@@ -1,0 +1,22 @@
+@base_url = http://localhost:8080
+@json_content = application/json
+
+
+
+### Create Admin User
+POST {{base_url}}/api/admin_users HTTP/1.1
+content-type: {{json_content}}
+
+{
+    "email": "admin@admin.com",
+    "password": "admin123"
+}
+
+### Login to Admin User
+POST {{base_url}}/api/auth/login HTTP/1.1
+content-type: {{json_content}}
+
+{
+    "email": "admin@admin.com",
+    "password": "admin123"
+}

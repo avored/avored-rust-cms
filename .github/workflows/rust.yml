@@ -1,0 +1,41 @@
+name: AvoRedCMS
+
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    name: AvoredCMS
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:12
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: avored_cms
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Swatinem/rust-cache@v2.4.0
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Migrate database
+        run: |
+          cd rust-api
+          cp .env.example .env
+          sudo apt-get install libpq-dev -y
+          cargo install diesel_cli --no-default-features --features postgres
+          diesel setup
+          diesel migration run
+      - uses: actions-rs/cargo@v1
+        with:
+          run: |
+            cd rust-api
+            test
