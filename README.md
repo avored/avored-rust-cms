@@ -1,5 +1,5 @@
 # Avored Rust CMS
-AvoRed Rust CMS implement via hexagonal architech pattern. 
+AvoRed Rust CMS implement with the help of axum web framework and diesel orm. 
 
 
 [![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml)
