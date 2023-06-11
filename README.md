@@ -2,7 +2,7 @@
 AvoRed Rust CMS implement via hexagonal architech pattern. 
 
 
-[![AvoRedCMS](https://github.com/avored/avored-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-cms/actions/workflows/rust.yml)
+[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml)
 
 
 ## Installation
