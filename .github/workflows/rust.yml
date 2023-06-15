@@ -34,8 +34,4 @@ jobs:
           cargo install diesel_cli --no-default-features --features postgres
           diesel setup
           diesel migration run
-      - uses: actions-rs/cargo@v1
-        with:
-          run: |
-            cd rust-api
-            test
+          cargo test
