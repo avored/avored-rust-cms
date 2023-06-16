@@ -1,12 +1,7 @@
 <template>  
-    <div class="h-screen w-full flex flex-col items-center justify-center">
-        <div class="block">
-            <img src="../assets/logo.svg" alt="AvoRed Rust CMS" class="w-24" />
-        </div>
-        <h2 class="text-red-700 text-2xl font-semibold">AvoRed Rust CMS</h2>
-        <div class="max-w-lg mt-5  block">
-            <p>Response for home route: {{ result }}</p>
-        </div>
+    <div class="flex h-screen">
+        <AvoRedSidebar />
+        <AvoRedHeader />
     </div>
 </template>
 
@@ -14,6 +9,8 @@
 import { ref, onMounted } from 'vue'
 import { AxiosResponse } from 'axios'
 import avoRedRustApi from '../api'
+import AvoRedSidebar from '../components/partials/AvoRedSidebar.vue';
+import AvoRedHeader from '../components/partials/AvoRedHeader.vue';
 
 const result = ref()
 

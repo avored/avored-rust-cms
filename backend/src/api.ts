@@ -21,4 +21,7 @@ const avoRedRustApi = axios.create(config);
 
 // API.interceptors.request.use(injectAccessToken);
 
+// export const avoredApiGet = () => {
+//   avoredApiGet.get(uri, headers)
+// }
 export default avoRedRustApi;
