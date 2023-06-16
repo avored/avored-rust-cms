@@ -39,7 +39,6 @@ pub async fn require_authentication<T>(
             created_at: token_data.claims.created_at,
             updated_at: token_data.claims.updated_at,
         };
-        println!("i am here");
         request.extensions_mut().insert(user);
     } else {
 

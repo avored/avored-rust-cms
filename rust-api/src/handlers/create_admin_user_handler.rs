@@ -19,8 +19,6 @@ pub async fn create_admin_user_handler(
     
     let admin_user = app_state.admin_user_repository.create(payload.email.clone(), password_hash);
 
-    println!("Admin USER PAYLOAD {} {}", payload.email, payload.password);
-
     Json(admin_user).into_response()
 }
 
