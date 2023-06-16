@@ -1,12 +1,14 @@
 use std::sync::Arc;
 use argon2::{ Argon2, PasswordVerifier, PasswordHash};
 use axum::{response::IntoResponse, Json, extract::State, http::{StatusCode, Response}};
+use chrono::{Utc, NaiveDateTime};
 use jsonwebtoken::{Header, EncodingKey, encode};
 use serde::Deserialize;
 use serde_derive::Serialize;
 use serde_json::json;
+use uuid::Uuid;
 
-use crate::routes::AppState;
+use crate::{routes::AppState};
 
 pub async fn login_admin_user_handler(
         app_state : State<Arc<AppState>>,
@@ -30,15 +32,32 @@ pub async fn login_admin_user_handler(
             message: String::from("Invalid email or password"),
         };
         return Err((StatusCode::BAD_REQUEST, Json(error_response)));
-    }   
+    }  
+
+    let jwt_secret = app_state.config.jwt_secret.as_ref();
+
+    let expiration = Utc::now()
+        .checked_add_signed(chrono::Duration::minutes(app_state.config.jwt_maxage))
+        .expect("valid timestamp")
+        .timestamp();
+
+    let claims = Claims {
+        sub: admin_user.id,
+        email: admin_user.email,
+        password: admin_user.password,
+        created_at: admin_user.created_at,
+        updated_at: admin_user.updated_at,
+        exp: expiration as usize,
+    };
+
     //@todo use secret from config
-    let token = encode(&Header::default(), &admin_user, &EncodingKey::from_secret("secret".as_ref())).unwrap();
+    let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(jwt_secret)).unwrap();
     let response = Response::new(json!({"status": "success", "token": token}).to_string());
     
     Ok(response)
 
 }
-
+ 
 #[derive(Deserialize, Debug)]
 pub struct LoginAdminUserPayload {
     email: String,
@@ -51,4 +70,17 @@ pub struct LoginAdminUserPayload {
 pub struct LoginAdminUserResponse {
     success: bool,
     message: String
+}
+
+
+
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Claims {
+    pub sub: Uuid,
+    pub email: String,
+    pub password: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+    pub exp: usize,
 }

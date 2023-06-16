@@ -4,6 +4,13 @@
 
 
 ### Create Admin User
+GET {{base_url}} HTTP/1.1
+content-type: {{json_content}}
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzODZkYjY1ZS0zODczLTRkMGItYjA2ZS1iMzM2YjEwZDkxYTAiLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJHZsdkkzREVlYUpzSDc5NmVhSTdSQnckSXpxT29tQm9FVmVXamphRnBRVkJhK0F4QzFHMHBTdU52Z1BIanVnTjM4NCIsImNyZWF0ZWRfYXQiOiIyMDIzLTA2LTA5VDEwOjM3OjI4LjgyMTg0MCIsInVwZGF0ZWRfYXQiOiIyMDIzLTA2LTA5VDEwOjM3OjI4LjgyMTg0MCIsImV4cCI6MTY4Njg4Njg2NH0.92hZSwHDqtYXyt5kKjW-OOokKjA70L1UJOL8c1tFQ28
+
+
+
+### Create Admin User
 POST {{base_url}}/api/admin_users HTTP/1.1
 content-type: {{json_content}}
 

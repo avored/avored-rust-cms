@@ -17,8 +17,8 @@ const config = {
   }
 };
 
-const API = axios.create(config);
+const avoRedRustApi = axios.create(config);
 
 // API.interceptors.request.use(injectAccessToken);
 
-export default API;
+export default avoRedRustApi;

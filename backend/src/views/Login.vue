@@ -66,7 +66,7 @@
 import { AxiosResponse } from 'axios'
 import { ref } from 'vue'
 import type { Ref } from 'vue'
-import api from '../api'
+import avoredRustApi from '../api'
 import { useRouter } from 'vue-router';
 
 
@@ -80,10 +80,10 @@ const email: Ref<string> = ref('admin@admin.com')
 const password: Ref<string> = ref('admin123')
 
 const submit = async () => {
-  console.log(email.value, password.value)
+  
   const data = {email: email.value, password: password.value}
   
-  const result: AxiosResponse<AuthResponseType> = await api.post(
+  const result: AxiosResponse<AuthResponseType> = await avoredRustApi.post(
       '/api/auth/login', 
       JSON.stringify(data),
       {
@@ -94,10 +94,10 @@ const submit = async () => {
 
   if (result.data.token) {
       localStorage.setItem('is_logged_in', 'true')
+      localStorage.setItem('token', result.data.token)
       router.push({ path: '/' })
 
   }
-  console.log(result)
 }
 
 

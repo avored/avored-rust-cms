@@ -4,6 +4,7 @@ use diesel::{prelude::*};
 use chrono::NaiveDateTime;
 // use diesel::prelude::*;
 use serde::{Serialize};
+use serde_derive::Deserialize;
 use uuid::Uuid;
 
 
@@ -14,7 +15,7 @@ use crate::schema::admin_users::dsl::*;
 // pub type Email = String;
 // pub type Password = String;
 
-#[derive(Queryable, Selectable, Serialize, Debug)]
+#[derive(Queryable, Selectable, Serialize, Debug, Deserialize)]
 #[diesel(table_name = admin_users)]
 pub struct AdminUser {
     pub id: Uuid,
@@ -58,22 +59,18 @@ impl AdminUserRepository {
 
         let new_admin_user_struct = NewAdminUser { email: admin_user_email, password: admin_user_password, created_at: current, updated_at: current };
 
-        let admin_user_model = diesel::insert_into(admin_users)
+        diesel::insert_into(admin_users)
             .values(&new_admin_user_struct)
             .get_result::<AdminUser>(conn)
-            .expect("Error creating new admin user record");
-
-        admin_user_model
+            .expect("Error creating new admin user record")
     }
     pub fn find_by_email(&self, admin_user_email: String) -> AdminUser {
         let conn = &mut self.db.get().unwrap();
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
 
-        let admin_user_model = admin_users
+        admin_users
             .filter(email.eq(admin_user_email))
             .first::<AdminUser>(conn)
-            .expect(&expect_message);
-
-        admin_user_model
+            .expect(&expect_message)
     }
 }
