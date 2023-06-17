@@ -12,14 +12,14 @@ Authorization: {{token}}
 
 
 ### List Admin User
-GET {{base_url}}/api/admin_users HTTP/1.1
+GET {{base_url}}/api/admin-users HTTP/1.1
 content-type: {{json_content}}
 Authorization: {{token}}
 
 
 
 ### Create Admin User
-POST {{base_url}}/api/admin_users HTTP/1.1
+POST {{base_url}}/api/admin-users HTTP/1.1
 content-type: {{json_content}}
 
 {

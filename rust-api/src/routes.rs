@@ -52,8 +52,8 @@ pub fn app_routes() -> Router {
             app_state.clone(),
             require_authentication,
         ))
-        .route("/api/admin_users", get(admin_users_handler))
-        .route("/api/admin_users", post(create_admin_user_handler))
+        .route("/api/admin-users", get(admin_users_handler))
+        .route("/api/admin-users", post(create_admin_user_handler))
         .route("/api/auth/login", post(login_admin_user_handler))
         .with_state(app_state)
         .layer(cors)

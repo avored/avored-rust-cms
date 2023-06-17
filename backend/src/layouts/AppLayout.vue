@@ -1,6 +1,12 @@
 <template>  
     <div class="flex h-screen">
-        Home Page
+        <AvoRedSidebar />
+        <div class="bg-white flex-1">
+            <AvoRedHeader />
+            <div class="p-5">
+                <router-view></router-view>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -8,6 +14,8 @@
 import { ref, onMounted } from 'vue'
 import { AxiosResponse } from 'axios'
 import avoRedRustApi from '../api'
+import AvoRedSidebar from '../components/partials/AvoRedSidebar.vue';
+import AvoRedHeader from '../components/partials/AvoRedHeader.vue';
 
 const result = ref()
 

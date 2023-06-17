@@ -1,10 +1,8 @@
-<template>  
-    <div class="flex h-screen">
-        Home Page
-    </div>
+<template>
+    Admin users
+    {{ result }}
 </template>
-
-<script async setup lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { AxiosResponse } from 'axios'
 import avoRedRustApi from '../api'
@@ -13,8 +11,8 @@ const result = ref()
 
 onMounted(async () => {
     const token = localStorage.getItem('token')
-    const response : AxiosResponse<Array<PostType>> = await avoRedRustApi.get(
-        '/', 
+    const response : AxiosResponse<Array<AdminUserType>> = await avoRedRustApi.get(
+        '/api/admin-users', 
         {
             headers: {
                 "Authorization": `Bearer ${token}`,
@@ -26,12 +24,11 @@ onMounted(async () => {
 })
 
 
-
-type PostType = {
+type AdminUserType = {
     id: String,
-    title: String,
-    body: String,
+    email: String,
     created_at: String,
     updated_at: StaticRangeInit
 }
+
 </script>
