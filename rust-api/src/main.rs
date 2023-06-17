@@ -10,6 +10,7 @@ mod models;
 mod schema;
 mod repositories;
 mod middleware;
+mod responses;
 
 use crate::routes::app_routes;
 

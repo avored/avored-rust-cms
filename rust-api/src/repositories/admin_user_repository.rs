@@ -8,6 +8,7 @@ use serde_derive::Deserialize;
 use uuid::Uuid;
 
 
+use crate::responses::admin_user_response::AdminUserResponse;
 use crate::schema::admin_users;
 use crate::schema::admin_users::dsl::*;
 
@@ -34,6 +35,19 @@ pub struct NewAdminUser {
     pub updated_at: NaiveDateTime,
 }
 
+
+
+
+impl Into<AdminUserResponse> for AdminUser {
+    fn into(self) -> AdminUserResponse {
+        AdminUserResponse {
+            id: self.id,
+            email: self.email,
+            created_at: self.created_at,
+            updated_at: self.updated_at
+        }
+    }
+}
 
 
 pub struct AdminUserRepository {
@@ -72,5 +86,6 @@ impl AdminUserRepository {
             .filter(email.eq(admin_user_email))
             .first::<AdminUser>(conn)
             .expect(&expect_message)
+
     }
 }
