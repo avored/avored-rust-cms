@@ -1,3 +1,4 @@
+
 use diesel::{PgConnection};
 use diesel::r2d2::{Pool, ConnectionManager};
 use diesel::{prelude::*};
@@ -59,12 +60,31 @@ impl AdminUserRepository {
         AdminUserRepository { db }
     }
 
-    pub fn all(&self) -> Vec<AdminUser> {
+    // pub fn all(&self) -> Vec<AdminUser> {
+    //     let conn = &mut self.db.get().unwrap();
+
+    //     admin_users
+    //         .load(conn)
+    //         .expect("Error loading admin_users")
+    // }
+
+    pub fn paginate(&self, per_page: i64, offset : i64) -> Vec<AdminUser> {
         let conn = &mut self.db.get().unwrap();
 
         admin_users
+            .offset(offset)
+            .limit(per_page)
             .load(conn)
             .expect("Error loading admin_users")
+    }
+
+    pub fn count(&self) -> i64 {
+        let conn = &mut self.db.get().unwrap();
+
+        admin_users
+            .count()
+            .get_result(conn)
+            .expect("Error while doing a count on admin_users")
     }
 
     pub fn create(&self, admin_user_email: String, admin_user_password: String) -> AdminUser {
