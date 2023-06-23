@@ -9,7 +9,7 @@
     </div>
   </div>
 
-  <div class="overflow-x-auto text-left border-t my-8 text-sm">
+  <div class="text-left border-t my-8 text-sm">
     <form @submit.prevent="submit" action="#" class="mt-3 w-full">
       <div class="w-full">
         <label for="Email" class="w-full text-sm font-medium text-gray-700">
@@ -61,20 +61,26 @@
         </div>
 
       <div class="mt-5 flex w-full items-center">
-        <button type="submit"
-          class="shrink-0 rounded-md border border-blue-600 bg-blue-600 px-8 py-3 text-sm font-medium text-white transition hover:bg-transparent hover:text-blue-600 focus:outline-none focus:ring active:text-blue-500">
+        <button type="submit" :disabled="!validation.$dirty || validation.$error"
+          class="btn btn-primary">
           Create Admin User
         </button>
+        <router-link class="ml-auto btn btn-default" :to="{name:'admin-users-list'}">Cancel</router-link>
       </div>
     </form>
 
   </div>
 </template>
 <script setup lang="ts">
+import useVuelidate from '@vuelidate/core'
 import { computed, ref } from 'vue'
-import { useVuelidate } from '@vuelidate/core'
 import { required, email, sameAs } from '@vuelidate/validators'
+import { AxiosResponse } from 'axios'
+import avoRedRustApi from '../api'
+import { useRouter } from 'vue-router'
 
+
+const router = useRouter()
 const create_user_form = ref<CreateUserForm>({email: '', password: '', confirm_password: ''})
 const rules =  computed(() => ({
       email: {
@@ -92,10 +98,30 @@ const rules =  computed(() => ({
 
 
 const validation =  useVuelidate(rules, create_user_form)
-console.log(validation.value)
 
-const submit = () => {
-  console.log(create_user_form.value)
+const submit = async () => {
+  const data = {email: create_user_form.value.email, password: create_user_form.value.password}
+
+  const token = localStorage.getItem('token')
+  const result: AxiosResponse<AdminUserType> = await avoRedRustApi.post(
+      '/api/admin-users', 
+      JSON.stringify(data),
+      {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+  if (result.data.id) {
+      router.push({ name: 'admin-users-list' })
+  }
+}
+interface AdminUserType {
+    id: String,
+    email: String,
+    created_at: String,
+    updated_at: StaticRangeInit
 }
 
 interface CreateUserForm {
