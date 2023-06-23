@@ -147,7 +147,7 @@ onMounted(async () => {
 })
 
 
-const getAdminUserList = async (current_page: number, per_page = 2)  => {
+const getAdminUserList = async (current_page: number, per_page = 10)  => {
     const token = localStorage.getItem('token')
     return await avoRedRustApi.get(
         '/api/admin-users',
