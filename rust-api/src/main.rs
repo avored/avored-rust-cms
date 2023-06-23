@@ -11,6 +11,7 @@ mod schema;
 mod repositories;
 mod middleware;
 mod responses;
+mod requests;
 
 use crate::routes::app_routes;
 

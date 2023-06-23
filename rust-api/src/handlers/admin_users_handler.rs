@@ -1,12 +1,20 @@
 use std::sync::Arc;
-use axum::{response::IntoResponse, Json, extract::State};
+use axum::{response::IntoResponse, Json, extract::{State, Query}};
 use serde_derive::Serialize;
 
-use crate::{routes::AppState, responses::admin_user_response::AdminUserResponse};
+use crate::{
+    routes::AppState, 
+    responses::admin_user_response::AdminUserResponse, 
+    requests::admin_user_list_request::AdminUsersRequest
+};
 
-pub async fn admin_users_handler(app_state : State<Arc<AppState>>) -> impl IntoResponse {
-    let current_page: i64 = 1;
-    let per_page = 2;
+pub async fn admin_users_handler(
+        app_state : State<Arc<AppState>>,
+        Query(payload): Query<AdminUsersRequest>
+    ) -> impl IntoResponse {
+
+    let current_page: i64 = payload.current_page;
+    let per_page = payload.per_page;
     let offset: i64 = (current_page - 1) * per_page;
     let from: i64 = offset + 1;
     let to: i64 = offset + per_page;

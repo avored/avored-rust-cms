@@ -19,9 +19,17 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/admin-users',
+    path: '/admin-user',
     name: 'admin-users-list',
     component: () => import(/* webpackChunkName: "about" */ './views/AdminUsersIndex.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/admin-user/create',
+    name: 'admin-user-create',
+    component: () => import(/* webpackChunkName: "about" */ './views/AdminUserCreate.vue'),
     meta: {
       requiresAuth: true
     }
