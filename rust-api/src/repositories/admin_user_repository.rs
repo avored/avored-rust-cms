@@ -98,6 +98,7 @@ impl AdminUserRepository {
             .get_result::<AdminUser>(conn)
             .expect("Error creating new admin user record")
     }
+  
     pub fn find_by_email(&self, admin_user_email: String) -> AdminUser {
         let conn = &mut self.db.get().unwrap();
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
@@ -106,6 +107,34 @@ impl AdminUserRepository {
             .filter(email.eq(admin_user_email))
             .first::<AdminUser>(conn)
             .expect(&expect_message)
+    }
+    pub fn find_by_uuid(&self, admin_user_uuid: Uuid) -> AdminUser {
+        let conn = &mut self.db.get().unwrap();
+        let expect_message = format!("Error loading admin_users by id: {}", &admin_user_uuid);
 
+        admin_users
+            .filter(id.eq(admin_user_uuid))
+            .first::<AdminUser>(conn)
+            .expect(&expect_message)
+    }
+    pub fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> AdminUser {
+        let conn = &mut self.db.get().unwrap();
+        let expect_message = format!("Error updating admin_users by id: {}", &admin_user_uuid);
+        
+        let current = chrono::offset::Utc::now().naive_utc();
+        
+        diesel::update(admin_users)
+        .filter(id.eq(admin_user_uuid))
+        .set((email.eq(admin_user_email), updated_at.eq(current)))
+        .execute(conn)
+        .expect(&expect_message);
+    
+        let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
+
+        admin_users
+            .filter(id.eq(admin_user_uuid))
+            .first::<AdminUser>(conn)
+            .expect(&expect_message)
+    
     }
 }

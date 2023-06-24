@@ -61,11 +61,12 @@
         </div>
 
       <div class="mt-5 flex w-full items-center">
+        <router-link class="mr-auto btn btn-default" :to="{name:'admin-users-list'}">Cancel</router-link>
         <button type="submit" :disabled="!validation.$dirty || validation.$error"
           class="btn btn-primary">
           Create Admin User
         </button>
-        <router-link class="ml-auto btn btn-default" :to="{name:'admin-users-list'}">Cancel</router-link>
+        
       </div>
     </form>
 
