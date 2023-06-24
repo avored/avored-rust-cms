@@ -93,7 +93,7 @@ const submit = async () => {
 
   const token = localStorage.getItem('token')
   const result: AxiosResponse<AdminUserType> = await avoRedRustApi.put(
-      '/api/admin-users', 
+      '/api/admin-users/' + edit_user_form.value.id, 
       JSON.stringify(data),
       {
         headers: {
