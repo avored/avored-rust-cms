@@ -29,7 +29,7 @@ content-type: {{json_content}}
 Authorization: {{token}}
 
 {
-    "email": "admin@update.com"
+    "email": "admin@admin.com"
 }
 
 
