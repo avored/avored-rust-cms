@@ -34,6 +34,14 @@ const routes: Array<RouteRecordRaw> = [
       requiresAuth: true
     }
   },
+  {
+    path: '/admin-user/:admin_user_id',
+    name: 'admin-user-edit',
+    component: () => import(/* webpackChunkName: "about" */ './views/AdminUserEdit.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
 ]
 
 

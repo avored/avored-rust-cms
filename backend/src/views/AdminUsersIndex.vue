@@ -113,7 +113,7 @@ const columns: Array<ColumnType> = [
         value: (row: AdminUserType) => {
             var html = "";
 
-            html += `<a href="/admin-users/${row.id}">Edit</a>`
+            html += `<a href="/admin-user/${row.id}">Edit</a>`
 
             return html;
         }

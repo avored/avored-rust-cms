@@ -30,7 +30,14 @@ pub fn app_routes() -> Router {
     let cors:CorsLayer = CorsLayer::new()
             .allow_origin("http://localhost:5173".parse::<HeaderValue>().unwrap())
             .allow_headers([CONTENT_TYPE, AUTHORIZATION])
-            .allow_methods([axum::http::Method::GET, axum::http::Method::POST, axum::http::Method::OPTIONS]);
+            .allow_methods([
+                axum::http::Method::GET, 
+                axum::http::Method::POST, 
+                axum::http::Method::PUT, 
+                axum::http::Method::PATCH, 
+                axum::http::Method::DELETE ,
+                axum::http::Method::OPTIONS
+            ]);
 
     let db: Pool<ConnectionManager<PgConnection>> = establish_connection();
     // let connection = &mut db.get().unwrap();
