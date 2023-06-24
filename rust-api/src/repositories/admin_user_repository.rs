@@ -124,10 +124,10 @@ impl AdminUserRepository {
         let current = chrono::offset::Utc::now().naive_utc();
         
         diesel::update(admin_users)
-        .filter(id.eq(admin_user_uuid))
-        .set((email.eq(admin_user_email), updated_at.eq(current)))
-        .execute(conn)
-        .expect(&expect_message);
+            .filter(id.eq(admin_user_uuid))
+            .set((email.eq(admin_user_email), updated_at.eq(current)))
+            .execute(conn)
+            .expect(&expect_message);
     
         let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
 
@@ -135,6 +135,15 @@ impl AdminUserRepository {
             .filter(id.eq(admin_user_uuid))
             .first::<AdminUser>(conn)
             .expect(&expect_message)
-    
+    }
+
+    pub fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> usize {
+        let conn = &mut self.db.get().unwrap();
+        let expect_message = format!("Error delete admin_users by id: {}", &admin_user_uuid);
+        
+        diesel::delete(admin_users)
+            .filter(id.eq(admin_user_uuid))
+            .execute(conn)
+            .expect(&expect_message)
     }
 }
