@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::http::HeaderValue;
 use axum::{Router, middleware};
-use axum::routing::{get, post};
+use axum::routing::{get, post, put};
 use axum::http::header::{CONTENT_TYPE, AUTHORIZATION};
 use tower_http::cors::{CorsLayer};
 use diesel::{PgConnection, r2d2};
@@ -14,6 +14,8 @@ use crate::handlers::home_handler::home_handler;
 
 use crate::handlers::admin_users_handler::admin_users_handler;
 use crate::handlers::create_admin_user_handler::create_admin_user_handler;
+use crate::handlers::get_admin_user_handler::get_admin_user_handler;
+use crate::handlers::put_admin_user_handler::put_admin_user_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 
 use crate::config::Config;
@@ -53,6 +55,8 @@ pub fn app_routes() -> Router {
             require_authentication,
         ))
         .route("/api/admin-users", get(admin_users_handler))
+        .route("/api/admin-users/:admin_user_id", get(get_admin_user_handler))
+        .route("/api/admin-users/:admin_user_id", put(put_admin_user_handler))
         .route("/api/admin-users", post(create_admin_user_handler))
         .route("/api/auth/login", post(login_admin_user_handler))
         .with_state(app_state)

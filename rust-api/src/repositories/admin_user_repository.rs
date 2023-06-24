@@ -106,6 +106,14 @@ impl AdminUserRepository {
             .filter(email.eq(admin_user_email))
             .first::<AdminUser>(conn)
             .expect(&expect_message)
+    }
+    pub fn find_by_uuid(&self, admin_user_uuid: Uuid) -> AdminUser {
+        let conn = &mut self.db.get().unwrap();
+        let expect_message = format!("Error loading admin_users by id: {}", &admin_user_uuid);
 
+        admin_users
+            .filter(id.eq(admin_user_uuid))
+            .first::<AdminUser>(conn)
+            .expect(&expect_message)
     }
 }
