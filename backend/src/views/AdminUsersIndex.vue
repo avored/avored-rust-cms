@@ -114,6 +114,7 @@ const columns: Array<ColumnType> = [
             var html = "";
 
             html += `<a href="/admin-user/${row.id}">Edit</a>`
+            html += ` | <a href="/admin-user/${row.id}/show">Show</a>`
 
             return html;
         }
