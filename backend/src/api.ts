@@ -11,7 +11,7 @@ import axios from "axios";
 // const accessToken = localStorage.getItem("access_token");
   
 const config = {
-  baseURL: "http://localhost:8080",
+  baseURL: "https://purvesh.northcentralus.cloudapp.azure.com",
   headers: {
       // accessToken ? 'Authoziation': 'Bearer ' + accessToken : null
   }
