@@ -10,4 +10,7 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
+  ssr: {
+    noExternal: ['@vuelidate/core'],
+},
 })
