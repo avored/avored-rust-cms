@@ -28,8 +28,10 @@ pub struct AppState {
 }
 
 pub fn app_routes() -> Router {
+    let config: Config = Config::new();
+
     let cors:CorsLayer = CorsLayer::new()
-            .allow_origin("http://localhost:5173".parse::<HeaderValue>().unwrap())
+            .allow_origin(config.backend_url.parse::<HeaderValue>().unwrap())
             .allow_headers([CONTENT_TYPE, AUTHORIZATION])
             .allow_methods([
                 axum::http::Method::GET, 
