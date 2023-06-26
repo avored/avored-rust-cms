@@ -21,9 +21,9 @@
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.3",
-    "@types/vuelidate": "^0.7.18",
     "@types/lodash": "^4.14.195",
     "@types/node": "^20.2.6",
+    "@types/vuelidate": "^0.7.18",
     "@vitejs/plugin-vue": "^4.1.0",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.24",

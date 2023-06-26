@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "axios"
 
 // const injectAccessToken = (config: InternalAxiosRequestConfig) => {
 //   const accessToken = localStorage.getItem("access_token");
@@ -8,10 +8,11 @@ import axios from "axios";
 // };
 
 
+
 // const accessToken = localStorage.getItem("access_token");
-  
+    console.log(import.meta.env.VITE_BACKEND_BASE_URL)
 const config = {
-  baseURL: "https://purvesh.northcentralus.cloudapp.azure.com",
+  baseURL: import.meta.env.VITE_BACKEND_BASE_URL ?? 'https://purvesh.northcentralus.cloudapp.azure.com',
   headers: {
       // accessToken ? 'Authoziation': 'Bearer ' + accessToken : null
   }
