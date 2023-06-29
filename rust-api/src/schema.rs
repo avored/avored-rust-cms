@@ -4,25 +4,16 @@ diesel::table! {
     admin_users (id) {
         id -> Uuid,
         #[max_length = 255]
+        name -> Varchar,
+        #[max_length = 255]
         email -> Varchar,
         #[max_length = 255]
         password -> Varchar,
         created_at -> Timestamp,
         updated_at -> Timestamp,
-    }
-}
-
-diesel::table! {
-    posts (id) {
-        id -> Uuid,
         #[max_length = 255]
-        title -> Varchar,
-        body -> Text,
-        created_at -> Timestamp,
+        created_by -> Varchar,
+        #[max_length = 255]
+        updated_by -> Varchar,
     }
 }
-
-diesel::allow_tables_to_appear_in_same_query!(
-    admin_users,
-    posts,
-);

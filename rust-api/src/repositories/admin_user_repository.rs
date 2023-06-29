@@ -17,23 +17,29 @@ use crate::schema::admin_users::dsl::*;
 // pub type Email = String;
 // pub type Password = String;
 
-#[derive(Queryable, Selectable, Serialize, Debug, Deserialize)]
+#[derive(Queryable, Selectable, Serialize, Debug, Deserialize, Clone)]
 #[diesel(table_name = admin_users)]
 pub struct AdminUser {
     pub id: Uuid,
+    pub name: String,
     pub email: String,
     pub password: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub created_by: String,
+    pub updated_by: String
 }
 
 #[derive(Insertable)]
 #[diesel(table_name = admin_users)]
 pub struct NewAdminUser {
+    pub name: String,
     pub email: String,
     pub password: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub created_by: String,
+    pub updated_by: String
 }
 
 
@@ -43,9 +49,12 @@ impl Into<AdminUserResponse> for AdminUser {
     fn into(self) -> AdminUserResponse {
         AdminUserResponse {
             id: self.id,
+            name: self.name,
             email: self.email,
             created_at: self.created_at,
-            updated_at: self.updated_at
+            updated_at: self.updated_at,
+            created_by: self.created_by,
+            updated_by: self.updated_by
         }
     }
 }
@@ -87,14 +96,11 @@ impl AdminUserRepository {
             .expect("Error while doing a count on admin_users")
     }
 
-    pub fn create(&self, admin_user_email: String, admin_user_password: String) -> AdminUser {
+    pub fn create(&self, create_admin_user_model: NewAdminUser) -> AdminUser {
         let conn = &mut self.db.get().unwrap();
-        let current = chrono::offset::Utc::now().naive_utc();
-
-        let new_admin_user_struct = NewAdminUser { email: admin_user_email, password: admin_user_password, created_at: current, updated_at: current };
 
         diesel::insert_into(admin_users)
-            .values(&new_admin_user_struct)
+            .values(&create_admin_user_model)
             .get_result::<AdminUser>(conn)
             .expect("Error creating new admin user record")
     }

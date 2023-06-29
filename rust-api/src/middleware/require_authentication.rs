@@ -34,18 +34,23 @@ pub async fn require_authentication<T>(
 
         let user = AdminUser {
             id: token_data.claims.sub,
+            name: token_data.claims.name,
             email: token_data.claims.email,
             password: token_data.claims.password,
             created_at: token_data.claims.created_at,
             updated_at: token_data.claims.updated_at,
+            created_by: token_data.claims.created_by,
+            updated_by: token_data.claims.updated_by,
         };
+
         request.extensions_mut().insert(user);
+        Ok(next.run(request).await)
     } else {
 
         return Err(AppError::new(
             StatusCode::UNAUTHORIZED,
             "You are not authorized for this",
-        ));
+        ))
     }
-    Ok(next.run(request).await)
+    
 }

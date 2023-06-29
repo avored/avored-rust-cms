@@ -7,8 +7,7 @@ use tower_http::cors::{CorsLayer};
 use diesel::{PgConnection, r2d2};
 use diesel::r2d2::{Pool, ConnectionManager};
 
-use crate::repositories::post_repository::PostRepository;
-use crate::repositories::admin_user_repository::AdminUserRepository;
+use crate::repositories::admin_user_repository::{AdminUserRepository, AdminUser};
 use crate::middleware::require_authentication::require_authentication;
 use crate::handlers::home_handler::home_handler;
 
@@ -22,9 +21,9 @@ use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 use crate::config::Config;
 
 pub struct AppState {
-    pub post_repository: PostRepository,
     pub admin_user_repository: AdminUserRepository,
-    pub config: Config
+    pub config: Config,
+    pub current_user: Option<AdminUser>
 }
 
 pub fn app_routes() -> Router {
@@ -46,29 +45,29 @@ pub fn app_routes() -> Router {
     // let connection = &mut db.get().unwrap();
 
     /************** REPOSITORIES  **************/
-    let post_repository = PostRepository::new(db.clone());
     let admin_user_repository = AdminUserRepository::new(db.clone());
 
     let config: Config = Config::new();
 
     /************** APPLICATION STATES  **************/
     let app_state = Arc::new(AppState {
-        post_repository,
         admin_user_repository,
-        config
+        config,
+        current_user: None
     });
 
     Router::new()
         .route("/", get(home_handler))
-        .route_layer(middleware::from_fn_with_state(
-            app_state.clone(),
-            require_authentication,
-        ))
+        
+
         .route("/api/admin-users", get(admin_users_handler))
         .route("/api/admin-users/:admin_user_id", get(get_admin_user_handler))
         .route("/api/admin-users/:admin_user_id", put(put_admin_user_handler))
         .route("/api/admin-users/:admin_user_id", delete(delete_admin_user_handler))
         .route("/api/admin-users", post(create_admin_user_handler))
+        // ABOVE ROUTES ARE AUTH MIDDLEWARE
+        .route_layer(middleware::from_fn_with_state(app_state.clone(), require_authentication))
+
         .route("/api/auth/login", post(login_admin_user_handler))
         .with_state(app_state)
         .layer(cors)

@@ -6,7 +6,6 @@ mod config;
 mod routes;
 mod app_error;
 mod handlers;
-mod models;
 mod schema;
 mod repositories;
 mod middleware;

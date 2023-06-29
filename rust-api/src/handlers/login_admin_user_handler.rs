@@ -43,10 +43,13 @@ pub async fn login_admin_user_handler(
 
     let claims = Claims {
         sub: admin_user.id,
+        name: admin_user.name,
         email: admin_user.email,
         password: admin_user.password,
         created_at: admin_user.created_at,
         updated_at: admin_user.updated_at,
+        created_by: admin_user.created_by,
+        updated_by: admin_user.updated_by,
         exp: expiration as usize,
     };
 
@@ -78,8 +81,11 @@ pub struct LoginAdminUserResponse {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Claims {
     pub sub: Uuid,
+    pub name: String,
     pub email: String,
     pub password: String,
+    pub created_by: String,
+    pub updated_by: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub exp: usize,
