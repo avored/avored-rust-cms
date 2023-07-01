@@ -1,11 +1,16 @@
-use axum::{response::IntoResponse, Json, Extension};
-use serde_json::json;
+use axum::{response::IntoResponse, Json};
+use axum::{extract::{State}};
+use std::sync::Arc;
 
-use crate::{repositories::admin_user_repository::AdminUser};
+use crate::routes::AppState;
+
+// use crate::{repositories::admin_user_repository::AdminUser};
 
 pub async fn home_handler (
-    Extension(current_user): Extension<AdminUser>,
+    app_state : State<Arc<AppState>>,
+    // Extension(current_user): Extension<AdminUser>,
 ) -> impl IntoResponse { 
-    println!("extension: {:?}", current_user);
-    Json(json!(current_user)).into_response()
+
+    let admin_users = app_state.admin_user_repository.paginate(1, 1).await;
+    Json(admin_users).into_response()
 }

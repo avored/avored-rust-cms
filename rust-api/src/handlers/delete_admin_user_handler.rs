@@ -8,10 +8,10 @@ pub async fn delete_admin_user_handler(
         app_state : State<Arc<AppState>>,
         Path(admin_user_id): Path<String>
     ) -> impl IntoResponse {
+        todo!();
+        // let admin_user_uuid: Uuid = Uuid::parse_str(&admin_user_id).unwrap();
+        // app_state.admin_user_repository.delete_by_uuid(admin_user_uuid);
 
-        let admin_user_uuid: Uuid = Uuid::parse_str(&admin_user_id).unwrap();
-        app_state.admin_user_repository.delete_by_uuid(admin_user_uuid);
-
-        Json(StatusCode::NO_CONTENT).into_response()
+        // Json(StatusCode::NO_CONTENT).into_response()
 }
 

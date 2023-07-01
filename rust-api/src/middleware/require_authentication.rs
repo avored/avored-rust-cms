@@ -36,7 +36,7 @@ pub async fn require_authentication<T>(
             id: token_data.claims.sub,
             name: token_data.claims.name,
             email: token_data.claims.email,
-            password: token_data.claims.password,
+            // password: token_data.claims.password,
             created_at: token_data.claims.created_at,
             updated_at: token_data.claims.updated_at,
             created_by: token_data.claims.created_by,

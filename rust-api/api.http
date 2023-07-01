@@ -1,6 +1,6 @@
 @base_url = http://localhost:8080
 @json_content = application/json
-@token = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDUzZTlmZS04NjFiLTQ3NDQtODhjYy1kZjM5OTFlMjA1OWUiLCJuYW1lIjoiQWRtaW4gVXNlciIsImVtYWlsIjoiYWRtaW51c2VyQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJDFVZjRDazdhYXRnOEd5MXd0OEg5UUEkbE9XVzN6blc4NDlOMTRld01NcWhYK3VoeFc2Mm95OFJiVHpRckU2dzdYayIsImNyZWF0ZWRfYnkiOiJhZG1pbkBhZG1pbi5jb20iLCJ1cGRhdGVkX2J5IjoiYWRtaW5AYWRtaW4uY29tIiwiY3JlYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwidXBkYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwiZXhwIjoxNjg4MDc4ODY5fQ.8RdeYVZYfBlJWL224K42i2rn455WRw2qWWJkCYNvn24
+@token = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDUzZTlmZS04NjFiLTQ3NDQtODhjYy1kZjM5OTFlMjA1OWUiLCJuYW1lIjoiQWRtaW4gVXNlciIsImVtYWlsIjoiYWRtaW51c2VyQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJDFVZjRDazdhYXRnOEd5MXd0OEg5UUEkbE9XVzN6blc4NDlOMTRld01NcWhYK3VoeFc2Mm95OFJiVHpRckU2dzdYayIsImNyZWF0ZWRfYnkiOiJhZG1pbkBhZG1pbi5jb20iLCJ1cGRhdGVkX2J5IjoiYWRtaW5AYWRtaW4uY29tIiwiY3JlYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwidXBkYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwiZXhwIjoxNjg4MjUzMzMwfQ.FdeeZJnER3cbWkMCvI5hgLWUcF-8ohM9us9b8TU90fw
 
 @admin_user_uuid = c4e1bd3e-3fdc-44a6-ad71-ed667cb25ff0
 
@@ -11,6 +11,13 @@ content-type: {{json_content}}
 Authorization: {{token}}
 
 
+### Login to Admin User
+POST {{base_url}}/api/auth/login HTTP/1.1
+content-type: {{json_content}}
+{
+    "email": "adminuser@admin.com",
+    "password": "admin123"
+}
 
 ### List Admin User
 GET {{base_url}}/api/admin-users?current_page=1&per_page=2 HTTP/1.1
@@ -47,13 +54,4 @@ content-type: {{json_content}}
     "email": "adminuser@admin.com",
     "password": "admin123",
     "name": "Admin User"
-}
-
-### Login to Admin User
-POST {{base_url}}/api/auth/login HTTP/1.1
-content-type: {{json_content}}
-
-{
-    "email": "adminuser@admin.com",
-    "password": "admin123"
 }

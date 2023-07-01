@@ -2,6 +2,7 @@ use std::sync::Arc;
 use argon2::{ Argon2, PasswordVerifier, PasswordHash};
 use axum::{response::IntoResponse, Json, extract::State, http::{StatusCode, Response}};
 use chrono::{Utc, NaiveDateTime};
+use entity::admin_users;
 use jsonwebtoken::{Header, EncodingKey, encode};
 use serde::Deserialize;
 use serde_derive::Serialize;
@@ -10,14 +11,13 @@ use uuid::Uuid;
 
 use crate::{routes::AppState};
 
-pub async fn login_admin_user_handler(
+pub async fn login_admin_user_handler (
         app_state : State<Arc<AppState>>,
         Json(payload): Json<LoginAdminUserPayload>
     ) -> Result<impl IntoResponse, (StatusCode, Json<LoginAdminUserResponse>)> {
 
-    let admin_user = app_state.admin_user_repository.find_by_email(payload.email.clone());
-
-    // let parsed_hash = PasswordHash::new(&admin_user.password).expect("Error occurred while making password hash");
+    let admin_user: entity::admin_users::Model = app_state.admin_user_repository.find_by_email(payload.email).await;
+   
 
     let is_valid = match PasswordHash::new(&admin_user.password) {
         Ok(parsed_hash) => Argon2::default()
@@ -32,7 +32,7 @@ pub async fn login_admin_user_handler(
             message: String::from("Invalid email or password"),
         };
         return Err((StatusCode::BAD_REQUEST, Json(error_response)));
-    }  
+    }
 
     let jwt_secret = app_state.config.jwt_secret.as_ref();
 
@@ -61,7 +61,7 @@ pub async fn login_admin_user_handler(
 
 }
  
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct LoginAdminUserPayload {
     email: String,
     password: String

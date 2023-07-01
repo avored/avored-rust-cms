@@ -10,9 +10,10 @@ pub async fn put_admin_user_handler(
         Json(payload): Json<UpdateAdminUsersRequest>
     ) -> impl IntoResponse {
 
-        let admin_user_uuid: Uuid = Uuid::parse_str(&admin_user_id).unwrap();
-        let admin_user = app_state.admin_user_repository.update_by_uuid(admin_user_uuid, payload.email);
+        todo!();
+        // let admin_user_uuid: Uuid = Uuid::parse_str(&admin_user_id).unwrap();
+        // let admin_user = app_state.admin_user_repository.update_by_uuid(admin_user_uuid, payload.email);
 
-        Json(admin_user).into_response()
+        // Json(admin_user).into_response()
 }
 
