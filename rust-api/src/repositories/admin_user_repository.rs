@@ -1,9 +1,8 @@
 use chrono::NaiveDateTime;
-use sea_orm::{DbConn, EntityTrait, QueryFilter, ColumnTrait};
+use sea_orm::{DbConn, EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait};
 // use serde::{Serialize};
 // use serde_derive::Deserialize;
 use uuid::{Uuid};
-
 use entity::admin_users;
 // use crate::responses::admin_user_response::AdminUserResponse;
 
@@ -85,45 +84,51 @@ impl AdminUserRepository {
   
     pub async fn find_by_email(&self, admin_user_email: String) -> entity::admin_users::Model {
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
-        let admin_user_model: entity::admin_users::Model = admin_users::Entity::find().
-                    filter(admin_users::Column::Email.eq(admin_user_email))
-                    .one(&self.db).await.expect(&expect_message)
-                    .ok_or("Cannot find user with email")
-                    .expect("cant find admin user with email");
-
-        admin_user_model
+        
+        admin_users::Entity::find()
+            .filter(admin_users::Column::Email.eq(admin_user_email))
+            .one(&self.db).await.expect(&expect_message)
+            .ok_or(expect_message)
+            .expect("Cannot find admin_users with email")
     }
     
-    // pub fn find_by_uuid(&self, admin_user_uuid: Uuid) -> AdminUser {
-    //     todo!()
-    //     // let conn = &mut self.db.get().unwrap();
-    //     // let expect_message = format!("Error loading admin_users by id: {}", &admin_user_uuid);
+    pub async fn find_by_uuid(&self, admin_user_uuid: Uuid) -> entity::admin_users::Model {
+        let expect_message = format!("Error loading admin_users by uuid: {}", &admin_user_uuid);
+        
+        admin_users::Entity::find_by_id(admin_user_uuid)
+            .one(&self.db)
+            .await
+            .expect("error while finding the admin_users by uuid")
+            .ok_or(expect_message)
+            .expect("Cannot find admin_users with email")
+    }
+    pub async fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> entity::admin_users::Model {
 
-    //     // admin_users
-    //     //     .filter(id.eq(admin_user_uuid))
-    //     //     .first::<AdminUser>(conn)
-    //     //     .expect(&expect_message)
-    // }
-    // pub fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> AdminUser {
-    //     todo!()
-    //     // let conn = &mut self.db.get().unwrap();
-    //     // let expect_message = format!("Error updating admin_users by id: {}", &admin_user_uuid);
+        let mut admin_user_model: admin_users::ActiveModel = self.find_by_uuid(admin_user_uuid).await.into();
+
+        admin_user_model.email = Set(admin_user_email);
+
+        let admin_user_model: entity::admin_users::Model = admin_user_model.update(&self.db).await.expect("error");
+
+        admin_user_model
+        // let conn = &mut self.db.get().unwrap();
+        // let expect_message = format!("Error updating admin_users by id: {}", &admin_user_uuid);
         
-    //     // let current = chrono::offset::Utc::now().naive_utc();
+        // let current = chrono::offset::Utc::now().naive_utc();
         
-    //     // diesel::update(admin_users)
-    //     //     .filter(id.eq(admin_user_uuid))
-    //     //     .set((email.eq(admin_user_email), updated_at.eq(current)))
-    //     //     .execute(conn)
-    //     //     .expect(&expect_message);
+        // diesel::update(admin_users)
+        //     .filter(id.eq(admin_user_uuid))
+        //     .set((email.eq(admin_user_email), updated_at.eq(current)))
+        //     .execute(conn)
+        //     .expect(&expect_message);
     
-    //     let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
+        // let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
 
-    //     // admin_users
-    //     //     .filter(id.eq(admin_user_uuid))
-    //     //     .first::<AdminUser>(conn)
-    //     //     .expect(&expect_message)
-    // }
+        // admin_users
+        //     .filter(id.eq(admin_user_uuid))
+        //     .first::<AdminUser>(conn)
+        //     .expect(&expect_message)
+    }
 
     // pub fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> usize {
     //     todo!()

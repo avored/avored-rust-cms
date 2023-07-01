@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::http::HeaderValue;
 use axum::{Router, middleware};
-use axum::routing::{get, post};
+use axum::routing::{get, post, put, delete};
 use axum::http::header::{CONTENT_TYPE, AUTHORIZATION};
 use tower_http::cors::{CorsLayer};
 
@@ -9,10 +9,10 @@ use crate::repositories::admin_user_repository::{AdminUserRepository, AdminUser}
 use crate::middleware::require_authentication::require_authentication;
 use crate::handlers::home_handler::home_handler;
 
-// use crate::handlers::admin_users_handler::admin_users_handler;
+use crate::handlers::admin_users_handler::admin_users_handler;
 // use crate::handlers::create_admin_user_handler::create_admin_user_handler;
-// use crate::handlers::get_admin_user_handler::get_admin_user_handler;
-// use crate::handlers::put_admin_user_handler::put_admin_user_handler;
+use crate::handlers::get_admin_user_handler::get_admin_user_handler;
+use crate::handlers::put_admin_user_handler::put_admin_user_handler;
 // use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 use sea_orm::{Database};
@@ -59,9 +59,9 @@ pub async fn app_routes() -> Router {
         .route("/", get(home_handler))
         
 
-        // .route("/api/admin-users", get(admin_users_handler))
-        // .route("/api/admin-users/:admin_user_id", get(get_admin_user_handler))
-        // .route("/api/admin-users/:admin_user_id", put(put_admin_user_handler))
+        .route("/api/admin-users", get(admin_users_handler))
+        .route("/api/admin-users/:admin_user_id", get(get_admin_user_handler))
+        .route("/api/admin-users/:admin_user_id", put(put_admin_user_handler))
         // .route("/api/admin-users/:admin_user_id", delete(delete_admin_user_handler))
         // .route("/api/admin-users", post(create_admin_user_handler))
         // ABOVE ROUTES ARE AUTH MIDDLEWARE
