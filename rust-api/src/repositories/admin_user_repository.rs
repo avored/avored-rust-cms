@@ -1,10 +1,8 @@
 use chrono::NaiveDateTime;
-use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult};
-// use serde::{Serialize};
-// use serde_derive::Deserialize;
+use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult, PaginatorTrait};
+use serde_derive::Serialize;
 use uuid::{Uuid};
 use entity::admin_users;
-// use crate::responses::admin_user_response::AdminUserResponse;
 
 #[derive(Clone)]
 pub struct AdminUser {
@@ -17,20 +15,12 @@ pub struct AdminUser {
     pub updated_by: String
 }
 
-// impl Into<AdminUserResponse> for AdminUser {
-//     fn into(self) -> AdminUserResponse {
-//         AdminUserResponse {
-//             id: self.id,
-//             name: self.name,
-//             email: self.email,
-//             created_at: self.created_at,
-//             updated_at: self.updated_at,
-//             created_by: self.created_by,
-//             updated_by: self.updated_by
-//         }
-//     }
-// }
-
+#[derive(Serialize)]
+pub struct AdminUsersPaginate {
+    pub results : Vec<admin_users::Model>,
+    pub no_of_pages: u64,
+    pub current_page: u64
+}
 
 pub struct AdminUserRepository {
     pub db: sea_orm::DatabaseConnection,
@@ -41,37 +31,20 @@ impl AdminUserRepository {
         AdminUserRepository { db }
     }
 
-    // pub fn all(&self) -> Vec<AdminUser> {
-    //     let conn = &mut self.db.get().unwrap();
+    pub async fn paginate(&self, per_page: u64, current_page : u64) -> AdminUsersPaginate {
 
-    //     admin_users
-    //         .load(conn)
-    //         .expect("Error loading admin_users")
-    // }
+        let admin_users_pages  = admin_users::Entity::find()
+            .paginate(&self.db, per_page);
 
-    pub async fn paginate(&self, per_page: i64, offset : i64) -> Vec<admin_users::Model> {
-        let db = &self.db;
+        let admin_user_list = admin_users_pages.fetch_page(current_page).await.unwrap();
+        let no_of_pages = admin_users_pages.num_pages().await.unwrap();
 
-        let admin_users: Vec<admin_users::Model> = admin_users::Entity::find().all(db).await.expect("error which fetch");
-
-        admin_users
-
-        // admin_users
-        //     .offset(offset)
-        //     .limit(per_page)
-        //     .load(conn)
-        //     .expect("Error loading admin_users")
+        AdminUsersPaginate {
+            results: admin_user_list,
+            no_of_pages,
+            current_page
+        }
     }
-
-    // pub fn count(&self) -> i64 {
-    //     todo!()
-    //     // let conn = &mut self.db.get().unwrap();
-
-    //     // admin_users
-    //     //     .count()
-    //     //     .get_result(conn)
-    //     //     .expect("Error while doing a count on admin_users")
-    // }
 
     pub async fn create(
         &self, 
@@ -91,12 +64,10 @@ impl AdminUserRepository {
             created_at: Set(current),
             updated_at: Set(current),
             created_by: Set(logged_in_user_email),
-            updated_by: Set(updated_by_admin_user_email),
-            ..Default::default()
+            updated_by: Set(updated_by_admin_user_email)
         };
 
         admin_user_model.insert(&self.db).await.unwrap()
-
     }
   
     pub async fn find_by_email(&self, admin_user_email: String) -> entity::admin_users::Model {

@@ -47,7 +47,7 @@ pub async fn require_authentication<T>(
         Ok(next.run(request).await)
     } else {
 
-        return Err(AppError::new(
+        Err(AppError::new(
             StatusCode::UNAUTHORIZED,
             "You are not authorized for this",
         ))

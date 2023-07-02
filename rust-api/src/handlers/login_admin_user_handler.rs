@@ -2,7 +2,6 @@ use std::sync::Arc;
 use argon2::{ Argon2, PasswordVerifier, PasswordHash};
 use axum::{response::IntoResponse, Json, extract::State, http::{StatusCode, Response}};
 use chrono::{Utc, NaiveDateTime};
-use entity::admin_users;
 use jsonwebtoken::{Header, EncodingKey, encode};
 use serde::Deserialize;
 use serde_derive::Serialize;
