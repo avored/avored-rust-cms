@@ -53,14 +53,14 @@
             <div class="text-sm text-gray-500 dark:text-gray-400">
                 Showing 
                 <span class="font-medium text-gray-700 dark:text-gray-100">
-                    {{ paginate?.from }} 
+                    {{ getPagerFromNumber() }} 
                         to 
-                    {{ paginate?.to }}
+                    {{ getPagerToNumber() }}
                 </span>
             </div>
 
             <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
-                <button type="button" :disabled="_.get(paginate, 'current_page', 1) === 1 ? true : false" @click="getPrevPage"
+                <button type="button" :disabled="isPrevPageButtonEnabled()" @click="getPrevPage"
                     class="flex items-center justify-center w-1/2 px-5 py-2 text-sm disabled:bg-gray-300 text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
@@ -72,7 +72,7 @@
                     </span>
                 </button>
 
-                <button :disabled="(_.get(paginate, 'last_page') == true ? true : false)" @click="getNextPage"
+                <button :disabled="isNextPageButtonEnabled()" @click="getNextPage"
                     class="flex items-center justify-center w-1/2 px-5 py-2 disabled:bg-gray-300 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                     <span>
                         Next
@@ -93,6 +93,8 @@ import * as _ from "lodash"
 import { AxiosResponse } from 'axios'
 import avoRedRustApi from '../api'
 
+
+const per_page = ref(5)
 const rows = ref<Array<AdminUserType>>()
 const paginate = ref<Paginate>()
 
@@ -113,42 +115,71 @@ const columns: Array<ColumnType> = [
         value: (row: AdminUserType) => {
             var html = "";
 
-            html += `<a href="/admin-user/${row.id}">Edit</a>`
-            html += ` | <a href="/admin-user/${row.id}/show">Show</a>`
+            html += `<a href="#/admin-user-edit/${row.id}">Edit</a>`
+            html += ` | <a href="#/admin-user-show/${row.id}">Show</a>`
 
             return html;
         }
     }
 ]
+const getPagerFromNumber = () => {
+    const current_page: number = _.get(paginate.value, 'current_page', 0);
+    if (current_page === 0) {
+        return 1;
+    }
 
+    return (current_page * per_page.value) + 1; 
+}
+const isPrevPageButtonEnabled = () => {
+    return (paginate.value?.current_page ?? 0) === 0
+}
+const isNextPageButtonEnabled = () => {
+    return !(((paginate.value?.current_page ?? 0) + 1) < (paginate.value?.no_of_pages ?? 0))
+}
+const getPagerToNumber = () => {
+    const current_page: number = _.get(paginate.value, 'current_page', 0);
+    var from: number = 0;
+    if (current_page === 0) {
+         return per_page.value
+    }
+    var from = (current_page * per_page.value)
+    return from + per_page.value
+}
 const getNextPage = async () => {
     let current_page: number = (paginate.value?.current_page ?? 0) + 1
-    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(current_page)
+    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(current_page, per_page.value)
 
-    rows.value = response.data.rows
-    paginate.value = response.data.paginate
+    rows.value = response.data.results
+    paginate.value = {
+        current_page: response.data.current_page,
+        no_of_pages: response.data.no_of_pages
+    };
 }
 
 const getPrevPage = async () => {
     let current_page: number = (paginate.value?.current_page ?? 0) - 1
-    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(current_page)
+    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(current_page, per_page.value)
 
-    rows.value = response.data.rows
-    paginate.value = response.data.paginate
+    rows.value = response.data.results
+    paginate.value = {
+        current_page: response.data.current_page,
+        no_of_pages: response.data.no_of_pages
+    };
 }
 
 onMounted(async () => {
     
-    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(1)
+    const response: AxiosResponse<AdminUsersListResponse> = await getAdminUserList(0, per_page.value)
 
-    rows.value = response.data.rows
-    paginate.value = response.data.paginate
-
-    console.log(response.data.paginate)
+    rows.value = response.data.results
+    paginate.value = {
+        current_page: response.data.current_page,
+        no_of_pages: response.data.no_of_pages
+    };
 })
 
 
-const getAdminUserList = async (current_page: number, per_page = 10)  => {
+const getAdminUserList = async (current_page: number, per_page: number)  => {
     const token = localStorage.getItem('token')
     return await avoRedRustApi.get(
         '/api/admin-users',
@@ -165,17 +196,14 @@ const getAdminUserList = async (current_page: number, per_page = 10)  => {
 }
 
 interface AdminUsersListResponse {
-    paginate: Paginate,
-    rows: Array<AdminUserType>
+    current_page: number,
+    no_of_pages: number,
+    results: Array<AdminUserType>
 }
 
 interface Paginate {
     current_page: number,
-    from: number,
-    to: number,
-    total: number,
-    last_page: Boolean,
-    has_more_pages: Boolean
+    no_of_pages: number,
 }
 interface ColumnType {
     identifier: String,

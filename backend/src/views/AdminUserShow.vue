@@ -59,7 +59,7 @@ const show_user_form = ref<AdminUserType>({email: '', id: ''})
                 'Content-Type': 'application/json'
             }
         })
-
+        console.log(response)
     show_user_form.value = response.data
 
 })

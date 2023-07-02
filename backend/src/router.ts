@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHashHistory, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from './views/Home.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -35,7 +35,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/admin-user/:admin_user_id',
+    path: '/admin-user-edit/:admin_user_id',
     name: 'admin-user-edit',
     component: () => import(/* webpackChunkName: "about" */ './views/AdminUserEdit.vue'),
     meta: {
@@ -43,7 +43,7 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
-    path: '/admin-user/:admin_user_id/show',
+    path: '/admin-user-show/:admin_user_id',
     name: 'admin-user-show',
     component: () => import(/* webpackChunkName: "about" */ './views/AdminUserShow.vue'),
     meta: {
@@ -55,7 +55,7 @@ const routes: Array<RouteRecordRaw> = [
 
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes
 })
 
