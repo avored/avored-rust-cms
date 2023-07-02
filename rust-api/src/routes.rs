@@ -4,11 +4,8 @@ use axum::{Router, middleware};
 use axum::routing::{get, post, put, delete};
 use axum::http::header::{CONTENT_TYPE, AUTHORIZATION};
 use tower_http::cors::{CorsLayer};
-use diesel::{PgConnection, r2d2};
-use diesel::r2d2::{Pool, ConnectionManager};
 
-use crate::repositories::post_repository::PostRepository;
-use crate::repositories::admin_user_repository::AdminUserRepository;
+use crate::repositories::admin_user_repository::{AdminUserRepository, AdminUser};
 use crate::middleware::require_authentication::require_authentication;
 use crate::handlers::home_handler::home_handler;
 
@@ -18,16 +15,17 @@ use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
 use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
+use sea_orm::{Database};
 
 use crate::config::Config;
 
 pub struct AppState {
-    pub post_repository: PostRepository,
     pub admin_user_repository: AdminUserRepository,
-    pub config: Config
+    pub config: Config,
+    pub current_user: Option<AdminUser>
 }
 
-pub fn app_routes() -> Router {
+pub async fn app_routes() -> Router {
     let config: Config = Config::new();
 
     let cors:CorsLayer = CorsLayer::new()
@@ -42,42 +40,49 @@ pub fn app_routes() -> Router {
                 axum::http::Method::OPTIONS
             ]);
 
-    let db: Pool<ConnectionManager<PgConnection>> = establish_connection();
+    let db = establish_connection().await;
     // let connection = &mut db.get().unwrap();
 
     /************** REPOSITORIES  **************/
-    let post_repository = PostRepository::new(db.clone());
-    let admin_user_repository = AdminUserRepository::new(db.clone());
+    let admin_user_repository = AdminUserRepository::new(db);
 
     let config: Config = Config::new();
 
     /************** APPLICATION STATES  **************/
     let app_state = Arc::new(AppState {
-        post_repository,
         admin_user_repository,
-        config
+        config,
+        current_user: None
     });
 
     Router::new()
         .route("/", get(home_handler))
-        .route_layer(middleware::from_fn_with_state(
-            app_state.clone(),
-            require_authentication,
-        ))
+        
         .route("/api/admin-users", get(admin_users_handler))
         .route("/api/admin-users/:admin_user_id", get(get_admin_user_handler))
         .route("/api/admin-users/:admin_user_id", put(put_admin_user_handler))
         .route("/api/admin-users/:admin_user_id", delete(delete_admin_user_handler))
         .route("/api/admin-users", post(create_admin_user_handler))
+        // ABOVE ROUTES ARE AUTH MIDDLEWARE
+        .route_layer(middleware::from_fn_with_state(app_state.clone(), require_authentication))
+
         .route("/api/auth/login", post(login_admin_user_handler))
         .with_state(app_state)
         .layer(cors)
 }
 
-pub fn establish_connection() ->  Pool<ConnectionManager<PgConnection>> {
+pub async fn establish_connection() -> sea_orm::DatabaseConnection  {
     let config: Config = Config::new();
     let database_url: String = config.database_url;
 
-    let manager: ConnectionManager<PgConnection> = ConnectionManager::<PgConnection>::new(database_url);
-    r2d2::Pool::builder().build(manager).expect("Failed to create DB connection pool.")
+    // let manager: ConnectionManager<PgConnection> = ConnectionManager::<PgConnection>::new(database_url);
+    // r2d2::Pool::builder().build(manager).expect("Failed to create DB connection pool.")
+
+    // let database_url = std::env::var("DATABASE_URL").unwrap();
+    let db: sea_orm::DatabaseConnection = Database::connect(&database_url)
+        .await
+        .unwrap();
+        // .expect("Failed to setup the database")
+
+    db
 }

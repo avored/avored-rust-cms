@@ -10,14 +10,13 @@ use uuid::Uuid;
 
 use crate::{routes::AppState};
 
-pub async fn login_admin_user_handler(
+pub async fn login_admin_user_handler (
         app_state : State<Arc<AppState>>,
         Json(payload): Json<LoginAdminUserPayload>
     ) -> Result<impl IntoResponse, (StatusCode, Json<LoginAdminUserResponse>)> {
 
-    let admin_user = app_state.admin_user_repository.find_by_email(payload.email.clone());
-
-    // let parsed_hash = PasswordHash::new(&admin_user.password).expect("Error occurred while making password hash");
+    let admin_user: entity::admin_users::Model = app_state.admin_user_repository.find_by_email(payload.email).await;
+   
 
     let is_valid = match PasswordHash::new(&admin_user.password) {
         Ok(parsed_hash) => Argon2::default()
@@ -32,7 +31,7 @@ pub async fn login_admin_user_handler(
             message: String::from("Invalid email or password"),
         };
         return Err((StatusCode::BAD_REQUEST, Json(error_response)));
-    }  
+    }
 
     let jwt_secret = app_state.config.jwt_secret.as_ref();
 
@@ -43,10 +42,13 @@ pub async fn login_admin_user_handler(
 
     let claims = Claims {
         sub: admin_user.id,
+        name: admin_user.name,
         email: admin_user.email,
         password: admin_user.password,
         created_at: admin_user.created_at,
         updated_at: admin_user.updated_at,
+        created_by: admin_user.created_by,
+        updated_by: admin_user.updated_by,
         exp: expiration as usize,
     };
 
@@ -58,7 +60,7 @@ pub async fn login_admin_user_handler(
 
 }
  
-#[derive(Deserialize, Debug)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct LoginAdminUserPayload {
     email: String,
     password: String
@@ -78,8 +80,11 @@ pub struct LoginAdminUserResponse {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Claims {
     pub sub: Uuid,
+    pub name: String,
     pub email: String,
     pub password: String,
+    pub created_by: String,
+    pub updated_by: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
     pub exp: usize,

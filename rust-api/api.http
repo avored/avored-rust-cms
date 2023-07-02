@@ -1,19 +1,27 @@
 @base_url = http://localhost:8080
 @json_content = application/json
-@token = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzODZkYjY1ZS0zODczLTRkMGItYjA2ZS1iMzM2YjEwZDkxYTAiLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJHZsdkkzREVlYUpzSDc5NmVhSTdSQnckSXpxT29tQm9FVmVXamphRnBRVkJhK0F4QzFHMHBTdU52Z1BIanVnTjM4NCIsImNyZWF0ZWRfYXQiOiIyMDIzLTA2LTA5VDEwOjM3OjI4LjgyMTg0MCIsInVwZGF0ZWRfYXQiOiIyMDIzLTA2LTA5VDEwOjM3OjI4LjgyMTg0MCIsImV4cCI6MTY4Njg4Njg2NH0.92hZSwHDqtYXyt5kKjW-OOokKjA70L1UJOL8c1tFQ28
+@token = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI1NDUzZTlmZS04NjFiLTQ3NDQtODhjYy1kZjM5OTFlMjA1OWUiLCJuYW1lIjoiQWRtaW4gVXNlciIsImVtYWlsIjoiYWRtaW51c2VyQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJDFVZjRDazdhYXRnOEd5MXd0OEg5UUEkbE9XVzN6blc4NDlOMTRld01NcWhYK3VoeFc2Mm95OFJiVHpRckU2dzdYayIsImNyZWF0ZWRfYnkiOiJhZG1pbkBhZG1pbi5jb20iLCJ1cGRhdGVkX2J5IjoiYWRtaW5AYWRtaW4uY29tIiwiY3JlYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwidXBkYXRlZF9hdCI6IjIwMjMtMDYtMjlUMDU6MDE6MDcuMDQ2Mjg5IiwiZXhwIjoxNjg4MjYxOTI4fQ.8rni89RsxbsKJxFVGmrgDoqNPGGZ3KQpauESUqFDdNA
 
-@admin_user_uuid = c4e1bd3e-3fdc-44a6-ad71-ed667cb25ff0
+@admin_user_uuid = 5d664f17-bc59-47c0-8b76-b0ee7549d44b
 
 
-### Create Admin User
+### HOME PAGE
 GET {{base_url}} HTTP/1.1
 content-type: {{json_content}}
 Authorization: {{token}}
 
 
+### Login to Admin User
+POST {{base_url}}/api/auth/login HTTP/1.1
+content-type: {{json_content}}
+
+{
+    "email": "adminuser@admin.com",
+    "password": "admin123"
+}
 
 ### List Admin User
-GET {{base_url}}/api/admin-users?current_page=1&per_page=2 HTTP/1.1
+GET {{base_url}}/api/admin-users?current_page=3&per_page=5 HTTP/1.1
 content-type: {{json_content}}
 Authorization: {{token}}
 
@@ -31,6 +39,8 @@ Authorization: {{token}}
 {
     "email": "admin@admin.com"
 }
+
+
 ### DELETE Admin User
 DELETE {{base_url}}/api/admin-users/{{admin_user_uuid}} HTTP/1.1
 content-type: {{json_content}}
@@ -40,17 +50,10 @@ Authorization: {{token}}
 ### Create Admin User
 POST {{base_url}}/api/admin-users HTTP/1.1
 content-type: {{json_content}}
+Authorization: {{token}}
 
 {
-    "email": "admin@admin.com",
-    "password": "admin123"
-}
-
-### Login to Admin User
-POST {{base_url}}/api/auth/login HTTP/1.1
-content-type: {{json_content}}
-
-{
-    "email": "admin@admin.com",
-    "password": "admin123"
+    "email": "adminuserinsert@admin.com",
+    "password": "admin123",
+    "name": "Admin User"
 }

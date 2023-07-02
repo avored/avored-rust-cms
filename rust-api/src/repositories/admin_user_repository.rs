@@ -1,149 +1,104 @@
-
-use diesel::{PgConnection};
-use diesel::r2d2::{Pool, ConnectionManager};
-use diesel::{prelude::*};
 use chrono::NaiveDateTime;
-// use diesel::prelude::*;
-use serde::{Serialize};
-use serde_derive::Deserialize;
-use uuid::Uuid;
+use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult, PaginatorTrait};
+use serde_derive::Serialize;
+use uuid::{Uuid};
+use entity::admin_users;
 
-
-use crate::responses::admin_user_response::AdminUserResponse;
-use crate::schema::admin_users;
-use crate::schema::admin_users::dsl::*;
-
-
-// pub type Email = String;
-// pub type Password = String;
-
-#[derive(Queryable, Selectable, Serialize, Debug, Deserialize)]
-#[diesel(table_name = admin_users)]
+#[derive(Clone)]
 pub struct AdminUser {
     pub id: Uuid,
+    pub name: String,
     pub email: String,
-    pub password: String,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
+    pub created_by: String,
+    pub updated_by: String
 }
 
-#[derive(Insertable)]
-#[diesel(table_name = admin_users)]
-pub struct NewAdminUser {
-    pub email: String,
-    pub password: String,
-    pub created_at: NaiveDateTime,
-    pub updated_at: NaiveDateTime,
+#[derive(Serialize)]
+pub struct AdminUsersPaginate {
+    pub results : Vec<admin_users::Model>,
+    pub no_of_pages: u64,
+    pub current_page: u64
 }
-
-
-
-
-impl Into<AdminUserResponse> for AdminUser {
-    fn into(self) -> AdminUserResponse {
-        AdminUserResponse {
-            id: self.id,
-            email: self.email,
-            created_at: self.created_at,
-            updated_at: self.updated_at
-        }
-    }
-}
-
 
 pub struct AdminUserRepository {
-    pub db: Pool<ConnectionManager<PgConnection>>,
+    pub db: sea_orm::DatabaseConnection,
 }
 
 impl AdminUserRepository {
-    pub fn new(db: Pool<ConnectionManager<PgConnection>> ) -> AdminUserRepository {
+    pub fn new(db: sea_orm::DatabaseConnection ) -> AdminUserRepository {
         AdminUserRepository { db }
     }
 
-    // pub fn all(&self) -> Vec<AdminUser> {
-    //     let conn = &mut self.db.get().unwrap();
+    pub async fn paginate(&self, per_page: u64, current_page : u64) -> AdminUsersPaginate {
 
-    //     admin_users
-    //         .load(conn)
-    //         .expect("Error loading admin_users")
-    // }
+        let admin_users_pages  = admin_users::Entity::find()
+            .paginate(&self.db, per_page);
 
-    pub fn paginate(&self, per_page: i64, offset : i64) -> Vec<AdminUser> {
-        let conn = &mut self.db.get().unwrap();
+        let admin_user_list = admin_users_pages.fetch_page(current_page).await.unwrap();
+        let no_of_pages = admin_users_pages.num_pages().await.unwrap();
 
-        admin_users
-            .offset(offset)
-            .limit(per_page)
-            .load(conn)
-            .expect("Error loading admin_users")
+        AdminUsersPaginate {
+            results: admin_user_list,
+            no_of_pages,
+            current_page
+        }
     }
 
-    pub fn count(&self) -> i64 {
-        let conn = &mut self.db.get().unwrap();
-
-        admin_users
-            .count()
-            .get_result(conn)
-            .expect("Error while doing a count on admin_users")
-    }
-
-    pub fn create(&self, admin_user_email: String, admin_user_password: String) -> AdminUser {
-        let conn = &mut self.db.get().unwrap();
+    pub async fn create(
+        &self, 
+        name: String,
+        email: String,
+        password: String,
+        logged_in_user_email: String
+    ) -> entity::admin_users::Model {
         let current = chrono::offset::Utc::now().naive_utc();
+        let updated_by_admin_user_email = logged_in_user_email.clone();
 
-        let new_admin_user_struct = NewAdminUser { email: admin_user_email, password: admin_user_password, created_at: current, updated_at: current };
+        let admin_user_model = admin_users::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            name: Set(name),
+            email: Set(email),
+            password: Set(password),
+            created_at: Set(current),
+            updated_at: Set(current),
+            created_by: Set(logged_in_user_email),
+            updated_by: Set(updated_by_admin_user_email)
+        };
 
-        diesel::insert_into(admin_users)
-            .values(&new_admin_user_struct)
-            .get_result::<AdminUser>(conn)
-            .expect("Error creating new admin user record")
+        admin_user_model.insert(&self.db).await.unwrap()
     }
   
-    pub fn find_by_email(&self, admin_user_email: String) -> AdminUser {
-        let conn = &mut self.db.get().unwrap();
+    pub async fn find_by_email(&self, admin_user_email: String) -> entity::admin_users::Model {
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
-
-        admin_users
-            .filter(email.eq(admin_user_email))
-            .first::<AdminUser>(conn)
-            .expect(&expect_message)
-    }
-    pub fn find_by_uuid(&self, admin_user_uuid: Uuid) -> AdminUser {
-        let conn = &mut self.db.get().unwrap();
-        let expect_message = format!("Error loading admin_users by id: {}", &admin_user_uuid);
-
-        admin_users
-            .filter(id.eq(admin_user_uuid))
-            .first::<AdminUser>(conn)
-            .expect(&expect_message)
-    }
-    pub fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> AdminUser {
-        let conn = &mut self.db.get().unwrap();
-        let expect_message = format!("Error updating admin_users by id: {}", &admin_user_uuid);
         
-        let current = chrono::offset::Utc::now().naive_utc();
-        
-        diesel::update(admin_users)
-            .filter(id.eq(admin_user_uuid))
-            .set((email.eq(admin_user_email), updated_at.eq(current)))
-            .execute(conn)
-            .expect(&expect_message);
+        admin_users::Entity::find()
+            .filter(admin_users::Column::Email.eq(admin_user_email))
+            .one(&self.db).await.expect(&expect_message)
+            .ok_or(expect_message)
+            .expect("Cannot find admin_users with email")
+    }
     
-        let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
+    pub async fn find_by_uuid(&self, admin_user_uuid: Uuid) -> entity::admin_users::Model {
+        let expect_message = format!("Error loading admin_users by uuid: {}", &admin_user_uuid);
+        
+        admin_users::Entity::find_by_id(admin_user_uuid)
+            .one(&self.db)
+            .await
+            .expect("error while finding the admin_users by uuid")
+            .ok_or(expect_message)
+            .expect("Cannot find admin_users with email")
+    }
+    pub async fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> entity::admin_users::Model {
 
-        admin_users
-            .filter(id.eq(admin_user_uuid))
-            .first::<AdminUser>(conn)
-            .expect(&expect_message)
+        let mut admin_user_model: admin_users::ActiveModel = self.find_by_uuid(admin_user_uuid).await.into();
+        admin_user_model.email = Set(admin_user_email);
+
+        admin_user_model.update(&self.db).await.expect("error")
     }
 
-    pub fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> usize {
-        let conn = &mut self.db.get().unwrap();
-        let expect_message = format!("Error delete admin_users by id: {}", &admin_user_uuid);
-        
-        diesel::delete(admin_users)
-            .filter(id.eq(admin_user_uuid))
-            .execute(conn)
-            .expect(&expect_message)
+    pub async fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> DeleteResult {
+        admin_users::Entity::delete_by_id(admin_user_uuid).exec(&self.db).await.unwrap()
     }
 }
