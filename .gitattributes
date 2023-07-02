@@ -1,3 +1,4 @@
 # Auto detect text files and perform LF normalization
 * text=auto
-backend/* linguist-vendored
+*.ts linguist-vendored
+*.js linguist-vendored
