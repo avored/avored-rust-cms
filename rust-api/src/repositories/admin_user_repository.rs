@@ -1,11 +1,12 @@
 use chrono::NaiveDateTime;
-use sea_orm::{DbConn, EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait};
+use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult};
 // use serde::{Serialize};
 // use serde_derive::Deserialize;
 use uuid::{Uuid};
 use entity::admin_users;
 // use crate::responses::admin_user_response::AdminUserResponse;
 
+#[derive(Clone)]
 pub struct AdminUser {
     pub id: Uuid,
     pub name: String,
@@ -72,15 +73,31 @@ impl AdminUserRepository {
     //     //     .expect("Error while doing a count on admin_users")
     // }
 
-    // pub fn create(&self, create_admin_user_model: NewAdminUser) -> AdminUser {
-    //     todo!()
-    //     // let conn = &mut self.db.get().unwrap();
+    pub async fn create(
+        &self, 
+        name: String,
+        email: String,
+        password: String,
+        logged_in_user_email: String
+    ) -> entity::admin_users::Model {
+        let current = chrono::offset::Utc::now().naive_utc();
+        let updated_by_admin_user_email = logged_in_user_email.clone();
 
-    //     // diesel::insert_into(admin_users)
-    //     //     .values(&create_admin_user_model)
-    //     //     .get_result::<AdminUser>(conn)
-    //     //     .expect("Error creating new admin user record")
-    // }
+        let admin_user_model = admin_users::ActiveModel {
+            id: Set(Uuid::new_v4()),
+            name: Set(name),
+            email: Set(email),
+            password: Set(password),
+            created_at: Set(current),
+            updated_at: Set(current),
+            created_by: Set(logged_in_user_email),
+            updated_by: Set(updated_by_admin_user_email),
+            ..Default::default()
+        };
+
+        admin_user_model.insert(&self.db).await.unwrap()
+
+    }
   
     pub async fn find_by_email(&self, admin_user_email: String) -> entity::admin_users::Model {
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
@@ -105,39 +122,12 @@ impl AdminUserRepository {
     pub async fn update_by_uuid(&self, admin_user_uuid: Uuid, admin_user_email: String) -> entity::admin_users::Model {
 
         let mut admin_user_model: admin_users::ActiveModel = self.find_by_uuid(admin_user_uuid).await.into();
-
         admin_user_model.email = Set(admin_user_email);
 
-        let admin_user_model: entity::admin_users::Model = admin_user_model.update(&self.db).await.expect("error");
-
-        admin_user_model
-        // let conn = &mut self.db.get().unwrap();
-        // let expect_message = format!("Error updating admin_users by id: {}", &admin_user_uuid);
-        
-        // let current = chrono::offset::Utc::now().naive_utc();
-        
-        // diesel::update(admin_users)
-        //     .filter(id.eq(admin_user_uuid))
-        //     .set((email.eq(admin_user_email), updated_at.eq(current)))
-        //     .execute(conn)
-        //     .expect(&expect_message);
-    
-        // let expect_message = format!("Error loading updated admin_users by id: {}", &admin_user_uuid);
-
-        // admin_users
-        //     .filter(id.eq(admin_user_uuid))
-        //     .first::<AdminUser>(conn)
-        //     .expect(&expect_message)
+        admin_user_model.update(&self.db).await.expect("error")
     }
 
-    // pub fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> usize {
-    //     todo!()
-    //     // let conn = &mut self.db.get().unwrap();
-    //     // let expect_message = format!("Error delete admin_users by id: {}", &admin_user_uuid);
-        
-    //     // diesel::delete(admin_users)
-    //     //     .filter(id.eq(admin_user_uuid))
-    //     //     .execute(conn)
-    //     //     .expect(&expect_message)
-    // }
+    pub async fn delete_by_uuid(&self, admin_user_uuid: Uuid) -> DeleteResult {
+        admin_users::Entity::delete_by_id(admin_user_uuid).exec(&self.db).await.unwrap()
+    }
 }
