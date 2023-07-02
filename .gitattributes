@@ -2,3 +2,4 @@
 * text=auto
 *.ts linguist-vendored
 *.js linguist-vendored
+*.vue linguist-vendored
