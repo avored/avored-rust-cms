@@ -31,7 +31,6 @@ jobs:
           cd rust-api
           cp .env.example .env
           sudo apt-get install libpq-dev -y
-          cargo install diesel_cli --no-default-features --features postgres
-          diesel setup
-          diesel migration run
+          cargo install sea-orm-cli
+          diesel migrate up
           cargo test
