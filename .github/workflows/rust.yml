@@ -32,5 +32,5 @@ jobs:
           cp .env.example .env
           sudo apt-get install libpq-dev -y
           cargo install sea-orm-cli
-          diesel migrate up
+          sea-orm-cli migrate up
           cargo test
