@@ -11,17 +11,21 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Post::Table)
+                    .table(AdminUsers::Table)
                     .if_not_exists()
                     .col(
-                        ColumnDef::new(Post::Id)
-                            .integer()
+                        ColumnDef::new(AdminUsers::Id)
+                            .uuid()
                             .not_null()
-                            .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Post::Title).string().not_null())
-                    .col(ColumnDef::new(Post::Text).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::Name).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::Email).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::Password).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::CreatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)).not_null())
+                    .col(ColumnDef::new(AdminUsers::UpdatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)).not_null())
+                    .col(ColumnDef::new(AdminUsers::CreatedBy).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::UpdatedBy).string().not_null())
                     .to_owned(),
             )
             .await
@@ -31,16 +35,21 @@ impl MigrationTrait for Migration {
         // Replace the sample below with your own migration scripts
 
         manager
-            .drop_table(Table::drop().table(Post::Table).to_owned())
+            .drop_table(Table::drop().table(AdminUsers::Table).to_owned())
             .await
     }
 }
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum Post {
+enum AdminUsers {
     Table,
     Id,
-    Title,
-    Text,
+    Name,
+    Email,
+    Password,
+    CreatedAt,
+    UpdatedAt,
+    CreatedBy,
+    UpdatedBy,
 }
