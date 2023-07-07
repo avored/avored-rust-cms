@@ -21,8 +21,8 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Roles::Description).text().null())
                     .col(ColumnDef::new(Roles::CreatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)))
                     .col(ColumnDef::new(Roles::UpdatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)))
-                    .col(ColumnDef::new(Roles::CreatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))))
-                    .col(ColumnDef::new(Roles::UpdatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))))
+                    .col(ColumnDef::new(Roles::CreatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))).not_null())
+                    .col(ColumnDef::new(Roles::UpdatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))).not_null())
                     .to_owned(),
             )
             .await

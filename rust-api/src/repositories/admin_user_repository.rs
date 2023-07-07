@@ -1,8 +1,8 @@
 use chrono::NaiveDateTime;
-use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult, PaginatorTrait};
+use sea_orm::{ EntityTrait, QueryFilter, ColumnTrait, Set, ActiveModelTrait, DeleteResult, PaginatorTrait, LoaderTrait};
 use serde_derive::Serialize;
-use uuid::{Uuid};
-use entity::admin_users;
+use uuid::Uuid;
+use entity::{admin_users, roles, admin_users_roles};
 
 #[derive(Clone)]
 pub struct AdminUser {
@@ -22,6 +22,35 @@ pub struct AdminUsersPaginate {
     pub current_page: u64
 }
 
+#[derive(Serialize)]
+pub struct RoleSturct {
+    pub id: Uuid,
+    pub name: String,
+    pub description: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+    pub created_by: String,
+    pub updated_by: String
+}
+
+
+#[derive(Serialize)]
+pub struct AdminUserResponse {
+    pub id: Uuid,
+    pub name: String,
+    pub email: String,
+    pub created_at: NaiveDateTime,
+    pub updated_at: NaiveDateTime,
+    pub created_by: String,
+    pub updated_by: String,
+    pub roles: RoleSturct
+}
+
+#[derive(Serialize)] 
+pub struct AdminUsersTestResponse {
+    pub results: Vec<AdminUserResponse>,
+}
+
 pub struct AdminUserRepository {
     pub db: sea_orm::DatabaseConnection,
 }
@@ -32,9 +61,17 @@ impl AdminUserRepository {
     }
 
     pub async fn paginate(&self, per_page: u64, current_page : u64) -> AdminUsersPaginate {
+        // let admin_user_test  = admin_users::Entity::find().paginate(&self.db, per_page);
+        let admin_users_all  = admin_users::Entity::find().paginate(&self.db, per_page).fetch_page(current_page).await.unwrap();
 
-        let admin_users_pages  = admin_users::Entity::find()
-            .paginate(&self.db, per_page);
+        let admin_user_list_test = admin_users_all.load_many_to_many(roles::Entity, admin_users_roles::Entity, &self.db).await.unwrap();
+
+
+
+        println!("{:?}", admin_user_list_test);
+        // let admin_users_pages  = admin_users::Entity::find()
+        //     .paginate(&self.db, per_page);
+        let admin_users_pages  = admin_users::Entity::find().inner_join(roles::Entity).paginate(&self.db, per_page);
 
         let admin_user_list = admin_users_pages.fetch_page(current_page).await.unwrap();
         let no_of_pages = admin_users_pages.num_pages().await.unwrap();

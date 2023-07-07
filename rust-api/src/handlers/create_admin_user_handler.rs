@@ -3,7 +3,7 @@ use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use axum::{response::IntoResponse, Json, extract::State, Extension};
 use rand_core::OsRng;
 
-use crate::{routes::AppState, repositories::admin_user_repository::{ AdminUser}, requests::admin_user_create_request::CreateAdminUserRequest};
+use crate::{routes::AppState, repositories::admin_user_repository::AdminUser, requests::admin_user_create_request::CreateAdminUserRequest};
 
 pub async fn create_admin_user_handler(
         Extension(current_user): Extension<AdminUser>,
