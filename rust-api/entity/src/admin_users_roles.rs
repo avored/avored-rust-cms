@@ -31,7 +31,6 @@ pub enum Relation {
     Roles,
 }
 
-
 impl Related<super::admin_users::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::AdminUsers.def()

@@ -4,5 +4,5 @@ use serde::Deserialize;
 pub struct CreateAdminUserRequest {
     pub name: String,
     pub email: String,
-    pub password: String
+    pub password: String,
 }
