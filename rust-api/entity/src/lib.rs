@@ -3,4 +3,5 @@
 pub mod prelude;
 
 pub mod admin_users;
-pub mod post;
+pub mod admin_users_roles;
+pub mod roles;

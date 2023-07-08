@@ -1,22 +1,29 @@
-use std::sync::Arc;
-use argon2::{ Argon2, PasswordVerifier, PasswordHash};
-use axum::{response::IntoResponse, Json, extract::State, http::{StatusCode, Response}};
-use chrono::{Utc, NaiveDateTime};
-use jsonwebtoken::{Header, EncodingKey, encode};
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
+use axum::{
+    extract::State,
+    http::{Response, StatusCode},
+    response::IntoResponse,
+    Json,
+};
+use chrono::{NaiveDateTime, Utc};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::Deserialize;
 use serde_derive::Serialize;
 use serde_json::json;
+use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::{routes::AppState};
+use crate::routes::{AppState, establish_connection};
 
-pub async fn login_admin_user_handler (
-        app_state : State<Arc<AppState>>,
-        Json(payload): Json<LoginAdminUserPayload>
-    ) -> Result<impl IntoResponse, (StatusCode, Json<LoginAdminUserResponse>)> {
-
-    let admin_user: entity::admin_users::Model = app_state.admin_user_repository.find_by_email(payload.email).await;
-   
+pub async fn login_admin_user_handler(
+    app_state: State<Arc<AppState>>,
+    Json(payload): Json<LoginAdminUserPayload>,
+) -> Result<impl IntoResponse, (StatusCode, Json<LoginAdminUserResponse>)> {
+    let connection = establish_connection().await;
+    let admin_user: entity::admin_users::Model = app_state
+        .admin_user_repository
+        .find_by_email(connection, payload.email)
+        .await;
 
     let is_valid = match PasswordHash::new(&admin_user.password) {
         Ok(parsed_hash) => Argon2::default()
@@ -26,7 +33,7 @@ pub async fn login_admin_user_handler (
     };
 
     if !is_valid {
-        let error_response = LoginAdminUserResponse{
+        let error_response = LoginAdminUserResponse {
             success: false,
             message: String::from("Invalid email or password"),
         };
@@ -53,29 +60,28 @@ pub async fn login_admin_user_handler (
     };
 
     //@todo use secret from config
-    let token = encode(&Header::default(), &claims, &EncodingKey::from_secret(jwt_secret)).unwrap();
+    let token = encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(jwt_secret),
+    )
+    .unwrap();
     let response = Response::new(json!({"status": "success", "token": token}).to_string());
-    
-    Ok(response)
 
+    Ok(response)
 }
- 
+
 #[derive(Deserialize, Debug, Clone)]
 pub struct LoginAdminUserPayload {
     email: String,
-    password: String
+    password: String,
 }
-
-
 
 #[derive(Serialize)]
 pub struct LoginAdminUserResponse {
     success: bool,
-    message: String
+    message: String,
 }
-
-
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Claims {

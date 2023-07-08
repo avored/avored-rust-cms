@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use serde_derive::{Serialize};
+use serde_derive::Serialize;
 use uuid::Uuid;
 
 #[derive(Serialize)]

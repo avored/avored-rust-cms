@@ -5,22 +5,20 @@ use axum::{
 };
 use std::sync::Arc;
 
-use crate::{
-    requests::admin_user_list_request::AdminUsersRequest,
-    routes::{establish_connection, AppState},
-};
+use crate::{requests::roles_request::RolesRequest, routes::{AppState, establish_connection}};
 
-pub async fn admin_users_handler(
+pub async fn roles_handler(
     app_state: State<Arc<AppState>>,
-    Query(payload): Query<AdminUsersRequest>,
+    Query(payload): Query<RolesRequest>,
 ) -> impl IntoResponse {
     let current_page: u64 = payload.current_page;
     let per_page = payload.per_page;
+
     let connection = establish_connection().await;
 
-    let admin_users = app_state
-        .admin_user_repository
+    let roles = app_state
+        .role_repository
         .paginate(connection, per_page, current_page)
         .await;
-    Json(admin_users).into_response()
+    Json(roles).into_response()
 }

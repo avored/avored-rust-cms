@@ -1,15 +1,15 @@
-use std::net::SocketAddr;
 use axum::Router;
 use dotenvy::dotenv;
+use std::net::SocketAddr;
 
-mod config;
-mod routes;
 mod app_error;
+mod config;
 mod handlers;
-mod repositories;
 mod middleware;
-mod responses;
+mod repositories;
 mod requests;
+mod responses;
+mod routes;
 
 use crate::routes::app_routes;
 
@@ -38,9 +38,6 @@ async fn main() {
     // };
 
     // let post: admin_users::Model = post.insert(&db).await.expect("error creating post record");
-
-
-
 
     // Json(json!({})).into_response()
 

@@ -24,8 +24,8 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(AdminUsers::Password).string().not_null())
                     .col(ColumnDef::new(AdminUsers::CreatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)).not_null())
                     .col(ColumnDef::new(AdminUsers::UpdatedAt).timestamp().default(SimpleExpr::Keyword(Keyword::CurrentTimestamp)).not_null())
-                    .col(ColumnDef::new(AdminUsers::CreatedBy).string().not_null())
-                    .col(ColumnDef::new(AdminUsers::UpdatedBy).string().not_null())
+                    .col(ColumnDef::new(AdminUsers::CreatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))).not_null())
+                    .col(ColumnDef::new(AdminUsers::UpdatedBy).string().default(Value::String(Some(Box::new(String::from("CLI"))))).not_null())
                     .to_owned(),
             )
             .await
@@ -42,7 +42,7 @@ impl MigrationTrait for Migration {
 
 /// Learn more at https://docs.rs/sea-query#iden
 #[derive(Iden)]
-enum AdminUsers {
+pub enum AdminUsers {
     Table,
     Id,
     Name,

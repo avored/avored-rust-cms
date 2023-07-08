@@ -1,28 +1,29 @@
 use std::sync::Arc;
 
-use crate::{app_error::AppError, repositories::admin_user_repository::AdminUser, routes::AppState, handlers::login_admin_user_handler::Claims};
+use crate::{
+    app_error::AppError, handlers::login_admin_user_handler::Claims,
+    repositories::admin_user_repository::AdminUser, routes::AppState,
+};
 use axum::{
-    http::{Request, StatusCode, HeaderMap},
+    extract::State,
+    http::{HeaderMap, Request, StatusCode},
     middleware::Next,
     response::Response,
-    extract::State
 };
-use jsonwebtoken::{decode, DecodingKey, Validation, Algorithm};
-
+use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 
 pub async fn require_authentication<T>(
-    app_state : State<Arc<AppState>>,
+    app_state: State<Arc<AppState>>,
     headers: HeaderMap,
     mut request: Request<T>,
     next: Next<T>,
 ) -> Result<Response, AppError> {
-    let full_token  = headers.get("Authorization").unwrap();
-    
+    let full_token = headers.get("Authorization").unwrap();
+
     let authorized_token = full_token.to_str().unwrap().replace("Bearer ", "");
 
     // let token = authorized_token[6..];
-    
-    
+
     let decoded = decode::<Claims>(
         &authorized_token,
         &DecodingKey::from_secret(app_state.config.jwt_secret.as_ref()),
@@ -46,11 +47,9 @@ pub async fn require_authentication<T>(
         request.extensions_mut().insert(user);
         Ok(next.run(request).await)
     } else {
-
         Err(AppError::new(
             StatusCode::UNAUTHORIZED,
             "You are not authorized for this",
         ))
     }
-    
 }
