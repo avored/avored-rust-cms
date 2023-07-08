@@ -44,9 +44,6 @@ pub async fn app_routes() -> Router {
             axum::http::Method::OPTIONS,
         ]);
 
-    let db = establish_connection().await;
-    // let connection = &mut db.get().unwrap();
-
     /************** REPOSITORIES  **************/
     let admin_user_repository = AdminUserRepository::new();
     let role_repository = RoleRepository::new();
