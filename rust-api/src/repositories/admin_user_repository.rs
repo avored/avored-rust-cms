@@ -74,7 +74,11 @@ impl AdminUserRepository {
         admin_user_model.insert(&connection).await.unwrap()
     }
 
-    pub async fn find_by_email(&self, connection: sea_orm::DatabaseConnection, admin_user_email: String) -> entity::admin_users::Model {
+    pub async fn find_by_email(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        admin_user_email: String,
+    ) -> entity::admin_users::Model {
         let expect_message = format!("Error loading admin_users by email: {}", &admin_user_email);
 
         admin_users::Entity::find()
@@ -86,7 +90,11 @@ impl AdminUserRepository {
             .expect("Cannot find admin_users with email")
     }
 
-    pub async fn find_by_uuid(&self, connection: sea_orm::DatabaseConnection, admin_user_uuid: Uuid) -> entity::admin_users::Model {
+    pub async fn find_by_uuid(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        admin_user_uuid: Uuid,
+    ) -> entity::admin_users::Model {
         let expect_message = format!("Error loading admin_users by uuid: {}", &admin_user_uuid);
 
         admin_users::Entity::find_by_id(admin_user_uuid)
@@ -98,7 +106,7 @@ impl AdminUserRepository {
     }
     pub async fn update_by_uuid(
         &self,
-        connection: sea_orm::DatabaseConnection, 
+        connection: sea_orm::DatabaseConnection,
         admin_user_uuid: Uuid,
         admin_user_email: String,
     ) -> entity::admin_users::Model {
@@ -115,10 +123,17 @@ impl AdminUserRepository {
 
         active_admin_user_model.email = Set(admin_user_email);
 
-        active_admin_user_model.update(&connection).await.expect("error")
+        active_admin_user_model
+            .update(&connection)
+            .await
+            .expect("error")
     }
 
-    pub async fn delete_by_uuid(&self, connection: sea_orm::DatabaseConnection, admin_user_uuid: Uuid) -> DeleteResult {
+    pub async fn delete_by_uuid(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        admin_user_uuid: Uuid,
+    ) -> DeleteResult {
         admin_users::Entity::delete_by_id(admin_user_uuid)
             .exec(&connection)
             .await

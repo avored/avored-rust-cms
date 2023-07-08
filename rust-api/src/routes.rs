@@ -12,6 +12,7 @@ use crate::repositories::admin_user_repository::{AdminUser, AdminUserRepository}
 
 use crate::handlers::admin_users_handler::admin_users_handler;
 use crate::handlers::create_admin_user_handler::create_admin_user_handler;
+use crate::handlers::create_role_handler::create_role_handler;
 use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
@@ -62,6 +63,7 @@ pub async fn app_routes() -> Router {
     Router::new()
         .route("/", get(home_handler))
         .route("/api/roles", get(roles_handler))
+        .route("/api/role", post(create_role_handler))
         .route("/api/admin-users", get(admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",
