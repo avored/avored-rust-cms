@@ -8,7 +8,7 @@
             </div>
 
             <div class="mt-4 flex flex-col gap-4 sm:mt-0 sm:flex-row sm:items-center">
-                <router-link :to="{name: 'admin-user-create'}"
+                <router-link :to="{name: 'role-create'}"
                     class="block rounded-lg bg-red-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus:ring"
                     type="button">
                     Create Role

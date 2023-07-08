@@ -41,7 +41,7 @@ impl RoleRepository {
 
         let mut desciption = create_role_data.description.clone();
 
-        if !create_role_data.description.is_none() {
+        if create_role_data.description.is_none() {
             desciption = None;
         }
 

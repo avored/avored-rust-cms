@@ -73,5 +73,6 @@ content-type: {{json_content}}
 Authorization: {{token}}
 
 {
-    "name": "Created Role Without Description"
+    "name": "Created Role Description",
+    "description": "Test Desc"
 }
