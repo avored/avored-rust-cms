@@ -64,3 +64,15 @@ Authorization: {{token}}
     "password": "admin123",
     "name": "Admin User"
 }
+
+
+
+### Create role
+POST {{base_url}}/api/role HTTP/1.1
+content-type: {{json_content}}
+Authorization: {{token}}
+
+{
+    "name": "Created Role Description",
+    "description": "Test Desc"
+}

@@ -14,6 +14,7 @@ impl Config {
         let jwt_secret = std::env::var("JWT_SECRET").expect("JWT_SECRET must be set");
         let jwt_expires_in = std::env::var("JWT_EXPIRED_IN").expect("JWT_EXPIRED_IN must be set");
         let jwt_maxage = std::env::var("JWT_MAXAGE").expect("JWT_MAXAGE must be set");
+
         Config {
             database_url,
             backend_url,
