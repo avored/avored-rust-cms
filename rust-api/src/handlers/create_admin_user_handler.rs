@@ -13,24 +13,25 @@ pub async fn create_admin_user_handler(
     app_state: State<Arc<AppState>>,
     Json(payload): Json<CreateAdminUserRequest>,
 ) -> impl IntoResponse {
-    let password = payload.password.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
+    todo!();
+    // let password = payload.password.as_bytes();
+    // let salt = SaltString::generate(&mut OsRng);
 
-    let argon2 = Argon2::default();
-    let password_hash = argon2
-        .hash_password(password, &salt)
-        .expect("Error occurred while encrypted password")
-        .to_string();
+    // let argon2 = Argon2::default();
+    // let password_hash = argon2
+    //     .hash_password(password, &salt)
+    //     .expect("Error occurred while encrypted password")
+    //     .to_string();
 
-    let admin_user = app_state
-        .admin_user_repository
-        .create(
-            payload.name,
-            payload.email,
-            password_hash,
-            current_user.email,
-        )
-        .await;
+    // let admin_user = app_state
+    //     .admin_user_repository
+    //     .create(
+    //         payload.name,
+    //         payload.email,
+    //         password_hash,
+    //         current_user.email,
+    //     )
+    //     .await;
 
-    Json(admin_user).into_response()
+    // Json(admin_user).into_response()
 }

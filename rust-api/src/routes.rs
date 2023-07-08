@@ -6,6 +6,7 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
 use crate::handlers::home_handler::home_handler;
+use crate::handlers::roles_handler::roles_handler;
 use crate::middleware::require_authentication::require_authentication;
 use crate::repositories::admin_user_repository::{AdminUser, AdminUserRepository};
 
@@ -15,12 +16,15 @@ use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
+use crate::repositories::role_repository::RoleRepository;
 use sea_orm::Database;
 
 use crate::config::Config;
 
 pub struct AppState {
     pub admin_user_repository: AdminUserRepository,
+    pub role_repository: RoleRepository,
+    // pub connection: sea_orm::DatabaseConnection,
     pub config: Config,
     pub current_user: Option<AdminUser>,
 }
@@ -44,19 +48,23 @@ pub async fn app_routes() -> Router {
     // let connection = &mut db.get().unwrap();
 
     /************** REPOSITORIES  **************/
-    let admin_user_repository = AdminUserRepository::new(db);
+    let admin_user_repository = AdminUserRepository::new();
+    let role_repository = RoleRepository::new();
 
     let config: Config = Config::new();
 
     /************** APPLICATION STATES  **************/
     let app_state = Arc::new(AppState {
         admin_user_repository,
+        role_repository,
+        // connection: db,
         config,
         current_user: None,
     });
 
     Router::new()
         .route("/", get(home_handler))
+        .route("/api/roles", get(roles_handler))
         .route("/api/admin-users", get(admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",

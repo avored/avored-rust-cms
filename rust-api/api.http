@@ -20,6 +20,13 @@ content-type: {{json_content}}
     "password": "admin123"
 }
 
+### List Roles
+GET {{base_url}}/api/roles?current_page=0&per_page=5 HTTP/1.1
+content-type: {{json_content}}
+Authorization: {{token}}
+
+
+
 ### List Admin User
 GET {{base_url}}/api/admin-users?current_page=3&per_page=5 HTTP/1.1
 content-type: {{json_content}}
