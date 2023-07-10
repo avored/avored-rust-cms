@@ -60,11 +60,16 @@ Authorization: {{token}}
 }
 
 
-@role_uuid = 7bfa4be7-e43c-4983-8018-6af968f264d0
+@role_uuid = 95a805fc-6520-46c9-8d57-39d28d613a04
 
 
 ### List Roles
 GET {{base_url}}/api/roles?current_page=0&per_page=5 HTTP/1.1
+content-type: {{json_content}}
+Authorization: {{token}}
+
+### Get Role
+GET {{base_url}}/api/role/{{role_uuid}} HTTP/1.1
 content-type: {{json_content}}
 Authorization: {{token}}
 
