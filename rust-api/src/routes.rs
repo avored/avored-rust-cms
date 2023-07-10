@@ -17,6 +17,7 @@ use crate::handlers::create_admin_user_handler::create_admin_user_handler;
 use crate::handlers::create_role_handler::create_role_handler;
 use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
+use crate::handlers::get_role_handler::get_role_handler;
 use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
 use crate::repositories::role_repository::RoleRepository;
@@ -64,11 +65,13 @@ pub async fn app_routes() -> Router {
 
     Router::new()
         .route("/", get(home_handler))
+        // %%%%%%%%%%  Role Routes  %%%%%%%%%%
         .route("/api/roles", get(roles_handler))
+        .route("/api/role/:role_id", get(get_role_handler))
         .route("/api/role", post(create_role_handler))
         .route("/api/role/:role_id", put(put_role_handler))
         .route("/api/role/:role_id", delete(delete_role_handler))
-        // Admin User Routes
+        // %%%%%%%%%%  admin user Routes  %%%%%%%%%%
         .route("/api/admin-users", get(admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",
@@ -83,7 +86,7 @@ pub async fn app_routes() -> Router {
             delete(delete_admin_user_handler),
         )
         .route("/api/admin-users", post(create_admin_user_handler))
-        // ABOVE ROUTES ARE AUTH MIDDLEWARE
+        // %%%%%%%%%%  middleware Routes  %%%%%%%%%%
         .route_layer(middleware::from_fn_with_state(
             app_state.clone(),
             require_authentication,

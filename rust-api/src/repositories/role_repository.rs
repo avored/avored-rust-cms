@@ -59,6 +59,21 @@ impl RoleRepository {
         role_model.insert(&connection).await.unwrap()
     }
 
+    pub async fn find_by_uuid(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        role_uuid: Uuid,
+    ) -> entity::roles::Model {
+        let expect_message = format!("Error loading roles by uuid: {}", &role_uuid);
+
+        roles::Entity::find_by_id(role_uuid)
+            .one(&connection)
+            .await
+            .expect("error while finding the roles by uuid")
+            .ok_or(expect_message)
+            .expect("Cannot find roles with uuid")
+    }
+
     pub async fn update_by_uuid(
         &self,
         connection: sea_orm::DatabaseConnection,

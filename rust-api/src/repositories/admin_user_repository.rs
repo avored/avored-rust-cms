@@ -102,8 +102,9 @@ impl AdminUserRepository {
             .await
             .expect("error while finding the admin_users by uuid")
             .ok_or(expect_message)
-            .expect("Cannot find admin_users with email")
+            .expect("Cannot find admin_users with uuid")
     }
+
     pub async fn update_by_uuid(
         &self,
         connection: sea_orm::DatabaseConnection,

@@ -35,6 +35,22 @@ const routes: Array<RouteRecordRaw> = [
     }
   },
   {
+    path: '/role-edit/:role_id',
+    name: 'role-edit',
+    component: () => import(/* webpackChunkName: "about" */ './views/role/RoleEdit.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
+    path: '/role-show/:role_id',
+    name: 'role-show',
+    component: () => import(/* webpackChunkName: "about" */ './views/role/RoleShow.vue'),
+    meta: {
+      requiresAuth: true
+    }
+  },
+  {
     path: '/admin-user',
     name: 'admin-users-list',
     component: () => import(/* webpackChunkName: "about" */ './views/AdminUsersIndex.vue'),
