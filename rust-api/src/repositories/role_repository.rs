@@ -1,3 +1,4 @@
+use crate::requests::update_role_request::UpdateRoleRequest;
 use crate::{
     requests::create_role_request::CreateRoleRequest,
     responses::roless_paginate_response::RolessPaginateResponse,
@@ -56,5 +57,41 @@ impl RoleRepository {
         };
 
         role_model.insert(&connection).await.unwrap()
+    }
+
+    pub async fn update_by_uuid(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        role_uuid: Uuid,
+        payload: UpdateRoleRequest,
+        logged_in_user_email: String,
+    ) -> entity::roles::Model {
+        let expect_message = format!("Error loading roles by uuid: {}", &role_uuid);
+
+        let role_model = roles::Entity::find_by_id(role_uuid)
+            .one(&connection)
+            .await
+            .expect("error while finding the admin_users by uuid")
+            .ok_or(expect_message)
+            .expect("Cannot find admin_users with email");
+
+        let mut active_role_model: roles::ActiveModel = role_model.into();
+
+        active_role_model.name = Set(payload.name);
+
+        let mut desciption: Option<_> = payload.description.clone();
+
+        if payload.description.is_none() {
+            desciption = None;
+        }
+
+        active_role_model.description = Set(desciption);
+        active_role_model.updated_at = Set(Utc::now().naive_utc());
+        active_role_model.updated_by = Set(logged_in_user_email);
+
+        active_role_model
+            .update(&connection)
+            .await
+            .expect(format!("Error loading updated roles by uuid: {}", &role_uuid).as_str())
     }
 }

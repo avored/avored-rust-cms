@@ -6,6 +6,7 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
 use crate::handlers::home_handler::home_handler;
+use crate::handlers::put_role_handler::put_role_handler;
 use crate::handlers::roles_handler::roles_handler;
 use crate::middleware::require_authentication::require_authentication;
 use crate::repositories::admin_user_repository::{AdminUser, AdminUserRepository};
@@ -64,6 +65,10 @@ pub async fn app_routes() -> Router {
         .route("/", get(home_handler))
         .route("/api/roles", get(roles_handler))
         .route("/api/role", post(create_role_handler))
+        .route(
+            "/api/role/:role_id",
+            put(put_role_handler),
+        )
         .route("/api/admin-users", get(admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",
