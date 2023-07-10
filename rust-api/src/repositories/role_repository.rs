@@ -6,7 +6,7 @@ use crate::{
 use chrono::Utc;
 use entity::roles;
 use sea_orm::ActiveValue::Set;
-use sea_orm::{ActiveModelTrait, EntityTrait, PaginatorTrait};
+use sea_orm::{ActiveModelTrait, EntityTrait, PaginatorTrait, DeleteResult};
 use uuid::Uuid;
 
 pub struct RoleRepository {}
@@ -94,4 +94,16 @@ impl RoleRepository {
             .await
             .expect(format!("Error loading updated roles by uuid: {}", &role_uuid).as_str())
     }
+
+    pub async fn delete_by_uuid(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+        role_uuid: Uuid,
+    ) -> DeleteResult {
+        roles::Entity::delete_by_id(role_uuid)
+            .exec(&connection)
+            .await
+            .unwrap()
+    }
+    
 }

@@ -3,7 +3,6 @@
 @token = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZjViODNkNS02YTM5LTQzZTMtODg2ZC04NWZjMjFmODRhMDAiLCJuYW1lIjoiQWRtaW4gYWRtaW4iLCJlbWFpbCI6ImFkbWluQGFkbWluLmNvbSIsInBhc3N3b3JkIjoiJGFyZ29uMmlkJHY9MTkkbT0xOTQ1Nix0PTIscD0xJHZsdkkzREVlYUpzSDc5NmVhSTdSQnckSXpxT29tQm9FVmVXamphRnBRVkJhK0F4QzFHMHBTdU52Z1BIanVnTjM4NCIsImNyZWF0ZWRfYnkiOiJDTEkiLCJ1cGRhdGVkX2J5IjoiQ0xJIiwiY3JlYXRlZF9hdCI6IjIwMjMtMDctMDZUMDY6MjA6MjYiLCJ1cGRhdGVkX2F0IjoiMjAyMy0wNy0wNlQwNjoyMDoyNiIsImV4cCI6Mzc2ODg3Njg0NTR9.Mj3vDzyrRVYTWeNE8NUO8xwM4VV8Lp-kAdLhpBNqzbg
 
 @admin_user_uuid = f1c997fd-d2d3-488d-a163-32b12453a6d4
-@role_uuid = 21be4322-34b7-4a7f-ae79-e342e9e02f3c
 
 
 ### HOME PAGE
@@ -61,6 +60,15 @@ Authorization: {{token}}
 }
 
 
+@role_uuid = 7bfa4be7-e43c-4983-8018-6af968f264d0
+
+
+### List Roles
+GET {{base_url}}/api/roles?current_page=0&per_page=5 HTTP/1.1
+content-type: {{json_content}}
+Authorization: {{token}}
+
+
 
 ### Create role
 POST {{base_url}}/api/role HTTP/1.1
@@ -72,13 +80,6 @@ Authorization: {{token}}
     "description": "Test Desc"
 }
 
-
-### List Roles
-GET {{base_url}}/api/roles?current_page=0&per_page=5 HTTP/1.1
-content-type: {{json_content}}
-Authorization: {{token}}
-
-
 ### PUT Role
 PUT {{base_url}}/api/role/{{role_uuid}} HTTP/1.1
 content-type: {{json_content}}
@@ -88,3 +89,8 @@ Authorization: {{token}}
     "name": "Administrator",
     "description": "Administrator Role "
 }
+
+### DELETE Role
+DELETE {{base_url}}/api/role/{{role_uuid}} HTTP/1.1
+content-type: {{json_content}}
+Authorization: {{token}}

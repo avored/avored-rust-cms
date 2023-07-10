@@ -5,6 +5,7 @@ use axum::{middleware, Router};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
+use crate::handlers::delete_role_handler::delete_role_handler;
 use crate::handlers::home_handler::home_handler;
 use crate::handlers::put_role_handler::put_role_handler;
 use crate::handlers::roles_handler::roles_handler;
@@ -65,10 +66,9 @@ pub async fn app_routes() -> Router {
         .route("/", get(home_handler))
         .route("/api/roles", get(roles_handler))
         .route("/api/role", post(create_role_handler))
-        .route(
-            "/api/role/:role_id",
-            put(put_role_handler),
-        )
+        .route("/api/role/:role_id", put(put_role_handler))
+        .route("/api/role/:role_id", delete(delete_role_handler))
+        // Admin User Routes
         .route("/api/admin-users", get(admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",
@@ -97,12 +97,5 @@ pub async fn establish_connection() -> sea_orm::DatabaseConnection {
     let config: Config = Config::new();
     let database_url: String = config.database_url;
 
-    // let manager: ConnectionManager<PgConnection> = ConnectionManager::<PgConnection>::new(database_url);
-    // r2d2::Pool::builder().build(manager).expect("Failed to create DB connection pool.")
-
-    // let database_url = std::env::var("DATABASE_URL").unwrap();
-    let db: sea_orm::DatabaseConnection = Database::connect(&database_url).await.unwrap();
-    // .expect("Failed to setup the database")
-
-    db
+    Database::connect(&database_url).await.unwrap()
 }
