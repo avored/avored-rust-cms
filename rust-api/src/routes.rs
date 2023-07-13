@@ -1,11 +1,3 @@
-use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
-use axum::http::HeaderValue;
-use axum::routing::{delete, get, post, put};
-use axum::{middleware, Router};
-use handlebars::Handlebars;
-use std::sync::Arc;
-use tower_http::cors::CorsLayer;
-
 use crate::handlers::admin_login_handler::admin_login_handler;
 use crate::handlers::delete_role_handler::delete_role_handler;
 use crate::handlers::home_handler::home_handler;
@@ -13,6 +5,14 @@ use crate::handlers::put_role_handler::put_role_handler;
 use crate::handlers::roles_handler::roles_handler;
 use crate::middleware::require_authentication::require_authentication;
 use crate::repositories::admin_user_repository::{AdminUser, AdminUserRepository};
+use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
+use axum::http::HeaderValue;
+use axum::routing::{delete, get, post, put};
+use axum::{middleware, Router};
+use handlebars::Handlebars;
+use std::sync::Arc;
+use tower_http::cors::CorsLayer;
+use tower_http::services::ServeDir;
 
 use crate::handlers::admin_users_handler::admin_users_handler;
 use crate::handlers::create_admin_user_handler::create_admin_user_handler;
@@ -71,6 +71,8 @@ pub async fn app_routes() -> Router {
         handlebars: handlebars,
     });
 
+    let public_static_service = ServeDir::new("public");
+
     Router::new()
         .route("/", get(home_handler))
         // %%%%%%%%%%  Role Routes  %%%%%%%%%%
@@ -102,6 +104,7 @@ pub async fn app_routes() -> Router {
         .route("/api/auth/login", post(login_admin_user_handler))
         .route("/admin/login", get(admin_login_handler))
         .with_state(app_state)
+        .nest_service("/public", public_static_service)
         .layer(cors)
 }
 
