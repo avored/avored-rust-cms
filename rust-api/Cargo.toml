@@ -25,6 +25,7 @@ argon2 = "0.5.0"
 jsonwebtoken = "8.3.0"
 chrono = { version = "0.4.24", features = ["serde", "rustc-serialize"] }
 rand_core = { version = "0.6.4", features = ["std"]}
+handlebars = { version = "4.3.7", features = ["dir_source"] }
 
 
 [dependencies.sea-orm]

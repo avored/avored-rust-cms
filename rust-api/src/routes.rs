@@ -2,9 +2,11 @@ use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use axum::http::HeaderValue;
 use axum::routing::{delete, get, post, put};
 use axum::{middleware, Router};
+use handlebars::Handlebars;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 
+use crate::handlers::admin_login_handler::admin_login_handler;
 use crate::handlers::delete_role_handler::delete_role_handler;
 use crate::handlers::home_handler::home_handler;
 use crate::handlers::put_role_handler::put_role_handler;
@@ -28,8 +30,8 @@ use crate::config::Config;
 pub struct AppState {
     pub admin_user_repository: AdminUserRepository,
     pub role_repository: RoleRepository,
-    // pub connection: sea_orm::DatabaseConnection,
     pub config: Config,
+    pub handlebars: Handlebars<'static>,
     pub current_user: Option<AdminUser>,
 }
 
@@ -48,6 +50,12 @@ pub async fn app_routes() -> Router {
             axum::http::Method::OPTIONS,
         ]);
 
+    let mut handlebars = Handlebars::new();
+
+    handlebars
+        .register_templates_directory(".hbs", "./views")
+        .expect("handlebars cant register the views path");
+
     /************** REPOSITORIES  **************/
     let admin_user_repository = AdminUserRepository::new();
     let role_repository = RoleRepository::new();
@@ -58,9 +66,9 @@ pub async fn app_routes() -> Router {
     let app_state = Arc::new(AppState {
         admin_user_repository,
         role_repository,
-        // connection: db,
         config,
         current_user: None,
+        handlebars: handlebars,
     });
 
     Router::new()
@@ -92,6 +100,7 @@ pub async fn app_routes() -> Router {
             require_authentication,
         ))
         .route("/api/auth/login", post(login_admin_user_handler))
+        .route("/admin/login", get(admin_login_handler))
         .with_state(app_state)
         .layer(cors)
 }
