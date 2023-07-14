@@ -2,8 +2,7 @@ use axum::{
     extract::State,
     response::{Html, IntoResponse},
 };
-use axum_sessions::extractors::{ReadableSession, WritableSession};
-use serde_json::json;
+use axum_sessions::extractors::ReadableSession;
 use std::sync::Arc;
 
 use crate::{repositories::admin_user_repository::AdminUser, routes::AppState};

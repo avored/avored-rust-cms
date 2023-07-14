@@ -7,12 +7,12 @@ pub struct AppError {
 }
 
 impl AppError {
-    // pub fn new(code: StatusCode, message: impl Into<String>) -> Self {
-    //     Self {
-    //         code,
-    //         message: message.into(),
-    //     }
-    // }
+    pub fn new(code: StatusCode, message: impl Into<String>) -> Self {
+        Self {
+            code,
+            message: message.into(),
+        }
+    }
 }
 
 impl IntoResponse for AppError {

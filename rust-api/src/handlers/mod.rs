@@ -8,7 +8,6 @@ pub mod get_admin_login_handler;
 pub mod get_admin_user_handler;
 pub mod get_role_handler;
 pub mod home_handler;
-pub mod login_admin_user_handler;
 pub mod post_admin_login_handler;
 pub mod put_admin_user_handler;
 pub mod put_role_handler;

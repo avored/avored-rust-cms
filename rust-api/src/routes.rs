@@ -14,7 +14,6 @@ use axum::{middleware, Router};
 use axum_sessions::async_session::MemoryStore;
 use axum_sessions::SessionLayer;
 use handlebars::Handlebars;
-use rand::Rng;
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
@@ -25,7 +24,6 @@ use crate::handlers::create_role_handler::create_role_handler;
 use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::get_role_handler::get_role_handler;
-use crate::handlers::login_admin_user_handler::login_admin_user_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
 use crate::repositories::role_repository::RoleRepository;
 use sea_orm::Database;
@@ -109,13 +107,14 @@ pub async fn app_routes() -> Router {
             delete(delete_admin_user_handler),
         )
         .route("/api/admin-users", post(create_admin_user_handler))
+        .route("/admin", get(get_admin_handler))
         // %%%%%%%%%%  middleware Routes  %%%%%%%%%%
         .route_layer(middleware::from_fn_with_state(
             app_state.clone(),
             require_authentication,
         ))
         // .route("/api/auth/login", post(login_admin_user_handler))
-        .route("/admin", get(get_admin_handler))
+        
         .route("/admin/login", post(post_admin_login_handler))
         .route("/admin/login", get(get_admin_login_handler))
         .with_state(app_state)
