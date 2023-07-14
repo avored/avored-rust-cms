@@ -7,7 +7,7 @@ use std::sync::Arc;
 
 use crate::routes::AppState;
 
-pub async fn admin_login_handler(app_state: State<Arc<AppState>>) -> impl IntoResponse {
+pub async fn get_admin_login_handler(app_state: State<Arc<AppState>>) -> impl IntoResponse {
     let data = json!({});
 
     let handlebars = &app_state.handlebars;

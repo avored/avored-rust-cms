@@ -4,11 +4,12 @@ use sea_orm::{
     ActiveModelTrait, ColumnTrait, DeleteResult, EntityTrait, LoaderTrait, PaginatorTrait,
     QueryFilter, Set,
 };
+use serde_derive::{Serialize, Deserialize};
 use uuid::Uuid;
 
 use crate::responses::admin_users_paginate_response::AdminUsersPaginateResponse;
 
-#[derive(Clone)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct AdminUser {
     pub id: Uuid,
     pub name: String,

@@ -13,7 +13,7 @@ use serde_json::json;
 use std::sync::Arc;
 use uuid::Uuid;
 
-use crate::routes::{AppState, establish_connection};
+use crate::routes::{establish_connection, AppState};
 
 pub async fn login_admin_user_handler(
     app_state: State<Arc<AppState>>,
@@ -78,7 +78,7 @@ pub struct LoginAdminUserPayload {
 }
 
 #[derive(Serialize)]
-pub struct LoginAdminUserResponse {
+struct LoginAdminUserResponse {
     success: bool,
     message: String,
 }
