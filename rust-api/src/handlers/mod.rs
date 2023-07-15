@@ -12,3 +12,4 @@ pub mod post_admin_login_handler;
 pub mod put_admin_user_handler;
 pub mod put_role_handler;
 pub mod roles_handler;
+pub mod test_pp_handler;

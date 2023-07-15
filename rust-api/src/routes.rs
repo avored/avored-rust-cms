@@ -13,9 +13,7 @@ use axum::routing::{delete, get, post, put};
 use axum::{middleware, Router};
 use axum_sessions::async_session::MemoryStore;
 use axum_sessions::SessionLayer;
-use handlebars::{
-    handlebars_helper, Context, Handlebars, Helper, JsonRender, Output, RenderContext, RenderError,
-};
+use handlebars::{Context, Handlebars, Helper, JsonRender, Output, RenderContext, RenderError};
 use r_i18n::{I18n, I18nConfig};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
@@ -28,6 +26,7 @@ use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::get_role_handler::get_role_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
+use crate::handlers::test_pp_handler::test_pp_handler;
 use crate::repositories::role_repository::RoleRepository;
 use sea_orm::Database;
 
@@ -120,6 +119,7 @@ pub async fn app_routes() -> Router {
         // .route("/api/auth/login", post(login_admin_user_handler))
         .route("/admin/login", post(post_admin_login_handler))
         .route("/admin/login", get(get_admin_login_handler))
+        .route("/test-pp", get(test_pp_handler))
         .with_state(app_state)
         .nest_service("/public", public_static_service)
         .layer(session_layer)

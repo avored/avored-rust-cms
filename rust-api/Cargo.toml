@@ -29,6 +29,9 @@ handlebars = { version = "4.3.7", features = ["dir_source"] }
 axum-sessions = "0.5.0"
 rand = "0.8.5"
 r_i18n = "1.0.1"
+validator = { version = "0.16.1", features = ["derive"] }
+thiserror = "1.0.43"
+async-trait = "0.1.71"
 
 [dependencies.sea-orm]
 version = "0.11"
