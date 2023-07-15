@@ -13,7 +13,10 @@ use axum::routing::{delete, get, post, put};
 use axum::{middleware, Router};
 use axum_sessions::async_session::MemoryStore;
 use axum_sessions::SessionLayer;
-use handlebars::Handlebars;
+use handlebars::{
+    handlebars_helper, Context, Handlebars, Helper, JsonRender, Output, RenderContext, RenderError,
+};
+use r_i18n::{I18n, I18nConfig};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use tower_http::services::ServeDir;
@@ -52,12 +55,13 @@ pub async fn app_routes() -> Router {
             axum::http::Method::DELETE,
             axum::http::Method::OPTIONS,
         ]);
-
     let mut handlebars = Handlebars::new();
 
     handlebars
         .register_templates_directory(".hbs", "./views")
         .expect("handlebars cant register the views path");
+
+    handlebars.register_helper("translate_key", Box::new(translate_key));
 
     /************** REPOSITORIES  **************/
     let admin_user_repository = AdminUserRepository::new();
@@ -114,7 +118,6 @@ pub async fn app_routes() -> Router {
             require_authentication,
         ))
         // .route("/api/auth/login", post(login_admin_user_handler))
-        
         .route("/admin/login", post(post_admin_login_handler))
         .route("/admin/login", get(get_admin_login_handler))
         .with_state(app_state)
@@ -128,4 +131,44 @@ pub async fn establish_connection() -> sea_orm::DatabaseConnection {
     let database_url: String = config.database_url;
 
     Database::connect(&database_url).await.unwrap()
+}
+
+fn translate_key(
+    h: &Helper,
+    _: &Handlebars,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut dyn Output,
+) -> Result<(), RenderError> {
+    // get parameter from helper or throw an error
+    let param = h
+        .param(0)
+        .ok_or(RenderError::new(&format!("param 0")))
+        .unwrap();
+    let param_value: String = param.value().render();
+
+    let tran = translate(String::from(param_value));
+
+    write!(out, "{}", tran).unwrap();
+    Ok(())
+}
+
+fn translate(key: String) -> String {
+    let config: I18nConfig = I18nConfig {
+        locales: &["en", "fr"],
+        directory: "locales",
+    };
+    let r_i18n: I18n = I18n::configure(&config);
+
+    let translated_text = match r_i18n.translations.get("en") {
+        Some(language_json) => {
+            if language_json.has_key(&key) {
+                language_json[&key].to_string()
+            } else {
+                String::from(&key)
+            }
+        }
+        None => String::from(&key),
+    };
+    translated_text
 }

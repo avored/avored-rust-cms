@@ -28,7 +28,7 @@ rand_core = { version = "0.6.4", features = ["std"]}
 handlebars = { version = "4.3.7", features = ["dir_source"] }
 axum-sessions = "0.5.0"
 rand = "0.8.5"
-
+r_i18n = "1.0.1"
 
 [dependencies.sea-orm]
 version = "0.11"

@@ -7,7 +7,7 @@ use axum::{
     extract::State,
     http::StatusCode,
     response::{IntoResponse, Redirect},
-    Json, Form,
+    Form, Json,
 };
 use axum_sessions::extractors::WritableSession;
 use std::sync::Arc;
@@ -21,7 +21,7 @@ pub async fn post_admin_login_handler(
     mut session: WritableSession,
     app_state: State<Arc<AppState>>,
     Form(payload): Form<LoginAdminUserRequest>,
-) -> Result<impl IntoResponse, (StatusCode, Json<LoginAdminUserResponse>)> {
+) -> Result<impl IntoResponse, impl IntoResponse> {
     let connection = establish_connection().await;
     let admin_user: entity::admin_users::Model = app_state
         .admin_user_repository
@@ -36,11 +36,7 @@ pub async fn post_admin_login_handler(
     };
 
     if !is_valid {
-        let error_response = LoginAdminUserResponse {
-            success: false,
-            message: String::from("Invalid email or password"),
-        };
-        return Err((StatusCode::BAD_REQUEST, Json(error_response)));
+        return Err(Redirect::to("/admin/login").into_response());
     }
 
     // let jwt_secret = app_state.config.jwt_secret.as_ref();
