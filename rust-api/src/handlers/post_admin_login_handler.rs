@@ -5,15 +5,13 @@ use crate::{
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::{
     extract::State,
-    http::StatusCode,
     response::{IntoResponse, Redirect},
-    Form, Json,
+    Form,
 };
 use axum_sessions::extractors::WritableSession;
 use std::sync::Arc;
 
 use crate::{
-    responses::login_admin_user_response::LoginAdminUserResponse,
     routes::{establish_connection, AppState},
 };
 
