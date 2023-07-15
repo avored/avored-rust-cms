@@ -27,7 +27,20 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
 
 
 Generate Sea Orm Cli Entity
+
     sea-orm-cli generate entity -o entity/src
 
 Generate Sea Orm Migration Fresh
-    sea-orm-cli migrate fresh
+
+     sea-orm-cli migrate fresh
+
+##### Seting up full Stack project in RUST
+
+ - [ ] Web Framework ([Axum](https://github.com/tokio-rs/axum))
+ - [ ] DB ([Postgres SQL](https://www.postgresql.org/))
+ - [ ] DB ORM ([Sea Orm CLI](https://www.sea-ql.org))
+ - [ ] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
+ - [ ] Form Validation ([Validator](https://github.com/Keats/validator))
+ - [ ] Todo Display Form Validation Error
+ - [ ] Todo Flash messages
+
