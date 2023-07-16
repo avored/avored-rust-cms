@@ -23,17 +23,6 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
 
     cargo run
 
-### Dev CLI
-
-
-Generate Sea Orm Cli Entity
-
-    sea-orm-cli generate entity -o entity/src
-
-Generate Sea Orm Migration Fresh
-
-     sea-orm-cli migrate fresh
-
 ##### Seting up full Stack project in RUST
 
  - [ ] Web Framework ([Axum](https://github.com/tokio-rs/axum))
@@ -44,3 +33,31 @@ Generate Sea Orm Migration Fresh
  - [ ] Todo Display Form Validation Error
  - [ ] Todo Flash messages
 
+
+
+
+### Dev Help 
+
+
+Generate Sea Orm Cli Entity
+
+    sea-orm-cli generate entity -o entity/src
+
+Generate Sea Orm Migration Fresh
+
+     sea-orm-cli migrate fresh
+
+
+How to do a loop inside the handlebar template
+
+    {{#each validation_message as |message|}}
+        {{ message.mssage }}
+    {{/each}}
+
+How to render a variable in handlebar template 
+
+    {{ variable_name }}
+
+How to call heloper method in handlebar template 
+
+    {{ helper_method_name "argument" ~}}

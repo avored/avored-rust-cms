@@ -61,12 +61,11 @@ pub async fn app_routes() -> Router {
         .expect("handlebars cant register the views path");
 
     handlebars.register_helper("translate_key", Box::new(translate_key));
+    handlebars.register_helper("get_validation_message", Box::new(get_validation_message));
 
     /************** REPOSITORIES  **************/
     let admin_user_repository = AdminUserRepository::new();
     let role_repository = RoleRepository::new();
-
-    let config: Config = Config::new();
 
     /************** APPLICATION STATES  **************/
     let app_state = Arc::new(AppState {
@@ -120,8 +119,8 @@ pub async fn app_routes() -> Router {
         .route("/admin/login", post(post_admin_login_handler))
         .route("/admin/login", get(get_admin_login_handler))
         .route("/test-pp", get(test_pp_handler))
-        .with_state(app_state)
         .nest_service("/public", public_static_service)
+        .with_state(app_state)
         .layer(session_layer)
         .layer(cors_layer)
 }
@@ -171,4 +170,26 @@ fn translate(key: String) -> String {
         None => String::from(&key),
     };
     translated_text
+}
+
+fn get_validation_message(
+    h: &Helper,
+    _: &Handlebars,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut dyn Output,
+) -> Result<(), RenderError> {
+    let param = h
+        .param(0)
+        .ok_or(RenderError::new(&format!("param 0")))
+        .unwrap();
+    let param_value: String = param.value().render();
+    write!(
+        out,
+        "{}",
+        String::from(format!("Hello Validation {}", param_value))
+    )
+    .unwrap();
+
+    Ok(())
 }

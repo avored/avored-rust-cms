@@ -11,9 +11,7 @@ use axum::{
 use axum_sessions::extractors::WritableSession;
 use std::sync::Arc;
 
-use crate::{
-    routes::{establish_connection, AppState},
-};
+use crate::routes::{establish_connection, AppState};
 
 pub async fn post_admin_login_handler(
     mut session: WritableSession,
@@ -34,6 +32,14 @@ pub async fn post_admin_login_handler(
     };
 
     if !is_valid {
+        let validation_error = String::from("your email address or password did not match");
+
+        session
+            .insert("validation_errors", validation_error)
+            .expect("Could not store the validation errors into session.");
+
+        // session
+        // app_state.avored_validation.un
         return Err(Redirect::to("/admin/login").into_response());
     }
 
