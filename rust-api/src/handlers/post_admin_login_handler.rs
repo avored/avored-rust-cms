@@ -9,7 +9,8 @@ use axum::{
     Form,
 };
 use axum_sessions::extractors::WritableSession;
-use std::sync::Arc;
+use std::{error::Error, sync::Arc};
+use validator::{Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::routes::{establish_connection, AppState};
 
@@ -18,6 +19,39 @@ pub async fn post_admin_login_handler(
     app_state: State<Arc<AppState>>,
     Form(payload): Form<LoginAdminUserRequest>,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
+    let validation_error_list = match payload.validate() {
+        Ok(_) => ValidationErrors::new(),
+        Err(errors) => errors,
+    };
+
+    for (field_name, error) in validation_error_list.errors() {
+        // let test = validation_error_list.errors();
+        // let test= error::add("sdfs");
+        match &error {
+            ValidationErrorsKind::Field(field_errors) => {
+                for field_error in field_errors {
+                    let message = match &field_error.message {
+                        Some(message) => message,
+                        None => continue,
+                    };
+                    println!("{:?}", message.is_empty());
+
+                    if !message.is_empty() {
+                        // let key = field_name.clone();
+                        let validation_key = format!("validation_error_{}", field_name);
+                        session
+                            .insert(&validation_key, message)
+                            .expect("Could not store the validation errors into session.");
+                    }
+                }
+                // println!("Error: {:?}", &error);
+            }
+            ValidationErrorsKind::Struct(_) => continue,
+            ValidationErrorsKind::List(_) => continue,
+        }
+    }
+    // println!(": {:?}", validation_error_list.errors());
+
     let connection = establish_connection().await;
     let admin_user: entity::admin_users::Model = app_state
         .admin_user_repository
@@ -35,7 +69,7 @@ pub async fn post_admin_login_handler(
         let validation_error = String::from("your email address or password did not match");
 
         session
-            .insert("validation_errors", validation_error)
+            .insert("validation_error_email", validation_error)
             .expect("Could not store the validation errors into session.");
 
         // session
