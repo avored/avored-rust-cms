@@ -25,7 +25,7 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
 
 ##### Seting up full Stack project in RUST
 
- - [ ] Web Framework ([Axum](https://github.com/tokio-rs/axum))
+ - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
  - [ ] DB ([Postgres SQL](https://www.postgresql.org/))
  - [ ] DB ORM ([Sea Orm CLI](https://www.sea-ql.org))
  - [ ] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
