@@ -26,11 +26,11 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
 ##### Seting up full Stack project in RUST
 
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
- - [ ] DB ([Postgres SQL](https://www.postgresql.org/))
- - [ ] DB ORM ([Sea Orm CLI](https://www.sea-ql.org))
- - [ ] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
- - [ ] Form Validation ([Validator](https://github.com/Keats/validator))
- - [ ] Todo Display Form Validation Error
+ - [x] DB ([Postgres SQL](https://www.postgresql.org/))
+ - [x] DB ORM ([Sea Orm CLI](https://www.sea-ql.org))
+ - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
+ - [x] Form Validation ([Validator](https://github.com/Keats/validator))
+ - [x] Display Form Validation Error
  - [ ] Todo Flash messages
 
 
