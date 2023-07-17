@@ -9,8 +9,8 @@ use axum::{
     Form,
 };
 use axum_sessions::extractors::WritableSession;
-use std::{error::Error, sync::Arc};
-use validator::{Validate, ValidationErrors, ValidationErrorsKind};
+use std::sync::Arc;
+use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::routes::{establish_connection, AppState};
 
@@ -49,6 +49,9 @@ pub async fn post_admin_login_handler(
             ValidationErrorsKind::Struct(_) => continue,
             ValidationErrorsKind::List(_) => continue,
         }
+    }
+    if validation_error_list.errors().length() > 0 {
+        return Err(Redirect::to("/admin/login").into_response());
     }
     // println!(": {:?}", validation_error_list.errors());
 

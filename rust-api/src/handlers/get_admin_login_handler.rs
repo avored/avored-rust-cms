@@ -2,15 +2,14 @@ use axum::{
     extract::State,
     response::{Html, IntoResponse},
 };
-use axum_sessions::extractors::{ReadableSession, WritableSession};
+use axum_sessions::extractors::WritableSession;
 use serde_derive::Serialize;
 use std::{collections::HashMap, sync::Arc};
 
 use crate::routes::AppState;
 
 pub async fn get_admin_login_handler(
-    session_read: ReadableSession,
-    mut _session_write: WritableSession,
+    mut session_read: WritableSession,
     app_state: State<Arc<AppState>>,
 ) -> impl IntoResponse {
     let mut view_model = GetAdminLoginHandlerViewModel::new();
@@ -18,6 +17,8 @@ pub async fn get_admin_login_handler(
     let validation_email_message = session_read.get("validation_error_email");
     let validation_password_message = session_read.get("validation_error_password");
 
+    session_read.remove("validation_error_email");
+    session_read.remove("validation_error_password");
     view_model.validation_email_message = match validation_email_message {
         Some(message) => message,
         None => String::from(""),

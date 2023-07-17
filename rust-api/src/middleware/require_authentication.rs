@@ -14,6 +14,7 @@ pub async fn require_authentication<T>(
     let decoded = session.get("logged_in_user");
     println!("Session: {:?}", decoded);
     if decoded.is_none() {
+        println!("i am middleware not auth");
         return Err(Redirect::to("/admin/login").into_response());
     }
 

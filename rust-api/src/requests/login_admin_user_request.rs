@@ -5,6 +5,6 @@ use validator::Validate;
 pub struct LoginAdminUserRequest {
     #[validate(email(message = "The email field must be a valid email address."))]
     pub email: String,
-    #[validate(length(min = 150, message = "minimum 150 character is required"))]
+    #[validate(length(min = 1, message = "The password is a required field."))]
     pub password: String,
 }
