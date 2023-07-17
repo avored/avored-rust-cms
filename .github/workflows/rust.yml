@@ -28,7 +28,6 @@ jobs:
           override: true
       - name: Migrate database
         run: |
-          cd rust-api
           cp .env.example .env
           sudo apt-get install libpq-dev -y
           cargo install sea-orm-cli
