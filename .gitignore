@@ -3,4 +3,5 @@
 .env
 .idea
 .vscode
-target
+/target
+/migration/target
