@@ -1,9 +1,9 @@
+use crate::handlers::add_admin_users_handler::add_admin_users_handler;
 use crate::handlers::delete_role_handler::delete_role_handler;
 use crate::handlers::get_admin_handler::get_admin_handler;
 use crate::handlers::get_admin_login_handler::get_admin_login_handler;
-use crate::handlers::add_admin_users_handler::add_admin_users_handler;
-use crate::handlers::list_admin_users_handler::list_admin_users_handler;
 use crate::handlers::home_handler::home_handler;
+use crate::handlers::list_admin_users_handler::list_admin_users_handler;
 use crate::handlers::post_admin_login_handler::post_admin_login_handler;
 use crate::handlers::put_role_handler::put_role_handler;
 use crate::handlers::roles_handler::roles_handler;
@@ -28,6 +28,7 @@ use crate::handlers::delete_admin_user_handler::delete_admin_user_handler;
 use crate::handlers::get_admin_user_handler::get_admin_user_handler;
 use crate::handlers::get_role_handler::get_role_handler;
 use crate::handlers::put_admin_user_handler::put_admin_user_handler;
+use crate::handlers::store_admin_user_handler::store_admin_user_handler;
 use crate::handlers::test_pp_handler::test_pp_handler;
 use crate::repositories::role_repository::RoleRepository;
 use sea_orm::Database;
@@ -98,7 +99,7 @@ pub async fn app_routes() -> Router {
         .route("/api/role/:role_id", delete(delete_role_handler))
         // %%%%%%%%%%  admin user Routes  %%%%%%%%%%
         .route("/api/admin-users", get(admin_users_handler))
-        
+        .route("/admin-user", post(store_admin_user_handler))
         .route("/add-admin-user", get(add_admin_users_handler))
         .route("/admin-user", get(list_admin_users_handler))
         .route(
@@ -122,7 +123,6 @@ pub async fn app_routes() -> Router {
         ))
         // .route("/api/auth/login", post(login_admin_user_handler))
         .route("/admin/login", post(post_admin_login_handler))
-        
         .route("/admin/login", get(get_admin_login_handler))
         .route("/test-pp", get(test_pp_handler))
         .nest_service("/public", public_static_service)
