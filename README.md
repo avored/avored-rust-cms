@@ -23,6 +23,22 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
 
     cargo run
 
+
+## Features
+
+- [ ] Users
+- [ ] Roles/Permissions
+- [ ] Components
+- [ ] Pages
+- [ ] Collection
+- [ ] SEO
+- [ ] Asset Manager
+
+## RoadMap
+ - [ ] Rest API
+ - [ ] GraphQL API
+ - [ ] Content Workflow
+
 ##### Seting up full Stack project in RUST
 
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))

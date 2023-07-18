@@ -1,7 +1,8 @@
 use crate::handlers::delete_role_handler::delete_role_handler;
 use crate::handlers::get_admin_handler::get_admin_handler;
 use crate::handlers::get_admin_login_handler::get_admin_login_handler;
-use crate::handlers::get_admin_users_handler::get_admin_users_handler;
+use crate::handlers::add_admin_users_handler::add_admin_users_handler;
+use crate::handlers::list_admin_users_handler::list_admin_users_handler;
 use crate::handlers::home_handler::home_handler;
 use crate::handlers::post_admin_login_handler::post_admin_login_handler;
 use crate::handlers::put_role_handler::put_role_handler;
@@ -96,8 +97,10 @@ pub async fn app_routes() -> Router {
         .route("/api/role/:role_id", put(put_role_handler))
         .route("/api/role/:role_id", delete(delete_role_handler))
         // %%%%%%%%%%  admin user Routes  %%%%%%%%%%
-        .route("/admin-user", get(get_admin_users_handler))
         .route("/api/admin-users", get(admin_users_handler))
+        
+        .route("/add-admin-user", get(add_admin_users_handler))
+        .route("/admin-user", get(list_admin_users_handler))
         .route(
             "/api/admin-users/:admin_user_id",
             get(get_admin_user_handler),

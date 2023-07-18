@@ -119,5 +119,13 @@ impl RoleRepository {
             .exec(&connection)
             .await
             .unwrap()
+ 
+ 
+    }
+    pub async fn all(
+        &self,
+        connection: sea_orm::DatabaseConnection,
+    ) -> Result<Vec<roles::Model>, sea_orm::DbErr>  {
+        roles::Entity::find().all(&connection).await
     }
 }

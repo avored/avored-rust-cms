@@ -14,8 +14,14 @@ pub async fn admin_users_handler(
     app_state: State<Arc<AppState>>,
     Query(payload): Query<AdminUsersRequest>,
 ) -> impl IntoResponse {
-    let current_page: u64 = payload.current_page;
-    let per_page = payload.per_page;
+    let current_page: u64 = match payload.current_page {
+        Some(current_page) => current_page,
+        None => 1,
+    };
+    let per_page = match payload.per_page {
+        Some(per_page) => per_page,
+        None => 10,
+    };
     let connection = establish_connection().await;
 
     let admin_users = app_state

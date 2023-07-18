@@ -1,0 +1,78 @@
+{{#*inline "page_content"}}
+<div
+    class="border-b bg-white border-gray-300 pl-6 py-2 shadow-sm">
+    <span class="block text-xs font-normal text-gray-500 mt-2">
+        <!-- <a href="#">Dashboard</a> &raquo; -->
+        <a href="/admin">Dashboard</a> &raquo;
+        <a href="/admin/admin-users">Admin Users</a> &raquo;
+        <span>Add Admin User</span>
+    </span>
+</div>
+
+<section class="container mb-5 mt-8 px-4 mx-auto">
+
+    <div class="sm:flex sm:items-center sm:justify-between">
+        <div>
+            <div class="flex items-center gap-x-3">
+                <h2 class="text-lg font-semibold text-gray-800">
+                    Add Admin User
+                </h2>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="bg-white rounded-md shadow-lg p-4 px-4 md:p-8 mb-6">
+            <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                <div class="text-gray-600">
+                    <p class="font-medium text-lg">Personal Details</p>
+                    <p>Please fill out all the fields.</p>
+                </div>
+
+                <div class="lg:col-span-2">
+                    <div
+                        class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-5">
+                        <div class="md:col-span-5  mt-3">
+                            <label for="full_name">Name</label>
+                            <input type="text" name="full_name" id="full_name"
+                                class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                                value />
+                        </div>
+
+                        <div class="md:col-span-5  mt-3">
+                            <label for="email">Email Address</label>
+                            <input type="email" name="email" id="email"
+                                class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                                />
+                            <p class="text-xs mt-2">
+                                This email will be used to sent an email to user to generate the password
+                            </p>
+                        </div>
+
+                        <div class="md:col-span-5 mt-3">
+                            <label for="full_name">Roles</label>
+                            <select multiple x-data="multiselect">
+                                {{#each role_options as |role_option|}}
+                                    <option value="{{role_option.id}}">{{role_option.name}}</option>
+                                {{/each}}
+                              </select>
+                        </div>
+
+
+                        <div class="md:col-span-5 mt-5 text-right">
+                            <div class="inline-flex items-end">
+                                <button
+                                    class="bg-primary-500 hover:bg-primary-700 text-white font-bold py-2 px-4 rounded">
+                                    Create
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{{/inline}}
+
+{{> layout/app}}

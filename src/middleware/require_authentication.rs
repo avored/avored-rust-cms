@@ -12,9 +12,9 @@ pub async fn require_authentication<T>(
     next: Next<T>,
 ) -> Result<Response, impl IntoResponse> {
     let decoded = session.get("logged_in_user");
-    println!("Session: {:?}", decoded);
+    // println!("Session: {:?}", decoded);
     if decoded.is_none() {
-        println!("i am middleware not auth");
+        // println!("i am middleware not auth");
         return Err(Redirect::to("/admin/login").into_response());
     }
 
