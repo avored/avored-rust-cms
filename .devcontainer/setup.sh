@@ -9,7 +9,12 @@ apt-get install -y \
   zsh \
   vim \
   build-essential \
-  openssl
+  openssl \
+  libssl-dev \
+  pkg-config
+
+
+sudo apt install postgresql postgresql-contrib
 
 ## Install rustup and common components
 curl https://sh.rustup.rs -sSf | sh -s -- -y 
@@ -21,6 +26,10 @@ rustup component add clippy --toolchain nightly
 
 cargo install cargo-expand
 cargo install cargo-edit
+
+
+cargo install sea-orm-cli
+
 
 ## setup and install oh-my-zsh
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
