@@ -3,7 +3,9 @@ use std::net::SocketAddr;
 use crate::routes::app_route;
 
 mod handlers;
+mod models;
 mod routes;
+mod error;
 
 #[tokio::main]
 async fn main() {
