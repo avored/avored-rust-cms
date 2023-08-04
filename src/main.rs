@@ -8,7 +8,7 @@ mod handlers;
 mod models;
 mod routes;
 mod config;
-mod state;
+mod avored_state;
 
 #[tokio::main]
 async fn main() {

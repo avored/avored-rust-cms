@@ -2,13 +2,13 @@ use surrealdb::{dbs::Session, kvs::Datastore};
 
 use crate::config::Config;
 
-pub struct State {
+pub struct AvoRedState {
     pub datastore: Datastore,
     pub database_session: Session
 }
 
-impl State {
-    pub async fn new(config: Config) -> State {
+impl AvoRedState {
+    pub async fn new(config: Config) -> AvoRedState {
 
         let datastore = Datastore::new("file://data/avored.db")
             .await
@@ -19,7 +19,7 @@ impl State {
             config.database_name.clone(),
         );
         
-        State {
+        AvoRedState {
             datastore,
             database_session,
         }

@@ -2,9 +2,12 @@ use std::sync::Arc;
 
 use axum::{routing::get, Router};
 
-use crate::{handlers::{admin_handler::admin_handler, home_handler::home_handler}, state::State};
+use crate::{
+    avored_state::AvoRedState,
+    handlers::{admin_handler::admin_handler, home_handler::home_handler},
+};
 
-pub fn routes(state: State) -> Router {
+pub fn routes(state: AvoRedState) -> Router {
     let app = Router::new()
         .route("/", get(home_handler))
         .route("/admin", get(admin_handler))

@@ -1,21 +1,22 @@
+use std::sync::Arc;
+
+use axum::extract::State;
 use axum::response::IntoResponse;
 use axum::Json;
 use surrealdb::dbs::Response;
-use surrealdb::dbs::Session;
-use surrealdb::kvs::Datastore;
 use surrealdb::sql::Array;
 use surrealdb::sql::Object;
 
+use crate::avored_state::AvoRedState;
 use crate::error::Result;
 use crate::models::admin_user_model::AdminUser;
 use crate::models::W;
 
-pub async fn admin_handler() -> impl IntoResponse {
-    let datastore = Datastore::new("file://data/avored.db")
-        .await
-        .expect("there is issue with connecting with data/avored.db storage");
-
-    let database_session = Session::for_db("public", "avored_cms");
+pub async fn admin_handler(
+    state: State<Arc<AvoRedState>>
+) -> impl IntoResponse {
+    let datastore = &state.datastore;
+    let database_session = &state.database_session;
 
     // let sql = "DELETE admin_users where name = 'Purvesh';";
 
