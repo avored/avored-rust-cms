@@ -1,21 +1,24 @@
 use std::net::SocketAddr;
 
-use crate::routes::app_route;
+use crate::bootstrap::bootstrap;
 
+mod bootstrap;
+mod error;
 mod handlers;
 mod models;
 mod routes;
-mod error;
+mod config;
+mod state;
 
 #[tokio::main]
 async fn main() {
-    let app = app_route();
+    let router = bootstrap().await;
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
 
     println!("Server Started: http://localhost:8080");
     axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+        .serve(router.into_make_service())
         .await
         .unwrap();
 }
