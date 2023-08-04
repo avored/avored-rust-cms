@@ -9,6 +9,7 @@ mod models;
 mod routes;
 mod config;
 mod avored_state;
+mod repositories;
 
 #[tokio::main]
 async fn main() {

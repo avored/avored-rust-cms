@@ -1,10 +1,11 @@
 use surrealdb::{dbs::Session, kvs::Datastore};
 
-use crate::config::Config;
+use crate::{config::Config, repositories::admin_user_repository::AdminUserRepository};
 
 pub struct AvoRedState {
     pub datastore: Datastore,
-    pub database_session: Session
+    pub database_session: Session,
+    pub admin_user_repository: AdminUserRepository
 }
 
 impl AvoRedState {
@@ -18,10 +19,12 @@ impl AvoRedState {
             config.database_namespace.clone(),
             config.database_name.clone(),
         );
+        let admin_user_repository = AdminUserRepository::new();
         
         AvoRedState {
             datastore,
             database_session,
+            admin_user_repository
         }
     }
 }
