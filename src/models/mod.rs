@@ -29,7 +29,6 @@ impl TryFrom<W<Value>> for Array {
 impl TryFrom<W<Value>> for Object {
 	type Error = Error;
 	fn try_from(val: W<Value>) -> Result<Object> {
-        println!(" i am here try _into");
 		match val.0 {
 			Value::Object(obj) => Ok(obj),
 			_ => Err(Error::XValueNotOfType("Object")),

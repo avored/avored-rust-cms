@@ -1,10 +1,12 @@
 use std::sync::Arc;
+use std::vec;
 
 use axum::extract::State;
-use axum::response::IntoResponse;
-use axum::Json;
+use axum::response::{IntoResponse, Html};
+use serde_derive::Serialize;
 
 use crate::avored_state::AvoRedState;
+use crate::models::admin_user_model::AdminUser;
 
 pub async fn admin_handler(state: State<Arc<AvoRedState>>) -> impl IntoResponse {
     // let datastore = &state.datastore;
@@ -73,5 +75,34 @@ pub async fn admin_handler(state: State<Arc<AvoRedState>>) -> impl IntoResponse 
         Err(_) => panic!("no data found error"),
     };
 
-    Json(admin_users).into_response()
+    let mut view_model = GetAdminHandlerViewModel::new();
+    view_model.admin_users = admin_users;
+
+    let handlebars = &state.handlebars;
+
+    let html = handlebars
+        .render("dashboard", &view_model)
+        .expect("there is an issue while loading the admin template");
+
+    Html(html).into_response()
+
+    // Json(admin_users).into_response()
+}
+
+
+#[derive(Serialize)]
+pub struct GetAdminHandlerViewModel {
+    validation_email_message: String,
+    validation_password_message: String,
+    admin_users: Vec<AdminUser>
+}
+
+impl GetAdminHandlerViewModel {
+    fn new() -> Self {
+        GetAdminHandlerViewModel {
+            validation_email_message: String::from(""),
+            validation_password_message: String::from(""),
+            admin_users: vec![],
+        }
+    }
 }
