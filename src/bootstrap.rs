@@ -1,4 +1,7 @@
-use crate::{avored_state::AvoRedState, providers::avored_config_provider::AvoRedConfigProvider, routes::routes};
+use crate::{
+    avored_state::AvoRedState, providers::avored_config_provider::AvoRedConfigProvider,
+    routes::routes,
+};
 use axum::Router;
 use dotenvy::dotenv;
 
@@ -6,9 +9,8 @@ pub async fn bootstrap() -> Router {
     dotenv().ok();
     env_logger::init();
     let config = AvoRedConfigProvider::new();
-    let state = AvoRedState::new(config).await;
-
+    let state = AvoRedState::new(config.clone()).await;
     // error!("this is printed by default"); example of how we can do logging
 
-    routes(state)
+    routes(state, config.clone())
 }

@@ -7,8 +7,21 @@ use serde_derive::Serialize;
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
+use crate::providers::avored_session_provider::WritableSession;
 
-pub async fn admin_handler(state: State<Arc<AvoRedState>>) -> impl IntoResponse {
+pub async fn admin_handler(
+    state: State<Arc<AvoRedState>>,
+    mut session: WritableSession
+) -> impl IntoResponse {
+    let counter = match session.get("counter") {
+        Some(count) => count,
+        None => 0
+    };
+
+    println!("{counter}");
+
+    session.insert("counter", counter + 1)
+        .expect("cant store counter into session");
     // let datastore = &state.datastore;
     // let database_session = &state.database_session;
 
