@@ -32,12 +32,12 @@ const BASE64_DIGEST_LEN: usize = 44;
 
 pub type SessionHandle = Arc<RwLock<async_session::Session>>;
 
-#[derive(Clone)]
-pub enum PersistencePolicy {
-    Always,
-    ChangedOnly,
-    ExistingOnly,
-}
+// #[derive(Clone)]
+// pub enum PersistencePolicy {
+//     Always,
+//     ChangedOnly,
+//     ExistingOnly,
+// }
 
 /// Layer that provides cookie-based sessions.
 #[derive(Clone)]
@@ -46,7 +46,6 @@ pub struct SessionLayer<Store> {
     cookie_path: String,
     cookie_name: String,
     cookie_domain: Option<String>,
-    persistence_policy: PersistencePolicy,
     session_ttl: Option<Duration>,
     same_site_policy: SameSite,
     http_only: bool,
@@ -97,7 +96,7 @@ impl<Store: SessionStore> SessionLayer<Store> {
 
         Self {
             store,
-            persistence_policy: PersistencePolicy::Always,
+            // persistence_policy: PersistencePolicy::Always,
             cookie_path: "/".into(),
             cookie_name: "sid".into(),
             cookie_domain: None,
@@ -109,62 +108,62 @@ impl<Store: SessionStore> SessionLayer<Store> {
         }
     }
 
-    pub fn with_persistence_policy(mut self, policy: PersistencePolicy) -> Self {
-        self.persistence_policy = policy;
-        self
-    }
+    // pub fn with_persistence_policy(mut self, policy: PersistencePolicy) -> Self {
+    //     self.persistence_policy = policy;
+    //     self
+    // }
 
-    /// Sets a cookie for the session. Defaults to `"/"`.
-    pub fn with_cookie_path(mut self, cookie_path: impl AsRef<str>) -> Self {
-        self.cookie_path = cookie_path.as_ref().to_owned();
-        self
-    }
+    // /// Sets a cookie for the session. Defaults to `"/"`.
+    // pub fn with_cookie_path(mut self, cookie_path: impl AsRef<str>) -> Self {
+    //     self.cookie_path = cookie_path.as_ref().to_owned();
+    //     self
+    // }
 
-    /// Sets a cookie name for the session. Defaults to `"sid"`.
-    pub fn with_cookie_name(mut self, cookie_name: impl AsRef<str>) -> Self {
-        self.cookie_name = cookie_name.as_ref().to_owned();
-        self
-    }
+    // /// Sets a cookie name for the session. Defaults to `"sid"`.
+    // pub fn with_cookie_name(mut self, cookie_name: impl AsRef<str>) -> Self {
+    //     self.cookie_name = cookie_name.as_ref().to_owned();
+    //     self
+    // }
 
-    /// Sets a cookie domain for the session. Defaults to `None`.
-    pub fn with_cookie_domain(mut self, cookie_domain: impl AsRef<str>) -> Self {
-        self.cookie_domain = Some(cookie_domain.as_ref().to_owned());
-        self
-    }
+    // /// Sets a cookie domain for the session. Defaults to `None`.
+    // pub fn with_cookie_domain(mut self, cookie_domain: impl AsRef<str>) -> Self {
+    //     self.cookie_domain = Some(cookie_domain.as_ref().to_owned());
+    //     self
+    // }
 
     /// Decide if session is presented to the storage layer
-    fn should_store(&self, cookie_value: &Option<String>, session_data_changed: bool) -> bool {
-        session_data_changed
-            || matches!(self.persistence_policy, PersistencePolicy::Always)
-            || (matches!(self.persistence_policy, PersistencePolicy::ExistingOnly)
-                && cookie_value.is_some())
-    }
+    // fn should_store(&self, cookie_value: &Option<String>, session_data_changed: bool) -> bool {
+    //     session_data_changed
+    //         || matches!(self.persistence_policy, PersistencePolicy::Always)
+    //         || (matches!(self.persistence_policy, PersistencePolicy::ExistingOnly)
+    //             && cookie_value.is_some())
+    // }
 
-    /// Sets a cookie same site policy for the session. Defaults to
-    /// `SameSite::Strict`.
-    pub fn with_same_site_policy(mut self, policy: SameSite) -> Self {
-        self.same_site_policy = policy;
-        self
-    }
+    // /// Sets a cookie same site policy for the session. Defaults to
+    // /// `SameSite::Strict`.
+    // pub fn with_same_site_policy(mut self, policy: SameSite) -> Self {
+    //     self.same_site_policy = policy;
+    //     self
+    // }
 
-    /// Sets a cookie time-to-live (ttl) for the session. Defaults to
-    /// `Duration::from_secs(60 * 60 * 24)`; one day.
-    pub fn with_session_ttl(mut self, session_ttl: Option<Duration>) -> Self {
-        self.session_ttl = session_ttl;
-        self
-    }
+    // /// Sets a cookie time-to-live (ttl) for the session. Defaults to
+    // /// `Duration::from_secs(60 * 60 * 24)`; one day.
+    // pub fn with_session_ttl(mut self, session_ttl: Option<Duration>) -> Self {
+    //     self.session_ttl = session_ttl;
+    //     self
+    // }
 
-    /// Sets a cookie `HttpOnly` attribute for the session. Defaults to `true`.
-    pub fn with_http_only(mut self, http_only: bool) -> Self {
-        self.http_only = http_only;
-        self
-    }
+    // /// Sets a cookie `HttpOnly` attribute for the session. Defaults to `true`.
+    // pub fn with_http_only(mut self, http_only: bool) -> Self {
+    //     self.http_only = http_only;
+    //     self
+    // }
 
-    /// Sets a cookie secure attribute for the session. Defaults to `true`.
-    pub fn with_secure(mut self, secure: bool) -> Self {
-        self.secure = secure;
-        self
-    }
+    // /// Sets a cookie secure attribute for the session. Defaults to `true`.
+    // pub fn with_secure(mut self, secure: bool) -> Self {
+    //     self.secure = secure;
+    //     self
+    // }
 
     async fn load_or_create(&self, cookie_value: Option<String>) -> SessionHandle {
         let session = match cookie_value {
@@ -313,8 +312,7 @@ where
             let mut response = inner.call(request).await?;
 
             let session = session_handle.read().await;
-            let (session_is_destroyed, session_data_changed) =
-                (session.is_destroyed(), session.data_changed());
+            let session_is_destroyed =  session.is_destroyed();
             drop(session);
 
             // Pull out the session so we can pass it to the store without `Clone` blowing
@@ -334,14 +332,7 @@ where
                     SET_COOKIE,
                     HeaderValue::from_str(&removal_cookie.to_string()).unwrap(),
                 );
-
-            // Store if
-            //  - We have guest sessions
-            //  - We received a valid cookie and we use the `ExistingOnly`
-            //    policy.
-            //  - If we use the `ChangedOnly` policy, only
-            //    `session.data_changed()` should trigger this branch.
-            } else if session_layer.should_store(&cookie_value, session_data_changed) {
+            } else {
                 match session_layer.store.store_session(session).await {
                     Ok(Some(cookie_value)) => {
                         let cookie = session_layer.build_cookie(cookie_value);
@@ -366,11 +357,11 @@ where
 }
 
 #[derive(Debug)]
-pub struct WritableSession {
+pub struct AvoRedSession {
     session: OwnedRwLockWriteGuard<async_session::Session>,
 }
 
-impl Deref for WritableSession {
+impl Deref for AvoRedSession {
     type Target = OwnedRwLockWriteGuard<async_session::Session>;
 
     fn deref(&self) -> &Self::Target {
@@ -378,14 +369,14 @@ impl Deref for WritableSession {
     }
 }
 
-impl DerefMut for WritableSession {
+impl DerefMut for AvoRedSession {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.session
     }
 }
 
 #[async_trait]
-impl<S> FromRequestParts<S> for WritableSession
+impl<S> FromRequestParts<S> for AvoRedSession
 where
     S: Send + Sync,
 {

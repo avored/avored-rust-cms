@@ -24,7 +24,6 @@ impl AdminUserRepository {
         let responses = match datastore.execute(sql, &database_session, None, false).await {
             Ok(response) => response,
             Err(_) => {
-                // todo improve this error
                 let out: Vec<Response> = vec![];
                 out
             }
@@ -33,23 +32,27 @@ impl AdminUserRepository {
         let response = responses
             .into_iter()
             .next()
-            .expect("error while retriving the first response");
+            .expect("there is an issue with unwrapping the surrealdb response");
 
-        let result = response.result.expect("first result comes with error");
+        let result = response.result.expect("there is an issue with receiving the respoinse result of surreal db query response");
 
-        let array: Array = W(result).try_into().expect("sdfds");
+        let array: Array = W(result).try_into().expect("there is an issue while converting query result into an array");
         let objects: Result<Vec<Object>> =
             array.into_iter().map(|value| W(value).try_into()).collect();
         let objects = match objects {
             Ok(obj) => obj,
-            Err(_) => panic!("no data"),
+            Err(_) => {
+                let objects: Vec<Object> = vec![];
+
+                objects
+            },
         };
 
         let test: Result<Vec<AdminUser>> = objects.into_iter().map(|o| o.try_into()).collect();
 
         let admin_users = match test {
             Ok(data) => data,
-            Err(_) => panic!("some errror"),
+            Err(_) => panic!("issue while converting an vector of objects into admin_user struct"),
         };
 
         Ok(admin_users)

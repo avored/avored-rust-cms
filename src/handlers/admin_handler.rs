@@ -7,11 +7,11 @@ use serde_derive::Serialize;
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
-use crate::providers::avored_session_provider::WritableSession;
+use crate::providers::avored_session_provider::AvoRedSession;
 
 pub async fn admin_handler(
     state: State<Arc<AvoRedState>>,
-    mut session: WritableSession
+    mut session: AvoRedSession
 ) -> impl IntoResponse {
     let counter = match session.get("counter") {
         Some(count) => count,
