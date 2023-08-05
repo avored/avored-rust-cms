@@ -1,6 +1,6 @@
 use surrealdb::{dbs::Session, kvs::Datastore};
 
-use crate::config::Config;
+use crate::providers::avored_config_provider::AvoRedConfigProvider;
 
 pub struct AvoRedDatabaseProvider {
     pub datastore: Datastore,
@@ -8,7 +8,7 @@ pub struct AvoRedDatabaseProvider {
 }
 
 impl AvoRedDatabaseProvider {
-    pub async fn register(config: Config) -> AvoRedDatabaseProvider {
+    pub async fn register(config: AvoRedConfigProvider) -> AvoRedDatabaseProvider {
         let datastore = Datastore::new("file://data/avored.db")
             .await
             .expect("there is issue with connecting with data/avored.db storage");

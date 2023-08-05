@@ -9,13 +9,11 @@ use crate::{
 
 pub fn routes(state: AvoRedState) -> Router {
 
-    let public_static_service = ServeDir::new("public");
+    let static_routing_service = ServeDir::new("public");
 
-    let app = Router::new()
+    Router::new()
         .route("/", get(home_handler))
         .route("/admin", get(admin_handler))
-        .nest_service("/public", public_static_service)
-        .with_state(Arc::new(state));
-
-    app
+        .nest_service("/public", static_routing_service)
+        .with_state(Arc::new(state))
 }
