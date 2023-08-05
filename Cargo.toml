@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+argon2 = "0.5.1"
 async-session = "3.0.0"
 axum = "0.6.20"
 axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
@@ -22,3 +23,4 @@ surrealdb = { version = "1.0.0-beta.9", features = ["kv-rocksdb"] }
 tokio = { version = "1", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.4.3", features = ["fs"] }
+validator = { version = "0.16.1", features = ["derive"] }

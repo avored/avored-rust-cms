@@ -10,6 +10,7 @@ mod routes;
 mod avored_state;
 mod repositories;
 mod providers;
+mod requests;
 
 #[tokio::main]
 async fn main() {
