@@ -1,5 +1,5 @@
 use crate::error::{Error, Result};
-use surrealdb::sql::{Array, Object, Value};
+use surrealdb::sql::{Array, Object, Value, Datetime};
 
 pub mod admin_user_model;
 
@@ -25,6 +25,41 @@ impl TryFrom<W<Value>> for Array {
 		}
 	}
 }
+
+
+impl TryFrom<W<Value>> for i64 {
+	type Error = Error;
+	fn try_from(val: W<Value>) -> Result<i64> {
+		match val.0 {
+			Value::Number(obj) => Ok(obj.as_int()),
+			_ => Err(Error::XValueNotOfType("i64")),
+		}
+	}
+}
+
+impl TryFrom<W<Value>> for bool {
+	type Error = Error;
+	fn try_from(val: W<Value>) -> Result<bool> {
+		match val.0 {
+			Value::False => Ok(false),
+			Value::True => Ok(true),
+			_ => Err(Error::XValueNotOfType("bool")),
+		}
+	}
+}
+
+
+impl TryFrom<W<Value>> for Datetime {
+	type Error = Error;
+	fn try_from(val: W<Value>) -> Result<Datetime> {
+		match val.0 {
+			Value::Datetime(obj) => Ok(obj),
+			_ => Err(Error::XValueNotOfType("datetime")),
+		}
+	}
+}
+
+
 
 impl TryFrom<W<Value>> for Object {
 	type Error = Error;

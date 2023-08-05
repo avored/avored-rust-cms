@@ -2,7 +2,7 @@ use std::sync::Arc;
 use std::vec;
 
 use axum::extract::State;
-use axum::response::{IntoResponse, Html};
+use axum::response::{Html, IntoResponse};
 use serde_derive::Serialize;
 
 use crate::avored_state::AvoRedState;
@@ -11,17 +11,19 @@ use crate::providers::avored_session_provider::AvoRedSession;
 
 pub async fn admin_handler(
     state: State<Arc<AvoRedState>>,
-    mut session: AvoRedSession
+    mut session: AvoRedSession,
 ) -> impl IntoResponse {
     let counter = match session.get("counter") {
         Some(count) => count,
-        None => 0
+        None => 0,
     };
 
     println!("{counter}");
 
-    session.insert("counter", counter + 1)
+    session
+        .insert("counter", counter + 1)
         .expect("cant store counter into session");
+
     // let datastore = &state.datastore;
     // let database_session = &state.database_session;
 
@@ -83,7 +85,7 @@ pub async fn admin_handler(
         .paginate(&state.datastore, &state.database_session)
         .await;
 
-     let admin_users = match admin_users {
+    let admin_users = match admin_users {
         Ok(data) => data,
         Err(_) => panic!("no data found error"),
     };
@@ -102,12 +104,11 @@ pub async fn admin_handler(
     // Json(admin_users).into_response()
 }
 
-
 #[derive(Serialize)]
 pub struct GetAdminHandlerViewModel {
     validation_email_message: String,
     validation_password_message: String,
-    admin_users: Vec<AdminUser>
+    admin_users: Vec<AdminUser>,
 }
 
 impl GetAdminHandlerViewModel {

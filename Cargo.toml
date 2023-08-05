@@ -10,6 +10,7 @@ argon2 = "0.5.1"
 async-session = "3.0.0"
 axum = "0.6.20"
 axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
+chrono = "0.4.26"
 dotenvy = "0.15.7"
 env_logger = "0.10.0"
 futures = "0.3.28"

@@ -16,6 +16,21 @@ pub struct AdminUser {
     pub updated_by: String,
 }
 
+impl AdminUser {
+    pub fn empty_admin_user() -> Self {
+        AdminUser {
+            id: String::from(""),
+            name: String::from(""),
+            email: String::from(""),
+            password: String::from(""),
+            created_at: Datetime::from(chrono::Utc::now()),
+            updated_at: Datetime::from(chrono::Utc::now()),
+            created_by: String::from(""),
+            updated_by: String::from(""),
+        }
+    } 
+}
+
 impl TryFrom<Object> for AdminUser {
     type Error = Error;
     fn try_from(val: Object) -> Result<AdminUser> {
@@ -54,14 +69,14 @@ impl TryFrom<Object> for AdminUser {
         };
 
         Ok(AdminUser {
-            id: id.to_string(),
-            name: name.to_string(),
-            email: email.to_string(),
-            password: password.to_string(),
-            created_at: created_at.to_datetime(),
-            updated_at: updated_at.to_datetime(),
-            created_by: created_at.to_string(),
-            updated_by: updated_by.to_string(),
+            id: id.as_raw_string(),
+            name: name.as_raw_string(),
+            email: email.as_raw_string(),
+            password: password.as_raw_string(),
+            created_at: created_at.as_datetime(),
+            updated_at: updated_at.as_datetime(),
+            created_by: created_by.as_raw_string(),
+            updated_by: updated_by.as_raw_string(),
         })
     }
 }

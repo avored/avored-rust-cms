@@ -2,9 +2,9 @@ use std::sync::Arc;
 
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::extract::State;
-use axum::response::{ IntoResponse, Redirect};
+use axum::response::{IntoResponse, Redirect};
 use axum::Form;
-use validator::{HasLen, ValidationErrors, ValidationErrorsKind, Validate};
+use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
@@ -41,7 +41,6 @@ pub async fn authenticate_admin_user_handler(
                             .expect("Could not store the validation errors into session.");
                     }
                 }
-                // println!("Error: {:?}", &error);
             }
             ValidationErrorsKind::Struct(_) => continue,
             ValidationErrorsKind::List(_) => continue,
@@ -51,11 +50,14 @@ pub async fn authenticate_admin_user_handler(
         return Err(Redirect::to("/admin/login").into_response());
     }
 
-    let admin_user_model = state.admin_user_repository.find_by_email(
-        &state.datastore,
-        &state.database_session,
-        payload.email,
-    );
+    let admin_user_model = match state
+        .admin_user_repository
+        .find_by_email(&state.datastore, &state.database_session, payload.email)
+        .await
+    {
+        Ok(data) => data,
+        Err(_) => AdminUser::empty_admin_user(),
+    };
 
     let is_valid = match PasswordHash::new(&admin_user_model.password) {
         Ok(parsed_hash) => Argon2::default()
