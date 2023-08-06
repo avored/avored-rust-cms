@@ -11,18 +11,18 @@ use crate::providers::avored_session_provider::AvoRedSession;
 
 pub async fn admin_handler(
     state: State<Arc<AvoRedState>>,
-    mut session: AvoRedSession,
+    // session: AvoRedSession,
 ) -> impl IntoResponse {
-    let counter = match session.get("counter") {
-        Some(count) => count,
-        None => 0,
-    };
+    // let counter = match session.get("counter") {
+    //     Some(count) => count,
+    //     None => 0,
+    // };
 
-    println!("{counter}");
+    // println!("{counter}");
 
-    session
-        .insert("counter", counter + 1)
-        .expect("cant store counter into session");
+    // session
+    //     .insert("counter", counter + 1)
+    //     .expect("cant store counter into session");
 
     // let datastore = &state.datastore;
     // let database_session = &state.database_session;
