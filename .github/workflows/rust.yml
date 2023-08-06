@@ -18,7 +18,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Migrate database
+      - name: Run Tests
         run: |
           cp .env.example .env
           cargo test
