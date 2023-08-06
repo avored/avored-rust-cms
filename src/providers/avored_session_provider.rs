@@ -1,5 +1,4 @@
 use std::{
-    sync::Arc,
     task::{Context, Poll},
     time::Duration,
 };
@@ -20,17 +19,15 @@ use axum::{
 use axum_extra::extract::cookie::{Cookie, Key, SameSite};
 use futures::future::BoxFuture;
 use log::error;
-use tokio::sync::RwLock;
 use tower::{Layer, Service};
 
 use std::ops::{Deref, DerefMut};
 
 use axum::{async_trait, extract::FromRequestParts, http::request::Parts, Extension};
-use tokio::sync::OwnedRwLockWriteGuard;
 
 const BASE64_DIGEST_LEN: usize = 44;
 
-pub type SessionHandle = Arc<RwLock<async_session::Session>>;
+pub type SessionHandle = async_session::Session;
 
 // #[derive(Clone)]
 // pub enum PersistencePolicy {
@@ -171,11 +168,10 @@ impl<Store: SessionStore> SessionLayer<Store> {
             None => None,
         };
 
-        Arc::new(RwLock::new(
-            session
-                .and_then(async_session::Session::validate)
-                .unwrap_or_default(),
-        ))
+        session
+            .and_then(async_session::Session::validate)
+            .unwrap_or_default()
+        
     }
 
     fn build_cookie(&self, cookie_value: String) -> Cookie<'static> {
@@ -302,24 +298,16 @@ where
         Box::pin(async move {
             let session_handle = session_layer.load_or_create(cookie_value.clone()).await;
 
-            let mut session = session_handle.write().await;
+            let mut session = session_handle;
             if let Some(ttl) = session_layer.session_ttl {
-                (*session).expire_in(ttl);
+                (session).expire_in(ttl);
             }
-            drop(session);
-
-            request.extensions_mut().insert(session_handle.clone());
+            request.extensions_mut().insert(session.clone());
             let mut response = inner.call(request).await?;
 
-            let session = session_handle.read().await;
+            let session: async_session::Session = session;
             let session_is_destroyed =  session.is_destroyed();
-            drop(session);
 
-            // Pull out the session so we can pass it to the store without `Clone` blowing
-            // away the `cookie_value`.
-            let session = RwLock::into_inner(
-                Arc::try_unwrap(session_handle).expect("Session handle still has owners."),
-            );
             if session_is_destroyed {
                 if let Err(e) = session_layer.store.destroy_session(session).await {
                     error!("Failed to destroy session: {:?}", e);
@@ -358,11 +346,11 @@ where
 
 #[derive(Debug)]
 pub struct AvoRedSession {
-    session: OwnedRwLockWriteGuard<async_session::Session>,
+    session: async_session::Session,
 }
 
 impl Deref for AvoRedSession {
-    type Target = OwnedRwLockWriteGuard<async_session::Session>;
+    type Target = async_session::Session;
 
     fn deref(&self) -> &Self::Target {
         &self.session
@@ -387,7 +375,7 @@ where
             Extension::from_request_parts(parts, state)
                 .await
                 .expect("Session extension missing. Is the session layer installed?");
-        let session = session_handle.write_owned().await;
+            let session = session_handle.clone();
 
         Ok(Self { session })
     }
