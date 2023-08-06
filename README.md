@@ -42,20 +42,7 @@ Setup your `.env` file you can rename the existing `.env.example` file make sure
  - [x] Display Form Validation Error
  - [ ] Todo Flash messages
 
-
-
-
 ### Dev Help 
-
-
-Generate Sea Orm Cli Entity
-
-    sea-orm-cli generate entity -o entity/src
-
-Generate Sea Orm Migration Fresh
-
-     sea-orm-cli migrate fresh
-
 
 How to do a loop inside the handlebar template
 
