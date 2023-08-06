@@ -9,15 +9,7 @@ jobs:
   test:
     name: AvoredCMS
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:12
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
-          POSTGRES_DB: avored_cms
-        ports:
-          - 5432:5432
+    
     steps:
       - uses: actions/checkout@v3
       - uses: Swatinem/rust-cache@v2.4.0
@@ -29,7 +21,4 @@ jobs:
       - name: Migrate database
         run: |
           cp .env.example .env
-          sudo apt-get install libpq-dev -y
-          cargo install sea-orm-cli
-          sea-orm-cli migrate up
           cargo test
