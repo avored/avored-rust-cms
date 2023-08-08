@@ -85,7 +85,7 @@ pub async fn admin_handler(
 
     let admin_users = state
         .admin_user_repository
-        .paginate(&state.datastore, &state.database_session)
+        .paginate(&state.datastore, &state.database_session, 0)
         .await;
 
     let admin_users = match admin_users {

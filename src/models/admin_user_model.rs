@@ -36,7 +36,11 @@ pub struct AdminUserPaginate {
     pub count: i64,
     pub per_page: i64,
     pub from: i64,
-    pub to: i64
+    pub to: i64,
+    pub has_previous_page: bool,
+    pub has_next_page: bool,
+    pub next_page: i64,
+    pub previous_page: i64
 }
 
 impl AdminUserPaginate {
@@ -46,6 +50,10 @@ impl AdminUserPaginate {
             per_page: PER_PAGE,
             from: 0,
             to: 0,
+            has_previous_page: false,
+            has_next_page: false,
+            next_page: 0,
+            previous_page: 0
         }
     }
 }

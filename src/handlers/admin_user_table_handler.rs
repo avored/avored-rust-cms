@@ -12,8 +12,8 @@ use crate::providers::avored_session_provider::AvoRedSession;
 
 #[derive(Deserialize, Debug)]
 pub struct AdminUsersRequest {
-    pub current_page: Option<i64>,
-    pub per_page: Option<i64>,
+    pub current_page: Option<u64>,
+    pub per_page: Option<u64>,
 }
 
 pub async fn admin_user_table_handler(
@@ -26,21 +26,26 @@ pub async fn admin_user_table_handler(
         None => AdminUser::empty_admin_user(),
     };
 
+    println!(" QUERY : {:?}", query_param);
     let current_page: i64 = match query_param.current_page {
-        Some(current_page) => current_page,
+        Some(current_page) => current_page.try_into().unwrap(),
         None => 1,
     };
-    let per_page = match query_param.per_page {
-        Some(per_page) => per_page,
-        None => PER_PAGE,
+    let per_page: i64 = match query_param.per_page {
+        Some(per_page) => per_page.try_into().unwrap(),
+        None => PER_PAGE.try_into().unwrap(),
     };
     let from = ((current_page - 1) * per_page) + 1;
     let to = from + per_page - 1;
+    let start = from - 1;
 
+    println!("{}", current_page);
+    // let mut previous_page: i64 = 0;
+   
 
     let admin_users = state
         .admin_user_repository
-        .paginate(&state.datastore, &state.database_session)
+        .paginate(&state.datastore, &state.database_session, start)
         .await;
 
     let admin_users = match admin_users {
@@ -59,12 +64,28 @@ pub async fn admin_user_table_handler(
 
     admin_user_paginate.from = from;
     admin_user_paginate.to = to;
+    
+
+    if current_page > 1 {
+        println!("i am inside prev page");
+        admin_user_paginate.has_previous_page = true;
+        admin_user_paginate.previous_page = current_page - 1;
+    }
+
+    if to < admin_user_paginate.count {
+        admin_user_paginate.has_next_page = true;
+        let next_page  = current_page + 1;
+        println!("i am inside next page {}", (current_page + 1));
+        admin_user_paginate.next_page= next_page;
+    }
 
     let mut view_model = AdminUserTableHandlerViewModel::new();
     view_model.admin_users = admin_users;
 
     view_model.logged_in_user = logged_in_user;
     view_model.admin_user_paginate = admin_user_paginate;
+
+    println!("{:?} from: {} to: {} current_page: {}, per_page {}", view_model.admin_user_paginate, from, to, current_page, per_page);
 
     let handlebars = &state.handlebars;
 

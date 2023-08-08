@@ -20,9 +20,13 @@ impl AdminUserRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
+        start: i64
     ) -> Result<Vec<AdminUser>> {
-        let sql = "SELECT * FROM admin_users LIMIT $limit;";
-        let vars = BTreeMap::from([("limit".into(), PER_PAGE.into())]);
+        let sql = "SELECT * FROM admin_users LIMIT $limit START $start;";
+        let vars = BTreeMap::from([
+            ("limit".into(), PER_PAGE.into()),
+            ("start".into(), start.into()),
+        ]);
 
         let responses = match datastore.execute(sql, &database_session, Some(vars), false).await {
             Ok(response) => response,
