@@ -9,5 +9,11 @@
     "enter_your_confirm_password": "Enter your confirm password",
     "setup_application": "Setup Application",
     "enter_your_name": "Enter your name",
-    "name": "Name"
+    "name": "Name",
+    "admin_user": "Admin User",
+    "create_admin_user": "Create Admin User",
+    "personal_details": "Personal Details",
+    "please_fill_out_all_the_fields": "Please fill out all the fields",
+    "full_name": "Full Name",
+    "submit": "Submit"
 }

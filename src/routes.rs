@@ -1,5 +1,9 @@
 use async_session::MemoryStore;
-use axum::{routing::{get, post}, Router, middleware};
+use axum::{
+    middleware,
+    routing::{get, post},
+    Router,
+};
 use std::sync::Arc;
 use tower_http::services::ServeDir;
 
@@ -7,12 +11,16 @@ use crate::{
     avored_state::AvoRedState,
     handlers::{
         admin_handler::admin_handler, admin_login_handler::admin_login_handler,
+        create_admin_user_handler::create_admin_user_handler,
+        store_admin_user_handler::store_admin_user_handler,
+        admin_user_table_handler::admin_user_table_handler,
         authenticate_admin_user_handler::authenticate_admin_user_handler,
         home_handler::home_handler,
     },
+    middleware::require_authentication::require_authentication,
     providers::{
         avored_config_provider::AvoRedConfigProvider, avored_session_provider::SessionLayer,
-    }, middleware::require_authentication::require_authentication,
+    },
 };
 
 pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
@@ -23,6 +31,9 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
 
     Router::new()
         .route("/", get(home_handler))
+        .route("/admin/store-admin-user", post(store_admin_user_handler))
+        .route("/admin/create-admin-user", get(create_admin_user_handler))
+        .route("/admin/admin-user", get(admin_user_table_handler))
         .route("/admin", get(admin_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),

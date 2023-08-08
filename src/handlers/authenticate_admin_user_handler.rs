@@ -78,7 +78,7 @@ pub async fn authenticate_admin_user_handler(
 
     let admin_user_model = AdminUser {
         id: admin_user_model.id,
-        name: admin_user_model.name,
+        full_name: admin_user_model.full_name,
         email: admin_user_model.email,
         password: admin_user_model.password,
         created_at: admin_user_model.created_at,

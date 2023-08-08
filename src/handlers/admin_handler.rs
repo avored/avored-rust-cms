@@ -11,24 +11,17 @@ use crate::providers::avored_session_provider::AvoRedSession;
 
 pub async fn admin_handler(
     state: State<Arc<AvoRedState>>,
-    mut session: AvoRedSession,
+    session: AvoRedSession,
 ) -> impl IntoResponse {
-    println!("i am inside admin_handler");
-    let counter = match session.get("counter") {
-        Some(count) => count,
-        None => 0,
+    let logged_in_user = match session.get("logged_in_user") {
+        Some(logged_in_user) => logged_in_user,
+        None => AdminUser::empty_admin_user(),
     };
-
-    println!("{counter}");
-
-    session
-        .insert("counter", counter + 1)
-        .expect("cant store counter into session");
 
     // let datastore = &state.datastore;
     // let database_session = &state.database_session;
 
-    // let sql = "DELETE admin_users where name = 'Purvesh';";
+    // let sql = "DELETE admin_users where full_name = 'Purvesh';";
 
     // let _responses = match datastore.execute(sql, &database_session, None, false).await {
     //     Ok(response) => response,
@@ -39,7 +32,7 @@ pub async fn admin_handler(
     //     }
     // };
 
-    // let sql = "CREATE admin_users SET name = 'Purvesh';";
+    // let sql = "CREATE admin_users SET full_name = 'Purvesh';";
 
     // let _responses = match datastore.execute(sql, &database_session, None, false).await {
     //     Ok(response) => response,
@@ -91,8 +84,10 @@ pub async fn admin_handler(
         Err(_) => panic!("no data found error"),
     };
 
-    let mut view_model = GetAdminHandlerViewModel::new();
+    let mut view_model = AdminHandlerViewModel::new();
     view_model.admin_users = admin_users;
+
+    view_model.logged_in_user = logged_in_user;
 
     let handlebars = &state.handlebars;
 
@@ -106,15 +101,18 @@ pub async fn admin_handler(
 }
 
 #[derive(Serialize)]
-pub struct GetAdminHandlerViewModel {
+pub struct AdminHandlerViewModel {
+    logged_in_user: AdminUser,
     validation_email_message: String,
     validation_password_message: String,
     admin_users: Vec<AdminUser>,
 }
 
-impl GetAdminHandlerViewModel {
+impl AdminHandlerViewModel {
     fn new() -> Self {
-        GetAdminHandlerViewModel {
+        let logged_in_user = AdminUser::empty_admin_user();
+        AdminHandlerViewModel {
+            logged_in_user,
             validation_email_message: String::from(""),
             validation_password_message: String::from(""),
             admin_users: vec![],

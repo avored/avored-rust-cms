@@ -19,11 +19,13 @@ pub async fn require_authentication<T>(
         return Err(Redirect::to("/admin/login").into_response());
     }
 
+    // println!("{:?}", request.headers());
+
     let token_data: AdminUser = decoded.unwrap();
 
     let user = AdminUser {
         id: token_data.id,
-        name: token_data.name,
+        full_name: token_data.full_name,
         email: token_data.email,
         password: token_data.password,
         created_at: token_data.created_at,

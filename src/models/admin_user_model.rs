@@ -7,7 +7,7 @@ use crate::error::{Error, Result};
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct AdminUser {
     pub id: String,
-    pub name: String,
+    pub full_name: String,
     pub email: String,
     pub password: String,
     pub created_at: Datetime,
@@ -20,7 +20,7 @@ impl AdminUser {
     pub fn empty_admin_user() -> Self {
         AdminUser {
             id: String::from(""),
-            name: String::from(""),
+            full_name: String::from(""),
             email: String::from(""),
             password: String::from(""),
             created_at: Datetime::from(chrono::Utc::now()),
@@ -39,7 +39,7 @@ impl TryFrom<Object> for AdminUser {
             None => Value::Null,
         };
 
-        let name = match val.get("name") {
+        let full_name = match val.get("full_name") {
             Some(val) => val.clone(),
             None => Value::Null,
         };
@@ -70,7 +70,7 @@ impl TryFrom<Object> for AdminUser {
 
         Ok(AdminUser {
             id: id.as_raw_string(),
-            name: name.as_raw_string(),
+            full_name: full_name.as_raw_string(),
             email: email.as_raw_string(),
             password: password.as_raw_string(),
             created_at: created_at.as_datetime(),

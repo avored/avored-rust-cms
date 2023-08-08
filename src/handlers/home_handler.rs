@@ -20,7 +20,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
         .to_string();
 
     let vars = BTreeMap::from([
-        ("name".into(), "Admin".into()),
+        ("full_name".into(), "Admin".into()),
         ("email".into(), "admin@admin.com".into()),
         ("password".into(), password_hash.as_str().into()),
     ]);
@@ -31,7 +31,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
         REMOVE TABLE admin_users;
         DEFINE TABLE admin_users;
 
-        DEFINE FIELD name ON TABLE admin_users TYPE string;
+        DEFINE FIELD full_name ON TABLE admin_users TYPE string;
         DEFINE FIELD email ON TABLE admin_users TYPE string;
         DEFINE FIELD password ON TABLE admin_users TYPE string;
         DEFINE FIELD created_by ON TABLE admin_users TYPE string;
@@ -41,11 +41,11 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
         DEFINE INDEX admin_users_email_index ON TABLE admin_users COLUMNS email UNIQUE;
 
         CREATE admin_users CONTENT {
-            name: $name,
+            full_name: $full_name,
             email: $email,
             password: $password,
-            created_by: $name,
-            updated_by: $name,
+            created_by: $full_name,
+            updated_by: $full_name,
             created_at: time::now(),
             updated_at: time::now()
         };
