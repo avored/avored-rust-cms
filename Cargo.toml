@@ -17,11 +17,11 @@ futures = "0.3.28"
 handlebars = { version = "4.3.7", features = ["dir_source"] }
 log = "0.4.19"
 r_i18n = "1.0.1"
-serde = { version = "1.0.180", features = ["derive"] }
-serde_derive = "1.0.180"
+serde = { version = "1.0.183", features = ["derive"] }
+serde_derive = "1.0.183"
 serde_json = "1.0.104"
 surrealdb = { git = "https://github.com/surrealdb/surrealdb.git", tag = "v1.0.0-beta.9", features = ["kv-rocksdb"]}
-tokio = { version = "1", features = ["full"] }
+tokio = { version = "1.29.1", features = ["full"] }
 tower = "0.4.13"
 tower-http = { version = "0.4.3", features = ["fs"] }
 validator = { version = "0.16.1", features = ["derive"] }

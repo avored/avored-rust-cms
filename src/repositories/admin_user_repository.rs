@@ -4,8 +4,9 @@ use surrealdb::dbs::{Response, Session};
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Array, Object};
 
+use crate::PER_PAGE;
 use crate::error::Result;
-use crate::models::admin_user_model::AdminUser;
+use crate::models::admin_user_model::{AdminUser, AdminUserPaginate};
 use crate::models::W;
 
 pub struct AdminUserRepository {}
@@ -20,9 +21,10 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
     ) -> Result<Vec<AdminUser>> {
-        let sql = "SELECT * FROM admin_users;";
+        let sql = "SELECT * FROM admin_users LIMIT $limit;";
+        let vars = BTreeMap::from([("limit".into(), PER_PAGE.into())]);
 
-        let responses = match datastore.execute(sql, &database_session, None, false).await {
+        let responses = match datastore.execute(sql, &database_session, Some(vars), false).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -62,6 +64,40 @@ impl AdminUserRepository {
         };
 
         Ok(admin_users)
+    }
+
+    pub async fn no_of_record (
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<AdminUserPaginate> {
+        let sql = "SELECT count() FROM admin_users GROUP ALL;";
+
+        let responses = match datastore.execute(sql, &database_session, None, false).await {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response.result.expect(
+            "there is an issue with receiving the respoinse result of surreal db query response",
+        ).first();
+
+        let result_admin_users_count: Result<Object> = W(result).try_into();
+
+        let admin_users_count: Result<AdminUserPaginate> = match result_admin_users_count {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(AdminUserPaginate::empty_admin_user_paginate()),
+        };
+
+        admin_users_count
     }
 
     pub async fn find_by_email(

@@ -1,8 +1,8 @@
 use serde::Serialize;
 use serde_derive::Deserialize;
-use surrealdb::sql::{Object, Value, Datetime};
+use surrealdb::sql::{Datetime, Object, Value};
 
-use crate::error::{Error, Result};
+use crate::{error::{Error, Result}, PER_PAGE};
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct AdminUser {
@@ -28,7 +28,41 @@ impl AdminUser {
             created_by: String::from(""),
             updated_by: String::from(""),
         }
-    } 
+    }
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct AdminUserPaginate {
+    pub count: i64,
+    pub per_page: i64,
+    pub from: i64,
+    pub to: i64
+}
+
+impl AdminUserPaginate {
+    pub fn empty_admin_user_paginate() -> Self {
+        AdminUserPaginate {
+            count: 0,
+            per_page: PER_PAGE,
+            from: 0,
+            to: 0,
+        }
+    }
+}
+
+
+impl TryFrom<Object> for AdminUserPaginate {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<AdminUserPaginate> {
+        let count = match val.get("count") {
+            Some(val) => val.clone(),
+            None => Value::Null,
+        };
+        let mut admin_user_paginate = AdminUserPaginate::empty_admin_user_paginate();
+        admin_user_paginate.count = count.as_int();
+
+        Ok(admin_user_paginate)
+    }
 }
 
 impl TryFrom<Object> for AdminUser {

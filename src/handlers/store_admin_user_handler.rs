@@ -6,7 +6,6 @@ use argon2::password_hash::rand_core::OsRng;
 use axum::Form;
 use axum::extract::State;
 use axum::response::{IntoResponse, Redirect};
-use serde_derive::Serialize;
 use surrealdb::dbs::Response;
 use validator::{ValidationErrors, ValidationErrorsKind, HasLen, Validate};
 
@@ -41,10 +40,8 @@ pub async fn store_admin_user_handler(
                         Some(message) => message,
                         None => continue,
                     };
-                    println!("{:?}", message.is_empty());
 
                     if !message.is_empty() {
-                        // let key = field_name.clone();
                         let validation_key = format!("validation_error_{}", field_name);
                         session
                             .insert(&validation_key, message)

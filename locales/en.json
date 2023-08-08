@@ -15,5 +15,12 @@
     "personal_details": "Personal Details",
     "please_fill_out_all_the_fields": "Please fill out all the fields",
     "full_name": "Full Name",
-    "submit": "Submit"
+    "submit": "Submit",
+    "edit": "Edit",
+    "email": "Email",
+    "created_at": "Created At",
+    "created_by": "Created By",
+    "updated_at": "Updated At",
+    "updated_by": "Updated By",
+    "results": "Results"
 }

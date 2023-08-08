@@ -1,5 +1,5 @@
 use crate::error::{Error, Result};
-use surrealdb::sql::{Array, Object, Value, Datetime};
+use surrealdb::sql::{Array, Object, Value, Datetime, Number};
 
 pub mod admin_user_model;
 
@@ -59,6 +59,15 @@ impl TryFrom<W<Value>> for Datetime {
 	}
 }
 
+impl TryFrom<W<Value>> for Number {
+	type Error = Error;
+	fn try_from(val: W<Value>) -> Result<Number> {
+		match val.0 {
+			Value::Number(obj) => Ok(obj),
+			_ => Err(Error::XValueNotOfType("number")),
+		}
+	}
+}
 
 
 impl TryFrom<W<Value>> for Object {

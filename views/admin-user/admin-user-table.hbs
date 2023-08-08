@@ -36,11 +36,11 @@
 </div>
 <div>
     <!-- -->
-    <div class="bg-gray-100">
+    <div class="mt-5">
         
         <div class="px-4 mx-auto">
             
-            <div class="mt-6 md:flex md:items-center md:justify-between">
+            <!-- <div class="t-6 md:flex md:items-center md:justify-between">
 
                 <div class="ml-auto flex items-center mt-4 md:mt-0">
                     <span class="absolute">
@@ -56,7 +56,7 @@
                     <input type="text" placeholder="Search"
                         class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
                 </div>
-            </div>
+            </div> -->
 
             <div class="flex flex-col mt-6">
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -73,10 +73,10 @@
                                             <button
                                                 class="flex items-center gap-x-3 focus:outline-none">
                                                 <span>
-                                                    Name
+                                                    {{ translate_key "full_name" ~}}
                                                 </span>
 
-                                                <svg class="h-3"
+                                                <!-- <svg class="h-3"
                                                     viewBox="0 0 10 11"
                                                     fill="none"
                                                     xmlns="http://www.w3.org/2000/svg">
@@ -95,37 +95,37 @@
                                                         fill="currentColor"
                                                         stroke="currentColor"
                                                         stroke-width="0.3" />
-                                                </svg>
+                                                </svg> -->
                                             </button>
                                         </th>
 
                                         <th scope="col"
                                             class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            Email
+                                            {{ translate_key "email" ~}}
                                         </th>
 
                                         <th scope="col"
                                             class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            Created At
+                                            {{ translate_key "created_at" ~}}
                                         </th>
 
                                         <th scope="col"
                                             class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            Updated At
+                                            {{ translate_key "updated_at" ~}}
                                         </th>
 
                                         <th scope="col"
                                             class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            Created By
+                                            {{ translate_key "created_by" ~}}
                                         </th>
                                         <th scope="col"
                                             class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            Updated By
+                                            {{ translate_key "updated_by" ~}}
                                         </th>
 
                                         <th scope="col"
                                             class="relative py-3.5 px-4">
-                                            <span class="sr-only">Edit</span>
+                                            <span class="sr-only">{{ translate_key "edit" ~}}</span>
                                         </th>
                                     </tr>
                                 </thead>
@@ -210,9 +210,10 @@
 
             <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                    Page <span
-                        class="font-medium text-gray-700 dark:text-gray-100">1
-                        of 10</span>
+                    {{ translate_key "results" ~}} 
+                    <span class="font-medium text-gray-700 dark:text-gray-100">
+                        {{ admin_user_paginate.from }} to {{ admin_user_paginate.to }}
+                    </span>
                 </div>
 
                 <div class="flex items-center mt-4 gap-x-4 sm:mt-0">

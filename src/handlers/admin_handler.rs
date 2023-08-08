@@ -6,7 +6,7 @@ use axum::response::{Html, IntoResponse};
 use serde_derive::Serialize;
 
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::AdminUser;
+use crate::models::admin_user_model::{AdminUser, AdminUserPaginate};
 use crate::providers::avored_session_provider::AvoRedSession;
 
 pub async fn admin_handler(
@@ -74,6 +74,15 @@ pub async fn admin_handler(
     //     Err(_) => panic!("some errror"),
     // };
 
+    let admin_user_paginate  = match state
+        .admin_user_repository
+        .no_of_record(&state.datastore, &state.database_session)
+        .await
+    {
+        Ok(count) => count,
+        Err(_) => AdminUserPaginate::empty_admin_user_paginate(),
+    };
+
     let admin_users = state
         .admin_user_repository
         .paginate(&state.datastore, &state.database_session)
@@ -88,6 +97,7 @@ pub async fn admin_handler(
     view_model.admin_users = admin_users;
 
     view_model.logged_in_user = logged_in_user;
+    view_model.admin_user_paginate = admin_user_paginate;
 
     let handlebars = &state.handlebars;
 
@@ -106,6 +116,7 @@ pub struct AdminHandlerViewModel {
     validation_email_message: String,
     validation_password_message: String,
     admin_users: Vec<AdminUser>,
+    admin_user_paginate: AdminUserPaginate
 }
 
 impl AdminHandlerViewModel {
@@ -116,6 +127,7 @@ impl AdminHandlerViewModel {
             validation_email_message: String::from(""),
             validation_password_message: String::from(""),
             admin_users: vec![],
+            admin_user_paginate: AdminUserPaginate::empty_admin_user_paginate()
         }
     }
 }
