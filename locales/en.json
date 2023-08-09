@@ -22,5 +22,7 @@
     "created_by": "Created By",
     "updated_at": "Updated At",
     "updated_by": "Updated By",
-    "results": "Results"
+    "results": "Results",
+    "previous": "Previous",
+    "next": "Next"
 }

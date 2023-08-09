@@ -1,6 +1,7 @@
 import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus'
- 
+import feather from 'feather-icons' 
+
 Alpine.plugin(focus)
  
 
@@ -12,3 +13,5 @@ window.Alpine = Alpine;
 
 
 Alpine.start();
+
+feather.replace()
