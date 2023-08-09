@@ -12,7 +12,9 @@ use crate::{
     handlers::{
         admin_handler::admin_handler, admin_login_handler::admin_login_handler,
         create_admin_user_handler::create_admin_user_handler,
+        edit_admin_user_handler::edit_admin_user_handler,
         store_admin_user_handler::store_admin_user_handler,
+        update_admin_user_handler::update_admin_user_handler,
         admin_user_table_handler::admin_user_table_handler,
         authenticate_admin_user_handler::authenticate_admin_user_handler,
         home_handler::home_handler,
@@ -32,6 +34,8 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
     Router::new()
         .route("/", get(home_handler))
         .route("/admin/store-admin-user", post(store_admin_user_handler))
+        .route("/admin/edit-admin-user/:admin_user_id", get(edit_admin_user_handler))
+        .route("/admin/update-admin-user/:admin_user_id", post(update_admin_user_handler))
         .route("/admin/create-admin-user", get(create_admin_user_handler))
         .route("/admin/admin-user", get(admin_user_table_handler))
         .route("/admin", get(admin_handler))

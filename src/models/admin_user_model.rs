@@ -80,6 +80,11 @@ impl TryFrom<Object> for AdminUser {
             Some(val) => val.clone(),
             None => Value::Null,
         };
+        let id = id.as_raw_string();
+        let identifier = match id.split(":").nth(1) {
+            Some(id) => id,
+            None => ""
+        };
 
         let full_name = match val.get("full_name") {
             Some(val) => val.clone(),
@@ -111,7 +116,7 @@ impl TryFrom<Object> for AdminUser {
         };
 
         Ok(AdminUser {
-            id: id.as_raw_string(),
+            id: identifier.to_string(),
             full_name: full_name.as_raw_string(),
             email: email.as_raw_string(),
             password: password.as_raw_string(),

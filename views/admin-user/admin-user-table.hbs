@@ -69,7 +69,7 @@
                                 <thead class="bg-gray-50 dark:bg-gray-800">
                                     <tr>
                                         <th scope="col"
-                                            class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="py-2 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             <button
                                                 class="flex items-center gap-x-3 focus:outline-none">
                                                 <span>
@@ -100,26 +100,26 @@
                                         </th>
 
                                         <th scope="col"
-                                            class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "email" ~}}
                                         </th>
 
                                         <th scope="col"
-                                            class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "created_at" ~}}
                                         </th>
 
                                         <th scope="col"
-                                            class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "updated_at" ~}}
                                         </th>
 
                                         <th scope="col"
-                                            class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "created_by" ~}}
                                         </th>
                                         <th scope="col"
-                                            class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "updated_by" ~}}
                                         </th>
 
@@ -133,22 +133,22 @@
                                     class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                                     {{#each admin_users as |admin_user|}}
                                         <tr>
-                                            <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
+                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
                                                 {{ admin_user.full_name }}
                                             </td>
                                             <td
-                                                class="px-12 py-4 text-sm font-medium whitespace-nowrap">
+                                                class="px-4 py-1 text-sm font-medium whitespace-nowrap">
                                                 <!-- <div
                                                     class="inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800"> -->
                                                     {{ admin_user.email }}
                                                 <!-- </div> -->
                                             </td>
                                             <td
-                                                class="px-4 py-4 text-sm whitespace-nowrap">
+                                                class="px-4 py-1 text-sm whitespace-nowrap">
                                                 {{ admin_user.created_at }}
                                             </td>
                                             <td
-                                                class="px-4 py-4 text-sm whitespace-nowrap">
+                                                class="px-4 py-1 text-sm whitespace-nowrap">
                                                 <!-- <div class="flex items-center">
                                                     <img
                                                         class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
@@ -173,30 +173,21 @@
                                             </td>
 
                                             <td
-                                                class="px-4 py-4 text-sm whitespace-nowrap">
+                                                class="px-4 py-1 text-sm whitespace-nowrap">
                                                 {{ admin_user.created_by }}
                                             </td>
                                             <td
-                                                class="px-4 py-4 text-sm whitespace-nowrap">
+                                                class="px-4 py-1 text-sm whitespace-nowrap">
                                                 {{ admin_user.updated_by }}
                                             </td>
 
                                             <td
-                                                class="px-4 py-4 text-sm whitespace-nowrap">
-                                                <button
-                                                    class="px-1 py-1 text-gray-500 transition-colors duration-200 rounded-lg dark:text-gray-300 hover:bg-gray-100">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke-width="1.5"
-                                                        stroke="currentColor"
-                                                        class="w-6 h-6">
-                                                        <path stroke-linecap="round"
-                                                            stroke-linejoin="round"
-                                                            d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                                                    </svg>
-                                                </button>
+                                                class="px-4 py-1 text-sm whitespace-nowrap">
+                                                <a
+                                                    href="/admin/edit-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500">
+                                                    <i class="w-4 h-4" data-feather="more-vertical"></i>
+                                                </a>
                                             </td>
                                         </tr>
                                     {{/each}}

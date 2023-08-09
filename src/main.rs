@@ -14,7 +14,7 @@ mod requests;
 mod middleware;
 mod responses;
 
-const PER_PAGE: i64 = 2;
+const PER_PAGE: i64 = 10;
 
 #[tokio::main]
 async fn main() {

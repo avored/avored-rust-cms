@@ -142,4 +142,47 @@ impl AdminUserRepository {
 
         admin_user
     }
+
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        id: String,
+    ) -> Result<AdminUser> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars = BTreeMap::from([
+            ("table".into(), "admin_users".into()),
+            ("id".into(), id.into())
+        ]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), false)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response.result.expect(
+            "there is an issue with receiving the respoinse result of surreal db query response",
+        ).first();
+        
+        let result_admin_users: Result<Object> = W(result).try_into();
+
+        let admin_user: Result<AdminUser> = match result_admin_users {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(AdminUser::empty_admin_user()),
+        };
+
+        admin_user
+    }
+
 }
