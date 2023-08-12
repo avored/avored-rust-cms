@@ -13,28 +13,52 @@
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
             <form class="space-y-5" action="/admin/login" method="POST">
+                <div>
+                    {{> components/label 
+                        label=(translate_key "email_address")
+                        for="email"
+                    }}
+                    <div class="mt-1">
+                        {{> components/input 
+                            type="email"
+                            name="email"
+                            value="admin@admin.com"
+                            is_required=true
+                            class=""
+                            placeholder=(translate_key "enter_your_email")
+                        }}
+                    </div>
+                    {{#if validation_email_message  }}
+                        {{> components/input-error 
+                            error_message=validation_email_message
+                        }}
+                    {{/if}}
+                </div>
 
-                {{> components/input 
-                    label=(translate_key "email_address")
-                    type="email"
-                    name="email"
-                    value="admin@admin.com"
-                    is_required=true
-                    class=""
-                    placeholder=(translate_key "enter_your_email_address")
-                    error_message=validation_email_message
-                }}
+                <div>
+                    {{> components/label 
+                        label=(translate_key "password")
+                        for="password"
+                    }}
+                    <div class="mt-1">
+                        {{> components/input 
+                            type="password"
+                            name="password"
+                            value="admin123"
+                            is_required=true
+                            class=""
+                            placeholder=(translate_key "enter_your_password")
+                        }}
+                    </div>
+                    {{#if validation_password_message  }}
+                        {{> components/input-error 
+                            error_message=validation_password_message
+                        }}
+                    {{/if}}
+                </div>
 
-                {{> components/input 
-                    label=(translate_key "password")
-                    type="password"
-                    name="password"
-                    value="admin123"
-                    is_required=true
-                    class=""
-                    placeholder=(translate_key "enter_your_password")
-                    error_message=validation_password_message
-                }}
+
+            
 
                 <div class="flex items-center justify-end">
                     <div class="text-sm">

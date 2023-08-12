@@ -26,5 +26,9 @@
     "previous": "Previous",
     "next": "Next",
     "create_page": "Create Page",
-    "create_component": "Create Component"
+    "create_component": "Create Component",
+    "component": "Component",
+    "identifier": "Identifier",
+    "enter_identifier": "Enter Identifier",
+    "enter_name": "Enter Name"
 }
