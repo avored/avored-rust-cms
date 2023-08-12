@@ -1,0 +1,32 @@
+{{#*inline "page_content"}}
+<div
+    class="border-b bg-white border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
+    <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
+        <div>
+            <div class="flex items-center">
+                <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+                    {{translate_key "create_component" ~}}
+                </h2>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div>
+    <!-- -->
+    <div class="px-4">
+        <form  action="/admin/store-page" method="post">
+            <div class="my-6 flex w-full  justify-center items-center border border-dotted">
+                {{> components/input}}
+                <div class="p-3 flex items-center">
+                    Create Component
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{/inline}}
+
+{{> layout/app}}

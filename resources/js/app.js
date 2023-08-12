@@ -6,8 +6,10 @@ Alpine.plugin(focus)
  
 
 import MultiSelect from './multi-select'
+import PageBuilder from './page-builder'
 
 Alpine.data('multiselect', MultiSelect)
+Alpine.data('page_builder', PageBuilder)
 
 window.Alpine = Alpine;
 

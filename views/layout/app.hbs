@@ -59,12 +59,12 @@
             <!-- Section Devider -->
             <div
               class="section border-b pt-4 mb-4 text-xs text-gray-600 border-gray-700 pb-1 pl-3">
-              Work
+              Content Manager
             </div>
 
             <!-- ITEM -->
             <li class="text-sm text-gray-500 ">
-              <a href="#"
+              <a href="/admin/create-page"
                 class="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
                 <div class="pr-2">
                   <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24"
@@ -74,7 +74,12 @@
                       d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                   </svg>
                 </div>
-                <div>Tasks </div>
+                <div>{{ translate_key "create_page" ~}}</div>
+              </a>
+              <a href="/admin/create-component"
+                class="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                <div class="pr-2"><i data-feather="compass" class="h-5 w-5"></i></div>
+                <div>{{ translate_key "create_component" ~}}</div>
               </a>
             </li>
 
@@ -148,7 +153,7 @@
       <div class="flex-1 flex-col flex">
 
         <!-- Top navbar -->
-        <nav class="bg-gray-800 shadow-xl sticky w-full top-0 text-black z-50"
+        <nav class="bg-slate-800 shadow-xl sticky w-full top-0 text-black z-50"
           x-data="{ mobilemenue: false }">
           <div class="mx-auto ">
             <div class="flex items-stretch justify-between h-16">
@@ -396,7 +401,7 @@
         <main class="bg-white mb-auto w-full">
           {{>page_content}}
         </main>
-        <footer class="border-t p-4 pb-3 text-xs bg-gray-100">
+        <footer class="border-t p-4 pb-3 text-xs bg-slate-100">
           2023 &copy; Design & Develop by AvoRed.
         </footer>
       </div>

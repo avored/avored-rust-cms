@@ -24,5 +24,7 @@
     "updated_by": "Updated By",
     "results": "Results",
     "previous": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "create_page": "Create Page",
+    "create_component": "Create Component"
 }

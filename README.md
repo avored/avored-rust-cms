@@ -57,3 +57,7 @@ How to render a variable in handlebar template
 How to call heloper method in handlebar template 
 
     {{ helper_method_name "argument" ~}}
+
+
+How to start a surrealdb
+    surreal start --log trace --user root --pass root

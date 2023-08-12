@@ -5,12 +5,6 @@
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
             {{translate_key "sign_into_your_account" ~}}
         </h2>
-        <p class="mt-2 text-center text-sm text-gray-600 max-w">
-            Or
-            <a href="#" class="font-medium text-blue-600 hover:text-blue-500">
-                create an account
-            </a>
-        </p>
     </div>
     <div>
 
@@ -18,39 +12,29 @@
 
     <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-            <form class="space-y-6" action="/admin/login" method="POST">
+            <form class="space-y-5" action="/admin/login" method="POST">
 
-                <div>
-                    <label for="email"
-                        class="block text-sm font-medium text-gray-700">
-                        Email address
-                    </label>
-                    <div class="mt-1">
-                        <input id="email" name="email" value="admin@admin.com"
-                            type="email" autocomplete="email" required
-                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                            placeholder="Enter your email address">
-                    </div>
-                    <div class="text-sm text-red-600 mt-3 p-2">
-                        {{ validation_email_message }}
-                    </div>
-                </div>
+                {{> components/input 
+                    label=(translate_key "email_address")
+                    type="email"
+                    name="email"
+                    value="admin@admin.com"
+                    is_required=true
+                    class=""
+                    placeholder=(translate_key "enter_your_email_address")
+                    error_message=validation_email_message
+                }}
 
-                <div>
-                    <label for="password"
-                        class="block text-sm font-medium text-gray-700">
-                        Password
-                    </label>
-                    <div class="mt-1">
-                        <input id="password" value="admin123" name="password"
-                            type="password"
-                            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
-                            placeholder="Enter your password">
-                    </div>
-                    <div class="text-sm text-red-600 mt-3 p-2">
-                        {{ validation_password_message }}
-                    </div>
-                </div>
+                {{> components/input 
+                    label=(translate_key "password")
+                    type="password"
+                    name="password"
+                    value="admin123"
+                    is_required=true
+                    class=""
+                    placeholder=(translate_key "enter_your_password")
+                    error_message=validation_password_message
+                }}
 
                 <div class="flex items-center justify-end">
                     <div class="text-sm">
@@ -68,7 +52,6 @@
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>

@@ -13,6 +13,7 @@ impl AvoRedDatabaseProvider {
             .await
             .expect("there is issue with connecting with data/avored.db storage");
 
+        println!("ns:{} db: {}", config.database_namespace.clone(), config.database_name.clone());
         let database_session = Session::for_db(
             config.database_namespace.clone(),
             config.database_name.clone(),

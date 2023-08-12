@@ -7,3 +7,5 @@ pub mod create_admin_user_handler;
 pub mod store_admin_user_handler;
 pub mod edit_admin_user_handler;
 pub mod update_admin_user_handler;
+pub mod create_page_handler;
+pub mod create_component_handler;

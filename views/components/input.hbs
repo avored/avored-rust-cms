@@ -1,0 +1,25 @@
+<div>
+    <label for="{{ name }}"
+        class="block text-sm font-medium text-gray-700">
+        <!-- Email address -->
+        {{ label }}
+    </label>
+    <div class="mt-1">
+        <input
+            id="{{ name }}" 
+            name="{{ name }}" 
+            value="{{ value }}"
+            type="{{ type }}" 
+            {{#if is_required}}
+                required
+            {{/if}}
+            placeholder="{{ placeholder}}"
+            class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm focus:z-10 {{ class }}"
+        />
+    </div>
+    {{#if error_message  }}
+    <div class="text-sm text-red-600 mt-2">
+        {{ error_message }}
+    </div>
+    {{/if}}
+</div>
