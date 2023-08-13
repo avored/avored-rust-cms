@@ -36,5 +36,13 @@ export default () => ({
 
         return identifierValues.join(',')
     },
+    getItemTypeValue() {
+        let typeValues = [];
+        this.data.map(x =>  {
+          typeValues.push(x.type_value)
+        })
+
+        return typeValues.join(',')
+    },
   });
   

@@ -17,12 +17,12 @@
 <div>
     <!-- -->
     <div class="px-4">
-        <form action="/admin/store-admin-user" method="post">
+        <form action="/admin/store-component" method="post">
             <div
                 class="mb-6 ">
                 <div
-                    class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
-                    <div class="text-gray-600">
+                    class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-4">
+                    <div class="text-gray-600 col-span-4 lg:col-span-1">
                         <p class="font-medium text-lg">
                             {{ translate_key "personal_details" ~}} 
                         </p>
@@ -31,7 +31,7 @@
                         </p>
                     </div>
 
-                    <div class="lg:col-span-2">
+                    <div class="col-span-4 lg:col-span-3">
                         <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
                             <div class="md:col-span-6">
                                 {{> components/label 
@@ -44,7 +44,7 @@
                                         type="text"
                                         name="name"
                                         value=""
-                                        is_required=true
+                                        is_required=false
                                         class=""
                                         placeholder=(translate_key "enter_name")
                                     }}
@@ -69,7 +69,7 @@
                                         type="text"
                                         name="identifier"
                                         value=""
-                                        is_required=true
+                                        is_required=false
                                         class=""
                                         placeholder=(translate_key "enter_identifier")
                                     }}
@@ -84,8 +84,10 @@
                             </div>
                           
                             <div class="md:col-span-6 mt-5" x-data="field_builder">
+                                <input type="hidden" name="test" value='{"test": {"field_name" :"test", "field_type": "text", "field_value": "seo title" } }' />
                                 <input type="hidden" name="field_names" x-model="getItemNameValue" value="" />
                                 <input type="hidden" name="field_identifiers"  x-model="getItemIdentifierValue" value="" />
+                                <input type="hidden" name="field_types"  x-model="getItemTypeValue" value="" />
 
                                 <template x-for="(item, index) in data" :key="item.identifier">
                                     <div class="bg-slate-50 rounded mb-5 shadow px-5 py-3 w-full">
@@ -100,7 +102,7 @@
                                                 <div class="mt-2">
                                                     <select x-on:change="setFieldType($event, item.identifier)">
                                                         <option value="">
-                                                            {{ translate_key "please_selecr" ~}}
+                                                            {{ translate_key "please_select" ~}}
                                                         </option>
                                                         <option value="text">
                                                             {{ translate_key "text" ~}}

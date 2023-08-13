@@ -20,6 +20,7 @@ use crate::{
         home_handler::home_handler,
         create_page_handler::create_page_handler,
         create_component_handler::create_component_handler,
+        store_component_handler::store_component_handler,
     },
     middleware::require_authentication::require_authentication,
     providers::{
@@ -35,6 +36,7 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
 
     Router::new()
         .route("/", get(home_handler))
+        .route("/admin/store-component", post(store_component_handler))
         .route("/admin/create-component", get(create_component_handler))
         .route("/admin/create-page", get(create_page_handler))
         .route("/admin/store-admin-user", post(store_admin_user_handler))
