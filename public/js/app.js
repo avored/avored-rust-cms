@@ -4004,7 +4004,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var feather_icons__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! feather-icons */ "./node_modules/feather-icons/dist/feather.js");
 /* harmony import */ var feather_icons__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(feather_icons__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var _multi_select__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./multi-select */ "./resources/js/multi-select.js");
-/* harmony import */ var _page_builder__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./page-builder */ "./resources/js/page-builder.js");
+/* harmony import */ var _field_builder__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./field-builder */ "./resources/js/field-builder.js");
 
 
 
@@ -4012,10 +4012,70 @@ alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].plugin(_alpinejs_focus__WEBPACK
 
 
 alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].data('multiselect', _multi_select__WEBPACK_IMPORTED_MODULE_3__["default"]);
-alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].data('page_builder', _page_builder__WEBPACK_IMPORTED_MODULE_4__["default"]);
+alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].data('field_builder', _field_builder__WEBPACK_IMPORTED_MODULE_4__["default"]);
 window.Alpine = alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"];
 alpinejs__WEBPACK_IMPORTED_MODULE_0__["default"].start();
 feather_icons__WEBPACK_IMPORTED_MODULE_2___default().replace();
+
+/***/ }),
+
+/***/ "./resources/js/field-builder.js":
+/*!***************************************!*\
+  !*** ./resources/js/field-builder.js ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function () {
+  return {
+    data: [],
+    init: function init() {
+      console.log("field builder init");
+    },
+    addFieldButtonOnClick: function addFieldButtonOnClick() {
+      console.log('identifier', new Date().getTime());
+      this.data.push({
+        identifier: new Date().getTime()
+      });
+    },
+    setFieldType: function setFieldType(event, identifier) {
+      var field = this.data.find(function (x) {
+        return x.identifier === identifier;
+      });
+      field.type = event.target.value;
+    },
+    setFieldNameValue: function setFieldNameValue(event, identifier) {
+      var field = this.data.find(function (x) {
+        return x.identifier === identifier;
+      });
+      field.name_value = event.target.value;
+    },
+    setFieldIdentifierValue: function setFieldIdentifierValue(event, identifier) {
+      var field = this.data.find(function (x) {
+        return x.identifier === identifier;
+      });
+      field.identifier_value = event.target.value;
+    },
+    getItemNameValue: function getItemNameValue() {
+      var nameValues = [];
+      this.data.map(function (x) {
+        nameValues.push(x.name_value);
+      });
+      return nameValues.join(',');
+    },
+    getItemIdentifierValue: function getItemIdentifierValue() {
+      var identifierValues = [];
+      this.data.map(function (x) {
+        identifierValues.push(x.identifier_value);
+      });
+      return identifierValues.join(',');
+    }
+  };
+});
 
 /***/ }),
 
@@ -4246,30 +4306,6 @@ function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input ==
           })
         };
       });
-    }
-  };
-});
-
-/***/ }),
-
-/***/ "./resources/js/page-builder.js":
-/*!**************************************!*\
-  !*** ./resources/js/page-builder.js ***!
-  \**************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (function () {
-  return {
-    init: function init() {
-      console.log("page builder init");
-    },
-    addSectionOnClick: function addSectionOnClick() {
-      console.log("add section");
     }
   };
 });

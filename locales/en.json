@@ -30,5 +30,10 @@
     "component": "Component",
     "identifier": "Identifier",
     "enter_identifier": "Enter Identifier",
-    "enter_name": "Enter Name"
+    "enter_name": "Enter Name",
+    "field_name": "Field Name",
+    "field_identifier": "Field Identifier",
+    "field_type": "Field Type",
+    "please_select": "Please Select",
+    "text": "Text"
 }
