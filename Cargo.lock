@@ -216,6 +216,7 @@ version = "0.1.0"
 dependencies = [
  "argon2",
  "async-session",
+ "avored_form_data",
  "axum",
  "axum-extra",
  "chrono",
@@ -234,6 +235,10 @@ dependencies = [
  "tower-http",
  "validator",
 ]
+
+[[package]]
+name = "avored_form_data"
+version = "0.1.0"
 
 [[package]]
 name = "axum"
