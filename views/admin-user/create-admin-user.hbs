@@ -17,7 +17,7 @@
 <div>
     <!-- -->
     <div class="px-4">
-        <form action="/admin/store-admin-user" method="post">
+        <form enctype="multipart/form-data" action="/admin/store-admin-user" method="post">
             <div
                 class="mb-6 ">
                 <div
@@ -32,9 +32,31 @@
                     </div>
 
                     <div class="lg:col-span-2">
+
                         <div
                             class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
+
                             <div class="md:col-span-6">
+                                <div class="flex items-center">
+                                    <div>
+                                        <div class="flex items-center justify-center text-5xl text-white rounded-full h-32 w-32 bg-primary-500">
+                                            A
+                                        </div>
+                                    </div>
+
+                                    <div class="ml-5">
+                                        {{> components/input 
+                                            type="file"
+                                            name="image"
+                                            value=""
+                                            class=""
+                                        }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <div class="md:col-span-6 mt-5">
                                 <label for="full_name">
                                     {{ translate_key "full_name" ~}}
                                 </label>
@@ -54,7 +76,7 @@
                                     {{ translate_key "email_address" ~}}
                                 </label>
                                 <div class="mt-1">
-                                    <input id="email" name="email" value=""
+                                    <input id="email" name="email" value="admin@admin.com"
                                         type="text" 
                                         class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                                     />
@@ -69,7 +91,7 @@
                                     {{ translate_key "password" ~}}
                                 </label>
                                 <div class="mt-1">
-                                    <input id="password" name="password" value=""
+                                    <input id="password" name="password" value="admin123"
                                         type="password" 
                                         class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                                     />
@@ -85,7 +107,7 @@
                                 </label>
                             
                                     <div class="mt-1">
-                                        <input id="confirmation_password" name="confirmation_password" value=""
+                                        <input id="confirmation_password" name="confirmation_password" value="admin123"
                                             type="password"
                                             class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
                                         />

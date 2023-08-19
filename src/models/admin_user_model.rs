@@ -10,6 +10,7 @@ pub struct AdminUser {
     pub full_name: String,
     pub email: String,
     pub password: String,
+    pub profile_image: String,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -23,6 +24,7 @@ impl AdminUser {
             full_name: String::from(""),
             email: String::from(""),
             password: String::from(""),
+            profile_image: String::from(""),
             created_at: Datetime::from(chrono::Utc::now()),
             updated_at: Datetime::from(chrono::Utc::now()),
             created_by: String::from(""),
@@ -98,6 +100,10 @@ impl TryFrom<Object> for AdminUser {
             Some(val) => val.clone(),
             None => Value::Null,
         };
+        let profile_image = match val.get("profile_image") {
+            Some(val) => val.clone(),
+            None => Value::Null,
+        };
         let created_at = match val.get("created_at") {
             Some(val) => val.clone(),
             None => Value::Null,
@@ -120,6 +126,7 @@ impl TryFrom<Object> for AdminUser {
             full_name: full_name.as_raw_string(),
             email: email.as_raw_string(),
             password: password.as_raw_string(),
+            profile_image: profile_image.as_raw_string(),
             created_at: created_at.as_datetime(),
             updated_at: updated_at.as_datetime(),
             created_by: created_by.as_raw_string(),

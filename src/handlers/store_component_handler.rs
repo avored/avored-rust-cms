@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 use std::collections::HashMap;
 use std::sync::Arc;
 use axum::Form;
@@ -23,11 +25,11 @@ pub async fn store_component_handler(
    
     // let mut view_model = CreatePageHandlerViewModel::new();
 
-    println!("Payload: {:?}", payload.test);
+    println!("Payload: {:?}", payload);
     
-    let json: HashMap<String, FieldType>= serde_json::from_str(&payload.test).unwrap();
+    // let json: HashMap<String, FieldType>= serde_json::from_str(&payload).unwrap();
     
-    println!("JSON: {:?}", json);
+    // println!("JSON: {:?}", json);
     // view_model.logged_in_user = logged_in_user;
 
     // let handlebars = &state.handlebars;

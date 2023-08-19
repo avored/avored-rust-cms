@@ -1,3 +1,5 @@
+#[warn(unused_imports)]
+
 use std::net::SocketAddr;
 
 use crate::bootstrap::bootstrap;
@@ -22,7 +24,16 @@ async fn main() {
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
 
+    println!("     _             ____          _ ");
+    println!(r"    / \__   _____ |  _ \ ___  __| |");
+    println!(r"   / _ \ \ / / _ \| |_) / _ \/ _` |");
+    println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");
+    println!(r" /_/   \_\_/ \___/|_| \_\___|\__,_|");
+
+
     println!("Server Started: http://localhost:8080");
+                                    
+    
     axum::Server::bind(&addr)
         .serve(router.into_make_service())
         .await

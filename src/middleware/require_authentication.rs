@@ -13,13 +13,9 @@ pub async fn require_authentication<T>(
     next: Next<T>,
 ) -> Result<Response, impl IntoResponse> {
     let decoded = session.get("logged_in_user");
-    // println!("Session: {:?}", decoded);
     if decoded.is_none() {
-        // println!("i am middleware not auth");
         return Err(Redirect::to("/admin/login").into_response());
     }
-
-    // println!("{:?}", request.headers());
 
     let token_data: AdminUser = decoded.unwrap();
 
@@ -28,6 +24,7 @@ pub async fn require_authentication<T>(
         full_name: token_data.full_name,
         email: token_data.email,
         password: token_data.password,
+        profile_image: token_data.profile_image,
         created_at: token_data.created_at,
         updated_at: token_data.updated_at,
         created_by: token_data.created_by,

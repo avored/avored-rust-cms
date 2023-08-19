@@ -1,9 +1,9 @@
 use std::sync::Arc;
 
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
+use avored_form_data::AvoRedForm;
 use axum::extract::State;
 use axum::response::{IntoResponse, Redirect};
-use axum::Form;
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
@@ -14,7 +14,7 @@ use crate::requests::authenticate_admin_user_request::AuthenticateAdminUserReque
 pub async fn authenticate_admin_user_handler(
     mut session: AvoRedSession,
     state: State<Arc<AvoRedState>>,
-    Form(payload): Form<AuthenticateAdminUserRequest>,
+    AvoRedForm(payload): AvoRedForm<AuthenticateAdminUserRequest>,
 ) -> impl IntoResponse {
     let validation_error_list = match payload.validate() {
         Ok(_) => ValidationErrors::new(),
@@ -22,8 +22,6 @@ pub async fn authenticate_admin_user_handler(
     };
 
     for (field_name, error) in validation_error_list.errors() {
-        // let test = validation_error_list.errors();
-        // let test= error::add("sdfs");
         match &error {
             ValidationErrorsKind::Field(field_errors) => {
                 for field_error in field_errors {
@@ -31,7 +29,6 @@ pub async fn authenticate_admin_user_handler(
                         Some(message) => message,
                         None => continue,
                     };
-                    println!("{:?}", message.is_empty());
 
                     if !message.is_empty() {
                         // let key = field_name.clone();
@@ -76,11 +73,18 @@ pub async fn authenticate_admin_user_handler(
         return Err(Redirect::to("/admin/login").into_response());
     }
 
+    let mut profile_image = String::from("https://via.placeholder.com/100x100");
+
+    if admin_user_model.profile_image.len() > 0 {
+        profile_image = admin_user_model.profile_image;
+    }
+ 
     let admin_user_model = AdminUser {
         id: admin_user_model.id,
         full_name: admin_user_model.full_name,
         email: admin_user_model.email,
         password: admin_user_model.password,
+        profile_image: profile_image,
         created_at: admin_user_model.created_at,
         updated_at: admin_user_model.updated_at,
         created_by: admin_user_model.created_by,

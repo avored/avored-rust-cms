@@ -13,6 +13,7 @@ pub async fn admin_login_handler(
 ) -> impl IntoResponse {
     let mut view_model = AdminLoginHandlerViewModel::new();
 
+
     let validation_email_message = session.get("validation_error_email");
     let validation_password_message = session.get("validation_error_password");
 
@@ -27,7 +28,6 @@ pub async fn admin_login_handler(
         Some(message) => message,
         None => String::from(""),
     };
-
 
     let handlebars = &state.handlebars;
 

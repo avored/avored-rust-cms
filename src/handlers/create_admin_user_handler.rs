@@ -15,18 +15,18 @@ pub async fn create_admin_user_handler(
         Some(logged_in_user) => logged_in_user,
         None => AdminUser::empty_admin_user(),
     };
-
    
     let mut view_model = CreateAdminUserHandlerViewModel::new();
 
+    let validation_error_full_name = session.get("validation_error_full_name");
     let validation_error_email = session.get("validation_error_email");
     let validation_error_password = session.get("validation_error_password");
-    let validation_error_confirmation_password =
-        session.get("validation_error_confirmation_password");
+    let validation_error_confirmation_password = session.get("validation_error_confirmation_password");
 
-    // session.remove("validation_error_email");
-    // session.remove("validation_error_password");
-    // session.remove("validation_error_confirmation_password");
+    view_model.validation_error_full_name = match validation_error_full_name {
+        Some(message) => message,
+        None => String::from(""),
+    };
     view_model.validation_error_email = match validation_error_email {
         Some(message) => message,
         None => String::from(""),
@@ -57,6 +57,7 @@ pub async fn create_admin_user_handler(
 #[derive(Serialize)]
 pub struct CreateAdminUserHandlerViewModel {
     logged_in_user: AdminUser,
+    validation_error_full_name: String,
     validation_error_email: String,
     validation_error_password: String,
     validation_error_confirmation_password: String
@@ -67,6 +68,7 @@ impl CreateAdminUserHandlerViewModel {
         let logged_in_user = AdminUser::empty_admin_user();
         CreateAdminUserHandlerViewModel {
             logged_in_user,
+            validation_error_full_name: String::from(""),
             validation_error_email: String::from(""),
             validation_error_password: String::from(""),
             validation_error_confirmation_password: String::from("")
