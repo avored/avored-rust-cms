@@ -104,6 +104,10 @@
                                             class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                                             {{ translate_key "email" ~}}
                                         </th>
+                                        <th scope="col"
+                                            class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                            {{ translate_key "is_super_admin" ~}}
+                                        </th>
 
                                         <th scope="col"
                                             class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -137,12 +141,20 @@
                                             <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
                                                 {{ admin_user.full_name }}
                                             </td>
+                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                                <div class="flex items-center">
+                                                    <img
+                                                        class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
+                                                        src="/public/{{ admin_user.profile_image }}"
+                                                        alt />
+                                                    <span class="ml-2">
+                                                        {{ admin_user.email }}
+                                                    </span>
+                                                </div>
+                                            </td>
                                             <td
                                                 class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                <!-- <div
-                                                    class="inline px-3 py-1 text-sm font-normal rounded-full text-emerald-500 gap-x-2 bg-emerald-100/60 dark:bg-gray-800"> -->
-                                                    {{ admin_user.email }}
-                                                <!-- </div> -->
+                                                    {{ admin_user.is_super_admin }}
                                             </td>
                                             <td
                                                 class="px-4 py-1 text-sm whitespace-nowrap">

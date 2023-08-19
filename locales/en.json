@@ -35,5 +35,6 @@
     "field_identifier": "Field Identifier",
     "field_type": "Field Type",
     "please_select": "Please Select",
-    "text": "Text"
+    "text": "Text",
+    "is_super_admin": "Is super admin"
 }

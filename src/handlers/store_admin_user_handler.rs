@@ -36,13 +36,14 @@ pub async fn store_admin_user_handler(
         full_name: String::from(""),
         email: String::from(""),
         password: String::from(""),
+        is_super_admin: false,
         confirmation_password: String::from(""),
     };
     let mut profile_image = String::from("");
 
     while let Some(mut field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
-
+        
         match name.as_ref() {
             "image" => {
                 let s: String = rand::thread_rng()
@@ -82,6 +83,18 @@ pub async fn store_admin_user_handler(
 
                 payload.email = email;
             }
+            "is_super_admin" => {
+                let bytes = field.bytes().await.unwrap();
+                let decoded = decode_binary(&bytes).into_owned();
+
+                let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
+                let mut  bool_super_admin = false;
+                if string_super_admin.eq("1") {
+                    bool_super_admin = true;
+                }
+
+                payload.is_super_admin = bool_super_admin;
+            }
             "password" => {
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
@@ -99,6 +112,8 @@ pub async fn store_admin_user_handler(
             &_ => continue,
         }
     }
+
+
 
     let email_regex = Regex::new(r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})").unwrap();
 
@@ -213,6 +228,7 @@ pub async fn store_admin_user_handler(
             email: $email,
             password: $password,
             profile_image: $profile_image,
+            is_super_admin: $is_super_admin,
             created_by: $logged_in_user_name,
             updated_by: $logged_in_user_name,
             created_at: time::now(),
@@ -235,6 +251,7 @@ pub async fn store_admin_user_handler(
         ("email".into(), payload.email.into()),
         ("password".into(), password_hash.as_str().into()),
         ("profile_image".into(), profile_image.as_str().into()),
+        ("is_super_admin".into(), payload.is_super_admin.into()),
         ("logged_in_user_name".into(), logged_in_user.full_name.as_str().into()),
     ]);
 

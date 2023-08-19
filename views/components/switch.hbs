@@ -16,7 +16,7 @@
        
        </label>
     <input 
-       type="checkbox" 
+       type="hidden" 
        
        {{#if id}}
               id="{{ id }}"
@@ -27,6 +27,8 @@
        {{#if name}}
               name="{{ name }}"
        {{/if}}
+
+       x-model="toggle"
        class="sr-only appearance-none bg-transparent border-none w-full h-full active:outline-none focus:outline-none"
        />
   </div>

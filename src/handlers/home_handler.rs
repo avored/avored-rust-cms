@@ -24,6 +24,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
         ("email".into(), "admin@admin.com".into()),
         ("password".into(), password_hash.as_str().into()),
         ("profile_image".into(), "".into()),
+        ("is_super_admin".into(), true.into()),
     ]);
     // let datastore = &state.datastore;
     // let database_session = &state.database_session;
@@ -36,6 +37,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
         DEFINE FIELD email ON TABLE admin_users TYPE string;
         DEFINE FIELD password ON TABLE admin_users TYPE string;
         DEFINE FIELD profile_image ON TABLE admin_users TYPE string;
+        DEFINE FIELD is_super_admin ON TABLE admin_users TYPE bool;
         DEFINE FIELD created_by ON TABLE admin_users TYPE string;
         DEFINE FIELD updated_by ON TABLE admin_users TYPE string;
         DEFINE FIELD created_at ON TABLE admin_users TYPE datetime;
@@ -47,6 +49,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
             email: $email,
             password: $password,
             profile_image: $profile_image,
+            is_super_admin: $is_super_admin,
             created_by: $full_name,
             updated_by: $full_name,
             created_at: time::now(),

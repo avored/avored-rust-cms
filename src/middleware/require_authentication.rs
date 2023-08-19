@@ -18,13 +18,14 @@ pub async fn require_authentication<T>(
     }
 
     let token_data: AdminUser = decoded.unwrap();
-
+    
     let user = AdminUser {
         id: token_data.id,
         full_name: token_data.full_name,
         email: token_data.email,
         password: token_data.password,
         profile_image: token_data.profile_image,
+        is_super_admin: token_data.is_super_admin,
         created_at: token_data.created_at,
         updated_at: token_data.updated_at,
         created_by: token_data.created_by,

@@ -76,7 +76,7 @@ pub async fn authenticate_admin_user_handler(
     let mut profile_image = String::from("https://via.placeholder.com/100x100");
 
     if admin_user_model.profile_image.len() > 0 {
-        profile_image = admin_user_model.profile_image;
+        profile_image = format!("/public/{}", admin_user_model.profile_image);
     }
  
     let admin_user_model = AdminUser {
@@ -85,6 +85,7 @@ pub async fn authenticate_admin_user_handler(
         email: admin_user_model.email,
         password: admin_user_model.password,
         profile_image: profile_image,
+        is_super_admin: admin_user_model.is_super_admin,
         created_at: admin_user_model.created_at,
         updated_at: admin_user_model.updated_at,
         created_by: admin_user_model.created_by,

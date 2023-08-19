@@ -86,6 +86,25 @@
                                 </div>
                             </div>
 
+                            <div class="md:col-span-6">
+                                {{> components/label 
+                                    label=(translate_key "is_super_admin")
+                                    for="is_super_admin"
+                                }}
+                                <div class="mt-1">
+                                    {{> components/switch 
+                                        name="is_super_admin"
+                                        value=""
+                                        class=""
+                                    }}
+                                </div>
+                                {{#if validation_is_super_admin_message  }}
+                                    {{> components/input-error 
+                                        error_message=validation_is_super_admin_message
+                                    }}
+                                {{/if}}
+                            </div>
+
                             <div class="md:col-span-3">
                                 <label for="password">
                                     {{ translate_key "password" ~}}

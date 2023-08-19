@@ -11,6 +11,7 @@ pub struct AdminUser {
     pub email: String,
     pub password: String,
     pub profile_image: String,
+    pub is_super_admin: bool,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -25,6 +26,7 @@ impl AdminUser {
             email: String::from(""),
             password: String::from(""),
             profile_image: String::from(""),
+            is_super_admin: false,
             created_at: Datetime::from(chrono::Utc::now()),
             updated_at: Datetime::from(chrono::Utc::now()),
             created_by: String::from(""),
@@ -104,6 +106,10 @@ impl TryFrom<Object> for AdminUser {
             Some(val) => val.clone(),
             None => Value::Null,
         };
+        let is_super_admin = match val.get("is_super_admin") {
+            Some(val) => val.clone(),
+            None => Value::False,
+        };
         let created_at = match val.get("created_at") {
             Some(val) => val.clone(),
             None => Value::Null,
@@ -121,12 +127,18 @@ impl TryFrom<Object> for AdminUser {
             None => Value::Null,
         };
 
+        let mut bool_super_admin = false;
+        if is_super_admin.is_true()  {
+            bool_super_admin = true;
+        }
+
         Ok(AdminUser {
             id: identifier.to_string(),
             full_name: full_name.as_raw_string(),
             email: email.as_raw_string(),
             password: password.as_raw_string(),
             profile_image: profile_image.as_raw_string(),
+            is_super_admin: bool_super_admin,
             created_at: created_at.as_datetime(),
             updated_at: updated_at.as_datetime(),
             created_by: created_by.as_raw_string(),
