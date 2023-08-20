@@ -33,7 +33,7 @@ pub async fn update_admin_user_handler(
     let mut profile_image = String::from("");
     let mut existing_profile_image = String::from("");
 
-    while let Some(mut field) = multipart.next_field().await.unwrap() {
+    while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
         
         match name.as_ref() {
