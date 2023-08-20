@@ -1,8 +1,7 @@
 use serde::Deserialize;
-use validator::Validate;
 
-#[derive(Deserialize, Debug, Clone, Validate)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct UpdateAdminUserRequest {
-    #[validate(length(min = 1, message = "The full name is a required field."))]
-    pub full_name: String
+    pub full_name: String,
+    pub is_super_admin: bool
 }

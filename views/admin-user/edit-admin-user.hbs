@@ -17,7 +17,7 @@
 <div>
     <!-- -->
     <div class="px-4">
-        <form action="/admin/update-admin-user/{{ admin_user_model.id }}" method="post">
+        <form enctype="multipart/form-data" action="/admin/update-admin-user/{{ admin_user_model.id }}" method="post">
             <div
                 class="mb-6 ">
                 <div
@@ -32,6 +32,34 @@
                     </div>
 
                     <div class="lg:col-span-2">
+                        <div class="md:col-span-6">
+                            <div class="flex items-center">
+                                <div>
+                                    {{#if admin_user_model.profile_image }}
+
+                                        <img 
+                                            src="/public/{{ admin_user_model.profile_image }}" 
+                                            class="w-32 aspect-square h-32 rounded-full"
+                                            alt="{{ admin_user_model.full_name }}" />
+                                    {{ else }}
+                                        <div class="flex items-center justify-center text-5xl text-white rounded-full h-32 w-32 bg-primary-500">
+                                            A
+                                        </div>
+                                    {{/if }}
+                                </div>
+
+                                <div class="ml-5">
+                                    <input type="hidden" name="existing_profile_image" value="{{admin_user_model.profile_image }}" />
+                                    {{> components/input 
+                                        type="file"
+                                        name="image"
+                                        value=""
+                                        class=""
+                                    }}
+                                </div>
+                            </div>
+                        </div>
+
                         <div
                             class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
                             <div class="md:col-span-6">
@@ -47,6 +75,25 @@
                                 <div class="text-sm text-red-600 mt-3 px-2">
                                     {{ validation_error_full_name }}
                                 </div>
+                            </div>
+
+                            <div class="md:col-span-6">
+                                {{> components/label 
+                                    label=(translate_key "is_super_admin")
+                                    for="is_super_admin"
+                                }}
+                                <div class="mt-1">
+                                    {{> components/switch 
+                                        name="is_super_admin"
+                                        init_value=admin_user_model.is_super_admin
+                                        class=""
+                                    }}
+                                </div>
+                                {{#if validation_is_super_admin_message  }}
+                                    {{> components/input-error 
+                                        error_message=validation_is_super_admin_message
+                                    }}
+                                {{/if}}
                             </div>
 
                             <div class="md:col-span-6">

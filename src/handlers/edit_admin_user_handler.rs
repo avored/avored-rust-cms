@@ -25,6 +25,8 @@ pub async fn edit_admin_user_handler(
     let mut view_model = EditAdminUserHandlerViewModel::new();
     view_model.admin_user_model = admin_user_model;
 
+    println!("AdminUSER {:?}", view_model.admin_user_model);
+
     let validation_error_full_name = session.get("validation_error_full_name");
 
     view_model.validation_error_full_name = match validation_error_full_name {
