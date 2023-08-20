@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
-use avored_form_data::AvoRedForm;
+use avored_qs::AvoRedForm;
 use axum::extract::State;
 use axum::response::{IntoResponse, Redirect};
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};

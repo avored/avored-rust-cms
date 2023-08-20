@@ -1,5 +1,5 @@
 [package]
-name = "avored_form_data"
+name = "avored_qs"
 version = "0.1.0"
 edition = "2021"
 

@@ -976,10 +976,6 @@ select {
   display: none;
 }
 
-.aspect-auto {
-  aspect-ratio: auto;
-}
-
 .aspect-square {
   aspect-ratio: 1 / 1;
 }
@@ -1107,10 +1103,6 @@ select {
 
 .w-full {
   width: 100%;
-}
-
-.w-16 {
-  width: 4rem;
 }
 
 .min-w-full {
@@ -1388,10 +1380,6 @@ select {
 .bg-blue-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
-}
-
-.bg-emerald-100\/60 {
-  background-color: rgb(209 250 229 / 0.6);
 }
 
 .bg-gray-100 {
@@ -1709,11 +1697,6 @@ select {
 .text-blue-600 {
   --tw-text-opacity: 1;
   color: rgb(37 99 235 / var(--tw-text-opacity));
-}
-
-.text-emerald-500 {
-  --tw-text-opacity: 1;
-  color: rgb(16 185 129 / var(--tw-text-opacity));
 }
 
 .text-gray-300 {

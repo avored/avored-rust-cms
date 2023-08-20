@@ -216,7 +216,7 @@ version = "0.1.0"
 dependencies = [
  "argon2",
  "async-session",
- "avored_form_data",
+ "avored_qs",
  "axum",
  "axum-extra",
  "chrono",
@@ -240,7 +240,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "avored_form_data"
+name = "avored_qs"
 version = "0.1.0"
 dependencies = [
  "axum",

@@ -5,7 +5,6 @@ use axum::extract::{State, Path, Multipart};
 use axum::response::{IntoResponse, Redirect};
 use rand::Rng;
 use rand::distributions::Alphanumeric;
-use regex::Regex;
 use surrealdb::dbs::Response;
 use urlencoding::decode_binary;
 
