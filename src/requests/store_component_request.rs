@@ -8,11 +8,14 @@ pub struct StoreComponentRequest {
     pub name: String,
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
-    #[validate(length(min = 1, message = "The field name is a required field."))]
-    pub field_names: String,
-    #[validate(length(min = 1, message = "The field identifier is a required field."))]
-    pub field_identifiers: String,
-    #[validate(length(min = 1, message = "The field types is a required field."))]
-    pub field_types: String,
-    // #[validate(length(min = 1, message = "The field types is a required field."))]
+
+    pub fields: Vec<FieldType>,
+}
+
+
+#[derive(Deserialize, Debug, Clone)]
+pub struct FieldType {
+    field_type: String,
+    name: String,
+    identifier: String
 }

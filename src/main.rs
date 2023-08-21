@@ -24,7 +24,7 @@ async fn main() {
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
 
-    println!("     _             ____          _ ");
+    println!(r"     _             ____          _ ");
     println!(r"    / \__   _____ |  _ \ ___  __| |");
     println!(r"   / _ \ \ / / _ \| |_) / _ \/ _` |");
     println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");

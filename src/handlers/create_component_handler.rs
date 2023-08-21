@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::extract::State;
 use axum::response::{Html, IntoResponse};
-use serde_derive::Serialize;
+use serde_derive::{Deserialize, Serialize};
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
@@ -15,12 +15,9 @@ pub async fn create_component_handler(
         Some(logged_in_user) => logged_in_user,
         None => AdminUser::empty_admin_user(),
     };
-   
+
     let mut view_model = CreatePageHandlerViewModel::new();
-
-
     view_model.logged_in_user = logged_in_user;
-
     let handlebars = &state.handlebars;
 
     let html = handlebars
@@ -28,8 +25,16 @@ pub async fn create_component_handler(
         .expect("there is an issue while loading the admin template");
 
     Html(html).into_response()
+}
 
-    // Json(admin_users).into_response()
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+struct Address {
+    postcode: String,
+}
+
+#[derive(Debug, PartialEq, Deserialize, Serialize)]
+pub struct QueryTest {
+    address: Vec<Address>,
 }
 
 #[derive(Serialize)]

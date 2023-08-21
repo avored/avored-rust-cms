@@ -1,3 +1,5 @@
+#[warn(unused_imports)]
+
 use async_session::MemoryStore;
 use axum::{
     middleware,

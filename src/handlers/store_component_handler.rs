@@ -2,6 +2,7 @@
 
 use std::collections::HashMap;
 use std::sync::Arc;
+use avored_qs::AvoRedForm;
 use axum::Form;
 use axum::extract::State;
 use axum::response::{Html, IntoResponse, Redirect};
@@ -16,7 +17,7 @@ use crate::requests::store_component_request::StoreComponentRequest;
 pub async fn store_component_handler(
     state: State<Arc<AvoRedState>>,
     session: AvoRedSession,
-    Form(payload): Form<StoreComponentRequest>,
+    AvoRedForm(payload): AvoRedForm<StoreComponentRequest>,
 ) -> impl IntoResponse {
     // let logged_in_user = match session.get("logged_in_user") {
     //     Some(logged_in_user) => logged_in_user,
