@@ -5,6 +5,7 @@ use std::net::SocketAddr;
 use crate::bootstrap::bootstrap;
 
 mod bootstrap;
+mod prelude;
 mod error;
 mod handlers;
 mod models;

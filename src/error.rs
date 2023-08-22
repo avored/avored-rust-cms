@@ -1,13 +1,21 @@
-//! This is the main (and only for now) application Error type.
-//! It's using 'thiserror' as it reduces boilerplate error code while providing rich error typing.
-//!
-//! Notes:
-//!     - The strategy is to start with one Error type for the whole application and then seggregate as needed.
-//!     - Since everything is typed from the start, renaming and refactoring become relatively trivial.
-//!     - By best practices, `anyhow` is not used in application code, but can be used in unit or integration test (will be in dev_dependencies when used)
-//!
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 
 pub type Result<T> = core::result::Result<T, Error>;
+
+#[derive(thiserror::Error, Debug)]
+pub enum AvoRedError {
+	#[error("Generic {0}")]
+	Generic(String),
+}
+
+impl IntoResponse for AvoRedError {
+	fn into_response(self) -> Response {
+		println!("->> {:<12} -  {self:?}", "INTO_RESPONSE");
+
+		(StatusCode::INTERNAL_SERVER_ERROR, "Unhandled error").into_response()
+	}
+}
 
 #[derive(Debug)]
 pub enum Error {

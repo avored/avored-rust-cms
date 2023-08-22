@@ -24,6 +24,7 @@ use crate::{
         create_component_handler::create_component_handler,
         store_component_handler::store_component_handler,
     },
+    middleware::log_request::log_request,
     middleware::require_authentication::require_authentication,
     providers::{
         avored_config_provider::AvoRedConfigProvider, avored_session_provider::SessionLayer,
@@ -53,6 +54,7 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
         ))
         .route("/admin/login", post(authenticate_admin_user_handler))
         .route("/admin/login", get(admin_login_handler))
+        .route_layer(middleware::from_fn(log_request))
         .nest_service("/public", static_routing_service)
         .with_state(state)
         .layer(session_layer)
