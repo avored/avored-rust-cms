@@ -14,6 +14,7 @@ use crate::{
     handlers::{
         admin_handler::admin_handler, admin_login_handler::admin_login_handler,
         create_admin_user_handler::create_admin_user_handler,
+        test_pp_handler::test_pp_handler,
         edit_admin_user_handler::edit_admin_user_handler,
         store_admin_user_handler::store_admin_user_handler,
         update_admin_user_handler::update_admin_user_handler,
@@ -39,6 +40,7 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
 
     Router::new()
         .route("/", get(home_handler))
+        .route("/test-pp", get(test_pp_handler))
         .route("/admin/store-component", post(store_component_handler))
         .route("/admin/create-component", get(create_component_handler))
         .route("/admin/create-page", get(create_page_handler))
@@ -48,10 +50,10 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
         .route("/admin/create-admin-user", get(create_admin_user_handler))
         .route("/admin/admin-user", get(admin_user_table_handler))
         .route("/admin", get(admin_handler))
-        .route_layer(middleware::from_fn_with_state(
-            state.clone(),
-            require_authentication,
-        ))
+        // .route_layer(middleware::from_fn_with_state(
+        //     state.clone(),
+        //     require_authentication,
+        // ))
         .route("/admin/login", post(authenticate_admin_user_handler))
         .route("/admin/login", get(admin_login_handler))
         .route_layer(middleware::from_fn(log_request))

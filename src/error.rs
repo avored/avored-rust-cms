@@ -7,6 +7,9 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum AvoRedError {
 	#[error("Generic {0}")]
 	Generic(String),
+
+	#[error("Surreal DB Error {0}")]
+	Surreal(surrealdb::err::Error),
 }
 
 impl IntoResponse for AvoRedError {
@@ -14,6 +17,12 @@ impl IntoResponse for AvoRedError {
 		println!("->> {:<12} -  {self:?}", "INTO_RESPONSE");
 
 		(StatusCode::INTERNAL_SERVER_ERROR, "Unhandled error").into_response()
+	}
+}
+
+impl From<surrealdb::err::Error> for AvoRedError {
+	fn from(val: surrealdb::err::Error) -> Self {
+		AvoRedError::Surreal(val)
 	}
 }
 

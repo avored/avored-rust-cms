@@ -221,8 +221,7 @@ pub async fn store_admin_user_handler(
     //         return Err(Redirect::to("/admin/create-admin-user").into_response());
     //     }
 
-        let sql = "
-
+    let sql = "
         CREATE admin_users CONTENT {
             full_name: $full_name,
             email: $email,
