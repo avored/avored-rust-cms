@@ -1,12 +1,12 @@
 use std::collections::BTreeMap;
 
 use surrealdb::dbs::{Response, Session};
-use surrealdb::kvs::Datastore;
+use surrealdb::kvs::{Datastore};
 use surrealdb::sql::{Array, Object};
 
 use crate::PER_PAGE;
 use crate::error::Result;
-use crate::models::admin_user_model::{AdminUser, AdminUserPaginate};
+use crate::models::admin_user_model::{AdminUser, AdminUserPaginate, ModelCount};
 use crate::models::W;
 
 pub struct AdminUserRepository {}
@@ -42,7 +42,7 @@ impl AdminUserRepository {
             .expect("there is an issue with unwrapping the surrealdb response");
 
         let result = response.result.expect(
-            "there is an issue with receiving the respoinse result of surreal db query response",
+            "there is an issue with receiving the response result of surreal db query response",
         );
 
         let array: Array = W(result)
@@ -91,7 +91,7 @@ impl AdminUserRepository {
             .expect("there is an issue with unwrapping the surrealdb response");
 
         let result = response.result.expect(
-            "there is an issue with receiving the respoinse result of surreal db query response",
+            "there is an issue with receiving the response result of surreal db query response",
         ).first();
 
         let result_admin_users_count: Result<Object> = W(result).try_into();
@@ -130,7 +130,7 @@ impl AdminUserRepository {
             .expect("there is an issue with unwrapping the surrealdb response");
 
         let result = response.result.expect(
-            "there is an issue with receiving the respoinse result of surreal db query response",
+            "there is an issue with receiving the response result of surreal db query response",
         ).first();
 
         let result_admin_users: Result<Object> = W(result).try_into();
@@ -141,6 +141,49 @@ impl AdminUserRepository {
         };
 
         admin_user
+    }
+
+    pub async fn has_email_address_taken(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        email: String,
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count() FROM admin_users WHERE email=$email;";
+        let vars = BTreeMap::from([
+            ("email".into(), email.into())
+        ]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), true)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response.result.expect(
+            "there is an issue with receiving the response result of surreal db query response",
+        ).first();
+        println!("Result: {:?}", result);
+        let result_object: Result<Object> = W(result).try_into();
+
+        let admin_users_count: Result<ModelCount> = match result_object {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(ModelCount::new()),
+        };
+
+        // println!("{:?}", admin_users_count);
+
+        admin_users_count
     }
 
     pub async fn find_by_id(

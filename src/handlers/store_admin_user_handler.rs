@@ -18,7 +18,7 @@ use urlencoding::decode_binary;
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::AdminUser;
+use crate::models::admin_user_model::{AdminUser, ModelCount};
 use crate::providers::avored_session_provider::AvoRedSession;
 use crate::requests::store_admin_user_request::StoreAdminUserRequest;
 
@@ -180,6 +180,26 @@ pub async fn store_admin_user_handler(
             .insert(
                 "validation_error_password",
                 String::from("Password did not match confirmation password"),
+            )
+            .expect("Could not store the validation errors into session.");
+    }
+
+    let admin_user_count = state
+        .admin_user_repository
+        .has_email_address_taken(
+            &state.datastore,
+            &state.database_session,
+            logged_in_user.email
+        )
+        .await
+        .unwrap_or(ModelCount::new());
+
+    if admin_user_count.count >= 1 {
+        has_error = true;
+        session
+            .insert(
+                "validation_error_email",
+                String::from("Email address already take. Please use another email address"),
             )
             .expect("Could not store the validation errors into session.");
     }

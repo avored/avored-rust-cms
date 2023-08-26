@@ -14,7 +14,7 @@ pub enum AvoRedError {
 
 impl IntoResponse for AvoRedError {
 	fn into_response(self) -> Response {
-		println!("->> {:<12} -  {self:?}", "INTO_RESPONSE");
+		println!("->> {:<12} -  {self:?}", "AVORED_ERROR_INTO_RESPONSE");
 
 		(StatusCode::INTERNAL_SERVER_ERROR, "Unhandled error").into_response()
 	}
