@@ -35,13 +35,13 @@ Set up your `.env` file you can rename the existing `.env.example` file make sur
 ##### Seting up full Stack project in RUST
 
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
- - [x] DB ([Postgres SQL](https://www.postgresql.org/))
- - [x] DB ORM ([Sea Orm CLI](https://www.sea-ql.org))
+ - [x] SurrealDB ([Surreal DB](https://surrealdb.com/))
  - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
  - [x] Form Validation ([Validator](https://github.com/Keats/validator))
  - [x] Display Form Validation Error
- - [ ] Todo Flash messages
-
+ - [x] Todo Flash messages
+ - [ ] Form validation middleware
+ 
 ### Dev Help 
 
 How to do a loop inside the handlebar template
