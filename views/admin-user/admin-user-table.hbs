@@ -139,26 +139,47 @@
                                     {{#each admin_users as |admin_user|}}
                                         <tr>
                                             <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                {{ admin_user.full_name }}
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                    {{ admin_user.full_name }}
+                                                </a>
                                             </td>
                                             <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                <div class="flex items-center">
-                                                    <img
-                                                        class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
-                                                        src="/public/{{ admin_user.profile_image }}"
-                                                        alt />
-                                                    <span class="ml-2">
-                                                        {{ admin_user.email }}
-                                                    </span>
-                                                </div>
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                    <div class="flex items-center">
+                                                        <img
+                                                            class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
+                                                            src="/public/{{ admin_user.profile_image }}"
+                                                            alt />
+                                                        <span class="ml-2">
+                                                            {{ admin_user.email }}
+                                                        </span>
+                                                    </div>
+                                                </a>
+
                                             </td>
-                                            <td
-                                                class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
                                                     {{ admin_user.is_super_admin }}
+                                                </a>
+
                                             </td>
-                                            <td
-                                                class="px-4 py-1 text-sm whitespace-nowrap">
-                                                {{ admin_user.created_at }}
+                                            <td  class="px-4 py-1 text-sm whitespace-nowrap">
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                    {{ admin_user.created_at }}
+                                                </a>
+
                                             </td>
                                             <td
                                                 class="px-4 py-1 text-sm whitespace-nowrap">
@@ -182,16 +203,32 @@
                                                     <p
                                                         class="flex items-center justify-center w-6 h-6 -mx-1 text-xs text-blue-600 bg-blue-100 border-2 border-white rounded-full">+4</p>
                                                 </div> -->
-                                                {{ admin_user.updated_at }}
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                   {{ admin_user.updated_at }}
+                                                </a>
                                             </td>
 
                                             <td
                                                 class="px-4 py-1 text-sm whitespace-nowrap">
-                                                {{ admin_user.created_by }}
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                    {{ admin_user.created_by }}
+                                                </a>
+
                                             </td>
                                             <td
                                                 class="px-4 py-1 text-sm whitespace-nowrap">
-                                                {{ admin_user.updated_by }}
+                                                <a
+                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                    class="px-1 py-1 text-gray-500"
+                                                >
+                                                    {{ admin_user.updated_by }}
+                                                </a>
                                             </td>
 
                                             <td

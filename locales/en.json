@@ -36,5 +36,8 @@
     "field_type": "Field Type",
     "please_select": "Please Select",
     "text": "Text",
-    "is_super_admin": "Is super admin"
+    "is_super_admin": "Is super admin",
+    "show_admin_user": "Show Admin User",
+    "delete_admin_user": "Delete Admin User",
+    "profile_image": "Profile Image"
 }

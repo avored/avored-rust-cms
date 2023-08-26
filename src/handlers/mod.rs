@@ -11,3 +11,4 @@ pub mod create_page_handler;
 pub mod create_component_handler;
 pub mod store_component_handler;
 pub mod test_pp_handler;
+pub mod show_admin_user_handler;
