@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 use axum::extract::{State, Path};
-use axum::response::{Html, IntoResponse};
+use axum::response::{Html, IntoResponse, Redirect};
 use surrealdb::dbs::Response;
 
 use crate::avored_state::AvoRedState;
@@ -42,5 +42,6 @@ pub async fn delete_admin_user_handler(
 
     // println!("{:?}", responses);
 
-    Html("").into_response()
+    Redirect::to("/admin/admin-user").into_response()
+    // Html("").into_response()
 }

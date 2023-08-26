@@ -7,7 +7,6 @@ use axum::{
     Router,
 };
 use std::sync::Arc;
-use axum::routing::delete;
 use tower_http::services::ServeDir;
 
 use crate::{
@@ -48,7 +47,7 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
         .route("/admin/create-component", get(create_component_handler))
         .route("/admin/create-page", get(create_page_handler))
         .route("/admin/store-admin-user", post(store_admin_user_handler))
-        .route("/admin/admin-user/:admin_user_id", delete(delete_admin_user_handler))
+        .route("/admin/delete-admin-user/:admin_user_id", post(delete_admin_user_handler))
         .route("/admin/edit-admin-user/:admin_user_id", get(edit_admin_user_handler))
         .route("/admin/show-admin-user/:admin_user_id", get(show_admin_user_handler))
         .route("/admin/update-admin-user/:admin_user_id", post(update_admin_user_handler))
