@@ -13,7 +13,10 @@ Alpine.data('field_builder', FieldBuilder)
 
 window.Alpine = Alpine;
 
-
 Alpine.start();
 
-feather.replace()
+
+window.document.addEventListener("DOMContentLoaded", function() {
+    feather.replace()
+});
+

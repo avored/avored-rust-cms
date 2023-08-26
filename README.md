@@ -11,15 +11,15 @@ AvoRed Rust CMS implement with the help of axum web framework and surrealdb as d
     cd avored-cms/rust-api
     
 
-Setup your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
+Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
 
-### Start your application     
+### Start your application
     cargo run
 
 
 ## Features
 
-- [ ] Users
+- [x] Admin Users
 - [ ] Roles/Permissions
 - [ ] Components
 - [ ] Pages

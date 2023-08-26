@@ -18,15 +18,14 @@ use urlencoding::decode_binary;
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::{AdminUser, ModelCount};
+use crate::models::admin_user_model::{AdminUser, CreatableAdminUser, ModelCount};
 use crate::providers::avored_session_provider::AvoRedSession;
 use crate::requests::store_admin_user_request::StoreAdminUserRequest;
 
 pub async fn store_admin_user_handler(
     state: State<Arc<AvoRedState>>,
-    // Form(payload): Form<StoreAdminUserRequest>,
     mut session: AvoRedSession,
-    mut multipart: Multipart, // ) -> Result<impl IntoResponse, impl IntoResponse>  {
+    mut multipart: Multipart,
 ) -> Result<impl IntoResponse, impl IntoResponse> {
     let logged_in_user = match session.get("logged_in_user") {
         Some(logged_in_user) => logged_in_user,
@@ -113,9 +112,9 @@ pub async fn store_admin_user_handler(
         }
     }
 
-
-
-    let email_regex = Regex::new(r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})").unwrap();
+    let email_regex = Regex::new(
+        r"^([a-z0-9_+]([a-z0-9_+.]*[a-z0-9_+])?)@([a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,6})"
+        ).unwrap();
 
     let mut has_error = false;
     if payload.full_name.len() <= 0 {
@@ -154,8 +153,6 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-
-
     if payload.password.len() <= 0 {
         has_error = true;
         session
@@ -208,52 +205,6 @@ pub async fn store_admin_user_handler(
         println!("{:?}", payload);
         return Err(Redirect::to("/admin/create-admin-user").into_response());
     }
-   
-    //     let validation_error_list = match payload.validate() {
-    //         Ok(_) => ValidationErrors::new(),
-    //         Err(errors) => errors,
-    //     };
-
-    //     for (field_name, error) in validation_error_list.errors() {
-    //         // let test = validation_error_list.errors();
-    //         // let test= error::add("sdfs");
-    //         match &error {
-    //             ValidationErrorsKind::Field(field_errors) => {
-    //                 for field_error in field_errors {
-    //                     let message = match &field_error.message {
-    //                         Some(message) => message,
-    //                         None => continue,
-    //                     };
-
-    //                     if !message.is_empty() {
-    //                         let validation_key = format!("validation_error_{}", field_name);
-    //                         session
-    //                             .insert(&validation_key, message)
-    //                             .expect("Could not store the validation errors into session.");
-    //                     }
-    //                 }
-    //             }
-    //             ValidationErrorsKind::Struct(_) => continue,
-    //             ValidationErrorsKind::List(_) => continue,
-    //         }
-    //     }
-    //     if validation_error_list.errors().length() > 0 {
-    //         return Err(Redirect::to("/admin/create-admin-user").into_response());
-    //     }
-
-    let sql = "
-        CREATE admin_users CONTENT {
-            full_name: $full_name,
-            email: $email,
-            password: $password,
-            profile_image: $profile_image,
-            is_super_admin: $is_super_admin,
-            created_by: $logged_in_user_name,
-            updated_by: $logged_in_user_name,
-            created_at: time::now(),
-            updated_at: time::now()
-        };
-    ";
 
     let password = payload.password;
     let password = password.as_bytes();
@@ -265,30 +216,19 @@ pub async fn store_admin_user_handler(
         .expect("Error occurred while encrypted password")
         .to_string();
 
-    let vars = BTreeMap::from([
-        ("full_name".into(), payload.full_name.into()),
-        ("email".into(), payload.email.into()),
-        ("password".into(), password_hash.as_str().into()),
-        ("profile_image".into(), profile_image.as_str().into()),
-        ("is_super_admin".into(), payload.is_super_admin.into()),
-        ("logged_in_user_name".into(), logged_in_user.full_name.as_str().into()),
-    ]);
-
-    let responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
-        Ok(response) => response,
-        Err(_) => {
-            // todo improve this error
-            let out: Vec<Response> = vec![];
-            out
-        }
+    let creatable_admin_user = CreatableAdminUser {
+        full_name: payload.full_name,
+        email: payload.email,
+        password: password_hash,
+        profile_image,
+        is_super_admin: payload.is_super_admin,
+        logged_in_username: logged_in_user.email,
     };
-    
-    // Ok(Redirect::to("/admin/admin-user").into_response())
+
+    let created_admin_user = state
+        .admin_user_repository
+        .create_admin_user(&state.datastore, &state.database_session, creatable_admin_user)
+        .await;
+
     Ok(Redirect::to("/admin/admin-user").into_response())
-
-    // Json(admin_users).into_response()
 }
-
-// pub struct  TestStruct<'a> {
-//     image: Bytes<'a>
-// }

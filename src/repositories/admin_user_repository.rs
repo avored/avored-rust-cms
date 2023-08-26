@@ -6,7 +6,7 @@ use surrealdb::sql::{Array, Object};
 
 use crate::PER_PAGE;
 use crate::error::Result;
-use crate::models::admin_user_model::{AdminUser, AdminUserPaginate, ModelCount};
+use crate::models::admin_user_model::{AdminUser, AdminUserPaginate, CreatableAdminUser, ModelCount, UpdatableAdminUser};
 use crate::models::W;
 
 pub struct AdminUserRepository {}
@@ -185,6 +185,117 @@ impl AdminUserRepository {
 
         admin_users_count
     }
+    pub async fn update_admin_user (
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_admin_user: UpdatableAdminUser
+    ) -> Result<AdminUser> {
+
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                full_name: $full_name,
+                profile_image: $profile_image,
+                is_super_admin: $is_super_admin,
+                updated_by: $logged_in_user_name,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("full_name".into(), updatable_admin_user.full_name.into()),
+            ("logged_in_user_name".into(), updatable_admin_user.logged_in_username.into()),
+            ("profile_image".into(), updatable_admin_user.profile_image.into()),
+            ("is_super_admin".into(), updatable_admin_user.is_super_admin.into()),
+            ("id".into(), updatable_admin_user.id.into()),
+            ("table".into(), "admin_users".into()),
+        ]);
+
+        let responses = match datastore
+            .execute(sql, database_session, Some(vars), false)
+            .await {
+                Ok(response) => response,
+                Err(_) => {
+                    let out: Vec<Response> = vec![];
+                    out
+                }
+            };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response.result.expect(
+            "there is an issue with receiving the response result of surreal db query response",
+        ).first();
+
+        let result_admin_users: Result<Object> = W(result).try_into();
+
+        let admin_user: Result<AdminUser> = match result_admin_users {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(AdminUser::empty_admin_user()),
+        };
+
+        admin_user
+    }
+    pub async fn create_admin_user (
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        creatable_admin_user: CreatableAdminUser
+    ) -> Result<AdminUser> {
+        let sql = "
+            CREATE admin_users CONTENT {
+                full_name: $full_name,
+                email: $email,
+                password: $password,
+                profile_image: $profile_image,
+                is_super_admin: $is_super_admin,
+                created_by: $logged_in_user_name,
+                updated_by: $logged_in_user_name,
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        ";
+
+        let vars = BTreeMap::from([
+            ("full_name".into(), creatable_admin_user.full_name.into()),
+            ("email".into(), creatable_admin_user.email.into()),
+            ("password".into(), creatable_admin_user.password.into()),
+            ("profile_image".into(), creatable_admin_user.profile_image.into()),
+            ("is_super_admin".into(), creatable_admin_user.is_super_admin.into()),
+            ("logged_in_user_name".into(), creatable_admin_user.logged_in_username.into()),
+        ]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), false)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response.result.expect(
+            "there is an issue with receiving the response result of surreal db query response",
+        ).first();
+
+        let result_admin_users: Result<Object> = W(result).try_into();
+
+        let admin_user: Result<AdminUser> = match result_admin_users {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(AdminUser::empty_admin_user()),
+        };
+
+        admin_user
+    }
 
     pub async fn find_by_id(
         &self,
@@ -215,7 +326,7 @@ impl AdminUserRepository {
             .expect("there is an issue with unwrapping the surrealdb response");
 
         let result = response.result.expect(
-            "there is an issue with receiving the respoinse result of surreal db query response",
+            "there is an issue with receiving the response result of surreal db query response",
         ).first();
         
         let result_admin_users: Result<Object> = W(result).try_into();

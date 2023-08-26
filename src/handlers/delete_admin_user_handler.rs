@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 use axum::extract::{State, Path};
-use axum::response::{Html, IntoResponse, Redirect};
+use axum::response::{IntoResponse, Redirect};
 use surrealdb::dbs::Response;
 
 use crate::avored_state::AvoRedState;
@@ -12,11 +12,6 @@ pub async fn delete_admin_user_handler(
     Path(admin_user_id): Path<String>,
     mut session: AvoRedSession,
 ) -> impl IntoResponse  {
-
-    // let logged_in_user = match session.get("logged_in_user") {
-    //     Some(logged_in_user) => logged_in_user,
-    //     None => AdminUser::empty_admin_user(),
-    // };
 
     let sql = "DELETE type::thing($table, $id)";
 

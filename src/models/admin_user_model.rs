@@ -18,6 +18,8 @@ pub struct AdminUser {
     pub updated_by: String,
 }
 
+
+
 impl AdminUser {
     pub fn empty_admin_user() -> Self {
         AdminUser {
@@ -34,6 +36,7 @@ impl AdminUser {
         }
     }
 }
+
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct AdminUserPaginate {
@@ -172,4 +175,25 @@ impl TryFrom<Object> for AdminUser {
             updated_by: updated_by.as_raw_string(),
         })
     }
+}
+
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct CreatableAdminUser {
+    pub full_name: String,
+    pub email: String,
+    pub password: String,
+    pub profile_image: String,
+    pub is_super_admin: bool,
+    pub logged_in_username: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableAdminUser {
+    pub id: String,
+    pub full_name: String,
+    pub profile_image: String,
+    pub is_super_admin: bool,
+    pub logged_in_username: String,
 }

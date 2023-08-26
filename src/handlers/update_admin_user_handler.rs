@@ -9,7 +9,7 @@ use surrealdb::dbs::Response;
 use urlencoding::decode_binary;
 
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::AdminUser;
+use crate::models::admin_user_model::{AdminUser, UpdatableAdminUser};
 use crate::providers::avored_session_provider::AvoRedSession;
 use crate::requests::update_admin_user_request::UpdateAdminUserRequest;
 
@@ -114,36 +114,19 @@ pub async fn update_admin_user_handler(
         profile_image = existing_profile_image;
     }
 
-    let sql = "
-    
-    UPDATE type::thing($table, $id) MERGE {
-        full_name: $full_name,
-        profile_image: $profile_image,
-        is_super_admin: $is_super_admin,
-        updated_by: $logged_in_user_name,
-        updated_at: time::now()
-    };";
-
-    let vars = BTreeMap::from([
-        ("full_name".into(), payload.full_name.into()),
-        ("logged_in_user_name".into(), logged_in_user.full_name.as_str().into()),
-        ("profile_image".into(), profile_image.as_str().into()),
-        ("is_super_admin".into(), payload.is_super_admin.into()),
-        ("id".into(), admin_user_id.into()),
-        ("table".into(), "admin_users".into()),
-    ]);
-
-    let _responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
-        Ok(response) => response,
-        Err(_) => {
-            let out: Vec<Response> = vec![];
-            out
-        }
+    let updatable_admin_user = UpdatableAdminUser {
+        id: admin_user_id,
+        full_name: payload.full_name,
+        is_super_admin: payload.is_super_admin,
+        profile_image,
+        logged_in_username: logged_in_user.email
     };
 
-    // println!("{:?}", responses);
-    //@try to find the error here?
-    
+    let updated_admin_user = state
+        .admin_user_repository
+        .update_admin_user(&state.datastore, &state.database_session, updatable_admin_user)
+        .await;
+
     Ok(Redirect::to("/admin/admin-user").into_response())
 
     // Json(admin_users).into_response()
