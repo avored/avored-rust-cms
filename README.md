@@ -39,7 +39,7 @@ Set up your `.env` file you can rename the existing `.env.example` file make sur
  - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
  - [x] Form Validation ([Validator](https://github.com/Keats/validator))
  - [x] Display Form Validation Error
- - [x] Todo Flash messages
+ - [x] Flash messages
  - [ ] Form validation middleware
  
 ### Dev Help 
