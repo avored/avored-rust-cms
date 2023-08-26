@@ -16,6 +16,7 @@ mod providers;
 mod requests;
 mod middleware;
 mod responses;
+mod services;
 
 const PER_PAGE: i64 = 10;
 
