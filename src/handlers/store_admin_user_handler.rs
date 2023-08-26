@@ -189,7 +189,7 @@ pub async fn store_admin_user_handler(
         .has_email_address_taken(
             &state.datastore,
             &state.database_session,
-            logged_in_user.email
+            payload.email.clone()
         )
         .await
         .unwrap_or(ModelCount::new());
