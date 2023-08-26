@@ -21,7 +21,7 @@ pub async fn show_admin_user_handler(
         Ok(admin_user) => admin_user,
         Err(_) => AdminUser::empty_admin_user(),
     };
-    
+
     let mut view_model = ShowAdminUserViewModel::new();
     view_model.admin_user_model = admin_user_model;
 
