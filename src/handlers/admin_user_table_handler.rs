@@ -5,10 +5,10 @@ use axum::extract::{Query, State};
 use axum::response::{Html, IntoResponse};
 use serde::{Deserialize, Serialize};
 
-use crate::PER_PAGE;
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::{AdminUser, AdminUserPaginate};
 use crate::providers::avored_session_provider::AvoRedSession;
+use crate::PER_PAGE;
 
 #[derive(Deserialize, Debug)]
 pub struct AdminUsersRequest {
@@ -19,7 +19,7 @@ pub struct AdminUsersRequest {
 pub async fn admin_user_table_handler(
     state: State<Arc<AvoRedState>>,
     Query(query_param): Query<AdminUsersRequest>,
-    session: AvoRedSession,
+    mut session: AvoRedSession,
 ) -> impl IntoResponse {
     let logged_in_user = match session.get("logged_in_user") {
         Some(logged_in_user) => logged_in_user,
@@ -36,7 +36,7 @@ pub async fn admin_user_table_handler(
     };
     let from = ((current_page - 1) * per_page) + 1;
     let to = from + per_page - 1;
-    let start = from - 1;   
+    let start = from - 1;
 
     let admin_users = state
         .admin_user_repository
@@ -59,7 +59,6 @@ pub async fn admin_user_table_handler(
 
     admin_user_paginate.from = from;
     admin_user_paginate.to = to;
-    
 
     if current_page > 1 {
         admin_user_paginate.has_previous_page = true;
@@ -68,15 +67,18 @@ pub async fn admin_user_table_handler(
 
     if to < admin_user_paginate.count {
         admin_user_paginate.has_next_page = true;
-        let next_page  = current_page + 1;
-        admin_user_paginate.next_page= next_page;
+        let next_page = current_page + 1;
+        admin_user_paginate.next_page = next_page;
     }
 
     let mut view_model = AdminUserTableHandlerViewModel::new();
-    
+
     view_model.admin_users = admin_users;
     view_model.logged_in_user = logged_in_user;
     view_model.admin_user_paginate = admin_user_paginate;
+    view_model.success_message = session.get("success_message").unwrap_or(String::from(""));
+
+    session.remove("success_message");
 
     let handlebars = &state.handlebars;
 
@@ -86,7 +88,6 @@ pub async fn admin_user_table_handler(
 
     Html(html).into_response()
 
-    // Json(admin_users).into_response()
 }
 
 #[derive(Serialize)]
@@ -94,6 +95,7 @@ pub struct AdminUserTableHandlerViewModel {
     logged_in_user: AdminUser,
     admin_users: Vec<AdminUser>,
     admin_user_paginate: AdminUserPaginate,
+    success_message: String,
 }
 
 impl AdminUserTableHandlerViewModel {
@@ -103,6 +105,7 @@ impl AdminUserTableHandlerViewModel {
             logged_in_user,
             admin_users: vec![],
             admin_user_paginate: AdminUserPaginate::empty_admin_user_paginate(),
+            success_message: String::from(""),
         }
     }
 }
