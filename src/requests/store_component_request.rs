@@ -15,7 +15,7 @@ pub struct StoreComponentRequest {
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct FieldType {
-    field_type: String,
-    name: String,
-    identifier: String
+    // field_type: String,
+    // name: String,
+    // identifier: String
 }

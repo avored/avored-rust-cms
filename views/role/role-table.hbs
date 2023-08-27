@@ -1,0 +1,159 @@
+{{#*inline "page_content"}}
+    <div class="border-b border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
+        <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
+            <div>
+                <div class="flex items-center">
+                    <h2 class="text-lg font-medium text-gray-800">
+                        {{translate_key "role" ~}}
+                    </h2>
+                </div>
+            </div>
+
+            <div class="flex items-center">
+                <a href="/admin/create-role"  class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600">
+                    <i data-feather="plus-circle" class="h-4 w-4"></i>
+                    <span>Add {{ translate_key "role" ~}}</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <div class="pt-5 pb-10">
+            <div class="px-4 mx-auto">
+                <div class="flex flex-col mt-6">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                            <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                                    <thead class="bg-gray-50 dark:bg-gray-800">
+                                        <tr>
+                                            <th scope="col" class="py-2 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                <button class="flex items-center gap-x-3 focus:outline-none">
+                                                    <span>
+                                                        {{ translate_key "name" ~}}
+                                                    </span>
+                                                </button>
+                                            </th>
+
+                                            <th scope="col"
+                                                class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                {{ translate_key "identifier" ~}}
+                                            </th>
+
+                                            <th scope="col"
+                                                class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                {{ translate_key "created_at" ~}}
+                                            </th>
+
+                                            <th scope="col"
+                                                class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                {{ translate_key "updated_at" ~}}
+                                            </th>
+
+                                            <th scope="col"
+                                                class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                {{ translate_key "created_by" ~}}
+                                            </th>
+                                            <th scope="col"
+                                                class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                                {{ translate_key "updated_by" ~}}
+                                            </th>
+
+                                            <th scope="col"
+                                                class="relative py-3.5 px-4">
+                                                <span class="sr-only">{{ translate_key "edit" ~}}</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
+                                        {{#each roles as |role|}}
+                                            <tr>
+                                                <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/show-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500"
+                                                    >
+                                                        {{ role.name }}
+                                                    </a>
+                                                </td>
+                                                <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/show-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500"
+                                                    >
+                                                        {{ role.identifier }}
+                                                    </a>
+
+                                                </td>
+
+                                                <td  class="px-4 py-1 text-sm whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/show-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500"
+                                                    >
+                                                        {{ role.created_at }}
+                                                    </a>
+
+                                                </td>
+                                                <td class="px-4 py-1 text-sm whitespace-nowrap">
+                                                    <a href="/admin/show-role/{{ role.id }}" class="px-1 py-1 text-gray-500">
+                                                        {{ role.updated_at }}
+                                                    </a>
+                                                </td>
+
+                                                <td class="px-4 py-1 text-sm whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/show-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500"
+                                                    >
+                                                        {{ role.created_by }}
+                                                    </a>
+
+                                                </td>
+                                                <td
+                                                        class="px-4 py-1 text-sm whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/show-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500"
+                                                    >
+                                                        {{ role.updated_by }}
+                                                    </a>
+                                                </td>
+
+                                                <td
+                                                        class="px-4 py-1 text-sm whitespace-nowrap">
+                                                    <a
+                                                            href="/admin/edit-role/{{ role.id }}"
+                                                            class="px-1 py-1 text-gray-500">
+                                                        <i class="w-4 h-4" data-feather="more-vertical"></i>
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        {{ translate_key "results" ~}}
+                        <span class="font-medium text-gray-700 dark:text-gray-100">
+                        1 to 1
+                    </span>
+                    </div>
+
+                    <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
+                        button goes here
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{{/inline}}
+
+{{> layout/app}}

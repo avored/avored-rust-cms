@@ -2,6 +2,7 @@ use crate::error::{Error, Result};
 use surrealdb::sql::{Array, Object, Value, Datetime, Number};
 
 pub mod admin_user_model;
+pub mod role_model;
 
 pub struct W<T>(pub T);
 

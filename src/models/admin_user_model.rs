@@ -18,8 +18,6 @@ pub struct AdminUser {
     pub updated_by: String,
 }
 
-
-
 impl AdminUser {
     pub fn empty_admin_user() -> Self {
         AdminUser {

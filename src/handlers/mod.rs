@@ -13,3 +13,4 @@ pub mod store_component_handler;
 pub mod test_pp_handler;
 pub mod show_admin_user_handler;
 pub mod delete_admin_user_handler;
+pub mod role_table_handler;

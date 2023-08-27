@@ -5,8 +5,8 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(thiserror::Error, Debug)]
 pub enum AvoRedError {
-	#[error("Generic {0}")]
-	Generic(String),
+	// #[error("Generic {0}")]
+	// Generic(String),
 
 	#[error("Surreal DB Error {0}")]
 	Surreal(surrealdb::err::Error),

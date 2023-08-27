@@ -39,5 +39,6 @@
     "is_super_admin": "Is super admin",
     "show_admin_user": "Show Admin User",
     "delete_admin_user": "Delete Admin User",
-    "profile_image": "Profile Image"
+    "profile_image": "Profile Image",
+    "role": "Role"
 }

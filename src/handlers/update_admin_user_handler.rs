@@ -1,11 +1,9 @@
-use std::collections::BTreeMap;
-use std::sync::Arc;
-use std::path::Path as stdPath;
-use axum::extract::{State, Path, Multipart};
+use axum::extract::{Multipart, Path, State};
 use axum::response::{IntoResponse, Redirect};
-use rand::Rng;
 use rand::distributions::Alphanumeric;
-use surrealdb::dbs::Response;
+use rand::Rng;
+use std::path::Path as stdPath;
+use std::sync::Arc;
 use urlencoding::decode_binary;
 
 use crate::avored_state::AvoRedState;
@@ -18,8 +16,7 @@ pub async fn update_admin_user_handler(
     Path(admin_user_id): Path<String>,
     mut session: AvoRedSession,
     mut multipart: Multipart,
-) -> Result<impl IntoResponse, impl IntoResponse>  {
-
+) -> Result<impl IntoResponse, impl IntoResponse> {
     let logged_in_user = match session.get("logged_in_user") {
         Some(logged_in_user) => logged_in_user,
         None => AdminUser::empty_admin_user(),
@@ -27,7 +24,7 @@ pub async fn update_admin_user_handler(
 
     let mut payload = UpdateAdminUserRequest {
         full_name: String::from(""),
-        is_super_admin: false
+        is_super_admin: false,
     };
 
     let mut profile_image = String::from("");
@@ -35,15 +32,15 @@ pub async fn update_admin_user_handler(
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
-        
+
         match name.as_ref() {
             "image" => {
                 let s: String = rand::thread_rng()
-                                .sample_iter(&Alphanumeric)
-                                .take(32)
-                                .map(char::from)
-                                .collect();
-                            
+                    .sample_iter(&Alphanumeric)
+                    .take(32)
+                    .map(char::from)
+                    .collect();
+
                 // let file_content_test = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
 
@@ -55,7 +52,6 @@ pub async fn update_admin_user_handler(
 
                 let new_file_name = format!("{}.{}", s, file_ext);
 
-              
                 let file_name = stdPath::new(&new_file_name).file_name().unwrap();
 
                 profile_image = format!("upload/{}", new_file_name);
@@ -73,15 +69,13 @@ pub async fn update_admin_user_handler(
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
                 existing_profile_image = String::from_utf8_lossy(&decoded).into_owned();
-
-               
             }
             "is_super_admin" => {
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
-                let mut  bool_super_admin = false;
+                let mut bool_super_admin = false;
                 if string_super_admin.eq("1") {
                     bool_super_admin = true;
                 }
@@ -105,10 +99,13 @@ pub async fn update_admin_user_handler(
     }
 
     if has_error {
-        let redirect_url = format!("{}{}", String::from("/admin/edit-admin-user/"), admin_user_id);
+        let redirect_url = format!(
+            "{}{}",
+            String::from("/admin/edit-admin-user/"),
+            admin_user_id
+        );
         return Err(Redirect::to(&redirect_url).into_response());
     }
-
 
     if profile_image.len() <= 0 {
         profile_image = existing_profile_image;
@@ -119,12 +116,16 @@ pub async fn update_admin_user_handler(
         full_name: payload.full_name,
         is_super_admin: payload.is_super_admin,
         profile_image,
-        logged_in_username: logged_in_user.email
+        logged_in_username: logged_in_user.email,
     };
 
-    let updated_admin_user = state
+    let _updated_admin_user = state
         .admin_user_repository
-        .update_admin_user(&state.datastore, &state.database_session, updatable_admin_user)
+        .update_admin_user(
+            &state.datastore,
+            &state.database_session,
+            updatable_admin_user,
+        )
         .await;
 
     Ok(Redirect::to("/admin/admin-user").into_response())

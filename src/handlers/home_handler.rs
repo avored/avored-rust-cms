@@ -7,7 +7,7 @@ use rand_core::OsRng;
 
 use crate::avored_state::AvoRedState;
 
-pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse {
+pub async fn home_handler(state: State<Arc<AvoRedState>>) -> impl IntoResponse {
 
     let password = "admin123";
     let password = password.as_bytes();
@@ -55,9 +55,31 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
             created_at: time::now(),
             updated_at: time::now()
         };
+
+
+
+        REMOVE TABLE roles;
+        DEFINE TABLE roles;
+
+        DEFINE FIELD name ON TABLE roles TYPE string;
+        DEFINE FIELD identifier ON TABLE roles TYPE string;
+        DEFINE FIELD created_by ON TABLE roles TYPE string;
+        DEFINE FIELD updated_by ON TABLE roles TYPE string;
+        DEFINE FIELD created_at ON TABLE roles TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE roles TYPE datetime;
+        DEFINE INDEX roles_identifier_index ON TABLE roles COLUMNS identifier UNIQUE;
+
+        CREATE roles CONTENT {
+            name: 'Administrator',
+            identifier: 'administrator',
+            created_by: $full_name,
+            updated_by: $full_name,
+            created_at: time::now(),
+            updated_at: time::now()
+        };
     ";
 
-    let _responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
+    let responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
         Ok(response) => response,
         Err(_) => {
             // todo improve this error
@@ -65,6 +87,9 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>,) -> impl IntoResponse 
             out
         }
     };
+    println!("{responses:?}");
+    println!("");
+    println!("Migrate fresh done!");
 
     // let sql = "
         
