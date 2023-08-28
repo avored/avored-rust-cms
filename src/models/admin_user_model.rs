@@ -48,31 +48,7 @@ pub struct AdminUserPaginate {
     pub previous_page: i64
 }
 
-#[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct ModelCount {
-    pub count: i64
-}
-impl ModelCount {
-    pub fn new() -> Self {
-        ModelCount {
-            count: 0
-        }
-    }
-}
 
-impl TryFrom<Object> for ModelCount {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<ModelCount> {
-        let count = match val.get("count") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let mut model_count = ModelCount::new();
-        model_count.count = count.as_int();
-
-        Ok(model_count)
-    }
-}
 
 
 impl AdminUserPaginate {

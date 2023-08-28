@@ -18,7 +18,8 @@ use urlencoding::decode_binary;
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::{AdminUser, CreatableAdminUser, ModelCount};
+use crate::models::ModelCount;
+use crate::models::admin_user_model::{AdminUser, CreatableAdminUser};
 use crate::providers::avored_session_provider::AvoRedSession;
 use crate::requests::store_admin_user_request::StoreAdminUserRequest;
 

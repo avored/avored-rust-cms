@@ -6,9 +6,9 @@ use surrealdb::sql::{Array, Object};
 
 use crate::error::Result;
 use crate::models::admin_user_model::{
-    AdminUser, AdminUserPaginate, CreatableAdminUser, ModelCount, UpdatableAdminUser,
+    AdminUser, AdminUserPaginate, CreatableAdminUser, UpdatableAdminUser,
 };
-use crate::models::W;
+use crate::models::{W, ModelCount};
 use crate::PER_PAGE;
 
 pub struct AdminUserRepository {}
@@ -197,6 +197,7 @@ impl AdminUserRepository {
 
         admin_users_count
     }
+
     pub async fn update_admin_user(
         &self,
         datastore: &Datastore,

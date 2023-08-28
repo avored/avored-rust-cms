@@ -1,0 +1,87 @@
+{{#*inline "page_content"}}
+<div
+    class="border-b bg-white border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
+    <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
+        <div>
+            <div class="flex items-center">
+                <h2
+                    class="text-lg font-medium text-gray-800 dark:text-white">
+                    {{translate_key "create_role" ~}}
+                </h2>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<div>
+    <!-- -->
+    <div class="px-4">
+        <form  action="/admin/store-role" method="post">
+            <div
+                class="mb-6 ">
+                <div
+                    class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
+                    <div class="text-gray-600">
+                        <p class="font-medium text-lg">
+                            {{ translate_key "role_details" ~}} 
+                        </p>
+                        <p>
+                            {{ translate_key "please_fill_out_all_the_fields" ~}} 
+                        </p>
+                    </div>
+
+                    <div class="lg:col-span-2">
+                        <div class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
+
+                            <!-- FIELD NAME -->
+                            <div class="md:col-span-6 mt-5">
+                                <label for="name">
+                                    {{ translate_key "name" ~}}
+                                </label>
+                                <div class="mt-1">
+                                    <input id="name" name="name" value=""
+                                        type="text" 
+                                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                                    />
+                                </div>
+                                <div class="text-sm text-red-600 mt-3 px-2">
+                                    {{ validation_error_name }}
+                                </div>
+                            </div>
+
+                            <!-- FIELD IDENTIFIER -->
+                            <div class="md:col-span-6 mt-5">
+                                <label for="identifier">
+                                    {{ translate_key "identifier" ~}}
+                                </label>
+                                <div class="mt-1">
+                                    <input id="identifier" name="identifier" value=""
+                                        type="text" 
+                                        class="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                                    />
+                                </div>
+                                <div class="text-sm text-red-600 mt-3 px-2">
+                                    {{ validation_error_identifier }}
+                                </div>
+                            </div>
+
+                            <!-- FIELD SUBMIT BUTTON -->
+                            <div class="md:col-span-6 mt-5 text-right">
+                                <div class="inline-flex items-end">
+                                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                        {{ translate_key "submit" ~}}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{{/inline}}
+
+{{> layout/app}}

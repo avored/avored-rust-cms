@@ -1,4 +1,5 @@
 use crate::error::{Error, Result};
+use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Array, Object, Value, Datetime, Number};
 
 pub mod admin_user_model;
@@ -79,4 +80,33 @@ impl TryFrom<W<Value>> for Object {
 			_ => Err(Error::XValueNotOfType("Object")),
 		}
 	}
+}
+
+
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct ModelCount {
+    pub count: i64
+}
+impl ModelCount {
+    pub fn new() -> Self {
+        ModelCount {
+            count: 0
+        }
+    }
+}
+
+impl TryFrom<Object> for ModelCount {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ModelCount> {
+        let count = match val.get("count") {
+            Some(val) => val.clone(),
+            None => Value::Null,
+        };
+        let mut model_count = ModelCount::new();
+        model_count.count = count.as_int();
+
+        Ok(model_count)
+    }
 }

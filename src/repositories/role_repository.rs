@@ -3,7 +3,7 @@ use surrealdb::dbs::{Response, Session};
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Array, Object};
 use crate::models::role_model::RoleModel;
-use crate::models::W;
+use crate::models::{W, ModelCount};
 use crate::PER_PAGE;
 use crate::error::Result;
 
@@ -69,4 +69,47 @@ impl RoleRepository {
 
         Ok(roles)
     }
+
+    pub async fn has_identifier_taken(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count() FROM roles WHERE identifier=$identifier;";
+        let vars = BTreeMap::from([("identifier".into(), identifier.into())]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), true)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response
+            .result
+            .expect(
+                "there is an issue with receiving the response result of surreal db query response",
+            )
+            .first();
+        println!("Result: {:?}", result);
+        let result_object: Result<Object> = W(result).try_into();
+
+        let role_count: Result<ModelCount> = match result_object {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(ModelCount::new()),
+        };
+
+        role_count
+    }
+
 }

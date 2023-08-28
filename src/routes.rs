@@ -14,9 +14,12 @@ use crate::{
     handlers::{
         admin_handler::admin_handler, admin_login_handler::admin_login_handler,
         create_admin_user_handler::create_admin_user_handler,
+        create_role_handler::create_role_handler,
+        create_page_handler::create_page_handler,
         test_pp_handler::test_pp_handler,
         edit_admin_user_handler::edit_admin_user_handler,
         show_admin_user_handler::show_admin_user_handler,
+        store_role_handler::store_role_handler,
         store_admin_user_handler::store_admin_user_handler,
         update_admin_user_handler::update_admin_user_handler,
         admin_user_table_handler::admin_user_table_handler,
@@ -24,7 +27,6 @@ use crate::{
         delete_admin_user_handler::delete_admin_user_handler,
         authenticate_admin_user_handler::authenticate_admin_user_handler,
         home_handler::home_handler,
-        create_page_handler::create_page_handler,
         create_component_handler::create_component_handler,
         store_component_handler::store_component_handler,
     },
@@ -55,6 +57,8 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
         .route("/admin/create-admin-user", get(create_admin_user_handler))
         .route("/admin/admin-user", get(admin_user_table_handler))
         .route("/admin", get(admin_handler))
+        .route("/admin/create-role", get(create_role_handler))
+        .route("/admin/store-role", post(store_role_handler))
         .route("/admin/role", get(role_table_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
