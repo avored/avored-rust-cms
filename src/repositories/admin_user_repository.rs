@@ -263,6 +263,7 @@ impl AdminUserRepository {
 
         admin_user
     }
+    
     pub async fn create_admin_user(
         &self,
         datastore: &Datastore,

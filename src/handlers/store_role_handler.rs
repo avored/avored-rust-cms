@@ -19,11 +19,12 @@ use urlencoding::decode_binary;
 use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
 
 use crate::avored_state::AvoRedState;
-use crate::models::ModelCount;
 use crate::models::admin_user_model::{AdminUser, CreatableAdminUser};
+use crate::models::role_model::CreatableRole;
+use crate::models::ModelCount;
 use crate::providers::avored_session_provider::AvoRedSession;
-use crate::requests::ValidateRequest;
 use crate::requests::store_role_request::StoreRoleRequest;
+use crate::requests::ValidateRequest;
 
 pub async fn store_role_handler(
     state: State<Arc<AvoRedState>>,
@@ -37,7 +38,6 @@ pub async fn store_role_handler(
 
     let mut has_error = false;
     let validation_error_list = payload.validation_error(&mut session);
- 
 
     let role_count = state
         .role_service
@@ -63,20 +63,21 @@ pub async fn store_role_handler(
         println!("{:?}", payload);
         return Err(Redirect::to("/admin/create-role").into_response());
     }
+    let creatable_role = CreatableRole {
+        name: payload.name,
+        identifier: payload.identifier,
+        logged_in_user_email: logged_in_user.email,
+    };
 
-    // let creatable_admin_user = CreatableAdminUser {
-    //     full_name: payload.full_name,
-    //     email: payload.email,
-    //     password: password_hash,
-    //     profile_image,
-    //     is_super_admin: payload.is_super_admin,
-    //     logged_in_username: logged_in_user.email,
-    // };
-
-    // let created_admin_user = state
-    //     .admin_user_repository
-    //     .create_admin_user(&state.datastore, &state.database_session, creatable_admin_user)
-    //     .await;
+    let created_role =
+        state
+            .role_service
+            .create_role(
+                &state.datastore, 
+                &state.database_session, 
+                creatable_role
+            ).await;
+            
 
     Ok(Redirect::to("/admin/role").into_response())
 }

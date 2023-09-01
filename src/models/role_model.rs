@@ -67,3 +67,26 @@ impl TryFrom<Object> for RoleModel {
         })
     }
 }
+
+
+
+impl RoleModel {
+    pub fn empty() -> Self {
+        RoleModel {
+            id: String::from(""),
+            name: String::from(""),
+            identifier: String::from(""),
+            created_at: Datetime::from(chrono::Utc::now()),
+            updated_at: Datetime::from(chrono::Utc::now()),
+            created_by: String::from(""),
+            updated_by: String::from(""),
+        }
+    }
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct CreatableRole {
+    pub name: String,
+    pub identifier: String,
+    pub logged_in_user_email: String,
+}

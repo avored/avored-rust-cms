@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use surrealdb::dbs::{Response, Session};
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Array, Object};
-use crate::models::role_model::RoleModel;
+use crate::models::role_model::{RoleModel, CreatableRole};
 use crate::models::{W, ModelCount};
 use crate::PER_PAGE;
 use crate::error::Result;
@@ -110,6 +110,63 @@ impl RoleRepository {
         };
 
         role_count
+    }
+
+    pub async fn create_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        creatable_role: CreatableRole,
+    ) -> Result<RoleModel> {
+        let sql = "
+            CREATE roles CONTENT {
+                name: $name,
+                identifier: $identifier,
+                created_by: $logged_in_user_email,
+                updated_by: $logged_in_user_email,
+                created_at: time::now(),
+                updated_at: time::now()
+            };
+        ";
+
+        let vars = BTreeMap::from([
+            ("name".into(), creatable_role.name.into()),
+            ("identifier".into(), creatable_role.identifier.into()),
+            (
+                "logged_in_user_email".into(),
+                creatable_role.logged_in_user_email.into(),
+            ),
+        ]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), false)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response
+            .result
+            .expect(
+                "there is an issue with receiving the response result of surreal db query response",
+            )
+            .first();
+
+        let result_roles: Result<Object> = W(result).try_into();
+
+        match result_roles {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(RoleModel::empty()),
+        }
     }
 
 }

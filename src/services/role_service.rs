@@ -1,7 +1,7 @@
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use crate::models::ModelCount;
-use crate::models::role_model::RoleModel;
+use crate::models::role_model::{RoleModel, CreatableRole};
 use crate::repositories::role_repository::RoleRepository;
 use crate::error::Result;
 
@@ -30,5 +30,15 @@ impl RoleService {
     ) -> Result<ModelCount> {
         let role_repository = RoleRepository::new();
         role_repository.has_identifier_taken(datastore, database_session, identifier).await
+    }
+
+    pub async fn create_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        createable_role: CreatableRole
+    ) -> Result<RoleModel> {
+        let role_repository = RoleRepository::new();
+        role_repository.create_role(datastore, database_session, createable_role).await
     }
 }
