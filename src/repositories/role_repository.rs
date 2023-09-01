@@ -1,11 +1,11 @@
+use crate::error::Result;
+use crate::models::role_model::{CreatableRole, RoleModel, UpdatableRole};
+use crate::models::{ModelCount, W};
+use crate::PER_PAGE;
 use std::collections::BTreeMap;
 use surrealdb::dbs::{Response, Session};
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Array, Object};
-use crate::models::role_model::{RoleModel, CreatableRole};
-use crate::models::{W, ModelCount};
-use crate::PER_PAGE;
-use crate::error::Result;
 
 pub struct RoleRepository {}
 
@@ -18,7 +18,7 @@ impl RoleRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        start: i64
+        start: i64,
     ) -> Result<Vec<RoleModel>> {
         let sql = "SELECT * FROM roles LIMIT $limit START $start;";
         let vars = BTreeMap::from([
@@ -26,7 +26,10 @@ impl RoleRepository {
             ("start".into(), start.into()),
         ]);
 
-        let responses = match datastore.execute(sql, &database_session, Some(vars), false).await {
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), false)
+            .await
+        {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -57,10 +60,8 @@ impl RoleRepository {
             }
         };
 
-        let result_roles: Result<Vec<RoleModel>> = objects
-            .into_iter()
-            .map(|o|  o.try_into())
-            .collect();
+        let result_roles: Result<Vec<RoleModel>> =
+            objects.into_iter().map(|o| o.try_into()).collect();
 
         let roles = match result_roles {
             Ok(data) => data,
@@ -169,4 +170,103 @@ impl RoleRepository {
         }
     }
 
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        id: String,
+    ) -> Result<RoleModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars = BTreeMap::from([("table".into(), "roles".into()), ("id".into(), id.into())]);
+
+        let responses = match datastore
+            .execute(sql, &database_session, Some(vars), false)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response
+            .result
+            .expect(
+                "there is an issue with receiving the response result of surreal db query response",
+            )
+            .first();
+
+        let result_role: Result<Object> = W(result).try_into();
+
+        let role: Result<RoleModel> = match result_role {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(RoleModel::empty()),
+        };
+
+        role
+    }
+
+    pub async fn update_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_role: UpdatableRole,
+    ) -> Result<RoleModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                name: $name,
+                identifier: $identifier,
+                updated_by: $logged_in_user_email,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("name".into(), updatable_role.name.into()),
+            (
+                "logged_in_user_email".into(),
+                updatable_role.logged_in_user_email.into(),
+            ),
+            ("identifier".into(), updatable_role.identifier.into()),
+            ("id".into(), updatable_role.id.into()),
+            ("table".into(), "roles".into()),
+        ]);
+
+        let responses = match datastore
+            .execute(sql, database_session, Some(vars), false)
+            .await
+        {
+            Ok(response) => response,
+            Err(_) => {
+                let out: Vec<Response> = vec![];
+                out
+            }
+        };
+
+        let response = responses
+            .into_iter()
+            .next()
+            .expect("there is an issue with unwrapping the surrealdb response");
+
+        let result = response
+            .result
+            .expect(
+                "there is an issue with receiving the response result of surreal db query response",
+            )
+            .first();
+
+        let result_role: Result<Object> = W(result).try_into();
+
+        let role_model: Result<RoleModel> = match result_role {
+            Ok(data) => data.try_into(),
+            Err(_) => Ok(RoleModel::empty()),
+        };
+
+        role_model
+    }
 }

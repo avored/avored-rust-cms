@@ -90,3 +90,12 @@ pub struct CreatableRole {
     pub identifier: String,
     pub logged_in_user_email: String,
 }
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableRole {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub logged_in_user_email: String,
+}

@@ -16,3 +16,5 @@ pub mod delete_admin_user_handler;
 pub mod role_table_handler;
 pub mod create_role_handler;
 pub mod store_role_handler;
+pub mod edit_role_handler;
+pub mod update_role_handler;

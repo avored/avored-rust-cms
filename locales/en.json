@@ -41,5 +41,6 @@
     "delete_admin_user": "Delete Admin User",
     "profile_image": "Profile Image",
     "role": "Role",
-    "role_details": "Role Details"
+    "role_details": "Role Details",
+    "edit_role": "Update Role"
 }

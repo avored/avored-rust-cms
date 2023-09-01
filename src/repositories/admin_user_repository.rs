@@ -8,7 +8,7 @@ use crate::error::Result;
 use crate::models::admin_user_model::{
     AdminUser, AdminUserPaginate, CreatableAdminUser, UpdatableAdminUser,
 };
-use crate::models::{W, ModelCount};
+use crate::models::{ModelCount, W};
 use crate::PER_PAGE;
 
 pub struct AdminUserRepository {}
@@ -263,7 +263,7 @@ impl AdminUserRepository {
 
         admin_user
     }
-    
+
     pub async fn create_admin_user(
         &self,
         datastore: &Datastore,
