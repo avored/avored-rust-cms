@@ -3,7 +3,7 @@
 use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
-use avored_qs::AvoRedForm;
+use avored_better_query::AvoRedForm;
 use axum::extract::{Multipart, State};
 use axum::response::{IntoResponse, Redirect};
 use axum::Form;
@@ -22,6 +22,7 @@ use crate::avored_state::AvoRedState;
 use crate::models::ModelCount;
 use crate::models::admin_user_model::{AdminUser, CreatableAdminUser};
 use crate::providers::avored_session_provider::AvoRedSession;
+use crate::requests::ValidateRequest;
 use crate::requests::store_role_request::StoreRoleRequest;
 
 pub async fn store_role_handler(
@@ -35,34 +36,8 @@ pub async fn store_role_handler(
     };
 
     let mut has_error = false;
-    let validation_error_list = match payload.validate() {
-        Ok(_) => ValidationErrors::new(),
-        Err(errors) => errors,
-    };
-
-    for (field_name, error) in validation_error_list.errors() {
-        match &error {
-            ValidationErrorsKind::Field(field_errors) => {
-                for field_error in field_errors {
-                    let message = match &field_error.message {
-                        Some(message) => message,
-                        None => continue,
-                    };
-
-                    if !message.is_empty() {
-                        // let key = field_name.clone();
-                        has_error = true;
-                        let validation_key = format!("validation_error_{}", field_name);
-                        session
-                            .insert(&validation_key, message)
-                            .expect("Could not store the validation errors into session.");
-                    }
-                }
-            }
-            ValidationErrorsKind::Struct(_) => continue,
-            ValidationErrorsKind::List(_) => continue,
-        }
-    }
+    let validation_error_list = payload.validation_error(&mut session);
+ 
 
     let role_count = state
         .role_service
@@ -84,7 +59,7 @@ pub async fn store_role_handler(
             .expect("Could not store the validation errors into session.");
     }
 
-    if has_error {
+    if has_error || validation_error_list.errors().length() > 0 {
         println!("{:?}", payload);
         return Err(Redirect::to("/admin/create-role").into_response());
     }

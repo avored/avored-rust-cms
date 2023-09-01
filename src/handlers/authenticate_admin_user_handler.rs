@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
-use avored_qs::AvoRedForm;
+use avored_better_query::AvoRedForm;
 use axum::extract::State;
 use axum::response::{IntoResponse, Redirect};
-use validator::{HasLen, Validate, ValidationErrors, ValidationErrorsKind};
+use validator::{HasLen, ValidationErrors, ValidationErrorsKind, Validate};
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
@@ -78,7 +78,7 @@ pub async fn authenticate_admin_user_handler(
     if admin_user_model.profile_image.len() > 0 {
         profile_image = format!("/public/{}", admin_user_model.profile_image);
     }
- 
+
     let admin_user_model = AdminUser {
         id: admin_user_model.id,
         full_name: admin_user_model.full_name,

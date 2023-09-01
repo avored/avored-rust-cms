@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 use std::sync::Arc;
-use avored_qs::AvoRedForm;
+use avored_better_query::AvoRedForm;
 use axum::Form;
 use axum::extract::State;
 use axum::response::{Html, IntoResponse, Redirect};
