@@ -23,7 +23,8 @@ Set up your `.env` file you can rename the existing `.env.example` file make sur
 ## Features
 
 - [x] Admin Users
-- [ ] Roles/Permissions
+- [x] Roles
+- [ ] Permissions
 - [ ] Components
 - [ ] Pages
 - [ ] Collection
