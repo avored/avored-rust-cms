@@ -7,7 +7,7 @@ use validator::HasLen;
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::AdminUser;
-use crate::models::role_model::{UpdatableRole, RoleModel};
+use crate::models::role_model::{RoleModel, UpdatableRole};
 use crate::providers::avored_session_provider::AvoRedSession;
 use crate::requests::update_role_request::UpdateRoleRequest;
 use crate::requests::ValidateRequest;
@@ -40,10 +40,11 @@ pub async fn update_role_handler(
     match state
         .role_service
         .update_role(&state.datastore, &state.database_session, updatable_role)
-        .await {
-            Ok(role_model) => role_model,
-            Err(_) => RoleModel::empty()
-        };
+        .await
+    {
+        Ok(role_model) => role_model,
+        Err(_) => RoleModel::empty(),
+    };
 
     Ok(Redirect::to("/admin/role").into_response())
 }

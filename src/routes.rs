@@ -20,6 +20,7 @@ use crate::{
         edit_admin_user_handler::edit_admin_user_handler,
         edit_role_handler::edit_role_handler,
         show_admin_user_handler::show_admin_user_handler,
+        show_role_handler::show_role_handler,
         store_role_handler::store_role_handler,
         store_admin_user_handler::store_admin_user_handler,
         update_admin_user_handler::update_admin_user_handler,
@@ -27,6 +28,7 @@ use crate::{
         admin_user_table_handler::admin_user_table_handler,
         role_table_handler::role_table_handler,
         delete_admin_user_handler::delete_admin_user_handler,
+        delete_role_handler::delete_role_handler,
         authenticate_admin_user_handler::authenticate_admin_user_handler,
         home_handler::home_handler,
         create_component_handler::create_component_handler,
@@ -53,9 +55,11 @@ pub fn routes(state: Arc<AvoRedState>, config: AvoRedConfigProvider) -> Router {
         .route("/admin/create-page", get(create_page_handler))
         .route("/admin/store-admin-user", post(store_admin_user_handler))
         .route("/admin/delete-admin-user/:admin_user_id", post(delete_admin_user_handler))
+        .route("/admin/delete-role/:role_id", post(delete_role_handler))
         .route("/admin/edit-role/:role_id", get(edit_role_handler))
         .route("/admin/edit-admin-user/:admin_user_id", get(edit_admin_user_handler))
         .route("/admin/show-admin-user/:admin_user_id", get(show_admin_user_handler))
+        .route("/admin/show-role/:role_id", get(show_role_handler))
         .route("/admin/update-admin-user/:admin_user_id", post(update_admin_user_handler))
         .route("/admin/update-role/:role_id", post(update_role_handler))
         .route("/admin/create-admin-user", get(create_admin_user_handler))

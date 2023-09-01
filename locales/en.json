@@ -42,5 +42,8 @@
     "profile_image": "Profile Image",
     "role": "Role",
     "role_details": "Role Details",
-    "edit_role": "Update Role"
+    "edit_role": "Update Role",
+    "show_role": "Show Role",
+    "basic_detail": "Basic Detail",
+    "delete": "Delete"
 }
