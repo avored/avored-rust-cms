@@ -31,7 +31,7 @@ impl AdminUserRepository {
         ]);
 
         let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
+            .execute(sql, &database_session, Some(vars))
             .await
         {
             Ok(response) => response,
@@ -82,7 +82,7 @@ impl AdminUserRepository {
     ) -> Result<AdminUserPaginate> {
         let sql = "SELECT count() FROM admin_users GROUP ALL;";
 
-        let responses = match datastore.execute(sql, &database_session, None, false).await {
+        let responses = match datastore.execute(sql, &database_session, None).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -122,7 +122,7 @@ impl AdminUserRepository {
         let vars = BTreeMap::from([("email".into(), email.into())]);
 
         let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
+            .execute(sql, &database_session, Some(vars))
             .await
         {
             Ok(response) => response,
@@ -164,7 +164,7 @@ impl AdminUserRepository {
         let vars = BTreeMap::from([("email".into(), email.into())]);
 
         let responses = match datastore
-            .execute(sql, &database_session, Some(vars), true)
+            .execute(sql, &database_session, Some(vars))
             .await
         {
             Ok(response) => response,
@@ -232,7 +232,7 @@ impl AdminUserRepository {
         ]);
 
         let responses = match datastore
-            .execute(sql, database_session, Some(vars), false)
+            .execute(sql, database_session, Some(vars))
             .await
         {
             Ok(response) => response,
@@ -303,7 +303,7 @@ impl AdminUserRepository {
         ]);
 
         let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
+            .execute(sql, &database_session, Some(vars))
             .await
         {
             Ok(response) => response,
@@ -348,7 +348,7 @@ impl AdminUserRepository {
         ]);
 
         let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
+            .execute(sql, &database_session, Some(vars))
             .await
         {
             Ok(response) => response,

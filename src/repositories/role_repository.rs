@@ -26,10 +26,7 @@ impl RoleRepository {
             ("start".into(), start.into()),
         ]);
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
-            .await
-        {
+        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -80,10 +77,7 @@ impl RoleRepository {
         let sql = "SELECT count() FROM roles WHERE identifier=$identifier;";
         let vars = BTreeMap::from([("identifier".into(), identifier.into())]);
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars), true)
-            .await
-        {
+        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -139,10 +133,7 @@ impl RoleRepository {
             ),
         ]);
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
-            .await
-        {
+        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -179,10 +170,7 @@ impl RoleRepository {
         let sql = "SELECT * FROM type::thing($table, $id);";
         let vars = BTreeMap::from([("table".into(), "roles".into()), ("id".into(), id.into())]);
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars), false)
-            .await
-        {
+        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];
@@ -237,10 +225,7 @@ impl RoleRepository {
             ("table".into(), "roles".into()),
         ]);
 
-        let responses = match datastore
-            .execute(sql, database_session, Some(vars), false)
-            .await
-        {
+        let responses = match datastore.execute(sql, database_session, Some(vars)).await {
             Ok(response) => response,
             Err(_) => {
                 let out: Vec<Response> = vec![];

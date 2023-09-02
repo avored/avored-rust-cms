@@ -21,7 +21,7 @@ pub async fn delete_role_handler(
 
     let _responses = match state
         .datastore
-        .execute(sql, &state.database_session, Some(vars), false)
+        .execute(sql, &state.database_session, Some(vars))
         .await
     {
         Ok(response) => response,

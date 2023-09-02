@@ -79,7 +79,7 @@ pub async fn home_handler(state: State<Arc<AvoRedState>>) -> impl IntoResponse {
         };
     ";
 
-    let responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
+    let responses = match state.datastore.execute(sql, &state.database_session, Some(vars)).await {
         Ok(response) => response,
         Err(_) => {
             // todo improve this error

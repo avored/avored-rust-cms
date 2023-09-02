@@ -16,54 +16,107 @@ pub struct RoleModel {
 impl TryFrom<Object> for RoleModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<RoleModel> {
+        
         let id = match val.get("id") {
-            Some(val) => val.clone(),
-            None => Value::Null,
+            Some(val) => { 
+                let value  = match val.clone() {
+					Value::Thing(v) => {
+						let id = v.id;
+                        id.to_string()
+					},
+					_ => String::from("")
+				};
+				value
+            },
+            None => String::from(""),
         };
-        let test = id.clone();
-
-        println!("{:?}", test);
-
-        let id = id.as_raw_string();
-        let identifier = match id.split(":").nth(1) {
-            Some(id) => id,
-            None => "",
-        };
-
+     
         let name = match val.get("name") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let unique_identifier = match val.get("identifier") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
+        let identifier = match val.get("identifier") {
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
 
         let created_at = match val.get("created_at") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Datetime(v) => {
+						v
+					},
+					_ => Datetime::default()
+				};
+				value
+			},
+			None => Datetime::default(),
+		};
         let updated_at = match val.get("updated_at") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let created_by = match val.get("created_by") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let updated_by = match val.get("updated_by") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Datetime(v) => {
+						v
+					},
+					_ => Datetime::default()
+				};
+				value
+			},
+			None => Datetime::default(),
+		};
+
+         let created_by = match val.get("created_by") {
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
+         let updated_by = match val.get("updated_by") {
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
 
         Ok(RoleModel {
-            id: identifier.to_string(),
-            name: name.as_raw_string(),
-            identifier: unique_identifier.as_raw_string(),
-            created_at: created_at.as_datetime(),
-            updated_at: updated_at.as_datetime(),
-            created_by: created_by.as_raw_string(),
-            updated_by: updated_by.as_raw_string(),
+            id,
+            name,
+            identifier,
+            created_at,
+            updated_at,
+            created_by,
+            updated_by,
         })
     }
 }

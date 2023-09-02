@@ -71,11 +71,20 @@ impl TryFrom<Object> for AdminUserPaginate {
     type Error = Error;
     fn try_from(val: Object) -> Result<AdminUserPaginate> {
         let count = match val.get("count") {
-            Some(val) => val.clone(),
-            None => Value::Null,
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Number(v) => {
+						v.as_int()
+					},
+					_ => i64::default()
+				};
+				value
+			
+            },
+            None => i64::default(),
         };
         let mut admin_user_paginate = AdminUserPaginate::empty_admin_user_paginate();
-        admin_user_paginate.count = count.as_int();
+        admin_user_paginate.count = count;
 
         Ok(admin_user_paginate)
     }
@@ -85,68 +94,145 @@ impl TryFrom<Object> for AdminUser {
     type Error = Error;
     fn try_from(val: Object) -> Result<AdminUser> {
         let id = match val.get("id") {
-            Some(val) => val.clone(),
-            None => Value::Null,
+            Some(val) => { 
+                let value  = match val.clone() {
+					Value::Thing(v) => {
+						let id = v.id;
+                        id.to_string()
+					},
+					_ => String::from("")
+				};
+				value
+            },
+            None => String::from(""),
         };
-        let id = id.as_raw_string();
-        let identifier = match id.split(":").nth(1) {
-            Some(id) => id,
-            None => ""
-        };
-
+     
         let full_name = match val.get("full_name") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
         let email = match val.get("email") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
         let password = match val.get("password") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
         let profile_image = match val.get("profile_image") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+
         let is_super_admin = match val.get("is_super_admin") {
-            Some(val) => val.clone(),
-            None => Value::False,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Bool(v) => {
+						v
+					},
+					_ => false
+				};
+				value
+			},
+			None => false,
+		};
         let created_at = match val.get("created_at") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Datetime(v) => {
+						v
+					},
+					_ => Datetime::default()
+				};
+				value
+			},
+			None => Datetime::default(),
+		};
         let updated_at = match val.get("updated_at") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let created_by = match val.get("created_by") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
-        let updated_by = match val.get("updated_by") {
-            Some(val) => val.clone(),
-            None => Value::Null,
-        };
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Datetime(v) => {
+						v
+					},
+					_ => Datetime::default()
+				};
+				value
+			},
+			None => Datetime::default(),
+		};
 
-        let mut bool_super_admin = false;
-        if is_super_admin.is_true()  {
-            bool_super_admin = true;
-        }
+         let created_by = match val.get("created_by") {
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
 
+         let updated_by = match val.get("updated_by") {
+			Some(val) => { 
+				let value  = match val.clone() {
+					Value::Strand(v) => {
+						v.as_string()
+					},
+					_ => String::from("")
+				};
+				value
+			},
+			None => String::from(""),
+		};
+      
         Ok(AdminUser {
-            id: identifier.to_string(),
-            full_name: full_name.as_raw_string(),
-            email: email.as_raw_string(),
-            password: password.as_raw_string(),
-            profile_image: profile_image.as_raw_string(),
-            is_super_admin: bool_super_admin,
-            created_at: created_at.as_datetime(),
-            updated_at: updated_at.as_datetime(),
-            created_by: created_by.as_raw_string(),
-            updated_by: updated_by.as_raw_string(),
+            id,
+            full_name,
+            email,
+            password,
+            profile_image,
+            is_super_admin,
+            created_at,
+            updated_at,
+            created_by,
+            updated_by,
         })
     }
 }

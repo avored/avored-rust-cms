@@ -20,7 +20,7 @@ pub async fn delete_admin_user_handler(
         ("table".into(), "admin_users".into()),
     ]);
 
-    let _responses = match state.datastore.execute(sql, &state.database_session, Some(vars), false).await {
+    let _responses = match state.datastore.execute(sql, &state.database_session, Some(vars)).await {
         Ok(response) => response,
         Err(_) => {
             let out: Vec<Response> = vec![];
