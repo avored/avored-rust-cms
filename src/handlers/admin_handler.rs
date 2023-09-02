@@ -3,7 +3,7 @@ use std::vec;
 
 use axum::extract::State;
 use axum::response::{Html, IntoResponse};
-use serde_derive::Serialize;
+use serde::Serialize;
 
 use crate::avored_state::AvoRedState;
 use crate::models::admin_user_model::{AdminUser, AdminUserPaginate};
