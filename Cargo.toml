@@ -30,4 +30,4 @@ regex = "1.9.3"
 rand = "0.8.5"
 serde_qs = "0.12.0"
 thiserror = "1.0.47"
-surrealdb = { version = "1.0.0-beta.9", features = ["kv-rocksdb"] }
+surrealdb = { version = "1.0.0-beta.10", features = ["kv-rocksdb"] }
