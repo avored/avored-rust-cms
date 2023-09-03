@@ -1,43 +1,39 @@
-#[warn(unused_imports)]
-
 use std::net::SocketAddr;
 
-use crate::bootstrap::bootstrap;
+use axum::{
+    response::{Html, IntoResponse},
+    routing::get,
+    Router,
+};
+use tracing::info;
 
-mod bootstrap;
-mod prelude;
+use crate::error::Result;
+
 mod error;
-mod handlers;
-mod models;
-mod routes;
-mod avored_state;
-mod repositories;
-mod providers;
-mod requests;
-mod middleware;
-mod responses;
-mod services;
-
-const PER_PAGE: i64 = 10;
 
 #[tokio::main]
-async fn main() {
-    let router = bootstrap().await;
+async fn main() -> Result<()> {
+    let app = Router::new().merge(routes_hello());
 
+    // region:    --- Start Server
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-
-    println!(r"     _             ____          _ ");
-    println!(r"    / \__   _____ |  _ \ ___  __| |");
-    println!(r"   / _ \ \ / / _ \| |_) / _ \/ _` |");
-    println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");
-    println!(r" /_/   \_\_/ \___/|_| \_\___|\__,_|");
-
-
-    println!("Server Started: http://localhost:8080");
-                                    
-    
+    info!("{:<12} - on {addr}\n", "LISTENING");
     axum::Server::bind(&addr)
-        .serve(router.into_make_service())
+        .serve(app.into_make_service())
         .await
         .unwrap();
+    // endregion: --- Start Server
+
+    Ok(())
+}
+
+fn routes_hello() -> Router {
+    Router::new().route("/", get(handler_hello))
+}
+
+async fn handler_hello() -> impl IntoResponse {
+    println!("->> {:<12} - handler_hello", "HANDLER");
+
+    let name = String::from("Avored Rust CMS");
+    Html(format!("Hello <strong>{name}</strong>"))
 }
