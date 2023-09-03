@@ -1,0 +1,11 @@
+<input
+    id="{{ name }}" 
+    name="{{ name }}" 
+    value="{{ value }}"
+    type="{{ type }}" 
+    {{#if is_required}}
+        required
+    {{/if}}
+    placeholder="{{ placeholder}}"
+    class="appearance-none rounded-md ring-1 ring-primary-500 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 sm:text-sm focus:z-10 {{ class }}"
+/>

@@ -1,0 +1,21 @@
+{
+    "scripts": {
+        "dev": "concurrently \"npm run tail-watch\" \"npm run build\"",
+        "build": "npx webpack --config webpack.mix.js",
+        "tail-watch": "npx tailwindcss -i ./resources/css/app.css -o ./public/css/app.css --watch"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.14",
+        "concurrently": "^8.2.0",
+        "postcss": "^8.4.26",
+        "webpack": "^5.88.2",
+        "webpack-cli": "^5.1.4"
+    },
+    "dependencies": {
+        "@alpinejs/focus": "^3.12.3",
+        "@tailwindcss/forms": "^0.5.4",
+        "alpinejs": "^3.12.3",
+        "feather-icons": "^4.29.0",
+        "tailwindcss": "^3.3.3"
+    }
+}
