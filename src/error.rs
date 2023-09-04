@@ -3,7 +3,9 @@ use axum::{http::StatusCode, response::{Response, IntoResponse}};
 pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
-pub enum Error {}
+pub enum Error {
+	ConfigMissing(&'static str),
+}
 
 impl core::fmt::Display for Error {
 	fn fmt(

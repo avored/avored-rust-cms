@@ -14,3 +14,9 @@ tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 r_i18n = "1.0.1"
 tower-http = { version = "0.4.3", features = ["fs"] }
+dotenvy = "0.15.7"
+async-session = "3.0.0"
+axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
+futures = "0.3.28"
+tower = "0.4.13"
+surrealdb = { version = "1.0.0-beta.10", features = ["kv-rocksdb"] }

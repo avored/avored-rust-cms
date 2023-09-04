@@ -1,15 +1,14 @@
-use handlebars::{Handlebars, Helper, Context, RenderContext, RenderError, Output, JsonRender};
-use r_i18n::{I18nConfig, I18n};
-
+use handlebars::{Context, Handlebars, Helper, JsonRender, Output, RenderContext, RenderError};
+use r_i18n::{I18n, I18nConfig};
+use crate::error::Result as AvoRedResult;
 
 pub struct AvoRedViewProvider {
-    pub handlebars: Handlebars<'static>
+    pub handlebars: Handlebars<'static>,
 }
 
 impl AvoRedViewProvider {
-    pub fn register() -> AvoRedViewProvider {
+    pub fn register() -> AvoRedResult<AvoRedViewProvider> {
         let mut handlebars = Handlebars::new();
-
 
         handlebars
             .register_templates_directory(".hbs", "./views")
@@ -18,12 +17,9 @@ impl AvoRedViewProvider {
         handlebars.register_helper("translate_key", Box::new(translate_key));
         handlebars.register_helper("get_validation_message", Box::new(get_validation_message));
 
-        AvoRedViewProvider {
-            handlebars,
-        }
+        Ok(AvoRedViewProvider { handlebars })
     }
 }
-
 
 fn translate(key: String) -> String {
     let config: I18nConfig = I18nConfig {
