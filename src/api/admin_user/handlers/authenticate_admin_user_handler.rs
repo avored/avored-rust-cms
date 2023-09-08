@@ -33,7 +33,7 @@ pub async fn authenticate_admin_user_handler(
             .insert("validation_error_email", validation_error)
             .expect("Could not store the validation errors into session.");
 
-        return Ok(Redirect::to("/admin/login").into_response().into_response());
+        return Ok(Redirect::to("/admin/login").into_response());
     }
 
     session

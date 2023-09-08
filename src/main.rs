@@ -11,7 +11,7 @@ use tower_http::services::ServeDir;
 use tracing::info;
 
 use crate::{
-    api::admin_user::admin_user_routes::admin_user_routes,
+    api::{admin_user::admin_user_routes::admin_user_routes, setup::setup_routes::setup_routes},
     avored_state::AvoRedState,
     error::Result,
     models::admin_user_model::CreatableAdminUser,
@@ -39,7 +39,8 @@ async fn main() -> Result<()> {
 
     let app = Router::new()
         .merge(routes_hello(state.clone()))
-        .merge(admin_user_routes(state))
+        .merge(admin_user_routes(state.clone()))
+        .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
         .layer(session_layer);
 
@@ -48,6 +49,7 @@ async fn main() -> Result<()> {
     println!(r"   / _ \ \ / / _ \| |_) / _ \/ _` |");
     println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");
     println!(r" /_/   \_\_/ \___/|_| \_\___|\__,_|");
+
     println!("");
     println!("");
     println!("Server started: http://localhost:8080");

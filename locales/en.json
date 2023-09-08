@@ -45,5 +45,6 @@
     "edit_role": "Update Role",
     "show_role": "Show Role",
     "basic_detail": "Basic Detail",
-    "delete": "Delete"
+    "delete": "Delete",
+    "setup_avored": "Setup AvoRed"
 }
