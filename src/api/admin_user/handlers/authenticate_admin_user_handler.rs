@@ -8,6 +8,7 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use std::sync::Arc;
+use validator::HasLen;
 
 pub async fn authenticate_admin_user_handler(
     mut session: AvoRedSession,
@@ -16,8 +17,14 @@ pub async fn authenticate_admin_user_handler(
 ) -> Result<impl IntoResponse> {
     let admin_user_model = state
         .admin_user_service
-        .find_by_email(&state.db, payload.email)
+        .find_by_email(&state.db, payload.email.to_owned())
         .await?;
+
+    let validation_error_list = payload.validate_errors(session.clone())?;
+
+    if validation_error_list.errors().length() > 0 {
+        return Ok(Redirect::to("/admin/login").into_response());
+    }
 
     let is_valid = match PasswordHash::new(&admin_user_model.password) {
         Ok(parsed_hash) => Argon2::default()
@@ -39,6 +46,6 @@ pub async fn authenticate_admin_user_handler(
     session
         .insert("logged_in_user", admin_user_model)
         .expect("Could not store the answer.");
-    
+
     Ok(Redirect::to("/admin").into_response())
 }

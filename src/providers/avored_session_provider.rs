@@ -344,7 +344,7 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AvoRedSession {
     session: async_session::Session,
 }
