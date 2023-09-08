@@ -1,21 +1,28 @@
 use std::sync::Arc;
 
 use axum::{
+    middleware,
     routing::{get, post},
     Router,
 };
 
-use crate::avored_state::AvoRedState;
+use crate::{
+    avored_state::AvoRedState, middleware::require_authentication::require_authentication,
+};
 
 use super::handlers::{
     admin_login_handler::admin_login_handler,
-    authenticate_admin_user_handler::authenticate_admin_user_handler,
+    authenticate_admin_user_handler::authenticate_admin_user_handler, dashboard_handler::dashboard_handler,
 };
 
 pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
+        .route("/admin", get(dashboard_handler))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            require_authentication,
+        ))
         .route("/admin/login", get(admin_login_handler))
         .route("/admin/login", post(authenticate_admin_user_handler))
         .with_state(state)
 }
-

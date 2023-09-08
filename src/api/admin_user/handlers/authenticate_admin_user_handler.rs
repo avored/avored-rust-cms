@@ -14,17 +14,10 @@ pub async fn authenticate_admin_user_handler(
     state: State<Arc<AvoRedState>>,
     AvoRedForm(payload): AvoRedForm<AuthenticateAdminUserRequest>,
 ) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - authenticate_admin_user_handler", "HANDLER");
-    println!("->> {:?} - authenticate_admin_user_handler", payload);
     let admin_user_model = state
         .admin_user_service
         .find_by_email(&state.db, payload.email)
         .await?;
-
-    let  admin_user_model = admin_user_model.first().unwrap();
-    // if admin_user_model.id.is_empty() {
-    //     return Ok(Redirect::to("/admin/login").into_response().into_response());
-    // }
 
     let is_valid = match PasswordHash::new(&admin_user_model.password) {
         Ok(parsed_hash) => Argon2::default()
@@ -43,5 +36,9 @@ pub async fn authenticate_admin_user_handler(
         return Ok(Redirect::to("/admin/login").into_response().into_response());
     }
 
+    session
+        .insert("logged_in_user", admin_user_model)
+        .expect("Could not store the answer.");
+    
     Ok(Redirect::to("/admin").into_response())
 }

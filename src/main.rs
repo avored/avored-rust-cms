@@ -23,6 +23,7 @@ use argon2::PasswordHasher;
 mod api;
 mod avored_state;
 mod error;
+mod middleware;
 mod models;
 mod providers;
 mod services;
@@ -66,7 +67,6 @@ async fn main() -> Result<()> {
 fn routes_hello(state: Arc<AvoRedState>) -> Router {
     Router::new()
         .route("/", get(handler_hello))
-        .route("/admin", get(handler_hello))
         .with_state(state)
 }
 

@@ -44,24 +44,21 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         email: String,
-    ) -> Result<Vec<AdminUserModel>> {
+    ) -> Result<AdminUserModel> {
         let sql = "SELECT * FROM admin_users WHERE $data;";
-        println!("{}", email);
         let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-        
-        let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
-        for object in into_iter_objects(responses)? {
-            let admin_user_object = object?;
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
-            let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
-            admin_user_list.push(admin_user_model?);
-        }
-        // let task_model: Result<AdminUserModel> =
-        Ok(admin_user_list)
+        admin_user_model
     }
 
     pub async fn create_admin_user(
