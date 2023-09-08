@@ -260,6 +260,7 @@ dependencies = [
  "futures",
  "handlebars",
  "r_i18n",
+ "rand",
  "serde",
  "surrealdb",
  "tokio",
@@ -267,6 +268,7 @@ dependencies = [
  "tower-http",
  "tracing",
  "tracing-subscriber",
+ "urlencoding",
  "validator",
 ]
 

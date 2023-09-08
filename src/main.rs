@@ -1,4 +1,3 @@
-use argon2::password_hash::{rand_core::OsRng, SaltString};
 use async_session::MemoryStore;
 use axum::{
     extract::State,
@@ -14,11 +13,8 @@ use crate::{
     api::{admin_user::admin_user_routes::admin_user_routes, setup::setup_routes::setup_routes},
     avored_state::AvoRedState,
     error::Result,
-    models::admin_user_model::CreatableAdminUser,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
-use argon2::Argon2;
-use argon2::PasswordHasher;
 
 const PER_PAGE: i64 = 10;
 
