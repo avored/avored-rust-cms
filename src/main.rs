@@ -20,6 +20,8 @@ use crate::{
 use argon2::Argon2;
 use argon2::PasswordHasher;
 
+const PER_PAGE: i64 = 10;
+
 mod api;
 mod avored_state;
 mod error;
@@ -72,35 +74,35 @@ fn routes_hello(state: Arc<AvoRedState>) -> Router {
         .with_state(state)
 }
 
-async fn handler_hello(state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
+async fn handler_hello(_state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
     println!("->> {:<12} - handler_hello", "HANDLER");
 
-    let password = "admin123";
-    let password = password.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
+    // let password = "admin123";
+    // let password = password.as_bytes();
+    // let salt = SaltString::generate(&mut OsRng);
 
-    let argon2 = Argon2::default();
-    let password_hash = argon2
-        .hash_password(password, &salt)
-        .expect("Error occurred while encrypted password")
-        .to_string();
+    // let argon2 = Argon2::default();
+    // let password_hash = argon2
+    //     .hash_password(password, &salt)
+    //     .expect("Error occurred while encrypted password")
+    //     .to_string();
 
-    // region : Move this admin user creation into home page
-    let creatable_admin_user_model = CreatableAdminUser {
-        full_name: String::from("Admin"),
-        email: String::from("admin@admin.com"),
-        password: password_hash,
-        profile_image: String::from(""),
-        is_super_admin: true,
-        logged_in_username: String::from("CLI"),
-    };
+    // // region : Move this admin user creation into home page
+    // let creatable_admin_user_model = CreatableAdminUser {
+    //     full_name: String::from("Admin"),
+    //     email: String::from("admin@admin.com"),
+    //     password: password_hash,
+    //     profile_image: String::from(""),
+    //     is_super_admin: true,
+    //     logged_in_username: String::from("CLI"),
+    // };
 
-    let created = state
-        .admin_user_service
-        .create_admin_user(&state.db, creatable_admin_user_model)
-        .await?;
+    // let created = state
+    //     .admin_user_service
+    //     .create_admin_user(&state.db, creatable_admin_user_model)
+    //     .await?;
 
-    println!("{:?}", created);
+    // println!("{:?}", created);
 
     let name = String::from("Avored Rust CMS");
     Ok(Html(format!("Hello <strong>{name}</strong>")))

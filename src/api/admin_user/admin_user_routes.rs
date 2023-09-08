@@ -11,13 +11,16 @@ use crate::{
 };
 
 use super::handlers::{
-    admin_login_handler::admin_login_handler,
-    authenticate_admin_user_handler::authenticate_admin_user_handler, dashboard_handler::dashboard_handler,
+    admin_login_handler::admin_login_handler, admin_user_table_handler::admin_user_table_handler,
+    authenticate_admin_user_handler::authenticate_admin_user_handler,
+    create_admin_user_handler::create_admin_user_handler, dashboard_handler::dashboard_handler,
 };
 
 pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
         .route("/admin", get(dashboard_handler))
+        .route("/admin/create-admin-user", get(create_admin_user_handler))
+        .route("/admin/admin-user", get(admin_user_table_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_authentication,

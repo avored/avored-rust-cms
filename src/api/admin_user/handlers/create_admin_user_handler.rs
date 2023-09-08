@@ -10,27 +10,27 @@ use axum::{
 };
 use serde::Serialize;
 
-pub async fn dashboard_handler(
-    state: State<Arc<AvoRedState>>,
+pub async fn create_admin_user_handler(
     session: AvoRedSession,
+    state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
+    println!("->> {:<12} - admin_user_create_handler", "HANDLER");
     let logged_in_user = match session.get("logged_in_user") {
         Some(logged_in_user) => logged_in_user,
         None => AdminUserModel::default(),
     };
 
-    println!("->> {:<12} - dashboard_handler", "HANDLER");
-    let view_model = DashboardViewModel { logged_in_user };
+    let view_model = CreateAdminUserViewModel { logged_in_user };
 
     let handlebars = &state.handlebars;
     let html = handlebars
-        .render("dashboard", &view_model)
-        .expect("there is an issue with handlerbar rendering dashboard.hbs template");
+        .render("admin-user/create-admin-user", &view_model)
+        .expect("there is an issue with handlerbar rendering admin-user/table.hbs template");
 
     Ok(Html(html))
 }
 
-#[derive(Serialize)]
-pub struct DashboardViewModel {
-    logged_in_user: AdminUserModel,
+#[derive(Serialize, Default)]
+pub struct CreateAdminUserViewModel {
+    pub logged_in_user: AdminUserModel,
 }

@@ -9,6 +9,7 @@ use crate::{
     error::{Error, Result},
     models::admin_user_model::{AdminUserModel, CreatableAdminUser},
     providers::avored_database_provider::DB,
+    PER_PAGE,
 };
 
 pub struct AdminUserService {}
@@ -59,6 +60,29 @@ impl AdminUserService {
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
         admin_user_model
+    }
+
+    pub async fn paginate(
+        &self,
+        (datastore, database_session): &DB,
+        start: i64,
+    ) -> Result<Vec<AdminUserModel>> {
+        let sql = "SELECT * FROM admin_users LIMIT $limit START $start;";
+        let vars = BTreeMap::from([
+            ("limit".into(), PER_PAGE.into()),
+            ("start".into(), start.into()),
+        ]);
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let admin_user_object = object?;
+
+            let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
+            admin_user_list.push(admin_user_model?);
+        }
+        Ok(admin_user_list)
     }
 
     pub async fn create_admin_user(
