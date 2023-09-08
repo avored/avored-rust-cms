@@ -1,15 +1,18 @@
-use std::{sync::Arc, path::Path};
+use std::{path::Path, sync::Arc};
 
 use crate::{
-    avored_state::AvoRedState, error::Result, models::admin_user_model::{AdminUserModel, CreatableAdminUser},
-    providers::avored_session_provider::AvoRedSession, api::admin_user::requests::store_admin_user_request::StoreAdminUserRequest,
+    api::admin_user::requests::store_admin_user_request::StoreAdminUserRequest,
+    avored_state::AvoRedState,
+    error::Result,
+    models::admin_user_model::{AdminUserModel, CreatableAdminUser},
+    providers::avored_session_provider::AvoRedSession,
 };
 use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
 use axum::{
-    extract::{State, Multipart},
+    extract::{Multipart, State},
     response::{IntoResponse, Redirect},
 };
-use rand::{distributions::Alphanumeric, Rng, rngs::OsRng};
+use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use urlencoding::decode_binary;
 
 pub async fn store_admin_user_handler(
@@ -30,7 +33,7 @@ pub async fn store_admin_user_handler(
     };
     let mut profile_image = String::from("");
 
-    while let Some(mut field) = multipart.next_field().await.unwrap() {
+    while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
 
         match name.as_ref() {
@@ -43,21 +46,20 @@ pub async fn store_admin_user_handler(
 
                 let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
-
-                println!("File NAME: {}", file_name);
-                
-                let file_ext = file_name.split(".").last().unwrap_or(".png");
-                
                 let data = field.bytes().await.unwrap();
-                println!("File DATA: {:?}", data);
+                
+                if !file_name.is_empty()  {
 
-                let new_file_name = format!("{}.{}", s, file_ext);
+                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let new_file_name = format!("{}.{}", s, file_ext);
+    
+                    let file_name = Path::new(&new_file_name).file_name().unwrap();
+    
+                    profile_image = format!("upload/{}", new_file_name);
+                    let full_path = Path::new("public").join("upload").join(file_name);
+                    tokio::fs::write(full_path, data).await.unwrap();
+                }
 
-                let file_name = Path::new(&new_file_name).file_name().unwrap();
-
-                profile_image = format!("upload/{}", new_file_name);
-                let full_path = Path::new("public").join("upload").join(file_name);
-                tokio::fs::write(full_path, data).await.unwrap();
             }
             "full_name" => {
                 let bytes = field.bytes().await.unwrap();
@@ -220,10 +222,7 @@ pub async fn store_admin_user_handler(
 
     let _created_admin_user = state
         .admin_user_service
-        .create_admin_user(
-            &state.db,
-            creatable_admin_user,
-        )
+        .create_admin_user(&state.db, creatable_admin_user)
         .await;
 
     Ok(Redirect::to("/admin/admin-user").into_response())
