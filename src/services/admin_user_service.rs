@@ -2,12 +2,12 @@ use std::collections::BTreeMap;
 
 use surrealdb::{
     dbs::Response,
-    sql::{Object, Value},
+    sql::{Datetime, Object, Value},
 };
 
 use crate::{
     error::{Error, Result},
-    models::admin_user_model::AdminUserModel,
+    models::admin_user_model::{AdminUserModel, CreatableAdminUser},
     providers::avored_database_provider::DB,
 };
 
@@ -40,17 +40,65 @@ impl AdminUserService {
         Ok(admin_user_list)
     }
 
+    pub async fn find_by_email(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+    ) -> Result<Vec<AdminUserModel>> {
+        let sql = "SELECT * FROM admin_users WHERE $data;";
+        println!("{}", email);
+        let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        
+        let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let admin_user_object = object?;
+
+            let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
+            admin_user_list.push(admin_user_model?);
+        }
+        // let task_model: Result<AdminUserModel> =
+        Ok(admin_user_list)
+    }
+
     pub async fn create_admin_user(
         &self,
         (ds, ses): &DB,
-        email: &str,
-        password: &str,
+        creatable_admin_user_model: CreatableAdminUser,
     ) -> Result<String> {
         let sql = "CREATE admin_users CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
-            ("email".into(), email.into()),
-            ("password".into(), password.into()),
+            (
+                "full_name".into(),
+                creatable_admin_user_model.full_name.into(),
+            ),
+            ("email".into(), creatable_admin_user_model.email.into()),
+            (
+                "password".into(),
+                creatable_admin_user_model.password.into(),
+            ),
+            (
+                "profile_image".into(),
+                creatable_admin_user_model.profile_image.into(),
+            ),
+            (
+                "is_super_admin".into(),
+                creatable_admin_user_model.is_super_admin.into(),
+            ),
+            (
+                "created_by".into(),
+                creatable_admin_user_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                creatable_admin_user_model.logged_in_username.into(),
+            ),
+            ("created_at".into(), Datetime::default().into()),
+            ("updated_at".into(), Datetime::default().into()),
         ]
         .into();
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();

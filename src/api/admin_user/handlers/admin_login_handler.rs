@@ -11,12 +11,6 @@ pub async fn admin_login_handler(state: State<Arc<AvoRedState>>) -> Result<impl 
     println!("->> {:<12} - admin_login_handler", "HANDLER");
     let view_model = AdminLoginViewModel {};
 
-    let created = state
-        .admin_user_service
-        .create_admin_user(&state.db, "test", "password")
-        .await?;
-
-    println!("{:?}", created);
     let admin_users = state.admin_user_service.all_admin_users(&state.db).await?;
     println!("{:?}", admin_users);
     let handlebars = &state.handlebars;

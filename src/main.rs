@@ -1,5 +1,7 @@
+use argon2::password_hash::{rand_core::OsRng, SaltString};
 use async_session::MemoryStore;
 use axum::{
+    extract::State,
     response::{Html, IntoResponse},
     routing::get,
     Router,
@@ -12,15 +14,18 @@ use crate::{
     api::admin_user::admin_user_routes::admin_user_routes,
     avored_state::AvoRedState,
     error::Result,
+    models::admin_user_model::CreatableAdminUser,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
+use argon2::Argon2;
+use argon2::PasswordHasher;
 
 mod api;
 mod avored_state;
-mod services;
-mod models;
 mod error;
+mod models;
 mod providers;
+mod services;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -65,9 +70,36 @@ fn routes_hello(state: Arc<AvoRedState>) -> Router {
         .with_state(state)
 }
 
-async fn handler_hello() -> Result<impl IntoResponse> {
+async fn handler_hello(state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
     println!("->> {:<12} - handler_hello", "HANDLER");
-    
+
+    let password = "admin123";
+    let password = password.as_bytes();
+    let salt = SaltString::generate(&mut OsRng);
+
+    let argon2 = Argon2::default();
+    let password_hash = argon2
+        .hash_password(password, &salt)
+        .expect("Error occurred while encrypted password")
+        .to_string();
+
+    // region : Move this admin user creation into home page
+    let creatable_admin_user_model = CreatableAdminUser {
+        full_name: String::from("Admin"),
+        email: String::from("admin@admin.com"),
+        password: password_hash,
+        profile_image: String::from(""),
+        is_super_admin: true,
+        logged_in_username: String::from("CLI"),
+    };
+
+    let created = state
+        .admin_user_service
+        .create_admin_user(&state.db, creatable_admin_user_model)
+        .await?;
+
+    println!("{:?}", created);
+
     let name = String::from("Avored Rust CMS");
     Ok(Html(format!("Hello <strong>{name}</strong>")))
 }
