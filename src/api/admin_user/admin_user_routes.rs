@@ -18,7 +18,7 @@ use super::handlers::{
     store_admin_user_handler::store_admin_user_handler,
     update_admin_user_handler::update_admin_user_handler,
     show_admin_user_handler::show_admin_user_handler,
-    delete_admin_user_handler::delete_admin_user_handler,
+    delete_admin_user_handler::delete_admin_user_handler, role_table_handler::role_table_handler,
 };
 
 pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {
@@ -43,6 +43,7 @@ pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {
             post(update_admin_user_handler),
         )
         .route("/admin/admin-user", get(admin_user_table_handler))
+        .route("/admin/role", get(role_table_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_authentication,
