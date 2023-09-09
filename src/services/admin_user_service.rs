@@ -25,25 +25,25 @@ impl AdminUserService {
     }
 }
 impl AdminUserService {
-    pub async fn all_admin_users(
-        &self,
-        (datastore, database_session): &DB,
-    ) -> Result<Vec<AdminUserModel>> {
-        let sql = "SELECT * FROM admin_users";
+    // pub async fn all_admin_users(
+    //     &self,
+    //     (datastore, database_session): &DB,
+    // ) -> Result<Vec<AdminUserModel>> {
+    //     let sql = "SELECT * FROM admin_users";
 
-        let responses = datastore.execute(sql, database_session, None).await?;
+    //     let responses = datastore.execute(sql, database_session, None).await?;
 
-        // println!("{:?}", responses);
-        let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
+    //     // println!("{:?}", responses);
+    //     let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
-        for object in into_iter_objects(responses)? {
-            let admin_user_object = object?;
+    //     for object in into_iter_objects(responses)? {
+    //         let admin_user_object = object?;
 
-            let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
-            admin_user_list.push(admin_user_model?);
-        }
-        Ok(admin_user_list)
-    }
+    //         let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
+    //         admin_user_list.push(admin_user_model?);
+    //     }
+    //     Ok(admin_user_list)
+    // }
 
     pub async fn find_by_email(
         &self,
@@ -52,6 +52,15 @@ impl AdminUserService {
     ) -> Result<AdminUserModel> {
         self.admin_user_repository
             .find_by_email(datastore, database_session, email)
+            .await
+    }
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: String,
+    ) -> Result<AdminUserModel> {
+        self.admin_user_repository
+            .find_by_id(datastore, database_session, id)
             .await
     }
 

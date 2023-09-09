@@ -35,4 +35,27 @@ impl AdminUserRepository {
 
         admin_user_model
     }
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        id: String,
+    ) -> Result<AdminUserModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars = BTreeMap::from([
+            ("table".into(), "admin_users".into()),
+            ("id".into(), id.into()),
+        ]);
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
+
+        admin_user_model
+    }
 }

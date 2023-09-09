@@ -12,7 +12,7 @@ use serde::Serialize;
 
 pub async fn show_admin_user_handler(
     session: AvoRedSession,
-    Path(_admin_user_id): Path<String>,
+    Path(admin_user_id): Path<String>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - show_admin_user_handler", "HANDLER");
@@ -21,10 +21,9 @@ pub async fn show_admin_user_handler(
         None => AdminUserModel::default(),
     };
 
-    // @todo add find_by_id
     let admin_user_model = state
         .admin_user_service
-        .find_by_email(&state.db, String::from("admin@admin.com"))
+        .find_by_id(&state.db, admin_user_id)
         .await?;
 
     let view_model = ShowAdminUserHandlerViewModel {
