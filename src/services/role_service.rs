@@ -1,5 +1,5 @@
 use crate::{
-    error::Result, models::role_model::{RoleModel, CreatableRole}, providers::avored_database_provider::DB,
+    error::Result, models::role_model::{RoleModel, CreatableRole, UpdatableRoleModel}, providers::avored_database_provider::DB,
     repositories::role_repository::RoleRepository,
 };
 
@@ -71,47 +71,27 @@ impl RoleService {
         self.role_repository
             .create_role(datastore, database_session, creatable_role_model)
             .await
-
-    //     let sql = "CREATE admin_users CONTENT $data";
-
-    //     let data: BTreeMap<String, Value> = [
-    //         (
-    //             "full_name".into(),
-    //             creatable_admin_user_model.full_name.into(),
-    //         ),
-    //         ("email".into(), creatable_admin_user_model.email.into()),
-    //         (
-    //             "password".into(),
-    //             creatable_admin_user_model.password.into(),
-    //         ),
-    //         (
-    //             "profile_image".into(),
-    //             creatable_admin_user_model.profile_image.into(),
-    //         ),
-    //         (
-    //             "is_super_admin".into(),
-    //             creatable_admin_user_model.is_super_admin.into(),
-    //         ),
-    //         (
-    //             "created_by".into(),
-    //             creatable_admin_user_model.logged_in_username.clone().into(),
-    //         ),
-    //         (
-    //             "updated_by".into(),
-    //             creatable_admin_user_model.logged_in_username.into(),
-    //         ),
-    //         ("created_at".into(), Datetime::default().into()),
-    //         ("updated_at".into(), Datetime::default().into()),
-    //     ]
-    //     .into();
-    //     let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
-
-    //     let ress = ds.execute(sql, ses, Some(vars)).await?;
-
-    //     into_iter_objects(ress)?
-    //         .next()
-    //         .transpose()?
-    //         .and_then(|obj| obj.get("id").map(|id| id.to_string()))
-    //         .ok_or_else(|| Error::Generic("no record"))
     }
+
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: String,
+    ) -> Result<RoleModel> {
+        self.role_repository
+            .find_by_id(datastore, database_session, id)
+            .await
+    }
+
+    pub async fn update_role(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_role_model: UpdatableRoleModel,
+    ) -> Result<RoleModel> {
+        self.role_repository
+            .update_role(datastore, database_session, updatable_role_model)
+            .await
+    }
+
+
 }

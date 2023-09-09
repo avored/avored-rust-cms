@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::role_model::{CreatableRole, RoleModel};
+use crate::models::role_model::{CreatableRole, RoleModel, UpdatableRoleModel};
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
@@ -77,69 +77,65 @@ impl RoleRepository {
         role_model
     }
 
-    // pub async fn find_by_id(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     id: String,
-    // ) -> Result<RoleModel> {
-    //     let sql = "SELECT * FROM type::thing($table, $id);";
-    //     let vars = BTreeMap::from([("table".into(), "roles"), ("id".into(), id.into())]);
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: String,
+    ) -> Result<RoleModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> =
+            [
+                ("id".into(), role_id.into()), 
+                ("table".into(), "roles".into())
+            ].into();
 
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found")),
-    //     };
-    //     let role_model: Result<RoleModel> = result_object?.try_into();
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let role_model: Result<RoleModel> = result_object?.try_into();
 
-    //     role_model
-    // }
+        role_model
+    }
 
-    // pub async fn update_admin_user(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     updatable_admin_user: UpdatableAdminUserModel,
-    // ) -> Result<AdminUserModel> {
-    //     let sql = "
-    //         UPDATE type::thing($table, $id) MERGE {
-    //             full_name: $full_name,
-    //             profile_image: $profile_image,
-    //             is_super_admin: $is_super_admin,
-    //             updated_by: $logged_in_user_name,
-    //             updated_at: time::now()
-    //         };";
+    pub async fn update_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_admin_user: UpdatableRoleModel,
+    ) -> Result<RoleModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                name: $name,
+                identifier: $identifier,
+                updated_by: $logged_in_user_name,
+                updated_at: time::now()
+            };";
 
-    //     let vars = BTreeMap::from([
-    //         ("full_name".into(), updatable_admin_user.full_name.into()),
-    //         (
-    //             "logged_in_user_name".into(),
-    //             updatable_admin_user.logged_in_username.into(),
-    //         ),
-    //         (
-    //             "profile_image".into(),
-    //             updatable_admin_user.profile_image.into(),
-    //         ),
-    //         (
-    //             "is_super_admin".into(),
-    //             updatable_admin_user.is_super_admin.into(),
-    //         ),
-    //         ("id".into(), updatable_admin_user.id.into()),
-    //         ("table".into(), "admin_users".into()),
-    //     ]);
+        let vars = BTreeMap::from([
+            ("name".into(), updatable_admin_user.name.into()),
+            ("identifier".into(), updatable_admin_user.identifier.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_admin_user.logged_in_username.into(),
+            ),
+            ("id".into(), updatable_admin_user.id.into()),
+            ("table".into(), "roles".into()),
+        ]);
 
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found")),
-    //     };
-    //     let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let role_model: Result<RoleModel> = result_object?.try_into();
 
-    //     admin_user_model
-    // }
+        role_model
+    }
 }
