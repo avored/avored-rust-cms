@@ -24,6 +24,7 @@ mod error;
 mod middleware;
 mod models;
 mod providers;
+mod repositories;
 mod services;
 
 #[tokio::main]

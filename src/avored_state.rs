@@ -2,6 +2,7 @@ use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
 use crate::providers::avored_view_provider::AvoRedViewProvider;
+use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::services::admin_user_service::AdminUserService;
 use handlebars::Handlebars;
 
@@ -18,7 +19,9 @@ impl AvoRedState {
         let avored_config_provider = AvoRedConfigProvider::register()?;
         let avored_database_provider =
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
-        let admin_user_service = AdminUserService::new()?;
+
+        let admin_user_repository = AdminUserRepository::new();
+        let admin_user_service = AdminUserService::new(admin_user_repository)?;
 
         Ok(AvoRedState {
             handlebars: avored_view_provider.handlebars,

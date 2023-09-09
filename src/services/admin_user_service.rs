@@ -9,14 +9,19 @@ use crate::{
     error::{Error, Result},
     models::admin_user_model::{AdminUserModel, CreatableAdminUser},
     providers::avored_database_provider::DB,
+    repositories::admin_user_repository::AdminUserRepository,
     PER_PAGE,
 };
 
-pub struct AdminUserService {}
+pub struct AdminUserService {
+    admin_user_repository: AdminUserRepository,
+}
 
 impl AdminUserService {
-    pub fn new() -> Result<Self> {
-        Ok(AdminUserService {})
+    pub fn new(admin_user_repository: AdminUserRepository) -> Result<Self> {
+        Ok(AdminUserService {
+            admin_user_repository,
+        })
     }
 }
 impl AdminUserService {
@@ -37,7 +42,6 @@ impl AdminUserService {
             let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
             admin_user_list.push(admin_user_model?);
         }
-        // let task_model: Result<AdminUserModel> =
         Ok(admin_user_list)
     }
 
@@ -46,20 +50,9 @@ impl AdminUserService {
         (datastore, database_session): &DB,
         email: String,
     ) -> Result<AdminUserModel> {
-        let sql = "SELECT * FROM admin_users WHERE $data;";
-        let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        let result_object_option = into_iter_objects(responses)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => Err(Error::Generic("no record found")),
-        };
-        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
-
-        admin_user_model
+        self.admin_user_repository
+            .find_by_email(datastore, database_session, email)
+            .await
     }
 
     pub async fn paginate(
