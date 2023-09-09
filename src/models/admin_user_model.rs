@@ -168,3 +168,12 @@ pub struct CreatableAdminUser {
     pub is_super_admin: bool,
     pub logged_in_username: String,
 }
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableAdminUserModel {
+    pub id: String,
+    pub full_name: String,
+    pub profile_image: String,
+    pub is_super_admin: bool,
+    pub logged_in_username: String,
+}

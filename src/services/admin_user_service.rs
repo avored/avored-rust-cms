@@ -7,7 +7,7 @@ use surrealdb::{
 
 use crate::{
     error::{Error, Result},
-    models::admin_user_model::{AdminUserModel, CreatableAdminUser},
+    models::admin_user_model::{AdminUserModel, CreatableAdminUser, UpdatableAdminUserModel},
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
     PER_PAGE,
@@ -54,6 +54,7 @@ impl AdminUserService {
             .find_by_email(datastore, database_session, email)
             .await
     }
+
     pub async fn find_by_id(
         &self,
         (datastore, database_session): &DB,
@@ -61,6 +62,16 @@ impl AdminUserService {
     ) -> Result<AdminUserModel> {
         self.admin_user_repository
             .find_by_id(datastore, database_session, id)
+            .await
+    }
+
+    pub async fn update_admin_user(
+        &self,
+        (datastore, database_session): &DB,
+        updateable_admin_user_model: UpdatableAdminUserModel,
+    ) -> Result<AdminUserModel> {
+        self.admin_user_repository
+            .update_admin_user(datastore, database_session, updateable_admin_user_model)
             .await
     }
 
