@@ -1,5 +1,5 @@
 use crate::{
-    error::Result, models::role_model::RoleModel, providers::avored_database_provider::DB,
+    error::Result, models::role_model::{RoleModel, CreatableRole}, providers::avored_database_provider::DB,
     repositories::role_repository::RoleRepository,
 };
 
@@ -63,11 +63,15 @@ impl RoleService {
             .await
     }
 
-    // pub async fn create_role(
-    //     &self,
-    //     (ds, ses): &DB,
-    //     creatable_admin_user_model: CreatableAdminUser,
-    // ) -> Result<String> {
+    pub async fn create_role(
+        &self,
+        (datastore, database_session): &DB,
+        creatable_role_model: CreatableRole,
+    ) -> Result<RoleModel> {
+        self.role_repository
+            .create_role(datastore, database_session, creatable_role_model)
+            .await
+
     //     let sql = "CREATE admin_users CONTENT $data";
 
     //     let data: BTreeMap<String, Value> = [
@@ -109,5 +113,5 @@ impl RoleService {
     //         .transpose()?
     //         .and_then(|obj| obj.get("id").map(|id| id.to_string()))
     //         .ok_or_else(|| Error::Generic("no record"))
-    // }
+    }
 }

@@ -1,11 +1,11 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::role_model::RoleModel;
+use crate::models::role_model::{CreatableRole, RoleModel};
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::Value;
+use surrealdb::sql::{Datetime, Value};
 
 use super::into_iter_objects;
 
@@ -38,6 +38,43 @@ impl RoleRepository {
             role_list.push(role_model?);
         }
         Ok(role_list)
+    }
+
+    pub async fn create_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        createable_role_model: CreatableRole,
+    ) -> Result<RoleModel> {
+        let sql = "CREATE roles CONTENT $data";
+
+        let data: BTreeMap<String, Value> = [
+            ("name".into(), createable_role_model.name.into()),
+            ("identifier".into(), createable_role_model.identifier.into()),
+            (
+                "created_by".into(),
+                createable_role_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                createable_role_model.logged_in_username.into(),
+            ),
+            ("created_at".into(), Datetime::default().into()),
+            ("updated_at".into(), Datetime::default().into()),
+        ]
+        .into();
+        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let role_model: Result<RoleModel> = result_object?.try_into();
+
+        role_model
     }
 
     // pub async fn find_by_id(

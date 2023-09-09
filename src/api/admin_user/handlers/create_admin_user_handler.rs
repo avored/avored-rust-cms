@@ -25,7 +25,7 @@ pub async fn create_admin_user_handler(
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("admin-user/create-admin-user", &view_model)
-        .expect("there is an issue with handlerbar rendering admin-user/table.hbs template");
+        .expect("there is an issue with handlerbar rendering admin-user/createa-admin-user.hbs template");
 
     Ok(Html(html))
 }
