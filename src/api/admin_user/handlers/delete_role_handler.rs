@@ -8,13 +8,13 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 
-pub async fn delete_admin_user_handler(
+pub async fn delete_role_handler(
     _session: AvoRedSession,
-    Path(admin_user_id): Path<String>,
+    Path(role_id): Path<String>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - delete_admin_user_handler", "HANDLER");
-    state.admin_user_service.delete_admin_user(&state.db, admin_user_id).await?;
+    println!("->> {:<12} - delete_role_handler", "HANDLER");
+    state.role_service.delete_role(&state.db, role_id).await?;
 
-    Ok(Redirect::to("/admin/admin-user").into_response())
+    Ok(Redirect::to("/admin/role").into_response())
 }

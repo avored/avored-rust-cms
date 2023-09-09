@@ -102,4 +102,29 @@ impl AdminUserRepository {
 
         admin_user_model
     }
+
+    pub async fn delete_admin_user(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: String,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), "admin_users".into()),
+        ]
+        .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(false)
+    }
+
 }
