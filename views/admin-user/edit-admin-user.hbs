@@ -38,7 +38,7 @@
                                     {{#if admin_user_model.profile_image }}
 
                                         <img 
-                                            src="/public/{{ admin_user_model.profile_image }}" 
+                                            src="{{ admin_user_model.profile_image }}" 
                                             class="w-32 aspect-square h-32 rounded-full"
                                             alt="{{ admin_user_model.full_name }}" />
                                     {{ else }}

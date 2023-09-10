@@ -30,7 +30,7 @@
                         </div>
                         <div class="md:col-span-1">
                             {{#if admin_user_model.profile_image }}
-                                <img src="/public/{{ admin_user_model.profile_image }}" class="w-32 aspect-square h-32 rounded" alt="{{ admin_user_model.full_name }}"/>
+                                <img src="{{ admin_user_model.profile_image }}" class="w-32 aspect-square h-32 rounded" alt="{{ admin_user_model.full_name }}"/>
                             {{ else }}
                                 <div class="flex items-center justify-center text-xl text-white rounded-full h-32 w-32 bg-primary-500">
                                     {{ admin_user_model.full_name }}
