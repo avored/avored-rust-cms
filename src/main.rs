@@ -5,7 +5,8 @@ use axum::{
     routing::get,
     Router,
 };
-use std::{net::SocketAddr, sync::Arc};
+use tracing_subscriber::{filter, Layer, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt};
+use std::{net::SocketAddr, sync::Arc, fs::File, path::Path};
 use tower_http::services::ServeDir;
 use tracing::info;
 
@@ -29,6 +30,8 @@ mod services;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    
+    init_log();
     let state = Arc::new(AvoRedState::new().await?);
     let store = MemoryStore::new();
     let config = config();
@@ -103,4 +106,44 @@ async fn handler_hello(_state: State<Arc<AvoRedState>>) -> Result<impl IntoRespo
 
     let name = String::from("Avored Rust CMS");
     Ok(Html(format!("Hello <strong>{name}</strong>")))
+}
+
+
+fn init_log() {
+    let stdout_log = tracing_subscriber::fmt::layer()
+    .pretty();
+
+    // A layer that logs events to a file.
+    let file = File::create(Path::new("public").join("log").join("avored.log"));
+    let file = match file  {Ok(file) => file,Err(error) => panic!("Error: {:?}",error),};
+    let debug_log = tracing_subscriber::fmt::layer()
+        .with_writer(Arc::new(file));
+
+    // A layer that collects metrics using specific events.
+    let metrics_layer = /* ... */ filter::LevelFilter::INFO;
+
+    tracing_subscriber::registry()
+        .with(
+            stdout_log
+                // Add an `INFO` filter to the stdout logging layer
+                .with_filter(filter::LevelFilter::INFO)
+                // Combine the filtered `stdout_log` layer with the
+                // `debug_log` layer, producing a new `Layered` layer.
+                .and_then(debug_log)
+                // Add a filter to *both* layers that rejects spans and
+                // events whose targets start with `metrics`.
+                .with_filter(filter::filter_fn(|metadata| {
+                    !metadata.target().starts_with("metrics")
+                }))
+        )
+        .with(
+            // Add a filter to the metrics label that *only* enables
+            // events whose targets start with `metrics`.
+            metrics_layer.with_filter(filter::filter_fn(|metadata| {
+                metadata.target().starts_with("metrics")
+            }))
+        )
+        .init();
+
+    tracing::info!(target: "metrics::cool_stuff_count", value = 42);
 }

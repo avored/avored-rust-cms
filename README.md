@@ -11,13 +11,15 @@ AvoRed Rust CMS implement with the help of axum web framework and surrealdb as d
 ## Installation
 
     git clone https://github.com/avored/avored-cms
-    cd avored-cms/rust-api
+    cd avored-cms
     
 
 Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
 
 ### Start your application
     cargo run
+
+Once the application start you can visit `http://localhost:8080/setup` this url will create database tables and admin user once you submit it and redirect to `http://localhost:8080/admin/login`
 
 
 ## Features
