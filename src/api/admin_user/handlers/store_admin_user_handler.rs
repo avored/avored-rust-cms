@@ -222,6 +222,10 @@ pub async fn store_admin_user_handler(
         .admin_user_service
         .create_admin_user(&state.db, creatable_admin_user)
         .await;
+        
+    session
+        .insert("success_message", "Admin User added successfully!")
+        .expect("Could not store the validation errors into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())
 }
