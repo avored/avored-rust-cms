@@ -21,7 +21,6 @@ impl RoleService {
 
     //     let responses = datastore.execute(sql, database_session, None).await?;
 
-    //     // println!("{:?}", responses);
     //     let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
     //     for object in into_iter_objects(responses)? {

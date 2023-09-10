@@ -46,9 +46,6 @@ pub async fn update_admin_user_handler(
 
                 // let file_content_test = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
-
-                println!("file name: {}", file_name);
-
                 let file_ext = file_name.split(".").last().unwrap_or(".png");
 
                 let data = field.bytes().await.unwrap();

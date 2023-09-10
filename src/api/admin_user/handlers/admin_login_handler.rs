@@ -16,7 +16,6 @@ pub async fn admin_login_handler(
     println!("->> {:<12} - admin_login_handler", "HANDLER");
 
     // let admin_users = state.admin_user_service.all_admin_users(&state.db).await?;
-    // println!("{:?}", admin_users);
 
     let validation_email_message = session
         .get("validation_error_email")

@@ -12,7 +12,6 @@ pub async fn setup_avored_handler(state: State<Arc<AvoRedState>>) -> Result<impl
     let view_model = SetupViewModel {};
 
     // let admin_users = state.admin_user_service.all_admin_users(&state.db).await?;
-    // println!("{:?}", admin_users);
     let handlebars = &state.handlebars;
 
     let html = handlebars

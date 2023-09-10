@@ -35,7 +35,6 @@ impl AdminUserService {
 
     //     let responses = datastore.execute(sql, database_session, None).await?;
 
-    //     // println!("{:?}", responses);
     //     let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
     //     for object in into_iter_objects(responses)? {
@@ -197,8 +196,6 @@ fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Re
         .next()
         .map(|rp| rp.result)
         .transpose()?;
-
-    // println!("{:?}", response);
 
     match response {
         Some(Value::Array(arr)) => {

@@ -67,7 +67,6 @@ pub async fn store_admin_user_handler(
                 let full_name = String::from_utf8_lossy(&decoded).into_owned();
 
                 payload.full_name = full_name;
-                // println!("Full Name: {:?}", full_name);
             }
             "email" => {
                 let bytes = field.bytes().await.unwrap();
@@ -197,7 +196,6 @@ pub async fn store_admin_user_handler(
     // }
 
     if has_error {
-        println!("{:?}", payload);
         return Ok(Redirect::to("/admin/create-admin-user").into_response());
     }
 

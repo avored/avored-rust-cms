@@ -39,11 +39,10 @@ pub async fn update_role_handler(
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
     };
-    let role_model = state
+    let _role_model = state
         .role_service
         .update_role(&state.db, updateable_role_model)
         .await?;
 
-    println!("{role_model:?}");
     Ok(Redirect::to("/admin/role").into_response())
 }
