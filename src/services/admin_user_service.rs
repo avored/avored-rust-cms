@@ -7,7 +7,9 @@ use surrealdb::{
 
 use crate::{
     error::{Error, Result},
-    models::admin_user_model::{AdminUserModel, CreatableAdminUser, UpdatableAdminUserModel},
+    models::admin_user_model::{
+        AdminUserModel, CreatableAdminUser, Pagination, UpdatableAdminUserModel,
+    },
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
     PER_PAGE,
@@ -78,8 +80,27 @@ impl AdminUserService {
     pub async fn paginate(
         &self,
         (datastore, database_session): &DB,
-        start: i64,
-    ) -> Result<Vec<AdminUserModel>> {
+        current_page: i64,
+    ) -> Result<Pagination> {
+        // pagination logic goes here
+        // add a total no of record in db fn in repository
+        let start = (current_page - 1) * PER_PAGE;
+        let to = start + PER_PAGE;
+
+        let admin_user_count = self
+            .admin_user_repository
+            .get_total_count(datastore, database_session)
+            .await?;
+
+        let mut has_next_page = false;
+        if admin_user_count.total > to {
+            has_next_page = true;
+        };
+        let mut has_previous_page = false;
+        if current_page > 1 {
+            has_previous_page = true;
+        };
+
         let sql = "SELECT * FROM admin_users LIMIT $limit START $start;";
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
@@ -95,9 +116,21 @@ impl AdminUserService {
             let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
             admin_user_list.push(admin_user_model?);
         }
-        Ok(admin_user_list)
-    }
 
+        let admin_user_paginate = Pagination {
+            data: admin_user_list.clone(),
+            total: admin_user_count.total,
+            per_page: PER_PAGE,
+            current_page: current_page,
+            from: (start + 1),
+            to,
+            has_previous_page,
+            next_page_number: (current_page + 1),
+            has_next_page,
+            previous_page_number: (current_page - 1)
+        };
+        Ok(admin_user_paginate)
+    }
 
     pub async fn delete_admin_user(
         &self,
@@ -178,6 +211,4 @@ fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Re
         }
         _ => Err(Error::Generic("No Record found")),
     }
-
-
 }
