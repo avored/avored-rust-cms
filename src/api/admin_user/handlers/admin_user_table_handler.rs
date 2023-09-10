@@ -14,7 +14,7 @@ use axum::{
 use serde::Serialize;
 
 pub async fn admin_user_table_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     Query(query_param): Query<AdminUserTableQuery>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
@@ -29,9 +29,14 @@ pub async fn admin_user_table_handler(
         .admin_user_service
         .paginate(&state.db, current_page)
         .await?;
+    let success_message = session
+        .get("success_message")
+        .unwrap_or(String::from(""));
+        session.remove("success_message");
 
     let view_model = AdminUserTableViewModel {
         logged_in_user,
+        success_message,
         admin_user_pagination,
     };
 
