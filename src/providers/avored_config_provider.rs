@@ -1,3 +1,9 @@
+use std::{sync::OnceLock, env};
+
+use dotenvy::dotenv;
+
+use crate::error::{Error, Result};
+
 #[derive(Debug, Clone)]
 pub struct AvoRedConfigProvider {
     pub database_namespace: String,
@@ -5,16 +11,27 @@ pub struct AvoRedConfigProvider {
     pub session_secret_key: String
 }
 
-impl AvoRedConfigProvider {
-    pub fn new() -> AvoRedConfigProvider {
-        let database_namespace = std::env::var("AVORED_DATABASE_NAMESPACE").expect("AVORED_DATABASE_NAMESPACE must be set");
-        let database_name = std::env::var("AVORED_DATABASE_NAME").expect("AVORED_DATABASE_NAME must be set");
-        let session_secret_key = std::env::var("AVORED_SESSION_SECRET_KEY").expect("AVORED_SESSION_SECRET_KEY must be set");
 
-        AvoRedConfigProvider {
-            database_namespace,
-            database_name,
-            session_secret_key
-        }
+pub fn config() -> &'static AvoRedConfigProvider {
+    static INSTANCE: OnceLock<AvoRedConfigProvider> = OnceLock::new();
+
+    INSTANCE.get_or_init(|| {
+        AvoRedConfigProvider::register()
+            .unwrap_or_else(|ex| panic!("FATAL - WHILE LOADING CONF - Cause: {ex:?}"))
+    })
+}
+
+impl AvoRedConfigProvider {
+    pub fn register() -> Result<AvoRedConfigProvider> {
+        dotenv().ok();
+        Ok(AvoRedConfigProvider {
+            database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
+            database_name: get_env("AVORED_DATABASE_NAME")?,
+            session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?
+        })
     }
+}
+
+fn get_env(name: &'static str) -> Result<String> {
+    env::var(name).map_err(|_| Error::ConfigMissing(name))
 }

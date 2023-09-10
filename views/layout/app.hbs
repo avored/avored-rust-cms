@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" sizes="32x32"
+    <link rel="icon" type="image/x-icon" sizes="32x32"
       href="/public/images/favicon.ico">
 
     <link href="/public/css/app.css" rel="stylesheet">
@@ -11,65 +11,68 @@
   </head>
   <body class="antialiased bg-slate-50">
 
-    <div 
-        class="py-10 absolute bg-black bg-opacity-50 min-h-screen w-full font-medium text-gray-800"
+    <div
+      class="py-10 absolute bg-black bg-opacity-50 min-h-screen w-full font-medium text-gray-800"
+      x-show="modal"
+      x-on:confirmation-toggle.window="confirmation_message = $event.detail.confirmation_message; modal = true"
+      x-on:keyup.escape.window="modal = false"
+      x-data="{ modal: false, confirmation_message: 'Are you sure?' }">
+      <div
+        class="max-w-sm p-2 mt-10 z-50 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear"
         x-show="modal"
-        x-on:confirmation-toggle.window="confirmation_message = $event.detail.confirmation_message; modal = true"
-        x-on:keyup.escape.window="modal = false"
-        x-data="{ modal: false, confirmation_message: 'Are you sure?' }">
-        <div class="max-w-sm p-2 mt-10 z-50 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear" x-show="modal"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="opacity-0 scale-90"
-            x-transition:enter-end="opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-300"
-            x-transition:leave-start="opacity-100 scale-100"
-            x-transition:leave-end="opacity-0 scale-90"
-        >
-              <div class="relative p-6" x-on:click.outside="modal= false">
-                  <a href="#" x-on:click.prevent="modal = ! modal" class="absolute top-1.5 right-1.5">
-                    <i data-feather="x"></i>
-                  </a>
-                  
-                  <p class="text-sm text-gray-500">
-                      <span x-html="confirmation_message"></span>
-                  </p>
-                
-                  <div class="flex flex-row mt-6 space-x-2 justify-evenly">
-                      <a href="#" 
-                        x-on:click="modal = !modal; $dispatch('confirmation-confrimed');"
-                        class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg hover:bg-red-500">
-                        Delete
-                      </a>
-                      <a href="#" x-on:click.prevent="modal = ! modal" class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
-                        Cancel
-                      </a>
-                  </div>
-              </div>
+        x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 scale-90"
+        x-transition:enter-end="opacity-100 scale-100"
+        x-transition:leave="transition ease-in duration-300"
+        x-transition:leave-start="opacity-100 scale-100"
+        x-transition:leave-end="opacity-0 scale-90">
+        <div class="relative p-6" x-on:click.outside="modal= false">
+          <a href="#" x-on:click.prevent="modal = ! modal"
+            class="absolute top-1.5 right-1.5">
+            <i data-feather="x"></i>
+          </a>
+
+          <p class="text-sm text-gray-500">
+            <span x-html="confirmation_message"></span>
+          </p>
+
+          <div class="flex flex-row mt-6 space-x-2 justify-evenly">
+            <a href="#"
+              x-on:click="modal = !modal; $dispatch('confirmation-confrimed');"
+              class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg hover:bg-red-500">
+              Delete
+            </a>
+            <a href="#" x-on:click.prevent="modal = ! modal"
+              class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
+              Cancel
+            </a>
+          </div>
         </div>
+      </div>
     </div>
 
-
-    {{#if success_message  }}
-    <div class="absolute bottom-20 right-10 z-50" role="alert" 
-      x-data="{ show: true }" 
-      x-show="show" 
-      x-init="setTimeout(() => show = false, 15000)"
-    >
-      <div class="flex bg-green-100 items-center rounded-lg p-4 mb-4 text-sm text-green-700" role="alert">
+    {{#if success_message }}
+    <div class="absolute bottom-20 right-10 z-50" role="alert"
+      x-data="{ show: true }"
+      x-show="show"
+      x-init="setTimeout(() => show = false, 15000)">
+      <div
+        class="flex bg-green-100 items-center rounded-lg p-4 mb-4 text-sm text-green-700"
+        role="alert">
         <i class="w-4 h-4 mr-3" data-feather="bell"></i>
         <!-- <svg class="w-5 h-5 inline mr-3" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg> -->
         <div>
-            <span class="font-medium">
-              Success alert!
-            </span> 
-            
-            {{ success_message }}
-          </div>
+          <span class="font-medium">
+            Success alert!
+          </span>
 
-          <div x-on:click="show = false" class="cursor-pointer">
-              <i class="ml-3 w-4 h-4" data-feather="x"></i>
-          </div>
-          
+          {{ success_message }}
+        </div>
+
+        <div x-on:click="show = false" class="cursor-pointer">
+          <i class="ml-3 w-4 h-4" data-feather="x"></i>
+        </div>
+
       </div>
     </div>
     {{/if}}
@@ -200,7 +203,7 @@
                     <a href="/admin/role"
                       class="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
                       <div>
-                          {{ translate_key "role" ~}}
+                        {{ translate_key "role" ~}}
                       </div>
                     </a>
                   </li>
@@ -473,7 +476,6 @@
 
     </div>
     <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.3/dist/cdn.min.js"></script> -->
-    
 
   </body>
 </html>

@@ -1,74 +1,41 @@
-use axum::http::StatusCode;
-use axum::response::{IntoResponse, Response};
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(thiserror::Error, Debug)]
-pub enum AvoRedError {
-	// #[error("Generic {0}")]
-	// Generic(String),
-
-	#[error("Surreal DB Error {0}")]
-	Surreal(surrealdb::err::Error),
-}
-
-impl IntoResponse for AvoRedError {
-	fn into_response(self) -> Response {
-		println!("->> {:<12} -  {self:?}", "AVORED_ERROR_INTO_RESPONSE");
-
-		(StatusCode::INTERNAL_SERVER_ERROR, "Unhandled error").into_response()
-	}
-}
-
-impl From<surrealdb::err::Error> for AvoRedError {
-	fn from(val: surrealdb::err::Error) -> Self {
-		AvoRedError::Surreal(val)
-	}
-}
-
 #[derive(Debug)]
 pub enum Error {
-	CtxFail,
+    ConfigMissing(&'static str),
 
-	XValueNotOfType(&'static str),
-
-	XPropertyNotFound(String),
-
-	StoreFailToCreate(String),
-
-	JsonSerde(serde_json::Error),
-
-	ModqlOperatorNotSupported(String),
-
-	Surreal(surrealdb::err::Error),
-
-	IO(std::io::Error),
+    Generic(&'static str),
 }
 
-impl From<serde_json::Error> for Error {
-	fn from(val: serde_json::Error) -> Self {
-		Error::JsonSerde(val)
-	}
-}
-impl From<surrealdb::err::Error> for Error {
-	fn from(val: surrealdb::err::Error) -> Self {
-		Error::Surreal(val)
-	}
-}
-impl From<std::io::Error> for Error {
-	fn from(val: std::io::Error) -> Self {
-		Error::IO(val)
-	}
-}
-// endregion: --- Froms
-
-// region:    --- Error Boiler
-impl std::fmt::Display for Error {
-	fn fmt(&self, fmt: &mut std::fmt::Formatter) -> core::result::Result<(), std::fmt::Error> {
-		write!(fmt, "{self:?}")
-	}
+impl core::fmt::Display for Error {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
+        write!(fmt, "{self:?}")
+    }
 }
 
 impl std::error::Error for Error {}
 
-// endregion: --- Error Boiler
+impl From<surrealdb::err::Error> for Error {
+    fn from(_val: surrealdb::err::Error) -> Self {
+        Error::Generic("surreal error")
+    }
+}
+
+impl IntoResponse for Error {
+    fn into_response(self) -> Response {
+        println!("->> {:<12} - {self:?}", "INTO_RES");
+
+        // Create a placeholder Axum reponse.
+        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+
+        // Insert the Error into the reponse.
+        response.extensions_mut().insert(self);
+
+        response
+    }
+}

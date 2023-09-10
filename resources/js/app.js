@@ -19,4 +19,3 @@ Alpine.start();
 window.document.addEventListener("DOMContentLoaded", function() {
     feather.replace()
 });
-

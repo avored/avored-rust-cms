@@ -18,8 +18,8 @@ use axum::{
 };
 use axum_extra::extract::cookie::{Cookie, Key, SameSite};
 use futures::future::BoxFuture;
-use log::error;
 use tower::{Layer, Service};
+use tracing::error;
 
 use std::ops::{Deref, DerefMut};
 
@@ -344,7 +344,7 @@ where
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AvoRedSession {
     session: async_session::Session,
 }

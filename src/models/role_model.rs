@@ -1,8 +1,8 @@
 use crate::error::{Error, Result};
-use serde_derive::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use serde::{Deserialize, Serialize};
+use surrealdb::sql::{Object, Value, Datetime};
 
-#[derive(Serialize, Debug, Deserialize, Clone)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RoleModel {
     pub id: String,
     pub name: String,
@@ -16,21 +16,19 @@ pub struct RoleModel {
 impl TryFrom<Object> for RoleModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<RoleModel> {
-        
         let id = match val.get("id") {
-            Some(val) => { 
-                let value  = match val.clone() {
-					Value::Thing(v) => {
-						let id = v.id;
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Thing(v) => {
+                        let id = v.id;
                         id.to_string()
-					},
-					_ => String::from("")
-				};
-				value
-            },
+                    }
+                    _ => String::from(""),
+                };
+                value
+            }
             None => String::from(""),
         };
-     
         let name = match val.get("name") {
 			Some(val) => { 
 				let value  = match val.clone() {
@@ -45,19 +43,15 @@ impl TryFrom<Object> for RoleModel {
 		};
 
         let identifier = match val.get("identifier") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Strand(v) => {
-						v.as_string()
-					},
-					_ => String::from("")
-				};
-				value
-			},
-			None => String::from(""),
-		};
-
-
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
         let created_at = match val.get("created_at") {
 			Some(val) => { 
 				let value  = match val.clone() {
@@ -122,33 +116,17 @@ impl TryFrom<Object> for RoleModel {
 }
 
 
-
-impl RoleModel {
-    pub fn empty() -> Self {
-        RoleModel {
-            id: String::from(""),
-            name: String::from(""),
-            identifier: String::from(""),
-            created_at: Datetime::from(chrono::Utc::now()),
-            updated_at: Datetime::from(chrono::Utc::now()),
-            created_by: String::from(""),
-            updated_by: String::from(""),
-        }
-    }
-}
-
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableRole {
     pub name: String,
     pub identifier: String,
-    pub logged_in_user_email: String,
+	pub logged_in_username: String,
 }
 
-
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct UpdatableRole {
-    pub id: String,
+pub struct UpdatableRoleModel {
+	pub id: String,
     pub name: String,
     pub identifier: String,
-    pub logged_in_user_email: String,
+	pub logged_in_username: String,
 }

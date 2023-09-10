@@ -1,16 +1,18 @@
-use crate::error::Result;
-use crate::models::role_model::{CreatableRole, RoleModel, UpdatableRole};
-use crate::models::{ModelCount, W};
-use crate::PER_PAGE;
 use std::collections::BTreeMap;
-use surrealdb::dbs::{Response, Session};
+
+use crate::error::{Error, Result};
+use crate::models::role_model::{CreatableRole, RoleModel, UpdatableRoleModel};
+use crate::PER_PAGE;
+use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::{Array, Object};
+use surrealdb::sql::{Datetime, Value};
+
+use super::into_iter_objects;
 
 pub struct RoleRepository {}
 
 impl RoleRepository {
-    pub fn new() -> RoleRepository {
+    pub fn new() -> Self {
         RoleRepository {}
     }
 
@@ -25,233 +27,139 @@ impl RoleRepository {
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
         ]);
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
+        let mut role_list: Vec<RoleModel> = Vec::new();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
+        for object in into_iter_objects(responses)? {
+            let role_object = object?;
 
-        let result = response.result.expect(
-            "there is an issue with receiving the response result of surreal db query response",
-        );
-
-        let array: Array = W(result)
-            .try_into()
-            .expect("there is an issue while converting query result into an array");
-        let objects: Result<Vec<Object>> =
-            array.into_iter().map(|value| W(value).try_into()).collect();
-        let objects = match objects {
-            Ok(obj) => obj,
-            Err(_) => {
-                let objects: Vec<Object> = vec![];
-
-                objects
-            }
-        };
-
-        let result_roles: Result<Vec<RoleModel>> =
-            objects.into_iter().map(|o| o.try_into()).collect();
-
-        let roles = match result_roles {
-            Ok(data) => data,
-            Err(_) => panic!("issue while converting an vector of objects into roles struct"),
-        };
-
-        Ok(roles)
-    }
-
-    pub async fn has_identifier_taken(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        identifier: String,
-    ) -> Result<ModelCount> {
-        let sql = "SELECT count() FROM roles WHERE identifier=$identifier;";
-        let vars = BTreeMap::from([("identifier".into(), identifier.into())]);
-
-        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
-
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-        println!("Result: {:?}", result);
-        let result_object: Result<Object> = W(result).try_into();
-
-        let role_count: Result<ModelCount> = match result_object {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(ModelCount::new()),
-        };
-
-        role_count
+            let role_model: Result<RoleModel> = role_object.try_into();
+            role_list.push(role_model?);
+        }
+        Ok(role_list)
     }
 
     pub async fn create_role(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_role: CreatableRole,
+        createable_role_model: CreatableRole,
     ) -> Result<RoleModel> {
-        let sql = "
-            CREATE roles CONTENT {
-                name: $name,
-                identifier: $identifier,
-                created_by: $logged_in_user_email,
-                updated_by: $logged_in_user_email,
-                created_at: time::now(),
-                updated_at: time::now()
-            };
-        ";
+        let sql = "CREATE roles CONTENT $data";
 
-        let vars = BTreeMap::from([
-            ("name".into(), creatable_role.name.into()),
-            ("identifier".into(), creatable_role.identifier.into()),
+        let data: BTreeMap<String, Value> = [
+            ("name".into(), createable_role_model.name.into()),
+            ("identifier".into(), createable_role_model.identifier.into()),
             (
-                "logged_in_user_email".into(),
-                creatable_role.logged_in_user_email.into(),
+                "created_by".into(),
+                createable_role_model.logged_in_username.clone().into(),
             ),
-        ]);
+            (
+                "updated_by".into(),
+                createable_role_model.logged_in_username.into(),
+            ),
+            ("created_at".into(), Datetime::default().into()),
+            ("updated_at".into(), Datetime::default().into()),
+        ]
+        .into();
+        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
-        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
+        let role_model: Result<RoleModel> = result_object?.try_into();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_roles: Result<Object> = W(result).try_into();
-
-        match result_roles {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(RoleModel::empty()),
-        }
+        role_model
     }
 
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        id: String,
+        role_id: String,
     ) -> Result<RoleModel> {
         let sql = "SELECT * FROM type::thing($table, $id);";
-        let vars = BTreeMap::from([("table".into(), "roles".into()), ("id".into(), id.into())]);
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), "roles".into()),
+        ]
+        .into();
 
-        let responses = match datastore.execute(sql, &database_session, Some(vars)).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
+        let role_model: Result<RoleModel> = result_object?.try_into();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_role: Result<Object> = W(result).try_into();
-
-        let role: Result<RoleModel> = match result_role {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(RoleModel::empty()),
-        };
-
-        role
+        role_model
     }
 
     pub async fn update_role(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_role: UpdatableRole,
+        updatable_admin_user: UpdatableRoleModel,
     ) -> Result<RoleModel> {
         let sql = "
             UPDATE type::thing($table, $id) MERGE {
                 name: $name,
                 identifier: $identifier,
-                updated_by: $logged_in_user_email,
+                updated_by: $logged_in_user_name,
                 updated_at: time::now()
             };";
 
         let vars = BTreeMap::from([
-            ("name".into(), updatable_role.name.into()),
+            ("name".into(), updatable_admin_user.name.into()),
+            ("identifier".into(), updatable_admin_user.identifier.into()),
             (
-                "logged_in_user_email".into(),
-                updatable_role.logged_in_user_email.into(),
+                "logged_in_user_name".into(),
+                updatable_admin_user.logged_in_username.into(),
             ),
-            ("identifier".into(), updatable_role.identifier.into()),
-            ("id".into(), updatable_role.id.into()),
+            ("id".into(), updatable_admin_user.id.into()),
             ("table".into(), "roles".into()),
         ]);
 
-        let responses = match datastore.execute(sql, database_session, Some(vars)).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
-
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_role: Result<Object> = W(result).try_into();
-
-        let role_model: Result<RoleModel> = match result_role {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(RoleModel::empty()),
-        };
+        let role_model: Result<RoleModel> = result_object?.try_into();
 
         role_model
+    }
+
+    pub async fn delete_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: String,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), "roles".into()),
+        ]
+        .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(false)
     }
 }

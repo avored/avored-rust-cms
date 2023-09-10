@@ -6,28 +6,22 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-argon2 = "0.5.1"
-async-session = "3.0.0"
-axum = "0.6.20"
-axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
-chrono = "0.4.26"
-dotenvy = "0.15.7"
-env_logger = "0.10.0"
-futures = "0.3.28"
-handlebars = { version = "4.3.7", features = ["dir_source"] }
-log = "0.4.19"
+axum = { version = "0.6.20", features = ["multipart"] }
+handlebars = { version = "4.4.0", features = ["dir_source"] }
+serde = { version = "1.0.188", features = ["derive"] }
+tokio = { version = "1.32.0", features = ["full"] }
+tracing = "0.1.37"
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 r_i18n = "1.0.1"
-serde = { version = "1.0.183", features = ["derive"] }
-serde_derive = "1.0.183"
-serde_json = "1.0.104"
-tokio = { version = "1.29.1", features = ["full"] }
-tower = "0.4.13"
 tower-http = { version = "0.4.3", features = ["fs"] }
-validator = { version = "0.16.1", features = ["derive"] }
+dotenvy = "0.15.7"
+async-session = "3.0.0"
+axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
+futures = "0.3.28"
+tower = "0.4.13"
+surrealdb = { version = "1.0.0-beta.11", features = ["kv-rocksdb"] }
+argon2 = "0.5.2"
 avored_better_query = { path = "./avored_better_query" }
-urlencoding = "2.1.3"
-regex = "1.9.3"
+validator = { version = "0.16.1", features = ["derive"] }
 rand = "0.8.5"
-serde_qs = "0.12.0"
-thiserror = "1.0.47"
-surrealdb = { version = "1.0.0-beta.10", features = ["kv-rocksdb"] }
+urlencoding = "2.1.3"

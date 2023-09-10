@@ -1,115 +1,17 @@
 use std::collections::BTreeMap;
 
-use surrealdb::dbs::{Response, Session};
+use crate::error::{Error, Result};
+use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
+use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::{Array, Object};
+use surrealdb::sql::Value;
 
-use crate::error::Result;
-use crate::models::admin_user_model::{
-    AdminUser, AdminUserPaginate, CreatableAdminUser, UpdatableAdminUser,
-};
-use crate::models::{ModelCount, W};
-use crate::PER_PAGE;
-
+use super::into_iter_objects;
 pub struct AdminUserRepository {}
 
 impl AdminUserRepository {
-    pub fn new() -> AdminUserRepository {
+    pub fn new() -> Self {
         AdminUserRepository {}
-    }
-
-    pub async fn paginate(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        start: i64,
-    ) -> Result<Vec<AdminUser>> {
-        let sql = "SELECT * FROM admin_users LIMIT $limit START $start;";
-        let vars = BTreeMap::from([
-            ("limit".into(), PER_PAGE.into()),
-            ("start".into(), start.into()),
-        ]);
-
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
-
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response.result.expect(
-            "there is an issue with receiving the response result of surreal db query response",
-        );
-
-        let array: Array = W(result)
-            .try_into()
-            .expect("there is an issue while converting query result into an array");
-        let objects: Result<Vec<Object>> =
-            array.into_iter().map(|value| W(value).try_into()).collect();
-        let objects = match objects {
-            Ok(obj) => obj,
-            Err(_) => {
-                let objects: Vec<Object> = vec![];
-
-                objects
-            }
-        };
-
-        let result_admin_users: Result<Vec<AdminUser>> =
-            objects.into_iter().map(|o| o.try_into()).collect();
-
-        let admin_users = match result_admin_users {
-            Ok(data) => data,
-            Err(_) => panic!("issue while converting an vector of objects into admin_user struct"),
-        };
-
-        Ok(admin_users)
-    }
-
-    pub async fn no_of_record(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-    ) -> Result<AdminUserPaginate> {
-        let sql = "SELECT count() FROM admin_users GROUP ALL;";
-
-        let responses = match datastore.execute(sql, &database_session, None).await {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
-
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_admin_users_count: Result<Object> = W(result).try_into();
-
-        let admin_users_count: Result<AdminUserPaginate> = match result_admin_users_count {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(AdminUserPaginate::empty_admin_user_paginate()),
-        };
-
-        admin_users_count
     }
 
     pub async fn find_by_email(
@@ -117,93 +19,51 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
         email: String,
-    ) -> Result<AdminUser> {
-        let sql = "SELECT * FROM admin_users where email=$email;";
-        let vars = BTreeMap::from([("email".into(), email.into())]);
+    ) -> Result<AdminUserModel> {
+        let sql = "SELECT * FROM admin_users WHERE $data;";
+        let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_admin_users: Result<Object> = W(result).try_into();
-
-        let admin_user: Result<AdminUser> = match result_admin_users {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(AdminUser::empty_admin_user()),
-        };
-
-        admin_user
+        admin_user_model
     }
-
-    pub async fn has_email_address_taken(
+    pub async fn find_by_id(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        email: String,
-    ) -> Result<ModelCount> {
-        let sql = "SELECT count() FROM admin_users WHERE email=$email;";
-        let vars = BTreeMap::from([("email".into(), email.into())]);
+        id: String,
+    ) -> Result<AdminUserModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars = BTreeMap::from([
+            ("table".into(), "admin_users".into()),
+            ("id".into(), id.into()),
+        ]);
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-        println!("Result: {:?}", result);
-        let result_object: Result<Object> = W(result).try_into();
-
-        let admin_users_count: Result<ModelCount> = match result_object {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(ModelCount::new()),
-        };
-
-        // println!("{:?}", admin_users_count);
-
-        admin_users_count
+        admin_user_model
     }
-
     pub async fn update_admin_user(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_admin_user: UpdatableAdminUser,
-    ) -> Result<AdminUser> {
+        updatable_admin_user: UpdatableAdminUserModel,
+    ) -> Result<AdminUserModel> {
         let sql = "
             UPDATE type::thing($table, $id) MERGE {
                 full_name: $full_name,
@@ -231,152 +91,40 @@ impl AdminUserRepository {
             ("table".into(), "admin_users".into()),
         ]);
 
-        let responses = match datastore
-            .execute(sql, database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
         };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_admin_users: Result<Object> = W(result).try_into();
-
-        let admin_user: Result<AdminUser> = match result_admin_users {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(AdminUser::empty_admin_user()),
-        };
-
-        admin_user
+        admin_user_model
     }
 
-    pub async fn create_admin_user(
+    pub async fn delete_admin_user(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_admin_user: CreatableAdminUser,
-    ) -> Result<AdminUser> {
+        role_id: String,
+    ) -> Result<bool> {
         let sql = "
-            CREATE admin_users CONTENT {
-                full_name: $full_name,
-                email: $email,
-                password: $password,
-                profile_image: $profile_image,
-                is_super_admin: $is_super_admin,
-                created_by: $logged_in_user_name,
-                updated_by: $logged_in_user_name,
-                created_at: time::now(),
-                updated_at: time::now()
-            };
-        ";
+            DELETE type::thing($table, $id);";
 
-        let vars = BTreeMap::from([
-            ("full_name".into(), creatable_admin_user.full_name.into()),
-            ("email".into(), creatable_admin_user.email.into()),
-            ("password".into(), creatable_admin_user.password.into()),
-            (
-                "profile_image".into(),
-                creatable_admin_user.profile_image.into(),
-            ),
-            (
-                "is_super_admin".into(),
-                creatable_admin_user.is_super_admin.into(),
-            ),
-            (
-                "logged_in_user_name".into(),
-                creatable_admin_user.logged_in_username.into(),
-            ),
-        ]);
-
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
-
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_admin_users: Result<Object> = W(result).try_into();
-
-        let admin_user: Result<AdminUser> = match result_admin_users {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(AdminUser::empty_admin_user()),
-        };
-
-        admin_user
-    }
-
-    pub async fn find_by_id(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        id: String,
-    ) -> Result<AdminUser> {
-        let sql = "SELECT * FROM type::thing($table, $id);";
-        let vars = BTreeMap::from([
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
             ("table".into(), "admin_users".into()),
-            ("id".into(), id.into()),
-        ]);
+        ]
+        .into();
 
-        let responses = match datastore
-            .execute(sql, &database_session, Some(vars))
-            .await
-        {
-            Ok(response) => response,
-            Err(_) => {
-                let out: Vec<Response> = vec![];
-                out
-            }
-        };
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
 
-        let response = responses
-            .into_iter()
-            .next()
-            .expect("there is an issue with unwrapping the surrealdb response");
-
-        let result = response
-            .result
-            .expect(
-                "there is an issue with receiving the response result of surreal db query response",
-            )
-            .first();
-
-        let result_admin_users: Result<Object> = W(result).try_into();
-
-        let admin_user: Result<AdminUser> = match result_admin_users {
-            Ok(data) => data.try_into(),
-            Err(_) => Ok(AdminUser::empty_admin_user()),
-        };
-
-        admin_user
+        Ok(false)
     }
+
 }
