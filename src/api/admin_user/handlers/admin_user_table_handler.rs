@@ -47,4 +47,5 @@ pub async fn admin_user_table_handler(
 pub struct AdminUserTableViewModel {
     pub logged_in_user: AdminUserModel,
     pub admin_user_pagination: Pagination,
+    pub success_message: String
 }
