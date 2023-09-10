@@ -17,7 +17,7 @@ use crate::{
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
 
-const PER_PAGE: i64 = 2;
+const PER_PAGE: i64 = 10;
 
 mod api;
 mod avored_state;
