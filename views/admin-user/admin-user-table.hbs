@@ -11,13 +11,14 @@
 
                 <span
                     class="ml-2 px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
-                    {{ admin_user_paginate.count }} {{translate_key "admin_user" ~}}
+                    {{ admin_user_pagination.total }} {{translate_key
+                    "admin_user"~}}
                 </span>
             </div>
         </div>
 
         <div class="flex items-center">
-            
+
             <a
                 href="/admin/create-admin-user"
                 class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
@@ -38,9 +39,9 @@
 <div>
     <!-- -->
     <div class="pt-5 pb-10">
-        
+
         <div class="px-4 mx-auto">
-            
+
             <!-- <div class="t-6 md:flex md:items-center md:justify-between">
 
                 <div class="ml-auto flex items-center mt-4 md:mt-0">
@@ -74,7 +75,8 @@
                                             <button
                                                 class="flex items-center gap-x-3 focus:outline-none">
                                                 <span>
-                                                    {{ translate_key "full_name" ~}}
+                                                    {{ translate_key "full_name"
+                                                    ~}}
                                                 </span>
 
                                                 <!-- <svg class="h-3"
@@ -106,7 +108,8 @@
                                         </th>
                                         <th scope="col"
                                             class="px-4 py-2 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                            {{ translate_key "is_super_admin" ~}}
+                                            {{ translate_key "is_super_admin"
+                                            ~}}
                                         </th>
 
                                         <th scope="col"
@@ -130,60 +133,62 @@
 
                                         <th scope="col"
                                             class="relative py-3.5 px-4">
-                                            <span class="sr-only">{{ translate_key "edit" ~}}</span>
+                                            <span class="sr-only">{{
+                                                translate_key "edit" ~}}</span>
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody
                                     class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                                    {{#each admin_users as |admin_user|}}
-                                        <tr>
-                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    {{ admin_user.full_name }}
-                                                </a>
-                                            </td>
-                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    <div class="flex items-center">
-                                                        <img
-                                                            class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
-                                                            src="/public/{{ admin_user.profile_image }}"
-                                                            alt />
-                                                        <span class="ml-2">
-                                                            {{ admin_user.email }}
-                                                        </span>
-                                                    </div>
-                                                </a>
+                                    {{#each admin_user_pagination.data as
+                                    |admin_user|}}
+                                    <tr>
+                                        <td
+                                            class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.full_name }}
+                                            </a>
+                                        </td>
+                                        <td
+                                            class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                <div class="flex items-center">
+                                                    <img
+                                                        class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
+                                                        src="/public/{{ admin_user.profile_image }}"
+                                                        alt />
+                                                    <span class="ml-2">
+                                                        {{ admin_user.email }}
+                                                    </span>
+                                                </div>
+                                            </a>
 
-                                            </td>
-                                            <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    {{ admin_user.is_super_admin }}
-                                                </a>
+                                        </td>
+                                        <td
+                                            class="px-4 py-1 text-sm font-medium whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.is_super_admin }}
+                                            </a>
 
-                                            </td>
-                                            <td  class="px-4 py-1 text-sm whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    {{ admin_user.created_at }}
-                                                </a>
+                                        </td>
+                                        <td
+                                            class="px-4 py-1 text-sm whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.created_at }}
+                                            </a>
 
-                                            </td>
-                                            <td
-                                                class="px-4 py-1 text-sm whitespace-nowrap">
-                                                <!-- <div class="flex items-center">
+                                        </td>
+                                        <td
+                                            class="px-4 py-1 text-sm whitespace-nowrap">
+                                            <!-- <div class="flex items-center">
                                                     <img
                                                         class="object-cover w-6 h-6 -mx-1 border-2 border-white rounded-full dark:border-gray-700 shrink-0"
                                                         src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=256&q=80"
@@ -203,43 +208,41 @@
                                                     <p
                                                         class="flex items-center justify-center w-6 h-6 -mx-1 text-xs text-blue-600 bg-blue-100 border-2 border-white rounded-full">+4</p>
                                                 </div> -->
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                   {{ admin_user.updated_at }}
-                                                </a>
-                                            </td>
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.updated_at }}
+                                            </a>
+                                        </td>
 
-                                            <td
-                                                class="px-4 py-1 text-sm whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    {{ admin_user.created_by }}
-                                                </a>
+                                        <td
+                                            class="px-4 py-1 text-sm whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.created_by }}
+                                            </a>
 
-                                            </td>
-                                            <td
-                                                class="px-4 py-1 text-sm whitespace-nowrap">
-                                                <a
-                                                    href="/admin/show-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500"
-                                                >
-                                                    {{ admin_user.updated_by }}
-                                                </a>
-                                            </td>
+                                        </td>
+                                        <td
+                                            class="px-4 py-1 text-sm whitespace-nowrap">
+                                            <a
+                                                href="/admin/show-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                {{ admin_user.updated_by }}
+                                            </a>
+                                        </td>
 
-                                            <td
-                                                class="px-4 py-1 text-sm whitespace-nowrap">
-                                                <a
-                                                    href="/admin/edit-admin-user/{{ admin_user.id }}"
-                                                    class="px-1 py-1 text-gray-500">
-                                                    <i class="w-4 h-4" data-feather="more-vertical"></i>
-                                                </a>
-                                            </td>
-                                        </tr>
+                                        <td
+                                            class="px-4 py-1 text-sm whitespace-nowrap">
+                                            <a
+                                                href="/admin/edit-admin-user/{{ admin_user.id }}"
+                                                class="px-1 py-1 text-gray-500">
+                                                <i class="w-4 h-4"
+                                                    data-feather="more-vertical"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
                                     {{/each}}
 
                                 </tbody>
@@ -251,43 +254,39 @@
 
             <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
                 <div class="text-sm text-gray-500 dark:text-gray-400">
-                    {{ translate_key "results" ~}} 
+                    {{ translate_key "results" ~}}
                     <span class="font-medium text-gray-700 dark:text-gray-100">
-                        {{ admin_user_paginate.from }} to {{ admin_user_paginate.to }}
+                        {{ admin_user_pagination.from }} to {{
+                            admin_user_pagination.to }}
                     </span>
                 </div>
 
                 <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
                     <button type="button"
-                        {{#if admin_user_paginate.has_previous_page}}
-                            onclick="location = '/admin/admin-user?current_page={{ admin_user_paginate.previous_page }}'"
+                        {{#if admin_user_pagination.has_previous_page}}
+                        onclick="location = '/admin/admin-user?current_page={{ admin_user_pagination.previous_page_number }}'"
                         {{else}}
-                            disabled
+                        disabled
                         {{/if}}
-                            class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                    >
+                        class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                         <i data-feather="arrow-left" class="h-4 w-4"></i>
                         <span>
                             {{ translate_key "previous" ~}}
                         </span>
                     </button>
-                    
 
                     <button type="button"
-                        {{#if admin_user_paginate.has_next_page}}
-                            onclick="location = '/admin/admin-user?current_page={{ admin_user_paginate.next_page }}'"
+                        {{#if admin_user_pagination.has_next_page }}
+                        onclick="location = '/admin/admin-user?page={{ admin_user_pagination.next_page_number }}'"
                         {{else}}
-                            disabled="disabled"
+                        disabled="disabled"
                         {{/if}}
-                            class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                        >
-                            <span>
-                                {{ translate_key "next" ~}}
-                            </span>
-                            <i data-feather="arrow-right" class="h-4 w-4"></i>
+                        class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+                        <span>
+                            {{ translate_key "next" ~}}
+                        </span>
+                        <i data-feather="arrow-right" class="h-4 w-4"></i>
                     </button>
-                    
-                        
                 </div>
             </div>
         </div>

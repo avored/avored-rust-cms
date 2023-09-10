@@ -1,6 +1,6 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Object, Value, Datetime};
+use surrealdb::sql::{Datetime, Object, Value};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {
@@ -33,17 +33,15 @@ impl TryFrom<Object> for AdminUserModel {
             None => String::from(""),
         };
         let full_name = match val.get("full_name") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Strand(v) => {
-						v.as_string()
-					},
-					_ => String::from("")
-				};
-				value
-			},
-			None => String::from(""),
-		};
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
 
         let email = match val.get("email") {
             Some(val) => {
@@ -68,80 +66,68 @@ impl TryFrom<Object> for AdminUserModel {
         };
 
         let profile_image = match val.get("profile_image") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Strand(v) => {
-						v.as_string()
-					},
-					_ => String::from("")
-				};
-				value
-			},
-			None => String::from(""),
-		};
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
 
         let is_super_admin = match val.get("is_super_admin") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Bool(v) => {
-						v
-					},
-					_ => false
-				};
-				value
-			},
-			None => false,
-		};
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Bool(v) => v,
+                    _ => false,
+                };
+                value
+            }
+            None => false,
+        };
         let created_at = match val.get("created_at") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Datetime(v) => {
-						v
-					},
-					_ => Datetime::default()
-				};
-				value
-			},
-			None => Datetime::default(),
-		};
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Datetime(v) => v,
+                    _ => Datetime::default(),
+                };
+                value
+            }
+            None => Datetime::default(),
+        };
         let updated_at = match val.get("updated_at") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Datetime(v) => {
-						v
-					},
-					_ => Datetime::default()
-				};
-				value
-			},
-			None => Datetime::default(),
-		};
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Datetime(v) => v,
+                    _ => Datetime::default(),
+                };
+                value
+            }
+            None => Datetime::default(),
+        };
 
-         let created_by = match val.get("created_by") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Strand(v) => {
-						v.as_string()
-					},
-					_ => String::from("")
-				};
-				value
-			},
-			None => String::from(""),
-		};
+        let created_by = match val.get("created_by") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
 
-         let updated_by = match val.get("updated_by") {
-			Some(val) => { 
-				let value  = match val.clone() {
-					Value::Strand(v) => {
-						v.as_string()
-					},
-					_ => String::from("")
-				};
-				value
-			},
-			None => String::from(""),
-		};
+        let updated_by = match val.get("updated_by") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
 
         Ok(AdminUserModel {
             id,
@@ -157,7 +143,6 @@ impl TryFrom<Object> for AdminUserModel {
         })
     }
 }
-
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableAdminUser {
@@ -176,4 +161,43 @@ pub struct UpdatableAdminUserModel {
     pub profile_image: String,
     pub is_super_admin: bool,
     pub logged_in_username: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct Pagination {
+    pub data: Vec<AdminUserModel>,
+    pub total: i64,
+    pub per_page: i64,
+    pub current_page: i64,
+    pub from: i64,
+    pub to: i64,
+    pub has_next_page: bool,
+    pub has_previous_page: bool,
+    pub next_page_number: i64,
+    pub previous_page_number: i64,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ModelCount {
+    pub total: i64,
+}
+
+impl TryFrom<Object> for ModelCount {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ModelCount> {
+        let count = match val.get("count") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Number(v) => v,
+                    _ => surrealdb::sql::Number::Int(0),
+                };
+                value
+            }
+            None => surrealdb::sql::Number::Int(0),
+        };
+
+        let count = count.as_int();
+
+        Ok(ModelCount { total: count })
+    }
 }
