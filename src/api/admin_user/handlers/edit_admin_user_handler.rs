@@ -44,7 +44,7 @@ pub async fn edit_admin_user_handler(
         .expect("there is an issue with handlerbar rendering admin-user/edit-admin-user.hbs template");
     
     session
-        .insert("success_message", "Admin User added successfully!")
+        .insert("success_message", "Admin User edited successfully!")
         .expect("Could not store the validation errors into session.");
 
     Ok(Html(html))
