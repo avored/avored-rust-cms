@@ -31,7 +31,6 @@ pub async fn update_admin_user_handler(
     };
 
     let mut profile_image = String::from("");
-    let mut existing_profile_image = String::from("");
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
@@ -66,11 +65,6 @@ pub async fn update_admin_user_handler(
                 let full_name = String::from_utf8_lossy(&decoded).into_owned();
 
                 payload.full_name = full_name;
-            }
-            "existing_profile_image" => {
-                let bytes = field.bytes().await.unwrap();
-                let decoded = decode_binary(&bytes).into_owned();
-                existing_profile_image = String::from_utf8_lossy(&decoded).into_owned();
             }
             "is_super_admin" => {
                 let bytes = field.bytes().await.unwrap();
@@ -107,10 +101,6 @@ pub async fn update_admin_user_handler(
             admin_user_id
         );
         return Ok(Redirect::to(&redirect_url).into_response());
-    }
-
-    if profile_image.len() <= 0 {
-        profile_image = existing_profile_image;
     }
 
     let updateable_admin_user_model = UpdatableAdminUserModel {
