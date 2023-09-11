@@ -35,7 +35,5 @@ pub async fn require_authentication<T>(
 
     request.extensions_mut().insert(user);
 
-    *request.uri_mut() = "/admin/login".parse().unwrap();
-
     Ok(next.run(request).await)
 }

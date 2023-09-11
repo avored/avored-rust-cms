@@ -4,7 +4,7 @@ use crate::{
     api::admin_user::requests::admin_user_table_query::AdminUserTableQuery,
     avored_state::AvoRedState,
     error::Result,
-    models::admin_user_model::{AdminUserModel, Pagination},
+    models::admin_user_model::{AdminUserModel, AdminUserPagination},
     providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
@@ -46,5 +46,5 @@ pub async fn admin_user_table_handler(
 #[derive(Serialize, Default)]
 pub struct AdminUserTableViewModel {
     pub logged_in_user: AdminUserModel,
-    pub admin_user_pagination: Pagination,
+    pub admin_user_pagination: AdminUserPagination,
 }

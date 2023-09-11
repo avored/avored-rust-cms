@@ -47,5 +47,6 @@
     "basic_detail": "Basic Detail",
     "delete": "Delete",
     "setup_avored": "Setup AvoRed",
-    "delete_role": "Delete Role"
+    "delete_role": "Delete Role",
+    "create": "Create"
 }

@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
+use crate::models::ModelCount;
 use crate::models::role_model::{CreatableRole, RoleModel, UpdatableRoleModel};
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -162,4 +163,23 @@ impl RoleRepository {
 
         Ok(false)
     }
+
+    pub async fn get_total_count(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count() FROM roles GROUP ALL;";
+        let responses = datastore.execute(sql, database_session, None).await?;
+        
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let admin_user_count: Result<ModelCount> = result_object?.try_into();
+
+        admin_user_count
+    }
+
 }

@@ -6,7 +6,7 @@
             <div class="flex items-center">
                 <h2
                     class="text-lg font-medium text-gray-800 dark:text-white">
-                    {{translate_key "create_role" ~}}
+                    {{translate_key "create" ~}}&nbsp;{{translate_key "role" ~}}
                 </h2>
             </div>
         </div>
@@ -24,10 +24,11 @@
                     class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-3">
                     <div class="text-gray-600">
                         <p class="font-medium text-lg">
-                            {{ translate_key "basic_detail" ~}} 
+                            {{ translate_key "basic_detail" ~}}
                         </p>
                         <p>
-                            {{ translate_key "please_fill_out_all_the_fields" ~}} 
+                            {{ translate_key "please_fill_out_all_the_fields"
+                            ~}}
                         </p>
                     </div>
 
@@ -35,45 +36,44 @@
 
                         <div
                             class="grid gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
-                            
-                          
 
                             <div class="md:col-span-6 mt-5">
-                                {{> components/label 
-                                    label=(translate_key "name")
-                                    for="name"
+                                {{> components/label
+                                label=(translate_key "name")
+                                for="name"
                                 }}
                                 <div class="mt-1">
-                                    {{> components/input 
-                                        type="name"
-                                        name="name"
-                                        value=""
-                                        is_required=true
+                                    {{> components/input
+                                    type="name"
+                                    name="name"
+                                    autofocus=true
+                                    value=""
+                                    is_required=true
                                     }}
                                 </div>
-                                {{#if validation_name_message  }}
-                                    {{> components/input-error 
-                                        error_message=validation_name_message
-                                    }}
+                                {{#if validation_name_message }}
+                                {{> components/input-error
+                                error_message=validation_name_message
+                                }}
                                 {{/if}}
                             </div>
 
                             <div class="md:col-span-6">
-                                {{> components/label 
-                                    label=(translate_key "identifier")
-                                    for="v"
+                                {{> components/label
+                                label=(translate_key "identifier")
+                                for="v"
                                 }}
                                 <div class="mt-1">
-                                    {{> components/input 
-                                        type="text"
-                                        name="identifier"
-                                        is_required=true
+                                    {{> components/input
+                                    type="text"
+                                    name="identifier"
+                                    is_required=true
                                     }}
                                 </div>
-                                {{#if validation_identifier_message  }}
-                                    {{> components/input-error 
-                                        error_message=validation_identifier_message
-                                    }}
+                                {{#if validation_identifier_message }}
+                                {{> components/input-error
+                                error_message=validation_identifier_message
+                                }}
                                 {{/if}}
                             </div>
 

@@ -22,7 +22,7 @@ impl std::error::Error for Error {}
 
 impl From<surrealdb::err::Error> for Error {
     fn from(_val: surrealdb::err::Error) -> Self {
-        Error::Generic("surreal error")
+        Error::Generic("Surreal Error")
     }
 }
 
