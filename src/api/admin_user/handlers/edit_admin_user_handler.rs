@@ -11,7 +11,7 @@ use axum::{
 use serde::Serialize;
 
 pub async fn edit_admin_user_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     Path(admin_user_id): Path<String>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
@@ -25,10 +25,15 @@ pub async fn edit_admin_user_handler(
         .admin_user_service
         .find_by_id(&state.db, admin_user_id)
         .await?;
+    let success_message = session
+        .get("success_message")
+        .unwrap_or(String::from(""));
+        session.remove("success_message");
 
     let view_model = EditAdminUserHandlerViewModel {
         logged_in_user,
         admin_user_model,
+        success_message
     };
 
     // let admin_user_model = state.ad`
@@ -37,6 +42,10 @@ pub async fn edit_admin_user_handler(
     let html = handlebars
         .render("admin-user/edit-admin-user", &view_model)
         .expect("there is an issue with handlerbar rendering admin-user/edit-admin-user.hbs template");
+    
+    session
+        .insert("success_message", "Admin User added successfully!")
+        .expect("Could not store the validation errors into session.");
 
     Ok(Html(html))
 }
@@ -45,4 +54,5 @@ pub async fn edit_admin_user_handler(
 pub struct EditAdminUserHandlerViewModel {
     pub logged_in_user: AdminUserModel,
     pub admin_user_model: AdminUserModel,
+    pub success_message: String
 }
