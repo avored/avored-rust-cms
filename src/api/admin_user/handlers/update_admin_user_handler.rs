@@ -124,5 +124,10 @@ pub async fn update_admin_user_handler(
         .await?;
 
     println!("{admin_user_model:?}");
+    
+    session
+        .insert("success_message", "Admin User edited successfully!")
+        .expect("Could not store the validation errors into session.");
+
     Ok(Redirect::to("/admin/admin-user").into_response())
 }

@@ -28,7 +28,7 @@ pub async fn edit_admin_user_handler(
 
     let view_model = EditAdminUserHandlerViewModel {
         logged_in_user,
-        admin_user_model,
+        admin_user_model
     };
 
     // let admin_user_model = state.ad`
