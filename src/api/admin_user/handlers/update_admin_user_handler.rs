@@ -44,19 +44,21 @@ pub async fn update_admin_user_handler(
                     .map(char::from)
                     .collect();
 
-                // let file_content_test = field.content_type().unwrap().to_string();
+                let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
-                let file_ext = file_name.split(".").last().unwrap_or(".png");
-
                 let data = field.bytes().await.unwrap();
+                
+                if !file_name.is_empty()  {
 
-                let new_file_name = format!("{}.{}", s, file_ext);
-
-                let file_name = Path::new(&new_file_name).file_name().unwrap();
-
-                profile_image = format!("upload/{}", new_file_name);
-                let full_path = Path::new("public").join("upload").join(file_name);
-                tokio::fs::write(full_path, data).await.unwrap();
+                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let new_file_name = format!("{}.{}", s, file_ext);
+    
+                    let file_name = Path::new(&new_file_name).file_name().unwrap();
+    
+                    profile_image = format!("upload/{}", new_file_name);
+                    let full_path = Path::new("public").join("upload").join(file_name);
+                    tokio::fs::write(full_path, data).await.unwrap();
+                }
             }
             "full_name" => {
                 let bytes = field.bytes().await.unwrap();
