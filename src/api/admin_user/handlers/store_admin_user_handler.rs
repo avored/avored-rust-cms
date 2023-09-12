@@ -81,7 +81,7 @@ pub async fn store_admin_user_handler(
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
                 let mut bool_super_admin = false;
-                if string_super_admin.eq("1") {
+                if string_super_admin.eq("true") {
                     bool_super_admin = true;
                 }
 

@@ -11,7 +11,7 @@ use axum::{
 use serde::Serialize;
 
 pub async fn create_role_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - role_create_handler", "HANDLER");
@@ -19,8 +19,17 @@ pub async fn create_role_handler(
         Some(logged_in_user) => logged_in_user,
         None => RoleModel::default(),
     };
+    let validation_name_message = session
+        .get("validation_error_name")
+        .unwrap_or(String::from(""));
+    let validation_identifier_message = session
+        .get("validation_error_identifier")
+        .unwrap_or(String::from(""));
 
-    let view_model = CreateRoleViewModel { logged_in_user };
+    session.remove("validation_error_name");
+    session.remove("validation_error_identifier");
+
+    let view_model = CreateRoleViewModel { logged_in_user, validation_name_message, validation_identifier_message };
 
     let handlebars = &state.handlebars;
     let html = handlebars
@@ -33,4 +42,6 @@ pub async fn create_role_handler(
 #[derive(Serialize, Default)]
 pub struct CreateRoleViewModel {
     pub logged_in_user: RoleModel,
+    pub validation_name_message: String,
+    pub validation_identifier_message: String
 }

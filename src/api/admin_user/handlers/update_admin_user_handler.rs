@@ -71,8 +71,9 @@ pub async fn update_admin_user_handler(
                 let decoded = decode_binary(&bytes).into_owned();
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
+                println!("superadmin: {string_super_admin}");
                 let mut bool_super_admin = false;
-                if string_super_admin.eq("1") {
+                if string_super_admin.eq("true") {
                     bool_super_admin = true;
                 }
 

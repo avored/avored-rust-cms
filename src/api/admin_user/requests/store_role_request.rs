@@ -11,9 +11,22 @@ pub struct StoreRoleRequest {
 
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
+
+    pub permissions: Option<Permission>
 }
 
 
+#[derive(Deserialize, Debug, Clone, Validate, Default)]
+pub struct Permission {
+    pub dashboard: Option<bool>,
+    pub admin_user_table: Option<bool>,
+    pub admin_user_update: Option<bool>,
+    pub admin_user_create: Option<bool>,
+    pub role_table: Option<bool>,
+    pub role_create: Option<bool>,
+    pub role_update: Option<bool>,
+    pub role_delete: Option<bool>
+}
 
 impl StoreRoleRequest {
     pub fn validate_errors(&self, mut session: AvoRedSession) -> Result<ValidationErrors> {
