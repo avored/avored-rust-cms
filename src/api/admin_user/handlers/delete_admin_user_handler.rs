@@ -16,5 +16,9 @@ pub async fn delete_admin_user_handler(
     println!("->> {:<12} - delete_admin_user_handler", "HANDLER");
     state.admin_user_service.delete_admin_user(&state.db, admin_user_id).await?;
 
+    session
+        .insert("success_message", "Admin User deleted successfully!")
+        .expect("Could not store the validation errors into session.");
+
     Ok(Redirect::to("/admin/admin-user").into_response())
 }
