@@ -15,7 +15,7 @@ use axum::{
 use validator::HasLen;
 
 pub async fn update_role_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     AxumPath(role_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Form(payload): Form<UpdateRoleRequest>,
@@ -43,6 +43,10 @@ pub async fn update_role_handler(
         .role_service
         .update_role(&state.db, updateable_role_model)
         .await?;
+    
+    session
+        .insert("success_message", "User Role edited successfully!")
+        .expect("Could not store the validation errors into session.");
 
     Ok(Redirect::to("/admin/role").into_response())
 }
