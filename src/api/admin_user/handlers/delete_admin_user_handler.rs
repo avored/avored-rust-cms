@@ -9,14 +9,14 @@ use axum::{
 };
 
 pub async fn delete_admin_user_handler(
-    mut _session: AvoRedSession,
+    mut session: AvoRedSession,
     Path(admin_user_id): Path<String>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - delete_admin_user_handler", "HANDLER");
     state.admin_user_service.delete_admin_user(&state.db, admin_user_id).await?;
 
-    _session
+    session
         .insert("success_message", "Admin User deleted successfully!")
         .expect("Could not store the validation errors into session.");
 
