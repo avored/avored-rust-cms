@@ -21,7 +21,7 @@ impl AvoRedViewProvider {
     }
 }
 
-fn translate(key: String) -> String {
+pub fn translate(key: &str) -> String {
     let config: I18nConfig = I18nConfig {
         locales: &["en", "fr"],
         directory: "locales",
@@ -30,13 +30,13 @@ fn translate(key: String) -> String {
 
     let translated_text = match r_i18n.translations.get("en") {
         Some(language_json) => {
-            if language_json.has_key(&key) {
-                language_json[&key].to_string()
+            if language_json.has_key(key) {
+                language_json[key].to_string()
             } else {
-                String::from(&key)
+                String::from(key)
             }
         }
-        None => String::from(&key),
+        None => String::from(key),
     };
     translated_text
 }
@@ -55,7 +55,7 @@ fn translate_key(
         .unwrap();
     let param_value: String = param.value().render();
 
-    let tran = translate(String::from(param_value));
+    let tran = translate(param_value.as_str());
 
     write!(out, "{}", tran).unwrap();
     Ok(())

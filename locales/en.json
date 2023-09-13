@@ -57,5 +57,6 @@
     "role_table": "Role table",
     "role_create": "Create role",
     "role_update": "Update role",
-    "role_delete": "Delete role"
+    "role_delete": "Delete role",
+    "success_delete_admin_user": "Admin User deleted successfully!"
 }
