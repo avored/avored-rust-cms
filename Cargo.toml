@@ -19,7 +19,7 @@ async-session = "3.0.0"
 axum-extra = { version = "0.7.7", features = ["cookie", "cookie-signed"] }
 futures = "0.3.28"
 tower = "0.4.13"
-surrealdb = { version = "1.0.0-beta.11", features = ["kv-rocksdb"] }
+surrealdb = { version = "1.0.0-beta.12", features = ["kv-rocksdb"] }
 argon2 = "0.5.2"
 avored_better_query = { path = "./avored_better_query" }
 validator = { version = "0.16.1", features = ["derive"] }
