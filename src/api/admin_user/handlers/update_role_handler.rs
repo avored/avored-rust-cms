@@ -26,7 +26,7 @@ pub async fn update_role_handler(
         None => AdminUserModel::default(),
     };
 
-    let validation_error_list = payload.validate_errors(session)?;
+    let validation_error_list = payload.validate_errors(session.clone())?;
 
     if validation_error_list.errors().length() > 0 {
         let redirect_url = format!("/admin/edit-role/{}", role_id);
