@@ -13,6 +13,7 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn store_role_handler(
     state: State<Arc<AvoRedState>>,
@@ -40,8 +41,8 @@ pub async fn store_role_handler(
         .create_role(&state.db, creatable_role)
         .await;
     session
-        .insert("success_message", "User Role added successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_create_role"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/role").into_response())
 }

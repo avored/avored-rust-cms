@@ -58,5 +58,9 @@
     "role_create": "Create role",
     "role_update": "Update role",
     "role_delete": "Delete role",
-    "success_delete_admin_user": "Admin User deleted successfully!"
+    "success_delete_admin_user": "Admin User deleted successfully!",
+    "success_update_admin_user": "Admin User updated successfully!",
+    "success_create_admin_user": "Admin User created successfully!",
+    "success_create_role": "Role created successfully!",
+    "success_update_role": "Role updated successfully!"
 }

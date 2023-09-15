@@ -14,6 +14,7 @@ use axum::{
 };
 use rand::{distributions::Alphanumeric, rngs::OsRng, Rng};
 use urlencoding::decode_binary;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn store_admin_user_handler(
     state: State<Arc<AvoRedState>>,
@@ -222,10 +223,10 @@ pub async fn store_admin_user_handler(
         .admin_user_service
         .create_admin_user(&state.db, creatable_admin_user)
         .await;
-        
+
     session
-        .insert("success_message", "Admin User added successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_create_admin_user"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())
 }

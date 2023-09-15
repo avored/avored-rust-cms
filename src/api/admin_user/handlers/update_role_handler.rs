@@ -44,10 +44,9 @@ pub async fn update_role_handler(
         .role_service
         .update_role(&state.db, updateable_role_model)
         .await?;
-    
     session
-        .insert("success_message", "User Role edited successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_update_role"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/role").into_response())
 }
