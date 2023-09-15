@@ -110,7 +110,7 @@ pub async fn update_admin_user_handler(
         profile_image,
         logged_in_username: logged_in_user.email,
     };
-    let admin_user_model = state
+    let _admin_user_model = state
         .admin_user_service
         .update_admin_user(&state.db, updateable_admin_user_model)
         .await?;
