@@ -31,7 +31,6 @@ pub async fn update_admin_user_handler(
     };
 
     let mut profile_image = String::from("");
-    let mut existing_profile_image = String::from("");
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
@@ -44,19 +43,21 @@ pub async fn update_admin_user_handler(
                     .map(char::from)
                     .collect();
 
-                // let file_content_test = field.content_type().unwrap().to_string();
+                let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
-                let file_ext = file_name.split(".").last().unwrap_or(".png");
-
                 let data = field.bytes().await.unwrap();
+                
+                if !file_name.is_empty()  {
 
-                let new_file_name = format!("{}.{}", s, file_ext);
-
-                let file_name = Path::new(&new_file_name).file_name().unwrap();
-
-                profile_image = format!("upload/{}", new_file_name);
-                let full_path = Path::new("public").join("upload").join(file_name);
-                tokio::fs::write(full_path, data).await.unwrap();
+                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let new_file_name = format!("{}.{}", s, file_ext);
+    
+                    let file_name = Path::new(&new_file_name).file_name().unwrap();
+    
+                    profile_image = format!("upload/{}", new_file_name);
+                    let full_path = Path::new("public").join("upload").join(file_name);
+                    tokio::fs::write(full_path, data).await.unwrap();
+                }
             }
             "full_name" => {
                 let bytes = field.bytes().await.unwrap();
@@ -65,18 +66,13 @@ pub async fn update_admin_user_handler(
 
                 payload.full_name = full_name;
             }
-            "existing_profile_image" => {
-                let bytes = field.bytes().await.unwrap();
-                let decoded = decode_binary(&bytes).into_owned();
-                existing_profile_image = String::from_utf8_lossy(&decoded).into_owned();
-            }
             "is_super_admin" => {
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
                 let mut bool_super_admin = false;
-                if string_super_admin.eq("1") {
+                if string_super_admin.eq("true") {
                     bool_super_admin = true;
                 }
 
@@ -107,10 +103,6 @@ pub async fn update_admin_user_handler(
         return Ok(Redirect::to(&redirect_url).into_response());
     }
 
-    if profile_image.len() <= 0 {
-        profile_image = existing_profile_image;
-    }
-
     let updateable_admin_user_model = UpdatableAdminUserModel {
         id: admin_user_id,
         full_name: payload.full_name,
@@ -118,12 +110,10 @@ pub async fn update_admin_user_handler(
         profile_image,
         logged_in_username: logged_in_user.email,
     };
-    let admin_user_model = state
+    let _admin_user_model = state
         .admin_user_service
         .update_admin_user(&state.db, updateable_admin_user_model)
         .await?;
-
-    println!("{admin_user_model:?}");
     
     session
         .insert("success_message", "Admin User edited successfully!")

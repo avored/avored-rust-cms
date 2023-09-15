@@ -1,6 +1,14 @@
+#[warn(dead_code)]
+
 use crate::{
-    error::Result, models::role_model::{RoleModel, CreatableRole, UpdatableRoleModel}, providers::avored_database_provider::DB,
+    error::Result,
+    models::{
+        role_model::{CreatableRole, RoleModel, RolePagination, UpdatableRoleModel},
+        Pagination,
+    },
+    providers::avored_database_provider::DB,
     repositories::role_repository::RoleRepository,
+    PER_PAGE,
 };
 
 pub struct RoleService {
@@ -55,11 +63,49 @@ impl RoleService {
     pub async fn paginate(
         &self,
         (datastore, database_session): &DB,
-        start: i64,
-    ) -> Result<Vec<RoleModel>> {
-        self.role_repository
+        current_page: i64,
+    ) -> Result<RolePagination> {
+        let start = (current_page - 1) * PER_PAGE;
+        let to = start + PER_PAGE;
+
+        let admin_user_count = self
+            .role_repository
+            .get_total_count(datastore, database_session)
+            .await?;
+
+        let mut has_next_page = false;
+        if admin_user_count.total > to {
+            has_next_page = true;
+        };
+        let mut has_previous_page = false;
+        if current_page > 1 {
+            has_previous_page = true;
+        };
+
+        let pagination = Pagination {
+            total: admin_user_count.total,
+            per_page: PER_PAGE,
+            current_page,
+            from: (start + 1),
+            to,
+            has_previous_page,
+            next_page_number: (current_page + 1),
+            has_next_page,
+            previous_page_number: (current_page - 1),
+        };
+
+
+        let roles = self
+            .role_repository
             .paginate(datastore, database_session, start)
-            .await
+            .await?;
+
+        // println!("{:?}", roles);
+
+        Ok(RolePagination {
+            data: roles,
+            pagination,
+        })
     }
 
     pub async fn create_role(
@@ -101,6 +147,4 @@ impl RoleService {
             .delete_role(datastore, database_session, role_id)
             .await
     }
-
-
 }

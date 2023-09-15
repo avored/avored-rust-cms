@@ -112,7 +112,7 @@
                                 </thead>
                                 <tbody
                                     class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                                    {{#each roles as |role|}}
+                                    {{#each role_pagination.data as |role|}}
                                         <tr>
                                             <td class="px-4 py-1 text-sm font-medium whitespace-nowrap">
                                                 <a
@@ -218,41 +218,37 @@
                 <div class="text-sm text-gray-500 dark:text-gray-400">
                     {{ translate_key "results" ~}} 
                     <span class="font-medium text-gray-700 dark:text-gray-100">
-                        {{ role_paginate.from }} to {{ role_paginate.to }}
+                        {{ role_pagination.pagination.from }} to {{ role_pagination.pagination.to }}
                     </span>
                 </div>
 
                 <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
-                    <button type="button" 
-                        {{#if role_paginate.has_previous_page}}
-                            onclick="location = '/role?current_page={{ role_paginate.previous_page }}'"
+                    <button type="button"
+                        {{#if
+                        role_pagination.pagination.has_previous_page}}
+                        onclick="location = '/admin/role?current_page={{ role_pagination.pagination.previous_page_number }}'"
                         {{else}}
-                            disabled
+                        disabled
                         {{/if}}
-                            class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                    >
+                        class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                         <i data-feather="arrow-left" class="h-4 w-4"></i>
                         <span>
                             {{ translate_key "previous" ~}}
                         </span>
                     </button>
-                    
 
                     <button type="button"
-                        {{#if role_paginate.has_next_page}}
-                            onclick="location = '/admin/role?current_page={{ role_paginate.next_page }}'"
+                        {{#if role_pagination.pagination.has_next_page }}
+                        onclick="location = '/admin/role?page={{ role_pagination.pagination.next_page_number }}'"
                         {{else}}
-                            disabled="disabled"
+                        disabled="disabled"
                         {{/if}}
-                            class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800"
-                        >
-                            <span>
-                                {{ translate_key "next" ~}}
-                            </span>
-                            <i data-feather="arrow-right" class="h-4 w-4"></i>
+                        class="disabled:opacity-25 disabled:cursor-not-allowed flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+                        <span>
+                            {{ translate_key "next" ~}}
+                        </span>
+                        <i data-feather="arrow-right" class="h-4 w-4"></i>
                     </button>
-                    
-                        
                 </div>
             </div>
         </div>

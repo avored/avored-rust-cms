@@ -47,5 +47,16 @@
     "basic_detail": "Basic Detail",
     "delete": "Delete",
     "setup_avored": "Setup AvoRed",
-    "delete_role": "Delete Role"
+    "delete_role": "Delete Role",
+    "create": "Create",
+    "dashboard": "Dashboard",
+    "admin_user_table": "Admin user table",
+    "admin_user_create": "Create admin user",
+    "admin_user_update": "Update admin user",
+    "admin_user_delete": "Delete admin user",
+    "role_table": "Role table",
+    "role_create": "Create role",
+    "role_update": "Update role",
+    "role_delete": "Delete role",
+    "success_delete_admin_user": "Admin User deleted successfully!"
 }

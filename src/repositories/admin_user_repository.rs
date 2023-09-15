@@ -1,7 +1,8 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel, ModelCount};
+use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
+use crate::models::ModelCount;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
@@ -134,8 +135,7 @@ impl AdminUserRepository {
     ) -> Result<ModelCount> {
         let sql = "SELECT count() FROM admin_users GROUP ALL;";
         let responses = datastore.execute(sql, database_session, None).await?;
-        // let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,

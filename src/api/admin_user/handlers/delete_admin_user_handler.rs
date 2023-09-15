@@ -7,6 +7,7 @@ use axum::{
     extract::{Path, State},
     response::{IntoResponse, Redirect},
 };
+use crate::providers::avored_view_provider::translate;
 
 pub async fn delete_admin_user_handler(
     mut session: AvoRedSession,
@@ -17,8 +18,8 @@ pub async fn delete_admin_user_handler(
     state.admin_user_service.delete_admin_user(&state.db, admin_user_id).await?;
 
     session
-        .insert("success_message", "Admin User deleted successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_delete_admin_user"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())
 }

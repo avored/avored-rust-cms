@@ -4,7 +4,7 @@ use crate::{
     api::admin_user::requests::admin_user_table_query::AdminUserTableQuery,
     avored_state::AvoRedState,
     error::Result,
-    models::admin_user_model::{AdminUserModel, Pagination},
+    models::admin_user_model::{AdminUserModel, AdminUserPagination},
     providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
@@ -29,10 +29,8 @@ pub async fn admin_user_table_handler(
         .admin_user_service
         .paginate(&state.db, current_page)
         .await?;
-    let success_message = session
-        .get("success_message")
-        .unwrap_or(String::from(""));
-        session.remove("success_message");
+    let success_message = session.get("success_message").unwrap_or(String::from(""));
+    session.remove("success_message");
 
     let view_model = AdminUserTableViewModel {
         logged_in_user,
@@ -51,6 +49,6 @@ pub async fn admin_user_table_handler(
 #[derive(Serialize, Default)]
 pub struct AdminUserTableViewModel {
     pub logged_in_user: AdminUserModel,
-    pub admin_user_pagination: Pagination,
-    pub success_message: String
+    pub admin_user_pagination: AdminUserPagination,
+    pub success_message: String,
 }

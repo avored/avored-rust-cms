@@ -7,8 +7,11 @@ use surrealdb::{
 
 use crate::{
     error::{Error, Result},
-    models::admin_user_model::{
-        AdminUserModel, CreatableAdminUser, Pagination, UpdatableAdminUserModel,
+    models::{
+        admin_user_model::{
+            AdminUserModel, AdminUserPagination, CreatableAdminUser, UpdatableAdminUserModel,
+        },
+        Pagination,
     },
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
@@ -80,9 +83,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-    ) -> Result<Pagination> {
-        // pagination logic goes here
-        // add a total no of record in db fn in repository
+    ) -> Result<AdminUserPagination> {
         let start = (current_page - 1) * PER_PAGE;
         let to = start + PER_PAGE;
 
@@ -98,6 +99,18 @@ impl AdminUserService {
         let mut has_previous_page = false;
         if current_page > 1 {
             has_previous_page = true;
+        };
+
+        let pagination = Pagination {
+            total: admin_user_count.total,
+            per_page: PER_PAGE,
+            current_page: current_page,
+            from: (start + 1),
+            to,
+            has_previous_page,
+            next_page_number: (current_page + 1),
+            has_next_page,
+            previous_page_number: (current_page - 1),
         };
 
         let sql = "SELECT * FROM admin_users LIMIT $limit START $start;";
@@ -116,18 +129,11 @@ impl AdminUserService {
             admin_user_list.push(admin_user_model?);
         }
 
-        let admin_user_paginate = Pagination {
-            data: admin_user_list.clone(),
-            total: admin_user_count.total,
-            per_page: PER_PAGE,
-            current_page: current_page,
-            from: (start + 1),
-            to,
-            has_previous_page,
-            next_page_number: (current_page + 1),
-            has_next_page,
-            previous_page_number: (current_page - 1)
+        let admin_user_paginate = AdminUserPagination {
+            data: admin_user_list,
+            pagination,
         };
+
         Ok(admin_user_paginate)
     }
 

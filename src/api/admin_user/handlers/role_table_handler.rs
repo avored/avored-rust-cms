@@ -1,17 +1,21 @@
 use std::sync::Arc;
 
 use crate::{
-    avored_state::AvoRedState, error::Result, models::{admin_user_model::AdminUserModel, role_model::RoleModel},
+    api::admin_user::requests::role_table_query::RoleTableQuery,
+    avored_state::AvoRedState,
+    error::Result,
+    models::{admin_user_model::AdminUserModel, role_model::RolePagination},
     providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
-    extract::State,
+    extract::{Query, State},
     response::{Html, IntoResponse},
 };
 use serde::Serialize;
 
 pub async fn role_table_handler(
     session: AvoRedSession,
+    Query(query_param): Query<RoleTableQuery>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - role_table_handler", "HANDLER");
@@ -20,11 +24,13 @@ pub async fn role_table_handler(
         None => AdminUserModel::default(),
     };
 
-    let roles = state.role_service.paginate(&state.db, 0).await?;
+    let current_page = query_param.page.unwrap_or(1);
+
+    let role_pagination = state.role_service.paginate(&state.db, current_page).await?;
 
     let view_model = RoleViewModel {
         logged_in_user,
-        roles,
+        role_pagination,
     };
 
     let handlebars = &state.handlebars;
@@ -38,5 +44,5 @@ pub async fn role_table_handler(
 #[derive(Serialize, Default)]
 pub struct RoleViewModel {
     pub logged_in_user: AdminUserModel,
-    pub roles: Vec<RoleModel>,
+    pub role_pagination: RolePagination,
 }
