@@ -8,20 +8,29 @@
        x-on:click="toggle=!toggle"
 >
        <input 
-              type="checkbox" 
+          type="checkbox"
               
-              {{#if id}}
-                     id="{{ id }}"
-              {{ else }}
-                     id="{{ name }}"
-              {{/if}}
+          {{#if id}}
+             id="{{ id }}"
+          {{ else }}
+             id="{{ name }}"
+          {{/if}}
               
-              {{#if name}}
-                     name="{{ name }}"
-              {{/if}}
-              x-model="toggle"
+          {{#if name}}
+             name="{{ name }}"
+          {{/if}}
+
+          x-model="toggle"
+
+           {{#if value}}
+              value="{{ value }}"
+           {{ else }}
               value="true"
-              class="appearance-none peer absolute opacity-5 left-1/2 -translate-x-1/2 rounded-md" />
+           {{/if}}
+
+          class="appearance-none peer absolute opacity-5 left-1/2 -translate-x-1/2 rounded-md"
+
+       />
        <span
               class="w-12 h-6 flex items-center flex-shrink-0 
                      p-1 bg-gray-300 rounded-full 

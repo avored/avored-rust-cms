@@ -79,6 +79,8 @@
 
                                 <div class="md:col-span-6">
                                     <div class="flex flex-row">
+
+                                        <!-- DASHBOARD PERMISSION CARD -->
                                         <div class="basis-1/3">
                                             <div class="rounded border">
                                                 <div class="border-b  p-3 font-semibold">
@@ -88,7 +90,8 @@
                                                     <div class="mt-1 flex items-center">
                                                     <span>
                                                         {{> components/switch id="permission-dashboard"
-                                                                name="permissions[dashboard]"}}
+                                                                value="dashboard"
+                                                                name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -100,6 +103,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- ADMIN USER PERMISSION CARD -->
                                         <div class="basis-1/3 ml-3">
                                             <div class="rounded border">
                                                 <div class="border-b p-3 font-semibold">
@@ -108,8 +113,10 @@
                                                 <div class="p-3">
                                                     <div class="mt-1 flex items-center">
                                                     <span>
-                                                        {{> components/switch id="permission-admin-user-table"
-                                                                name="permissions[admin_user_table]"}}
+                                                        {{> components/switch
+                                                            id="permission-admin-user-table"
+                                                            value="admin_user_table"
+                                                            name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -123,7 +130,8 @@
                                                         {{>
                                                             components/switch
                                                             id="permission-admin-user-create"
-                                                            name="permissions[admin_user_create]"
+                                                            value="admin_user_create"
+                                                            name="permissions[]"
                                                         }}
                                                     </span>
                                                         <span class="ml-3">
@@ -137,7 +145,8 @@
                                                     <span>
                                                         {{> components/switch
                                                             id="permission-admin-user-update"
-                                                            name="permissions[admin_user_update]"}}
+                                                            value="admin_user_update"
+                                                            name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -150,7 +159,8 @@
                                                     <span>
                                                         {{> components/switch
                                                             id="permission-admin-user-delete"
-                                                            name="permissions[admin_user_delete]"}}
+                                                            value="admin_user_delete"
+                                                            name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -162,6 +172,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <!-- ROLE PERMISSION CARD -->
                                         <div class="basis-1/3 ml-3">
                                             <div class="rounded border">
                                                 <div
@@ -174,7 +186,8 @@
                                                     <span>
                                                         {{> components/switch
                                                             id="permission-role-table"
-                                                            name="permissions[role_table]"}}
+                                                            value="role_table"
+                                                            name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -188,7 +201,8 @@
                                                         {{>
                                                         components/switch
                                                                 id="permission-role-create"
-                                                                name="permissions[role_create]"
+                                                                value="role_create"
+                                                                name="permissions[]"
                                                         }}
                                                     </span>
                                                         <span class="ml-3">
@@ -202,7 +216,8 @@
                                                     <span>
                                                         {{> components/switch
                                                                 id="permission-role-update"
-                                                                name="permissions[role_update]"}}
+                                                                value="role_update"
+                                                                name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -215,7 +230,8 @@
                                                     <span>
                                                         {{> components/switch
                                                                 id="permission-role-delete"
-                                                                name="permissions[role_delete]"}}
+                                                                value="role_delete"
+                                                                name="permissions[]"}}
                                                     </span>
                                                         <span class="ml-3">
                                                             {{> components/label
@@ -228,7 +244,6 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <div class="md:col-span-6 mt-5 text-right">

@@ -1,7 +1,6 @@
+use crate::error::Result as AvoRedResult;
 use handlebars::{Context, Handlebars, Helper, JsonRender, Output, RenderContext, RenderError};
 use r_i18n::{I18n, I18nConfig};
-use crate::error::Result as AvoRedResult;
-
 pub struct AvoRedViewProvider {
     pub handlebars: Handlebars<'static>,
 }
@@ -14,6 +13,7 @@ impl AvoRedViewProvider {
             .register_templates_directory(".hbs", "./views")
             .expect("handlebars cant register the views path");
 
+        handlebars.register_helper("is_vector_contains", Box::new(is_vector_contains));
         handlebars.register_helper("translate_key", Box::new(translate_key));
         handlebars.register_helper("get_validation_message", Box::new(get_validation_message));
 
@@ -80,5 +80,45 @@ fn get_validation_message(
     )
     .unwrap();
 
+    Ok(())
+}
+
+fn is_vector_contains(
+    h: &Helper,
+    _: &Handlebars,
+    _: &Context,
+    _: &mut RenderContext,
+    out: &mut dyn Output,
+) -> Result<(), RenderError> {
+    let vector = h
+        .param(0)
+        .ok_or(RenderError::new(&format!("param 0")))
+        .unwrap();
+    let vector_value = match vector.value().as_array() {
+        Some(arr) => arr.clone(),
+        None => Vec::new(),
+    };
+
+    let find_key = h
+        .param(1)
+        .ok_or(RenderError::new(&format!("param 1")))
+        .unwrap();
+    let find_key_value = find_key.value().render();
+
+    let mut find_key_result = "";
+
+    if vector_value.into_iter().any(|i| {
+
+        // Try to fix this trim issue 
+        let index = i.to_string();
+        let trim_str = index.trim_matches('"');
+        
+        trim_str.eq(&find_key_value)
+    }) {
+        // this value wont be used anyhow yet.
+        find_key_result = "found";
+    }
+
+    write!(out, "{}", find_key_result).unwrap();
     Ok(())
 }

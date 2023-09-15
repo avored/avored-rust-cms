@@ -85,7 +85,7 @@ impl RoleService {
         let pagination = Pagination {
             total: admin_user_count.total,
             per_page: PER_PAGE,
-            current_page: current_page,
+            current_page,
             from: (start + 1),
             to,
             has_previous_page,
@@ -94,7 +94,6 @@ impl RoleService {
             previous_page_number: (current_page - 1),
         };
 
-        println!("i am here");
 
         let roles = self
             .role_repository

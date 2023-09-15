@@ -71,7 +71,6 @@ pub async fn update_admin_user_handler(
                 let decoded = decode_binary(&bytes).into_owned();
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
-                println!("superadmin: {string_super_admin}");
                 let mut bool_super_admin = false;
                 if string_super_admin.eq("true") {
                     bool_super_admin = true;
@@ -115,8 +114,6 @@ pub async fn update_admin_user_handler(
         .admin_user_service
         .update_admin_user(&state.db, updateable_admin_user_model)
         .await?;
-
-    println!("{admin_user_model:?}");
     
     session
         .insert("success_message", "Admin User edited successfully!")

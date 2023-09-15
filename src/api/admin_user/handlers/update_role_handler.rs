@@ -7,10 +7,10 @@ use crate::{
     models::{admin_user_model::AdminUserModel, role_model::UpdatableRoleModel},
     providers::avored_session_provider::AvoRedSession,
 };
+use avored_better_query::AvoRedForm;
 use axum::{
     extract::{Path as AxumPath, State},
     response::{IntoResponse, Redirect},
-    Form,
 };
 use validator::HasLen;
 
@@ -18,7 +18,7 @@ pub async fn update_role_handler(
     session: AvoRedSession,
     AxumPath(role_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
-    Form(payload): Form<UpdateRoleRequest>,
+    AvoRedForm(payload): AvoRedForm<UpdateRoleRequest>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - update_role_handler", "HANDLER");
     let logged_in_user = match session.get("logged_in_user") {
@@ -38,6 +38,7 @@ pub async fn update_role_handler(
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
+        permissions: payload.permissions
     };
     let _role_model = state
         .role_service

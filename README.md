@@ -25,8 +25,7 @@ Once the application start you can visit `http://localhost:8080/setup` this url 
 ## Features
 
 - [x] Admin Users
-- [x] Roles
-- [ ] Permissions
+- [x] Roles/Permissions
 - [ ] Components
 - [ ] Pages
 - [ ] Collection

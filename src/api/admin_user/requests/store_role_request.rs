@@ -12,7 +12,7 @@ pub struct StoreRoleRequest {
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
-    pub permissions: Option<Permission>
+    pub permissions: Vec<String>
 }
 
 

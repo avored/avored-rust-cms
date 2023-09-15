@@ -38,7 +38,6 @@ impl RoleRepository {
             let role_model: Result<RoleModel> = role_object.try_into();
             role_list.push(role_model?);
         }
-        println!("{:?}", role_list);
         Ok(role_list)
     }
 
@@ -53,6 +52,7 @@ impl RoleRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_role_model.name.into()),
             ("identifier".into(), createable_role_model.identifier.into()),
+            ("permissions".into(), createable_role_model.permissions.into()),
             (
                 "created_by".into(),
                 createable_role_model.logged_in_username.clone().into(),
@@ -126,6 +126,7 @@ impl RoleRepository {
         let vars = BTreeMap::from([
             ("name".into(), updatable_admin_user.name.into()),
             ("identifier".into(), updatable_admin_user.identifier.into()),
+            ("permissions".into(), updatable_admin_user.permissions.into()),
             (
                 "logged_in_user_name".into(),
                 updatable_admin_user.logged_in_username.into(),
