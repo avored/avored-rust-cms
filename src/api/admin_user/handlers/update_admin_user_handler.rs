@@ -13,6 +13,7 @@ use axum::{
 };
 use rand::{distributions::Alphanumeric, Rng};
 use urlencoding::decode_binary;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn update_admin_user_handler(
     mut session: AvoRedSession,
@@ -116,8 +117,8 @@ pub async fn update_admin_user_handler(
         .await?;
     
     session
-        .insert("success_message", "Admin User edited successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_update_admin_user"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())
 }
