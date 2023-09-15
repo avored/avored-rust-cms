@@ -13,6 +13,7 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn update_role_handler(
     mut session: AvoRedSession,
