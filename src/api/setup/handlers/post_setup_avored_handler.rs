@@ -80,6 +80,15 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD created_at ON TABLE components TYPE datetime;
         DEFINE FIELD updated_at ON TABLE components TYPE datetime;
         DEFINE INDEX components_identifier_index ON TABLE components COLUMNS identifier UNIQUE;
+
+        CREATE components CONTENT {
+                    name: 'Test Component',
+                    identifier: 'test-component',
+                    created_by: $full_name,
+                    updated_by: $full_name,
+                    created_at: time::now(),
+                    updated_at: time::now()
+                };
     ";
 
     let password = payload.password.as_str();

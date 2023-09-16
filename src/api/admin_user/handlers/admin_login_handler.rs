@@ -36,7 +36,7 @@ pub async fn admin_login_handler(
 
     let html = handlebars
         .render("admin-user/auth/login", &view_model)
-        .expect("there is an issue with handlerbar rendering auth/login.hbs template");
+        .expect("there is an issue with handlebar rendering auth/login.hbs template");
 
     Ok(Html(html))
 }

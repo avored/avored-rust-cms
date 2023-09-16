@@ -79,12 +79,18 @@ fn routes_hello(state: Arc<AvoRedState>) -> Router {
         .with_state(state)
 }
 
-async fn handler_hello(_state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
+async fn handler_hello(state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
     println!("->> {:<12} - handler_hello", "HANDLER");
 
-    let name = String::from("Avored Rust CMS");
-    Ok(Html(format!("Hello <strong>{name}</strong>")))
+    let handlebar = &state.handlebars;
+    let view_model = HomeViewModel {};
+    let html = handlebar.render("home", &view_model)?;
+
+    Ok(Html(html))
 }
+
+#[derive(serde::Serialize, Default)]
+struct HomeViewModel {}
 
 fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();
