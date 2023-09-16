@@ -7,6 +7,9 @@ AvoRed Rust CMS implement with the help of axum web framework and surrealdb as d
 ### Join community via Slack
 [![Join community via Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/avoredrustcms/shared_invite/zt-22031l11y-EYp3a3oWVVFaZ8WCWZAkJQ)
 
+## Demo Admin
+
+Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
 ## Installation
 
