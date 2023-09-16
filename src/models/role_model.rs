@@ -13,6 +13,7 @@ pub struct RoleModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
+    pub permissions: Vec<String>,
 }
 
 impl TryFrom<Object> for RoleModel {
@@ -95,6 +96,24 @@ impl TryFrom<Object> for RoleModel {
             None => String::from(""),
         };
 
+        let permissions = match val.get("permissions") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            arr.push(array.as_string())
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
+
         Ok(RoleModel {
             id,
             name,
@@ -103,6 +122,7 @@ impl TryFrom<Object> for RoleModel {
             updated_at,
             created_by,
             updated_by,
+            permissions,
         })
     }
 }
@@ -112,6 +132,7 @@ pub struct CreatableRole {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
+    pub permissions: Vec<String>
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -120,6 +141,7 @@ pub struct UpdatableRoleModel {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
+    pub permissions: Vec<String>
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

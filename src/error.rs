@@ -19,6 +19,11 @@ impl core::fmt::Display for Error {
 }
 
 impl std::error::Error for Error {}
+impl From<serde_json::Error> for Error {
+    fn from(_val: serde_json::Error) -> Self {
+        Error::Generic("Serde struct to string  Error")
+    }
+}
 
 impl From<surrealdb::err::Error> for Error {
     fn from(_val: surrealdb::err::Error) -> Self {

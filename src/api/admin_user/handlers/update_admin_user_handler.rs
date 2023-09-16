@@ -13,6 +13,7 @@ use axum::{
 };
 use rand::{distributions::Alphanumeric, Rng};
 use urlencoding::decode_binary;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn update_admin_user_handler(
     mut session: AvoRedSession,
@@ -72,7 +73,7 @@ pub async fn update_admin_user_handler(
 
                 let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
                 let mut bool_super_admin = false;
-                if string_super_admin.eq("1") {
+                if string_super_admin.eq("true") {
                     bool_super_admin = true;
                 }
 
@@ -110,16 +111,14 @@ pub async fn update_admin_user_handler(
         profile_image,
         logged_in_username: logged_in_user.email,
     };
-    let admin_user_model = state
+    let _admin_user_model = state
         .admin_user_service
         .update_admin_user(&state.db, updateable_admin_user_model)
         .await?;
-
-    println!("{admin_user_model:?}");
     
     session
-        .insert("success_message", "Admin User edited successfully!")
-        .expect("Could not store the validation errors into session.");
+        .insert("success_message", translate("success_update_admin_user"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())
 }

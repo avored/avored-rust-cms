@@ -7,18 +7,19 @@ use crate::{
     models::{admin_user_model::AdminUserModel, role_model::UpdatableRoleModel},
     providers::avored_session_provider::AvoRedSession,
 };
+use avored_better_query::AvoRedForm;
 use axum::{
     extract::{Path as AxumPath, State},
     response::{IntoResponse, Redirect},
-    Form,
 };
 use validator::HasLen;
+use crate::providers::avored_view_provider::translate;
 
 pub async fn update_role_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     AxumPath(role_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
-    Form(payload): Form<UpdateRoleRequest>,
+    AvoRedForm(payload): AvoRedForm<UpdateRoleRequest>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - update_role_handler", "HANDLER");
     let logged_in_user = match session.get("logged_in_user") {
@@ -26,7 +27,7 @@ pub async fn update_role_handler(
         None => AdminUserModel::default(),
     };
 
-    let validation_error_list = payload.validate_errors(session)?;
+    let validation_error_list = payload.validate_errors(session.clone())?;
 
     if validation_error_list.errors().length() > 0 {
         let redirect_url = format!("/admin/edit-role/{}", role_id);
@@ -38,11 +39,15 @@ pub async fn update_role_handler(
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
+        permissions: payload.permissions
     };
     let _role_model = state
         .role_service
         .update_role(&state.db, updateable_role_model)
         .await?;
+    session
+        .insert("success_message", translate("success_update_role"))
+        .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/role").into_response())
 }
