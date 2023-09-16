@@ -5,13 +5,18 @@ use axum::{
     routing::get,
     Router,
 };
-use tracing_subscriber::{filter, Layer, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt};
-use std::{net::SocketAddr, sync::Arc, fs::File, path::Path};
+use std::{fs::File, net::SocketAddr, path::Path, sync::Arc};
 use tower_http::services::ServeDir;
 use tracing::info;
+use tracing_subscriber::{
+    filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
+};
 
 use crate::{
-    api::{admin_user::admin_user_routes::admin_user_routes, setup::setup_routes::setup_routes},
+    api::{
+        admin_user::admin_user_routes::admin_user_routes,
+        component::component_routes::component_routes, setup::setup_routes::setup_routes,
+    },
     avored_state::AvoRedState,
     error::Result,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
@@ -30,7 +35,6 @@ mod services;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    
     init_log();
     let state = Arc::new(AvoRedState::new().await?);
     let store = MemoryStore::new();
@@ -41,6 +45,7 @@ async fn main() -> Result<()> {
 
     let app = Router::new()
         .merge(routes_hello(state.clone()))
+        .merge(component_routes(state.clone()))
         .merge(admin_user_routes(state.clone()))
         .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
@@ -74,50 +79,29 @@ fn routes_hello(state: Arc<AvoRedState>) -> Router {
         .with_state(state)
 }
 
-async fn handler_hello(_state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
+async fn handler_hello(state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
     println!("->> {:<12} - handler_hello", "HANDLER");
 
-    // let password = "admin123";
-    // let password = password.as_bytes();
-    // let salt = SaltString::generate(&mut OsRng);
+    let handlebar = &state.handlebars;
+    let view_model = HomeViewModel {};
+    let html = handlebar.render("home", &view_model)?;
 
-    // let argon2 = Argon2::default();
-    // let password_hash = argon2
-    //     .hash_password(password, &salt)
-    //     .expect("Error occurred while encrypted password")
-    //     .to_string();
-
-    // // region : Move this admin user creation into home page
-    // let creatable_admin_user_model = CreatableAdminUser {
-    //     full_name: String::from("Admin"),
-    //     email: String::from("admin@admin.com"),
-    //     password: password_hash,
-    //     profile_image: String::from(""),
-    //     is_super_admin: true,
-    //     logged_in_username: String::from("CLI"),
-    // };
-
-    // let created = state
-    //     .admin_user_service
-    //     .create_admin_user(&state.db, creatable_admin_user_model)
-    //     .await?;
-
-    // println!("{:?}", created);
-
-    let name = String::from("Avored Rust CMS");
-    Ok(Html(format!("Hello <strong>{name}</strong>")))
+    Ok(Html(html))
 }
 
+#[derive(serde::Serialize, Default)]
+struct HomeViewModel {}
 
 fn init_log() {
-    let stdout_log = tracing_subscriber::fmt::layer()
-    .pretty();
+    let stdout_log = tracing_subscriber::fmt::layer().pretty();
 
     // A layer that logs events to a file.
     let file = File::create(Path::new("public").join("log").join("avored.log"));
-    let file = match file  {Ok(file) => file,Err(error) => panic!("Error: {:?}",error),};
-    let debug_log = tracing_subscriber::fmt::layer()
-        .with_writer(Arc::new(file));
+    let file = match file {
+        Ok(file) => file,
+        Err(error) => panic!("Error: {:?}", error),
+    };
+    let debug_log = tracing_subscriber::fmt::layer().with_writer(Arc::new(file));
 
     // A layer that collects metrics using specific events.
     let metrics_layer = /* ... */ filter::LevelFilter::INFO;
@@ -134,14 +118,14 @@ fn init_log() {
                 // events whose targets start with `metrics`.
                 .with_filter(filter::filter_fn(|metadata| {
                     !metadata.target().starts_with("metrics")
-                }))
+                })),
         )
         .with(
             // Add a filter to the metrics label that *only* enables
             // events whose targets start with `metrics`.
             metrics_layer.with_filter(filter::filter_fn(|metadata| {
                 metadata.target().starts_with("metrics")
-            }))
+            })),
         )
         .init();
 

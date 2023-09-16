@@ -4,6 +4,7 @@ use surrealdb::sql::{Object, Value};
 
 pub mod admin_user_model;
 pub mod role_model;
+pub mod component_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {
