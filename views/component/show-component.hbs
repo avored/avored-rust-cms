@@ -4,7 +4,7 @@
             <div>
                 <div class="flex items-center">
                     <h2 class="text-lg font-medium text-gray-800 dark:text-white">
-                        {{translate_key "show_admin_user" ~}}
+                        {{translate_key "show_component" ~}}
                     </h2>
                 </div>
             </div>
@@ -29,19 +29,19 @@
                             {{ translate_key "name" ~}}
                         </div>
                         <div class="md:col-span-1">
-                            {{ role_model.name }}
+                            {{ component_model.name }}
                         </div>
 
                         <div class="md:col-span-1">
                             {{ translate_key "identifier" ~}}
                         </div>
                         <div class="md:col-span-1">
-                            {{ role_model.identifier }}
+                            {{ component_model.identifier }}
                         </div>
                     </div>
                     <form method="post" 
-                        action="/admin/delete-role/{{ role_model.id }}" 
-                        id="delete-role-hidden-form"
+                        action="/admin/delete-component/{{ component_model.id }}"
+                        id="delete-component-hidden-form"
                     >
                     </form>
                     <div x-data class="grid mt-5 gap-4 gap-y-2 text-sm grid-cols-1 md:grid-cols-6">
@@ -49,10 +49,10 @@
                             <div class="inline-flex items-end">
                                 <button 
                                     type="submit"
-                                    x-on:confirmation-confrimed.window="document.getElementById('delete-role-hidden-form').submit()"
-                                    x-on:click="$dispatch('confirmation-toggle', {confirmation_message: 'are you sure do you want to delete this role?'})"
+                                    x-on:confirmation-confrimed.window="document.getElementById('delete-component-hidden-form').submit()"
+                                    x-on:click="$dispatch('confirmation-toggle', {confirmation_message: 'are you sure do you want to delete this component?'})"
                                     class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                    {{ translate_key "delete_role" ~}}
+                                    {{ translate_key "delete_component" ~}}
                                 </button>
                             </div>
                         </div>

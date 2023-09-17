@@ -36,7 +36,7 @@ pub async fn role_table_handler(
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("admin-user/role-table", &view_model)
-        .expect("there is an issue with handlerbar rendering admin-user/role-table.hbs template");
+        .expect("there is an issue with handlebar rendering admin-user/role-table.hbs template");
 
     Ok(Html(html))
 }

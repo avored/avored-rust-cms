@@ -33,7 +33,7 @@ pub async fn component_table_handler(
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("component/component-table", &view_model)
-        .expect("there is an issue with handlerbar rendering component/component-table.hbs template");
+        .expect("there is an issue with handlebar rendering component/component-table.hbs template");
 
     Ok(Html(html))
 }
