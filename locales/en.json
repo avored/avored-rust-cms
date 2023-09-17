@@ -58,12 +58,13 @@
     "role_create": "Create role",
     "role_update": "Update role",
     "role_delete": "Delete role",
-    "success_delete_admin_user": "Admin User deleted successfully!",
-    "success_update_admin_user": "Admin User updated successfully!",
-    "success_create_admin_user": "Admin User created successfully!",
-    "success_create_role": "Role created successfully!",
-    "success_update_role": "Role updated successfully!",
-    "success_create_component": "Component created successfully!",
-    "success_update_component": "Component updated successfully!",
-    "success_delete_component": "Component deleted successfully!"
+    "success_deleted_admin_user": "Admin User deleted successfully!",
+    "success_updated_admin_user": "Admin User updated successfully!",
+    "success_created_admin_user": "Admin User created successfully!",
+    "success_created_role": "Role created successfully!",
+    "success_updated_role": "Role updated successfully!",
+    "success_deleted_role": "Role deleted successfully!",
+    "success_created_component": "Component created successfully!",
+    "success_updated_component": "Component updated successfully!",
+    "success_deleted_component": "Component deleted successfully!"
 }

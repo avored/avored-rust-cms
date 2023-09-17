@@ -225,7 +225,7 @@ pub async fn store_admin_user_handler(
         .await;
 
     session
-        .insert("success_message", translate("success_create_admin_user"))
+        .insert("success_message", translate("success_created_admin_user"))
         .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())

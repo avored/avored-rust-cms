@@ -41,7 +41,7 @@ pub async fn store_component_handler(
         .create_component(&state.db, creatable_component)
         .await;
     session
-        .insert("success_message", translate("success_create_component"))
+        .insert("success_message", translate("success_created_component"))
         .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/component").into_response())

@@ -7,6 +7,7 @@ use axum::{
     extract::{Path, State},
     response::{IntoResponse, Redirect},
 };
+use crate::providers::avored_view_provider::translate;
 
 pub async fn delete_role_handler(
     mut session: AvoRedSession,
@@ -17,7 +18,7 @@ pub async fn delete_role_handler(
     state.role_service.delete_role(&state.db, role_id).await?;
 
     session
-        .insert("success_message", "User role deleted successfully!")
+        .insert("success_message", translate("success_deleted_role"))
         .expect("Could not store the validation errors into session.");
 
     Ok(Redirect::to("/admin/role").into_response())

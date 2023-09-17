@@ -18,7 +18,7 @@ pub async fn delete_component_handler(
     state.component_service.delete_component(&state.db, component_id).await?;
 
     session
-        .insert("success_message", translate("success_delete_component"))
+        .insert("success_message", translate("success_deleted_component"))
         .expect("Could not store the validation errors into session.");
 
     Ok(Redirect::to("/admin/component").into_response())

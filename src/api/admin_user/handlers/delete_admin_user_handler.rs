@@ -18,7 +18,7 @@ pub async fn delete_admin_user_handler(
     state.admin_user_service.delete_admin_user(&state.db, admin_user_id).await?;
 
     session
-        .insert("success_message", translate("success_delete_admin_user"))
+        .insert("success_message", translate("success_deleted_admin_user"))
         .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/admin-user").into_response())

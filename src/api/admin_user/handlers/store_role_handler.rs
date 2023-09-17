@@ -41,7 +41,7 @@ pub async fn store_role_handler(
         .create_role(&state.db, creatable_role)
         .await;
     session
-        .insert("success_message", translate("success_create_role"))
+        .insert("success_message", translate("success_created_role"))
         .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/role").into_response())

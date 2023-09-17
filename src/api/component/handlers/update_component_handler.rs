@@ -46,7 +46,7 @@ pub async fn update_component_handler(
         .update_component(&state.db, updateable_component_model)
         .await?;
     session
-        .insert("success_message", translate("success_update_component"))
+        .insert("success_message", translate("success_updated_component"))
         .expect("Could not store the success message into session.");
 
     Ok(Redirect::to("/admin/component").into_response())
