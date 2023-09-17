@@ -14,7 +14,7 @@ use axum::{
 use serde::Serialize;
 
 pub async fn component_table_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     Query(query_param): Query<ComponentTableQuery>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
@@ -25,9 +25,13 @@ pub async fn component_table_handler(
     };
     let current_page = query_param.page.unwrap_or(1);
     let component_pagination = state.component_service.paginate(&state.db, current_page).await?;
+    let success_message = session.get("success_message").unwrap_or(String::from(""));
+    session.remove("success_message");
+
     let view_model = ComponentViewModel {
         logged_in_user,
         component_pagination,
+        success_message
     };
 
     let handlebars = &state.handlebars;
@@ -42,4 +46,5 @@ pub async fn component_table_handler(
 pub struct ComponentViewModel {
     pub logged_in_user: AdminUserModel,
     pub component_pagination: ComponentPagination,
+    pub success_message: String,
 }

@@ -14,7 +14,7 @@ use axum::{
 use serde::Serialize;
 
 pub async fn role_table_handler(
-    session: AvoRedSession,
+    mut session: AvoRedSession,
     Query(query_param): Query<RoleTableQuery>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
@@ -27,10 +27,13 @@ pub async fn role_table_handler(
     let current_page = query_param.page.unwrap_or(1);
 
     let role_pagination = state.role_service.paginate(&state.db, current_page).await?;
-
+    let success_message = session.get("success_message").unwrap_or(String::from(""));
+    session.remove("success_message");
+    
     let view_model = RoleViewModel {
         logged_in_user,
         role_pagination,
+        success_message
     };
 
     let handlebars = &state.handlebars;
@@ -45,4 +48,5 @@ pub async fn role_table_handler(
 pub struct RoleViewModel {
     pub logged_in_user: AdminUserModel,
     pub role_pagination: RolePagination,
+    pub success_message: String,
 }

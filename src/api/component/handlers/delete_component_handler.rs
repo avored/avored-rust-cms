@@ -7,6 +7,7 @@ use axum::{
     extract::{Path, State},
     response::{IntoResponse, Redirect},
 };
+use crate::providers::avored_view_provider::translate;
 
 pub async fn delete_component_handler(
     mut session: AvoRedSession,
@@ -17,7 +18,7 @@ pub async fn delete_component_handler(
     state.component_service.delete_component(&state.db, component_id).await?;
 
     session
-        .insert("success_message", "User component deleted successfully!")
+        .insert("success_message", translate("success_delete_component"))
         .expect("Could not store the validation errors into session.");
 
     Ok(Redirect::to("/admin/component").into_response())
