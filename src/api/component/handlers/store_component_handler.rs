@@ -25,17 +25,20 @@ pub async fn store_component_handler(
         Some(logged_in_user) => logged_in_user,
         None => AdminUserModel::default(),
     };
+
+    println!("Payload: {:?}", payload);
+
     let validation_error_list = payload.validate_errors(session.clone())?;
     if validation_error_list.errors().length() > 0 {
         return Ok(Redirect::to("/admin/create-role").into_response());
     }
-    
+
     let creatable_component = CreatableComponent {
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
     };
-    
+
     let _created_component = state
         .component_service
         .create_component(&state.db, creatable_component)

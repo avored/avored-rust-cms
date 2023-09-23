@@ -24,7 +24,6 @@ pub fn component_routes(state: Arc<AvoRedState>) -> Router {
         .route("/admin/update-component/:component_id", post(update_component_handler))
         .route("/admin/show-component/:component_id", get(show_component_handler))
         .route("/admin/delete-component/:component_id", post(delete_component_handler))
-
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_authentication,

@@ -11,8 +11,16 @@ pub struct StoreComponentRequest {
 
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
+
+    pub fields: Vec<Field>
 }
 
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct Field {
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
+}
 
 impl StoreComponentRequest {
     pub fn validate_errors(&self, mut session: AvoRedSession) -> Result<ValidationErrors> {

@@ -7,15 +7,15 @@
       href="/public/images/favicon.ico">
 
     <link href="/public/css/app.css" rel="stylesheet">
-    <script src="/public/js/app.js"></script>
+    <script defer src="/public/js/app.js"></script>
   </head>
   <body class="antialiased bg-slate-50">
 
     <div
       class="py-10 absolute bg-black bg-opacity-50 min-h-screen w-full font-medium text-gray-800"
       x-show="modal"
-      x-on:confirmation-toggle.window="confirmation_message = $event.detail.confirmation_message; modal = true"
-      x-on:keyup.escape.window="modal = false"
+      @confirmation-toggle.window="confirmation_message = $event.detail.confirmation_message; modal = true"
+      @keyup.escape.window="modal = false"
       x-data="{ modal: false, confirmation_message: 'Are you sure?' }">
       <div
         class="max-w-sm p-2 mt-10 z-50 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear"
@@ -26,8 +26,8 @@
         x-transition:leave="transition ease-in duration-300"
         x-transition:leave-start="opacity-100 scale-100"
         x-transition:leave-end="opacity-0 scale-90">
-        <div class="relative p-6" x-on:click.outside="modal= false">
-          <a href="#" x-on:click.prevent="modal = ! modal"
+        <div class="relative p-6" @click.outside="modal= false">
+          <a href="#" @click.prevent="modal = ! modal"
             class="absolute top-1.5 right-1.5">
             <i data-feather="x"></i>
           </a>
@@ -38,11 +38,11 @@
 
           <div class="flex flex-row mt-6 space-x-2 justify-evenly">
             <a href="#"
-              x-on:click="modal = !modal; $dispatch('confirmation-confrimed');"
+              @click="modal = !modal; $dispatch('confirmation-confrimed');"
               class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg hover:bg-red-500">
               Delete
             </a>
-            <a href="#" x-on:click.prevent="modal = ! modal"
+            <a href="#" @click.prevent="modal = ! modal"
               class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
               Cancel
             </a>
@@ -69,7 +69,7 @@
           {{ success_message }}
         </div>
 
-        <div x-on:click="show = false" class="cursor-pointer">
+        <div @click="show = false" class="cursor-pointer">
           <i class="ml-3 w-4 h-4" data-feather="x"></i>
         </div>
 
@@ -81,8 +81,8 @@
 
       <!-- sidebar -->
       <div
-        class="sidebar max-h-screen top-0 h-screen bg-gray-800 text-blue-100 w-64 fixed inset-y-0 left-0 transform transition duration-200 ease-in-out z-20"
-        x-data="{ open: true }" x-on:togglesidebar.window=" open = !open"
+        class="sidebar max-h-screen top-0 h-screen bg-gray-800 text-blue-100 w-64 fixed inset-y-0 left-0 transform transition duration-200 ease-in-out"
+        x-data="{ open: true }" @togglesidebar.window=" open = !open"
         x-show="true"
         :class="open === true ? 'md:translate-x-0 md:sticky ':'-translate-x-full' ">
 
@@ -96,7 +96,7 @@
             </div>
 
             <div>
-              <span class="text-2xl font-extrabold">AvoRed</span>
+              <span class="text-2xl font-semibold">AvoRed</span>
               <span class="text-xs block">Rust CMS</span>
             </div>
           </a>
@@ -473,9 +473,6 @@
           2023 &copy; Design & Develop by AvoRed.
         </footer>
       </div>
-
     </div>
-    <!-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.3/dist/cdn.min.js"></script> -->
-
   </body>
 </html>

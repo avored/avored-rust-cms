@@ -12,10 +12,9 @@ Alpine.data('multiselect', MultiSelect)
 Alpine.data('field_builder', FieldBuilder)
 
 window.Alpine = Alpine;
+window.feather = feather;
+Alpine.start()
 
-Alpine.start();
-
-
-window.document.addEventListener("DOMContentLoaded", function() {
+window.addEventListener("load", (event) => {
     feather.replace()
 });

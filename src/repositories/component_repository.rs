@@ -174,7 +174,7 @@ impl ComponentRepository {
     ) -> Result<ModelCount> {
         let sql = "SELECT count() FROM components GROUP ALL;";
         let responses = datastore.execute(sql, database_session, None).await?;
-        println!("RES: {:?}", responses);
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,

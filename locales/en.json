@@ -66,5 +66,7 @@
     "success_deleted_role": "Role deleted successfully!",
     "success_created_component": "Component created successfully!",
     "success_updated_component": "Component updated successfully!",
-    "success_deleted_component": "Component deleted successfully!"
+    "success_deleted_component": "Component deleted successfully!",
+    "add_field": "Add field",
+    "cancel": "Cancel"
 }

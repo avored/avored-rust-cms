@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    avored_state::AvoRedState, error::Result, models::role_model::RoleModel,
+    avored_state::AvoRedState, error::Result,
     providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
@@ -9,6 +9,7 @@ use axum::{
     response::{Html, IntoResponse},
 };
 use serde::Serialize;
+use crate::models::admin_user_model::AdminUserModel;
 
 pub async fn create_component_handler(
     mut session: AvoRedSession,
@@ -17,7 +18,7 @@ pub async fn create_component_handler(
     println!("->> {:<12} - component_create_handler", "HANDLER");
     let logged_in_user = match session.get("logged_in_user") {
         Some(logged_in_user) => logged_in_user,
-        None => RoleModel::default(),
+        None => AdminUserModel::default(),
     };
     let validation_name_message = session
         .get("validation_error_name")
@@ -41,7 +42,7 @@ pub async fn create_component_handler(
 
 #[derive(Serialize, Default)]
 pub struct CreateComponentViewModel {
-    pub logged_in_user: RoleModel,
+    pub logged_in_user: AdminUserModel,
     pub validation_name_message: String,
     pub validation_identifier_message: String
 }
