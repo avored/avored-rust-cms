@@ -49,12 +49,15 @@ impl ComponentRepository {
     ) -> Result<ComponentModel> {
         let sql = "CREATE components CONTENT $data";
 
+
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_component_model.name.into()),
             (
                 "identifier".into(),
                 createable_component_model.identifier.into(),
             ),
+            ("fields".into(), createable_component_model.fields.into()),
             (
                 "created_by".into(),
                 createable_component_model.logged_in_username.clone().into(),

@@ -68,4 +68,4 @@ How to call heloper method in handlebar template
 
 
 How to start a surrealdb
-    surreal start --log trace --user root --pass root
+surreal start --user root --pass root --bind 0.0.0.0:8000 file://test.db

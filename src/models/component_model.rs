@@ -112,6 +112,14 @@ pub struct CreatableComponent {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
+    pub fields: Vec<FieldModel>
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct FieldModel {
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
