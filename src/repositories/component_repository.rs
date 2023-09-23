@@ -57,7 +57,7 @@ impl ComponentRepository {
                 "identifier".into(),
                 createable_component_model.identifier.into(),
             ),
-            ("fields".into(), createable_component_model.fields.into()),
+            // ("fields".into(), createable_component_model.fields.into()),
             (
                 "created_by".into(),
                 createable_component_model.logged_in_username.clone().into(),
