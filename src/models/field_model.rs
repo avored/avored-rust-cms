@@ -1,12 +1,11 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
-use crate::models::field_model::FieldModel;
 
 use super::Pagination;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct ComponentModel {
+pub struct FieldModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
@@ -14,12 +13,11 @@ pub struct ComponentModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
-    pub fields: Vec<FieldModel>
 }
 
-impl TryFrom<Object> for ComponentModel {
+impl TryFrom<Object> for FieldModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<ComponentModel> {
+    fn try_from(val: Object) -> Result<FieldModel> {
         let id = match val.get("id") {
             Some(val) => {
                 let value = match val.clone() {
@@ -97,32 +95,7 @@ impl TryFrom<Object> for ComponentModel {
             None => String::from(""),
         };
 
-        let fields = match val.get("fields") {
-            Some(val) => {
-                let value = match val.clone() {
-                    Value::Array(v) => {
-                        let mut arr = Vec::new();
-
-                        for array in v.into_iter() {
-                            let object = match array.clone() {
-                                Value::Object(v) => v,
-                                _ => surrealdb::sql::Object::default(),
-                            };
-
-                            let field: FieldModel = object.try_into()?;
-
-                            arr.push(field)
-                        }
-                        arr
-                    }
-                    _ => Vec::new(),
-                };
-                value
-            }
-            None => Vec::new(),
-        };
-
-        Ok(ComponentModel {
+        Ok(FieldModel {
             id,
             name,
             identifier,
@@ -130,20 +103,18 @@ impl TryFrom<Object> for ComponentModel {
             updated_at,
             created_by,
             updated_by,
-            fields: fields
         })
     }
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct CreatableComponent {
+pub struct CreatableFieldModel {
     pub name: String,
     pub identifier: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
-
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct UpdatableComponentModel {
+pub struct UpdatableFieldModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
@@ -151,7 +122,7 @@ pub struct UpdatableComponentModel {
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct ComponentPagination {
-    pub data: Vec<ComponentModel>,
+pub struct FieldPagination {
+    pub data: Vec<FieldModel>,
     pub pagination: Pagination,
 }

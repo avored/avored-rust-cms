@@ -9,6 +9,8 @@ use crate::services::admin_user_service::AdminUserService;
 use crate::services::component_service::ComponentService;
 use crate::services::role_service::RoleService;
 use handlebars::Handlebars;
+use crate::repositories::field_repository::FieldRepository;
+use crate::services::field_service::FieldService;
 
 pub struct AvoRedState {
     pub handlebars: Handlebars<'static>,
@@ -17,6 +19,7 @@ pub struct AvoRedState {
     pub admin_user_service: AdminUserService,
     pub role_service: RoleService,
     pub component_service: ComponentService,
+    pub field_service: FieldService
 }
 
 impl AvoRedState {
@@ -35,13 +38,17 @@ impl AvoRedState {
         let component_repository = ComponentRepository::new();
         let component_service = ComponentService::new(component_repository)?;
 
+        let field_repository = FieldRepository::new();
+        let field_service = FieldService::new(field_repository)?;
+
         Ok(AvoRedState {
             handlebars: avored_view_provider.handlebars,
             config: avored_config_provider,
             db: avored_database_provider.db,
             admin_user_service,
             role_service,
-            component_service
+            component_service,
+            field_service
         })
     }
 }

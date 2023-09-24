@@ -89,6 +89,30 @@ pub async fn post_setup_avored_handler(
                     created_at: time::now(),
                     updated_at: time::now()
                 };
+
+
+
+
+        DEFINE TABLE fields;
+
+        DEFINE FIELD name ON TABLE fields TYPE string;
+        DEFINE FIELD identifier ON TABLE fields TYPE string;
+        DEFINE FIELD created_by ON TABLE fields TYPE string;
+        DEFINE FIELD updated_by ON TABLE fields TYPE string;
+        DEFINE FIELD created_at ON TABLE fields TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE fields TYPE datetime;
+        DEFINE INDEX fields_identifier_index ON TABLE fields COLUMNS identifier UNIQUE;
+
+
+
+        DEFINE TABLE component_field;
+
+        DEFINE FIELD created_by ON TABLE component_field TYPE string;
+        DEFINE FIELD updated_by ON TABLE component_field TYPE string;
+        DEFINE FIELD created_at ON TABLE component_field TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE component_field TYPE datetime;
+
+
     ";
 
     let password = payload.password.as_str();

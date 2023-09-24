@@ -8,6 +8,7 @@ use crate::{
     repositories::component_repository::ComponentRepository,
     PER_PAGE,
 };
+use crate::models::field_model::FieldModel;
 
 pub struct ComponentService {
     component_repository: ComponentRepository,
@@ -102,6 +103,18 @@ impl ComponentService {
     ) -> Result<bool> {
         self.component_repository
             .delete_component(datastore, database_session, component_id)
+            .await
+    }
+
+    pub async fn attach_component_with_field(
+        &self,
+        (datastore, database_session): &DB,
+        component_model: ComponentModel,
+        field_model: FieldModel,
+        logged_in_username: String
+    ) -> Result<bool> {
+        self.component_repository
+            .attach_component_with_field(datastore, database_session, component_model, field_model, logged_in_username)
             .await
     }
 }

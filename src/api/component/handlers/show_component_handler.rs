@@ -27,6 +27,7 @@ pub async fn show_component_handler(
         .find_by_id(&state.db, component_id)
         .await?;
 
+    // println!("COM: {component_model:?}");
     let view_model = ShowComponentViewModel {
         logged_in_user,
         component_model,

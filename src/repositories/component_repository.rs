@@ -7,6 +7,7 @@ use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
+use crate::models::field_model::FieldModel;
 
 use super::into_iter_objects;
 
@@ -49,8 +50,6 @@ impl ComponentRepository {
     ) -> Result<ComponentModel> {
         let sql = "CREATE components CONTENT $data";
 
-
-
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_component_model.name.into()),
             (
@@ -90,7 +89,7 @@ impl ComponentRepository {
         database_session: &Session,
         component_id: String,
     ) -> Result<ComponentModel> {
-        let sql = "SELECT * FROM type::thing($table, $id);";
+        let sql = "SELECT *, ->component_field<-components.* as fields FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
             ("id".into(), component_id.into()),
             ("table".into(), "components".into()),
@@ -104,6 +103,7 @@ impl ComponentRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found")),
         };
+        // println!("RESULT_OBJECT: {result_object:?}");
         let component_model: Result<ComponentModel> = result_object?.try_into();
 
         component_model
@@ -191,4 +191,36 @@ impl ComponentRepository {
        
         total_count
     }
+
+    pub async fn attach_component_with_field(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        component_model: ComponentModel,
+        field_model: FieldModel,
+        logged_in_username: String
+    ) -> Result<bool> {
+        let sql = format!("RELATE {}:{}->{}->{}:{} CONTENT $attached_data;", "components", component_model.id, "component_field", "fields", field_model.id);
+
+        let attached_data: BTreeMap<String, Value> = [
+            ("created_by".into(), logged_in_username.clone().into()),
+            ("updated_by".into(), logged_in_username.into()),
+            ("created_at".into(), Datetime::default().into()),
+            ("updated_at".into(), Datetime::default().into()),
+        ].into();
+
+        let vars: BTreeMap<String, Value> = [
+            ("attached_data".into(), attached_data.into()),
+        ].into();
+
+        let responses = datastore.execute(sql.as_str(), database_session, Some(vars)).await?;
+
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(true)
+    }
+
 }
