@@ -6,8 +6,8 @@ export default () => ({
         field_identifier: ''
     },
     fields: [],
-    init() {
-        console.log("field builder init")
+    init(data) {
+        console.log("field builder", data)
     },
 
     fieldButtonOnClick(field_type) {
