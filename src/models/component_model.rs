@@ -130,7 +130,7 @@ impl TryFrom<Object> for ComponentModel {
             updated_at,
             created_by,
             updated_by,
-            fields: fields,
+            fields,
         })
     }
 }
