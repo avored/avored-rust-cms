@@ -1,5 +1,3 @@
-#[warn(dead_code)]
-
 use crate::{
     error::Result,
     models::{
