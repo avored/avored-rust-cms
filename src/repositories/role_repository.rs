@@ -195,8 +195,8 @@ impl RoleRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found")),
         };
-        let admin_user_count: Result<ModelCount> = result_object?.try_into();
+        let model_count: Result<ModelCount> = result_object?.try_into();
 
-        admin_user_count
+        model_count
     }
 }

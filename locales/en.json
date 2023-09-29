@@ -68,5 +68,6 @@
     "success_updated_component": "Component updated successfully!",
     "success_deleted_component": "Component deleted successfully!",
     "add_field": "Add field",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "page": "Page"
 }

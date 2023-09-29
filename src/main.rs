@@ -21,6 +21,7 @@ use crate::{
     error::Result,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
+use crate::api::page::page_routes::page_routes;
 
 const PER_PAGE: i64 = 10;
 
@@ -46,6 +47,7 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .merge(routes_hello(state.clone()))
         .merge(component_routes(state.clone()))
+        .merge(page_routes(state.clone()))
         .merge(admin_user_routes(state.clone()))
         .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
