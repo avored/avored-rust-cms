@@ -30,6 +30,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+
       - name: Install Rust toolchain
         uses: actions-rs/toolchain@16499b5e05bf2e26879000db0c1d13f7e13fa3af #@v1
         with:
@@ -37,6 +38,9 @@ jobs:
           toolchain: stable
           components: clippy
           override: true
+
+      - name: cache project
+        uses: Swatinem/rust-cache@v2
 
       - name: Install required cargo
         run: cargo install clippy-sarif sarif-fmt
