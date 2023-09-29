@@ -17,4 +17,4 @@ jobs:
       - uses: mbrobbel/rustfmt-check@0.8.0
         with:
           token: ${{ secrets.CI_TOKEN }}
-          mode: review
+          mode: commit
