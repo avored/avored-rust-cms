@@ -23,6 +23,7 @@ jobs:
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.CI_TOKEN }}
+          
 #          mode: review ## Review mode requires to be on pull_request only..
 #    steps:
 #    - uses: actions/checkout@v3
