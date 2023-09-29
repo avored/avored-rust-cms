@@ -1,14 +1,16 @@
+use crate::models::field_model::FieldModel;
 use crate::{
     error::Result,
     models::{
-        component_model::{CreatableComponent, ComponentModel, ComponentPagination, UpdatableComponentModel},
+        component_model::{
+            ComponentModel, ComponentPagination, CreatableComponent, UpdatableComponentModel,
+        },
         Pagination,
     },
     providers::avored_database_provider::DB,
     repositories::component_repository::ComponentRepository,
     PER_PAGE,
 };
-use crate::models::field_model::FieldModel;
 
 pub struct ComponentService {
     component_repository: ComponentRepository,
@@ -16,11 +18,12 @@ pub struct ComponentService {
 
 impl ComponentService {
     pub fn new(component_repository: ComponentRepository) -> Result<Self> {
-        Ok(ComponentService { component_repository })
+        Ok(ComponentService {
+            component_repository,
+        })
     }
 }
 impl ComponentService {
-
     pub async fn paginate(
         &self,
         (datastore, database_session): &DB,
@@ -111,10 +114,16 @@ impl ComponentService {
         (datastore, database_session): &DB,
         component_model: ComponentModel,
         field_model: FieldModel,
-        logged_in_username: String
+        logged_in_username: String,
     ) -> Result<bool> {
         self.component_repository
-            .attach_component_with_field(datastore, database_session, component_model, field_model, logged_in_username)
+            .attach_component_with_field(
+                datastore,
+                database_session,
+                component_model,
+                field_model,
+                logged_in_username,
+            )
             .await
     }
 }

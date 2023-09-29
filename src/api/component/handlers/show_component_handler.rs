@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::models::component_model::ComponentModel;
 use crate::{
     avored_state::AvoRedState, error::Result, models::admin_user_model::AdminUserModel,
     providers::avored_session_provider::AvoRedSession,
@@ -9,7 +10,6 @@ use axum::{
     response::{Html, IntoResponse},
 };
 use serde::Serialize;
-use crate::models::component_model::ComponentModel;
 
 pub async fn show_component_handler(
     session: AvoRedSession,

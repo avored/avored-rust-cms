@@ -1,10 +1,16 @@
 use std::sync::Arc;
 
-use axum::{routing::{get, post}, Router};
+use axum::{
+    routing::{get, post},
+    Router,
+};
 
 use crate::avored_state::AvoRedState;
 
-use super::handlers::{setup_avored_handler::setup_avored_handler, post_setup_avored_handler::post_setup_avored_handler};
+use super::handlers::{
+    post_setup_avored_handler::post_setup_avored_handler,
+    setup_avored_handler::setup_avored_handler,
+};
 
 pub fn setup_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()

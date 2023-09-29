@@ -12,6 +12,7 @@ use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
 
+use crate::api::page::page_routes::page_routes;
 use crate::{
     api::{
         admin_user::admin_user_routes::admin_user_routes,
@@ -21,7 +22,6 @@ use crate::{
     error::Result,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
-use crate::api::page::page_routes::page_routes;
 
 const PER_PAGE: i64 = 10;
 

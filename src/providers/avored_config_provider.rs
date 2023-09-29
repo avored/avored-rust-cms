@@ -1,4 +1,4 @@
-use std::{sync::OnceLock, env};
+use std::{env, sync::OnceLock};
 
 use dotenvy::dotenv;
 
@@ -8,9 +8,8 @@ use crate::error::{Error, Result};
 pub struct AvoRedConfigProvider {
     pub database_namespace: String,
     pub database_name: String,
-    pub session_secret_key: String
+    pub session_secret_key: String,
 }
-
 
 pub fn config() -> &'static AvoRedConfigProvider {
     static INSTANCE: OnceLock<AvoRedConfigProvider> = OnceLock::new();
@@ -27,7 +26,7 @@ impl AvoRedConfigProvider {
         Ok(AvoRedConfigProvider {
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
             database_name: get_env("AVORED_DATABASE_NAME")?,
-            session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?
+            session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?,
         })
     }
 }

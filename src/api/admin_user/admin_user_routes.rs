@@ -15,13 +15,11 @@ use super::handlers::{
     authenticate_admin_user_handler::authenticate_admin_user_handler,
     create_admin_user_handler::create_admin_user_handler, create_role_handler::create_role_handler,
     dashboard_handler::dashboard_handler, delete_admin_user_handler::delete_admin_user_handler,
-    edit_admin_user_handler::edit_admin_user_handler, edit_role_handler::edit_role_handler,
-    role_table_handler::role_table_handler, show_admin_user_handler::show_admin_user_handler,
+    delete_role_handler::delete_role_handler, edit_admin_user_handler::edit_admin_user_handler,
+    edit_role_handler::edit_role_handler, role_table_handler::role_table_handler,
+    show_admin_user_handler::show_admin_user_handler, show_role_handler::show_role_handler,
     store_admin_user_handler::store_admin_user_handler, store_role_handler::store_role_handler,
-    update_admin_user_handler::update_admin_user_handler,
-    update_role_handler::update_role_handler,
-    show_role_handler::show_role_handler,
-    delete_role_handler::delete_role_handler,
+    update_admin_user_handler::update_admin_user_handler, update_role_handler::update_role_handler,
 };
 
 pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {

@@ -171,7 +171,6 @@ impl<Store: SessionStore> SessionLayer<Store> {
         session
             .and_then(async_session::Session::validate)
             .unwrap_or_default()
-        
     }
 
     fn build_cookie(&self, cookie_value: String) -> Cookie<'static> {
@@ -306,7 +305,7 @@ where
             let mut response = inner.call(request).await?;
 
             let session: async_session::Session = session;
-            let session_is_destroyed =  session.is_destroyed();
+            let session_is_destroyed = session.is_destroyed();
 
             if session_is_destroyed {
                 if let Err(e) = session_layer.store.destroy_session(session).await {
@@ -375,7 +374,7 @@ where
             Extension::from_request_parts(parts, state)
                 .await
                 .expect("Session extension missing. Is the session layer installed?");
-            let session = session_handle.clone();
+        let session = session_handle.clone();
 
         Ok(Self { session })
     }

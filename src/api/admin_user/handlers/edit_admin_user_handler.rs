@@ -28,7 +28,7 @@ pub async fn edit_admin_user_handler(
 
     let view_model = EditAdminUserHandlerViewModel {
         logged_in_user,
-        admin_user_model
+        admin_user_model,
     };
 
     // let admin_user_model = state.ad`
@@ -36,7 +36,9 @@ pub async fn edit_admin_user_handler(
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("admin-user/edit-admin-user", &view_model)
-        .expect("there is an issue with handlerbar rendering admin-user/edit-admin-user.hbs template");
+        .expect(
+            "there is an issue with handlerbar rendering admin-user/edit-admin-user.hbs template",
+        );
 
     Ok(Html(html))
 }

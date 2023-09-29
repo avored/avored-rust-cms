@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
+use crate::models::component_model::UpdatableComponentModel;
+use crate::providers::avored_view_provider::translate;
 use crate::{
     api::component::requests::update_component_request::UpdateComponentRequest,
-    avored_state::AvoRedState,
-    error::Result,
-    models::admin_user_model::AdminUserModel,
+    avored_state::AvoRedState, error::Result, models::admin_user_model::AdminUserModel,
     providers::avored_session_provider::AvoRedSession,
 };
 use avored_better_query::AvoRedForm;
@@ -13,8 +13,6 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
-use crate::models::component_model::UpdatableComponentModel;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn update_component_handler(
     mut session: AvoRedSession,
@@ -39,7 +37,7 @@ pub async fn update_component_handler(
         id: component_id,
         name: payload.name,
         identifier: payload.identifier,
-        logged_in_username: logged_in_user.email
+        logged_in_username: logged_in_user.email,
     };
     let _role_model = state
         .component_service

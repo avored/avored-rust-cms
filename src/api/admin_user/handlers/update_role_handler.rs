@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::providers::avored_view_provider::translate;
 use crate::{
     api::admin_user::requests::update_role_request::UpdateRoleRequest,
     avored_state::AvoRedState,
@@ -13,7 +14,6 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn update_role_handler(
     mut session: AvoRedSession,
@@ -39,7 +39,7 @@ pub async fn update_role_handler(
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
-        permissions: payload.permissions
+        permissions: payload.permissions,
     };
     let _role_model = state
         .role_service

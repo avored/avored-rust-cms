@@ -1,6 +1,6 @@
+use crate::error::Result;
 use serde::Deserialize;
 use validator::{Validate, ValidationErrors, ValidationErrorsKind};
-use crate::error::Result;
 
 use crate::providers::avored_session_provider::AvoRedSession;
 
@@ -12,9 +12,8 @@ pub struct StoreRoleRequest {
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
-    pub permissions: Vec<String>
+    pub permissions: Vec<String>,
 }
-
 
 #[derive(Deserialize, Debug, Clone, Validate, Default)]
 pub struct Permission {
@@ -25,7 +24,7 @@ pub struct Permission {
     pub role_table: Option<bool>,
     pub role_create: Option<bool>,
     pub role_update: Option<bool>,
-    pub role_delete: Option<bool>
+    pub role_delete: Option<bool>,
 }
 
 impl StoreRoleRequest {
