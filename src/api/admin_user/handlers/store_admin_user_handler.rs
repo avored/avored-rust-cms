@@ -112,7 +112,7 @@ pub async fn store_admin_user_handler(
     // .unwrap();
 
     let mut has_error = false;
-    if payload.full_name.len() <= 0 {
+    if payload.full_name.len() == 0 {
         has_error = true;
         session
             .insert(
@@ -121,7 +121,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.email.len() <= 0 {
+    if payload.email.len() == 0 {
         has_error = true;
         session
             .insert(
@@ -130,7 +130,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.email.len() <= 0 {
+    if payload.email.len() == 0 {
         has_error = true;
         session
             .insert(
@@ -148,7 +148,7 @@ pub async fn store_admin_user_handler(
     //         )
     //         .expect("Could not store the validation errors into session.");
     // }
-    if payload.password.len() <= 0 {
+    if payload.password.len() == 0 {
         has_error = true;
         session
             .insert(
@@ -157,7 +157,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.confirmation_password.len() <= 0 {
+    if payload.confirmation_password.len() == 0 {
         has_error = true;
         session
             .insert(
