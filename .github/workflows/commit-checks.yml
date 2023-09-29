@@ -17,15 +17,23 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-      with:
-        repository: avored/avored-rust-cms
-    - uses: Swatinem/rust-cache@v2.4.0
-    - name: github-action-auto-format
-      uses: cloudposse/github-action-auto-format@v0.12.0
-      with:
-        # GitHub Token for use `github_format.sh` and PR creation steps. This token must be granted `workflows` permissions.
-        workflow-token: ${{ secrets.CI_TOKEN }}
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@nightly
+      - uses: Swatinem/rust-cache@v2.4.0
+      - uses: mbrobbel/rustfmt-check@master
+        with:
+          token: ${{ secrets.CI_TOKEN }}
+          mode: review
+#    steps:
+#    - uses: actions/checkout@v3
+#      with:
+#        repository: avored/avored-rust-cms
+#    - uses: Swatinem/rust-cache@v2.4.0
+#    - name: github-action-auto-format
+#      uses: cloudposse/github-action-auto-format@v0.12.0
+#      with:
+#        # GitHub Token for use `github_format.sh` and PR creation steps. This token must be granted `workflows` permissions.
+#        workflow-token: ${{ secrets.CI_TOKEN }}
   greet:
     runs-on: ubuntu-latest
     steps:
