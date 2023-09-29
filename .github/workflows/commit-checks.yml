@@ -20,10 +20,6 @@ jobs:
     - name: github-action-auto-format
       uses: cloudposse/github-action-auto-format@v0.12.0
       with:
-        # GitHub username for writing new commits
-        bot-name: "April John (cloudpossebot)" # optional, default is cloudpossebot
-        # Email address associated with the GitHub user for writing new commits
-        bot-email: "aprl@acab.dev" # optional
         # GitHub Token for use in `github_format.sh` and PR creation steps. This token must be granted `workflows` permissions.
         workflow-token: "{{ secrets.CI_TOKEN }}"
   greet:
