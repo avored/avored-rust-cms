@@ -23,7 +23,7 @@ jobs:
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.CI_TOKEN }}
-          mode: review
+          mode: pull_request
 #    steps:
 #    - uses: actions/checkout@v3
 #      with:
