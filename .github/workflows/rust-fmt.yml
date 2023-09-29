@@ -8,6 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2.4.0
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.CI_TOKEN }}
