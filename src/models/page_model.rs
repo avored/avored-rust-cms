@@ -20,77 +20,70 @@ impl TryFrom<Object> for PageModel {
     fn try_from(val: Object) -> Result<PageModel> {
         let id = match val.get("id") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Thing(v) => {
                         let id = v.id;
                         id.to_string()
                     }
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let name = match val.get("name") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
 
         let identifier = match val.get("identifier") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let created_at = match val.get("created_at") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Datetime(v) => v,
                     _ => Datetime::default(),
-                };
-                value
+                }
             }
             None => Datetime::default(),
         };
         let updated_at = match val.get("updated_at") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Datetime(v) => v,
                     _ => Datetime::default(),
-                };
-                value
+                }
             }
             None => Datetime::default(),
         };
 
         let created_by = match val.get("created_by") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
 
         let updated_by = match val.get("updated_by") {
             Some(val) => {
-                let value = match val.clone() {
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
