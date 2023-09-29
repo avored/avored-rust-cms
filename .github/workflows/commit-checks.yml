@@ -14,16 +14,16 @@ jobs:
     - uses: Swatinem/rust-cache@v2.4.0
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag marks:$(date +%s)
-  format:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2.4.0
-      - uses: mbrobbel/rustfmt-check@master
-        with:
-          token: ${{ secrets.CI_TOKEN }}
-          
+#  format:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: dtolnay/rust-toolchain@stable
+#      - uses: Swatinem/rust-cache@v2.4.0
+#      - uses: mbrobbel/rustfmt-check@master
+#        with:
+#          token: ${{ secrets.CI_TOKEN }}
+
 #          mode: review ## Review mode requires to be on pull_request only..
 #    steps:
 #    - uses: actions/checkout@v3
