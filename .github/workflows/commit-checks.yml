@@ -22,7 +22,7 @@ jobs:
     - name: github-action-auto-format
       uses: cloudposse/github-action-auto-format@v0.12.0
       with:
-        # GitHub Token for use in `github_format.sh` and PR creation steps. This token must be granted `workflows` permissions.
+        # GitHub Token for use `github_format.sh` and PR creation steps. This token must be granted `workflows` permissions.
         workflow-token: "{{ secrets.CI_TOKEN }}"
   greet:
     runs-on: ubuntu-latest
