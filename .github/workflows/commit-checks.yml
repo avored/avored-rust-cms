@@ -41,7 +41,10 @@ jobs:
           
           Please include relevant logs or detailed description for faster resolutions.
           
-          We really appreciate your contribution!
+          We really appreciate your contribution! 
+          
+          Thanks 
+          Avored
         pr-message: |
           Hello! Thank you for your contribution.
           
@@ -50,3 +53,6 @@ jobs:
           If you are implementing a feature request, please check with the maintainers that the feature will be accepted first.
           
           We really appreciate your contribution!
+          
+          Thanks 
+          Avored 
