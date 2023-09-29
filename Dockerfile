@@ -16,6 +16,7 @@ COPY --from=planner /app/avored_better_query avored_better_query
 # Notice that we are specifying the --target flag!
 RUN cargo chef cook --release --target x86_64-unknown-linux-gnu --recipe-path recipe.json
 COPY . .
+RUN cp .env.example .env
 RUN cargo build --release --target x86_64-unknown-linux-gnu
 
 FROM alpine AS runtime
