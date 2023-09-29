@@ -11,12 +11,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: Swatinem/rust-cache@v2.4.0
     - name: Build the Docker image
       run: docker build . --file Dockerfile --tag marks:$(date +%s)
   format:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+    - uses: Swatinem/rust-cache@v2.4.0
     - name: github-action-auto-format
       uses: cloudposse/github-action-auto-format@v0.12.0
       with:
