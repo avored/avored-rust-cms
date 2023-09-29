@@ -10,4 +10,4 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
       - uses: mbrobbel/rustfmt-check@master
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.CI_TOKEN }}
