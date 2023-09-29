@@ -1,5 +1,6 @@
 use std::sync::Arc;
 
+use crate::providers::avored_view_provider::translate;
 use crate::{
     api::admin_user::requests::store_role_request::StoreRoleRequest,
     avored_state::AvoRedState,
@@ -13,7 +14,6 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn store_role_handler(
     state: State<Arc<AvoRedState>>,
@@ -28,14 +28,14 @@ pub async fn store_role_handler(
     if validation_error_list.errors().length() > 0 {
         return Ok(Redirect::to("/admin/create-role").into_response());
     }
-    
+
     let creatable_role = CreatableRole {
         name: payload.name,
         identifier: payload.identifier,
         permissions: payload.permissions,
         logged_in_username: logged_in_user.email,
     };
-    
+
     let _created_role = state
         .role_service
         .create_role(&state.db, creatable_role)

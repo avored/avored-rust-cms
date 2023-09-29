@@ -24,11 +24,11 @@ pub async fn edit_role_handler(
     };
 
     let role_model = state.role_service.find_by_id(&state.db, role_id).await?;
-    
+
     let mut view_model = EditRoleViewModel::default();
     view_model.logged_in_user = logged_in_user;
     view_model.role_model = role_model.clone();
-    
+
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("admin-user/edit-role", &view_model)

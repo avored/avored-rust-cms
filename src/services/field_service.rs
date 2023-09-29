@@ -1,8 +1,6 @@
 use crate::{
     error::Result,
-    models::{
-        field_model::{CreatableFieldModel, FieldModel}
-    },
+    models::field_model::{CreatableFieldModel, FieldModel},
     providers::avored_database_provider::DB,
     repositories::field_repository::FieldRepository,
 };
@@ -17,7 +15,6 @@ impl FieldService {
     }
 }
 impl FieldService {
-
     // pub async fn paginate(
     //     &self,
     //     (datastore, database_session): &DB,
@@ -68,7 +65,6 @@ impl FieldService {
         (datastore, database_session): &DB,
         creatable_field_model: CreatableFieldModel,
     ) -> Result<FieldModel> {
-
         // Think of how we going to do a DB transaction
         // create field
         // create field

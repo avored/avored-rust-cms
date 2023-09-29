@@ -31,7 +31,7 @@ pub async fn page_table_handler(
     let view_model = PageViewModel {
         logged_in_user,
         page_pagination,
-        success_message
+        success_message,
     };
 
     let handlebars = &state.handlebars;

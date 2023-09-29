@@ -132,7 +132,7 @@ pub struct CreatableRole {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
-    pub permissions: Vec<String>
+    pub permissions: Vec<String>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -141,7 +141,7 @@ pub struct UpdatableRoleModel {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
-    pub permissions: Vec<String>
+    pub permissions: Vec<String>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

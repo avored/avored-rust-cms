@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::field_model::{FieldModel, CreatableFieldModel};
+use crate::models::field_model::{CreatableFieldModel, FieldModel};
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
@@ -46,8 +46,6 @@ impl FieldRepository {
         createable_field_model: CreatableFieldModel,
     ) -> Result<FieldModel> {
         let sql = "CREATE fields CONTENT $data";
-
-
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_field_model.name.into()),

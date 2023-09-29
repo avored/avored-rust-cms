@@ -10,7 +10,6 @@ pub struct AuthenticateAdminUserRequest {
     pub password: String,
 }
 
-
 impl AuthenticateAdminUserRequest {
     pub fn validate_errors(&self, mut session: AvoRedSession) -> Result<ValidationErrors> {
         let validation_error_list = match self.validate() {

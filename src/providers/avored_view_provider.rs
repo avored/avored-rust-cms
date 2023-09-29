@@ -108,11 +108,10 @@ fn is_vector_contains(
     let mut find_key_result = "";
 
     if vector_value.into_iter().any(|i| {
-
-        // Try to fix this trim issue 
+        // Try to fix this trim issue
         let index = i.to_string();
         let trim_str = index.trim_matches('"');
-        
+
         trim_str.eq(&find_key_value)
     }) {
         // this value wont be used anyhow yet.

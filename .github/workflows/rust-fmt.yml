@@ -1,4 +1,4 @@
-on: pull_request
+on: push
 
 name: Rustfmt
 
@@ -6,10 +6,9 @@ jobs:
   format:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2.4.0
       - uses: mbrobbel/rustfmt-check@master
         with:
           token: ${{ secrets.CI_TOKEN }}
-          mode: review

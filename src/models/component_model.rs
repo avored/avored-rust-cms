@@ -1,7 +1,7 @@
 use crate::error::{Error, Result};
+use crate::models::field_model::FieldModel;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
-use crate::models::field_model::FieldModel;
 
 use super::Pagination;
 
@@ -14,7 +14,7 @@ pub struct ComponentModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
-    pub fields: Vec<FieldModel>
+    pub fields: Vec<FieldModel>,
 }
 
 impl TryFrom<Object> for ComponentModel {
@@ -130,7 +130,7 @@ impl TryFrom<Object> for ComponentModel {
             updated_at,
             created_by,
             updated_by,
-            fields: fields
+            fields,
         })
     }
 }
@@ -139,7 +139,7 @@ impl TryFrom<Object> for ComponentModel {
 pub struct CreatableComponent {
     pub name: String,
     pub identifier: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]

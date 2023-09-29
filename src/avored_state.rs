@@ -4,15 +4,15 @@ use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
 use crate::providers::avored_view_provider::AvoRedViewProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::component_repository::ComponentRepository;
+use crate::repositories::field_repository::FieldRepository;
+use crate::repositories::page_repository::PageRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::component_service::ComponentService;
-use crate::services::role_service::RoleService;
-use handlebars::Handlebars;
-use crate::repositories::field_repository::FieldRepository;
-use crate::repositories::page_repository::PageRepository;
 use crate::services::field_service::FieldService;
 use crate::services::page_service::PageService;
+use crate::services::role_service::RoleService;
+use handlebars::Handlebars;
 
 pub struct AvoRedState {
     pub handlebars: Handlebars<'static>,
@@ -55,7 +55,7 @@ impl AvoRedState {
             role_service,
             component_service,
             field_service,
-            page_service
+            page_service,
         })
     }
 }
