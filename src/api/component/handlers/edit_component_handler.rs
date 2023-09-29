@@ -1,17 +1,15 @@
 use std::sync::Arc;
 
+use crate::models::admin_user_model::AdminUserModel;
+use crate::models::component_model::ComponentModel;
 use crate::{
-    avored_state::AvoRedState,
-    error::Result,
-    providers::avored_session_provider::AvoRedSession,
+    avored_state::AvoRedState, error::Result, providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
     extract::{Path, State},
     response::{Html, IntoResponse},
 };
 use serde::Serialize;
-use crate::models::admin_user_model::AdminUserModel;
-use crate::models::component_model::ComponentModel;
 
 pub async fn edit_component_handler(
     session: AvoRedSession,
@@ -24,12 +22,15 @@ pub async fn edit_component_handler(
         None => AdminUserModel::default(),
     };
 
-    let component_model = state.component_service.find_by_id(&state.db, component_id).await?;
-    
+    let component_model = state
+        .component_service
+        .find_by_id(&state.db, component_id)
+        .await?;
+
     let mut view_model = EditComponentViewModel::default();
     view_model.logged_in_user = logged_in_user;
     view_model.component_model = component_model;
-    
+
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("component/edit-component", &view_model)

@@ -1,7 +1,9 @@
 use std::sync::Arc;
 
 use crate::{
-    avored_state::AvoRedState, error::Result, models::{admin_user_model::AdminUserModel, role_model::RoleModel},
+    avored_state::AvoRedState,
+    error::Result,
+    models::{admin_user_model::AdminUserModel, role_model::RoleModel},
     providers::avored_session_provider::AvoRedSession,
 };
 use axum::{
@@ -21,10 +23,7 @@ pub async fn show_role_handler(
         None => AdminUserModel::default(),
     };
 
-    let role_model = state
-        .role_service
-        .find_by_id(&state.db, role_id)
-        .await?;
+    let role_model = state.role_service.find_by_id(&state.db, role_id).await?;
 
     let view_model = ShowRoleViewModel {
         logged_in_user,

@@ -1,7 +1,7 @@
-use crate::providers::avored_config_provider::AvoRedConfigProvider;
-use surrealdb::kvs::Datastore;
-use surrealdb::dbs::Session;
 use crate::error::Result;
+use crate::providers::avored_config_provider::AvoRedConfigProvider;
+use surrealdb::dbs::Session;
+use surrealdb::kvs::Datastore;
 
 pub type DB = (Datastore, Session);
 pub struct AvoRedDatabaseProvider {

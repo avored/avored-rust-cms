@@ -92,7 +92,6 @@ impl RoleService {
             previous_page_number: (current_page - 1),
         };
 
-
         let roles = self
             .role_repository
             .paginate(datastore, database_session, start)

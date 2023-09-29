@@ -1,9 +1,6 @@
 use crate::{
     error::Result,
-    models::{
-        page_model::PagePagination,
-        Pagination,
-    },
+    models::{page_model::PagePagination, Pagination},
     providers::avored_database_provider::DB,
     repositories::page_repository::PageRepository,
     PER_PAGE,
@@ -53,7 +50,6 @@ impl PageService {
             previous_page_number: (current_page - 1),
         };
 
-
         let pages = self
             .page_repository
             .paginate(datastore, database_session, start)
@@ -66,5 +62,4 @@ impl PageService {
             pagination,
         })
     }
-
 }

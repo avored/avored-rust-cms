@@ -36,7 +36,9 @@ pub async fn show_admin_user_handler(
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("admin-user/show-admin-user", &view_model)
-        .expect("there is an issue with handlerbar rendering admin-user/show-admin-user.hbs template");
+        .expect(
+            "there is an issue with handlerbar rendering admin-user/show-admin-user.hbs template",
+        );
 
     Ok(Html(html))
 }

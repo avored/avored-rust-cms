@@ -1,5 +1,6 @@
 use std::{path::Path, sync::Arc};
 
+use crate::providers::avored_view_provider::translate;
 use crate::{
     api::admin_user::requests::update_admin_user_request::UpdateAdminUserRequest,
     avored_state::AvoRedState,
@@ -13,7 +14,6 @@ use axum::{
 };
 use rand::{distributions::Alphanumeric, Rng};
 use urlencoding::decode_binary;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn update_admin_user_handler(
     mut session: AvoRedSession,
@@ -47,14 +47,13 @@ pub async fn update_admin_user_handler(
                 let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
                 let data = field.bytes().await.unwrap();
-                
-                if !file_name.is_empty()  {
 
+                if !file_name.is_empty() {
                     let file_ext = file_name.split(".").last().unwrap_or(".png");
                     let new_file_name = format!("{}.{}", s, file_ext);
-    
+
                     let file_name = Path::new(&new_file_name).file_name().unwrap();
-    
+
                     profile_image = format!("upload/{}", new_file_name);
                     let full_path = Path::new("public").join("upload").join(file_name);
                     tokio::fs::write(full_path, data).await.unwrap();
@@ -115,7 +114,7 @@ pub async fn update_admin_user_handler(
         .admin_user_service
         .update_admin_user(&state.db, updateable_admin_user_model)
         .await?;
-    
+
     session
         .insert("success_message", translate("success_updated_admin_user"))
         .expect("Could not store the success message into session.");

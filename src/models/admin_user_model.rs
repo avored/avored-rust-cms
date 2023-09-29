@@ -174,5 +174,5 @@ pub struct UpdatableAdminUserModel {
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserPagination {
     pub data: Vec<AdminUserModel>,
-    pub pagination: Pagination
+    pub pagination: Pagination,
 }

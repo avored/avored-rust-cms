@@ -1,6 +1,6 @@
+use crate::error::Result;
 use serde::Deserialize;
 use validator::{Validate, ValidationErrors, ValidationErrorsKind};
-use crate::error::Result;
 
 use crate::providers::avored_session_provider::AvoRedSession;
 
@@ -12,7 +12,7 @@ pub struct StoreComponentRequest {
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
-    pub fields: Vec<Field>
+    pub fields: Vec<Field>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]

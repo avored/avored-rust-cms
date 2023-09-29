@@ -29,7 +29,11 @@ pub async fn create_role_handler(
     session.remove("validation_error_name");
     session.remove("validation_error_identifier");
 
-    let view_model = CreateRoleViewModel { logged_in_user, validation_name_message, validation_identifier_message };
+    let view_model = CreateRoleViewModel {
+        logged_in_user,
+        validation_name_message,
+        validation_identifier_message,
+    };
 
     let handlebars = &state.handlebars;
     let html = handlebars
@@ -43,5 +47,5 @@ pub async fn create_role_handler(
 pub struct CreateRoleViewModel {
     pub logged_in_user: RoleModel,
     pub validation_name_message: String,
-    pub validation_identifier_message: String
+    pub validation_identifier_message: String,
 }

@@ -24,20 +24,25 @@ pub async fn component_table_handler(
         None => AdminUserModel::default(),
     };
     let current_page = query_param.page.unwrap_or(1);
-    let component_pagination = state.component_service.paginate(&state.db, current_page).await?;
+    let component_pagination = state
+        .component_service
+        .paginate(&state.db, current_page)
+        .await?;
     let success_message = session.get("success_message").unwrap_or(String::from(""));
     session.remove("success_message");
 
     let view_model = ComponentViewModel {
         logged_in_user,
         component_pagination,
-        success_message
+        success_message,
     };
 
     let handlebars = &state.handlebars;
     let html = handlebars
         .render("component/component-table", &view_model)
-        .expect("there is an issue with handlebar rendering component/component-table.hbs template");
+        .expect(
+            "there is an issue with handlebar rendering component/component-table.hbs template",
+        );
 
     Ok(Html(html))
 }

@@ -1,9 +1,11 @@
 use std::sync::Arc;
 
+use crate::api::component::requests::store_component_request::StoreComponentRequest;
+use crate::models::component_model::CreatableComponent;
+use crate::models::field_model::CreatableFieldModel;
+use crate::providers::avored_view_provider::translate;
 use crate::{
-    avored_state::AvoRedState,
-    error::Result,
-    models::admin_user_model::AdminUserModel,
+    avored_state::AvoRedState, error::Result, models::admin_user_model::AdminUserModel,
     providers::avored_session_provider::AvoRedSession,
 };
 use avored_better_query::AvoRedForm;
@@ -12,10 +14,6 @@ use axum::{
     response::{IntoResponse, Redirect},
 };
 use validator::HasLen;
-use crate::api::component::requests::store_component_request::StoreComponentRequest;
-use crate::models::component_model::CreatableComponent;
-use crate::models::field_model::CreatableFieldModel;
-use crate::providers::avored_view_provider::translate;
 
 pub async fn store_component_handler(
     state: State<Arc<AvoRedState>>,
@@ -75,14 +73,12 @@ pub async fn store_component_handler(
                 &state.db,
                 created_component.clone(),
                 created_field,
-                logged_in_user.email.clone()
+                logged_in_user.email.clone(),
             )
             .await?;
 
         println!("ATTACHED: {:?}", created_field);
-
     }
-
 
     session
         .insert("success_message", translate("success_created_component"))

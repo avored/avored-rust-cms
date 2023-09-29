@@ -3,10 +3,10 @@ use surrealdb::dbs::Response;
 use surrealdb::sql::{Object, Value};
 
 pub mod admin_user_repository;
-pub mod role_repository;
 pub mod component_repository;
 pub mod field_repository;
 pub mod page_repository;
+pub mod role_repository;
 
 fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {
     let response = responses
