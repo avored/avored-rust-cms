@@ -6,6 +6,7 @@ pub mod admin_user_model;
 pub mod role_model;
 pub mod component_model;
 pub mod field_model;
+pub mod page_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {
