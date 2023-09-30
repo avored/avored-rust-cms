@@ -18,7 +18,7 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
-      - name: Run Tests
+      - name: Rust Check
         run: |
           cp .env.example .env
           cargo check
