@@ -150,7 +150,7 @@ pub async fn post_setup_avored_handler(
     let responses = ds.execute(sql, ses, Some(vars)).await?;
 
     println!("{responses:?}");
-    println!("");
+    println!();
     println!("Migrate fresh done!");
 
     Ok(Redirect::to("/admin/login"))

@@ -59,8 +59,8 @@ async fn main() -> Result<()> {
     println!(r"  / ___ \ V / (_) |  _ <  __/ (_| |");
     println!(r" /_/   \_\_/ \___/|_| \_\___|\__,_|");
 
-    println!("");
-    println!("");
+    println!();
+    println!();
     println!("Server started: http://localhost:8080");
 
     // region:    --- Start Server
