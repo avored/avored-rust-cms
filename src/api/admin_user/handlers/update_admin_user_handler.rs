@@ -84,7 +84,7 @@ pub async fn update_admin_user_handler(
 
     let mut has_error = false;
 
-    if payload.full_name.len() == 0 {
+    if payload.full_name.is_empty() {
         has_error = true;
         session
             .insert(
