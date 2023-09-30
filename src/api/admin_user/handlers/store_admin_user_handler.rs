@@ -119,7 +119,7 @@ pub async fn store_admin_user_handler(
             )
             .expect("Could not store the validation errors into session.");
     }
-    if payload.email.is_empty() == 0 {
+    if payload.email.is_empty() {
         has_error = true;
         session
             .insert(
