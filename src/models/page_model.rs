@@ -101,3 +101,21 @@ pub struct PagePagination {
     pub data: Vec<PageModel>,
     pub pagination: Pagination,
 }
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct CreatablePageModel {
+    pub name: String,
+    pub identifier: String,
+    pub content: String,
+    pub logged_in_username: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatablePageModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub content: String,
+    pub logged_in_username: String,
+}

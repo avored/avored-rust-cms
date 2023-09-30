@@ -17,7 +17,7 @@
     <div>
         <!-- -->
         <div x-data="page_builder" class="px-4">
-            <form action="/admin/store-page" method="post">
+            <form action="/admin/update-page/{{ page_model.id }}"  method="post">
                 <div class="mb-6 ">
                     <div class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-6">
                         <div class="text-gray-600">

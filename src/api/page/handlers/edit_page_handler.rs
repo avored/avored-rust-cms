@@ -22,10 +22,14 @@ pub async fn edit_page_handler(
         None => AdminUserModel::default(),
     };
 
-    let page_model = state
+    let mut page_model = state
         .page_service
         .find_by_id(&state.db, page_id)
         .await?;
+
+
+
+    page_model.content = page_model.content.replace("\r\n", "\r");
 
     println!("{:?}", page_model);
 

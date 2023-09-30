@@ -5,7 +5,7 @@ use crate::{
     repositories::page_repository::PageRepository,
     PER_PAGE,
 };
-use crate::models::page_model::PageModel;
+use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -71,6 +71,26 @@ impl PageService {
     ) -> Result<PageModel> {
         self.page_repository
             .find_by_id(datastore, database_session, id)
+            .await
+    }
+
+    pub async fn create_page(
+        &self,
+        (datastore, database_session): &DB,
+        creatable_page_model: CreatablePageModel,
+    ) -> Result<PageModel> {
+        self.page_repository
+            .create_page(datastore, database_session, creatable_page_model)
+            .await
+    }
+
+    pub async fn update_page(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_page_model: UpdatablePageModel,
+    ) -> Result<PageModel> {
+        self.page_repository
+            .update_page(datastore, database_session, updatable_page_model)
             .await
     }
 }

@@ -29,7 +29,7 @@ pub async fn store_component_handler(
 
     let validation_error_list = payload.validate_errors(session.clone())?;
     if validation_error_list.errors().length() > 0 {
-        return Ok(Redirect::to("/admin/create-role").into_response());
+        return Ok(Redirect::to("/admin/create-component").into_response());
     }
     // let mut fields = Vec::new();
     // for payload_field in payload.fields {

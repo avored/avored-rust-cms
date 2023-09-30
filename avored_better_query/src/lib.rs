@@ -141,7 +141,7 @@ where
 
                 let decoded = decode_binary(&bytes).into_owned();
                 let decoded = String::from_utf8_lossy(&decoded).into_owned();
-                // println!("--> avored qs: {}", decoded);
+                println!("--> avored qs: {}", decoded);
                 match serde_qs::from_str(&decoded) {
                     Ok(value) => Ok(AvoRedForm(value)),
                     Err(_) => Err(AvoRedError::ParseFormError)
