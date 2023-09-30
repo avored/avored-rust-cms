@@ -7,13 +7,13 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - uses: Swatinem/rust-cache@v2.4.0
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag marks:$(date +%s)
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#    - uses: actions/checkout@v4
+#    - uses: Swatinem/rust-cache@v2.4.0
+#    - name: Build the Docker image
+#      run: docker build . --file Dockerfile --tag marks:$(date +%s)
 #  format:
 #    runs-on: ubuntu-latest
 #    steps:
