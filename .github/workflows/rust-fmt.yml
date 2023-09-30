@@ -1,13 +1,24 @@
-on: push
+name: AvoRedCMS
 
-name: Rustfmt
+on: [push, pull_request]
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
-  format:
+  test:
+    name: AvoredCMS
     runs-on: ubuntu-latest
+    
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: mbrobbel/rustfmt-check@0.8.0
+      - uses: Swatinem/rust-cache@v2.4.0
+      - uses: actions-rs/toolchain@v1
         with:
-          token: ${{ secrets.CI_TOKEN }}
+          profile: minimal
+          toolchain: stable
+          override: true
+      - name: Run Tests
+        run: |
+          cp .env.example .env
+          cargo check
