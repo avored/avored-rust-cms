@@ -15,6 +15,7 @@
         "@alpinejs/focus": "^3.12.3",
         "@tailwindcss/forms": "^0.5.4",
         "alpinejs": "^3.12.3",
+        "easymde": "^2.18.0",
         "feather-icons": "^4.29.0",
         "tailwindcss": "^3.3.3"
     }

@@ -5,6 +5,7 @@ use crate::{
     repositories::page_repository::PageRepository,
     PER_PAGE,
 };
+use crate::models::page_model::PageModel;
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -61,5 +62,15 @@ impl PageService {
             data: pages,
             pagination,
         })
+    }
+
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: String,
+    ) -> Result<PageModel> {
+        self.page_repository
+            .find_by_id(datastore, database_session, id)
+            .await
     }
 }

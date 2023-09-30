@@ -9,6 +9,7 @@ pub struct PageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub content: String,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -37,6 +38,14 @@ impl TryFrom<Object> for PageModel {
         };
 
         let identifier = match val.get("identifier") {
+            Some(val) => match val.clone() {
+                Value::Strand(v) => v.as_string(),
+                _ => String::from(""),
+            },
+            None => String::from(""),
+        };
+
+        let content = match val.get("content") {
             Some(val) => match val.clone() {
                 Value::Strand(v) => v.as_string(),
                 _ => String::from(""),
@@ -78,6 +87,7 @@ impl TryFrom<Object> for PageModel {
             id,
             name,
             identifier,
+            content,
             created_at,
             updated_at,
             created_by,

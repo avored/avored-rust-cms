@@ -6,6 +6,7 @@ use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
+use surrealdb::sql::Value;
 
 use super::into_iter_objects;
 
@@ -57,4 +58,32 @@ impl PageRepository {
 
         model_count
     }
+
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        page_id: String,
+    ) -> Result<PageModel> {
+        let sql =
+            "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), page_id.into()),
+            ("table".into(), "pages".into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        // println!("RESULT_OBJECT: {result_object:?}");
+        let page_model: Result<PageModel> = result_object?.try_into();
+
+        page_model
+    }
+
 }
