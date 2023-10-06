@@ -69,5 +69,6 @@
     "success_deleted_component": "Component deleted successfully!",
     "add_field": "Add field",
     "cancel": "Cancel",
-    "page": "Page"
+    "page": "Page",
+    "asset_manager": "Asset Manager"
 }

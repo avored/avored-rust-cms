@@ -22,6 +22,7 @@ use crate::{
     error::Result,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
+use crate::api::asset::asset_routes::asset_routes;
 
 const PER_PAGE: i64 = 10;
 
@@ -45,6 +46,7 @@ async fn main() -> Result<()> {
     let static_routing_service = ServeDir::new("public");
 
     let app = Router::new()
+        .merge(asset_routes(state.clone()))
         .merge(routes_hello(state.clone()))
         .merge(component_routes(state.clone()))
         .merge(page_routes(state.clone()))
