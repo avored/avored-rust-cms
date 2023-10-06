@@ -1,0 +1,61 @@
+{{#*inline "page_title"}}
+    Asset Table:
+{{/inline}}
+
+{{#*inline "page_content"}}
+    <div class="border-b border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
+        <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
+            <div>
+                <div class="flex items-center">
+                    <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+                        {{translate_key "asset" ~}}
+                    </h2>
+
+                </div>
+            </div>
+
+            <div x-data="asset_manager" class="flex items-center">
+
+                <a
+                        href="/admin/create-asset"
+                        class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                         viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+
+                    <span>Add {{ translate_key "asset" ~}}</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div>
+        <!-- -->
+        <div class="pt-5 pb-10">
+
+            <div class="px-4 mx-auto">
+
+
+                <div class="flex flex-col mt-6">
+                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                            <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                                Asset Table
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
+                    Table footer
+                </div>
+            </div>
+        </div>
+    </div>
+{{/inline}}
+
+{{> layout/app}}

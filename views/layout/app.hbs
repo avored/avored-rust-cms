@@ -6,7 +6,7 @@
         <link rel="icon" type="image/x-icon" sizes="32x32" href="/public/images/favicon.ico">
         <link href="/public/css/app.css" rel="stylesheet">
         <script src="/public/js/app.js"></script>
-        <title>Admin Avored rust content management system</title>
+        <title>{{>page_title}} Avored rust content management system</title>
         <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css">
     </head>
 
@@ -89,7 +89,7 @@
         <header
           class=" h-[64px] py-2 shadow-lg px-4 md:sticky top-0 bg-gray-800 z-40">
           <!-- logo -->
-          <a href="#"
+          <a href="/admin"
             class="text-white flex items-center space-x-2 group hover:text-white">
             <div>
               <img src="/public/images/logo_only.svg" class="h-12" />
@@ -149,6 +149,15 @@
                 <div class="pr-2"><i data-feather="compass" class="h-5 w-5"></i></div>
                 <div>{{ translate_key "component" ~}}</div>
               </a>
+                <a href="/admin/asset"
+                   class="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                    <div class="pr-2">
+                        <i data-feather="image" class="h-5 w-5"></i>
+                    </div>
+                    <div>
+                        {{ translate_key "asset_manager" ~}}
+                    </div>
+                </a>
             </li>
 
             <!-- Section Devider -->
