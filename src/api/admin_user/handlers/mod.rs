@@ -15,3 +15,4 @@ pub mod store_admin_user_handler;
 pub mod store_role_handler;
 pub mod update_admin_user_handler;
 pub mod update_role_handler;
+pub mod logout_admin_user_handler;

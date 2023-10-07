@@ -12,6 +12,7 @@ use crate::{
 
 use super::handlers::{
     admin_login_handler::admin_login_handler, admin_user_table_handler::admin_user_table_handler,
+    logout_admin_user_handler::logout_admin_user_handler,
     authenticate_admin_user_handler::authenticate_admin_user_handler,
     create_admin_user_handler::create_admin_user_handler, create_role_handler::create_role_handler,
     dashboard_handler::dashboard_handler, delete_admin_user_handler::delete_admin_user_handler,
@@ -51,6 +52,7 @@ pub fn admin_user_routes(state: Arc<AvoRedState>) -> Router {
         .route("/admin/update-role/:role_id", post(update_role_handler))
         .route("/admin/show-role/:role_id", get(show_role_handler))
         .route("/admin/delete-role/:role_id", post(delete_role_handler))
+        .route("/admin/logout", post(logout_admin_user_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_authentication,
