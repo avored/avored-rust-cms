@@ -70,5 +70,7 @@
     "add_field": "Add field",
     "cancel": "Cancel",
     "page": "Page",
-    "asset_manager": "Asset Manager"
+    "asset_manager": "Asset Manager",
+    "add_asset": "Add Asset",
+    "asset": "Asset"
 }

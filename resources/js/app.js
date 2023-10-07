@@ -2,6 +2,7 @@ import Alpine from 'alpinejs';
 import focus from '@alpinejs/focus'
 import feather from 'feather-icons' 
 import EasyMDE from 'easymde'
+import axios from 'axios'
 
 Alpine.plugin(focus)
  
@@ -16,6 +17,7 @@ Alpine.data('field_builder', FieldBuilder)
 Alpine.data('page_builder', PageBuilder)
 Alpine.data('asset_manager', AssetManager)
 
+window.axios = axios
 window.EasyMDE = EasyMDE
 window.Alpine = Alpine;
 window.Feather = feather;

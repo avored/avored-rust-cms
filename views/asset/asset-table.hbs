@@ -3,59 +3,120 @@
 {{/inline}}
 
 {{#*inline "page_content"}}
-    <div class="border-b border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
-        <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
-            <div>
-                <div class="flex items-center">
-                    <h2 class="text-lg font-medium text-gray-800 dark:text-white">
-                        {{translate_key "asset" ~}}
-                    </h2>
+    <div x-data="asset_manager">
+        <div class="border-b border-gray-300 px-6 py-2 shadow-sm  text-xl font-bold">
+            <div class="h-14 min-h-fit sm:flex sm:items-center sm:justify-between">
+                <div>
+                    <div class="flex items-center">
+                        <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+                            {{translate_key "asset" ~}}
+                        </h2>
+                    </div>
+                </div>
 
+                <div class="flex items-center">
+                    <a @click.prevent="modal=true"
+                        href="#"
+                        class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600"
+                    >
+                        <i class="h-5 w-5" data-feather="plus-circle"></i>
+                        <span>Add {{ translate_key "asset" ~}}</span>
+                    </a>
                 </div>
             </div>
 
-            <div x-data="asset_manager" class="flex items-center">
-
-                <a
-                        href="/admin/create-asset"
-                        class="flex items-center justify-center w-1/2 px-5 py-2 text-sm tracking-wide text-white transition-colors duration-200 bg-blue-500 rounded-lg shrink-0 sm:w-auto gap-x-2 hover:bg-blue-600 dark:hover:bg-blue-500 dark:bg-blue-600">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                         viewBox="0 0 24 24" stroke-width="1.5"
-                         stroke="currentColor" class="w-5 h-5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-
-                    <span>Add {{ translate_key "asset" ~}}</span>
-                </a>
-            </div>
         </div>
 
-    </div>
+        <div>
+            <!-- -->
+            <div class="pt-5 pb-10">
 
-    <div>
-        <!-- -->
-        <div class="pt-5 pb-10">
-
-            <div class="px-4 mx-auto">
+                <div class="px-4 mx-auto">
 
 
-                <div class="flex flex-col mt-6">
-                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-                            <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
-                                Asset Table
+                    <div class="flex flex-col mt-6">
+                        <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                            <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
+                                <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+                                    Asset Table
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
+                        Table footer
+                    </div>
+                </div>
+
+
+                <!--  START MODAL    -->
+                <div class="py-10 fixed top-0 left-0 bg-black bg-opacity-75 min-h-screen w-full font-medium text-gray-800"
+                     x-show="modal"
+                     @keyup.escape.window="close_modal">
+                    <div
+                            class="max-w-4xl p-2 mt-10 z-80 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear"
+                            x-show="modal"
+                            x-transition:enter="transition ease-out duration-300"
+                            x-transition:enter-start="opacity-0 scale-90"
+                            x-transition:enter-end="opacity-100 scale-100"
+                            x-transition:leave="transition ease-in duration-300"
+                            x-transition:leave-start="opacity-100 scale-100"
+                            x-transition:leave-end="opacity-0 scale-90">
+                        <div class="p-2" @click.outside="modal= false">
+                            <div class="flex border-b pb-2 items-center">
+                                <div class="text-xl text-gray-800 text-semibold">
+                                    {{ translate_key "add_asset" ~}}
+                                </div>
+                                <button type="button" @click.prevent="modal = ! modal" class="ml-auto">
+                                    <i class="w-5 h-5" data-feather="x-circle"></i>
+                                </button>
+                            </div>
+
+                            <div class="text-sm text-gray-500 rounded">
+                                <div class="py-5">
+                                    <!-- MODAL CONTENT START -->
+                                    <div class="flex">
+                                        <div class="mt-5">
+                                            {{> components/label
+                                                    label=(translate_key "file")
+                                                    for="file"
+                                            }}
+                                            <div class="mt-1">
+                                                {{> components/input
+                                                    type="file"
+                                                    name="file"
+                                                    x-change="file_on_change_alpine_js"
+                                                }}
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <!-- MODAL CONTENT END -->
+                                    <!-- MODAL FOOTER START -->
+                                    <div class="flex flex-row mt-6 space-x-2 justify-evenly">
+                                        <a href="#"
+                                            @click.prevent="save_asset"
+                                           class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg hover:bg-red-500">
+                                            {{ translate_key "upload" }}
+                                        </a>
+                                        <a href="#" @click.prevent="modal = !modal"
+                                           class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
+                                            {{ translate_key "cancel" }}
+                                        </a>
+                                    </div>
+                                    <!-- MODAL FOOTER END -->
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!--  END MODAL    -->
 
-                <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
-                    Table footer
-                </div>
             </div>
         </div>
     </div>
+
 {{/inline}}
 
 {{> layout/app}}
