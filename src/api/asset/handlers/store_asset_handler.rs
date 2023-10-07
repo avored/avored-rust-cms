@@ -15,7 +15,7 @@ use serde::Serialize;
 
 pub async fn store_asset_handler(
     session: AvoRedSession,
-    state: State<Arc<AvoRedState>>,
+    _state: State<Arc<AvoRedState>>,
     mut multipart: Multipart,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - store_asset_handler", "HANDLER");

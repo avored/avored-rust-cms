@@ -72,5 +72,6 @@
     "page": "Page",
     "asset_manager": "Asset Manager",
     "add_asset": "Add Asset",
-    "asset": "Asset"
+    "asset": "Asset",
+    "logout": "Logout"
 }
