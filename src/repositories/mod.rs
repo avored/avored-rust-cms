@@ -8,6 +8,8 @@ pub mod field_repository;
 pub mod page_repository;
 pub mod role_repository;
 
+pub mod asset_repository;
+
 fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {
     let response = responses
         .into_iter()

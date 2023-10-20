@@ -13,6 +13,8 @@ use crate::services::field_service::FieldService;
 use crate::services::page_service::PageService;
 use crate::services::role_service::RoleService;
 use handlebars::Handlebars;
+use crate::repositories::asset_repository::AssetRepository;
+use crate::services::asset_service::AssetService;
 
 pub struct AvoRedState {
     pub handlebars: Handlebars<'static>,
@@ -23,6 +25,7 @@ pub struct AvoRedState {
     pub component_service: ComponentService,
     pub field_service: FieldService,
     pub page_service: PageService,
+    pub asset_service: AssetService,
 }
 
 impl AvoRedState {
@@ -47,6 +50,9 @@ impl AvoRedState {
         let page_repository = PageRepository::new();
         let page_service = PageService::new(page_repository)?;
 
+        let asset_repository = AssetRepository::new();
+        let asset_service = AssetService::new(asset_repository)?;
+
         Ok(AvoRedState {
             handlebars: avored_view_provider.handlebars,
             config: avored_config_provider,
@@ -56,6 +62,7 @@ impl AvoRedState {
             component_service,
             field_service,
             page_service,
+            asset_service
         })
     }
 }
