@@ -11,6 +11,8 @@ pub enum Error {
     ConfigMissing(&'static str),
 
     Generic(&'static str),
+
+    CreateModelError(&'static str),
 }
 
 impl core::fmt::Display for Error {

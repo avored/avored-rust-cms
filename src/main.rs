@@ -6,6 +6,7 @@ use axum::{
     Router,
 };
 use std::{fs::File, net::SocketAddr, path::Path, sync::Arc};
+use axum::extract::DefaultBodyLimit;
 use tower_http::services::ServeDir;
 use tracing::info;
 use tracing_subscriber::{
@@ -53,6 +54,7 @@ async fn main() -> Result<()> {
         .merge(admin_user_routes(state.clone()))
         .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
+        .layer(DefaultBodyLimit::max(104857600))
         .layer(session_layer);
 
     println!(r"     _             ____          _ ");
