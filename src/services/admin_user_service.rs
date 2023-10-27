@@ -104,7 +104,7 @@ impl AdminUserService {
         let pagination = Pagination {
             total: admin_user_count.total,
             per_page: PER_PAGE,
-            current_page: current_page,
+            current_page,
             from: (start + 1),
             to,
             has_previous_page,

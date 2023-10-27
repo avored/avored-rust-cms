@@ -5,10 +5,11 @@ use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
 use crate::models::asset_model::{CreatableAssetModel, AssetModel};
+use crate::models::ModelCount;
+use crate::PER_PAGE;
 
 use super::into_iter_objects;
-// const ASSET_TABLE: &str = "assets";
-
+const ASSET_TABLE: &str = "assets";
 
 pub struct AssetRepository {}
 
@@ -17,48 +18,48 @@ impl AssetRepository {
         AssetRepository {}
     }
 
-    // pub async fn paginate(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     start: i64,
-    // ) -> Result<Vec<AssetModel>> {
-    //     let sql = "SELECT * FROM type::table($table) LIMIT $limit START $start;";
-    //     let vars = BTreeMap::from([
-    //         ("limit".into(), PER_PAGE.into()),
-    //         ("start".into(), start.into()),
-    //         ("table".into(), PAGE_TABLE.into()),
-    //     ]);
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let mut asset_list: Vec<AssetModel> = Vec::new();
-    //
-    //     for object in into_iter_objects(responses)? {
-    //         let asset_object = object?;
-    //
-    //         let asset_model: Result<AssetModel> = asset_object.try_into();
-    //         asset_list.push(asset_model?);
-    //     }
-    //     Ok(asset_list)
-    // }
-    //
-    // pub async fn get_total_count(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    // ) -> Result<ModelCount> {
-    //     let sql = "SELECT count() FROM assets GROUP ALL;";
-    //     let responses = datastore.execute(sql, database_session, None).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found")),
-    //     };
-    //     let model_count: Result<ModelCount> = result_object?.try_into();
-    //
-    //     model_count
-    // }
+    pub async fn paginate(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        start: i64,
+    ) -> Result<Vec<AssetModel>> {
+        let sql = "SELECT * FROM type::table($table) LIMIT $limit START $start;";
+        let vars = BTreeMap::from([
+            ("limit".into(), PER_PAGE.into()),
+            ("start".into(), start.into()),
+            ("table".into(), ASSET_TABLE.into()),
+        ]);
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let mut asset_list: Vec<AssetModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let asset_object = object?;
+
+            let asset_model: Result<AssetModel> = asset_object.try_into();
+            asset_list.push(asset_model?);
+        }
+        Ok(asset_list)
+    }
+
+    pub async fn get_total_count(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count() FROM assets GROUP ALL;";
+        let responses = datastore.execute(sql, database_session, None).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+
+        model_count
+    }
     //
     // pub async fn find_by_id(
     //     &self,

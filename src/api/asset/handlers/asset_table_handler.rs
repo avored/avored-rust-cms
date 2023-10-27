@@ -10,10 +10,14 @@ use axum::{
     extract::State,
     response::{Html, IntoResponse},
 };
+use axum::extract::Query;
 use serde::Serialize;
+use crate::api::asset::requests::asset_table_query::AssetTableQuery;
+use crate::models::asset_model::AssetPagination;
 
 pub async fn asset_table_handler(
     session: AvoRedSession,
+    Query(query_param): Query<AssetTableQuery>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - asset_table_handler", "HANDLER");
@@ -22,8 +26,16 @@ pub async fn asset_table_handler(
         None => AdminUserModel::default(),
     };
 
+    let current_page = query_param.page.unwrap_or(1);
+    let assets_pagination = state
+        .asset_service
+        .paginate(&state.db, current_page)
+        .await?;
+    println!("{:?}", assets_pagination);
+
     let view_model = AssetTableViewModel {
-        logged_in_user
+        logged_in_user,
+        assets_pagination
     };
 
     let handlebars = &state.handlebars;
@@ -37,4 +49,5 @@ pub async fn asset_table_handler(
 #[derive(Serialize, Default)]
 pub struct AssetTableViewModel {
     pub logged_in_user: AdminUserModel,
+    pub assets_pagination: AssetPagination
 }
