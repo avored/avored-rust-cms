@@ -12,9 +12,9 @@ pub fn asset_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
         .route("/admin/asset", get(asset_table_handler))
         .route("/admin/store-asset", post(store_asset_handler))
-        .route_layer(middleware::from_fn_with_state(
-            state.clone(),
-            require_authentication,
-        ))
+        // .route_layer(middleware::from_fn_with_state(
+        //     state.clone(),
+        //     require_authentication,
+        // ))
         .with_state(state)
 }

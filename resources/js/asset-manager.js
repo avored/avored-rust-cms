@@ -17,6 +17,8 @@ export default () => ({
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
+        }).then((res) => {
+            location.reload()
         })
     },
     file_on_change_alpine_js(e) {
