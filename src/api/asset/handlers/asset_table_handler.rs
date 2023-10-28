@@ -31,7 +31,6 @@ pub async fn asset_table_handler(
         .asset_service
         .paginate(&state.db, current_page)
         .await?;
-    println!("{:?}", assets_pagination);
 
     let view_model = AssetTableViewModel {
         logged_in_user,
