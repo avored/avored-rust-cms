@@ -15,8 +15,8 @@
 
     </div>
     <div>
-        <!-- -->
-        <div x-data="page_builder" class="px-4">
+        <!-- START CONTENT -->
+        <div x-data="page_builder" x-init="init('{{ components }}')" class="px-4">
             <form action="/admin/update-page/{{ page_model.id }}"  method="post">
                 <div class="mb-6 ">
                     <div class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-6">
@@ -75,6 +75,11 @@
                                 <div class="md:col-span-6">
                                     <textarea name="content" id="easy_mde">{{{ page_model.content }}}</textarea>
                                 </div>
+                                <div class="md:col-span-6">
+                                    <a href="#" @click.prevent="open_component_modal" class="">
+                                        {{ translate_key "add_component" ~}}
+                                    </a>
+                                </div>
 
 
                                 <div class="md:col-span-6 mt-5 text-right">
@@ -90,7 +95,69 @@
                     </div>
                 </div>
             </form>
+
+            <!-- START COMPONENT SELECTION MODAL -->
+            <div class="py-10 fixed top-0 left-0 bg-black bg-opacity-75 min-h-screen w-full font-medium text-gray-800"
+                 x-show="component_modal"
+                 @keyup.escape.window="close_modal">
+                <div
+                        class="max-w-4xl p-2 mt-10 z-80 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear"
+                        x-show="component_modal"
+                        x-transition:enter="transition ease-out duration-200"
+                        x-transition:enter-start="opacity-0 scale-90"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-90">
+                    <div class="p-5" @click.outside="component_modal= false">
+                        <div class="flex border-b items-center">
+                            <div class="text-2xl text-gray-800 pb-3 text-semibold">
+                                {{ translate_key "select_component" ~}}
+                            </div>
+                            <div @click.prevent="component_modal = ! component_modal" class="ml-auto cursor-pointer">
+                                <i class="h-6 w-6" data-feather="x-circle"></i>
+                            </div>
+                        </div>
+
+                        <div class="text-sm text-gray-500 rounded">
+                            <div class="py-5">
+                                <div class="flex w-full">
+                                    <label for="modal_component_dropdown">
+                                        {{ translate_key "please_select_component" ~}}
+                                    </label>
+                                    <select
+                                        id="modal_component_dropdown"
+                                        class="rounded-md ring-1 ring-primary-500 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 sm:text-sm focus:z-10"
+                                    >
+                                        <option value="">
+                                            {{ translate_key "please_select_component" ~}}
+                                        </option>
+                                        {{#each components as |component|}}
+                                            <option value="{{ component.id }}">
+                                                {{ component.name }}
+                                            </option>
+                                        {{/each}}
+                                    </select>
+                                </div>
+                                <div class="flex flex-row mt-6 space-x-2 justify-evenly">
+                                    <a href="#"
+                                       @click.prevent="add_field_onclick"
+                                       class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-primary-600 border border-primary-600 rounded-lg hover:bg-primary-500">
+                                        {{ translate_key "add_component" }}
+                                    </a>
+                                    <a href="#" @click.prevent="component_modal = !component_modal"
+                                       class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
+                                        {{ translate_key "cancel" }}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- END MODAL -->
         </div>
+        <!-- END CONTENT -->
     </div>
 {{/inline}}
 

@@ -68,7 +68,14 @@ impl ComponentService {
             pagination,
         })
     }
-
+    pub async fn all(
+        &self,
+        (datastore, database_session): &DB
+    ) -> Result<Vec<ComponentModel>> {
+        self.component_repository
+            .all(datastore, database_session)
+            .await
+    }
     pub async fn create_component(
         &self,
         (datastore, database_session): &DB,
