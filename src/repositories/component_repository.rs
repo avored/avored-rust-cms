@@ -42,6 +42,26 @@ impl ComponentRepository {
         Ok(component_list)
     }
 
+    pub async fn all(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session
+    ) -> Result<Vec<ComponentModel>> {
+        let sql = "SELECT * FROM components";
+
+        let responses = datastore.execute(sql, database_session, None).await?;
+
+        let mut component_list: Vec<ComponentModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let component_object = object?;
+
+            let component_model: Result<ComponentModel> = component_object.try_into();
+            component_list.push(component_model?);
+        }
+        Ok(component_list)
+    }
+
     pub async fn create_component(
         &self,
         datastore: &Datastore,

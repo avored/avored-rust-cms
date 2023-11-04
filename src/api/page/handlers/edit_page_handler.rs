@@ -10,6 +10,7 @@ use axum::{
     response::{Html, IntoResponse},
 };
 use serde::Serialize;
+use crate::models::component_model::ComponentModel;
 
 pub async fn edit_page_handler(
     session: AvoRedSession,
@@ -27,15 +28,16 @@ pub async fn edit_page_handler(
         .find_by_id(&state.db, page_id)
         .await?;
 
-
+    let components = state.component_service.all(&state.db).await?;
+    println!("Components: {components:?}");
 
     page_model.content = page_model.content.replace("\r\n", "\r");
 
-    println!("{:?}", page_model);
-
-    let mut view_model = EditPageViewModel::default();
-    view_model.logged_in_user = logged_in_user;
-    view_model.page_model = page_model;
+    let view_model = EditPageViewModel {
+        logged_in_user,
+        page_model,
+        components
+    };
 
     let handlebars = &state.handlebars;
     let html = handlebars
@@ -45,8 +47,9 @@ pub async fn edit_page_handler(
     Ok(Html(html))
 }
 
-#[derive(Serialize, Default)]
+#[derive(Serialize)]
 pub struct EditPageViewModel {
     pub logged_in_user: AdminUserModel,
     pub page_model: PageModel,
+    pub components: Vec<ComponentModel>
 }
