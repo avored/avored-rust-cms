@@ -1,14 +1,14 @@
 export default () => ({
     modal: false,
+    error_message: '',
     files: [],
     init() {
-        console.log("asset manager")
+        console.log("asset manager init")
     },
     close_modal() {
         this.modal = false
     },
     save_asset() {
-        console.log("Test Save Asset")
         var formData = new FormData();
         //var imagefile = document.querySelector('#file');
         this.files.forEach((f) => formData.append('file', f));
@@ -18,6 +18,10 @@ export default () => ({
                 'Content-Type': 'multipart/form-data'
             }
         }).then((res) => {
+            if (res.data.success === false) {
+                this.error_message = "Only Jpeg and PNG file is allowed only."
+                return
+            }
             location.reload()
         })
     },
