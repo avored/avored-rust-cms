@@ -22,9 +22,9 @@ pub fn page_routes(state: Arc<AvoRedState>) -> Router {
             "/admin/update-page/:page_id",
             post(update_page_handler),
         )
-        // .route_layer(middleware::from_fn_with_state(
-        //     state.clone(),
-        //     require_authentication,
-        // ))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            require_authentication,
+        ))
         .with_state(state)
 }

@@ -47,7 +47,7 @@ impl ComponentRepository {
         datastore: &Datastore,
         database_session: &Session
     ) -> Result<Vec<ComponentModel>> {
-        let sql = "SELECT * FROM components";
+        let sql = "SELECT *, ->component_field<-components.* as fields FROM components";
 
         let responses = datastore.execute(sql, database_session, None).await?;
 

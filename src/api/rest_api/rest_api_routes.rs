@@ -9,11 +9,11 @@ use crate::avored_state::AvoRedState;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
-        .route("/api/health-check", get(health_check_api_handler))
         .route("/api/component-all", get(component_all_api_handler))
         // .route_layer(middleware::from_fn_with_state(
         //     state.clone(),
         //     require_authentication,
         // ))
+        .route("/api/health-check", get(health_check_api_handler))
         .with_state(state)
 }
