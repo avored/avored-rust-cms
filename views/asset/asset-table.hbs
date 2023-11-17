@@ -76,7 +76,12 @@
                                 <div class="py-5">
                                     <!-- MODAL CONTENT START -->
                                     <div class="flex">
-                                        <div class="mt-5">
+                                        <div class="mt-3">
+                                            <div x-show="error_message.length > 0" x-text="error_message"
+                                                  class="px-5 mb-2 py-3 rounded text-red-600 ring-1 ring-red-400">
+
+                                            </div>
+
                                             {{> components/label
                                                     label=(translate_key "file")
                                                     for="file"

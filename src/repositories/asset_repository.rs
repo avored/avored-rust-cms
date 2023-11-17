@@ -56,9 +56,12 @@ impl AssetRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found")),
         };
-        let model_count: Result<ModelCount> = result_object?.try_into();
+        let total_count = match result_object {
+            Ok(obj) => obj.try_into(),
+            Err(_) => Ok(ModelCount::default()),
+        };
 
-        model_count
+        total_count
     }
     //
     // pub async fn find_by_id(

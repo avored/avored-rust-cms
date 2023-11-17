@@ -12,7 +12,9 @@ use axum::extract::Multipart;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
-use crate::models::asset_model::CreatableAssetModel;
+use crate::models::asset_model::{AssetModel, CreatableAssetModel};
+
+const ALLOW_TYPES: [&'static str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 
 pub async fn store_asset_handler(
     session: AvoRedSession,
@@ -26,6 +28,7 @@ pub async fn store_asset_handler(
     };
     let mut creatable_asset_model = CreatableAssetModel::default();
     creatable_asset_model.logged_in_username = logged_in_user.email;
+    let mut is_allow_file_type = true;
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
@@ -37,7 +40,14 @@ pub async fn store_asset_handler(
                     .map(char::from)
                     .collect();
 
+                let file_type = field.content_type().unwrap().to_string();
                 creatable_asset_model.file_type = field.content_type().unwrap().to_string();
+
+                is_allow_file_type = ALLOW_TYPES.contains(&file_type.as_str());
+
+                if !is_allow_file_type {
+                    continue;
+                }
                 let file_name = field.file_name().unwrap().to_string();
                 let data = field.bytes().await.unwrap();
                 creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
@@ -60,14 +70,30 @@ pub async fn store_asset_handler(
         }
     }
 
+    if !is_allow_file_type {
+        let asset_model = AssetModel::default();
+        let creatable_asset_response = AssetResponseViewModel {
+            asset_model,
+            success: false
+        };
+
+        return Ok(Json(creatable_asset_response).into_response())
+    }
+
     let asset_model = state.asset_service
         .create_asset(&state.db, creatable_asset_model)
         .await?;
 
-    Ok(Json(asset_model).into_response())
+    let creatable_asset_response = AssetResponseViewModel {
+        asset_model,
+        success: true
+    };
+
+    Ok(Json(creatable_asset_response).into_response())
 }
 
 #[derive(Serialize)]
 pub struct AssetResponseViewModel {
-    pub asset_path: String,
+    pub asset_model: AssetModel,
+    pub success: bool
 }
