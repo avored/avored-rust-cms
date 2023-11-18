@@ -47,7 +47,7 @@ impl ComponentRepository {
         datastore: &Datastore,
         database_session: &Session
     ) -> Result<Vec<ComponentModel>> {
-        let sql = "SELECT *, ->component_field<-components.* as fields FROM components";
+        let sql = "SELECT *, ->component_field->fields.* as fields FROM components";
 
         let responses = datastore.execute(sql, database_session, None).await?;
 
@@ -110,7 +110,7 @@ impl ComponentRepository {
         component_id: String,
     ) -> Result<ComponentModel> {
         let sql =
-            "SELECT *, ->component_field<-components.* as fields FROM type::thing($table, $id);";
+            "SELECT *, ->component_field<-fields.* as fields FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
             ("id".into(), component_id.into()),
             ("table".into(), "components".into()),
@@ -239,6 +239,7 @@ impl ComponentRepository {
         let responses = datastore
             .execute(sql.as_str(), database_session, Some(vars))
             .await?;
+        println!("RESPONSE ATTACHED: {responses:?}");
 
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {

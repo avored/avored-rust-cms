@@ -52,12 +52,17 @@ pub async fn store_component_handler(
         .create_component(&state.db, creatable_component)
         .await?;
 
+    println!("Created component {:?}", created_component.clone());
+
     for payload_field in payload.fields {
         let creatable_field = CreatableFieldModel {
             name: payload_field.name,
             identifier: payload_field.identifier,
+            field_type: payload_field.field_type,
             logged_in_username: logged_in_user.email.clone(),
         };
+
+        println!("creatable_field: {creatable_field:?}");
 
         let created_field = state
             .field_service

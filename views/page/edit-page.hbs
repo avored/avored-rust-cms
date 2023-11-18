@@ -99,7 +99,7 @@
             <!-- START COMPONENT SELECTION MODAL -->
             <div class="py-10 fixed top-0 left-0 bg-black bg-opacity-75 min-h-screen w-full font-medium text-gray-800"
                  x-show="component_modal"
-                 @keyup.escape.window="close_modal">
+                 @keyup.escape.window="close_component_modal">
                 <div
                         class="max-w-4xl p-2 mt-10 z-80 mx-auto bg-white border-[1px] border-gray-200 shadow rounded-xl hover:shadow-lg transition-all duration-150 ease-linear"
                         x-show="component_modal"
@@ -109,12 +109,12 @@
                         x-transition:leave="transition ease-in duration-200"
                         x-transition:leave-start="opacity-100 scale-100"
                         x-transition:leave-end="opacity-0 scale-90">
-                    <div class="p-5" @click.outside="component_modal= false">
+                    <div class="p-5" @click.outside="close_component_modal">
                         <div class="flex border-b items-center">
                             <div class="text-2xl text-gray-800 pb-3 text-semibold">
                                 {{ translate_key "select_component" ~}}
                             </div>
-                            <div @click.prevent="component_modal = ! component_modal" class="ml-auto cursor-pointer">
+                            <div @click.prevent="close_component_modal" class="ml-auto cursor-pointer">
                                 <i class="h-6 w-6" data-feather="x-circle"></i>
                             </div>
                         </div>
@@ -126,6 +126,7 @@
                                         {{ translate_key "please_select_component" ~}}
                                     </label>
                                     <select
+                                        x-model="selected_component"
                                         id="modal_component_dropdown"
                                         class="rounded-md ring-1 ring-primary-500 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 sm:text-sm focus:z-10"
                                     >
@@ -145,7 +146,7 @@
                                        class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-primary-600 border border-primary-600 rounded-lg hover:bg-primary-500">
                                         {{ translate_key "add_component" }}
                                     </a>
-                                    <a href="#" @click.prevent="component_modal = !component_modal"
+                                    <a href="#" @click.prevent="close_component_modal"
                                        class="w-full py-3 text-sm text-center text-gray-500 transition duration-150 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
                                         {{ translate_key "cancel" }}
                                     </a>

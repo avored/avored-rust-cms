@@ -9,6 +9,7 @@ pub struct FieldModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub field_type: String,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -52,6 +53,19 @@ impl TryFrom<Object> for FieldModel {
             }
             None => String::from(""),
         };
+
+        let field_type = match val.get("field_type") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+
         let created_at = match val.get("created_at") {
             Some(val) => {
                 let value = match val.clone() {
@@ -99,6 +113,7 @@ impl TryFrom<Object> for FieldModel {
             id,
             name,
             identifier,
+            field_type,
             created_at,
             updated_at,
             created_by,
@@ -111,6 +126,7 @@ impl TryFrom<Object> for FieldModel {
 pub struct CreatableFieldModel {
     pub name: String,
     pub identifier: String,
+    pub field_type: String,
     pub logged_in_username: String,
 }
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -118,6 +134,7 @@ pub struct UpdatableFieldModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub field_type: String,
     pub logged_in_username: String,
 }
 

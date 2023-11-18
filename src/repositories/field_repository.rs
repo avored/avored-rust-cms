@@ -43,24 +43,16 @@ impl FieldRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        createable_field_model: CreatableFieldModel,
+        creatable_field_model: CreatableFieldModel,
     ) -> Result<FieldModel> {
         let sql = "CREATE fields CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
-            ("name".into(), createable_field_model.name.into()),
-            (
-                "identifier".into(),
-                createable_field_model.identifier.into(),
-            ),
-            (
-                "created_by".into(),
-                createable_field_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                createable_field_model.logged_in_username.into(),
-            ),
+            ("name".into(), creatable_field_model.name.into()),
+            ("identifier".into(), creatable_field_model.identifier.into()),
+            ("field_type".into(), creatable_field_model.field_type.into()),
+            ("created_by".into(), creatable_field_model.logged_in_username.clone().into()),
+            ("updated_by".into(), creatable_field_model.logged_in_username.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -72,7 +64,7 @@ impl FieldRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("fields record can't be created")),
         };
         let field_model: Result<FieldModel> = result_object?.try_into();
 
