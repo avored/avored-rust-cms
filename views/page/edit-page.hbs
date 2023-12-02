@@ -16,7 +16,7 @@
     </div>
     <div>
         <!-- START CONTENT -->
-        <div x-data="page_builder" x-init="init('{{ components }}')" class="px-4">
+        <div x-data="page_builder" x-init="init" class="px-4">
             <form action="/admin/update-page/{{ page_model.id }}"  method="post">
                 <div class="mb-6 ">
                     <div class="grid gap-4 mt-5 p-5 gap-y-2 text-sm grid-cols-1 lg:grid-cols-6">
@@ -75,6 +75,42 @@
                                 <div class="md:col-span-6">
                                     <textarea name="content" id="easy_mde">{{{ page_model.content }}}</textarea>
                                 </div>
+
+                                <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+                                <div id="app_vue">
+                                    <div>Test Hello</div>
+                                    <span></span>
+                                </div>
+
+                                <div class="mt-5 md:col-span-6">
+                                    <template x-for="page_component in page_components" :key="page_component.id">
+                                        <div class="mt-3 ring-1 ring-gray-200 p-3">
+                                            <div class="p-3">
+                                                <span class="font-semibold" x-html="page_component.name"></span>
+                                                <span class="ml-1 text-gray-400" x-html="page_component.identifier"></span>
+                                            </div>
+                                            <div class="p-3">
+                                                <div>Fields </div>
+                                                <template x-for="page_component_field in page_component.fields" :key="page_component_field.id">
+
+                                                    <div class="mt-2" x-if="page_component_field.field_type === 'text'">
+                                                        <label x-bind:for="page_component_field.identifier" x-html="page_component_field.name"></label>
+                                                        <input
+                                                                :id="page_component_field.identifier"
+                                                                class="appearance-none rounded-md ring-1 ring-primary-500 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 sm:text-sm focus:z-10"
+                                                                type="text"
+                                                                :name="page_component_field[page_component_field.id]"
+                                                                value="" />
+                                                    </div>
+                                                </template>
+                                            </div>
+
+                                        </div>
+                                    </template>
+
+                                </div>
+
                                 <div class="md:col-span-6">
                                     <a href="#" @click.prevent="open_component_modal" class="">
                                         {{ translate_key "add_component" ~}}
@@ -126,7 +162,7 @@
                                         {{ translate_key "please_select_component" ~}}
                                     </label>
                                     <select
-                                        x-model="selected_component"
+                                        x-model="selected_component_id"
                                         id="modal_component_dropdown"
                                         class="rounded-md ring-1 ring-primary-500 relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 sm:text-sm focus:z-10"
                                     >
@@ -142,7 +178,7 @@
                                 </div>
                                 <div class="flex flex-row mt-6 space-x-2 justify-evenly">
                                     <a href="#"
-                                       @click.prevent="add_field_onclick"
+                                       @click.prevent="add_component_onclick"
                                        class="w-full py-3 text-sm font-medium text-center text-white transition duration-150 ease-linear bg-primary-600 border border-primary-600 rounded-lg hover:bg-primary-500">
                                         {{ translate_key "add_component" }}
                                     </a>
