@@ -1,14 +1,17 @@
-import logo from './logo.svg';
 import './App.css';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import Dashboard from './pages/Dashboard'
+import Login from './pages/auth/Login'
 
 function App() {
-  return (
-      <div className="h-screen flex w-full justify-center items-center">
-        <h1 className="text-3xl font-bold text-indigo-600">
-          AvoRed rust content management system
-        </h1>
-      </div>
-  );
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/"   element={<Dashboard />} />
+                <Route path="/admin/login"   element={<Login />} />
+            </Routes>
+        </BrowserRouter>
+    );
 }
 
 export default App;
