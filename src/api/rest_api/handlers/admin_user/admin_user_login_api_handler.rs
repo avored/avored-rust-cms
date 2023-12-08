@@ -10,7 +10,7 @@ use serde_json::json;
 use crate::api::admin_user::requests::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
-use crate::models::admin_user_model::AdminUserModel;
+use crate::models::token_claim_model::TokenClaims;
 
 pub async fn admin_user_login_api_handler(
     state: State<Arc<AvoRedState>>,
@@ -30,7 +30,9 @@ pub async fn admin_user_login_api_handler(
 
 
     let claims: TokenClaims = TokenClaims {
-        sub: admin_user_model,
+        sub: admin_user_model.id,
+        name: admin_user_model.full_name,
+        email:admin_user_model.email,
         exp,
         iat,
     };
@@ -63,12 +65,6 @@ pub async fn admin_user_login_api_handler(
     Ok(Json(response_data))
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct TokenClaims {
-    pub sub: AdminUserModel,
-    pub iat: usize,
-    pub exp: usize,
-}
 
 #[derive(Serialize)]
 pub struct ResponseData {

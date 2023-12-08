@@ -8,6 +8,7 @@ pub mod field_model;
 pub mod page_model;
 pub mod role_model;
 pub mod asset_model;
+pub mod token_claim_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {
