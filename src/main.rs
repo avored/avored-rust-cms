@@ -1,3 +1,5 @@
+extern crate core;
+
 use async_session::MemoryStore;
 use axum::{
     extract::State,

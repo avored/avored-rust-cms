@@ -1,0 +1,6 @@
+
+### API POST ADMIN USER LOGIN
+POST http://localhost:8080/api/login
+Content-Type: application/json
+
+{"email": "admin@admin.com", "password": "admin123"}
