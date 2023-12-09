@@ -18,6 +18,8 @@
         "axios": "^1.5.1",
         "easymde": "^2.18.0",
         "feather-icons": "^4.29.0",
+        "feather-icons-react": "^0.6.2",
+        "lodash": "^4.17.21",
         "tailwindcss": "^3.3.3"
     }
 }

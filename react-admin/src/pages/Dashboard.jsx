@@ -1,97 +1,135 @@
 import logo from '../assets/logo_only.svg'
+import FeatherIcon from 'feather-icons-react'
+
 function Dashboard() {
     return (
-    <div
-        className="relative sm:flex sm:justify-center sm:items-center min-h-screen bg-center bg-gray-100 selection:bg-primary-500 selection:text-white">
-        <div className="max-w-7xl mx-auto p-6 lg:p-8">
-            <div className="flex justify-center">
-                <img src={logo} className="w-20 h-20" alt="Avored Rust Cms"/>
-            </div>
+        <div
+            className="min-h-screen">
+            <header
+                className="h-16 py-2 shadow-lg px-4 md:sticky top-0 bg-gray-800 z-40">
+                <a href="/admin"
+                   className="text-white flex items-center space-x-2 group hover:text-white">
+                    <div>
+                        <img src={logo} className="h-12"/>
+                    </div>
 
-            <div className="mt-16">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
-                    <a href="/admin/login"
-                       className="scale-100 p-6 bg-white rounded-lg shadow-2xl shadow-gray-500/20 flex  focus:outline focus:outline-2 focus:outline-primary-500">
-                        <div>
-                            <div className="h-16 w-16 bg-primary-50 flex items-center justify-center rounded-full">
-                                <i className="w-7 h-7 stroke-primary-500" data-feather="framer"></i>
+                    <div>
+                        <span className="text-2xl font-semibold">AvoRed</span>
+                        <span className="text-xs block">Rust CMS</span>
+                    </div>
+                </a>
+            </header>
+            <div className="flex">
+                <div
+                    className="w-64 max-h-screen top-16 pt-5 h-screen bg-gray-800 text-blue-100 fixed inset-y-0 left-0 transform transition duration-200 ease-in-out">
+                    <nav
+                        className="px-4 pt-4 scroller overflow-y-scroll max-h-[calc(100vh-64px)]"
+                    >
+                        <ul className="flex flex-col space-y-2">
+
+
+                            <li className="text-sm text-gray-500 ">
+                                <a href="/admin"
+                                   className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
+                                    <div className="pr-2">
+                                        <FeatherIcon className="h-4 w-4" icon="anchor"/>
+                                    </div>
+                                    <div>Dashboard</div>
+                                </a>
+                            </li>
+
+                            <div
+                                className="section border-b pt-4 mb-4 text-xs text-gray-600 border-gray-700 pb-1 pl-3">
+                                Content Manager
                             </div>
 
-                            <h2 className="mt-6 text-xl font-semibold text-gray-900">
-                                Administrator
-                            </h2>
 
-                            <p className="mt-4 text-gray-500 text-sm leading-relaxed">
-                                An app administrator plays a pivotal role in ensuring
-                                the smooth operation of the avored cms.
-                                They are responsible for managing user access,
-                                content updates and overseeing updates. The administrator acts as the
-                                gatekeeper, safeguarding the app's content and user
-                                experience while facilitating its growth and improvement.
-                                In essence, they are the backbone of a well-maintained
-                                and secure avored rust cms ecosystem.
-                            </p>
-                        </div>
-                        <div className="self-center pl-5">
-                            <i className="w-6 h-6 stroke-primary-500" data-feather="chevrons-right"></i>
-                        </div>
-                    </a>
+                            <li className="text-sm text-gray-500 ">
+                                <a href="#"
+                                   className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
+                                    <div className="pr-2">
+                                        <FeatherIcon className="h-4 w-4" icon="anchor"/>
+                                    </div>
+                                    <div>Page</div>
+                                </a>
+                                <a href="#"
+                                   className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                                    <div className="pr-2">
+                                        <FeatherIcon className="h-4 w-4" icon="compass"/></div>
+                                    <div>Components</div>
+                                </a>
+                                <a href="/admin/asset"
+                                   className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                                    <div className="pr-2">
+                                        <FeatherIcon className="h-4 w-4" icon="image"/>
+                                    </div>
+                                    <div>
+                                        Assets Manager
+                                    </div>
+                                </a>
+                            </li>
 
-                    <a href="https://github.com/avored/avored-rust-cms" target="_blank"
-                       className="scale-100 p-6 bg-white  rounded-lg shadow-2xl flex  focus:outline focus:outline-2 focus:outline-primary-500">
-                        <div>
-                            <div className="h-16 w-16 bg-primary-50 flex items-center justify-center rounded-full">
-                                <i className="w-7 h-7 stroke-primary-500" data-feather="github"></i>
+
+                            <div
+                                className="section border-b pt-4 mb-4 text-xs text-gray-600 border-gray-700 pb-1 pl-3">
+                                Managment
                             </div>
 
-                            <h2 className="mt-6 text-xl font-semibold text-gray-900">
-                                Github
-                            </h2>
 
-                            <p className="mt-4 text-gray-500 text-sm leading-relaxed">
-                                GitHub Star: When you "star" a GitHub repository, it signifies your
-                                interest in that project. Starring a repository
-                                also sends a signal to the repository owner that you
-                                appreciate their work or find it valuable.
+                            <li className="text-sm text-gray-500 ">
+                                <a href="#"
+                                   className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
+                                    <div className="pr-2">
+                                        <FeatherIcon className="h-4 w-4" icon="anchor"/>
+                                    </div>
+                                    <div>Team</div>
+                                    <div
+                                        className="absolute right-1.5 transition-transform duration-300"
+                                    >
+                                        <FeatherIcon className="h-4 w-4" icon="chevron-down"/>
+                                    </div>
+                                </a>
 
-                                Community Help: The GitHub community is known for its collaborative nature.
-                                Developers frequently help each other by contributing to
-                                open-source projects, reporting issues, suggesting improvements,
-                                and even submitting pull requests to fix bugs or add
-                                features. This collective effort is essential for
-                                the growth and success of open-source projects hosted on GitHub.
-                            </p>
-                        </div>
+                                <div
+                                    className="pl-4 pr-2 overflow-hidden transition-all transform translate duration-300 max-h-0 "
+                                >
+                                    <ul
+                                        className="flex flex-col mt-2 pl-2 text-gray-500 border-l border-gray-700 space-y-1 text-xs">
 
-                        <div className="self-center pl-5">
-                            <i className="w-6 h-6 stroke-primary-500" data-feather="chevrons-right"></i>
-                        </div>
-                    </a>
+                                        <li className="text-sm text-gray-500 ">
+                                            <a href="#"
+                                               className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
+                                                <div>
+                                                    Admin Users
+                                                </div>
+                                            </a>
+                                        </li>
+
+                                        <li className="text-sm text-gray-500 ">
+                                            <a href="/admin/role"
+                                               className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
+                                                <div>
+                                                    Roles
+                                                </div>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </nav>
                 </div>
-            </div>
 
-            <div className="flex justify-center mt-16 px-0 sm:items-center sm:justify-between">
-                <div className="text-center text-sm text-gray-500  sm:text-left">
-                    <div className="flex items-center gap-4">
-                        <a href="https://github.com/sponsors/indpurvesh"
-                           className="group inline-flex items-center hover:text-gray-700 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-primary-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                 strokeWidth="1.5"
-                                 className="-mt-px mr-1 w-5 h-5 stroke-gray-400 dark:stroke-gray-600 group-hover:stroke-gray-600 dark:group-hover:stroke-gray-400">
-                                <path strokeLinecap="round" strokeLinejoin="round"
-                                      d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
-                            </svg>
-                            Sponsor
-                        </a>
+                <div className="flex-1 pl-64 bg-white">
+                    <div className="p-5">
+                        Dashboard content goes here
                     </div>
                 </div>
-
-                <div className="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                    AvoRed Rust CMS
-                </div>
             </div>
+
+
         </div>
-    </div>
     )
 }
 

@@ -1,14 +1,25 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import logo from "../../assets/logo_only.svg";
 import {useNavigate} from "react-router-dom";
+import {isEmpty} from "lodash";
 
 function Login() {
     const [email, setEmail] = useState('admin@admin.com');
     const [password, setPassword] = useState('admin123');
     const redirect = useNavigate()
+
+    const [token, setToken] = useState('');
+
+    useEffect(()=>{
+        /* to do make sure it execute once only..*/
+        const token = localStorage.getItem("AUTH_TOKEN");
+        if (!isEmpty(token)) {
+            return redirect("/admin");
+        }
+    },[]);
+
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        console.log("handle submit")
         const response = (await fetch('http://localhost:8080/api/login', {
             method: 'post',
             headers: {
@@ -17,7 +28,6 @@ function Login() {
             body: JSON.stringify({email: email, password: password})
         }))
         const login_response = await response.json()
-        console.log(login_response)
         if (login_response.status) {
             localStorage.setItem("AUTH_TOKEN", login_response.data)
             return redirect("/admin");
