@@ -3,6 +3,7 @@ import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
 import Dashboard from './pages/Dashboard'
 import Login from './pages/auth/Login'
 import Home from "./pages/Home";
+import AppLayout from "./layouts/AppLayout";
 
 function App() {
     return (
@@ -10,8 +11,13 @@ function App() {
             <Routes>
                 {/*<Route path="/" element={<Navigate to="/admin" replace />} />*/}
                 <Route path="/" element={<Home />} />
-                <Route path="/admin"   element={<Dashboard />} />
+
                 <Route path="/admin/login"   element={<Login />} />
+
+                <Route element={<AppLayout />}>
+                    <Route path="/admin"   element={<Dashboard />} />
+                </Route>
+
             </Routes>
         </BrowserRouter>
     );
