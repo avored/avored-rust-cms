@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Login from './pages/auth/Login'
 import Home from "./pages/Home";
 import AppLayout from "./layouts/AppLayout";
+import PageTable from "./pages/page/PageTable";
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
 
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
+                    <Route path="/admin/page"   element={<PageTable />} />
                 </Route>
 
             </Routes>
