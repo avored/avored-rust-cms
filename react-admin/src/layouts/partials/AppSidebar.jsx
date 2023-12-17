@@ -1,6 +1,6 @@
 import logo from "../../assets/logo_only.svg";
 import FeatherIcon from "feather-icons-react";
-import {Outlet} from "react-router-dom";
+import {Link, Outlet} from "react-router-dom";
 
 function AppSidebar() {
     return (
@@ -30,13 +30,15 @@ function AppSidebar() {
 
 
                         <li className="text-sm text-gray-500 ">
-                            <a href="#"
-                               className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
+                            <Link
+                                className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700"
+                                to={`/admin/page`}>
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="anchor"/>
                                 </div>
                                 <div>Page</div>
-                            </a>
+                            </Link>
+
                             <a href="#"
                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
                                 <div className="pr-2">
