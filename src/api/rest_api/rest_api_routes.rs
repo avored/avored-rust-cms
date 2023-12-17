@@ -4,12 +4,15 @@ use axum::{routing::get, Router, middleware};
 use axum::routing::post;
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use axum::http::header::HeaderValue;
-use crate::api::rest_api::handlers::component_all_api_handler::component_all_api_handler;
-use crate::api::rest_api::handlers::health_check_api_handler::health_check_api_handler;
-use crate::api::rest_api::handlers::admin_user::admin_user_login_api_handler::admin_user_login_api_handler;
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use tower_http::cors::CorsLayer;
+use crate::api::rest_api::handlers::{
+    page::page_table_api_handler::page_table_api_handler,
+    admin_user::admin_user_login_api_handler::admin_user_login_api_handler,
+    component_all_api_handler::component_all_api_handler,
+    health_check_api_handler::health_check_api_handler
+};
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
@@ -29,6 +32,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         ]);
 
     Router::new()
+        .route("/api/page", get(page_table_api_handler))
         .route("/api/component-all", get(component_all_api_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
