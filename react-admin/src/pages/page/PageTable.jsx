@@ -32,9 +32,16 @@ function PageTable() {
     return (
         <div className="flex-1 pl-64 bg-white">
             <div className="px-5">
-                <div className="p-5 text-2xl font-semibold text-primary-500">
-                    Pages
+                <div className="flex items-center">
+                    <div className="p-5 text-2xl font-semibold text-primary-500">
+                        Pages
+                    </div>
+                    <Link className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        to="/admin/page/create">
+                        Create
+                    </Link>
                 </div>
+
 
                 <div className="overflow-x-auto">
                     <table className="min-w-full bg-white shadow-md rounded">
