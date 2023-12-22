@@ -1,12 +1,11 @@
 use std::sync::Arc;
-use axum::{http::Request, Json, middleware::Next, response::{IntoResponse, Response}};
+use axum::{http::Request, Json, middleware::Next, response::Response};
 use axum::extract::State;
 use axum::http::{header, StatusCode};
-use axum::response::Redirect;
+
 use axum_extra::extract::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
-use serde_json::json;
 use crate::avored_state::AvoRedState;
 use crate::models::token_claim_model::TokenClaims;
 
@@ -19,7 +18,7 @@ pub struct ErrorResponse {
 pub async fn require_jwt_authentication<T>(
     state: State<Arc<AvoRedState>>,
     cookie_jar: CookieJar,
-    mut req: Request<T>,
+    req: Request<T>,
     next: Next<T>,
 ) -> Result<Response, Json<ErrorResponse>> {
     let token = cookie_jar
@@ -48,10 +47,11 @@ pub async fn require_jwt_authentication<T>(
         (StatusCode::UNAUTHORIZED, Json(json_error))
     }).unwrap();
 
+    let secret = state.config.jwt_secret_key.clone();
 
     let claims = decode::<TokenClaims>(
         &token,
-        &DecodingKey::from_secret("raHJk52flUTP3jV7VjaaWTqui0gbfsBOx1sxx6Vj3u1mZCNKc7fsal54YwmLStTT".as_ref()),
+        &DecodingKey::from_secret(secret.as_ref()),
         &Validation::default(),
     )
         .map_err(|_| {
@@ -65,7 +65,7 @@ pub async fn require_jwt_authentication<T>(
 
     if claims.sub.len() <= 0 {
         is_token_valid = true;
-        println!("Claim admin_user {claims:?}");
+        // println!("Claim admin_user {claims:?}");
     }
 
     if is_token_valid {
@@ -77,7 +77,7 @@ pub async fn require_jwt_authentication<T>(
         return Err(Json(json_error));
     }
 
-    println!("TOKEN {token:?}");
+    // println!("TOKEN {token:?}");
 
     Ok(next.run(req).await)
 }
