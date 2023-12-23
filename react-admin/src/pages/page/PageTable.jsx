@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
-import {Link} from "react-router-dom";
+import {Link, redirect} from "react-router-dom";
+import {isEmpty} from "lodash";
 
 function PageTable() {
     const [pages, setPages] = useState([]);
@@ -19,11 +20,20 @@ function PageTable() {
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
+            console.log(response.ok)
+            if (!response.ok) {
+
+                return
+            }
             return await response.json()
         })
 
         mounted().then((res) => {
-            console.log(res.data)
+            if (isEmpty(res)) {
+                localStorage.removeItem("AUTH_TOKEN")
+                alert("please go to login page manually till we fix the issue.")
+                return redirect("/admin/login")
+            }
             setPages(res.data)
         })
 
@@ -60,7 +70,7 @@ function PageTable() {
                         <tbody className="">
                         {pages.map((page) => {
                             return (
-                                <tr className="border-b">
+                                <tr key={page.id} className="border-b">
                                     <td className="py-3 px-4">{page.id}</td>
                                     <td className="py-3 px-4">{page.name}</td>
                                     <td className="py-3 px-4">{page.identifier}</td>

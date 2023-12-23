@@ -5,7 +5,7 @@ use axum::http::{header, Response};
 use axum::Json;
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use serde_json::json;
 use crate::api::admin_user::requests::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
