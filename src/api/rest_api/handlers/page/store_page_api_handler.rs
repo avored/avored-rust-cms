@@ -5,13 +5,14 @@ use crate::{
     avored_state::AvoRedState, error::Result
 };
 use axum::{extract::State, Json};
+use serde::{Deserialize, Serialize};
 use crate::api::rest_api::handlers::page::request::store_page_request::StorePageRequest;
 
 
 pub async fn store_page_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
-) -> Result<Json<PageModel>> {
+) -> Result<Json<CreatedPageResponse>> {
     let validation_error_list = payload.validate_errors()?;
 
     println!("Validation error list: {:?}", validation_error_list);
@@ -19,7 +20,7 @@ pub async fn store_page_api_handler(
     let creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
-        content: payload.content,
+        content: "test content".to_string(), // ideally we should not need this one
         logged_in_username: "admin@admin.com".to_string(),
     };
 
@@ -27,7 +28,16 @@ pub async fn store_page_api_handler(
         .page_service
         .create_page(&state.db, creatable_page)
         .await?;
+    let response = CreatedPageResponse {
+        status: true,
+        page_model: created_page_model
+    };
 
+    Ok(Json(response))
+}
 
-    Ok(Json(created_page_model))
+#[derive(Serialize, Debug)]
+pub struct CreatedPageResponse {
+    pub status: bool,
+    pub page_model: PageModel
 }

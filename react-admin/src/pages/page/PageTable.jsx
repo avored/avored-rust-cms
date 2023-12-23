@@ -70,7 +70,7 @@ function PageTable() {
                         <tbody className="">
                         {pages.map((page) => {
                             return (
-                                <tr className="border-b">
+                                <tr key={page.id} className="border-b">
                                     <td className="py-3 px-4">{page.id}</td>
                                     <td className="py-3 px-4">{page.name}</td>
                                     <td className="py-3 px-4">{page.identifier}</td>

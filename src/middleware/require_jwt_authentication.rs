@@ -50,7 +50,7 @@ pub async fn require_jwt_authentication<T>(
 
     let secret = state.config.jwt_secret_key.clone();
 
-    let claims = decode::<TokenClaims>(
+    let _claims = decode::<TokenClaims>(
         &token,
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::default(),
@@ -63,6 +63,8 @@ pub async fn require_jwt_authentication<T>(
             (StatusCode::UNAUTHORIZED, Json(json_error))
         })?
         .claims;
+
+    //@todo improve the validation here with map str or something
 
     // if claims.sub.len() <= 0 {
     //     is_token_valid = true;

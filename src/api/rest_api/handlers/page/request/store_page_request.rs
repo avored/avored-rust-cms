@@ -9,9 +9,6 @@ pub struct StorePageRequest {
 
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
-
-    #[validate(length(min = 1, message = "The content is a required field."))]
-    pub content: String,
 }
 
 impl StorePageRequest {
