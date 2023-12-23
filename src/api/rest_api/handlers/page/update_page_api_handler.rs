@@ -6,14 +6,14 @@ use crate::{
     avored_state::AvoRedState, error::Result
 };
 
-use axum::{extract::{Path as AxumPath, State}, Json, response::IntoResponse};
+use axum::{extract::{Path as AxumPath, State}, Json};
 use serde::Serialize;
 
 pub async fn update_page_api_handler(
     AxumPath(page_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<UpdatePageRequest>,
-) -> Result<impl IntoResponse> {
+) -> Result<Json<UpdatablePageResponse>> {
     println!("->> {:<12} - update_page_api_handler", "HANDLER");
 
     let _validation_error_list = payload.validate_errors()?;

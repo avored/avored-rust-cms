@@ -1,9 +1,10 @@
 import {useEffect, useState} from "react";
-import {Link, redirect} from "react-router-dom";
+import {Link, redirect, useNavigate} from "react-router-dom";
 import {isEmpty} from "lodash";
 
 function PageTable() {
     const [pages, setPages] = useState([]);
+    const navigate = useNavigate()
 
     const getFormattedDate = ((date) => {
         var date = new Date(date);
@@ -22,7 +23,6 @@ function PageTable() {
             })
             console.log(response.ok)
             if (!response.ok) {
-
                 return
             }
             return await response.json()
@@ -31,8 +31,7 @@ function PageTable() {
         mounted().then((res) => {
             if (isEmpty(res)) {
                 localStorage.removeItem("AUTH_TOKEN")
-                alert("please go to login page manually till we fix the issue.")
-                return redirect("/admin/login")
+                return navigate("/admin/login")
             }
             setPages(res.data)
         })
@@ -47,7 +46,7 @@ function PageTable() {
                         Pages
                     </div>
                     <Link className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/page/create">
+                        to="/admin/page-create">
                         Create
                     </Link>
                 </div>
@@ -84,7 +83,7 @@ function PageTable() {
                                     <td className="py-3 px-4">{page.updated_by}</td>
                                     <td className="py-3 px-4">
                                         <Link className="font-medium text-primary-600 hover:text-primary-800"
-                                              to={`/admin/page/${page.id}`}>
+                                              to={`/admin/page-edit/${page.id}`}>
                                             Edit
                                         </Link>
 

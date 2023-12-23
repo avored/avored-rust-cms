@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import AppLayout from "./layouts/AppLayout";
 import PageTable from "./pages/page/PageTable";
 import PageCreate from "./pages/page/PageCreate";
+import PageEdit from "./pages/page/PageEdit";
 
 function App() {
     return (
@@ -19,7 +20,8 @@ function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
                     <Route path="/admin/page"   element={<PageTable />} />
-                    <Route path="/admin/page/create"   element={<PageCreate />} />
+                    <Route path="/admin/page-create"   element={<PageCreate />} />
+                    <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />
                 </Route>
 
             </Routes>

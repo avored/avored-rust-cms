@@ -13,7 +13,8 @@ use crate::api::rest_api::handlers::{
     component_all_api_handler::component_all_api_handler,
     health_check_api_handler::health_check_api_handler,
     page::store_page_api_handler::store_page_api_handler,
-    page::update_page_api_handler::update_page_api_handler
+    page::update_page_api_handler::update_page_api_handler,
+    page::fetch_page_api_handler::fetch_page_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -37,6 +38,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
         .route("/api/page/:page_id", put(update_page_api_handler))
+        .route("/api/page/:page_id", get(fetch_page_api_handler))
         .route("/api/component-all", get(component_all_api_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),

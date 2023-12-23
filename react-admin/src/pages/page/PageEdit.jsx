@@ -1,23 +1,55 @@
-import {useState} from "react";
-import {Link, redirect, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {Link, redirect, useNavigate, useParams} from "react-router-dom";
+import {isEmpty} from "lodash";
 
-function PageCreate() {
-    const [name, setName] = useState('Contact US');
-    const [identifier, setIdentifier] = useState('contact-us');
+function PageEdit() {
+    const [name, setName] = useState('Contact US update');
+    const [identifier, setIdentifier] = useState('contact-us-update');
     const navigate = useNavigate()
+    const params = useParams();
+
+
+    useEffect(() => {
+        const mounted = (async () => {
+            const response = await fetch('http://localhost:8080/api/page/' + params.page_id, {
+                method: 'get',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
+                }
+            })
+            console.log(response.ok)
+            if (!response.ok) {
+
+                return
+            }
+            return await response.json()
+        })
+
+        mounted().then((res) => {
+            if (isEmpty(res)) {
+                localStorage.removeItem("AUTH_TOKEN")
+                return navigate("/admin/login")
+            }
+
+            setName(res.page_model.name)
+            setIdentifier(res.page_model.identifier)
+        })
+
+    }, [])
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        const response = (await fetch('http://localhost:8080/api/page', {
-            method: 'post',
+        const response = (await fetch('http://localhost:8080/api/page/' + params.page_id, {
+            method: 'put',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
             },
             body: JSON.stringify({name: name, identifier: identifier})
         }))
-        const created_page_response = await response.json()
-        if (created_page_response.status) {
+        const updated_page_response = await response.json()
+        if (updated_page_response.status) {
             return navigate("/admin/page");
         }
     })
@@ -66,4 +98,4 @@ function PageCreate() {
     )
 }
 
-export default PageCreate
+export default PageEdit
