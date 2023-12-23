@@ -19,10 +19,17 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
 Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
 
-### Start your application
+### Start your application backend
     cargo run
 
-Once the application start you can visit `http://localhost:8080/setup` this url will create database tables and admin user once you submit it and redirect to `http://localhost:8080/admin/login`
+Once the application start you can visit `http://localhost:8080/setup` this url will create database tables and admin user once you submit it and redirect to login screen but igonore this page as we got react admin setup in progress.
+
+### Start react application admin
+    cd react-admin
+    npm i
+    npm start
+
+Visit `localhost:3000/admin` to access the react admin for the portal. Right now react admin does not have many pages redone yet but work in progress.
 
 
 ## Features
