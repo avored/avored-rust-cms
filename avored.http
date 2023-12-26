@@ -4,3 +4,16 @@ POST http://localhost:8080/api/login
 Content-Type: application/json
 
 {"email": "admin@admin.com", "password": "admin123"}
+
+
+### Create ADMIN USER POST
+POST http://localhost:8080/api/admin-user
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxOHVlMGl1cmloaW8weWdva3hkYyIsIm5hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW5AYWRtaW4uY29tIiwiaWF0IjoxNzAzNjI0NTMyLCJleHAiOjE3MDM2MjgxMzJ9.7paXVLMFu-ODKgxD1PS-r2S1JJRIz6KOEeRM9m-FkGk
+Content-Type: multipart/form-data; boundary=boundary
+
+--boundary
+Content-Disposition: form-data; full_name: "admin2" ; image: "test.jpg";
+
+// The 'input.txt' file will be uploaded
+< ./test.jpg
+
