@@ -16,7 +16,8 @@ use crate::api::rest_api::handlers::{
     page::update_page_api_handler::update_page_api_handler,
     page::fetch_page_api_handler::fetch_page_api_handler,
     admin_user::admin_user_table_api_handler::admin_user_table_api_handler,
-    admin_user::store_admin_user_api_handler::store_admin_user_api_handler
+    admin_user::store_admin_user_api_handler::store_admin_user_api_handler,
+    admin_user::update_admin_user_api_handler::update_admin_user_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -40,6 +41,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
         .route("/api/admin-user", get(admin_user_table_api_handler))
         .route("/api/admin-user", post(store_admin_user_api_handler))
+        .route("/api/admin-user/:admin_user_id", put(update_admin_user_api_handler))
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
         .route("/api/page/:page_id", put(update_page_api_handler))
