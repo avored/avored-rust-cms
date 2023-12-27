@@ -77,6 +77,17 @@ function AppSidebar() {
                                 </div>
                             </a>
 
+                            <a href="/admin/admin-user"
+                               className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                                <div className="pr-2">
+                                    <FeatherIcon className="h-4 w-4" icon="users"/>
+                                </div>
+                                <div>
+                                    Admin User
+                                </div>
+                            </a>
+
+
                             <div
                                 className="pl-4 pr-2 overflow-hidden transition-all transform translate duration-300 max-h-0 "
                             >

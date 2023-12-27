@@ -7,6 +7,7 @@ import AppLayout from "./layouts/AppLayout";
 import PageTable from "./pages/page/PageTable";
 import PageCreate from "./pages/page/PageCreate";
 import PageEdit from "./pages/page/PageEdit";
+import AdminUserTable from "./pages/admin-user/AdminUserTable";
 
 function App() {
     return (
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/admin/page"   element={<PageTable />} />
                     <Route path="/admin/page-create"   element={<PageCreate />} />
                     <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />
+                    <Route path="/admin/admin-user"   element={<AdminUserTable />} />
                 </Route>
 
             </Routes>
