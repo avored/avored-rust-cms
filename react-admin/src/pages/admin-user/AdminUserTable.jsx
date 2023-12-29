@@ -46,7 +46,7 @@ function AdminUserTable() {
                         Admin Users
                     </div>
                     <Link className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/page-create">
+                        to="/admin/admin-user-create">
                         Create
                     </Link>
                 </div>

@@ -28,8 +28,8 @@ pub async fn store_admin_user_api_handler(
     };
     let mut profile_image = String::from("");
 
-    while let Some(field) = multipart.next_field().await.unwrap() {
-        let name = field.name().unwrap();
+    while let Some(field) = multipart.next_field().await.expect("cant find next field") {
+        let name = field.name().expect("field name missing");
 
         match name {
             "image" => {
@@ -41,7 +41,7 @@ pub async fn store_admin_user_api_handler(
 
                 let _file_content_type = field.content_type().unwrap().to_string();
                 let file_name = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap();
+                let data = field.bytes().await.expect("data expected");
 
                 if !file_name.is_empty() {
                     let file_ext = file_name.split(".").last().unwrap_or(".png");
