@@ -83,7 +83,7 @@ function AdminUserTable() {
                                     <td className="py-3 px-4">{adminUser.updated_by}</td>
                                     <td className="py-3 px-4">
                                         <Link className="font-medium text-primary-600 hover:text-primary-800"
-                                              to={`/admin/page-edit/${adminUser.id}`}>
+                                              to={`/admin/admin-user-edit/${adminUser.id}`}>
                                             Edit
                                         </Link>
 

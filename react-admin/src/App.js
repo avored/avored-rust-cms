@@ -9,6 +9,7 @@ import PageCreate from "./pages/page/PageCreate";
 import PageEdit from "./pages/page/PageEdit";
 import AdminUserTable from "./pages/admin-user/AdminUserTable";
 import AdminUserCreate from "./pages/admin-user/AdminUserCreate";
+import AdminUserEdit from "./pages/admin-user/AdminUserEdit";
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />
                     <Route path="/admin/admin-user"   element={<AdminUserTable />} />
                     <Route path="/admin/admin-user-create"   element={<AdminUserCreate />} />
+                    <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEdit />} />
                 </Route>
 
             </Routes>

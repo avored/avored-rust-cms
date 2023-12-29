@@ -34,7 +34,7 @@ function AdminUserCreate() {
             },
             data: formData
         }))
-        
+
         if (created_admin_user_response.data.status) {
             return navigate("/admin/admin-user");
         }
