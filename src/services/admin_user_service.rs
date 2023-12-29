@@ -151,7 +151,7 @@ impl AdminUserService {
         &self,
         (ds, ses): &DB,
         creatable_admin_user_model: CreatableAdminUser,
-    ) -> Result<String> {
+    ) -> Result<AdminUserModel> {
         let sql = "CREATE admin_users CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
@@ -188,11 +188,14 @@ impl AdminUserService {
 
         let ress = ds.execute(sql, ses, Some(vars)).await?;
 
-        into_iter_objects(ress)?
-            .next()
-            .transpose()?
-            .and_then(|obj| obj.get("id").map(|id| id.to_string()))
-            .ok_or_else(|| Error::Generic("no record"))
+        let result_object_option = into_iter_objects(ress)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
+
+        admin_user_model
     }
 }
 
