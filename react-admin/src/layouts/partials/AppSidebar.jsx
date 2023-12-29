@@ -1,6 +1,6 @@
-import logo from "../../assets/logo_only.svg";
 import FeatherIcon from "feather-icons-react";
 import {Link, Outlet} from "react-router-dom";
+import {Menu} from "@headlessui/react";
 
 function AppSidebar() {
     return (
@@ -11,8 +11,6 @@ function AppSidebar() {
                     className="px-4 pt-4 scroller overflow-y-scroll max-h-[calc(100vh-64px)]"
                 >
                     <ul className="flex flex-col space-y-2">
-
-
                         <li className="text-sm text-gray-500 ">
                             <a href="/admin"
                                className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
@@ -46,7 +44,7 @@ function AppSidebar() {
                                 <div>Components</div>
                             </a>
                             <a href="/admin/asset"
-                               className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
+                               className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700">
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="image"/>
                                 </div>
@@ -62,10 +60,9 @@ function AppSidebar() {
                             Managment
                         </div>
 
-
-                        <li className="text-sm text-gray-500 ">
-                            <a href="#"
-                               className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
+                        <Menu as="li" className="text-sm text-gray-500">
+                            <Menu.Button
+                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700">
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="anchor"/>
                                 </div>
@@ -75,51 +72,41 @@ function AppSidebar() {
                                 >
                                     <FeatherIcon className="h-4 w-4" icon="chevron-down"/>
                                 </div>
-                            </a>
+                            </Menu.Button>
 
-                            <a href="/admin/admin-user"
-                               className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
-                                <div className="pr-2">
-                                    <FeatherIcon className="h-4 w-4" icon="users"/>
-                                </div>
-                                <div>
-                                    Admin User
-                                </div>
-                            </a>
-
-
-                            <div
-                                className="pl-4 pr-2 overflow-hidden transition-all transform translate duration-300 max-h-0 "
-                            >
-                                <ul
-                                    className="flex flex-col mt-2 pl-2 text-gray-500 border-l border-gray-700 space-y-1 text-xs">
-
-                                    <li className="text-sm text-gray-500 ">
-                                        <a href="#"
-                                           className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
+                            <Menu.Items className="flex flex-col mt-2 pl-2 ml-3 border-l border-gray-700 space-y-1">
+                                <Menu.Item as="li">
+                                    {({active}) => (
+                                        <a href="/admin/admin-user"
+                                           className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
+                                        >
                                             <div>
-                                                Admin Users
+                                                Admin User
                                             </div>
                                         </a>
-                                    </li>
-
-                                    <li className="text-sm text-gray-500 ">
-                                        <a href="/admin/role"
-                                           className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700">
-                                            <div>
-                                                Roles
-                                            </div>
+                                    )}
+                                </Menu.Item>
+                                <Menu.Item>
+                                    {({ active }) => (
+                                        <a
+                                            className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
+                                            href="/account-settings"
+                                        >
+                                            Settings
                                         </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
+                                    )}
+                                </Menu.Item>
+
+                            </Menu.Items>
+                        </Menu>
+
+
                     </ul>
                 </nav>
             </div>
             <Outlet/>
         </div>
-    );
+);
 }
 
 export default AppSidebar;

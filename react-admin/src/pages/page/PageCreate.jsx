@@ -23,8 +23,8 @@ function PageCreate() {
     })
 
     return (
-        <div className="flex-1 pl-64 bg-white">
-            <div className="px-5">
+        <div className="flex-1 bg-white">
+            <div className="px-5 pl-64 ">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">

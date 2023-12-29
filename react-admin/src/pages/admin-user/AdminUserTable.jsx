@@ -39,8 +39,8 @@ function AdminUserTable() {
     }, [])
 
     return (
-        <div className="flex-1 pl-64 bg-white">
-            <div className="px-5">
+        <div className="flex-1 bg-white">
+            <div className="px-5 pl-64 ">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         Admin Users
