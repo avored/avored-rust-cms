@@ -19,7 +19,8 @@ use crate::api::rest_api::handlers::{
     admin_user::store_admin_user_api_handler::store_admin_user_api_handler,
     admin_user::update_admin_user_api_handler::update_admin_user_api_handler,
     admin_user::fetch_admin_user_api_handler::fetch_admin_user_api_handler,
-    role::role_table_api_handler::role_table_api_handler
+    role::role_table_api_handler::role_table_api_handler,
+    role::fetch_role_api_handler::fetch_role_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -41,6 +42,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
     Router::new()
         .route("/api/role", get(role_table_api_handler))
+        .route("/api/role/:role_id", get(fetch_role_api_handler))
         .route("/api/admin-user", get(admin_user_table_api_handler))
         .route("/api/admin-user", post(store_admin_user_api_handler))
         .route("/api/admin-user/:admin_user_id", put(update_admin_user_api_handler))
