@@ -50,6 +50,7 @@ html {
   /* 5 */
   font-variation-settings: normal;
   /* 6 */
+  overflow-x:hidden;
 }
 
 /*
@@ -62,6 +63,7 @@ body {
   /* 1 */
   line-height: inherit;
   /* 2 */
+  overflow-x:hidden;
 }
 
 /*
