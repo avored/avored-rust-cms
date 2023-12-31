@@ -13,7 +13,7 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
 ## Installation
 
-    git clone https://github.com/avored/avored-cms
+    git clone https://github.com/avored/avored-rust-cms.git
     cd avored-cms
     
 
