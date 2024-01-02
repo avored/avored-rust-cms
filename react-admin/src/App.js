@@ -10,6 +10,10 @@ import PageEdit from "./pages/page/PageEdit";
 import AdminUserTable from "./pages/admin-user/AdminUserTable";
 import AdminUserCreate from "./pages/admin-user/AdminUserCreate";
 import AdminUserEdit from "./pages/admin-user/AdminUserEdit";
+import RoleTable from "./pages/role/RoleTable";
+import RoleCreate from "./pages/role/RoleCreate";
+import RoleEdit from "./pages/role/RoleEdit";
+
 
 function App() {
     return (
@@ -22,6 +26,10 @@ function App() {
 
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
+                    <Route path="/admin/role"   element={<RoleTable />} />
+                    <Route path="/admin/role-create"   element={<RoleCreate />} />
+                    <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
+
                     <Route path="/admin/page"   element={<PageTable />} />
                     <Route path="/admin/page-create"   element={<PageCreate />} />
                     <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />
