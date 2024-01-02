@@ -9,16 +9,6 @@ function RoleCreate() {
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        // const response = (await fetch('http://localhost:8080/api/role', {
-        //     method: 'post',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-        //     },
-        //     body: JSON.stringify({name: name, identifier: identifier})
-        // }))
-
-        // const created_page_response = await response.json()
 
         const created_page_response = await axios({
             url: 'http://localhost:8080/api/role',
