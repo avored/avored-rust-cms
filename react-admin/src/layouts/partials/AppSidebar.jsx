@@ -86,6 +86,17 @@ function AppSidebar() {
                                         </a>
                                     )}
                                 </Menu.Item>
+                                <Menu.Item as="li">
+                                    {({active}) => (
+                                        <a href="/admin/role"
+                                           className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
+                                        >
+                                            <div>
+                                                Role
+                                            </div>
+                                        </a>
+                                    )}
+                                </Menu.Item>
                                 <Menu.Item>
                                     {({ active }) => (
                                         <a
