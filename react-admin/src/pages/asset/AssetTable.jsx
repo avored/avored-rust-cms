@@ -136,7 +136,7 @@ function AssetTable() {
                         <div className="flex flex-col mt-6">
                             <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                 <div className="inline-block min-w-full p-2">
-                                    <div className="grid grid-cols-4 gap-4 mx-5">
+                                    <div className="grid grid-cols-6 gap-4 mx-5">
                                         {assets.map((asset) => {
                                             return (
                                                 <div key={asset.id} className="border rounded p-3">
