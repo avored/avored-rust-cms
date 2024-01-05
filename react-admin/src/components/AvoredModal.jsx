@@ -1,4 +1,4 @@
-import React, {useState, Fragment} from "react"
+import React, {Fragment} from "react"
 import { Dialog, Transition } from '@headlessui/react'
 
 const AvoredModal = ({
@@ -7,15 +7,6 @@ const AvoredModal = ({
     isOpen = false,
     closeModal
 }) => {
-    // let [isOpen, setIsOpen] = useState(true)
-
-    // function closeModal() {
-    //     setIsOpen(false)
-    // }
-
-    // function openModal() {
-    //     setIsOpen(true)
-    // }
 
     return (
         <>

@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {isEmpty} from "lodash";
 import axios from "axios";
 
@@ -8,9 +8,9 @@ function RoleTable() {
     const navigate = useNavigate()
 
     const getFormattedDate = ((date) => {
-        var date = new Date(date);
+        var date_obj = new Date(date);
 
-        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
     })
 
 

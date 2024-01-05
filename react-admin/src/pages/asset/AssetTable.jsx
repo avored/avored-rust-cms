@@ -1,7 +1,6 @@
 import AvoredModal from "../../components/AvoredModal";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import axios from "axios";
-import {isEmpty} from "lodash";
 import {useNavigate} from "react-router-dom";
 import InputField from "../../components/InputField";
 
@@ -46,11 +45,11 @@ function AssetTable() {
         setFile(file)
     });
 
-    useEffect(() => {
+    useEffect((fetchAssets) => {
         fetchAssets()
     }, [])
 
-    const fetchAssets = (() => {
+    const fetchAssets = useCallback(() => {
         const mounted = (async () => {
 
             const response = await axios({
@@ -70,7 +69,7 @@ function AssetTable() {
             localStorage.removeItem("AUTH_TOKEN")
             return navigate("/admin/login")
         })
-    })
+    }, [navigate])
 
     return (
         <div className="flex-1 bg-white">
@@ -112,18 +111,18 @@ function AssetTable() {
                                         </div>
 
                                         <div className="flex flex-row mt-6 space-x-2 justify-evenly">
-                                            <a href="#"
+                                            <button type="button"
                                                 onClick={saveAsset}
                                                 className="w-full py-3 text-sm font-medium text-center text-white transition
                                                 duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg
                                                 hover:bg-red-500">
                                                 Upload
-                                            </a>
-                                            <a href="#" onClick={onCloseModal}
+                                            </button>
+                                            <button type="button" onClick={onCloseModal}
                                                 className="w-full py-3 text-sm text-center text-gray-500 transition duration-150
                                                 ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100">
                                                 Cancel
-                                            </a>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
