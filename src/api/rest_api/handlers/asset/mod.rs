@@ -1,0 +1,1 @@
+pub mod asset_table_api_handler;
