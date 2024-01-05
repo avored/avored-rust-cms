@@ -23,7 +23,8 @@ use crate::api::rest_api::handlers::{
     role::fetch_role_api_handler::fetch_role_api_handler,
     role::store_role_api_handler::store_role_api_handler,
     role::update_role_api_handler::update_role_api_handler,
-    asset::asset_table_api_handler::asset_table_api_handler
+    asset::asset_table_api_handler::asset_table_api_handler,
+    asset::store_asset_api_handler::store_asset_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -45,6 +46,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
     Router::new()
         .route("/api/asset", get(asset_table_api_handler))
+        .route("/api/asset", post(store_asset_api_handler))
 
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))
