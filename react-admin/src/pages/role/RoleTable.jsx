@@ -38,7 +38,7 @@ function RoleTable() {
             setRoles(data.data)
         })
 
-    }, [])
+    }, [navigate])
 
     return (
         <div className="flex-1 bg-white">
