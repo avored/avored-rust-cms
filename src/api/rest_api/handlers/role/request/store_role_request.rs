@@ -2,8 +2,6 @@ use crate::error::Result;
 use serde::Deserialize;
 use validator::{Validate, ValidationErrors, ValidationErrorsKind};
 
-use crate::providers::avored_session_provider::AvoRedSession;
-
 #[derive(Deserialize, Debug, Clone, Validate, Default)]
 pub struct StoreRoleRequest {
     #[validate(length(min = 1, message = "The name is a required field."))]
@@ -28,13 +26,13 @@ pub struct Permission {
 }
 
 impl StoreRoleRequest {
-    pub fn _validate_errors(&self, mut session: AvoRedSession) -> Result<ValidationErrors> {
+    pub fn _validate_errors(&self) -> Result<ValidationErrors> {
         let validation_error_list = match self.validate() {
             Ok(_) => ValidationErrors::new(),
             Err(errors) => errors,
         };
 
-        for (field_name, error) in validation_error_list.errors() {
+        for (_field_name, error) in validation_error_list.errors() {
             match &error {
                 ValidationErrorsKind::Field(field_errors) => {
                     for _field_error in field_errors {
