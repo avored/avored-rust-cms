@@ -1,6 +1,6 @@
-use crate::error::Result;
+// use crate::error::Result;
 use serde::Deserialize;
-use validator::{Validate, ValidationErrors, ValidationErrorsKind};
+use validator::Validate;
 
 #[derive(Deserialize, Debug, Clone, Validate)]
 pub struct StoreComponentRequest {
