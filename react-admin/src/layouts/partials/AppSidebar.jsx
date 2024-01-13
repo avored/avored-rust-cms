@@ -37,12 +37,12 @@ function AppSidebar() {
                                 <div>Page</div>
                             </Link>
 
-                            <a href="#"
+                            <Link to={`admin/component`}
                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 ">
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="compass"/></div>
                                 <div>Components</div>
-                            </a>
+                            </Link>
                             <a href="/admin/asset"
                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700">
                                 <div className="pr-2">
