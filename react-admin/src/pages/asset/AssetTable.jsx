@@ -45,7 +45,7 @@ function AssetTable() {
         setFile(file)
     });
 
-    useEffect((fetchAssets) => {
+    useEffect(() => {
         fetchAssets()
     }, [])
 
