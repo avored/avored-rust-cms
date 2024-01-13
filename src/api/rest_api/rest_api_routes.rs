@@ -26,7 +26,9 @@ use crate::api::rest_api::handlers::{
     asset::asset_table_api_handler::asset_table_api_handler,
     asset::store_asset_api_handler::store_asset_api_handler,
     component::component_table_api_handler::component_table_api_handler,
-    component::store_component_api_handler::store_component_api_handler
+    component::store_component_api_handler::store_component_api_handler,
+    component::fetch_component_api_handler::fetch_component_api_handler,
+    component::update_component_api_handler::update_component_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -49,6 +51,8 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
         .route("/api/component", get(component_table_api_handler))
         .route("/api/component", post(store_component_api_handler))
+        .route("/api/component/:component_id", get(fetch_component_api_handler))
+        .route("/api/component/:component_id", put(update_component_api_handler))
 
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
