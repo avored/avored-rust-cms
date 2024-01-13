@@ -14,6 +14,9 @@ import RoleTable from "./pages/role/RoleTable";
 import RoleCreate from "./pages/role/RoleCreate";
 import RoleEdit from "./pages/role/RoleEdit";
 import AssetTable from "./pages/asset/AssetTable";
+import ComponentTable from "./pages/component/ComponentTable";
+import ComponentCreate from "./pages/component/ComponentCreate";
+import ComponentEdit from "./pages/component/ComponentEdit";
 
 
 function App() {
@@ -30,6 +33,9 @@ function App() {
 
                     <Route path="/admin/asset"   element={<AssetTable />} />
 
+                    <Route path="/admin/component"   element={<ComponentTable />} />
+                    <Route path="/admin/component-create"   element={<ComponentCreate />} />
+                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEdit />} />
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />

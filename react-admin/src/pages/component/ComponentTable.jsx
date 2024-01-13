@@ -3,8 +3,8 @@ import {Link, useNavigate} from "react-router-dom";
 import {isEmpty} from "lodash";
 import axios from "axios";
 
-function RoleTable() {
-    const [roles, setRoles] = useState([]);
+function ComponentTable() {
+    const [components, setComponents] = useState([]);
     const navigate = useNavigate()
 
     const getFormattedDate = ((date) => {
@@ -19,7 +19,7 @@ function RoleTable() {
         const mounted = (async () => {
 
             const response = await axios({
-                url: 'http://localhost:8080/api/role',
+                url: 'http://localhost:8080/api/component',
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ function RoleTable() {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
-            setRoles(data.data)
+            setComponents(data.data)
         })
 
     }, [navigate])
@@ -45,10 +45,10 @@ function RoleTable() {
             <div className="px-5 ml-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
-                        Roles
+                        Components
                     </div>
                     <Link className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/role-create">
+                        to="/admin/component-create">
                         Create
                     </Link>
                 </div>
@@ -69,23 +69,23 @@ function RoleTable() {
                         </tr>
                         </thead>
                         <tbody className="">
-                        {roles.map((role) => {
+                        {components.map((component) => {
                             return (
-                                <tr key={role.id} className="border-b">
-                                    <td className="py-3 px-4">{role.id}</td>
-                                    <td className="py-3 px-4">{role.name}</td>
-                                    <td className="py-3 px-4">{role.identifier}</td>
+                                <tr key={component.id} className="border-b">
+                                    <td className="py-3 px-4">{component.id}</td>
+                                    <td className="py-3 px-4">{component.name}</td>
+                                    <td className="py-3 px-4">{component.identifier}</td>
                                     <td className="py-3 px-4">
-                                        {getFormattedDate(role.created_at)}
+                                        {getFormattedDate(component.created_at)}
                                     </td>
                                     <td className="py-3 px-4">
-                                        {getFormattedDate(role.updated_at)}
+                                        {getFormattedDate(component.updated_at)}
                                     </td>
-                                    <td className="py-3 px-4">{role.created_by}</td>
-                                    <td className="py-3 px-4">{role.updated_by}</td>
+                                    <td className="py-3 px-4">{component.created_by}</td>
+                                    <td className="py-3 px-4">{component.updated_by}</td>
                                     <td className="py-3 px-4">
                                         <Link className="font-medium text-primary-600 hover:text-primary-800"
-                                              to={`/admin/role-edit/${role.id}`}>
+                                              to={`/admin/component-edit/${component.id}`}>
                                             Edit
                                         </Link>
 
@@ -101,4 +101,4 @@ function RoleTable() {
     )
 }
 
-export default RoleTable
+export default ComponentTable
