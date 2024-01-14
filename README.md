@@ -22,7 +22,7 @@ Set up your `.env` file you can rename the existing `.env.example` file make sur
 ### Start your application backend
     cargo run
 
-Once the application start you can visit `http://localhost:8080/setup` this url will create database tables and admin user once you submit it and redirect to login screen but igonore this page as we got react admin setup in progress.
+Once the application start you can visit `http://localhost:3000/setup` this url will create database tables and admin user once you submit it and redirect to login screen but ignore this page as we got react admin setup in progress.
 
 ### Start react application admin
     cd react-admin
@@ -36,11 +36,11 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
 
 - [x] Admin Users
 - [x] Roles/Permissions
-- [ ] Components
-- [ ] Pages
+- [x] Components
+- [x] Pages
 - [ ] Collection
 - [ ] SEO
-- [ ] Asset Manager
+- [x] Asset Manager
 
 ## RoadMap
  - [ ] Rest API
