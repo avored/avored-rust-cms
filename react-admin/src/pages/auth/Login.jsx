@@ -29,7 +29,7 @@ function Login() {
       body: JSON.stringify({ email: email, password: password }),
     });
     const login_response = await response.json();
-    console.log(login_response);
+
     if (login_response.status) {
       localStorage.setItem("AUTH_TOKEN", login_response.data);
       return redirect("/admin");

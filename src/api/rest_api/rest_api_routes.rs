@@ -28,7 +28,8 @@ use crate::api::rest_api::handlers::{
     component::component_table_api_handler::component_table_api_handler,
     component::store_component_api_handler::store_component_api_handler,
     component::fetch_component_api_handler::fetch_component_api_handler,
-    component::update_component_api_handler::update_component_api_handler
+    component::update_component_api_handler::update_component_api_handler,
+    setup::post_setup_avored_handler::post_setup_avored_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -53,7 +54,6 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/component", post(store_component_api_handler))
         .route("/api/component/:component_id", get(fetch_component_api_handler))
         .route("/api/component/:component_id", put(update_component_api_handler))
-
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
         .route("/api/role", get(role_table_api_handler))
@@ -74,6 +74,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
             require_jwt_authentication,
         ))
         .route("/api/health-check", get(health_check_api_handler))
+        .route("/api/setup", post(post_setup_avored_handler))
         .route("/api/login", post(admin_user_login_api_handler))
         .with_state(state)
         .layer(cors_layer)

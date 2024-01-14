@@ -5,4 +5,5 @@ pub mod page;
 pub mod role;
 pub mod asset;
 pub mod component;
+pub mod setup;
 
