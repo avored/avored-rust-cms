@@ -79,7 +79,6 @@ function AdminUserCreate() {
                                     type="file"
                                     name="image"
                                     onChange={handleProfileImageChange}
-                                    autoFocus
                                 />
                             </div>
 

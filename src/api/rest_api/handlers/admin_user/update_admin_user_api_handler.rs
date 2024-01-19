@@ -1,28 +1,88 @@
+use std::path::Path;
 use std::sync::Arc;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
 
 use axum::{extract::{Path as AxumPath, State}, Json};
+use axum::extract::Multipart;
+use rand::distributions::Alphanumeric;
+use rand::Rng;
 use serde::Serialize;
+use urlencoding::decode_binary;
+use crate::api::rest_api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::api::rest_api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 
 pub async fn update_admin_user_api_handler(
     AxumPath(admin_user_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
-    Json(payload): Json<UpdateAdminUserRequest>,
+    mut multipart: Multipart,
 ) -> Result<Json<UpdatableAdminUserResponse>> {
     println!("->> {:<12} - update_admin_user_api_handler", "HANDLER");
 
-    // let _validation_error_list = payload.validate_errors()?;
+    let mut payload = UpdateAdminUserRequest {
+        full_name: String::from(""),
+        is_super_admin: false,
+    };
+    let mut profile_image = String::from("");
 
-    // println!("Validation error list: {:?}", validation_error_list);
+    while let Some(field) = multipart.next_field().await.expect("cant find next field") {
+        let name = field.name().expect("field name missing");
+
+        match name {
+            "image" => {
+                let s: String = rand::thread_rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(32)
+                    .map(char::from)
+                    .collect();
+
+                let _file_content_type = field.content_type().unwrap().to_string();
+                let file_name = field.file_name().unwrap().to_string();
+                let data = field.bytes().await.expect("data expected");
+
+                if !file_name.is_empty() {
+                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let new_file_name = format!("{}.{}", s, file_ext);
+
+                    let file_name = Path::new(&new_file_name).file_name().unwrap();
+
+                    profile_image = format!("upload/{}", new_file_name);
+                    let full_path = Path::new("public").join("upload").join(file_name);
+                    tokio::fs::write(full_path, data).await.unwrap();
+                }
+            }
+            "full_name" => {
+                let bytes = field.bytes().await.unwrap();
+                let decoded = decode_binary(&bytes).into_owned();
+                let full_name = String::from_utf8_lossy(&decoded).into_owned();
+
+                payload.full_name = full_name;
+            }
+            "is_super_admin" => {
+                let bytes = field.bytes().await.unwrap();
+                let decoded = decode_binary(&bytes).into_owned();
+
+                let string_super_admin = String::from_utf8_lossy(&decoded).into_owned();
+                let mut bool_super_admin = false;
+                if string_super_admin.eq("true") {
+                    bool_super_admin = true;
+                }
+
+                payload.is_super_admin = bool_super_admin;
+            }
+            &_ => continue,
+        }
+    }
+
+    //@todo possible validation here
+
 
     let updateable_admin_user_model = UpdatableAdminUserModel {
         id: admin_user_id,
         full_name: payload.full_name,
-        profile_image: "".to_string(),
+        profile_image,
         is_super_admin: payload.is_super_admin,
         logged_in_username: "admin@admin.com".to_string(),
     };

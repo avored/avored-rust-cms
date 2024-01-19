@@ -3,13 +3,23 @@ import {Link, redirect, useNavigate, useParams} from "react-router-dom";
 import {isEmpty} from "lodash";
 import InputField from "../../components/InputField";
 import {Switch} from "@headlessui/react";
+import axios from "axios";
 
 function AdminUserEdit() {
-    const [full_name, setFullName] = useState();
+    const [full_name, setFullName] = useState()
+    const [current_profile_image, setCurrentProfileImage] = useState()
     const [is_super_admin, setIsSuperAdmin] = useState(false)
+    const [image, setImage] = useState()
     const navigate = useNavigate()
     const params = useParams();
 
+    const handleProfileImageChange = ((e) => {
+        // console.log(e.target.files[0])
+        const file = e.target.files[0];
+        // console.log(file)
+        setImage(file)
+        // console.log(image)
+    })
     useEffect(() => {
         const mounted = (async () => {
             const response = await fetch('http://localhost:8080/api/admin-user/' + params.admin_user_id, {
@@ -32,25 +42,44 @@ function AdminUserEdit() {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
-
             setFullName(res.admin_user_model.full_name)
             setIsSuperAdmin(res.admin_user_model.is_super_admin)
+            setCurrentProfileImage(res.admin_user_model.profile_image)
         })
 
     }, [])
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        const response = (await fetch('http://localhost:8080/api/admin-user/' + params.admin_user_id, {
-            method: 'put',
+
+        var formData = new FormData()
+
+        formData.append("full_name", full_name)
+        formData.append("is_super_admin", is_super_admin)
+        if (image) {
+            formData.append('image', image)
+        }
+        const updated_admin_user_response = (await axios({
+            url: 'http://localhost:8080/api/admin-user/' + params.admin_user_id,
+            method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data; boundary=----',
                 'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
             },
-            body: JSON.stringify({full_name: full_name, is_super_admin: is_super_admin})
+            data: formData
         }))
-        const updated_page_response = await response.json()
-        if (updated_page_response.status) {
+
+        //
+        // const response = (await fetch('http://localhost:8080/api/admin-user/' + params.admin_user_id, {
+        //     method: 'put',
+        //     headers: {
+        //         'Content-Type': 'application/json',
+        //         'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
+        //     },
+        //     body: JSON.stringify({full_name: full_name, is_super_admin: is_super_admin})
+        // }))
+
+        if (updated_admin_user_response.status) {
             return navigate("/admin/admin-user");
         }
     })
@@ -76,13 +105,15 @@ function AdminUserEdit() {
                                     autoFocus
                                 />
                             </div>
-                            <div className="mb-4">
+                            <div className="mb-4 flex items-center">
+                                <label htmlFor="is_super_admin_switch" className="text-sm text-gray-600">Is Super Admin</label>
                                 <Switch
                                     checked={is_super_admin}
                                     onChange={setIsSuperAdmin}
+                                    id="is_super_admin_switch"
                                     className={`${
                                         is_super_admin ? 'bg-primary-500' : 'bg-gray-200'
-                                    } relative inline-flex h-6 w-11 items-center rounded-full`}
+                                    } relative ml-5 inline-flex h-6 w-11 items-center rounded-full`}
                                 >
                                     <span className="sr-only">Enable notifications</span>
                                     <span
@@ -92,7 +123,25 @@ function AdminUserEdit() {
                                     />
                                 </Switch>
                             </div>
-                            <div className="flex items-center">
+                            <div className="flex items-center mt-3">
+                                <div className="ring-1 ring-gray-300 rounded">
+                                    <div className="p-3">
+                                        <img className="h-48 w-48 rounded" src={`http://localhost:8080${current_profile_image}`} />
+                                    </div>
+                                </div>
+                                <div className="ml-5">
+                                    <div className="mb-4">
+                                        <InputField
+                                            accept="image/*"
+                                            label="New Profile Photo"
+                                            type="file"
+                                            name="image"
+                                            onChange={handleProfileImageChange}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="flex items-center mt-5">
                                 <button type="submit"
                                         className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >

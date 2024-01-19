@@ -21,7 +21,6 @@ function AdminUserTable() {
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            console.log(response.ok)
             if (!response.ok) {
                 return
             }
@@ -40,7 +39,7 @@ function AdminUserTable() {
 
     return (
         <div className="flex-1 bg-white">
-            <div className="px-5 pl-64 ">
+            <div className="px-5 pl-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         Admin Users
@@ -52,7 +51,7 @@ function AdminUserTable() {
                 </div>
 
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto pl-5">
                     <table className="min-w-full bg-white shadow-md rounded">
                         <thead>
                         <tr className="bg-gray-700 text-white">
