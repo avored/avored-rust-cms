@@ -12,7 +12,6 @@ RUN cargo chef prepare --recipe-path recipe.json
 
 FROM chef AS builder
 COPY --from=planner /app/recipe.json recipe.json
-COPY --from=planner /app/avored_better_query avored_better_query
 # Notice that we are specifying the --target flag!
 RUN cargo chef cook --release --target x86_64-unknown-linux-gnu --recipe-path recipe.json
 COPY . .
