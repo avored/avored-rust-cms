@@ -1,12 +1,5 @@
 extern crate core;
-
-use async_session::MemoryStore;
-use axum::{
-    extract::State,
-    response::{Html, IntoResponse},
-    routing::get,
-    Router,
-};
+use axum::Router;
 use std::{fs::File, net::SocketAddr, path::Path, sync::Arc};
 use axum::extract::DefaultBodyLimit;
 use tower_http::services::ServeDir;
@@ -14,12 +7,9 @@ use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
-
-
 use crate::{
     avored_state::AvoRedState,
-    error::Result,
-    providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
+    error::Result
 };
 use crate::api::rest_api::rest_api_routes::rest_api_routes;
 
@@ -38,18 +28,15 @@ mod services;
 async fn main() -> Result<()> {
     init_log();
     let state = Arc::new(AvoRedState::new().await?);
-    let store = MemoryStore::new();
-    let config = config();
-    let session_layer = SessionLayer::new(store, config.session_secret_key.as_bytes());
+    // let config = config();
 
     let static_routing_service = ServeDir::new("public");
 
     let app = Router::new()
-        .merge(routes_hello(state.clone()))
         .merge(rest_api_routes(state.clone()))
         .nest_service("/public", static_routing_service)
         .layer(DefaultBodyLimit::max(104857600))
-        .layer(session_layer);
+    ;
 
     println!(r"     _             ____          _ ");
     println!(r"    / \__   _____ |  _ \ ___  __| |");
@@ -72,25 +59,6 @@ async fn main() -> Result<()> {
 
     Ok(())
 }
-
-fn routes_hello(state: Arc<AvoRedState>) -> Router {
-    Router::new()
-        .route("/", get(handler_hello))
-        .with_state(state)
-}
-
-async fn handler_hello(state: State<Arc<AvoRedState>>) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - handler_hello", "HANDLER");
-
-    let handlebar = &state.handlebars;
-    let view_model = HomeViewModel {};
-    let html = handlebar.render("home", &view_model)?;
-
-    Ok(Html(html))
-}
-
-#[derive(serde::Serialize, Default)]
-struct HomeViewModel {}
 
 fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();

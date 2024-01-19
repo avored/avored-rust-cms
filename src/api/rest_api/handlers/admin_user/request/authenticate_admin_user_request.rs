@@ -1,6 +1,5 @@
-use crate::error::Result;
 use serde::Deserialize;
-use validator::{Validate, ValidationErrors};
+use validator::Validate;
 
 #[derive(Deserialize, Debug, Clone, Validate)]
 pub struct AuthenticateAdminUserRequest {
@@ -11,11 +10,11 @@ pub struct AuthenticateAdminUserRequest {
 }
 
 impl AuthenticateAdminUserRequest {
-    pub fn validate_errors(&self) -> Result<ValidationErrors> {
-        let validation_error_list = match self.validate() {
-            Ok(_) => ValidationErrors::new(),
-            Err(errors) => errors,
-        };
+    // pub fn validate_errors(&self) -> Result<ValidationErrors> {
+    //     let validation_error_list = match self.validate() {
+    //         Ok(_) => ValidationErrors::new(),
+    //         Err(errors) => errors,
+    //     };
 
         // for (field_name, error) in validation_error_list.errors() {
         //     match &error {
@@ -40,6 +39,6 @@ impl AuthenticateAdminUserRequest {
         //     }
         // }
 
-        Ok(validation_error_list)
-    }
+    //     Ok(validation_error_list)
+    // }
 }

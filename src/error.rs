@@ -2,7 +2,6 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use handlebars::RenderError;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -23,12 +22,6 @@ impl core::fmt::Display for Error {
 
 impl std::error::Error for Error {}
 
-impl From<RenderError> for Error {
-    fn from(_val: RenderError) -> Self {
-        Error::Generic("handlebar Render Error")
-    }
-}
-
 impl From<serde_json::Error> for Error {
     fn from(_val: serde_json::Error) -> Self {
         Error::Generic("Serde struct to string  Error")
@@ -45,10 +38,10 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         println!("->> {:<12} - {self:?}", "INTO_RES");
 
-        // Create a placeholder Axum reponse.
+        // Create a placeholder Axum response.
         let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
 
-        // Insert the Error into the reponse.
+        // Insert the Error into the response.
         response.extensions_mut().insert(self);
 
         response
