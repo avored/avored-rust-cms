@@ -135,13 +135,13 @@ impl RoleService {
             .await
     }
 
-    pub async fn delete_role(
-        &self,
-        (datastore, database_session): &DB,
-        role_id: String,
-    ) -> Result<bool> {
-        self.role_repository
-            .delete_role(datastore, database_session, role_id)
-            .await
-    }
+    // pub async fn delete_role(
+    //     &self,
+    //     (datastore, database_session): &DB,
+    //     role_id: String,
+    // ) -> Result<bool> {
+    //     self.role_repository
+    //         .delete_role(datastore, database_session, role_id)
+    //         .await
+    // }
 }

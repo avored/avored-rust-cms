@@ -7,7 +7,6 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.6.20", features = ["multipart"] }
-handlebars = { version = "4.4.0", features = ["dir_source"] }
 serde = { version = "1.0.188", features = ["derive"] }
 tokio = { version = "1.32.0", features = ["full"] }
 tracing = "0.1.37"

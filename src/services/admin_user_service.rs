@@ -137,15 +137,15 @@ impl AdminUserService {
         Ok(admin_user_paginate)
     }
 
-    pub async fn delete_admin_user(
-        &self,
-        (datastore, database_session): &DB,
-        admin_user_id: String,
-    ) -> Result<bool> {
-        self.admin_user_repository
-            .delete_admin_user(datastore, database_session, admin_user_id)
-            .await
-    }
+    // pub async fn delete_admin_user(
+    //     &self,
+    //     (datastore, database_session): &DB,
+    //     admin_user_id: String,
+    // ) -> Result<bool> {
+    //     self.admin_user_repository
+    //         .delete_admin_user(datastore, database_session, admin_user_id)
+    //         .await
+    // }
 
     pub async fn create_admin_user(
         &self,

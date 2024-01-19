@@ -167,29 +167,29 @@ impl ComponentRepository {
         component_model
     }
 
-    pub async fn delete_component(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        component_id: String,
-    ) -> Result<bool> {
-        let sql = "
-            DELETE type::thing($table, $id);";
-
-        let vars: BTreeMap<String, Value> = [
-            ("id".into(), component_id.into()),
-            ("table".into(), "components".into()),
-        ]
-        .into();
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        if response.is_ok() {
-            return Ok(true);
-        }
-
-        Ok(false)
-    }
+    // pub async fn delete_component(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     component_id: String,
+    // ) -> Result<bool> {
+    //     let sql = "
+    //         DELETE type::thing($table, $id);";
+    //
+    //     let vars: BTreeMap<String, Value> = [
+    //         ("id".into(), component_id.into()),
+    //         ("table".into(), "components".into()),
+    //     ]
+    //     .into();
+    //
+    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    //     let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+    //     if response.is_ok() {
+    //         return Ok(true);
+    //     }
+    //
+    //     Ok(false)
+    // }
 
     pub async fn get_total_count(
         &self,

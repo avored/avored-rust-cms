@@ -15,17 +15,12 @@ use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
 
-use crate::api::page::page_routes::page_routes;
+
 use crate::{
-    api::{
-        admin_user::admin_user_routes::admin_user_routes,
-        component::component_routes::component_routes, setup::setup_routes::setup_routes,
-    },
     avored_state::AvoRedState,
     error::Result,
     providers::{avored_config_provider::config, avored_session_provider::SessionLayer},
 };
-use crate::api::asset::asset_routes::asset_routes;
 use crate::api::rest_api::rest_api_routes::rest_api_routes;
 
 const PER_PAGE: i64 = 10;
@@ -50,13 +45,8 @@ async fn main() -> Result<()> {
     let static_routing_service = ServeDir::new("public");
 
     let app = Router::new()
-        .merge(asset_routes(state.clone()))
         .merge(routes_hello(state.clone()))
-        .merge(component_routes(state.clone()))
-        .merge(page_routes(state.clone()))
-        .merge(admin_user_routes(state.clone()))
         .merge(rest_api_routes(state.clone()))
-        .merge(setup_routes(state))
         .nest_service("/public", static_routing_service)
         .layer(DefaultBodyLimit::max(104857600))
         .layer(session_layer);

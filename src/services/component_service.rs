@@ -106,15 +106,15 @@ impl ComponentService {
             .await
     }
 
-    pub async fn delete_component(
-        &self,
-        (datastore, database_session): &DB,
-        component_id: String,
-    ) -> Result<bool> {
-        self.component_repository
-            .delete_component(datastore, database_session, component_id)
-            .await
-    }
+    // pub async fn delete_component(
+    //     &self,
+    //     (datastore, database_session): &DB,
+    //     component_id: String,
+    // ) -> Result<bool> {
+    //     self.component_repository
+    //         .delete_component(datastore, database_session, component_id)
+    //         .await
+    // }
 
     pub async fn attach_component_with_field(
         &self,

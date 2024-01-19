@@ -164,29 +164,29 @@ impl RoleRepository {
         role_model
     }
 
-    pub async fn delete_role(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        role_id: String,
-    ) -> Result<bool> {
-        let sql = "
-            DELETE type::thing($table, $id);";
-
-        let vars: BTreeMap<String, Value> = [
-            ("id".into(), role_id.into()),
-            ("table".into(), "roles".into()),
-        ]
-        .into();
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        if response.is_ok() {
-            return Ok(true);
-        }
-
-        Ok(false)
-    }
+    // pub async fn delete_role(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     role_id: String,
+    // ) -> Result<bool> {
+    //     let sql = "
+    //         DELETE type::thing($table, $id);";
+    //
+    //     let vars: BTreeMap<String, Value> = [
+    //         ("id".into(), role_id.into()),
+    //         ("table".into(), "roles".into()),
+    //     ]
+    //     .into();
+    //
+    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    //     let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+    //     if response.is_ok() {
+    //         return Ok(true);
+    //     }
+    //
+    //     Ok(false)
+    // }
 
     pub async fn get_total_count(
         &self,
