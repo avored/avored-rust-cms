@@ -12,7 +12,7 @@ use urlencoding::decode_binary;
 use crate::api::rest_api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
-use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUser};
+use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
 pub async fn store_admin_user_api_handler(
     state: State<Arc<AvoRedState>>,
     mut multipart: Multipart,
@@ -25,11 +25,14 @@ pub async fn store_admin_user_api_handler(
         password: String::from(""),
         is_super_admin: false,
         confirmation_password: String::from(""),
+        role_ids: vec![]
     };
     let mut profile_image = String::from("");
 
     while let Some(field) = multipart.next_field().await.expect("cant find next field") {
         let name = field.name().expect("field name missing");
+
+        println!("field name: {name}");
 
         match name {
             "image" => {
@@ -93,6 +96,13 @@ pub async fn store_admin_user_api_handler(
                 let confirmation_password = String::from_utf8_lossy(&decoded).into_owned();
 
                 payload.confirmation_password = confirmation_password;
+            },
+            "role_ids[]" => {
+                let bytes = field.bytes().await.unwrap();
+                let decoded = decode_binary(&bytes).into_owned();
+                let role_id = String::from_utf8_lossy(&decoded).into_owned();
+
+                payload.role_ids.push(role_id);
             }
             &_ => continue,
         }
@@ -136,13 +146,14 @@ pub async fn store_admin_user_api_handler(
         .expect("Error occurred while encrypted password")
         .to_string();
 
-    let creatable_admin_user = CreatableAdminUser {
+    let creatable_admin_user = CreatableAdminUserModel {
         full_name: payload.full_name,
         email: payload.email,
         password: password_hash,
         profile_image,
         is_super_admin: payload.is_super_admin,
         logged_in_username: "admin@admin.com".to_string(),
+        role_ids: payload.role_ids
     };
 
     let created_admin_user = state

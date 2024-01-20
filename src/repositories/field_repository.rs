@@ -8,6 +8,7 @@ use surrealdb::sql::{Datetime, Value};
 
 use super::into_iter_objects;
 
+#[derive(Clone)]
 pub struct FieldRepository {}
 
 impl FieldRepository {

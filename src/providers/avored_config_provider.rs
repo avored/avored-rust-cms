@@ -1,7 +1,5 @@
-use std::{env, sync::OnceLock};
-
+use std::env;
 use dotenvy::dotenv;
-
 use crate::error::{Error, Result};
 
 #[derive(Debug, Clone)]
@@ -13,14 +11,14 @@ pub struct AvoRedConfigProvider {
     pub front_end_app_url: String
 }
 
-pub fn config() -> &'static AvoRedConfigProvider {
-    static INSTANCE: OnceLock<AvoRedConfigProvider> = OnceLock::new();
-
-    INSTANCE.get_or_init(|| {
-        AvoRedConfigProvider::register()
-            .unwrap_or_else(|ex| panic!("FATAL - WHILE LOADING CONF - Cause: {ex:?}"))
-    })
-}
+// pub fn config() -> &'static AvoRedConfigProvider {
+//     static INSTANCE: OnceLock<AvoRedConfigProvider> = OnceLock::new();
+//
+//     INSTANCE.get_or_init(|| {
+//         AvoRedConfigProvider::register()
+//             .unwrap_or_else(|ex| panic!("FATAL - WHILE LOADING CONF - Cause: {ex:?}"))
+//     })
+// }
 
 impl AvoRedConfigProvider {
     pub fn register() -> Result<AvoRedConfigProvider> {

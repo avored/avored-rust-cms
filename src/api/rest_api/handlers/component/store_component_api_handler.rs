@@ -28,7 +28,7 @@ pub async fn store_component_api_handler(
         .create_component(&state.db, creatable_component)
         .await?;
 
-    println!("Created component {:?}", created_component.clone());
+    // println!("Created component {:?}", created_component.clone());
 
     for payload_field in payload.fields {
         let creatable_field = CreatableFieldModel {
@@ -38,14 +38,14 @@ pub async fn store_component_api_handler(
             logged_in_username: "admin@admin.com".to_string(),
         };
 
-        println!("creatable_field: {creatable_field:?}");
+        // println!("creatable_field: {creatable_field:?}");
 
         let created_field = state
             .field_service
             .create_field(&state.db, creatable_field)
             .await?;
 
-        println!("Created component {:?}", created_component.clone());
+        // println!("Created component {:?}", created_component.clone());
         // println!("Created Field {:?}", created_field.clone());
 
         state
@@ -57,7 +57,7 @@ pub async fn store_component_api_handler(
                 "admin@admin.com".to_string(),
             )
             .await?;
-        println!("ATTACHED: {:?}", created_field.clone());
+        // println!("ATTACHED: {:?}", created_field.clone());
 
         created_component.fields.push(created_field);
 

@@ -11,6 +11,7 @@ use crate::PER_PAGE;
 use super::into_iter_objects;
 const ASSET_TABLE: &str = "assets";
 
+#[derive(Clone)]
 pub struct AssetRepository {}
 
 impl AssetRepository {

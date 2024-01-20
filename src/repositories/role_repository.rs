@@ -10,6 +10,7 @@ use surrealdb::sql::{Datetime, Value};
 
 use super::into_iter_objects;
 
+#[derive(Clone)]
 pub struct RoleRepository {}
 
 impl RoleRepository {

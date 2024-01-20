@@ -11,7 +11,7 @@ use crate::PER_PAGE;
 use super::into_iter_objects;
 const PAGE_TABLE: &str = "pages";
 
-
+#[derive(Clone)]
 pub struct PageRepository {}
 
 impl PageRepository {

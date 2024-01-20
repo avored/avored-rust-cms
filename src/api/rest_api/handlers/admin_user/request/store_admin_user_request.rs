@@ -7,4 +7,5 @@ pub struct StoreAdminUserRequest {
     pub password: String,
     pub confirmation_password: String,
     pub is_super_admin: bool,
+    pub role_ids: Vec<String>
 }

@@ -1,6 +1,7 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
+use crate::models::role_model::RoleModel;
 
 use super::Pagination;
 
@@ -16,6 +17,7 @@ pub struct AdminUserModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
+    pub roles: Vec<RoleModel>,
 }
 
 impl TryFrom<Object> for AdminUserModel {
@@ -94,6 +96,33 @@ impl TryFrom<Object> for AdminUserModel {
             }
             None => false,
         };
+
+        let roles = match val.get("roles") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => surrealdb::sql::Object::default(),
+                            };
+
+                            let role_model: RoleModel = object.try_into()?;
+
+                            arr.push(role_model)
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
+
+
         let created_at = match val.get("created_at") {
             Some(val) => {
                 let value = match val.clone() {
@@ -148,18 +177,20 @@ impl TryFrom<Object> for AdminUserModel {
             updated_at,
             created_by,
             updated_by,
+            roles
         })
     }
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct CreatableAdminUser {
+pub struct CreatableAdminUserModel {
     pub full_name: String,
     pub email: String,
     pub password: String,
     pub profile_image: String,
     pub is_super_admin: bool,
     pub logged_in_username: String,
+    pub role_ids: Vec<String>
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -169,6 +200,7 @@ pub struct UpdatableAdminUserModel {
     pub profile_image: String,
     pub is_super_admin: bool,
     pub logged_in_username: String,
+    pub role_ids: Vec<String>
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

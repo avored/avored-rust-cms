@@ -10,7 +10,6 @@ use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use urlencoding::decode_binary;
-use crate::api::rest_api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::api::rest_api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 
@@ -24,6 +23,7 @@ pub async fn update_admin_user_api_handler(
     let mut payload = UpdateAdminUserRequest {
         full_name: String::from(""),
         is_super_admin: false,
+        role_ids: vec![]
     };
     let mut profile_image = String::from("");
 
@@ -71,6 +71,13 @@ pub async fn update_admin_user_api_handler(
                 }
 
                 payload.is_super_admin = bool_super_admin;
+            },
+            "role_ids[]" => {
+                let bytes = field.bytes().await.unwrap();
+                let decoded = decode_binary(&bytes).into_owned();
+                let role_id = String::from_utf8_lossy(&decoded).into_owned();
+
+                payload.role_ids.push(role_id);
             }
             &_ => continue,
         }
@@ -85,6 +92,7 @@ pub async fn update_admin_user_api_handler(
         profile_image,
         is_super_admin: payload.is_super_admin,
         logged_in_username: "admin@admin.com".to_string(),
+        role_ids: payload.role_ids
     };
     let updated_admin_user_model = state
         .admin_user_service

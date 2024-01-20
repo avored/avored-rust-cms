@@ -4,4 +4,5 @@ use serde::Deserialize;
 pub struct UpdateAdminUserRequest {
     pub full_name: String,
     pub is_super_admin: bool,
+    pub role_ids: Vec<String>
 }

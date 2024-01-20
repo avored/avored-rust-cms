@@ -32,21 +32,17 @@ impl AvoRedState {
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
 
         let admin_user_repository = AdminUserRepository::new();
-        let admin_user_service = AdminUserService::new(admin_user_repository)?;
-
         let role_repository = RoleRepository::new();
-        let role_service = RoleService::new(role_repository)?;
-
         let component_repository = ComponentRepository::new();
-        let component_service = ComponentService::new(component_repository)?;
-
         let field_repository = FieldRepository::new();
-        let field_service = FieldService::new(field_repository)?;
-
         let page_repository = PageRepository::new();
-        let page_service = PageService::new(page_repository)?;
-
         let asset_repository = AssetRepository::new();
+
+        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository.clone())?;
+        let role_service = RoleService::new(role_repository)?;
+        let component_service = ComponentService::new(component_repository)?;
+        let field_service = FieldService::new(field_repository)?;
+        let page_service = PageService::new(page_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
 
         Ok(AvoRedState {
