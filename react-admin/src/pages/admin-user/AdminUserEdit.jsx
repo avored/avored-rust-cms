@@ -1,11 +1,17 @@
 import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {isEmpty} from "lodash";
 import InputField from "../../components/InputField";
 import {Switch} from "@headlessui/react";
-import axios from "axios";
+import axios from "axios"
+import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
 
 function AdminUserEdit() {
+
+    const [roles, setRoles] = useState([])
+
+    const [selectedOption, setSelectedOption] = useState([])
+
     const [full_name, setFullName] = useState()
     const [current_profile_image, setCurrentProfileImage] = useState()
     const [is_super_admin, setIsSuperAdmin] = useState(false)
@@ -14,37 +20,58 @@ function AdminUserEdit() {
     const params = useParams();
 
     const handleProfileImageChange = ((e) => {
-        // console.log(e.target.files[0])
         const file = e.target.files[0];
-        // console.log(file)
         setImage(file)
-        // console.log(image)
     })
+
     useEffect(() => {
         const mounted = (async () => {
-            const response = await fetch('http://localhost:8080/api/admin-user/' + params.admin_user_id, {
-                method: 'get',
+            const response = await axios({
+                url: 'http://localhost:8080/api/admin-user/' + params.admin_user_id,
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            console.log(response.ok)
-            if (!response.ok) {
-
+            if (!response.data.status) {
                 return
             }
-            return await response.json()
+            return response.data
+        })
+
+        const role_option_mounted = (async () => {
+            const response = await axios({
+                url: 'http://localhost:8080/api/role-options',
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
+                }
+            })
+            if (!response.data.status) {
+                return
+            }
+            return response.data
+        })
+
+        role_option_mounted().then((res) => {
+            setRoles(res.options)
         })
 
         mounted().then((res) => {
-            if (isEmpty(res)) {
+            if (!res.status) {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
             setFullName(res.admin_user_model.full_name)
             setIsSuperAdmin(res.admin_user_model.is_super_admin)
             setCurrentProfileImage(res.admin_user_model.profile_image)
+            var role_ids = []
+            res.admin_user_model.roles.forEach((role) => {
+                role_ids.push(role.id)
+            })
+            setSelectedOption(role_ids)
         })
 
     }, [])
@@ -56,9 +83,20 @@ function AdminUserEdit() {
 
         formData.append("full_name", full_name)
         formData.append("is_super_admin", is_super_admin)
+
+        selectedOption.map((option) => {
+            formData.append("role_ids[]", option)
+        })
+        // formData.append("roles", selectedOption)
+        // console.log(selectedOption)
+
+
         if (image) {
             formData.append('image', image)
         }
+
+        console.log(formData)
+
         const updated_admin_user_response = (await axios({
             url: 'http://localhost:8080/api/admin-user/' + params.admin_user_id,
             method: 'PUT',
@@ -105,8 +143,21 @@ function AdminUserEdit() {
                                     autoFocus
                                 />
                             </div>
+                            <div className="mb-4">
+                                <div className="relative z-10">
+                                    <AvoRedMultiSelectField
+                                        label="Roles"
+                                        options={roles}
+                                        selectedOption={selectedOption}
+                                        onChangeSelectedOption={setSelectedOption}
+                                    >
+                                    </AvoRedMultiSelectField>
+
+                                </div>
+                            </div>
                             <div className="mb-4 flex items-center">
-                                <label htmlFor="is_super_admin_switch" className="text-sm text-gray-600">Is Super Admin</label>
+                                <label htmlFor="is_super_admin_switch" className="text-sm text-gray-600">Is Super
+                                    Admin</label>
                                 <Switch
                                     checked={is_super_admin}
                                     onChange={setIsSuperAdmin}
@@ -126,7 +177,8 @@ function AdminUserEdit() {
                             <div className="flex items-center mt-3">
                                 <div className="ring-1 ring-gray-300 rounded">
                                     <div className="p-3">
-                                        <img className="h-48 w-48 rounded" src={`http://localhost:8080${current_profile_image}`} />
+                                        <img className="h-48 w-48 rounded"
+                                             src={`${current_profile_image}`}/>
                                     </div>
                                 </div>
                                 <div className="ml-5">

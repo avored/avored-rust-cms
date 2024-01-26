@@ -83,7 +83,8 @@ impl TryFrom<Object> for AdminUserModel {
         if profile_image.is_empty() {
             profile_image = String::from("https://place-hold.it/250x250");
         } else {
-            profile_image = format!("/public/{}", profile_image);
+            //@todo fix this
+            profile_image = format!("http://localhost:8080/public/{}", profile_image);
         }
 
         let is_super_admin = match val.get("is_super_admin") {

@@ -8,6 +8,7 @@ use crate::{
     repositories::role_repository::RoleRepository,
     PER_PAGE,
 };
+use crate::models::role_model::RoleOptionModel;
 
 pub struct RoleService {
     role_repository: RoleRepository,
@@ -19,24 +20,23 @@ impl RoleService {
     }
 }
 impl RoleService {
-    // pub async fn all_admin_users(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    // ) -> Result<Vec<AdminUserModel>> {
-    //     let sql = "SELECT * FROM admin_users";
+    pub async fn all(
+        &self,
+        (datastore, database_session): &DB,
+    ) -> Result<Vec<RoleOptionModel>> {
+        let roles = self.role_repository.all(datastore, database_session).await?;
+        let mut role_options: Vec<RoleOptionModel> = vec![];
 
-    //     let responses = datastore.execute(sql, database_session, None).await?;
+        for role in roles {
+            let role_option_model = RoleOptionModel {
+                value: role.id,
+                label: role.name
+            };
+            role_options.push(role_option_model);
+        }
 
-    //     let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
-
-    //     for object in into_iter_objects(responses)? {
-    //         let admin_user_object = object?;
-
-    //         let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
-    //         admin_user_list.push(admin_user_model?);
-    //     }
-    //     Ok(admin_user_list)
-    // }
+        Ok(role_options)
+    }
 
     // pub async fn find_by_id(
     //     &self,

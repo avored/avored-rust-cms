@@ -1,6 +1,7 @@
-import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate} from "react-router-dom";
-import {isEmpty} from "lodash";
+import {useEffect, useState} from "react"
+import {Link, useNavigate} from "react-router-dom"
+import {isEmpty} from "lodash"
+import axios from "axios"
 
 function AdminUserTable() {
     const [adminUsers, setAdminUsers] = useState([]);
@@ -14,21 +15,19 @@ function AdminUserTable() {
 
     useEffect(() => {
         const mounted = (async () => {
-            const response = await fetch('http://localhost:8080/api/admin-user', {
+            const response = await axios({
+                url: 'http://localhost:8080/api/admin-user',
                 method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            if (!response.ok) {
-                return
-            }
-            return await response.json()
+            return response.data
         })
 
         mounted().then((res) => {
-            if (isEmpty(res)) {
+            if (res.data.length < 0) {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }

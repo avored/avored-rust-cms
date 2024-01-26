@@ -16,6 +16,13 @@ pub struct RoleModel {
     pub permissions: Vec<String>,
 }
 
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct RoleOptionModel {
+    pub label: String,
+    pub value: String
+}
+
+
 impl TryFrom<Object> for RoleModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<RoleModel> {
