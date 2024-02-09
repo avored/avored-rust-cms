@@ -61,7 +61,9 @@ function ComponentEdit() {
             <div className="px-5 pl-64">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
+
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                            {JSON.stringify(process.env.REACT_APP_AVORED_FRONTEND_BASE_URL)}
                             Component Information
                         </h1>
                         {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
