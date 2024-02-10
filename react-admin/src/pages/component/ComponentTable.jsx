@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {isEmpty} from "lodash";
-import axios from "axios";
+import axios from "axios"
+import apiClient from "../../ApiClient";
 
 function ComponentTable() {
     const [components, setComponents] = useState([]);
@@ -18,24 +19,22 @@ function ComponentTable() {
     useEffect(() => {
         const mounted = (async () => {
 
-            const response = await axios({
-                url: 'http://localhost:8080/api/component',
+            return await apiClient({
+                url: '/component',
                 method: 'get',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            return response
         })
 
         mounted().then(({data}) => {
-            console.log(data)
-            if (isEmpty(data)) {
+            setComponents(data.data)
+        }).catch((errors) => {
+            if (errors.response.status === 401) {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
-            setComponents(data.data)
         })
 
     }, [navigate])

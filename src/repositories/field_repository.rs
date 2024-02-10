@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::field_model::{CreatableFieldModel, FieldModel};
+use crate::models::field_model::{CreatableFieldModel, FieldModel, UpdatableFieldModel};
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
@@ -97,42 +97,44 @@ impl FieldRepository {
     //     field_model
     // }
     //
-    // pub async fn update_field(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     updatable_admin_user: UpdatableFieldModel,
-    // ) -> Result<FieldModel> {
-    //     let sql = "
-    //         UPDATE type::thing($table, $id) MERGE {
-    //             name: $name,
-    //             identifier: $identifier,
-    //             updated_by: $logged_in_user_name,
-    //             updated_at: time::now()
-    //         };";
-    //
-    //     let vars = BTreeMap::from([
-    //         ("name".into(), updatable_admin_user.name.into()),
-    //         ("identifier".into(), updatable_admin_user.identifier.into()),
-    //         (
-    //             "logged_in_user_name".into(),
-    //             updatable_admin_user.logged_in_username.into(),
-    //         ),
-    //         ("id".into(), updatable_admin_user.id.into()),
-    //         ("table".into(), "fields".into()),
-    //     ]);
-    //
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found")),
-    //     };
-    //     let field_model: Result<FieldModel> = result_object?.try_into();
-    //
-    //     field_model
-    // }
+    pub async fn update_field(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_admin_user: UpdatableFieldModel,
+    ) -> Result<FieldModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                name: $name,
+                identifier: $identifier,
+                updated_by: $logged_in_user_name,
+                field_type: $field_type,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("name".into(), updatable_admin_user.name.into()),
+            ("identifier".into(), updatable_admin_user.identifier.into()),
+            ("field_type".into(), updatable_admin_user.field_type.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_admin_user.logged_in_username.into(),
+            ),
+            ("id".into(), updatable_admin_user.id.into()),
+            ("table".into(), "fields".into()),
+        ]);
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found")),
+        };
+        let field_model: Result<FieldModel> = result_object?.try_into();
+
+        field_model
+    }
     //
     // pub async fn delete_field(
     //     &self,

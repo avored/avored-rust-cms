@@ -15,24 +15,26 @@ function AdminUserTable() {
 
     useEffect(() => {
         const mounted = (async () => {
-            const response = await axios({
+            return axios({
                 url: 'http://localhost:8080/api/admin-user',
-                method: 'get',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            return response.data
         })
 
         mounted().then((res) => {
-            if (res.data.length < 0) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
+            setAdminUsers(res.data.data)
+        }).catch (
+            function (error) {
+                if (error.response.status === 401) {
+                    localStorage.removeItem("AUTH_TOKEN")
+                    return navigate("/admin/login")
+                }
+                alert(error)
             }
-            setAdminUsers(res.data)
-        })
+        )
 
     }, [])
 
