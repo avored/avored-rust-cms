@@ -16,7 +16,7 @@ pub async fn store_component_api_handler(
 ) -> Result<Json<CreatedComponentResponse>> {
     // let _validation_error_list = payload.validate_errors()?;
 
-    // println!("Validation error list: {:?}", validation_error_list);
+    // println!("Payload: {:?}", payload.clone());
     let creatable_component = CreatableComponent {
         name: payload.name,
         identifier: payload.identifier,
@@ -60,8 +60,6 @@ pub async fn store_component_api_handler(
         // println!("ATTACHED: {:?}", created_field.clone());
 
         created_component.fields.push(created_field);
-
-
     }
     let created_response = CreatedComponentResponse {
         status: true,
@@ -69,7 +67,6 @@ pub async fn store_component_api_handler(
     };
 
     Ok(Json(created_response))
-
 }
 
 #[derive(Serialize, Debug)]

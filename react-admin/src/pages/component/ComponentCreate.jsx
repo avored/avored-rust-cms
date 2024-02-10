@@ -13,7 +13,7 @@ function ComponentCreate() {
 
     const addFieldOnClick = (() => {
 
-        var field = {id: Math.random(), type: 'text', name: '', identifier: ''};
+        var field = {id: Math.random(), field_type: 'text', name: '', identifier: ''};
 
         setFields(fields => [...fields, field])
     })
@@ -29,7 +29,7 @@ function ComponentCreate() {
         setFields(prevFields => {
             return prevFields.map(field => {
                 if (field.id === fieldIndex) {
-                    field.type = fieldTypeValue
+                    field.field_type = fieldTypeValue
                     return field
                 }
                 return field
@@ -70,8 +70,9 @@ function ComponentCreate() {
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
             },
-            data: JSON.stringify({name: name, identifier: identifier, fields: []})
+            data: JSON.stringify({name: name, identifier: identifier, fields: fields})
         })
+
         if (created_page_response.status) {
             return navigate("/admin/component");
         }
@@ -116,13 +117,13 @@ function ComponentCreate() {
                                             <div className="border-r p-5 w-1/3">
                                                 <div
                                                     onClick={e => fieldTypeButtonOnClick(field.id ,'text')}
-                                                    className={`${field.type === 'text' ? 'bg-primary-300' : 'bg-gray-300'} ring-1 p-3 mt-3 rounded`}
+                                                    className={`${field.field_type === 'text' ? 'bg-primary-300' : 'bg-gray-300'} ring-1 p-3 mt-3 rounded`}
                                                 >
                                                     Text
                                                 </div>
                                                 <div
                                                     onClick={e => fieldTypeButtonOnClick(field.id ,'textarea')}
-                                                    className={`${field.type === 'textarea' ? 'bg-primary-300' : 'bg-gray-300'} ring-1 p-3 mt-3 rounded`}
+                                                    className={`${field.field_type === 'textarea' ? 'bg-primary-300' : 'bg-gray-300'} ring-1 p-3 mt-3 rounded`}
                                                 >
                                                     Textarea
                                                 </div>
@@ -130,7 +131,7 @@ function ComponentCreate() {
 
                                             <div className="p-3 w-2/3">
                                                 <div>
-                                                    Field Type: {field.type}
+                                                    Field Type: {field.field_type}
                                                 </div>
                                                 <div className="mt-3">
                                                     <InputField
