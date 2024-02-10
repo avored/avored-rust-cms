@@ -4,6 +4,7 @@ use crate::{
     providers::avored_database_provider::DB,
     repositories::field_repository::FieldRepository,
 };
+use crate::models::field_model::UpdatableFieldModel;
 
 pub struct FieldService {
     field_repository: FieldRepository,
@@ -85,15 +86,15 @@ impl FieldService {
     //         .await
     // }
     //
-    // pub async fn update_field(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     updatable_field_model: UpdatableFieldModel,
-    // ) -> Result<FieldModel> {
-    //     self.field_repository
-    //         .update_field(datastore, database_session, updatable_field_model)
-    //         .await
-    // }
+    pub async fn update_field(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_field_model: UpdatableFieldModel,
+    ) -> Result<FieldModel> {
+        self.field_repository
+            .update_field(datastore, database_session, updatable_field_model)
+            .await
+    }
     //
     // pub async fn delete_field(
     //     &self,

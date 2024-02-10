@@ -12,9 +12,7 @@ function ComponentCreate() {
     const navigate = useNavigate()
 
     const addFieldOnClick = (() => {
-
         var field = {id: Math.random(), field_type: 'text', name: '', identifier: ''};
-
         setFields(fields => [...fields, field])
     })
 
@@ -85,7 +83,6 @@ function ComponentCreate() {
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                             Component Information
-                            {JSON.stringify(fields)}
                         </h1>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
@@ -162,20 +159,19 @@ function ComponentCreate() {
                                         Add Field
                                     </span>
                                 </button>
-
                             </div>
-                                <div className="flex items-center">
-                                    <button type="submit"
-                                            className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                    >
-                                        Save
-                                    </button>
-                                    <Link to="/admin/component"
-                                          className="ml-auto font-medium text-gray-600 hover:text-gray-500">
-                                        Cancel
-                                    </Link>
-                                </div>
 
+                            <div className="flex items-center">
+                                <button type="submit"
+                                        className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                >
+                                    Save
+                                </button>
+                                <Link to="/admin/component"
+                                      className="ml-auto font-medium text-gray-600 hover:text-gray-500">
+                                    Cancel
+                                </Link>
+                            </div>
                         </form>
                     </div>
                 </div>

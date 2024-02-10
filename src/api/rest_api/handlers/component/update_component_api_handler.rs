@@ -8,6 +8,7 @@ use axum::{extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
 use crate::api::rest_api::handlers::component::request::update_component_request::UpdateComponentRequest;
 use crate::models::component_model::{ComponentModel, UpdatableComponentModel};
+use crate::models::field_model::UpdatableFieldModel;
 
 pub async fn update_component_api_handler(
     AxumPath(component_id): AxumPath<String>,
@@ -22,11 +23,55 @@ pub async fn update_component_api_handler(
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: "admin@admin.com".to_string(),
+
     };
-    let updated_component_model = state
+    let mut updated_component_model = state
         .component_service
         .update_component(&state.db, updateable_component_model)
         .await?;
+
+    for payload_field in payload.fields {
+
+        println!("Payload Fields: {payload_field:?}");
+
+        //@todo check for field ID and if not exist then create field and attached field
+
+
+
+        let updatable_field = UpdatableFieldModel {
+            id: payload_field.id,
+            name: payload_field.name,
+            identifier: payload_field.identifier,
+            field_type: payload_field.field_type,
+            logged_in_username: "admin@admin.com".to_string(),
+        };
+        //
+        // // println!("creatable_field: {creatable_field:?}");
+        //
+        let updated_field = state
+            .field_service
+            .update_field(&state.db, updatable_field)
+            .await?;
+
+        updated_component_model.fields.push(updated_field);
+        //
+        // // println!("Created component {:?}", created_component.clone());
+        // // println!("Created Field {:?}", created_field.clone());
+        //
+        // state
+        //     .component_service
+        //     .attach_component_with_field(
+        //         &state.db,
+        //         created_component.clone(),
+        //         created_field.clone(),
+        //         "admin@admin.com".to_string(),
+        //     )
+        //     .await?;
+        // // println!("ATTACHED: {:?}", created_field.clone());
+        //
+        // created_component.fields.push(created_field);
+    }
+
 
     let response = UpdatedComponentResponse {
         status: true,

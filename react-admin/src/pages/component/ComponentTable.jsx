@@ -19,14 +19,13 @@ function ComponentTable() {
     useEffect(() => {
         const mounted = (async () => {
 
-            const response = await apiClient({
+            return await apiClient({
                 url: '/component',
                 method: 'get',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            return response
         })
 
         mounted().then(({data}) => {

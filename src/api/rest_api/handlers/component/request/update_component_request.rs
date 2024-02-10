@@ -8,6 +8,16 @@ pub struct UpdateComponentRequest {
 
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
+
+    pub fields: Vec<UpdatableField>,
+}
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct UpdatableField {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
 }
 
 impl UpdateComponentRequest {

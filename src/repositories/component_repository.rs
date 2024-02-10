@@ -111,7 +111,7 @@ impl ComponentRepository {
         component_id: String,
     ) -> Result<ComponentModel> {
         let sql =
-            "SELECT *, ->component_field<-fields.* as fields FROM type::thing($table, $id);";
+            "SELECT *, ->component_field->fields.* as fields FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
             ("id".into(), component_id.into()),
             ("table".into(), "components".into()),
