@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::models::page_model::{CreatablePageModel, PageModel};
+use crate::models::page_model::{ComponentContentModel, CreatablePageModel, PageModel};
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -17,12 +17,25 @@ pub async fn store_page_api_handler(
 
     // println!("Validation error list: {:?}", validation_error_list);
 
-    let creatable_page = CreatablePageModel {
+    let mut  creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
         content: "test content".to_string(), // ideally we should not need this one
         logged_in_username: "admin@admin.com".to_string(),
+        component_content: vec![]
     };
+
+    for payload_component_content in payload.component_content {
+        let creatable_component_content_model = ComponentContentModel {
+            id: payload_component_content.id,
+            name: payload_component_content.name,
+            identifier: payload_component_content.identifier,
+            content: payload_component_content.content,
+        };
+
+        creatable_page.component_content.push(creatable_component_content_model);
+    }
+
 
     let created_page_model = state
         .page_service

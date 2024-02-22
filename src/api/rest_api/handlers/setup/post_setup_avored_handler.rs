@@ -119,6 +119,7 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD name ON TABLE pages TYPE string;
         DEFINE FIELD identifier ON TABLE pages TYPE string;
         DEFINE FIELD content ON TABLE pages TYPE string;
+        DEFINE FIELD component_content ON TABLE pages TYPE array;
         DEFINE FIELD created_by ON TABLE pages TYPE string;
         DEFINE FIELD updated_by ON TABLE pages TYPE string;
         DEFINE FIELD created_at ON TABLE pages TYPE datetime;
@@ -128,6 +129,7 @@ pub async fn post_setup_avored_handler(
         CREATE pages CONTENT {
             name: 'Home Page',
             identifier: 'home-page',
+            component_content: [{id: 'test id', name: 'test name', identifier: 'test identifier', content: 'test data'}],
             content:
 '**Bold Content**
 *Italic content*

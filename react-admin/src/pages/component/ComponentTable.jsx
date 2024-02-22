@@ -1,7 +1,5 @@
 import {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {isEmpty} from "lodash";
-import axios from "axios"
 import apiClient from "../../ApiClient";
 
 function ComponentTable() {

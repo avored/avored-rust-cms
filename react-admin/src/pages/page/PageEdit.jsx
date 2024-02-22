@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {Link, redirect, useNavigate, useParams} from "react-router-dom";
 import {isEmpty} from "lodash";
+import apiClient from "../../ApiClient";
 
 function PageEdit() {
     const [name, setName] = useState('Contact US update');
@@ -11,19 +12,16 @@ function PageEdit() {
 
     useEffect(() => {
         const mounted = (async () => {
-            const response = await fetch('http://localhost:8080/api/page/' + params.page_id, {
-                method: 'get',
+            const response  = await apiClient({
+                url: '/page',
+                method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            console.log(response.ok)
-            if (!response.ok) {
 
-                return
-            }
-            return await response.json()
+
+            return response
         })
 
         mounted().then((res) => {

@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::{Datetime, Value};
+use surrealdb::sql::Value;
 
 use crate::error::{Error, Result};
 use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
@@ -96,32 +96,68 @@ impl PageRepository {
         creatable_page_model: CreatablePageModel,
     ) -> Result<PageModel> {
 
-        println!("REPO MODEL: {creatable_page_model:?}");
+        // println!("REPO MODEL: {creatable_page_model:?}");
+        //
+        // let sql = "CREATE pages CONTENT $data";
+        //
+        // let data: BTreeMap<String, Value> = [
+        //     ("name".into(), creatable_page_model.name.into()),
+        //     (
+        //         "identifier".into(),
+        //         creatable_page_model.identifier.into(),
+        //     ),
+        //     ("component_content".into(), creatable_page_model.component_content.into()),
+        //     ("content".into(), creatable_page_model.content.into()),
+        //     (
+        //         "created_by".into(),
+        //         creatable_page_model.logged_in_username.clone().into(),
+        //     ),
+        //     (
+        //         "updated_by".into(),
+        //         creatable_page_model.logged_in_username.into(),
+        //     ),
+        //     ("created_at".into(), Datetime::default().into()),
+        //     ("updated_at".into(), Datetime::default().into()),
+        // ]
+        //     .into();
+        // let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+        //
+        // let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let sql = "CREATE pages CONTENT $data";
+        let mut component_content_sql = String::from("");
+        for creatable_component_content_model in creatable_page_model.component_content {
+            component_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', content: '{content}' {close_brace}",
+                                                id = creatable_component_content_model.id,
+                                                name = creatable_component_content_model.name,
+                                                identifier = creatable_component_content_model.identifier,
+                                                content =  creatable_component_content_model.content,
+                                                open_brace = String::from("{"),
+                                                close_brace = String::from("}")
+            ));
+        }
 
-        let data: BTreeMap<String, Value> = [
-            ("name".into(), creatable_page_model.name.into()),
-            (
-                "identifier".into(),
-                creatable_page_model.identifier.into(),
-            ),
-            ("content".into(), creatable_page_model.content.into()),
-            (
-                "created_by".into(),
-                creatable_page_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                creatable_page_model.logged_in_username.into(),
-            ),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-            .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+            let sql = format!("
+                    CREATE pages CONTENT {open_brace}
+                        name: '{name}',
+                        identifier: '{identifier}',
+                        component_content: [{component_content_sql}],
+                        content: '',
+                        created_by: 'admin@admin.com',
+                        updated_by: 'admin@admin.com',
+                        created_at: time::now(),
+                        updated_at: time::now(),
+                    {close_brace};
+                ",
+                name = creatable_page_model.name,
+                identifier = creatable_page_model.identifier,
+                component_content_sql = component_content_sql,
+                open_brace = String::from("{"),
+                close_brace = String::from("}")
+            );
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        println!("SQ: {sql}");
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
