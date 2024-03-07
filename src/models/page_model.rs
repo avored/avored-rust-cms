@@ -5,11 +5,42 @@ use surrealdb::sql::{Datetime, Object, Value};
 use super::Pagination;
 
 
+
+// This one should contain components and components fields with content
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub fields: Vec<ComponentFieldModel>,
+}
+
+// #[derive(Deserialize, Debug, Clone, Default)]
+// pub struct ComponentFieldModel {
+//     pub id: String,
+//     pub name: String,
+//     pub identifier: String,
+//     pub field_type: String,
+//     pub content: String,
+// }
+
+
+// Not sure do we need this or we can use default model for create and edit?
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct ComponentContentModel {
+//     pub id: String,
+//     pub name: String,
+//     pub identifier: String,
+//     pub fields: Vec<ComponentFieldModel>,
+// }
+
+
+#[derive(Deserialize, Debug, Clone, Default, Serialize)]
+pub struct ComponentFieldModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
     pub content: String,
 }
 
@@ -168,22 +199,23 @@ impl TryFrom<Object> for ComponentContentModel {
             None => String::from(""),
         };
 
-        let content = match val.get("content") {
-            Some(val) => {
-                let value = match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                };
-                value
-            }
-            None => String::from(""),
-        };
+        // let field_type = match val.get("field_type") {
+        //     Some(val) => {
+        //         let value = match val.clone() {
+        //             Value::Strand(v) => v.as_string(),
+        //             _ => String::from(""),
+        //         };
+        //         value
+        //     }
+        //     None => String::from(""),
+        // };
+
 
         Ok(ComponentContentModel {
             id,
             name,
             identifier,
-            content
+            fields: vec![]
         })
     }
 }

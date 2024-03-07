@@ -10,16 +10,27 @@ pub struct StorePageRequest {
     #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
-    pub component_content: Vec<ComponentContent>,
+    pub components_content: Vec<CreatableComponentContentRequest>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct ComponentContent {
+pub struct CreatableComponentContentRequest {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub fields: Vec<CreatableComponentFieldContentRequest>
+}
+
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct CreatableComponentFieldContentRequest {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
     pub content: String,
 }
+
 
 impl StorePageRequest {
     pub fn validate_errors(&self) -> Result<ValidationErrors> {

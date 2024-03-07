@@ -143,7 +143,6 @@ function PageCreate() {
             data: JSON.stringify({name: name, identifier: identifier, component_content: pageComponents})
         })
 
-
         if (created_page_response.status) {
             return navigate("/admin/page");
         }

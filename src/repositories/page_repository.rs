@@ -126,11 +126,10 @@ impl PageRepository {
 
         let mut component_content_sql = String::from("");
         for creatable_component_content_model in creatable_page_model.component_content {
-            component_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', content: '{content}' {close_brace}",
+            component_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}'  {close_brace}",
                                                 id = creatable_component_content_model.id,
                                                 name = creatable_component_content_model.name,
                                                 identifier = creatable_component_content_model.identifier,
-                                                content =  creatable_component_content_model.content,
                                                 open_brace = String::from("{"),
                                                 close_brace = String::from("}")
             ));
