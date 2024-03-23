@@ -125,7 +125,7 @@ impl PageRepository {
         // let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let mut component_content_sql = String::from("");
-        for creatable_component_content_model in creatable_page_model.component_content {
+        for creatable_component_content_model in creatable_page_model.component_contents {
             component_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}'  {close_brace}",
                                                 id = creatable_component_content_model.id,
                                                 name = creatable_component_content_model.name,

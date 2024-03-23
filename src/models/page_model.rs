@@ -15,25 +15,6 @@ pub struct ComponentContentModel {
     pub fields: Vec<ComponentFieldModel>,
 }
 
-// #[derive(Deserialize, Debug, Clone, Default)]
-// pub struct ComponentFieldModel {
-//     pub id: String,
-//     pub name: String,
-//     pub identifier: String,
-//     pub field_type: String,
-//     pub content: String,
-// }
-
-
-// Not sure do we need this or we can use default model for create and edit?
-// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-// pub struct ComponentContentModel {
-//     pub id: String,
-//     pub name: String,
-//     pub identifier: String,
-//     pub fields: Vec<ComponentFieldModel>,
-// }
-
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
 pub struct ComponentFieldModel {
@@ -233,7 +214,28 @@ pub struct CreatablePageModel {
     pub identifier: String,
     pub content: String,
     pub logged_in_username: String,
-    pub component_content: Vec<ComponentContentModel>,
+    pub component_contents: Vec<CreatableComponentContentModel>,
+}
+
+
+// This one should contain components and components fields with content
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct CreatableComponentContentModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub component_field_contents: Vec<CreatableComponentFieldContentModel>,
+}
+
+
+
+#[derive(Deserialize, Debug, Clone, Default, Serialize)]
+pub struct CreatableComponentFieldContentModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
+    pub field_content: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
