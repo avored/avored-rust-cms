@@ -12,7 +12,7 @@ pub struct ComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<ComponentFieldModel>,
+    pub component_fields_content: Vec<ComponentFieldModel>,
 }
 
 
@@ -22,7 +22,7 @@ pub struct ComponentFieldModel {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
-    pub content: String,
+    pub field_content: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -30,8 +30,7 @@ pub struct PageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub content: String,
-    pub component_content: Vec<ComponentContentModel>,
+    pub components_content: Vec<ComponentContentModel>,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -67,7 +66,7 @@ impl TryFrom<Object> for PageModel {
             None => String::from(""),
         };
 
-        let component_content = match val.get("component_content") {
+        let components_content = match val.get("components_content") {
             Some(val) => {
                 let value = match val.clone() {
                     Value::Array(v) => {
@@ -92,13 +91,6 @@ impl TryFrom<Object> for PageModel {
             None => Vec::new(),
         };
 
-        let content = match val.get("content") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
         let created_at = match val.get("created_at") {
             Some(val) => match val.clone() {
                 Value::Datetime(v) => v,
@@ -134,8 +126,7 @@ impl TryFrom<Object> for PageModel {
             id,
             name,
             identifier,
-            component_content,
-            content,
+            components_content,
             created_at,
             updated_at,
             created_by,
@@ -179,6 +170,30 @@ impl TryFrom<Object> for ComponentContentModel {
             }
             None => String::from(""),
         };
+        let component_fields_content = match val.get("component_fields_content") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => surrealdb::sql::Object::default(),
+                            };
+
+                            let order_product_model: ComponentFieldModel = object.try_into()?;
+
+                            arr.push(order_product_model)
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
 
         // let field_type = match val.get("field_type") {
         //     Some(val) => {
@@ -196,7 +211,79 @@ impl TryFrom<Object> for ComponentContentModel {
             id,
             name,
             identifier,
-            fields: vec![]
+            component_fields_content
+        })
+    }
+}
+
+
+
+impl TryFrom<Object> for ComponentFieldModel {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ComponentFieldModel> {
+        let id = match val.get("id") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+        let name = match val.get("name") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+        let identifier = match val.get("identifier") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+
+        let field_type = match val.get("field_type") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+
+
+        let field_content = match val.get("field_content") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+        
+        Ok(ComponentFieldModel {
+            id,
+            name,
+            identifier,
+            field_type,
+            field_content
         })
     }
 }
@@ -224,7 +311,7 @@ pub struct CreatableComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_field_contents: Vec<CreatableComponentFieldContentModel>,
+    pub component_fields_content: Vec<CreatableComponentFieldContentModel>,
 }
 
 

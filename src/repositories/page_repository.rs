@@ -124,37 +124,56 @@ impl PageRepository {
         //
         // let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let mut component_content_sql = String::from("");
+        let mut components_content_sql = String::from("");
+
+        //@todo skip the last loop with comma think of how to make a comma and skip the last one.
         for creatable_component_content_model in creatable_page_model.component_contents {
-            component_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}'  {close_brace}",
+
+            let mut component_fields_content_sql = String::from("");
+
+            for creatable_component_field_content in creatable_component_content_model.component_fields_content {
+
+                component_fields_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
+                                                       id = creatable_component_field_content.id,
+                                                       name = creatable_component_field_content.name,
+                                                       identifier = creatable_component_field_content.identifier,
+                                                       field_type = creatable_component_field_content.field_type,
+                                                       field_content = creatable_component_field_content.field_content,
+                                                       open_brace = String::from("{"),
+                                                       close_brace = String::from("}")
+                ));
+            }
+
+            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', component_fields_content: [{component_fields_content_sql}]  {close_brace}",
                                                 id = creatable_component_content_model.id,
                                                 name = creatable_component_content_model.name,
                                                 identifier = creatable_component_content_model.identifier,
+                                                component_fields_content_sql = component_fields_content_sql,
                                                 open_brace = String::from("{"),
                                                 close_brace = String::from("}")
             ));
         }
 
-            let sql = format!("
-                    CREATE pages CONTENT {open_brace}
-                        name: '{name}',
-                        identifier: '{identifier}',
-                        component_content: [{component_content_sql}],
-                        content: '',
-                        created_by: 'admin@admin.com',
-                        updated_by: 'admin@admin.com',
-                        created_at: time::now(),
-                        updated_at: time::now(),
-                    {close_brace};
-                ",
-                name = creatable_page_model.name,
-                identifier = creatable_page_model.identifier,
-                component_content_sql = component_content_sql,
-                open_brace = String::from("{"),
-                close_brace = String::from("}")
-            );
-
-        println!("SQ: {sql}");
+        let sql = format!("
+                CREATE pages CONTENT {open_brace}
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    components_content: [{components_content_sql}],
+                    created_by: 'admin@admin.com',
+                    updated_by: 'admin@admin.com',
+                    created_at: time::now(),
+                    updated_at: time::now(),
+                {close_brace};
+            ",
+            name = creatable_page_model.name,
+            identifier = creatable_page_model.identifier,
+            components_content_sql = components_content_sql,
+            open_brace = String::from("{"),
+            close_brace = String::from("}")
+        );
+        println!("-->");
+        println!("SQL: {sql}");
+        println!("-->");
 
         let responses = datastore.execute(&sql, database_session, None).await?;
 

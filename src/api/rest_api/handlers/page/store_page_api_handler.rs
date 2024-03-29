@@ -15,7 +15,7 @@ pub async fn store_page_api_handler(
 ) -> Result<Json<CreatedPageResponse>> {
     let _validation_error_list = payload.validate_errors()?;
 
-    println!("Payload SENT: {:?}", payload);
+    // println!("Payload SENT: {:?}", payload);
 
     let mut  creatable_page = CreatablePageModel {
         name: payload.name,
@@ -27,16 +27,16 @@ pub async fn store_page_api_handler(
 
     //
 
-    for payload_component_content in payload.components_contents {
+    for payload_component_content in payload.components_content {
         let mut  creatable_component_content_model = CreatableComponentContentModel {
             id: payload_component_content.id,
             name: payload_component_content.name,
             identifier: payload_component_content.identifier,
-            component_field_contents: vec![],
+            component_fields_content: vec![],
         };
 
-        for  payload_component_fields_data in  payload_component_content.component_field_contents {
-            let creatable_conponent_field_content = CreatableComponentFieldContentModel {
+        for  payload_component_fields_data in  payload_component_content.component_fields_content {
+            let creatable_component_field_content = CreatableComponentFieldContentModel {
                 id: payload_component_fields_data.id,
                 name: payload_component_fields_data.name,
                 identifier: payload_component_fields_data.identifier,
@@ -44,13 +44,13 @@ pub async fn store_page_api_handler(
                 field_content: payload_component_fields_data.field_content,
             };
 
-            creatable_component_content_model.component_field_contents.push(creatable_conponent_field_content);
+            creatable_component_content_model.component_fields_content.push(creatable_component_field_content);
         }
 
         creatable_page.component_contents.push(creatable_component_content_model);
     }
 
-    println!("Payload GENERATED: {:?}", creatable_page);
+    // println!("Payload GENERATED: {:?}", creatable_page);
 
     let created_page_model = state
         .page_service
