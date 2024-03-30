@@ -1,6 +1,7 @@
 import {useEffect, useState} from "react";
 import {Link, redirect, useNavigate} from "react-router-dom";
 import {isEmpty} from "lodash";
+import apiClient from "../../ApiClient";
 
 function PageTable() {
     const [pages, setPages] = useState([]);
@@ -14,26 +15,23 @@ function PageTable() {
 
     useEffect(() => {
         const mounted = (async () => {
-            const response = await fetch('http://localhost:8080/api/page', {
+
+            return await apiClient({
+                url: '/page',
                 method: 'get',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-            console.log(response.ok)
-            if (!response.ok) {
-                return
-            }
-            return await response.json()
         })
 
-        mounted().then((res) => {
-            if (isEmpty(res)) {
+        mounted().then(({data}) => {
+            setPages(data.data)
+        }).catch((errors) => {
+            if (errors.response.status === 401) {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
-            setPages(res.data)
         })
 
     }, [])

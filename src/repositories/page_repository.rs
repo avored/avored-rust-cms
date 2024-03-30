@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::{Datetime, Value};
+use surrealdb::sql::Value;
 
 use crate::error::{Error, Result};
 use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
@@ -96,32 +96,54 @@ impl PageRepository {
         creatable_page_model: CreatablePageModel,
     ) -> Result<PageModel> {
 
-        println!("REPO MODEL: {creatable_page_model:?}");
+        let mut components_content_sql = String::from("");
 
-        let sql = "CREATE pages CONTENT $data";
+        //@todo skip the last loop with comma think of how to make a comma and skip the last one.
+        for creatable_component_content_model in creatable_page_model.component_contents {
 
-        let data: BTreeMap<String, Value> = [
-            ("name".into(), creatable_page_model.name.into()),
-            (
-                "identifier".into(),
-                creatable_page_model.identifier.into(),
-            ),
-            ("content".into(), creatable_page_model.content.into()),
-            (
-                "created_by".into(),
-                creatable_page_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                creatable_page_model.logged_in_username.into(),
-            ),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-            .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+            let mut component_fields_content_sql = String::from("");
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+            for creatable_component_field_content in creatable_component_content_model.component_fields_content {
+
+                component_fields_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
+                                                       id = creatable_component_field_content.id,
+                                                       name = creatable_component_field_content.name,
+                                                       identifier = creatable_component_field_content.identifier,
+                                                       field_type = creatable_component_field_content.field_type,
+                                                       field_content = creatable_component_field_content.field_content,
+                                                       open_brace = String::from("{"),
+                                                       close_brace = String::from("}")
+                ));
+            }
+
+            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', component_fields_content: [{component_fields_content_sql}]  {close_brace}",
+                                                id = creatable_component_content_model.id,
+                                                name = creatable_component_content_model.name,
+                                                identifier = creatable_component_content_model.identifier,
+                                                component_fields_content_sql = component_fields_content_sql,
+                                                open_brace = String::from("{"),
+                                                close_brace = String::from("}")
+            ));
+        }
+
+        let sql = format!("
+                CREATE pages CONTENT {open_brace}
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    components_content: [{components_content_sql}],
+                    created_by: 'admin@admin.com',
+                    updated_by: 'admin@admin.com',
+                    created_at: time::now(),
+                    updated_at: time::now(),
+                {close_brace};
+            ",
+            name = creatable_page_model.name,
+            identifier = creatable_page_model.identifier,
+            components_content_sql = components_content_sql,
+            open_brace = String::from("{"),
+            close_brace = String::from("}")
+        );
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
@@ -139,28 +161,54 @@ impl PageRepository {
         database_session: &Session,
         updatable_admin_user: UpdatablePageModel,
     ) -> Result<PageModel> {
-        let sql = "
-            UPDATE type::thing($table, $id) MERGE {
-                name: $name,
-                identifier: $identifier,
-                content: $content,
-                updated_by: $logged_in_user_name,
-                updated_at: time::now()
-            };";
+        let mut components_content_sql = String::from("");
 
-        let vars = BTreeMap::from([
-            ("name".into(), updatable_admin_user.name.into()),
-            ("identifier".into(), updatable_admin_user.identifier.into()),
-            ("content".into(), updatable_admin_user.content.into()),
-            (
-                "logged_in_user_name".into(),
-                updatable_admin_user.logged_in_username.into(),
-            ),
-            ("id".into(), updatable_admin_user.id.into()),
-            ("table".into(), "pages".into()),
-        ]);
+        //@todo skip the last loop with comma think of how to make a comma and skip the last one.
+        for updatable_component_content_model in updatable_admin_user.component_contents {
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+            let mut component_fields_content_sql = String::from("");
+
+            for updatable_component_field_content in updatable_component_content_model.component_fields_content {
+
+                component_fields_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
+                                                               id = updatable_component_field_content.id,
+                                                               name = updatable_component_field_content.name,
+                                                               identifier = updatable_component_field_content.identifier,
+                                                               field_type = updatable_component_field_content.field_type,
+                                                               field_content = updatable_component_field_content.field_content,
+                                                               open_brace = String::from("{"),
+                                                               close_brace = String::from("}")
+                ));
+            }
+
+            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', component_fields_content: [{component_fields_content_sql}]  {close_brace}",
+                                                     id = updatable_component_content_model.id,
+                                                     name = updatable_component_content_model.name,
+                                                     identifier = updatable_component_content_model.identifier,
+                                                     component_fields_content_sql = component_fields_content_sql,
+                                                     open_brace = String::from("{"),
+                                                     close_brace = String::from("}")
+            ));
+        }
+
+        let sql = format!("
+                UPDATE pages:{page_id} MERGE {open_brace}
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    components_content: [{components_content_sql}],
+                    updated_by: 'admin@admin.com',
+                    updated_at: time::now(),
+                {close_brace};
+            ",
+                page_id = updatable_admin_user.id,
+                name = updatable_admin_user.name,
+                identifier = updatable_admin_user.identifier,
+                components_content_sql = components_content_sql,
+                open_brace = String::from("{"),
+                close_brace = String::from("}")
+        );
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
