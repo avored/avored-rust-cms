@@ -1,7 +1,8 @@
 extern crate core;
 use axum::Router;
-use std::{fs::File, net::SocketAddr, path::Path, sync::Arc};
+use std::{fs::File, path::Path, sync::Arc};
 use axum::extract::DefaultBodyLimit;
+use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 use tracing::info;
 use tracing_subscriber::{
@@ -49,10 +50,10 @@ async fn main() -> Result<()> {
     println!("Server started: http://localhost:8080");
 
     // region:    --- Start Server
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-    info!("{:<12} - on {addr}\n", "LISTENING");
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service())
+    // let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    info!("{:<12} - on {:?}\n", "LISTENING", listener.local_addr());
+    axum::serve(listener , app.into_make_service())
         .await
         .unwrap();
     // endregion: --- Start Server

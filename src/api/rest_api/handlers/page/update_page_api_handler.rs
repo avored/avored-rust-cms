@@ -16,7 +16,7 @@ pub async fn update_page_api_handler(
 ) -> Result<Json<UpdatablePageResponse>> {
     println!("->> {:<12} - update_page_api_handler", "HANDLER");
 
-    let _validation_error_list = payload.validate_errors()?;
+    // let _validation_error_list = payload.validate_errors()?;
 
     // println!("Validation error list: {:?}", validation_error_list);
 

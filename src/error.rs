@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
@@ -5,7 +6,7 @@ use axum::{
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Error {
     ConfigMissing(&'static str),
 

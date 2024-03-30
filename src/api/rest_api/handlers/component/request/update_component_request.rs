@@ -1,12 +1,11 @@
 use serde::Deserialize;
-use validator::Validate;
 
-#[derive(Deserialize, Debug, Clone, Validate, Default)]
+#[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdateComponentRequest {
-    #[validate(length(min = 1, message = "The name is a required field."))]
+    // #[validate(length(min = 1, message = "The name is a required field."))]
     pub name: String,
 
-    #[validate(length(min = 1, message = "The identifier is a required field."))]
+    // #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
     pub fields: Vec<UpdatableField>,
