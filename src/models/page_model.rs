@@ -330,6 +330,26 @@ pub struct UpdatablePageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub content: String,
+    pub component_contents: Vec<UpdatableComponentContentModel>,
     pub logged_in_username: String,
+}
+
+// This one should contain components and components fields with content
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct UpdatableComponentContentModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub component_fields_content: Vec<UpdatableComponentFieldContentModel>,
+}
+
+
+
+#[derive(Deserialize, Debug, Clone, Default, Serialize)]
+pub struct UpdatableComponentFieldContentModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub field_type: String,
+    pub field_content: String,
 }

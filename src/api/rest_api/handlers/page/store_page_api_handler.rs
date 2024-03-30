@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::models::page_model::{ComponentContentModel, ComponentFieldModel, CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel};
+use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel};
 use crate::{
     avored_state::AvoRedState, error::Result
 };
