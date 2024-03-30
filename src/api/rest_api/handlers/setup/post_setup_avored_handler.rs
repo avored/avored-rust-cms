@@ -10,7 +10,6 @@ use argon2::{
 };
 use axum::{extract::State, Json, response::IntoResponse};
 use serde::{Deserialize, Serialize};
-use validator::Validate;
 
 pub async fn post_setup_avored_handler(
     state: State<Arc<AvoRedState>>,
@@ -190,10 +189,10 @@ pub struct SetupViewModel {
 
 
 
-#[derive(Deserialize, Debug, Clone, Validate)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct SetupAvoRedRequest {
-    #[validate(email(message = "The email field must be a valid email address."))]
+    // #[validate(email(message = "The email field must be a valid email address."))]
     pub email: String,
-    #[validate(length(min = 1, message = "The password is a required field."))]
+    // #[validate(length(min = 1, message = "The password is a required field."))]
     pub password: String,
 }

@@ -1,13 +1,11 @@
-// use crate::error::Result;
 use serde::Deserialize;
-use validator::Validate;
 
-#[derive(Deserialize, Debug, Clone, Validate)]
+#[derive(Deserialize, Debug, Clone)]
 pub struct StoreComponentRequest {
-    #[validate(length(min = 1, message = "The name is a required field."))]
+    // #[validate(length(min = 1, message = "The name is a required field."))]
     pub name: String,
 
-    #[validate(length(min = 1, message = "The identifier is a required field."))]
+    // #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
 
     pub fields: Vec<Field>,

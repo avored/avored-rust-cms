@@ -43,12 +43,11 @@ pub async fn admin_user_login_api_handler(
     )
         .unwrap();
 
-    let cookie = Cookie::build("token", token.to_owned())
+    let cookie = Cookie::build("token")
         .path("/")
         // .max_age(Duration::h)
         .same_site(SameSite::Lax)
-        .http_only(true)
-        .finish();
+        .http_only(true);
 
     let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
     response

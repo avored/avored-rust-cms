@@ -13,7 +13,7 @@ pub async fn store_page_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
 ) -> Result<Json<CreatedPageResponse>> {
-    let _validation_error_list = payload.validate_errors()?;
+    // let _validation_error_list = payload.validate_errors()?;
 
     // println!("Payload SENT: {:?}", payload);
 

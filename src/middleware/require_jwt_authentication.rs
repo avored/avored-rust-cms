@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use axum::{http::Request, Json, middleware::Next};
+use axum::body::Body;
 use axum::extract::State;
 use axum::http::{header, StatusCode};
 use axum::response::IntoResponse;
@@ -16,11 +17,11 @@ pub struct ErrorResponse {
     pub message: String,
 }
 
-pub async fn require_jwt_authentication<T>(
+pub async fn require_jwt_authentication (
     state: State<Arc<AvoRedState>>,
     cookie_jar: CookieJar,
-    req: Request<T>,
-    next: Next<T>,
+    req: Request<Body>,
+    next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     let token = cookie_jar
         .get("token")
