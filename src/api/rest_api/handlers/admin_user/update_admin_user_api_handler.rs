@@ -4,7 +4,7 @@ use crate::{
     avored_state::AvoRedState, error::Result
 };
 
-use axum::{extract::{Path as AxumPath, State}, Json};
+use axum::{Extension, extract::{Path as AxumPath, State}, Json};
 use axum::extract::Multipart;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
@@ -12,8 +12,10 @@ use serde::Serialize;
 use urlencoding::decode_binary;
 use crate::api::rest_api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
+use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn update_admin_user_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     AxumPath(admin_user_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     mut multipart: Multipart,
@@ -91,12 +93,12 @@ pub async fn update_admin_user_api_handler(
         full_name: payload.full_name,
         profile_image,
         is_super_admin: payload.is_super_admin,
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email.clone(),
         role_ids: payload.role_ids
     };
     let updated_admin_user_model = state
         .admin_user_service
-        .update_admin_user(&state.db, updateable_admin_user_model)
+        .update_admin_user(&state.db, updateable_admin_user_model, logged_in_user)
         .await?;
     let response = UpdatableAdminUserResponse {
         status: true,

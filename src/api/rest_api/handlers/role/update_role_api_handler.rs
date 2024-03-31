@@ -5,12 +5,14 @@ use crate::{
     error::Result,
     models::role_model::UpdatableRoleModel,
 };
-use axum::{extract::{Path as AxumPath, State}, Json, response::IntoResponse};
+use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
 use crate::api::rest_api::handlers::role::request::update_role_request::UpdateRoleRequest;
 use crate::models::role_model::RoleModel;
+use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn update_role_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     AxumPath(role_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<UpdateRoleRequest>,
@@ -28,7 +30,7 @@ pub async fn update_role_api_handler(
         id: role_id,
         name: payload.name,
         identifier: payload.identifier,
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email,
         permissions: payload.permissions,
     };
     let updated_role_model = state

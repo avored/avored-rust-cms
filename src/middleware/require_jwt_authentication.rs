@@ -9,7 +9,7 @@ use axum_extra::extract::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
 use crate::avored_state::AvoRedState;
-use crate::models::token_claim_model::TokenClaims;
+use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 
 #[derive(Debug, Serialize)]
 pub struct ErrorResponse {
@@ -20,7 +20,7 @@ pub struct ErrorResponse {
 pub async fn require_jwt_authentication (
     state: State<Arc<AvoRedState>>,
     cookie_jar: CookieJar,
-    req: Request<Body>,
+    mut req: Request<Body>,
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     let token = cookie_jar
@@ -51,7 +51,7 @@ pub async fn require_jwt_authentication (
 
     let secret = state.config.jwt_secret_key.clone();
 
-    let _claims = decode::<TokenClaims>(
+    let claims = decode::<TokenClaims>(
         &token,
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::default(),
@@ -64,6 +64,13 @@ pub async fn require_jwt_authentication (
             (StatusCode::UNAUTHORIZED, Json(json_error))
         })?
         .claims;
+
+    let logged_in_user = LoggedInUser {
+        name: claims.name,
+        email: claims.email,
+    };
+
+    req.extensions_mut().insert(logged_in_user);
 
     //@todo improve the validation here with map str or something
 

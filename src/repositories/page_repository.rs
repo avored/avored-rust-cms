@@ -6,6 +6,7 @@ use surrealdb::sql::Value;
 use crate::error::{Error, Result};
 use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
 use crate::models::ModelCount;
+use crate::models::token_claim_model::LoggedInUser;
 use crate::PER_PAGE;
 
 use super::into_iter_objects;
@@ -94,6 +95,7 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         creatable_page_model: CreatablePageModel,
+        logged_in_user: LoggedInUser
     ) -> Result<PageModel> {
 
         let mut components_content_sql = String::from("");
@@ -131,8 +133,8 @@ impl PageRepository {
                     name: '{name}',
                     identifier: '{identifier}',
                     components_content: [{components_content_sql}],
-                    created_by: 'admin@admin.com',
-                    updated_by: 'admin@admin.com',
+                    created_by: '{logged_in_user_email}',
+                    updated_by: '{logged_in_user_email}',
                     created_at: time::now(),
                     updated_at: time::now(),
                 {close_brace};
@@ -140,6 +142,7 @@ impl PageRepository {
             name = creatable_page_model.name,
             identifier = creatable_page_model.identifier,
             components_content_sql = components_content_sql,
+            logged_in_user_email = logged_in_user.email,
             open_brace = String::from("{"),
             close_brace = String::from("}")
         );
@@ -160,6 +163,7 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         updatable_admin_user: UpdatablePageModel,
+        logged_in_user: LoggedInUser
     ) -> Result<PageModel> {
         let mut components_content_sql = String::from("");
 
@@ -196,7 +200,7 @@ impl PageRepository {
                     name: '{name}',
                     identifier: '{identifier}',
                     components_content: [{components_content_sql}],
-                    updated_by: 'admin@admin.com',
+                    updated_by: '{logged_in_user_email}',
                     updated_at: time::now(),
                 {close_brace};
             ",
@@ -204,6 +208,7 @@ impl PageRepository {
                 name = updatable_admin_user.name,
                 identifier = updatable_admin_user.identifier,
                 components_content_sql = components_content_sql,
+                logged_in_user_email = logged_in_user.email,
                 open_brace = String::from("{"),
                 close_brace = String::from("}")
         );

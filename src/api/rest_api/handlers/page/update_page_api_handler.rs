@@ -6,10 +6,12 @@ use crate::{
     avored_state::AvoRedState, error::Result
 };
 
-use axum::{extract::{Path as AxumPath, State}, Json};
+use axum::{Extension, extract::{Path as AxumPath, State}, Json};
 use serde::Serialize;
+use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn update_page_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     AxumPath(page_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<UpdatePageRequest>,
@@ -25,7 +27,7 @@ pub async fn update_page_api_handler(
         name: payload.name,
         identifier: payload.identifier,
         component_contents: vec![],
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email.clone(),
     };
 
 
@@ -56,7 +58,7 @@ pub async fn update_page_api_handler(
 
     let updated_page_model = state
         .page_service
-        .update_page(&state.db, updatable_page)
+        .update_page(&state.db, updatable_page, logged_in_user)
         .await?;
     let response = UpdatablePageResponse {
         status: true,

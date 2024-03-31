@@ -299,7 +299,6 @@ pub struct PagePagination {
 pub struct CreatablePageModel {
     pub name: String,
     pub identifier: String,
-    pub content: String,
     pub logged_in_username: String,
     pub component_contents: Vec<CreatableComponentContentModel>,
 }
