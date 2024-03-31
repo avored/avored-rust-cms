@@ -67,25 +67,15 @@ impl ComponentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        createable_component_model: CreatableComponent,
+        creatable_component_model: CreatableComponent,
     ) -> Result<ComponentModel> {
         let sql = "CREATE components CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
-            ("name".into(), createable_component_model.name.into()),
-            (
-                "identifier".into(),
-                createable_component_model.identifier.into(),
-            ),
-            // ("fields".into(), createable_component_model.fields.into()),
-            (
-                "created_by".into(),
-                createable_component_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                createable_component_model.logged_in_username.into(),
-            ),
+            ("name".into(), creatable_component_model.name.into()),
+            ("identifier".into(), creatable_component_model.identifier.into()),
+            ("created_by".into(), creatable_component_model.logged_in_username.clone().into()),
+            ("updated_by".into(), creatable_component_model.logged_in_username.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -240,7 +230,6 @@ impl ComponentRepository {
         let responses = datastore
             .execute(sql.as_str(), database_session, Some(vars))
             .await?;
-        println!("RESPONSE ATTACHED: {responses:?}");
 
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {

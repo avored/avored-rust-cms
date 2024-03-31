@@ -16,9 +16,7 @@ pub async fn store_component_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StoreComponentRequest>,
 ) -> Result<Json<CreatedComponentResponse>> {
-    // let _validation_error_list = payload.validate_errors()?;
 
-    // println!("Payload: {:?}", payload.clone());
     let creatable_component = CreatableComponent {
         name: payload.name,
         identifier: payload.identifier,
@@ -29,9 +27,7 @@ pub async fn store_component_api_handler(
         .component_service
         .create_component(&state.db, creatable_component)
         .await?;
-
-    // println!("Created component {:?}", created_component.clone());
-
+    
     for payload_field in payload.fields {
         let creatable_field = CreatableFieldModel {
             name: payload_field.name,
@@ -40,15 +36,10 @@ pub async fn store_component_api_handler(
             logged_in_username: logged_in_user.email.clone(),
         };
 
-        // println!("creatable_field: {creatable_field:?}");
-
         let created_field = state
             .field_service
             .create_field(&state.db, creatable_field)
             .await?;
-
-        // println!("Created component {:?}", created_component.clone());
-        // println!("Created Field {:?}", created_field.clone());
 
         state
             .component_service
