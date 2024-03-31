@@ -3,13 +3,15 @@ use std::sync::Arc;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
-use axum::{extract::State, Json};
+use axum::{Extension, extract::State, Json};
 use serde::Serialize;
 use crate::api::rest_api::handlers::role::request::store_role_request::StoreRoleRequest;
 use crate::models::role_model::{CreatableRole, RoleModel};
+use crate::models::token_claim_model::LoggedInUser;
 
 
 pub async fn store_role_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StoreRoleRequest>,
 ) -> Result<Json<CreatedRoleResponse>> {
@@ -20,7 +22,7 @@ pub async fn store_role_api_handler(
     let creatable_role = CreatableRole {
         name: payload.name,
         identifier: payload.identifier,
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email,
         permissions: payload.permissions,
     };
 

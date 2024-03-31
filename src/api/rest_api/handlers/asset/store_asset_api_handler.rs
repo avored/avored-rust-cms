@@ -5,23 +5,25 @@ use crate::{
     avored_state::AvoRedState,
     error::Result
 };
-use axum::{extract::State, Json, response::IntoResponse};
+use axum::{Extension, extract::State, Json, response::IntoResponse};
 use axum::extract::Multipart;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel};
+use crate::models::token_claim_model::LoggedInUser;
 
 const ALLOW_TYPES: [&'static str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 
 pub async fn store_asset_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     mut multipart: Multipart,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - store_asset_api_handler", "HANDLER");
 
     let mut creatable_asset_model = CreatableAssetModel::default();
-    creatable_asset_model.logged_in_username = "admin@admin.com".to_string();
+    creatable_asset_model.logged_in_username = logged_in_user.email;
     let mut is_allow_file_type = true;
 
     while let Some(field) = multipart.next_field().await.unwrap() {

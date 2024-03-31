@@ -4,7 +4,7 @@ use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
 use axum::extract::{Multipart,  State};
-use axum::Json;
+use axum::{Extension, Json};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
@@ -13,9 +13,12 @@ use crate::api::rest_api::handlers::admin_user::request::store_admin_user_reques
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
+use crate::models::token_claim_model::LoggedInUser;
+
 pub async fn store_admin_user_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
-    mut multipart: Multipart,
+    mut multipart: Multipart
 ) -> Result<Json<CreateAdminUserResponse>> {
     println!("->> {:<12} - store_admin_user_api_handler", "HANDLER");
 
@@ -152,13 +155,13 @@ pub async fn store_admin_user_api_handler(
         password: password_hash,
         profile_image,
         is_super_admin: payload.is_super_admin,
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email.clone(),
         role_ids: payload.role_ids
     };
 
     let created_admin_user = state
         .admin_user_service
-        .create_admin_user(&state.db, creatable_admin_user)
+        .create_admin_user(&state.db, creatable_admin_user, logged_in_user)
         .await?;
 
     let create_admin_user_response = CreateAdminUserResponse {

@@ -21,7 +21,7 @@ pub async fn fetch_admin_user_api_handler(
         .await?;
     let response = FetchAdminUserResponse {
         status: true,
-        admin_user_model: admin_user_model
+        admin_user_model
     };
 
     Ok(Json(response))

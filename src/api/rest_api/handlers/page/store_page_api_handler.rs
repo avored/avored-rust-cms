@@ -4,12 +4,14 @@ use crate::models::page_model::{CreatableComponentContentModel, CreatableCompone
 use crate::{
     avored_state::AvoRedState, error::Result
 };
-use axum::{extract::State, Json};
+use axum::{Extension, extract::State, Json};
 use serde::Serialize;
 use crate::api::rest_api::handlers::page::request::store_page_request::StorePageRequest;
+use crate::models::token_claim_model::LoggedInUser;
 
 
 pub async fn store_page_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
 ) -> Result<Json<CreatedPageResponse>> {
@@ -20,8 +22,7 @@ pub async fn store_page_api_handler(
     let mut  creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
-        content: "test content".to_string(), // ideally we should not need this one
-        logged_in_username: "admin@admin.com".to_string(),
+        logged_in_username: logged_in_user.email.clone(),
         component_contents: vec![]
     };
 
@@ -54,7 +55,7 @@ pub async fn store_page_api_handler(
 
     let created_page_model = state
         .page_service
-        .create_page(&state.db, creatable_page)
+        .create_page(&state.db, creatable_page, logged_in_user)
         .await?;
     let response = CreatedPageResponse {
         status: true,

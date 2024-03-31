@@ -22,12 +22,9 @@ pub async fn admin_user_login_api_handler(
         .find_by_email(&state.db, payload.email.to_owned())
         .await?;
 
-
     let now = chrono::Utc::now();
     let iat = now.timestamp() as usize;
     let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
-
-
     let claims: TokenClaims = TokenClaims {
         sub: admin_user_model.id,
         name: admin_user_model.full_name,
@@ -35,25 +32,21 @@ pub async fn admin_user_login_api_handler(
         exp,
         iat,
     };
-
     let token = encode(
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(&state.config.jwt_secret_key.as_ref()),
-    )
-        .unwrap();
-
+    ).unwrap();
     let cookie = Cookie::build("token")
         .path("/")
         // .max_age(Duration::h)
         .same_site(SameSite::Lax)
         .http_only(true);
-
     let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
+
     response
         .headers_mut()
         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-
     let response_data = ResponseData {
         status: true,
         data: token,

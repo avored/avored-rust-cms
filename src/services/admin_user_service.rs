@@ -11,6 +11,7 @@ use crate::{
     PER_PAGE,
 };
 use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::token_claim_model::LoggedInUser;
 use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
@@ -71,6 +72,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         updatable_admin_user_model: UpdatableAdminUserModel,
+        logged_in_user: LoggedInUser
     ) -> Result<AdminUserModel> {
         let mut admin_user_model = self.admin_user_repository
             .update_admin_user(datastore, database_session, updatable_admin_user_model.clone())
@@ -85,7 +87,7 @@ impl AdminUserService {
         for role_id in updatable_admin_user_model.role_ids {
             let role_model = self.role_repository.find_by_id(datastore, database_session, role_id).await?;
             self.admin_user_repository
-                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id)
+                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id, logged_in_user.clone())
                 .await?;
 
             admin_user_model.roles.push(role_model);
@@ -153,6 +155,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         creatable_admin_user_model: CreatableAdminUserModel,
+        logged_in_user: LoggedInUser
     ) -> Result<AdminUserModel> {
         let mut admin_user_model = self.admin_user_repository
             .create_admin_user(datastore, database_session, creatable_admin_user_model.clone())
@@ -160,7 +163,7 @@ impl AdminUserService {
         for role_id in creatable_admin_user_model.role_ids {
             let role_model = self.role_repository.find_by_id(datastore, database_session, role_id).await?;
             self.admin_user_repository
-                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id)
+                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id, logged_in_user.clone())
                 .await?;
 
             admin_user_model.roles.push(role_model);

@@ -6,6 +6,7 @@ use crate::models::ModelCount;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
+use crate::models::token_claim_model::LoggedInUser;
 use crate::PER_PAGE;
 
 use super::into_iter_objects;
@@ -234,7 +235,8 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
         admin_user_id: String,
-        role_id: String
+        role_id: String,
+        logged_in_user: LoggedInUser
     ) -> Result<bool> {
         let sql = format!(
             "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
@@ -242,8 +244,8 @@ impl AdminUserRepository {
         );
 
         let attached_data: BTreeMap<String, Value> = [
-            ("created_by".into(), "admin@admin.com".to_string().into()),
-            ("updated_by".into(), "admin@admin.com".to_string().into()),
+            ("created_by".into(), logged_in_user.email.clone().into()),
+            ("updated_by".into(), logged_in_user.email.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
