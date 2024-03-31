@@ -8,3 +8,9 @@ pub struct TokenClaims {
     pub iat: usize,
     pub exp: usize,
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct LoggedInUser {
+    pub name: String,
+    pub email: String,
+}
