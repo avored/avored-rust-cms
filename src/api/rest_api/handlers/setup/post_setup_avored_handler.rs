@@ -9,13 +9,38 @@ use argon2::{
     Argon2, PasswordHasher,
 };
 use axum::{extract::State, Json, response::IntoResponse};
+use email_address::EmailAddress;
 use serde::{Deserialize, Serialize};
+use crate::error::Error;
+
+#[derive( Debug, Serialize, Clone)]
+pub struct ErrorMessage {
+    key: String,
+    message: String
+}
+#[derive( Debug, Serialize, Clone)]
+pub struct ErrorResponse {
+    status: bool,
+    errors: Vec<ErrorMessage>
+}
 
 pub async fn post_setup_avored_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<SetupAvoRedRequest>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - post_setup_avored_handler", "HANDLER");
+
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
+
 
     let sql = "
         REMOVE TABLE admin_users;
@@ -197,4 +222,39 @@ pub struct SetupAvoRedRequest {
     pub email: String,
     // #[validate(length(min = 1, message = "The password is a required field."))]
     pub password: String,
+}
+
+impl SetupAvoRedRequest {
+    fn validate(&self) -> Result<Vec<ErrorMessage>> {
+        let mut errors: Vec<ErrorMessage> = vec![];
+
+        if self.email.len() <= 0 {
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: String::from("Email is a required field")
+            };
+
+            errors.push(error_message);
+        }
+
+        if ! EmailAddress::is_valid(&self.email) {
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: String::from("Invalid email address")
+            };
+
+            errors.push(error_message);
+        }
+
+        if self.password.len() <= 0 {
+            let error_message = ErrorMessage {
+                key: String::from("password"),
+                message: String::from("Password is a required field")
+            };
+
+            errors.push(error_message);
+        }
+        
+        Ok(errors)
+    }
 }

@@ -233,6 +233,7 @@ dependencies = [
  "axum-extra",
  "chrono",
  "dotenvy",
+ "email_address",
  "futures",
  "jsonwebtoken",
  "rand",
@@ -905,6 +906,15 @@ name = "either"
 version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a26ae43d7bcc3b814de94796a5e736d4029efb0ee900c12e2d54c993ad1a1e07"
+
+[[package]]
+name = "email_address"
+version = "0.2.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2153bd83ebc09db15bcbdc3e2194d901804952e3dc96967e1cd3b0c5c32d112"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "ena"

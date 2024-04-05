@@ -21,11 +21,11 @@ fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Re
         Some(Value::Array(arr)) => {
             let it = arr.into_iter().map(|v| match v {
                 Value::Object(object) => Ok(object),
-                _ => Err(Error::Generic("empty object")),
+                _ => Err(Error::Generic("empty object".to_string())),
             });
 
             Ok(it)
         }
-        _ => Err(Error::Generic("No Record found")),
+        _ => Err(Error::Generic("No Record found".to_string())),
     }
 }

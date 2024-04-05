@@ -34,7 +34,7 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
@@ -57,7 +57,7 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
@@ -109,7 +109,7 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(ress)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
@@ -155,7 +155,7 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
@@ -197,7 +197,7 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let admin_user_count: Result<ModelCount> = result_object?.try_into();
 
