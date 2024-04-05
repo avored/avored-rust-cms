@@ -55,7 +55,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let total_count = match result_object {
             Ok(obj) => obj.try_into(),
@@ -123,7 +123,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::CreateModelError("cannot create assets record")),
+            None => Err(Error::CreateModelError("cannot create assets record".to_string())),
         };
         let asset_model: Result<AssetModel> = result_object?.try_into();
 

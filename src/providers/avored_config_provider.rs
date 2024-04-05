@@ -34,5 +34,5 @@ impl AvoRedConfigProvider {
 }
 
 fn get_env(name: &'static str) -> Result<String> {
-    env::var(name).map_err(|_| Error::ConfigMissing(name))
+    env::var(name).map_err(|_| Error::ConfigMissing(name.to_string()))
 }

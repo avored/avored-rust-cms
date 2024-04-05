@@ -2,16 +2,20 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use serde::Serialize;
+use crate::api::rest_api::handlers::setup::post_setup_avored_handler::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize)]
 pub enum Error {
-    ConfigMissing(&'static str),
+    ConfigMissing(String),
 
-    Generic(&'static str),
+    Generic(String),
 
-    CreateModelError(&'static str),
+    CreateModelError(String),
+
+    BadRequestError(ErrorResponse)
 }
 
 impl core::fmt::Display for Error {
@@ -24,26 +28,47 @@ impl std::error::Error for Error {}
 
 impl From<serde_json::Error> for Error {
     fn from(_val: serde_json::Error) -> Self {
-        Error::Generic("Serde struct to string  Error")
+        Error::Generic("Serde struct to string  Error".to_string())
     }
 }
 
 impl From<surrealdb::err::Error> for Error {
     fn from(_val: surrealdb::err::Error) -> Self {
-        Error::Generic("Surreal Error")
+        Error::Generic("Surreal Error".to_string())
     }
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        println!("->> {:<12} - {self:?}", "INTO_RES");
+        // println!("->> {:<12} - {self:?}", "INTO_RES");
+        let response = match self {
+            Error::BadRequestError(str) => {
+                // let tets = serde_json::to_string(&str);
+
+                (StatusCode::BAD_REQUEST, str).into_response()
+            },
+            _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
+        };
 
         // Create a placeholder Axum response.
-        let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
-
+        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        // let mut response = self {
+        //
+        // }
         // Insert the Error into the response.
-        response.extensions_mut().insert(self);
+        // response.extensions_mut().insert(response);
 
         response
+    }
+}
+impl IntoResponse for ErrorResponse {
+    fn into_response(self) -> Response {
+
+        let  validation_errors = match serde_json::to_string(&self) {
+            Ok(str) => str,
+            _ => "validation error 400.".to_string()
+        };
+
+        (StatusCode::BAD_REQUEST, validation_errors).into_response()
     }
 }

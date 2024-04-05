@@ -87,7 +87,7 @@ impl ComponentRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let component_model: Result<ComponentModel> = result_object?.try_into();
 
@@ -113,7 +113,7 @@ impl ComponentRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         // println!("RESULT_OBJECT: {result_object:?}");
         let component_model: Result<ComponentModel> = result_object?.try_into();
@@ -151,7 +151,7 @@ impl ComponentRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let component_model: Result<ComponentModel> = result_object?.try_into();
 
@@ -193,7 +193,7 @@ impl ComponentRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
 
         let total_count = match result_object {

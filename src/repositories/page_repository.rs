@@ -56,7 +56,7 @@ impl PageRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let model_count: Result<ModelCount> = result_object?.try_into();
 
@@ -82,7 +82,7 @@ impl PageRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         // println!("RESULT_OBJECT: {result_object:?}");
         let page_model: Result<PageModel> = result_object?.try_into();
@@ -151,7 +151,7 @@ impl PageRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let page_model: Result<PageModel> = result_object?.try_into();
 
@@ -218,7 +218,7 @@ impl PageRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let page_model: Result<PageModel> = result_object?.try_into();
 

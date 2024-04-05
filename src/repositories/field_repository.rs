@@ -65,7 +65,7 @@ impl FieldRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("fields record can't be created")),
+            None => Err(Error::Generic("fields record can't be created".to_string())),
         };
         let field_model: Result<FieldModel> = result_object?.try_into();
 
@@ -129,7 +129,7 @@ impl FieldRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found")),
+            None => Err(Error::Generic("no record found".to_string())),
         };
         let field_model: Result<FieldModel> = result_object?.try_into();
 
