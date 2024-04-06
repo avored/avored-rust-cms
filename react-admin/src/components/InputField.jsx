@@ -17,6 +17,7 @@ const InputField = (props) => {
           autoFocus={props.autoFocus}
           className="appearance-none rounded-md ring-1 ring-gray-400 active::ring-primary-500 focus:ring-primary-500 relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none sm:text-sm focus:z-10"
           placeholder={props.placeholder ?? props.label}
+          {...props.register}
         />
       </div>
         {_.size(props.errorMessages) > 0 && props.errorMessages.map((errorMessage) => {
