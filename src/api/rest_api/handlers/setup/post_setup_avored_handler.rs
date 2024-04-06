@@ -254,7 +254,7 @@ impl SetupAvoRedRequest {
 
             errors.push(error_message);
         }
-        
+
         Ok(errors)
     }
 }

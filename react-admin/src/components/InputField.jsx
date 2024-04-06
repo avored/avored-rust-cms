@@ -1,4 +1,5 @@
 import React from "react";
+import _ from 'lodash';
 
 const InputField = (props) => {
   return (
@@ -18,6 +19,14 @@ const InputField = (props) => {
           placeholder={props.placeholder ?? props.label}
         />
       </div>
+        {_.size(props.errorMessages) > 0 && props.errorMessages.map((errorMessage) => {
+            return(
+                <div key={errorMessage} className="mt-1 text-red-600 text-sm">
+                    {errorMessage}
+                </div>
+            )
+        })
+        }
     </div>
   );
 };

@@ -2,15 +2,20 @@ import InputField from "../../components/InputField";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
+import _ from "lodash";
 
 function Setup() {
-    const [email, setEmail] = useState("admin@admin.com");
-    const [password, setPassword] = useState("admin123");
+    const [emailFieldErrorMessages, setEmailFieldErrorMessages] = useState([]);
+    const [passwordFieldErrorMessages, setPasswordFieldErrorMessages] = useState([]);
+    const [email, setEmail] = useState("sdfdsfsf");
+    const [password, setPassword] = useState();
     const redirect = useNavigate();
 
+    // setEmailFieldErrorMessages(["test error Message"])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setEmailFieldErrorMessages([]);
         const response = await axios({
             url: "http://localhost:8080/api/setup",
             method: "POST",
@@ -18,9 +23,21 @@ function Setup() {
                 "Content-Type": "application/json",
             },
             data: JSON.stringify({email: email, password: password}),
+        })
+        .catch(({response}) => {
+            if (response.status === 400) {
+                response.data.errors.map((error => {
+                    if (error.key === "email") {
+                        setEmailFieldErrorMessages(errorMessages => [...errorMessages, error.message])
+                    }
+                    if (error.key === "password") {
+                        setPasswordFieldErrorMessages(errorMessages => [...errorMessages, error.message])
+                    }
+                }))
+            }
         });
 
-        if (response.data.status) {
+        if (_.isBoolean(_.get(response, 'data.status'))) {
             return redirect("/admin/login");
         }
     };
@@ -44,11 +61,12 @@ function Setup() {
                             <div className="mt-3">
                                 <InputField
                                     label="Email Address"
-                                    type="email"
+                                    type="text"
                                     name="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     autoFocus
+                                    errorMessages={emailFieldErrorMessages}
                                 />
                             </div>
 
