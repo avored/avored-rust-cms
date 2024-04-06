@@ -3,7 +3,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use serde::Serialize;
-use crate::api::rest_api::handlers::setup::post_setup_avored_handler::ErrorResponse;
+use crate::models::validation_error::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
 

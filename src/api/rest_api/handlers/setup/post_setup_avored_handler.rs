@@ -12,17 +12,8 @@ use axum::{extract::State, Json, response::IntoResponse};
 use email_address::EmailAddress;
 use serde::{Deserialize, Serialize};
 use crate::error::Error;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
-#[derive( Debug, Serialize, Clone)]
-pub struct ErrorMessage {
-    key: String,
-    message: String
-}
-#[derive( Debug, Serialize, Clone)]
-pub struct ErrorResponse {
-    status: bool,
-    errors: Vec<ErrorMessage>
-}
 
 pub async fn post_setup_avored_handler(
     state: State<Arc<AvoRedState>>,

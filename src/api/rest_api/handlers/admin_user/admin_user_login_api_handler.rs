@@ -8,14 +8,26 @@ use serde::Serialize;
 use serde_json::json;
 use crate::api::rest_api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::models::token_claim_model::TokenClaims;
+use crate::models::validation_error::ErrorResponse;
 
 pub async fn admin_user_login_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<AuthenticateAdminUserRequest>,
 ) -> Result<Json<ResponseData>> {
     println!("->> {:<12} - admin_user_login_api_handler", "HANDLER");
+
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
 
     let admin_user_model = state
         .admin_user_service
