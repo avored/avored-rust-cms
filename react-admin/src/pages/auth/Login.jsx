@@ -3,9 +3,11 @@ import logo from "../../assets/logo_only.svg";
 import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import InputField from "../../components/InputField";
+import apiClient from "../../ApiClient";
+import _ from 'lodash';
 
 function Login() {
-  const [email, setEmail] = useState("admin@admin.com");
+  const [email, setEmail] = useState("admin@admincom");
   const [password, setPassword] = useState("admin123");
   const redirect = useNavigate();
 
@@ -21,19 +23,18 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://localhost:8080/api/login", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email: email, password: password }),
-    });
-    const login_response = await response.json();
+    var data = JSON.stringify({ email: email, password: password });
+    const response =
+        await apiClient.post("/login", data)
+            .catch((errors) => {
+              console.log(errors)
+            });
 
-    if (login_response.status) {
-      localStorage.setItem("AUTH_TOKEN", login_response.data);
-      return redirect("/admin");
-    }
+    console.log(_.get(response, 'data.status'))
+    // if (_.get(response, 'data.status')) {
+    //   localStorage.setItem("AUTH_TOKEN", response.data);
+    //   return redirect("/admin");
+    // }
   };
 
   return (

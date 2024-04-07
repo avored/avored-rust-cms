@@ -5,7 +5,7 @@ use crate::{
     error::Result,
 };
 use argon2::{
-    password_hash::{rand_core::OsRng, SaltString},
+    password_hash::SaltString,
     Argon2, PasswordHasher,
 };
 use axum::{extract::State, Json, response::IntoResponse};
@@ -167,9 +167,8 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD updated_at ON TABLE assets TYPE datetime;
     ";
 
-    let password = payload.password.as_str();
-    let password = password.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
+    let password = payload.password.as_str().as_bytes();
+    let salt = SaltString::from_b64(&state.config.password_salt)?;
 
     let argon2 = Argon2::default();
     let password_hash = argon2

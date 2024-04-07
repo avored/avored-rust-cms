@@ -27,6 +27,7 @@ impl AdminUserRepository {
     ) -> Result<AdminUserModel> {
         let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE $data;";
         let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
