@@ -1,7 +1,6 @@
 use std::path::Path;
 use std::sync::Arc;
 use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::rand_core::OsRng;
 use argon2::password_hash::SaltString;
 use axum::extract::{Multipart,  State};
 use axum::{Extension, Json};
@@ -138,10 +137,10 @@ pub async fn store_admin_user_api_handler(
     //     //@todo return validation error response
     // }
 
+    // println!("")
 
-    let password = payload.password;
-    let password = password.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
+    let password = payload.password.as_bytes();
+    let salt = SaltString::from_b64(&state.config.password_salt)?;
 
     let argon2 = Argon2::default();
     let password_hash = argon2

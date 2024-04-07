@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::extract::State;
 use axum::http::{header, Response};
 use axum::Json;
@@ -33,6 +34,13 @@ pub async fn admin_user_login_api_handler(
         .admin_user_service
         .find_by_email(&state.db, payload.email.to_owned())
         .await?;
+
+    let argon2 = Argon2::default();
+
+    let parsed_hash = PasswordHash::new(&admin_user_model.password)?;
+    if !argon2.verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
+        return Err(Error::AuthenticationError);
+    }
 
     let now = chrono::Utc::now();
     let iat = now.timestamp() as usize;
