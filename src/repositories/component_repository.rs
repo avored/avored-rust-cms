@@ -109,7 +109,7 @@ impl ComponentRepository {
         .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
+        println!("find res: {:?}", responses);
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
@@ -231,6 +231,7 @@ impl ComponentRepository {
             .execute(sql.as_str(), database_session, Some(vars))
             .await?;
 
+        println!("com: {:?}", responses);
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);
