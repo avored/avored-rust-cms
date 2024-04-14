@@ -169,14 +169,7 @@ function PageCreate() {
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        // const response = (await fetch('http://localhost:8080/api/page', {
-        //     method: 'post',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-        //     },
-        //     body: JSON.stringify({name: name, identifier: identifier, component_content: pageComponents})
-        // }))
+
         const created_page_response = await apiClient({
             url: '/page',
             method: 'POST',
