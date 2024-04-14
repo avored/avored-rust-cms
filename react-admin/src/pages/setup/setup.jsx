@@ -7,8 +7,8 @@ import _ from "lodash";
 function Setup() {
     const [emailFieldErrorMessages, setEmailFieldErrorMessages] = useState([]);
     const [passwordFieldErrorMessages, setPasswordFieldErrorMessages] = useState([]);
-    const [email, setEmail] = useState("sdfdsfsf");
-    const [password, setPassword] = useState();
+    const [email, setEmail] = useState("admin@admin.com");
+    const [password, setPassword] = useState("admin123");
     const redirect = useNavigate();
 
     // setEmailFieldErrorMessages(["test error Message"])

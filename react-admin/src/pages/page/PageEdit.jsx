@@ -12,16 +12,13 @@ function PageEdit() {
 
     useEffect(() => {
         const mounted = (async () => {
-            const response  = await apiClient({
+            return await apiClient({
                 url: '/page',
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
                 }
             })
-
-
-            return response
         })
 
         mounted().then((res) => {

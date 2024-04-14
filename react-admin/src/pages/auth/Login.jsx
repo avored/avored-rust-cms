@@ -7,7 +7,7 @@ import apiClient from "../../ApiClient";
 import _ from 'lodash';
 
 function Login() {
-  const [email, setEmail] = useState("admin@admincom");
+  const [email, setEmail] = useState("admin@admin.com");
   const [password, setPassword] = useState("admin123");
   const redirect = useNavigate();
 
@@ -30,11 +30,11 @@ function Login() {
               console.log(errors)
             });
 
-    console.log(_.get(response, 'data.status'))
-    // if (_.get(response, 'data.status')) {
-    //   localStorage.setItem("AUTH_TOKEN", response.data);
-    //   return redirect("/admin");
-    // }
+    // console.log(_.get(response, 'data.status'))
+    if (_.get(response, 'data.status')) {
+      localStorage.setItem("AUTH_TOKEN", response.data.data);
+      return redirect("/admin");
+    }
   };
 
   return (

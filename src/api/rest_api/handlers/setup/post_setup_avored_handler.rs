@@ -105,7 +105,7 @@ pub async fn post_setup_avored_handler(
 
 
 
-
+        REMOVE TABLE fields;
         DEFINE TABLE fields;
 
         DEFINE FIELD name ON TABLE fields TYPE string;
@@ -119,14 +119,7 @@ pub async fn post_setup_avored_handler(
 
 
 
-        DEFINE TABLE component_field;
 
-        DEFINE FIELD component_id ON TABLE component_field TYPE record<components>;
-        DEFINE FIELD field_id ON TABLE component_field TYPE record<fields>;
-        DEFINE FIELD created_by ON TABLE component_field TYPE string;
-        DEFINE FIELD updated_by ON TABLE component_field TYPE string;
-        DEFINE FIELD created_at ON TABLE component_field TYPE datetime;
-        DEFINE FIELD updated_at ON TABLE component_field TYPE datetime;
 
 
 

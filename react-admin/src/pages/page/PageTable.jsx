@@ -1,14 +1,14 @@
-import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate} from "react-router-dom";
-import {isEmpty} from "lodash";
-import apiClient from "../../ApiClient";
+import {useEffect, useState} from "react"
+import {Link, useNavigate} from "react-router-dom"
+import apiClient from "../../ApiClient"
+import _ from 'lodash'
 
 function PageTable() {
     const [pages, setPages] = useState([]);
     const navigate = useNavigate()
 
     const getFormattedDate = ((date) => {
-        var date = new Date(date);
+        date = new Date(date);
 
         return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
     })
@@ -28,7 +28,8 @@ function PageTable() {
         mounted().then(({data}) => {
             setPages(data.data)
         }).catch((errors) => {
-            if (errors.response.status === 401) {
+            console.log(errors)
+            if (_.get(errors, 'response.status') === 401) {
                 localStorage.removeItem("AUTH_TOKEN")
                 return navigate("/admin/login")
             }
