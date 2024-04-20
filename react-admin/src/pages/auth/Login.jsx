@@ -1,18 +1,23 @@
-import { useEffect, useState } from "react";
-import logo from "../../assets/logo_only.svg";
-import { useNavigate } from "react-router-dom";
-import { isEmpty } from "lodash";
-import InputField from "../../components/InputField";
-import apiClient from "../../ApiClient";
-import _ from 'lodash';
+import useEffect from "react"
+import logo from "../../assets/logo_only.svg"
+import { useNavigate } from "react-router-dom"
+import { isEmpty } from "lodash"
+import InputField from "../../components/InputField"
+import {useForm} from 'react-hook-form'
+import {joiResolver} from '@hookform/resolvers/joi'
+import { useLogin } from "./hooks/useLogin"
+import { loginSchema } from "./schemas/login.schema"
+import { ErrorMessage } from "../../components/ErrorMessage"
 
 function Login() {
-  const [email, setEmail] = useState("admin@admin.com");
-  const [password, setPassword] = useState("admin123");
   const redirect = useNavigate();
+  const {register, handleSubmit, formState: {errors}} = useForm({
+    resolver: joiResolver(loginSchema)
+  });
+  const {mutate, isPending} = useLogin();
 
-  const [token, setToken] = useState("");
-
+  // TODO: enhance to make this as an HOC
+  // for "protecting" routes/pages
   useEffect(() => {
     /* to do make sure it execute once only..*/
     const token = localStorage.getItem("AUTH_TOKEN");
@@ -21,20 +26,8 @@ function Login() {
     }
   }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    var data = JSON.stringify({ email: email, password: password });
-    const response =
-        await apiClient.post("/login", data)
-            .catch((errors) => {
-              console.log(errors)
-            });
-
-    // console.log(_.get(response, 'data.status'))
-    if (_.get(response, 'data.status')) {
-      localStorage.setItem("AUTH_TOKEN", response.data.data);
-      return redirect("/admin");
-    }
+  const loginSubmitHandler = (data) => {
+    mutate(data);
   };
 
   return (
@@ -53,27 +46,27 @@ function Login() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(loginSubmitHandler)}
             className="space-y-5"
-            action="/admin/login"
-            method="POST"
           >
-            <InputField
-              label="Email Address"
-              type="email"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoFocus
-            />
-            <InputField
-              label="Password"
-              type="password"
-              name="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoFocus="false"
-            />
+            <div>
+              <InputField
+                label="Email Address"
+                type="email"
+                name="email"
+                register={register("email")}
+              />
+              {errors.email && <ErrorMessage message={errors.email.message} />}
+            </div>
+            <div>
+              <InputField
+                label="Password"
+                type="password"
+                name="password"
+                register={register("password")}
+              />
+              {errors.password && <ErrorMessage message={errors.password.message} />}
+            </div>
             <div className="flex items-center justify-end">
               <div className="text-sm">
                 <a
@@ -90,7 +83,7 @@ function Login() {
                 type="submit"
                 className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
-                Sign in
+                {isPending ? "Loading..." : "Sign in"}
               </button>
             </div>
           </form>
