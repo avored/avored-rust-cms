@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use axum::extract::State;
 use axum::http::{header, Response};
 use axum::Json;
@@ -8,8 +9,9 @@ use serde::Serialize;
 use serde_json::json;
 use crate::api::rest_api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::models::token_claim_model::TokenClaims;
+use crate::models::validation_error::ErrorResponse;
 
 pub async fn admin_user_login_api_handler(
     state: State<Arc<AvoRedState>>,
@@ -17,10 +19,28 @@ pub async fn admin_user_login_api_handler(
 ) -> Result<Json<ResponseData>> {
     println!("->> {:<12} - admin_user_login_api_handler", "HANDLER");
 
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
+
     let admin_user_model = state
         .admin_user_service
         .find_by_email(&state.db, payload.email.to_owned())
         .await?;
+
+    let argon2 = Argon2::default();
+
+    let parsed_hash = PasswordHash::new(&admin_user_model.password)?;
+    if !argon2.verify_password(payload.password.as_bytes(), &parsed_hash).is_ok() {
+        return Err(Error::AuthenticationError);
+    }
 
     let now = chrono::Utc::now();
     let iat = now.timestamp() as usize;

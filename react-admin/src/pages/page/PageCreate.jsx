@@ -4,19 +4,18 @@ import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import apiClient from "../../ApiClient";
 import InputField from "../../components/InputField";
+import _ from 'lodash';
 
 function PageCreate() {
-    const [name, setName] = useState('Contact US')
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] = useState(false)
-    const [identifier, setIdentifier] = useState('contact-us');
     const navigate = useNavigate()
     const [components, setComponents] = useState([])
     const [pageComponents, setPageComponents] = useState([])
+    const [page, setPage] = useState()
 
 
     const getFormattedDate = ((date) => {
         var date_obj = new Date(date);
-
         return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
     })
 
@@ -30,6 +29,7 @@ function PageCreate() {
                             label={componentField.name}
                             type="text"
                             name={componentField.identifier}
+                            onChange={e => componentFieldContentOnChange(componentField.id, e.target.value)}
                         />
                     </div>
                 )
@@ -45,15 +45,6 @@ function PageCreate() {
     const renderComponentField = ((componentField) => {
         return (
             <div className="ring-1 my-2 ring-gray-200" key={componentField.id}>
-                {/*<div>*/}
-                {/*    component field name: {componentField.name}*/}
-                {/*</div>*/}
-                {/*<div>*/}
-                {/*    component field identifier: {componentField.identifier}*/}
-                {/*</div>*/}
-                {/*<div>*/}
-                {/*    component field type: {componentField.field_type}*/}
-                {/*</div>*/}
                 {renderComponentFieldType(componentField)}
             </div>
         )
@@ -63,6 +54,7 @@ function PageCreate() {
         e.preventDefault()
         const selectedComponent = components.find((component) => component.id === componentId)
 
+        pageAddComponentSelected(selectedComponent)
         setIsComponentTableModalOpen(false)
 
         setPageComponents(pageComponents => [...pageComponents, selectedComponent])
@@ -78,6 +70,58 @@ function PageCreate() {
         setIsComponentTableModalOpen(false)
     })
 
+   const pageNameOnChange = ((value) => {
+       setPage({
+           ...page,
+           name: value
+       })
+   })
+    const pageIdentifierOnChange = ((value) => {
+        setPage({
+            ...page,
+            identifier: value
+        })
+    })
+    const pageAddComponentSelected = ((component) => {
+        var componentContent = {}
+        componentContent.id = component.id;
+        componentContent.name = component.name;
+        componentContent.identifier = component.identifier;
+        componentContent.component_fields_content = [];
+
+        component.fields.map((field) => {
+            var componentFieldContent= {};
+
+            componentFieldContent.id = field.id;
+            componentFieldContent.name = field.name;
+            componentFieldContent.identifier = field.identifier;
+            componentFieldContent.field_type = field.field_type;
+            componentFieldContent.field_content = "";
+
+            componentContent.component_fields_content.push(componentFieldContent)
+        })
+
+        page.components_content.push(componentContent)
+    })
+
+    const componentFieldContentOnChange = ((componentFieldId, value) => {
+
+        page.components_content.map((componentContent) => {
+            var componentField = componentContent.component_fields_content.map((componentFieldContent) => {
+
+                if (componentFieldContent.id === componentFieldId) {
+                    componentFieldContent.field_content = value;
+                }
+            })
+        })
+        const updatedComponentContent = page.components_content
+
+        setPage({
+            ...page,
+            components_content: updatedComponentContent
+        })
+    })
+
     const renderComponent = ((pageComponent) => {
         return (
             <div key={pageComponent.id} className="my-5 ring-1 ring-gray-200 rounded p-3">
@@ -87,21 +131,20 @@ function PageCreate() {
                 <div>
                     component identifier: {pageComponent.identifier}
                 </div>
-
-                Component Fields
-                {pageComponent.fields.map((componentField) => {
-                    return renderComponentField(componentField)
-                })}
                 <div>
+                    Component Fields
 
+                    {pageComponent.fields.map((componentField) => {
+                        return renderComponentField(componentField)
+                    })}
                 </div>
-
             </div>
         )
     })
 
 
     useEffect(() => {
+        setPage({name: '', identifier: '', components_content: []})
         const mounted = (async () => {
 
             return await apiClient({
@@ -126,21 +169,14 @@ function PageCreate() {
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        // const response = (await fetch('http://localhost:8080/api/page', {
-        //     method: 'post',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-        //     },
-        //     body: JSON.stringify({name: name, identifier: identifier, component_content: pageComponents})
-        // }))
+
         const created_page_response = await apiClient({
             url: '/page',
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
             },
-            data: JSON.stringify({name: name, identifier: identifier, component_content: pageComponents})
+            data: JSON.stringify(page)
         })
 
         if (created_page_response.status) {
@@ -154,22 +190,22 @@ function PageCreate() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                            Page Information
+                            Page Information {JSON.stringify(page)}
                         </h1>
                         {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
                         {/*    receive mail.</p>*/}
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <input type="text" placeholder="Name"
-                                       value={name}
-                                       onChange={e => setName(e.target.value)}
+                                       value={_.get(page, 'name', '')}
+                                       onChange={e => pageNameOnChange(e.target.value)}
                                        className="border p-2 rounded w-full"/>
                             </div>
                             <div className="mb-4">
                                 <input type="text"
                                        placeholder="Identifier"
-                                       value={identifier}
-                                       onChange={e => setIdentifier(e.target.value)}
+                                       value={_.get(page, 'identifier')}
+                                       onChange={e => pageIdentifierOnChange(e.target.value)}
                                        className="border p-2 rounded w-full"/>
                             </div>
 

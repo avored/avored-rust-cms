@@ -8,7 +8,8 @@ pub struct AvoRedConfigProvider {
     pub database_name: String,
     pub session_secret_key: String,
     pub jwt_secret_key: String,
-    pub front_end_app_url: String
+    pub front_end_app_url: String,
+    pub password_salt: String
 }
 
 // pub fn config() -> &'static AvoRedConfigProvider {
@@ -29,6 +30,7 @@ impl AvoRedConfigProvider {
             session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?,
             jwt_secret_key: get_env("AVORED_JWT_SECRET")?,
             front_end_app_url: get_env("AVORED_FRONT_END_APP_URL")?,
+            password_salt: get_env("AVORED_PASSWORD_SALT")?
         })
     }
 }

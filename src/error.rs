@@ -3,7 +3,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use serde::Serialize;
-use crate::api::rest_api::handlers::setup::post_setup_avored_handler::ErrorResponse;
+use crate::models::validation_error::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -15,7 +15,9 @@ pub enum Error {
 
     CreateModelError(String),
 
-    BadRequestError(ErrorResponse)
+    BadRequestError(ErrorResponse),
+
+    AuthenticationError
 }
 
 impl core::fmt::Display for Error {
@@ -38,6 +40,12 @@ impl From<surrealdb::err::Error> for Error {
     }
 }
 
+impl From<argon2::password_hash::Error> for Error {
+    fn from(_val: argon2::password_hash::Error) -> Self {
+        Error::Generic("Password hasher error".to_string())
+    }
+}
+
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         // println!("->> {:<12} - {self:?}", "INTO_RES");
@@ -46,6 +54,9 @@ impl IntoResponse for Error {
                 // let tets = serde_json::to_string(&str);
 
                 (StatusCode::BAD_REQUEST, str).into_response()
+            },
+            Error::AuthenticationError => {
+                (StatusCode::UNAUTHORIZED, "Invalid Login detail given.").into_response()
             },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
         };

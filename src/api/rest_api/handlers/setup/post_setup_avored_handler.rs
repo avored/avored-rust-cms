@@ -5,24 +5,15 @@ use crate::{
     error::Result,
 };
 use argon2::{
-    password_hash::{rand_core::OsRng, SaltString},
+    password_hash::SaltString,
     Argon2, PasswordHasher,
 };
 use axum::{extract::State, Json, response::IntoResponse};
 use email_address::EmailAddress;
 use serde::{Deserialize, Serialize};
 use crate::error::Error;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
-#[derive( Debug, Serialize, Clone)]
-pub struct ErrorMessage {
-    key: String,
-    message: String
-}
-#[derive( Debug, Serialize, Clone)]
-pub struct ErrorResponse {
-    status: bool,
-    errors: Vec<ErrorMessage>
-}
 
 pub async fn post_setup_avored_handler(
     state: State<Arc<AvoRedState>>,
@@ -114,7 +105,7 @@ pub async fn post_setup_avored_handler(
 
 
 
-
+        REMOVE TABLE fields;
         DEFINE TABLE fields;
 
         DEFINE FIELD name ON TABLE fields TYPE string;
@@ -128,14 +119,7 @@ pub async fn post_setup_avored_handler(
 
 
 
-        DEFINE TABLE component_field;
 
-        DEFINE FIELD component_id ON TABLE component_field TYPE record<components>;
-        DEFINE FIELD field_id ON TABLE component_field TYPE record<fields>;
-        DEFINE FIELD created_by ON TABLE component_field TYPE string;
-        DEFINE FIELD updated_by ON TABLE component_field TYPE string;
-        DEFINE FIELD created_at ON TABLE component_field TYPE datetime;
-        DEFINE FIELD updated_at ON TABLE component_field TYPE datetime;
 
 
 
@@ -176,9 +160,8 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD updated_at ON TABLE assets TYPE datetime;
     ";
 
-    let password = payload.password.as_str();
-    let password = password.as_bytes();
-    let salt = SaltString::generate(&mut OsRng);
+    let password = payload.password.as_str().as_bytes();
+    let salt = SaltString::from_b64(&state.config.password_salt)?;
 
     let argon2 = Argon2::default();
     let password_hash = argon2

@@ -97,6 +97,31 @@ impl TryFrom<Object> for ComponentModel {
             None => String::from(""),
         };
 
+        let fields = match val.get("fields") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => surrealdb::sql::Object::default(),
+                            };
+
+                            let field_model: FieldModel = object.try_into()?;
+
+                            arr.push(field_model)
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
+
         Ok(ComponentModel {
             id,
             name,
@@ -105,7 +130,7 @@ impl TryFrom<Object> for ComponentModel {
             updated_at,
             created_by,
             updated_by,
-            fields: vec![],
+            fields,
         })
     }
 }
