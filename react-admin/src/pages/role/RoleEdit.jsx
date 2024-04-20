@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate, useParams} from "react-router-dom";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {isEmpty} from "lodash";
 import axios from "axios";
 

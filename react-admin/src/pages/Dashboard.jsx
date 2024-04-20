@@ -1,6 +1,3 @@
-import logo from '../assets/logo_only.svg'
-import FeatherIcon from 'feather-icons-react'
-
 function Dashboard() {
     return (
         <div className="flex-1 bg-white">

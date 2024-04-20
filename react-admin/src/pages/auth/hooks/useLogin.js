@@ -16,6 +16,9 @@ export const useLogin = () => {
             localStorage.setItem("AUTH_TOKEN", res.data.data);
             // and redirect to the admin.
             redirect("/admin");
+        },
+        onError: (errors) => {
+            console.log("sddsdssdff", errors)
         }
    }) 
 }
