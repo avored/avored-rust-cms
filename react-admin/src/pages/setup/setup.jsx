@@ -76,6 +76,7 @@ function Setup() {
                                     type="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
+                                    errorMessages={passwordFieldErrorMessages}
                                 />
                             </div>
 

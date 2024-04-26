@@ -35,11 +35,11 @@ use crate::api::rest_api::handlers::{
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
-    let backend_url = &state.config.front_end_app_url;
+    let front_end_app_url = &state.config.front_end_app_url;
 
-    println!("BACKEND URL {backend_url}");
+    println!("FRONT END CORS ALLOWED URL: {front_end_app_url}");
     let cors_layer = CorsLayer::new()
-        .allow_origin(backend_url.parse::<HeaderValue>().unwrap())
+        .allow_origin(front_end_app_url.parse::<HeaderValue>().unwrap())
         .allow_headers([CONTENT_TYPE, AUTHORIZATION])
         .allow_methods([
             axum::http::Method::GET,

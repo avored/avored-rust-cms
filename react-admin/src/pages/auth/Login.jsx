@@ -1,4 +1,4 @@
-import useEffect from "react"
+import {useEffect} from "react"
 import logo from "../../assets/logo_only.svg"
 import { useNavigate } from "react-router-dom"
 import { isEmpty } from "lodash"
@@ -7,6 +7,7 @@ import {useForm} from 'react-hook-form'
 import {joiResolver} from '@hookform/resolvers/joi'
 import { useLogin } from "./hooks/useLogin"
 import { loginSchema } from "./schemas/login.schema"
+import _ from 'lodash'
 import { ErrorMessage } from "../../components/ErrorMessage"
 
 function Login() {
@@ -14,7 +15,16 @@ function Login() {
   const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: joiResolver(loginSchema)
   });
-  const {mutate, isPending} = useLogin();
+  const {mutate, isPending, error} = useLogin();
+
+  const isErrorExist = (key) => {
+    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
+  }
+
+  const getErrorMessage = (key) => {
+    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
+  }
+
 
   // TODO: enhance to make this as an HOC
   // for "protecting" routes/pages
@@ -52,11 +62,12 @@ function Login() {
             <div>
               <InputField
                 label="Email Address"
-                type="email"
+                type="text"
                 name="email"
+                autoFocus={true}
                 register={register("email")}
               />
-              {errors.email && <ErrorMessage message={errors.email.message} />}
+              {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
             </div>
             <div>
               <InputField
@@ -65,7 +76,7 @@ function Login() {
                 name="password"
                 register={register("password")}
               />
-              {errors.password && <ErrorMessage message={errors.password.message} />}
+              {(isErrorExist('password') >=0) && <ErrorMessage message={getErrorMessage('password')} />}
             </div>
             <div className="flex items-center justify-end">
               <div className="text-sm">

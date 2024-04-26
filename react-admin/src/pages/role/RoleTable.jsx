@@ -1,44 +1,17 @@
-import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import {isEmpty} from "lodash";
-import axios from "axios";
+import {Link} from "react-router-dom";
+import {useRoleTable} from "./hooks/useRoleTable";
+import _ from 'lodash';
 
-function RoleTable() {
-    const [roles, setRoles] = useState([]);
-    const navigate = useNavigate()
+export default function RoleTable() {
 
     const getFormattedDate = ((date) => {
-        var date_obj = new Date(date);
+        const date_obj = new Date(date);
 
-        return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
+        return `${date_obj.getFullYear()}-${("0" + (date_obj.getMonth() + 1)).slice("-2")}-${("0" + (date_obj.getDate())).slice("-2")}`;
     })
 
-
-
-    useEffect(() => {
-        const mounted = (async () => {
-
-            const response = await axios({
-                url: 'http://localhost:8080/api/role',
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-            return response
-        })
-
-        mounted().then(({data}) => {
-            console.log(data)
-            if (isEmpty(data)) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-            setRoles(data.data)
-        })
-
-    }, [navigate])
+    const role_api_table_response = useRoleTable()
+    const roles = _.get(role_api_table_response, 'data.data.data', [])
 
     return (
         <div className="flex-1 bg-white">
@@ -52,7 +25,6 @@ function RoleTable() {
                         Create
                     </Link>
                 </div>
-
 
                 <div className="overflow-x-hidden">
                     <table className="min-w-full bg-white shadow-md rounded">
@@ -100,5 +72,3 @@ function RoleTable() {
         </div>
     )
 }
-
-export default RoleTable

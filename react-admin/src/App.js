@@ -1,5 +1,5 @@
 import './App.css';
-import {BrowserRouter, Navigate, Route, Routes} from 'react-router-dom';
+import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import Dashboard from './pages/Dashboard'
 import Login from './pages/auth/Login'
 import Home from "./pages/Home";
@@ -18,8 +18,6 @@ import ComponentTable from "./pages/component/ComponentTable";
 import ComponentCreate from "./pages/component/ComponentCreate";
 import ComponentEdit from "./pages/component/ComponentEdit";
 import Setup from "./pages/setup/setup";
-
-
 function App() {
     return (
         <BrowserRouter>

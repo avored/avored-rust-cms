@@ -178,6 +178,7 @@ function AdminUserEdit() {
                                 <div className="ring-1 ring-gray-300 rounded">
                                     <div className="p-3">
                                         <img className="h-48 w-48 rounded"
+                                             alt={full_name}
                                              src={`${current_profile_image}`}/>
                                     </div>
                                 </div>

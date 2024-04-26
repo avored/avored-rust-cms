@@ -73,18 +73,9 @@ impl RoleRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_role_model.name.into()),
             ("identifier".into(), createable_role_model.identifier.into()),
-            (
-                "permissions".into(),
-                createable_role_model.permissions.into(),
-            ),
-            (
-                "created_by".into(),
-                createable_role_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                createable_role_model.logged_in_username.into(),
-            ),
+            ("permissions".into(), createable_role_model.permissions.into()),
+            ("created_by".into(), createable_role_model.logged_in_username.clone().into()),
+            ("updated_by".into(), createable_role_model.logged_in_username.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -143,37 +134,15 @@ impl RoleRepository {
                 permissions: $permissions
             };";
 
-        // let mut role_ids = Vec::new();
-        // role_ids.push("test1");
-        // role_ids.push("test2");
-
         let vars = BTreeMap::from([
             ("name".into(), updatable_admin_user.name.into()),
             ("identifier".into(), updatable_admin_user.identifier.into()),
-            (
-                "permissions".into(),
-                updatable_admin_user.permissions.into(),
-            ),
-            (
-                "logged_in_user_name".into(),
-                updatable_admin_user.logged_in_username.into(),
-            ),
-            // ("permissions".into(), role_ids.into()),
+            ("permissions".into(), updatable_admin_user.permissions.into()),
+            ("logged_in_user_name".into(), updatable_admin_user.logged_in_username.into()),
             ("id".into(), updatable_admin_user.id.into()),
             ("table".into(), "roles".into()),
         ]);
-
-        // let vars2: BTreeMap<String, Value> = [
-
-        // ("table".into(), "admin_users".into()),
-        // ]
-        // .into();
-
-        // println!("{:?}", vars2);
-
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        // println!("UPDATE Role: {:?}", responses);
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {

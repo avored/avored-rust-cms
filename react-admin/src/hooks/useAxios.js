@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import {client} from '../lib/axios';
+import _ from 'lodash';
 
 export const useAxios = () => {
     useEffect(() => {
         const reqInterceptor = client.interceptors.request.use(
             config => {
-                if (!config.headers['Authorization']) {
-                    const token = localStorage.getItem("AUTH_TOKEN");
+                const token = localStorage.getItem("AUTH_TOKEN");
+                if (!_.isEmpty(token) && !config.headers['Authorization']) {
+
                     config.headers['Authorization'] = `Bearer ${token}` 
                 }
 
