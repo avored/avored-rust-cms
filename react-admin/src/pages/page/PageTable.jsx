@@ -8,9 +8,9 @@ function PageTable() {
     const navigate = useNavigate()
 
     const getFormattedDate = ((date) => {
-        date = new Date(date);
+        const date_obj = new Date(date);
 
-        return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+        return `${date_obj.getFullYear()}-${("0" + (date_obj.getMonth() + 1)).slice("-2")}-${("0" + date_obj.getDate()).slice("-2")}`;
     })
 
     useEffect(() => {

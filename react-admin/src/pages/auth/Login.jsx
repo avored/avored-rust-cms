@@ -64,6 +64,7 @@ function Login() {
                 label="Email Address"
                 type="text"
                 name="email"
+                autoFocus={true}
                 register={register("email")}
               />
               {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
