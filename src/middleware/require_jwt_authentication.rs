@@ -66,6 +66,7 @@ pub async fn require_jwt_authentication (
         .claims;
 
     let logged_in_user = LoggedInUser {
+        id: claims.sub,
         name: claims.name,
         email: claims.email,
     };

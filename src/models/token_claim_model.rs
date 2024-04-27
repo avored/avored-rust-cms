@@ -11,6 +11,7 @@ pub struct TokenClaims {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LoggedInUser {
+    pub id: String,
     pub name: String,
     pub email: String,
 }

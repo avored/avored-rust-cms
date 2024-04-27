@@ -25,12 +25,10 @@ impl AdminUserRepository {
         database_session: &Session,
         email: String,
     ) -> Result<AdminUserModel> {
-        let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE $data;";
-        let data: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+        let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE email=$data;";
+        let data: BTreeMap<String, Value> = [("data".into(), email.into())].into();
 
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(sql, database_session, Some(data)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
@@ -74,31 +72,13 @@ impl AdminUserRepository {
         let sql = "CREATE admin_users CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
-            (
-                "full_name".into(),
-                creatable_admin_user_model.full_name.into(),
-            ),
+            ("full_name".into(), creatable_admin_user_model.full_name.into(),),
             ("email".into(), creatable_admin_user_model.email.into()),
-            (
-                "password".into(),
-                creatable_admin_user_model.password.into(),
-            ),
-            (
-                "profile_image".into(),
-                creatable_admin_user_model.profile_image.into(),
-            ),
-            (
-                "is_super_admin".into(),
-                creatable_admin_user_model.is_super_admin.into(),
-            ),
-            (
-                "created_by".into(),
-                creatable_admin_user_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                creatable_admin_user_model.logged_in_username.into(),
-            ),
+            ("password".into(), creatable_admin_user_model.password.into(),),
+            ("profile_image".into(), creatable_admin_user_model.profile_image.into(),),
+            ("is_super_admin".into(), creatable_admin_user_model.is_super_admin.into(),),
+            ("created_by".into(), creatable_admin_user_model.logged_in_username.clone().into(),),
+            ("updated_by".into(), creatable_admin_user_model.logged_in_username.into(),),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
