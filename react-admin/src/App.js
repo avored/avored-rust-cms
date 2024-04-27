@@ -18,6 +18,7 @@ import ComponentTable from "./pages/component/ComponentTable";
 import ComponentCreate from "./pages/component/ComponentCreate";
 import ComponentEdit from "./pages/component/ComponentEdit";
 import Setup from "./pages/setup/setup";
+import Logout from "./pages/auth/Logout";
 function App() {
     return (
         <BrowserRouter>
@@ -30,6 +31,7 @@ function App() {
 
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
+                    <Route path="/admin/logout"   element={<Logout />} />
                     <Route path="/admin/asset"   element={<AssetTable />} />
                     <Route path="/admin/component"   element={<ComponentTable />} />
                     <Route path="/admin/component-create"   element={<ComponentCreate />} />

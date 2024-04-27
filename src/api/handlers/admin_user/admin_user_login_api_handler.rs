@@ -10,6 +10,7 @@ use serde_json::json;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
+use crate::models::admin_user_model::AdminUserModel;
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::ErrorResponse;
 
@@ -46,9 +47,9 @@ pub async fn admin_user_login_api_handler(
     let iat = now.timestamp() as usize;
     let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
     let claims: TokenClaims = TokenClaims {
-        sub: admin_user_model.id,
-        name: admin_user_model.full_name,
-        email:admin_user_model.email,
+        sub: admin_user_model.clone().id,
+        name: admin_user_model.clone().full_name,
+        email:admin_user_model.clone().email,
         exp,
         iat,
     };
@@ -70,6 +71,7 @@ pub async fn admin_user_login_api_handler(
     let response_data = ResponseData {
         status: true,
         data: token,
+        admin_user: admin_user_model
     };
 
 
@@ -80,5 +82,6 @@ pub async fn admin_user_login_api_handler(
 #[derive(Serialize)]
 pub struct ResponseData {
     status: bool,
-    data: String
+    data: String,
+    admin_user: AdminUserModel
 }
