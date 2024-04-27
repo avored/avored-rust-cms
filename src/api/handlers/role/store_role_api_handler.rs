@@ -5,7 +5,7 @@ use crate::{
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
-use crate::api::rest_api::handlers::role::request::store_role_request::StoreRoleRequest;
+use crate::api::handlers::role::request::store_role_request::StoreRoleRequest;
 use crate::models::role_model::{CreatableRole, RoleModel};
 use crate::models::token_claim_model::LoggedInUser;
 

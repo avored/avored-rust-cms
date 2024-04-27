@@ -6,7 +6,7 @@ use crate::{
 };
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
-use crate::api::rest_api::handlers::component::request::update_component_request::UpdateComponentRequest;
+use crate::api::handlers::component::request::update_component_request::UpdateComponentRequest;
 use crate::models::component_model::{ComponentModel, UpdatableComponentModel};
 use crate::models::field_model::UpdatableFieldModel;
 use crate::models::token_claim_model::LoggedInUser;

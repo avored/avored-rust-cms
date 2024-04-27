@@ -5,7 +5,7 @@ use crate::{
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
-use crate::api::rest_api::handlers::component::request::store_component_request::StoreComponentRequest;
+use crate::api::handlers::component::request::store_component_request::StoreComponentRequest;
 use crate::models::component_model::{ComponentModel, CreatableComponent};
 use crate::models::field_model::CreatableFieldModel;
 use crate::models::token_claim_model::LoggedInUser;

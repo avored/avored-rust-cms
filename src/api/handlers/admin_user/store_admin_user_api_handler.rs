@@ -8,7 +8,7 @@ use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use urlencoding::decode_binary;
-use crate::api::rest_api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
+use crate::api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};

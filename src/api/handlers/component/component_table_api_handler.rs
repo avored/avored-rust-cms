@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use axum::extract::{Query, State};
 use axum::Json;
-use crate::api::rest_api::handlers::component::request::component_table_query::ComponentTableQuery;
+use crate::api::handlers::component::request::component_table_query::ComponentTableQuery;
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
 use crate::models::component_model::ComponentPagination;

@@ -1,35 +1,38 @@
 use std::sync::Arc;
 
-use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel};
+use crate::models::page_model::{PageModel, UpdatableComponentContentModel, UpdatableComponentFieldContentModel, UpdatablePageModel};
 use crate::{
+    api::handlers::page::request::update_page_request::UpdatePageRequest,
     avored_state::AvoRedState, error::Result
 };
-use axum::{Extension, extract::State, Json};
+
+use axum::{Extension, extract::{Path as AxumPath, State}, Json};
 use serde::Serialize;
-use crate::api::rest_api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::models::token_claim_model::LoggedInUser;
 
-
-pub async fn store_page_api_handler(
+pub async fn update_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
+    AxumPath(page_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
-    Json(payload): Json<StorePageRequest>,
-) -> Result<Json<CreatedPageResponse>> {
+    Json(payload): Json<UpdatePageRequest>,
+) -> Result<Json<UpdatablePageResponse>> {
+    println!("->> {:<12} - update_page_api_handler", "HANDLER");
+
     // let _validation_error_list = payload.validate_errors()?;
 
-    // println!("Payload SENT: {:?}", payload);
+    // println!("Validation error list: {:?}", validation_error_list);
 
-    let mut  creatable_page = CreatablePageModel {
+    let mut updatable_page = UpdatablePageModel {
+        id: page_id,
         name: payload.name,
         identifier: payload.identifier,
+        component_contents: vec![],
         logged_in_username: logged_in_user.email.clone(),
-        component_contents: vec![]
     };
 
-    //
 
     for payload_component_content in payload.components_content {
-        let mut  creatable_component_content_model = CreatableComponentContentModel {
+        let mut  updatable_component_content_model = UpdatableComponentContentModel {
             id: payload_component_content.id,
             name: payload_component_content.name,
             identifier: payload_component_content.identifier,
@@ -37,7 +40,7 @@ pub async fn store_page_api_handler(
         };
 
         for  payload_component_fields_data in  payload_component_content.component_fields_content {
-            let creatable_component_field_content = CreatableComponentFieldContentModel {
+            let updatable_component_field_content = UpdatableComponentFieldContentModel {
                 id: payload_component_fields_data.id,
                 name: payload_component_fields_data.name,
                 identifier: payload_component_fields_data.identifier,
@@ -45,28 +48,29 @@ pub async fn store_page_api_handler(
                 field_content: payload_component_fields_data.field_content,
             };
 
-            creatable_component_content_model.component_fields_content.push(creatable_component_field_content);
+            updatable_component_content_model.component_fields_content.push(updatable_component_field_content);
         }
 
-        creatable_page.component_contents.push(creatable_component_content_model);
+        updatable_page.component_contents.push(updatable_component_content_model);
     }
 
-    // println!("Payload GENERATED: {:?}", creatable_page);
 
-    let created_page_model = state
+
+    let updated_page_model = state
         .page_service
-        .create_page(&state.db, creatable_page, logged_in_user)
+        .update_page(&state.db, updatable_page, logged_in_user)
         .await?;
-    let response = CreatedPageResponse {
+    let response = UpdatablePageResponse {
         status: true,
-        page_model: created_page_model
+        page_model: updated_page_model
     };
 
     Ok(Json(response))
 }
 
+
 #[derive(Serialize, Debug)]
-pub struct CreatedPageResponse {
+pub struct UpdatablePageResponse {
     pub status: bool,
     pub page_model: PageModel
 }
