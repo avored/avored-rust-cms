@@ -7,7 +7,7 @@ use axum::http::header::HeaderValue;
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use tower_http::cors::CorsLayer;
-use crate::api::rest_api::handlers::{
+use crate::api::handlers::{
     page::page_table_api_handler::page_table_api_handler,
     admin_user::admin_user_login_api_handler::admin_user_login_api_handler,
     component_all_api_handler::component_all_api_handler,
@@ -30,9 +30,9 @@ use crate::api::rest_api::handlers::{
     component::store_component_api_handler::store_component_api_handler,
     component::fetch_component_api_handler::fetch_component_api_handler,
     component::update_component_api_handler::update_component_api_handler,
-    setup::post_setup_avored_handler::post_setup_avored_handler
+    setup::post_setup_avored_handler::post_setup_avored_handler,
+    admin_user::logged_in_user_api_handler::logged_in_user_api_handler
 };
-use crate::api::rest_api::handlers::admin_user::logged_in_user_api_handler::logged_in_user_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 

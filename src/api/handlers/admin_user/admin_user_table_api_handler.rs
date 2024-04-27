@@ -2,7 +2,7 @@ use std::sync::Arc;
 use axum::extract::{Query, State};
 use axum::Json;
 use serde::Serialize;
-use crate::api::rest_api::handlers::page::request::page_table_request::PageTableRequest;
+use crate::api::handlers::page::request::page_table_request::PageTableRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::Result;
 use crate::models::admin_user_model::AdminUserPagination;

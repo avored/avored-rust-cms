@@ -10,7 +10,7 @@ use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use urlencoding::decode_binary;
-use crate::api::rest_api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
+use crate::api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
 

@@ -12,7 +12,7 @@ use crate::{
     avored_state::AvoRedState,
     error::Result
 };
-use crate::api::rest_api::rest_api_routes::rest_api_routes;
+use crate::api::rest_api_routes::rest_api_routes;
 
 const PER_PAGE: i64 = 10;
 

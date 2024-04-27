@@ -7,7 +7,7 @@ use crate::{
 };
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
-use crate::api::rest_api::handlers::role::request::update_role_request::UpdateRoleRequest;
+use crate::api::handlers::role::request::update_role_request::UpdateRoleRequest;
 use crate::models::role_model::RoleModel;
 use crate::models::token_claim_model::LoggedInUser;
 
