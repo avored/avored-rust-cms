@@ -1,80 +1,45 @@
-import {useEffect, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
-import {isEmpty} from "lodash";
-import InputField from "../../components/InputField";
-import {Switch} from "@headlessui/react";
-import axios from "axios"
-import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
-
+import {useMemo, useState} from "react"
+import {Link, useParams} from "react-router-dom"
+import InputField from "../../components/InputField"
+import {Switch} from "@headlessui/react"
+import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField"
+import _ from "lodash"
+import {useGetAdminUser} from "./hooks/useGetAdminUser"
+import {useGetRoleOptions} from "./hooks/useGetRoleOptions"
+import {useUpdateAdminUser} from "./hooks/useUpdateAdminUser"
 function AdminUserEdit() {
 
-    const [roles, setRoles] = useState([])
-
     const [selectedOption, setSelectedOption] = useState([])
-
     const [full_name, setFullName] = useState()
     const [current_profile_image, setCurrentProfileImage] = useState()
     const [is_super_admin, setIsSuperAdmin] = useState(false)
     const [image, setImage] = useState()
-    const navigate = useNavigate()
     const params = useParams();
+
+    const {data} = useGetAdminUser(params.admin_user_id)
+    useMemo(() => {
+        setFullName(_.get(data, 'data.admin_user_model.full_name'))
+
+        setIsSuperAdmin(_.get(data, 'data.admin_user_model.is_super_admin'))
+        setCurrentProfileImage(_.get(data, 'data.admin_user_model.profile_image'))
+        var role_ids = []
+        _.get(data, 'data.admin_user_model.roles', []).forEach((role) => {
+            role_ids.push(role.id)
+        })
+        setSelectedOption(role_ids)
+
+    }, [data])
+
+    const roleOptionResult = useGetRoleOptions()
+    const {mutate} = useUpdateAdminUser(params.admin_user_id)
+
+    const roles = _.get(roleOptionResult, 'data.data.options', [])
+
 
     const handleProfileImageChange = ((e) => {
         const file = e.target.files[0];
         setImage(file)
     })
-
-    useEffect(() => {
-        const mounted = (async () => {
-            const response = await axios({
-                url: 'http://localhost:8080/api/admin-user/' + params.admin_user_id,
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-            if (!response.data.status) {
-                return
-            }
-            return response.data
-        })
-
-        const role_option_mounted = (async () => {
-            const response = await axios({
-                url: 'http://localhost:8080/api/role-options',
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-            if (!response.data.status) {
-                return
-            }
-            return response.data
-        })
-
-        role_option_mounted().then((res) => {
-            setRoles(res.options)
-        })
-
-        mounted().then((res) => {
-            if (!res.status) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-            setFullName(res.admin_user_model.full_name)
-            setIsSuperAdmin(res.admin_user_model.is_super_admin)
-            setCurrentProfileImage(res.admin_user_model.profile_image)
-            var role_ids = []
-            res.admin_user_model.roles.forEach((role) => {
-                role_ids.push(role.id)
-            })
-            setSelectedOption(role_ids)
-        })
-
-    }, [])
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
@@ -87,39 +52,13 @@ function AdminUserEdit() {
         selectedOption.map((option) => {
             formData.append("role_ids[]", option)
         })
-        // formData.append("roles", selectedOption)
-        // console.log(selectedOption)
-
 
         if (image) {
             formData.append('image', image)
         }
 
-        console.log(formData)
+        mutate(formData)
 
-        const updated_admin_user_response = (await axios({
-            url: 'http://localhost:8080/api/admin-user/' + params.admin_user_id,
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=----',
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: formData
-        }))
-
-        //
-        // const response = (await fetch('http://localhost:8080/api/admin-user/' + params.admin_user_id, {
-        //     method: 'put',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //         'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-        //     },
-        //     body: JSON.stringify({full_name: full_name, is_super_admin: is_super_admin})
-        // }))
-
-        if (updated_admin_user_response.status) {
-            return navigate("/admin/admin-user");
-        }
     })
 
     return (

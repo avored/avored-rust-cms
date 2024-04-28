@@ -1,43 +1,28 @@
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import InputField from "../../components/InputField";
-import axios from 'axios';
+import {useStoreAdminUser} from "./hooks/useStoreAdminUser";
 
 function AdminUserCreate() {
     const [full_name, setFullName] = useState('Admin 3')
     const [email, setEmail] = useState('admin' + new Date().getMinutes() + new Date().getSeconds() +  '@admin.com')
     const [image, setImage] = useState()
-    const navigate = useNavigate()
+    const {mutate} = useStoreAdminUser()
 
     const handleProfileImageChange = ((e) => {
-        // console.log(e.target.files[0])
         const file = e.target.files[0];
-        // console.log(file)
         setImage(file)
-        // console.log(image)
     });
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        var formData = new FormData()
+        let formData = new FormData()
 
         formData.append("full_name", full_name);
         formData.append("email", email);
         formData.append('image', image)
 
-        const created_admin_user_response = (await axios({
-            url: 'http://localhost:8080/api/admin-user',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=----',
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: formData
-        }))
-
-        if (created_admin_user_response.data.status) {
-            return navigate("/admin/admin-user");
-        }
+        mutate(formData)
     })
 
     return (
