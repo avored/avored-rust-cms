@@ -3,14 +3,15 @@ import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
 
-export const useRoleTable = () => {
-    const client = useAxios();
-    const redirect = useNavigate();
+export const useGetRole = (role_id) => {
+    const client = useAxios()
+    const redirect = useNavigate()
+
     return useQuery({
-        queryKey: ['role-table'],
+        queryKey: ['role', role_id],
         queryFn: (async () => {
             try {
-                return await client.get("/role")
+                return await client.get("/role/" + role_id)
             } catch (error) {
                 if (_.get(error, 'response.status') === 401) {
                     localStorage.removeItem('AUTH_TOKEN')

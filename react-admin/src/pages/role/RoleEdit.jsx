@@ -1,17 +1,23 @@
-import {useEffect, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
-import _, {isEmpty} from "lodash";
-import axios from "axios";
-import {Switch} from "@headlessui/react";
-import apiClient from "../../ApiClient";
+import { useMemo, useState} from "react"
+import {Link,  useParams} from "react-router-dom"
+import _ from "lodash"
+import {Switch} from "@headlessui/react"
+import {useUpdateRole} from "./hooks/useUpdateRole"
+import {useGetRole} from "./hooks/useGetRole"
 
 function RoleEdit() {
-    const [name, setName] = useState('Contact US update');
-    const [identifier, setIdentifier] = useState('contact-us-update');
-    const navigate = useNavigate()
+    const [name, setName] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [permissions, setPermissions] = useState([])
     const params = useParams();
+    const { mutate } = useUpdateRole(params.role_id);
 
+    const {data} = useGetRole(params.role_id)
+    useMemo(() => {
+        setName(_.get(data, 'data.role_model.name'))
+        setIdentifier(_.get(data, 'data.role_model.identifier'))
+        setPermissions(_.get(data, 'data.role_model.permissions', []))
+    }, [data])
 
     const switchOnChange = ((e, key) => {
         if (e) {
@@ -28,52 +34,9 @@ function RoleEdit() {
         return _.indexOf(permissions, key) >= 0
     })
 
-
-    useEffect(() => {
-        const mounted = (async () => {
-            const response = await apiClient({
-                url: '/role/' + params.role_id,
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-
-            if (!_.get(response, 'data.status')) {
-                return
-            }
-
-            return _.get(response, 'data')
-        })
-
-        mounted().then((res) => {
-            if (isEmpty(res)) {
-                localStorage. removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-
-            setName(res.role_model.name)
-            setIdentifier(res.role_model.identifier)
-            setPermissions(_.get(res, 'role_model.permissions'))
-        })
-
-    }, [])
-
     const handleSubmit = (async (e) => {
         e.preventDefault()
-        const updated_role_response = await apiClient({
-            url: '/role/' + params.role_id,
-            method: 'put',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify({name: name, identifier: identifier, permissions: permissions})
-        })
-        if (updated_role_response.status) {
-            return navigate("/admin/role");
-        }
+        mutate({name: name, identifier: identifier, permissions: permissions})
     })
 
     return (
