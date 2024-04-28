@@ -4,12 +4,14 @@ import axios from "axios"
 import {Switch} from "@headlessui/react"
 import _ from 'lodash'
 import apiClient from "../../ApiClient";
+import {useStoreRole} from "./hooks/useStoreRole";
 
 function RoleCreate() {
     const [name, setName] = useState('Editor');
     const [identifier, setIdentifier] = useState('editor');
     const [permissions, setPermissions] = useState([])
     const navigate = useNavigate()
+    const { mutate } = useStoreRole()
 
     const switchOnChange = ((e, key) => {
         if (e) {
@@ -26,21 +28,10 @@ function RoleCreate() {
         return _.indexOf(permissions, key) >= 0
     })
 
-    const handleSubmit = (async (e) => {
+    const handleSubmit = ((e) => {
         e.preventDefault()
-
-        const created_role_response = await apiClient({
-            url: '/role',
-            method: 'post',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify({name: name, identifier: identifier, permissions: permissions})
-        })
-        if (created_role_response.status) {
-            return navigate("/admin/role");
-        }
+        const data = {name: name, identifier: identifier, permissions: permissions}
+        mutate(data)
     })
 
     return (

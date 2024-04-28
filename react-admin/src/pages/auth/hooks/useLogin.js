@@ -15,5 +15,5 @@ export const useLogin = () => {
             // and redirect to the admin.
             redirect("/admin");
         }
-   }) 
+   })
 }
