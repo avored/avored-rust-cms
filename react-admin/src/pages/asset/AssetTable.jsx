@@ -1,14 +1,16 @@
 import AvoredModal from "../../components/AvoredModal";
-import React, {useCallback, useEffect, useState} from "react";
-import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import React, {useState} from "react";
 import InputField from "../../components/InputField";
+import {useAssetTable} from "./hooks/useAssetTable";
+import _ from "lodash";
+import {useStoreAsset} from "./hooks/useStoreAsset";
 
 function AssetTable() {
     const [isOpen, setIsOpen] = useState(false)
-    const [assets, setAssets] = useState([])
-    const navigate = useNavigate()
     const [file, setFile] = useState()
+    const role_api_table_response = useAssetTable()
+    const assets = _.get(role_api_table_response, 'data.data.data', [])
+    const {mutate} = useStoreAsset()
 
     const onCloseModal = (() => {
         setIsOpen(false)
@@ -23,53 +25,15 @@ function AssetTable() {
         var formData = new FormData()
 
         formData.append('file', file)
-
-        const created_asset_response = (await axios({
-            url: 'http://localhost:8080/api/asset',
-            method: 'POST',
-            headers: {
-                'Content-Type': 'multipart/form-data; boundary=----',
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: formData
-        }))
-        console.log(window.x = created_asset_response, created_asset_response.data.data)
-        if (!created_asset_response.data.success) {
-            alert("asset did not uploaded. Please try again")
-        }
+        mutate(formData)
         onCloseModal()
-        fetchAssets()
+
+        // todo invalid asset table here
     })
     const handleAssetChange = ((e) => {
         const file = e.target.files[0];
         setFile(file)
     });
-
-    useEffect(() => {
-        fetchAssets()
-    }, [])
-
-    const fetchAssets = useCallback(() => {
-        const mounted = (async () => {
-
-            const response = await axios({
-                url: 'http://localhost:8080/api/asset',
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-            return response
-        })
-
-        mounted().then((res) => {
-            setAssets(res.data.data)
-        }).catch((error) => {
-            localStorage.removeItem("AUTH_TOKEN")
-            return navigate("/admin/login")
-        })
-    }, [navigate])
 
     return (
         <div className="flex-1 bg-white">
