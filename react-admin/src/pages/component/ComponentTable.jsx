@@ -1,41 +1,16 @@
-import {useEffect, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
-import apiClient from "../../ApiClient";
+import {Link} from "react-router-dom";
+import {useComponentTable} from "./hooks/useComponentTable";
+import _ from "lodash";
 
 function ComponentTable() {
-    const [components, setComponents] = useState([]);
-    const navigate = useNavigate()
+    const comoonent_api_table_response = useComponentTable()
+    const components = _.get(comoonent_api_table_response, 'data.data.data', [])
 
     const getFormattedDate = ((date) => {
         var date_obj = new Date(date);
 
         return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
     })
-
-
-
-    useEffect(() => {
-        const mounted = (async () => {
-
-            return await apiClient({
-                url: '/component',
-                method: 'get',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-        })
-
-        mounted().then(({data}) => {
-            setComponents(data.data)
-        }).catch((errors) => {
-            if (errors.response.status === 401) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-        })
-
-    }, [navigate])
 
     return (
         <div className="flex-1 bg-white">

@@ -1,8 +1,8 @@
 import InputField from "../../components/InputField";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import _ from "lodash";
+import apiClient from "../../ApiClient";
 
 function Setup() {
     const [emailFieldErrorMessages, setEmailFieldErrorMessages] = useState([]);
@@ -16,8 +16,8 @@ function Setup() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setEmailFieldErrorMessages([]);
-        const response = await axios({
-            url: "http://localhost:8080/api/setup",
+        const response = await apiClient({
+            url: "/setup",
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

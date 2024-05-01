@@ -1,11 +1,19 @@
 import logo from "../../assets/logo_only.svg";
 import {Menu} from "@headlessui/react";
-import {useLoggedInUser} from "../../hooks/useLoggedInUser"
 import _ from 'lodash'
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
+import {useEffect} from "react";
 
 function AppHeader() {
-    const adminUser = useLoggedInUser()
+    const adminUser = JSON.parse(localStorage.getItem("AUTH_ADMIN_USER"))
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (!_.get(adminUser, 'id')) {
+            localStorage.clear()
+            navigate('/admin/login')
+        }
+    })
 
     return (
         <header
@@ -14,7 +22,7 @@ function AppHeader() {
                 <a href="/admin"
                    className="text-white flex items-center space-x-2 group hover:text-white">
                     <div>
-                        <img src={logo} className="h-12"/>
+                        <img src={logo} alt="AvoRed Rust Cms Logo" className="h-12"/>
                     </div>
 
                     <div>
@@ -39,7 +47,7 @@ function AppHeader() {
                         </Menu.Button>
                         <Menu.Items as="div" className="absolute shadow-md  z-30 py-1.5 rounded-md bg-white border border-gray-100 w-full">
                             <Menu.Item as="div">
-                                <Link to={`/admin/admin-user-edit/${adminUser.id}`}
+                                <Link to={`/admin/admin-user-edit/${_(adminUser, 'id')}`}
                                    className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50">
                                     Profile
                                 </Link>

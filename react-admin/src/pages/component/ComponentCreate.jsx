@@ -1,15 +1,15 @@
 import {useState} from "react"
 import {Link, useNavigate} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
-import apiClient from "../../ApiClient"
 import {TrashIcon} from "@heroicons/react/16/solid"
 import InputField from "../../components/InputField";
+import {useStoreComponent} from "./hooks/useStoreComponent";
 
 function ComponentCreate() {
     const [fields, setFields] = useState([])
     const [name, setName] = useState('Component 2')
     const [identifier, setIdentifier] = useState('component-2')
-    const navigate = useNavigate()
+    const {mutate} = useStoreComponent()
 
     const addFieldOnClick = (() => {
         var field = {id: Math.random(), field_type: 'text', name: '', identifier: ''};
@@ -61,19 +61,7 @@ function ComponentCreate() {
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-
-        const created_page_response = await apiClient({
-            url: '/component',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify({name: name, identifier: identifier, fields: fields})
-        })
-
-        if (created_page_response.status) {
-            return navigate("/admin/component");
-        }
+        mutate({name: name, identifier: identifier, fields: fields})
     })
 
     return (
