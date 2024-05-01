@@ -8,8 +8,8 @@ import {useStoreAsset} from "./hooks/useStoreAsset";
 function AssetTable() {
     const [isOpen, setIsOpen] = useState(false)
     const [file, setFile] = useState()
-    const role_api_table_response = useAssetTable()
-    const assets = _.get(role_api_table_response, 'data.data.data', [])
+    const asset_api_table_response = useAssetTable()
+    const assets = _.get(asset_api_table_response, 'data.data.data', [])
     const {mutate} = useStoreAsset()
 
     const onCloseModal = (() => {

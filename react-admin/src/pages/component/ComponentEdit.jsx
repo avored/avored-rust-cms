@@ -1,11 +1,14 @@
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {Link, redirect, useNavigate, useParams} from "react-router-dom";
-import {isEmpty} from "lodash";
+import _, {isEmpty} from "lodash";
 import axios from "axios";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import InputField from "../../components/InputField";
 import apiClient from "../../ApiClient";
+import {useGetRole} from "../role/hooks/useGetRole";
+import {useGetComponent} from "./hooks/useGetComponent";
+import {useUpdateComponent} from "./hooks/useUpdateComponent";
 
 function ComponentEdit() {
     const [name, setName] = useState()
@@ -13,6 +16,15 @@ function ComponentEdit() {
     const [fields, setFields] = useState([])
     const navigate = useNavigate()
     const params = useParams()
+
+    const {mutate} = useUpdateComponent(params.component_id)
+
+    const {data} = useGetComponent(params.component_id)
+    useMemo(() => {
+        setName(_.get(data, 'data.component_model.name'))
+        setIdentifier(_.get(data, 'data.component_model.identifier'))
+        setFields(_.get(data, 'data.component_model.fields', []))
+    }, [data])
 
     const addFieldOnClick = (() => {
         var field = {id: Math.random(), field_type: 'text', name: '', identifier: ''};
@@ -62,53 +74,10 @@ function ComponentEdit() {
         })
     })
 
-    useEffect(() => {
-        const mounted = (async () => {
-            const response = await apiClient({
-                url: '/component/'  + params.component_id,
-                method: 'GET',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-
-            if (!response.status) {
-                return
-            }
-
-            return response.data
-        })
-
-        mounted().then((res) => {
-            if (isEmpty(res)) {
-                localStorage. removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-
-            setName(res.component_model.name)
-            setIdentifier(res.component_model.identifier)
-            setFields(res.component_model.fields)
-        })
-
-    }, [])
-
-
 
     const handleSubmit = (async (e) => {
         e.preventDefault()
-
-        const updated_component_response = await apiClient({
-            url: '/component/'  + params.component_id,
-            method: 'PUT',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify({name: name, identifier: identifier, fields: fields})
-        })
-
-        if (updated_component_response.status) {
-            return navigate("/admin/component");
-        }
+        mutate({name: name, identifier: identifier, fields: fields})
     })
 
     return (
