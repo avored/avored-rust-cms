@@ -1,7 +1,6 @@
 import InputField from "../../components/InputField";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import axios from "axios";
 import _ from "lodash";
 import apiClient from "../../ApiClient";
 

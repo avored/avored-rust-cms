@@ -1,12 +1,9 @@
-import {useEffect, useMemo, useState} from "react";
-import {Link, redirect, useNavigate, useParams} from "react-router-dom";
-import _, {isEmpty} from "lodash";
-import axios from "axios";
+import {useMemo, useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
+import _ from "lodash";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import InputField from "../../components/InputField";
-import apiClient from "../../ApiClient";
-import {useGetRole} from "../role/hooks/useGetRole";
 import {useGetComponent} from "./hooks/useGetComponent";
 import {useUpdateComponent} from "./hooks/useUpdateComponent";
 
@@ -14,7 +11,7 @@ function ComponentEdit() {
     const [name, setName] = useState()
     const [identifier, setIdentifier] = useState()
     const [fields, setFields] = useState([])
-    const navigate = useNavigate()
+
     const params = useParams()
 
     const {mutate} = useUpdateComponent(params.component_id)

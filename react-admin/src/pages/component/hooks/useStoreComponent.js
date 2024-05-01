@@ -1,4 +1,4 @@
-import {useMutation, useQuery} from '@tanstack/react-query'
+import {useMutation} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'

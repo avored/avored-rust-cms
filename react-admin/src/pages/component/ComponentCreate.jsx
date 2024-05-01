@@ -9,7 +9,6 @@ function ComponentCreate() {
     const [fields, setFields] = useState([])
     const [name, setName] = useState('Component 2')
     const [identifier, setIdentifier] = useState('component-2')
-    const navigate = useNavigate()
     const {mutate} = useStoreComponent()
 
     const addFieldOnClick = (() => {

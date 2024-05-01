@@ -22,7 +22,7 @@ function AppHeader() {
                 <a href="/admin"
                    className="text-white flex items-center space-x-2 group hover:text-white">
                     <div>
-                        <img src={logo} className="h-12"/>
+                        <img src={logo} alt="AvoRed Rust Cms Logo" className="h-12"/>
                     </div>
 
                     <div>
