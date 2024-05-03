@@ -1,8 +1,7 @@
 import InputField from "../../components/InputField";
 import {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import _ from "lodash";
-import apiClient from "../../ApiClient";
+import {useStoreSetup} from "./hooks/useStoreSetup";
 
 function Setup() {
     const [emailFieldErrorMessages, setEmailFieldErrorMessages] = useState([]);
@@ -10,36 +9,36 @@ function Setup() {
     const [email, setEmail] = useState("admin@admin.com");
     const [password, setPassword] = useState("admin123");
     const redirect = useNavigate();
-
-    // setEmailFieldErrorMessages(["test error Message"])
+    const {mutate} = useStoreSetup()
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setEmailFieldErrorMessages([]);
-        const response = await apiClient({
-            url: "/setup",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            data: JSON.stringify({email: email, password: password}),
-        })
-        .catch(({response}) => {
-            if (response.status === 400) {
-                response.data.errors.map((error => {
-                    if (error.key === "email") {
-                        setEmailFieldErrorMessages(errorMessages => [...errorMessages, error.message])
-                    }
-                    if (error.key === "password") {
-                        setPasswordFieldErrorMessages(errorMessages => [...errorMessages, error.message])
-                    }
-                }))
-            }
-        });
-
-        if (_.isBoolean(_.get(response, 'data.status'))) {
-            return redirect("/admin/login");
-        }
+        e.preventDefault()
+        mutate({email: email, password: password})
+        // setEmailFieldErrorMessages([]);
+        // const response = await apiClient({
+        //     url: "/setup",
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //     },
+        //     data: JSON.stringify({email: email, password: password}),
+        // })
+        // .catch(({response}) => {
+        //     if (response.status === 400) {
+        //         response.data.errors.map((error => {
+        //             if (error.key === "email") {
+        //                 setEmailFieldErrorMessages(errorMessages => [...errorMessages, error.message])
+        //             }
+        //             if (error.key === "password") {
+        //                 setPasswordFieldErrorMessages(errorMessages => [...errorMessages, error.message])
+        //             }
+        //         }))
+        //     }
+        // });
+        //
+        // if (_.isBoolean(_.get(response, 'data.status'))) {
+        //     return redirect("/admin/login");
+        // }
     };
 
     return (
