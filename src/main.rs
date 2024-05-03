@@ -47,11 +47,11 @@ async fn main() -> Result<()> {
 
     println!();
     println!();
-    println!("Server started: http://localhost:8080");
+    println!("Server started: http://0.0.0.0:8080");
 
     // region:    --- Start Server
     // let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    let listener = TcpListener::bind("0.0.0.0:8080").await.unwrap();
     info!("{:<12} - on {:?}\n", "LISTENING", listener.local_addr());
     axum::serve(listener , app.into_make_service())
         .await

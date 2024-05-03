@@ -1,19 +1,36 @@
-import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate, useParams} from "react-router-dom";
+import {useMemo, useState} from "react";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
-import apiClient from "../../ApiClient";
 import InputField from "../../components/InputField";
 import _ from 'lodash';
+import {useComponentAll} from "./hooks/useComponentAll";
+import {useGetPage} from "./hooks/useGetPage";
+import {useUpdatePage} from "./hooks/useUpdatePage";
 
 function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] = useState(false)
     const navigate = useNavigate()
-    const [components, setComponents] = useState([])
     const [pageComponents, setPageComponents] = useState([])
-    const [page, setPage] = useState()
+    const [page, setPage] = useState({})
     const params = useParams()
 
+    const component_all_api_response = useComponentAll();
+    const components = _.get(component_all_api_response, 'data.data', [])
+
+    const {mutate} = useUpdatePage(params.page_id)
+
+    const {data} = useGetPage(params.page_id)
+    // console.log(page_api_response)
+    useMemo(() => {
+        setPage(_.get(data, 'data.page_model'))
+        const comms = _.get(data, 'data.page_model.components_content', [])
+        console.log(comms)
+            comms.map((com) => {
+                setPageComponents(pageComponents => [...pageComponents, com])
+            })
+    //
+    }, [data])
 
     const getFormattedDate = ((date) => {
         var date_obj = new Date(date);
@@ -102,6 +119,10 @@ function PageEdit() {
             componentContent.component_fields_content.push(componentFieldContent)
         })
 
+        if (_.isEmpty(page, 'components_content')) {
+            page['components_content'] = []
+        }
+
         page.components_content.push(componentContent)
     })
 
@@ -143,74 +164,9 @@ function PageEdit() {
         )
     })
 
-
-    useEffect(() => {
-        setPage({name: '', identifier: '', components_content: []})
-        const mounted = (async () => {
-
-            return await apiClient({
-                url: '/component-all',
-                method: 'get',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-        })
-        const mounted_page = (async () => {
-            console.log(params)
-            return await apiClient({
-                url: '/page/' + params.page_id,
-                method: 'get',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-        })
-
-
-        mounted_page().then(({data}) => {
-            setPage(data.page_model)
-            console.log('before', data.page_model.components_content)
-            data.page_model.components_content.map((com) => {
-                console.log(com)
-                setPageComponents(pageComponents => [...pageComponents, com])
-            })
-
-
-            // setPageComponents(data.page_model.components_content)
-        }).catch((errors) => {
-            if (_.get(errors, 'response.status') === 401) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-        })
-
-        mounted().then(({data}) => {
-            setComponents(data)
-        }).catch((errors) => {
-            if (errors.response.status === 401) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-        })
-
-    }, [navigate])
-
     const handleSubmit = (async (e) => {
         e.preventDefault()
-
-        const created_page_response = await apiClient({
-            url: '/page',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify(page)
-        })
-
-        if (created_page_response.status) {
-            return navigate("/admin/page");
-        }
+        mutate(page)
     })
 
     return (

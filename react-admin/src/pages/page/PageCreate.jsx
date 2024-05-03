@@ -1,18 +1,22 @@
-import {useEffect, useState} from "react";
-import {Link, redirect, useNavigate} from "react-router-dom";
+import {useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
-import apiClient from "../../ApiClient";
 import InputField from "../../components/InputField";
 import _ from 'lodash';
+import {useComponentAll} from "./hooks/useComponentAll";
+import {useStorePage} from "./hooks/useStorePage";
 
 function PageCreate() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] = useState(false)
     const navigate = useNavigate()
-    const [components, setComponents] = useState([])
     const [pageComponents, setPageComponents] = useState([])
-    const [page, setPage] = useState()
+    const [page, setPage] = useState({})
 
+    const component_all_api_response = useComponentAll();
+    const components = _.get(component_all_api_response, 'data.data', [])
+
+    const {mutate} = useStorePage()
 
     const getFormattedDate = ((date) => {
         var date_obj = new Date(date);
@@ -100,7 +104,9 @@ function PageCreate() {
 
             componentContent.component_fields_content.push(componentFieldContent)
         })
-
+        if (_.isEmpty(page, 'components_content')) {
+            page['components_content'] = []
+        }
         page.components_content.push(componentContent)
     })
 
@@ -143,45 +149,10 @@ function PageCreate() {
     })
 
 
-    useEffect(() => {
-        setPage({name: '', identifier: '', components_content: []})
-        const mounted = (async () => {
-
-            return await apiClient({
-                url: '/component-all',
-                method: 'get',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-        })
-
-        mounted().then(({data}) => {
-            setComponents(data)
-        }).catch((errors) => {
-            if (errors.response.status === 401) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-        })
-
-    }, [navigate])
-
     const handleSubmit = (async (e) => {
         e.preventDefault()
 
-        const created_page_response = await apiClient({
-            url: '/page',
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-            },
-            data: JSON.stringify(page)
-        })
-
-        if (created_page_response.status) {
-            return navigate("/admin/page");
-        }
+       mutate(page)
     })
 
     return (
