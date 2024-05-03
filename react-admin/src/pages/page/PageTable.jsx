@@ -1,11 +1,10 @@
-import {useEffect, useState} from "react"
-import {Link, useNavigate} from "react-router-dom"
-import apiClient from "../../ApiClient"
+import {Link} from "react-router-dom"
 import _ from 'lodash'
+import {usePageTable} from "./hooks/usePageTable"
 
 function PageTable() {
-    const [pages, setPages] = useState([]);
-    const navigate = useNavigate()
+    const page_api_table_response = usePageTable()
+    const pages = _.get(page_api_table_response, 'data.data.data', [])
 
     const getFormattedDate = ((date) => {
         const date_obj = new Date(date);
@@ -13,29 +12,7 @@ function PageTable() {
         return `${date_obj.getFullYear()}-${("0" + (date_obj.getMonth() + 1)).slice("-2")}-${("0" + date_obj.getDate()).slice("-2")}`;
     })
 
-    useEffect(() => {
-        const mounted = (async () => {
 
-            return await apiClient({
-                url: '/page',
-                method: 'get',
-                headers: {
-                    'Authorization': 'Bearer ' + localStorage.getItem("AUTH_TOKEN"),
-                }
-            })
-        })
-
-        mounted().then(({data}) => {
-            setPages(data.data)
-        }).catch((errors) => {
-            console.log(errors)
-            if (_.get(errors, 'response.status') === 401) {
-                localStorage.removeItem("AUTH_TOKEN")
-                return navigate("/admin/login")
-            }
-        })
-
-    }, [])
 
     return (
         <div className="flex-1 bg-white">
