@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
+use crate::error::Error;
 use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel};
+use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -15,10 +17,17 @@ pub async fn store_page_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
 ) -> Result<Json<CreatedPageResponse>> {
-    // let _validation_error_list = payload.validate_errors()?;
+    let error_messages = payload.validate()?;
 
-    // println!("Payload SENT: {:?}", payload);
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
 
+        return Err(Error::BadRequestError(error_response));
+    }
+    
     let mut  creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,

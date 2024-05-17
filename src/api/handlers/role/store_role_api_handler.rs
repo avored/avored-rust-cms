@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use crate::error::Error;
+use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -15,9 +17,17 @@ pub async fn store_role_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StoreRoleRequest>,
 ) -> Result<Json<CreatedRoleResponse>> {
-    // let _validation_error_list = payload.validate_errors()?;
 
-    println!("{:?}", payload);
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
 
     let creatable_role = CreatableRole {
         name: payload.name,

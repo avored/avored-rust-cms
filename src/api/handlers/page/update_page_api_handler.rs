@@ -1,6 +1,8 @@
 use std::sync::Arc;
 
+use crate::error::Error;
 use crate::models::page_model::{PageModel, UpdatableComponentContentModel, UpdatableComponentFieldContentModel, UpdatablePageModel};
+use crate::models::validation_error::ErrorResponse;
 use crate::{
     api::handlers::page::request::update_page_request::UpdatePageRequest,
     avored_state::AvoRedState, error::Result
@@ -18,9 +20,16 @@ pub async fn update_page_api_handler(
 ) -> Result<Json<UpdatablePageResponse>> {
     println!("->> {:<12} - update_page_api_handler", "HANDLER");
 
-    // let _validation_error_list = payload.validate_errors()?;
+    let error_messages = payload.validate()?;
 
-    // println!("Validation error list: {:?}", validation_error_list);
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
 
     let mut updatable_page = UpdatablePageModel {
         id: page_id,
