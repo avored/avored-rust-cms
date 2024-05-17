@@ -7,9 +7,11 @@ use crate::{
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
 use crate::api::handlers::component::request::update_component_request::UpdateComponentRequest;
+use crate::error::Error;
 use crate::models::component_model::{ComponentModel, UpdatableComponentModel};
 use crate::models::field_model::UpdatableFieldModel;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
 
 pub async fn update_component_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -19,6 +21,16 @@ pub async fn update_component_api_handler(
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - update_component_api_handler", "HANDLER");
 
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
 
     let updateable_component_model = UpdatableComponentModel {
         id: component_id,

@@ -6,9 +6,11 @@ use crate::{
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
 use crate::api::handlers::component::request::store_component_request::StoreComponentRequest;
+use crate::error::Error;
 use crate::models::component_model::{ComponentModel, CreatableComponent};
 use crate::models::field_model::CreatableFieldModel;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
 
 
 pub async fn store_component_api_handler(
@@ -17,6 +19,18 @@ pub async fn store_component_api_handler(
     Json(payload): Json<StoreComponentRequest>,
 ) -> Result<Json<CreatedComponentResponse>> {
 
+    println!("->> {:<12} - store_component_api_handler", "HANDLER");
+
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
     let creatable_component = CreatableComponent {
         name: payload.name,
         identifier: payload.identifier,

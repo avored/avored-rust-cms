@@ -1,13 +1,11 @@
 use serde::Deserialize;
+use rust_i18n::t;
+use crate::models::validation_error::ErrorMessage;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct StoreComponentRequest {
-    // #[validate(length(min = 1, message = "The name is a required field."))]
     pub name: String,
-
-    // #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
-
     pub fields: Vec<Field>,
 }
 
@@ -19,27 +17,28 @@ pub struct Field {
 }
 
 impl StoreComponentRequest {
-    // pub fn validate_errors(&self) -> Result<ValidationErrors> {
-    //     let validation_error_list = match self.validate() {
-    //         Ok(_) => ValidationErrors::new(),
-    //         Err(errors) => errors,
-    //     };
-    //
-    //     // for (_field_name, error) in validation_error_list.errors() {
-    //     //     match &error {
-    //     //         ValidationErrorsKind::Field(field_errors) => {
-    //     //             for _field_error in field_errors {
-    //     //                 // let message = match &field_error.message {
-    //     //                 //     Some(message) => message,
-    //     //                 //     None => continue,
-    //     //                 // };
-    //     //             }
-    //     //         }
-    //     //         ValidationErrorsKind::Struct(_) => continue,
-    //     //         ValidationErrorsKind::List(_) => continue,
-    //     //     }
-    //     // }
-    //
-    //     Ok(validation_error_list)
-    // }
+    pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
+        let mut errors: Vec<ErrorMessage> = vec![];
+
+        if self.name.len() <= 0 {
+
+            let error_message = ErrorMessage {
+                key: String::from("name"),
+                message: t!("validation_required", attribute = t!("name")).to_string()
+            };
+
+            errors.push(error_message);
+        }
+
+        if self.identifier.len() <= 0 {
+            let error_message = ErrorMessage {
+                key: String::from("identifier"),
+                message: t!("validation_required", attribute = t!("identifier")).to_string()
+            };
+
+            errors.push(error_message);
+        }
+
+        Ok(errors)
+    }
 }

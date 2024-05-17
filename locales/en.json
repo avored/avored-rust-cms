@@ -1,3 +1,5 @@
 {
-    "name": "english"
+    "name": "name",
+    "identifier": "identifier",
+    "validation_required": "%{attribute} is a required field."
 }
