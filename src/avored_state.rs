@@ -1,6 +1,7 @@
 use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
+use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::component_repository::ComponentRepository;
 use crate::repositories::field_repository::FieldRepository;
@@ -16,6 +17,7 @@ use crate::services::asset_service::AssetService;
 
 pub struct AvoRedState {
     pub config: AvoRedConfigProvider,
+    pub template: AvoRedTemplateProvider,
     pub db: DB,
     pub admin_user_service: AdminUserService,
     pub role_service: RoleService,
@@ -30,6 +32,10 @@ impl AvoRedState {
         let avored_config_provider = AvoRedConfigProvider::register()?;
         let avored_database_provider =
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
+
+        let avored_template_provider = AvoRedTemplateProvider::register(
+            avored_config_provider.clone()
+        ).await?;
 
         let admin_user_repository = AdminUserRepository::new();
         let role_repository = RoleRepository::new();
@@ -47,6 +53,7 @@ impl AvoRedState {
 
         Ok(AvoRedState {
             config: avored_config_provider,
+            template: avored_template_provider,
             db: avored_database_provider.db,
             admin_user_service,
             role_service,

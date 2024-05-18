@@ -19,6 +19,7 @@ import ComponentCreate from "./pages/component/ComponentCreate";
 import ComponentEdit from "./pages/component/ComponentEdit";
 import Setup from "./pages/setup/setup";
 import Logout from "./pages/auth/Logout";
+import ForgotPassword from "./pages/auth/ForgotPassword";
 function App() {
     return (
         <BrowserRouter>
@@ -27,6 +28,7 @@ function App() {
                 <Route path="/" element={<Home />} />
 
                 <Route path="/admin/login"   element={<Login />} />
+                <Route path="/admin/forgot-password"   element={<ForgotPassword />} />
                 <Route path="/setup"   element={<Setup />} />
 
                 <Route element={<AppLayout />}>
