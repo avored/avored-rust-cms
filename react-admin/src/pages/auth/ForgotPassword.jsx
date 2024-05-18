@@ -1,21 +1,21 @@
 import {useEffect} from "react"
 import logo from "../../assets/logo_only.svg"
-import { useNavigate, Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { isEmpty } from "lodash"
 import InputField from "../../components/InputField"
 import {useForm} from 'react-hook-form'
 import {joiResolver} from '@hookform/resolvers/joi'
-import { useLogin } from "./hooks/useLogin"
-import { loginSchema } from "./schemas/login.schema"
+import { forgotPasswordSchema } from "./schemas/forgotPassword.schema"
 import _ from 'lodash'
 import { ErrorMessage } from "../../components/ErrorMessage"
+import {useForgotPassword} from "./hooks/useForgotPassword";
 
-function Login() {
+function ForgotPassword() {
   const redirect = useNavigate();
   const {register, handleSubmit, formState: {errors}} = useForm({
-    resolver: joiResolver(loginSchema)
+    resolver: joiResolver(forgotPasswordSchema)
   });
-  const {mutate, isPending, error} = useLogin();
+  const {mutate, isPending, error} = useForgotPassword();
 
   const isErrorExist = (key) => {
     return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
@@ -36,7 +36,7 @@ function Login() {
     }
   }, []);
 
-  const loginSubmitHandler = (data) => {
+  const submitHandler = (data) => {
     mutate(data);
   };
 
@@ -48,7 +48,7 @@ function Login() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign into your account
+          Forgot password
         </h2>
       </div>
       <div></div>
@@ -56,7 +56,7 @@ function Login() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form
-            onSubmit={handleSubmit(loginSubmitHandler)}
+            onSubmit={handleSubmit(submitHandler)}
             className="space-y-5"
           >
             <div>
@@ -69,32 +69,13 @@ function Login() {
               />
               {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
             </div>
-            <div>
-              <InputField
-                label="Password"
-                type="password"
-                name="password"
-                register={register("password")}
-              />
-              {(isErrorExist('password') >=0) && <ErrorMessage message={getErrorMessage('password')} />}
-            </div>
-            <div className="flex items-center justify-end">
-              <div className="text-sm">
-                <Link
-                  to={`/admin/forgot-password`}
-                  className="font-medium text-primary-600 hover:text-primary-500"
-                >
-                  Forgot your password?
-                </Link>
-              </div>
-            </div>
 
             <div>
               <button
                 type="submit"
                 className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
-                {isPending ? "Loading..." : "Sign in"}
+                {isPending ? "Loading..." : "Forgot Password"}
               </button>
             </div>
           </form>
@@ -104,4 +85,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ForgotPassword;

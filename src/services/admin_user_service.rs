@@ -1,3 +1,5 @@
+use lettre::{AsyncTransport, Message};
+use lettre::message::{header, MultiPart, SinglePart};
 use crate::{
     error::Result,
     models::{
@@ -10,8 +12,11 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
     PER_PAGE,
 };
+use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
+use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
@@ -29,24 +34,51 @@ impl AdminUserService {
     }
 }
 impl AdminUserService {
-    // pub async fn all_admin_users(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    // ) -> Result<Vec<AdminUserModel>> {
-    //     let sql = "SELECT * FROM admin_users";
+    pub async fn sent_forgot_password_email(
+        &self,
+        template: &AvoRedTemplateProvider,
+        front_end_url: &str,
+        to_address: String
+    ) -> Result<bool>
+    {
+        let from_address = String::from("info@avored.com");
+        let to_address = to_address;
+        let email_subject = "Forgot your password?";
 
-    //     let responses = datastore.execute(sql, database_session, None).await?;
+        let token = "123456789";
 
-    //     let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
+        let link = format!("{front_end_url}/admin/reset-password/{token}");
+        let data = ForgotPasswordViewModel {
+            link
+        };
+        let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
 
-    //     for object in into_iter_objects(responses)? {
-    //         let admin_user_object = object?;
+        let email = Message::builder()
+            .from(from_address.parse().unwrap())
+            .to(to_address.parse().unwrap())
+            .subject(email_subject)
+            .multipart(
+                MultiPart::alternative()
+                    // .singlepart(
+                    //     SinglePart::builder()
+                    //         .header(header::ContentType::TEXT_PLAIN)
+                    //         .body(String::from("Hello from Lettre! A mailer library for Rust")), // Every message should have a plain text fallback.
+                    // )
+                    .singlepart(
+                        SinglePart::builder()
+                            .header(header::ContentType::TEXT_HTML)
+                            .body(String::from(forgot_password_email_content)),
+                    ),
+            )
+            .unwrap();
 
-    //         let admin_user_model: Result<AdminUserModel> = admin_user_object.try_into();
-    //         admin_user_list.push(admin_user_model?);
-    //     }
-    //     Ok(admin_user_list)
-    // }
+
+        // Send the email
+        match template.mailer.send(email).await {
+            Ok(_) => Ok(true),
+            Err(_) => Err(Error::Generic(String::from("error while sending an email"))),
+        }
+    }
 
     pub async fn find_by_email(
         &self,
@@ -172,23 +204,3 @@ impl AdminUserService {
         Ok(admin_user_model)
     }
 }
-
-// fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {
-//     let response = responses
-//         .into_iter()
-//         .next()
-//         .map(|rp| rp.result)
-//         .transpose()?;
-//
-//     match response {
-//         Some(Value::Array(arr)) => {
-//             let it = arr.into_iter().map(|v| match v {
-//                 Value::Object(object) => Ok(object),
-//                 _ => Err(Error::Generic("empty object")),
-//             });
-//
-//             Ok(it)
-//         }
-//         _ => Err(Error::Generic("No Record found")),
-//     }
-// }

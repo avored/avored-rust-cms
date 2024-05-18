@@ -1,8 +1,11 @@
+use std::num::ParseIntError;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use handlebars::{RenderError, TemplateError};
 use serde::Serialize;
+use tracing::log::error;
 use crate::models::validation_error::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
@@ -43,6 +46,26 @@ impl From<surrealdb::err::Error> for Error {
 impl From<argon2::password_hash::Error> for Error {
     fn from(_val: argon2::password_hash::Error) -> Self {
         Error::Generic("Password hasher error".to_string())
+    }
+}
+impl From<RenderError> for Error {
+    fn from(actual_error: RenderError) -> Self {
+        error!("there is an issue while rendering the handlebar template: {actual_error:?}");
+        Error::Generic("handlebar error".to_string())
+    }
+}
+
+impl From<TemplateError> for Error {
+    fn from(actual_error: TemplateError) -> Self {
+        error!("there is an issue while registering the handlebar template with avored: {actual_error:?}");
+        Error::Generic("handlebar template error".to_string())
+    }
+}
+
+impl From<ParseIntError> for Error {
+    fn from(actual_error: ParseIntError) -> Self {
+        error!("there is an issue while parsing the env from string to u16: {actual_error:?}");
+        Error::Generic("parse int error".to_string())
     }
 }
 

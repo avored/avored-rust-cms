@@ -9,7 +9,11 @@ pub struct AvoRedConfigProvider {
     pub session_secret_key: String,
     pub jwt_secret_key: String,
     pub front_end_app_url: String,
-    pub password_salt: String
+    pub password_salt: String,
+    pub smtp_host: String,
+    pub smtp_username: String,
+    pub smtp_password: String,
+    pub smtp_port: u16,
 }
 
 // pub fn config() -> &'static AvoRedConfigProvider {
@@ -30,7 +34,11 @@ impl AvoRedConfigProvider {
             session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?,
             jwt_secret_key: get_env("AVORED_JWT_SECRET")?,
             front_end_app_url: get_env("AVORED_FRONT_END_APP_URL")?,
-            password_salt: get_env("AVORED_PASSWORD_SALT")?
+            password_salt: get_env("AVORED_PASSWORD_SALT")?,
+            smtp_host: get_env("SMTP_HOST")?,
+            smtp_username: get_env("SMTP_USERNAME")?,
+            smtp_password: get_env("SMTP_PASSWORD")?,
+            smtp_port: get_env("SMTP_PORT")?.parse::<u16>()?,
         })
     }
 }
