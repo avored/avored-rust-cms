@@ -1,5 +1,7 @@
 use lettre::{AsyncTransport, Message};
 use lettre::message::{header, MultiPart, SinglePart};
+use rand::distributions::{Alphanumeric, DistString};
+use rand::Rng;
 use crate::{
     error::Result,
     models::{
@@ -53,7 +55,8 @@ impl AdminUserService {
         let to_address = to_address;
         let email_subject = "Forgot your password?";
 
-        let token = String::from("123456789");
+        let token = Alphanumeric.sample_string(&mut rand::thread_rng(), 22);
+
         let creatable_password_reset_model = CreatablePasswordResetModel {
             email: to_address.clone(),
             token,
