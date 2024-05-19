@@ -4,6 +4,7 @@ use axum::{
     response::{IntoResponse, Response},
 };
 use handlebars::{RenderError, TemplateError};
+use lettre::address::AddressError;
 use serde::Serialize;
 use tracing::log::error;
 use crate::models::validation_error::ErrorResponse;
@@ -66,6 +67,22 @@ impl From<ParseIntError> for Error {
     fn from(actual_error: ParseIntError) -> Self {
         error!("there is an issue while parsing the env from string to u16: {actual_error:?}");
         Error::Generic("parse int error".to_string())
+    }
+}
+
+
+impl From<AddressError> for Error {
+    fn from(actual_error: AddressError) -> Self {
+        error!("there is an issue while parsing email address: {actual_error:?}");
+        Error::Generic("parse lettre address parsing error".to_string())
+    }
+}
+
+
+impl From<lettre::error::Error> for Error {
+    fn from(actual_error: lettre::error::Error) -> Self {
+        error!("there is an issue lettre error: {actual_error:?}");
+        Error::Generic("lettre error".to_string())
     }
 }
 

@@ -32,7 +32,8 @@ use crate::api::handlers::{
     component::update_component_api_handler::update_component_api_handler,
     setup::post_setup_avored_handler::post_setup_avored_handler,
     admin_user::logged_in_user_api_handler::logged_in_user_api_handler,
-    admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler
+    admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
+    admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -81,6 +82,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/health-check", get(health_check_api_handler))
         .route("/api/setup", post(post_setup_avored_handler))
         .route("/api/login", post(admin_user_login_api_handler))
+        .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
         .with_state(state)
         .layer(cors_layer)

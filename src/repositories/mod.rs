@@ -3,6 +3,7 @@ use surrealdb::dbs::Response;
 use surrealdb::sql::{Object, Value};
 
 pub mod admin_user_repository;
+pub mod password_reset_repository;
 pub mod component_repository;
 pub mod field_repository;
 pub mod page_repository;

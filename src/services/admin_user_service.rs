@@ -15,27 +15,35 @@ use crate::{
 use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
 use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::password_rest_model::CreatablePasswordResetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
+use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
-    role_repository: RoleRepository
+    role_repository: RoleRepository,
+    password_reset_repository: PasswordResetRepository
 }
 
 impl AdminUserService {
-    pub fn new(admin_user_repository: AdminUserRepository, role_repository: RoleRepository) -> Result<Self> {
+    pub fn new(
+        admin_user_repository: AdminUserRepository,
+        role_repository: RoleRepository,
+        password_reset_repository: PasswordResetRepository
+    ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
-            role_repository
-
+            role_repository,
+            password_reset_repository
         })
     }
 }
 impl AdminUserService {
     pub async fn sent_forgot_password_email(
         &self,
+        (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,
         front_end_url: &str,
         to_address: String
@@ -45,17 +53,27 @@ impl AdminUserService {
         let to_address = to_address;
         let email_subject = "Forgot your password?";
 
-        let token = "123456789";
+        let token = String::from("123456789");
+        let creatable_password_reset_model = CreatablePasswordResetModel {
+            email: to_address.clone(),
+            token,
+        };
 
-        let link = format!("{front_end_url}/admin/reset-password/{token}");
+        let password_reset_model = self
+            .password_reset_repository
+            .create_password_reset(datastore, database_session, creatable_password_reset_model)
+            .await?;
+
+        let link = format!("{front_end_url}/admin/reset-password/{}", password_reset_model.token);
         let data = ForgotPasswordViewModel {
             link
         };
+
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
 
         let email = Message::builder()
-            .from(from_address.parse().unwrap())
-            .to(to_address.parse().unwrap())
+            .from(from_address.parse()?)
+            .to(to_address.parse()?)
             .subject(email_subject)
             .multipart(
                 MultiPart::alternative()
@@ -69,9 +87,7 @@ impl AdminUserService {
                             .header(header::ContentType::TEXT_HTML)
                             .body(String::from(forgot_password_email_content)),
                     ),
-            )
-            .unwrap();
-
+            )?;
 
         // Send the email
         match template.mailer.send(email).await {
