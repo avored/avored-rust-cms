@@ -20,6 +20,7 @@ import ComponentEdit from "./pages/component/ComponentEdit";
 import Setup from "./pages/setup/setup";
 import Logout from "./pages/auth/Logout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
+import ResetPassword from "./pages/auth/ResetPassword";
 function App() {
     return (
         <BrowserRouter>
@@ -29,6 +30,7 @@ function App() {
 
                 <Route path="/admin/login"   element={<Login />} />
                 <Route path="/admin/forgot-password"   element={<ForgotPassword />} />
+                <Route path="/admin/reset-password/:token"   element={<ResetPassword />} />
                 <Route path="/setup"   element={<Setup />} />
 
                 <Route element={<AppLayout />}>

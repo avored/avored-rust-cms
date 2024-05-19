@@ -32,7 +32,9 @@ pub async fn admin_user_forgot_password_api_handler(
     let template = &state.template;
     let frontend_url = &state.config.front_end_app_url;
     let sent_status = state
-        .admin_user_service.sent_forgot_password_email(template , frontend_url, payload.email).await?;
+        .admin_user_service
+        .sent_forgot_password_email(&state.db, template, frontend_url, payload.email)
+        .await?;
 
     let response_data = ResponseData {
         status: sent_status

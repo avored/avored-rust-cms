@@ -13,6 +13,7 @@ use crate::services::field_service::FieldService;
 use crate::services::page_service::PageService;
 use crate::services::role_service::RoleService;
 use crate::repositories::asset_repository::AssetRepository;
+use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::services::asset_service::AssetService;
 
 pub struct AvoRedState {
@@ -43,8 +44,9 @@ impl AvoRedState {
         let field_repository = FieldRepository::new();
         let page_repository = PageRepository::new();
         let asset_repository = AssetRepository::new();
+        let password_reset_repository = PasswordResetRepository::new();
 
-        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository.clone())?;
+        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository.clone(), password_reset_repository.clone())?;
         let role_service = RoleService::new(role_repository)?;
         let component_service = ComponentService::new(component_repository)?;
         let field_service = FieldService::new(field_repository)?;
