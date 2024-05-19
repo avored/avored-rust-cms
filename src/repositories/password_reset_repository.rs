@@ -41,4 +41,25 @@ impl PasswordResetRepository {
 
         password_reset_model
     }
+
+    pub async fn get_password_reset_by_email(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        email: String,
+    ) -> crate::error::Result<PasswordResetModel> {
+        let sql = "SELECT * FROM password_reset WHERE email=$email";
+        let vars: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let password_reset_model: crate::error::Result<PasswordResetModel> = result_object?.try_into();
+
+        password_reset_model
+    }
 }

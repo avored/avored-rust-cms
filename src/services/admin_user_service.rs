@@ -15,7 +15,7 @@ use crate::{
 use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
 use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
-use crate::models::password_rest_model::CreatablePasswordResetModel;
+use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
@@ -113,6 +113,27 @@ impl AdminUserService {
     ) -> Result<AdminUserModel> {
         self.admin_user_repository
             .find_by_id(datastore, database_session, id)
+            .await
+    }
+
+    pub async fn get_password_reset_by_email(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+    ) -> Result<PasswordResetModel> {
+        self.password_reset_repository
+            .get_password_reset_by_email(datastore, database_session, email)
+            .await
+    }
+
+    pub async fn update_password_by_email(
+        &self,
+        (datastore, database_session): &DB,
+        new_password: String,
+        email: String
+    ) -> Result<AdminUserModel> {
+        self.admin_user_repository
+            .update_password_by_email(datastore, database_session, new_password, email)
             .await
     }
 
