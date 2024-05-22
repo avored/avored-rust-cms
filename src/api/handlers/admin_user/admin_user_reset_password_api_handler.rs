@@ -59,14 +59,9 @@ pub async fn admin_user_reset_password_api_handler(
         .update_password_by_email(&state.db, password_hash, payload.email)
         .await?;
 
-    //@todo find the password reset model by email
-    // verify token with payload
-    // encrypt password
-    // update admin user password
-
 
     let response_data = ResponseData {
-        status: true
+        status: update_password_status
     };
 
     Ok(Json(response_data))

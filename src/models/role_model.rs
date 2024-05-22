@@ -1,15 +1,18 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
+use utoipa::ToSchema;
 
 use super::Pagination;
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
 pub struct RoleModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    #[schema(value_type=String)]
     pub created_at: Datetime,
+    #[schema(value_type=String)]
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,

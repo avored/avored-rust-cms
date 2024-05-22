@@ -150,13 +150,13 @@ impl AdminUserRepository {
         database_session: &Session,
         new_password: String,
         email: String
-    ) -> Result<AdminUserModel> {
+    ) -> Result<bool> {
         let sql = "
             UPDATE type::table($table) SET password=$password WHERE email=$email";
 
         let vars = BTreeMap::from([
             ("password".into(), new_password.into()),
-            ("email".into(), email.into()),
+            ("email".into(), email.clone().into()),
             ("table".into(), "admin_users".into()),
         ]);
 
@@ -167,9 +167,12 @@ impl AdminUserRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
-        admin_user_model
+        if result_object.is_ok() {
+            return Ok(true);
+        }
+
+        Err(Error::Generic(format!("issue while updating password by email: {email}")))
     }
 
     // pub async fn delete_admin_user(

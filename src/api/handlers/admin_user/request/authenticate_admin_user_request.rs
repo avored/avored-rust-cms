@@ -1,8 +1,9 @@
 use email_address::EmailAddress;
 use serde::Deserialize;
+use utoipa::ToSchema;
 use crate::models::validation_error::ErrorMessage;
 
-#[derive(Deserialize, Debug, Clone)]
+#[derive(Deserialize, Debug, Clone, ToSchema)]
 pub struct AuthenticateAdminUserRequest {
     pub email: String,
     pub password: String,

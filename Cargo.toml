@@ -27,3 +27,4 @@ email_address = "0.2.4"
 rust-i18n = "3.0.1"
 lettre = { version = "0.11.7", features = ["tokio1-native-tls"] }
 handlebars = "5.1.2"
+utoipa = "4.2.3"

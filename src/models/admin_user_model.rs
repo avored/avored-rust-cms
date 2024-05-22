@@ -1,11 +1,12 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
+use utoipa::ToSchema;
 use crate::models::role_model::RoleModel;
 
 use super::Pagination;
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
 pub struct AdminUserModel {
     pub id: String,
     pub full_name: String,
@@ -13,7 +14,9 @@ pub struct AdminUserModel {
     pub password: String,
     pub profile_image: String,
     pub is_super_admin: bool,
+    #[schema(value_type=String)]
     pub created_at: Datetime,
+    #[schema(value_type=String)]
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
