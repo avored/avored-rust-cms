@@ -33,7 +33,8 @@ use crate::api::handlers::{
     setup::post_setup_avored_handler::post_setup_avored_handler,
     admin_user::logged_in_user_api_handler::logged_in_user_api_handler,
     admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
-    admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler
+    admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler,
+    openapi_api_handler::openapi_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -75,6 +76,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/page/:page_id", put(update_page_api_handler))
         .route("/api/page/:page_id", get(fetch_page_api_handler))
         .route("/api/component-all", get(component_all_api_handler))
+        .route("/api/openapi.json", get(openapi_api_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_jwt_authentication,

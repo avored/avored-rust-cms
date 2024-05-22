@@ -1,7 +1,6 @@
 use lettre::{AsyncTransport, Message};
 use lettre::message::{header, MultiPart, SinglePart};
 use rand::distributions::{Alphanumeric, DistString};
-use rand::Rng;
 use crate::{
     error::Result,
     models::{
@@ -134,7 +133,7 @@ impl AdminUserService {
         (datastore, database_session): &DB,
         new_password: String,
         email: String
-    ) -> Result<AdminUserModel> {
+    ) -> Result<bool> {
         self.admin_user_repository
             .update_password_by_email(datastore, database_session, new_password, email)
             .await

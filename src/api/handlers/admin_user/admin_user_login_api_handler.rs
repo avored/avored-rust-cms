@@ -7,6 +7,7 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::Serialize;
 use serde_json::json;
+use utoipa::ToSchema;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
@@ -14,10 +15,20 @@ use crate::models::admin_user_model::AdminUserModel;
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::ErrorResponse;
 
+
+/// Return JSON version of an OpenAPI schema
+#[utoipa::path(
+    post,
+    path = "/api/login",
+    responses(
+        (status = 200, description = "JSON file", body = LoginResponseData)
+    ),
+    request_body = AuthenticateAdminUserRequest,
+)]
 pub async fn admin_user_login_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<AuthenticateAdminUserRequest>,
-) -> Result<Json<ResponseData>> {
+) -> Result<Json<LoginResponseData>> {
     println!("->> {:<12} - admin_user_login_api_handler", "HANDLER");
 
     let error_messages = payload.validate()?;
@@ -68,7 +79,7 @@ pub async fn admin_user_login_api_handler(
     response
         .headers_mut()
         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-    let response_data = ResponseData {
+    let response_data = LoginResponseData {
         status: true,
         data: token,
         admin_user: admin_user_model
@@ -79,8 +90,8 @@ pub async fn admin_user_login_api_handler(
 }
 
 
-#[derive(Serialize)]
-pub struct ResponseData {
+#[derive(Serialize, ToSchema)]
+pub struct LoginResponseData {
     status: bool,
     data: String,
     admin_user: AdminUserModel
