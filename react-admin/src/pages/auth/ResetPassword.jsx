@@ -13,7 +13,7 @@ import {resetPasswordSchema} from "./schemas/resetPassword.schema"
 function ResetPassword() {
   const redirect = useNavigate();
   const token = useParams().token
-  const {register, handleSubmit, formState: {errors}} = useForm({
+  const {register, handleSubmit} = useForm({
     resolver: joiResolver(resetPasswordSchema)
   });
   const {mutate, isPending, error} = useResetPassword();

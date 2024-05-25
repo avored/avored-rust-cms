@@ -1,5 +1,5 @@
 import {useState} from "react"
-import {Link, useNavigate} from "react-router-dom"
+import {Link} from "react-router-dom"
 import {Switch} from "@headlessui/react"
 import _ from 'lodash'
 import {useStoreRole} from "./hooks/useStoreRole";
@@ -8,7 +8,6 @@ function RoleCreate() {
     const [name, setName] = useState('Editor');
     const [identifier, setIdentifier] = useState('editor');
     const [permissions, setPermissions] = useState([])
-    const navigate = useNavigate()
     const { mutate } = useStoreRole()
 
     const switchOnChange = ((e, key) => {

@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import InputField from "../../components/InputField";
@@ -9,7 +9,6 @@ import {useStorePage} from "./hooks/useStorePage";
 
 function PageCreate() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] = useState(false)
-    const navigate = useNavigate()
     const [pageComponents, setPageComponents] = useState([])
     const [page, setPage] = useState({})
 
@@ -25,7 +24,14 @@ function PageCreate() {
 
     const renderComponentFieldType = ((componentField) => {
         switch (componentField.field_type) {
+            case 'textarea':
+                return (
+                    <div>
+                        Textarea
+                    </div>
+                )
             case 'text':
+            default:
                 return (
                     <div>
 
@@ -35,12 +41,6 @@ function PageCreate() {
                             name={componentField.identifier}
                             onChange={e => componentFieldContentOnChange(componentField.id, e.target.value)}
                         />
-                    </div>
-                )
-            case 'textarea':
-                return (
-                    <div>
-                        Textarea
                     </div>
                 )
         }

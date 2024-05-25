@@ -1,5 +1,5 @@
 import {useMemo, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import _ from "lodash";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import {TrashIcon} from "@heroicons/react/16/solid";

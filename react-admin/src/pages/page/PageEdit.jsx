@@ -1,5 +1,5 @@
 import {useMemo, useState} from "react";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import InputField from "../../components/InputField";
@@ -10,7 +10,6 @@ import {useUpdatePage} from "./hooks/useUpdatePage";
 
 function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] = useState(false)
-    const navigate = useNavigate()
     const [pageComponents, setPageComponents] = useState([])
     const [page, setPage] = useState({})
     const params = useParams()
@@ -21,15 +20,12 @@ function PageEdit() {
     const {mutate} = useUpdatePage(params.page_id)
 
     const {data} = useGetPage(params.page_id)
-    // console.log(page_api_response)
     useMemo(() => {
         setPage(_.get(data, 'data.page_model'))
         const comms = _.get(data, 'data.page_model.components_content', [])
-        console.log(comms)
-            comms.map((com) => {
-                setPageComponents(pageComponents => [...pageComponents, com])
-            })
-    //
+        comms.map((com) => {
+            setPageComponents(pageComponents => [...pageComponents, com])
+        })
     }, [data])
 
     const getFormattedDate = ((date) => {
@@ -39,7 +35,15 @@ function PageEdit() {
 
     const renderComponentFieldType = ((componentField) => {
         switch (componentField.field_type) {
+            case 'textarea':
+                return (
+                    <div>
+                        Textarea
+                    </div>
+                )
+            break;
             case 'text':
+            default:
                 return (
                     <div>
                         <InputField
@@ -49,12 +53,6 @@ function PageEdit() {
                             value={componentField.field_content}
                             onChange={e => componentFieldContentOnChange(componentField.id, e.target.value)}
                         />
-                    </div>
-                )
-            case 'textarea':
-                return (
-                    <div>
-                        Textarea
                     </div>
                 )
         }
@@ -129,8 +127,7 @@ function PageEdit() {
     const componentFieldContentOnChange = ((componentFieldId, value) => {
 
         page.components_content.map((componentContent) => {
-            var componentField = componentContent.component_fields_content.map((componentFieldContent) => {
-
+            componentContent.component_fields_content.map((componentFieldContent) => {
                 if (componentFieldContent.id === componentFieldId) {
                     componentFieldContent.field_content = value;
                 }
