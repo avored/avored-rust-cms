@@ -34,6 +34,27 @@ pub async fn post_setup_avored_handler(
 
 
     let sql = "
+
+        REMOVE TABLE settings;
+        DEFINE TABLE settings;
+
+        DEFINE FIELD identifier ON TABLE settings TYPE string;
+        DEFINE FIELD value      ON TABLE settings TYPE string;
+        DEFINE FIELD created_at ON TABLE settings TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE settings TYPE datetime;
+        DEFINE FIELD created_by ON TABLE settings TYPE string;
+        DEFINE FIELD updated_by ON TABLE settings TYPE string;
+
+        CREATE settings CONTENT {
+            identifier: 'general_site_name',
+            value: 'Avored rust cms',
+            created_by: $full_name,
+            updated_by: $full_name,
+            created_at: time::now(),
+            updated_at: time::now()
+        };
+
+
         REMOVE TABLE admin_users;
         DEFINE TABLE admin_users;
 

@@ -12,13 +12,13 @@ function AppSidebar() {
                 >
                     <ul className="flex flex-col space-y-2">
                         <li className="text-sm text-gray-500 ">
-                            <a href="/admin"
+                            <Link to={`/admin`}
                                className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 ">
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="anchor"/>
                                 </div>
                                 <div>Dashboard</div>
-                            </a>
+                            </Link>
                         </li>
 
                         <div
@@ -43,7 +43,7 @@ function AppSidebar() {
                                     <FeatherIcon className="h-4 w-4" icon="compass"/></div>
                                 <div>Components</div>
                             </Link>
-                            <a href="/admin/asset"
+                            <Link to={`/admin/asset`}
                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700">
                                 <div className="pr-2">
                                     <FeatherIcon className="h-4 w-4" icon="image"/>
@@ -51,7 +51,7 @@ function AppSidebar() {
                                 <div>
                                     Assets Manager
                                 </div>
-                            </a>
+                            </Link>
                         </li>
 
 
@@ -77,34 +77,33 @@ function AppSidebar() {
                             <Menu.Items className="flex flex-col mt-2 pl-2 ml-3 border-l border-gray-700 space-y-1">
                                 <Menu.Item as="li">
                                     {({active}) => (
-                                        <a href="/admin/admin-user"
+                                        <Link to={`/admin/admin-user`}
                                            className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
                                         >
                                             <div>
                                                 Admin User
                                             </div>
-                                        </a>
+                                        </Link>
                                     )}
                                 </Menu.Item>
                                 <Menu.Item as="li">
                                     {({active}) => (
-                                        <a href="/admin/role"
+                                        <Link to={`/admin/role`}
                                            className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
                                         >
                                             <div>
                                                 Role
                                             </div>
-                                        </a>
+                                        </Link>
                                     )}
                                 </Menu.Item>
                                 <Menu.Item>
                                     {({ active }) => (
-                                        <a
+                                        <Link to={`/admin/setting`}
                                             className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
-                                            href="/account-settings"
                                         >
-                                            Settings
-                                        </a>
+                                            Setting
+                                        </Link>
                                     )}
                                 </Menu.Item>
 

@@ -7,4 +7,5 @@ pub mod role;
 pub mod asset;
 pub mod component;
 pub mod setup;
+pub mod setting;
 

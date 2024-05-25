@@ -14,7 +14,9 @@ use crate::services::page_service::PageService;
 use crate::services::role_service::RoleService;
 use crate::repositories::asset_repository::AssetRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
+use crate::repositories::setting_repository::SettingRepository;
 use crate::services::asset_service::AssetService;
+use crate::services::setting_service::SettingService;
 
 pub struct AvoRedState {
     pub config: AvoRedConfigProvider,
@@ -26,6 +28,7 @@ pub struct AvoRedState {
     pub field_service: FieldService,
     pub page_service: PageService,
     pub asset_service: AssetService,
+    pub setting_service: SettingService
 }
 
 impl AvoRedState {
@@ -45,6 +48,7 @@ impl AvoRedState {
         let page_repository = PageRepository::new();
         let asset_repository = AssetRepository::new();
         let password_reset_repository = PasswordResetRepository::new();
+        let setting_repository = SettingRepository::new();
 
         let admin_user_service = AdminUserService::new(admin_user_repository, role_repository.clone(), password_reset_repository.clone())?;
         let role_service = RoleService::new(role_repository)?;
@@ -52,6 +56,7 @@ impl AvoRedState {
         let field_service = FieldService::new(field_repository)?;
         let page_service = PageService::new(page_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
+        let setting_service = SettingService::new(setting_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -62,7 +67,8 @@ impl AvoRedState {
             component_service,
             field_service,
             page_service,
-            asset_service
+            asset_service,
+            setting_service
         })
     }
 }

@@ -13,7 +13,7 @@ const InputField = (props) => {
             <div className="mt-1">
                 <input
                     id={props.id ?? props.name}
-                    type={props.type}
+                    type={props.type ?? 'text'}
                     name={props.name}
                     required={props.required}
                     value={props.value}

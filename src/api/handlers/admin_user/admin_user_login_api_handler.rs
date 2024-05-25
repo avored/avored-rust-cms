@@ -16,7 +16,9 @@ use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::ErrorResponse;
 
 
-/// Return JSON version of an OpenAPI schema
+/// Login Admin User
+///
+/// Authenticate admin user
 #[utoipa::path(
     post,
     path = "/api/login",
