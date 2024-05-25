@@ -1,12 +1,14 @@
 {
   "sign_into_your_account": "Sign into your account",
+  "not_found_404": "Not Found 404",
   "email_address": "Email Address",
   "password": "Password",
-  "forgot_your_password": "Forgot your passoword?",
+  "forgot_your_password": "Forgot your password?",
+  "need_to_change_language": "Need to change a language?",
   "sign_in": "Sign in",
   "profile": "Profile",
   "logout": "Logout",
-  "forgot_password": "Forgot passoword?",
+  "forgot_password": "Forgot password?",
   "reset_password": "Reset password",
   "common": {
     "save": "Save",
