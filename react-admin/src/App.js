@@ -22,6 +22,7 @@ import Logout from "./pages/auth/Logout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import AvoRedApiTesting from "./pages/setting/AvoRedApiTesting";
+import Setting from "./pages/setting/Setting";
 function App() {
     return (
         <BrowserRouter>
@@ -51,6 +52,7 @@ function App() {
                     <Route path="/admin/admin-user-create"   element={<AdminUserCreate />} />
                     <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEdit />} />
                     <Route path="/admin/api-test"   element={<AvoRedApiTesting />} />
+                    <Route path="/admin/setting"   element={<Setting />} />
                 </Route>
 
             </Routes>

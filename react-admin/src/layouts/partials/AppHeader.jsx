@@ -17,7 +17,7 @@ function AppHeader() {
 
     return (
         <header
-            className="h-16 py-2 flex shadow-lg px-4 md:sticky bg-gray-800 z-40">
+            className="h-16 py-2 flex shadow-lg px-4 fixed inset-y-0 md:sticky bg-gray-800 z-40">
             <div className="flex w-full">
                 <a href="/admin"
                    className="text-white flex items-center space-x-2 group hover:text-white">

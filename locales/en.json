@@ -1,5 +1,7 @@
 {
     "name": "name",
     "identifier": "identifier",
+    "id": "Id",
+    "value": "Value",
     "validation_required": "%{attribute} is a required field."
 }

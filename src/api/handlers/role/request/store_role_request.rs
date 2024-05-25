@@ -35,8 +35,6 @@ impl StoreRoleRequest {
             errors.push(error_message);
         }
 
-        
-
         if self.identifier.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),

@@ -11,7 +11,7 @@ function AvoRedApiTesting() {
 
 
     useMemo(() => {
-        console.log(JSON.stringify(_.get(data, 'data')))
+
         setOpenapi(JSON.stringify(_.get(data, 'data')))
     }, [data])
 
@@ -19,15 +19,7 @@ function AvoRedApiTesting() {
     return (
         <div className="flex-1 bg-white">
             <div className="px-5 ml-64">
-                <div className="flex items-center">
-                    <div className="p-5 text-2xl font-semibold text-primary-500">
-                        Swagger UI
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                    <SwaggerUI spec={openapi} />
-                </div>
+                <SwaggerUI spec={openapi} />
             </div>
         </div>
     )
