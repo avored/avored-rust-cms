@@ -9,8 +9,10 @@ import { useLogin } from "./hooks/useLogin"
 import { loginSchema } from "./schemas/login.schema"
 import _ from 'lodash'
 import { ErrorMessage } from "../../components/ErrorMessage"
+import {useTranslation} from "react-i18next";
 
 function Login() {
+  const [t] = useTranslation('global')
   const redirect = useNavigate();
   const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: joiResolver(loginSchema)
@@ -48,7 +50,7 @@ function Login() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Sign into your account
+          {t('sign_into_your_account')}
         </h2>
       </div>
       <div></div>
