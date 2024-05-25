@@ -12,12 +12,17 @@ import { ErrorMessage } from "../../components/ErrorMessage"
 import {useTranslation} from "react-i18next";
 
 function Login() {
-  const [t] = useTranslation('global');
+  const [t, i18] = useTranslation('global');
   const redirect = useNavigate();
   const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: joiResolver(loginSchema)
   });
   const {mutate, isPending, error} = useLogin();
+
+
+  const localeChange = ((e) => {
+    i18.changeLanguage(e.target.value)
+  })
 
   const isErrorExist = (key) => {
     return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
@@ -99,6 +104,17 @@ function Login() {
               >
                 {isPending ? "Loading..." : t("sign_in")}
               </button>
+            </div>
+
+            <div className="text-gray-600 text-center text-sm">
+              {t("need_to_change_language")}
+              <select
+                  onChange={((e) => localeChange(e))}
+                  className="outline-none border-none appearance-none pr-8"
+              >
+                  <option>en</option>
+                <option>fr</option>
+              </select>
             </div>
           </form>
         </div>

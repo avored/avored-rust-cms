@@ -10,12 +10,15 @@ import i18next from "i18next";
 import {I18nextProvider} from "react-i18next";
 
 const queryClient = new QueryClient();
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+
+const currentLocale: string = localStorage.getItem("LOCALE") ?? "en"
+
 
 i18next.init({
     interpolation: {escapeValue:false},
-    lng: "en",
-    fallbackLng: "en",
+    lng: currentLocale,
+    fallbackLng: currentLocale,
     resources: {
         en: {
             global: en_locales
