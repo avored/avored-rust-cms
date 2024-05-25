@@ -15,6 +15,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 i18next.init({
     interpolation: {escapeValue:false},
     lng: "en",
+    fallbackLng: "en",
     resources: {
         en: {
             global: en_locales

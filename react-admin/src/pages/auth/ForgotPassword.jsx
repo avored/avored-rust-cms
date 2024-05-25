@@ -9,9 +9,11 @@ import { forgotPasswordSchema } from "./schemas/forgotPassword.schema"
 import _ from 'lodash'
 import { ErrorMessage } from "../../components/ErrorMessage"
 import {useForgotPassword} from "./hooks/useForgotPassword";
+import { useTranslation } from "react-i18next";
 
 function ForgotPassword() {
   const redirect = useNavigate();
+  const [t] = useTranslation("global");
   const {register, handleSubmit, formState: {errors}} = useForm({
     resolver: joiResolver(forgotPasswordSchema)
   });
@@ -48,26 +50,25 @@ function ForgotPassword() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Forgot password
+          {t("forgot_password")}
         </h2>
       </div>
       <div></div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form
-            onSubmit={handleSubmit(submitHandler)}
-            className="space-y-5"
-          >
+          <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                label="Email Address"
+                label={t("email_address")}
                 type="text"
                 name="email"
                 autoFocus={true}
                 register={register("email")}
               />
-              {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
+              {isErrorExist("email") >= 0 && (
+                <ErrorMessage message={getErrorMessage("email")} />
+              )}
             </div>
 
             <div>
@@ -75,7 +76,7 @@ function ForgotPassword() {
                 type="submit"
                 className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
-                {isPending ? "Loading..." : "Forgot Password"}
+                {isPending ? "Loading..." : t("forgot_password")}
               </button>
             </div>
           </form>
