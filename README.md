@@ -38,8 +38,7 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
 - [x] Roles/Permissions
 - [x] Components
 - [x] Pages
-- [ ] Collection
-- [ ] SEO
+- [x] Fields
 - [x] Asset Manager
 
 ## RoadMap
@@ -52,10 +51,7 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
  - [x] SurrealDB ([Surreal DB](https://surrealdb.com/))
  - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
- - [x] Form Validation ([Validator](https://github.com/Keats/validator))
  - [x] Display Form Validation Error
- - [x] Flash messages
- - [ ] Form validation middleware
  
 ### Dev help 
 
