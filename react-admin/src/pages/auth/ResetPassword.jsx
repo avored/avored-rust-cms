@@ -1,33 +1,38 @@
-import {useEffect} from "react"
-import logo from "../../assets/logo_only.svg"
-import {useNavigate, useParams} from "react-router-dom"
-import { isEmpty } from "lodash"
-import InputField from "../../components/InputField"
-import {useForm} from 'react-hook-form'
-import {joiResolver} from '@hookform/resolvers/joi'
-import _ from 'lodash'
-import { ErrorMessage } from "../../components/ErrorMessage"
-import {useResetPassword} from "./hooks/useResetPassword"
-import {resetPasswordSchema} from "./schemas/resetPassword.schema"
-import { useTranslation } from "react-i18next"
+import { useEffect } from "react";
+import logo from "../../assets/logo_only.svg";
+import { useNavigate, useParams } from "react-router-dom";
+import { isEmpty } from "lodash";
+import InputField from "../../components/InputField";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import _ from "lodash";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { useResetPassword } from "./hooks/useResetPassword";
+import { resetPasswordSchema } from "./schemas/resetPassword.schema";
+import { useTranslation } from "react-i18next";
 
 function ResetPassword() {
   const redirect = useNavigate();
-  const token = useParams().token
-  const {register, handleSubmit} = useForm({
-    resolver: joiResolver(resetPasswordSchema)
+  const token = useParams().token;
+  const { register, handleSubmit } = useForm({
+    resolver: joiResolver(resetPasswordSchema),
   });
   const [t] = useTranslation("global");
-  const {mutate, isPending, error} = useResetPassword();
+  const { mutate, isPending, error } = useResetPassword();
 
   const isErrorExist = (key) => {
-    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
-  }
+    return _.findIndex(
+      _.get(error, "response.data.errors", []),
+      (err) => err.key === key
+    );
+  };
 
   const getErrorMessage = (key) => {
-    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
-  }
-
+    return _.get(
+      error,
+      "response.data.errors." + isErrorExist("email") + ".message"
+    );
+  };
 
   // TODO: enhance to make this as an HOC
   // for "protecting" routes/pages
@@ -37,7 +42,7 @@ function ResetPassword() {
     if (!isEmpty(token)) {
       return redirect("/admin");
     }
-  }, []);
+  }, [redirect]); // Added "redirect" to the dependency array
 
   const submitHandler = (data) => {
     mutate(data);

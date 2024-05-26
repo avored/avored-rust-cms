@@ -1,32 +1,38 @@
-import {useEffect} from "react"
-import logo from "../../assets/logo_only.svg"
-import { useNavigate } from "react-router-dom"
-import { isEmpty } from "lodash"
-import InputField from "../../components/InputField"
-import {useForm} from 'react-hook-form'
-import {joiResolver} from '@hookform/resolvers/joi'
-import { forgotPasswordSchema } from "./schemas/forgotPassword.schema"
-import _ from 'lodash'
-import { ErrorMessage } from "../../components/ErrorMessage"
-import {useForgotPassword} from "./hooks/useForgotPassword";
+import { useEffect } from "react";
+import logo from "../../assets/logo_only.svg";
+import { useNavigate } from "react-router-dom";
+import { isEmpty } from "lodash";
+import InputField from "../../components/InputField";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { forgotPasswordSchema } from "./schemas/forgotPassword.schema";
+import _ from "lodash";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { useForgotPassword } from "./hooks/useForgotPassword";
 import { useTranslation } from "react-i18next";
 
 function ForgotPassword() {
   const redirect = useNavigate();
   const [t] = useTranslation("global");
-  const {register, handleSubmit, formState: {errors}} = useForm({
-    resolver: joiResolver(forgotPasswordSchema)
+  const { register, handleSubmit } = useForm({
+    // Removed "formState: { errors }" from the object
+    resolver: joiResolver(forgotPasswordSchema),
   });
-  const {mutate, isPending, error} = useForgotPassword();
+  const { mutate, isPending, error } = useForgotPassword();
 
   const isErrorExist = (key) => {
-    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
-  }
+    return _.findIndex(
+      _.get(error, "response.data.errors", []),
+      (err) => err.key === key
+    );
+  };
 
   const getErrorMessage = (key) => {
-    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
-  }
-
+    return _.get(
+      error,
+      "response.data.errors." + isErrorExist("email") + ".message"
+    );
+  };
 
   // TODO: enhance to make this as an HOC
   // for "protecting" routes/pages
@@ -36,7 +42,7 @@ function ForgotPassword() {
     if (!isEmpty(token)) {
       return redirect("/admin");
     }
-  }, []);
+  }, [redirect]); // Added "redirect" to the dependency array
 
   const submitHandler = (data) => {
     mutate(data);
