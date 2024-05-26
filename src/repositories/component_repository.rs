@@ -213,7 +213,13 @@ impl ComponentRepository {
         logged_in_username: String,
     ) -> Result<bool> {
         let sql = format!(
-            "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
+            "RELATE {}:{}->{}->{}:{} \
+                SET \
+                created_by=$created_by, \
+                updated_by=$updated_by, \
+                created_at=$created_at, \
+                updated_at=$updated_at\
+            ;",
             "components", component_model.id, "component_field", "fields", field_model.id
         );
 
@@ -225,10 +231,8 @@ impl ComponentRepository {
         ]
         .into();
 
-        let vars: BTreeMap<String, Value> = [("attached_data".into(), attached_data.into())].into();
-
         let responses = datastore
-            .execute(sql.as_str(), database_session, Some(vars))
+            .execute(sql.as_str(), database_session, Some(attached_data))
             .await?;
 
         println!("com: {:?}", responses);

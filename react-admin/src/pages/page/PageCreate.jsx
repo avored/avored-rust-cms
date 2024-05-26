@@ -106,7 +106,8 @@ function PageCreate() {
 
             componentContent.component_fields_content.push(componentFieldContent)
         })
-        if (_.isEmpty(page, 'components_content')) {
+
+        if (_.isEmpty(_.get(page, 'components_content'))) {
             page['components_content'] = []
         }
         page.components_content.push(componentContent)
@@ -181,7 +182,7 @@ function PageCreate() {
                   <input
                     type="text"
                     placeholder="Identifier"
-                    value={_.get(page, "identifier")}
+                    value={_.get(page, "identifier", "")}
                     onChange={(e) => pageIdentifierOnChange(e.target.value)}
                     className="border p-2 rounded w-full"
                   />
