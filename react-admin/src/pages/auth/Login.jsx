@@ -65,6 +65,7 @@ function Login() {
                 name="email"
                 autoFocus={true}
                 register={register("email")}
+                errors={errors}
               />
               {isErrorExist("email") >= 0 && (
                 <ErrorMessage message={getErrorMessage("email")} />
@@ -76,6 +77,7 @@ function Login() {
                 type="password"
                 name="password"
                 register={register("password")}
+                errors={errors}
               />
               {isErrorExist("password") >= 0 && (
                 <ErrorMessage message={getErrorMessage("password")} />
