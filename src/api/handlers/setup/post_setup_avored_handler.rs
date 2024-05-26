@@ -145,8 +145,15 @@ pub async fn post_setup_avored_handler(
         DEFINE INDEX fields_identifier_index ON TABLE fields COLUMNS identifier UNIQUE;
 
 
+        REMOVE TABLE component_field;
+        DEFINE TABLE component_field;
 
-
+        DEFINE FIELD in         ON TABLE component_field TYPE record<components>;
+        DEFINE FIELD out        ON TABLE component_field TYPE record<fields>;
+        DEFINE FIELD created_by ON TABLE component_field TYPE string;
+        DEFINE FIELD updated_by ON TABLE component_field TYPE string;
+        DEFINE FIELD created_at ON TABLE component_field TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE component_field TYPE datetime;
 
 
 
