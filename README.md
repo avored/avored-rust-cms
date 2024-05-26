@@ -15,7 +15,7 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
     git clone https://github.com/avored/avored-rust-cms.git
     cd avored-cms
-    cp .env.example .env    //Basically copy the env example file to .env
+    cp .env.example .env    //Basically copy the .env.example file to .env
     
 
 Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
@@ -27,7 +27,7 @@ Once the application start you can visit `http://localhost:3000/setup` this url 
 
 ### Start react application admin
     cd react-admin
-    cp .env.example .env    //Basically copy the env example file to .env
+    cp .env.example .env    //Basically copy the .env.example file to .env
     npm i
     npm start
 
