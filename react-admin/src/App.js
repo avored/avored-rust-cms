@@ -23,6 +23,7 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import AvoRedApiTesting from "./pages/setting/AvoRedApiTesting";
 import Setting from "./pages/setting/Setting";
+import ChangePassword from './pages/auth/ChangePassword';
 function App() {
     return (
         <BrowserRouter>
@@ -33,6 +34,7 @@ function App() {
                 <Route path="/admin/login"   element={<Login />} />
                 <Route path="/admin/forgot-password"   element={<ForgotPassword />} />
                 <Route path="/admin/reset-password/:token"   element={<ResetPassword />} />
+                <Route path="/admin/change-password" element={<ChangePassword/>}/>
                 <Route path="/setup"   element={<Setup />} />
 
                 <Route element={<AppLayout />}>
