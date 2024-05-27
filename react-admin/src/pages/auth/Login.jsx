@@ -25,18 +25,20 @@ function Login() {
   };
 
   const isErrorExist = (key) => {
-    return _.findIndex(
-      _.get(error, "response.data.errors", []),
-      (err) => err.key === key
-    );
-  };
+        let message = errors[key]?.message;
+        if (message) {
+          return 1;
+        }
+    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
+  }
 
   const getErrorMessage = (key) => {
-    return _.get(
-      error,
-      "response.data.errors." + isErrorExist("email") + ".message"
-    );
-  };
+    let message = errors[key]?.message;
+    if (message) {
+      return message;
+    }
+    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
+  }
 
   // TODO: enhance to make this as an HOC
   // for "protecting" routes/pages
