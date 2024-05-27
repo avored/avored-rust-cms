@@ -24,6 +24,8 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import AvoRedApiTesting from "./pages/setting/AvoRedApiTesting";
 import Setting from "./pages/setting/Setting";
 import ChangePassword from './pages/auth/ChangePassword';
+import NotFoundPage from "./pages/NotFoundPage";
+
 function App() {
     return (
         <BrowserRouter>
@@ -57,6 +59,7 @@ function App() {
                     <Route path="/admin/setting"   element={<Setting />} />
                 </Route>
 
+                <Route path="*"   element={<NotFoundPage />} />
             </Routes>
         </BrowserRouter>
     );

@@ -15,6 +15,7 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
     git clone https://github.com/avored/avored-rust-cms.git
     cd avored-cms
+    cp .env.example .env    //Basically copy the .env.example file to .env
     
 
 Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
@@ -26,6 +27,7 @@ Once the application start you can visit `http://localhost:3000/setup` this url 
 
 ### Start react application admin
     cd react-admin
+    cp .env.example .env    //Basically copy the .env.example file to .env
     npm i
     npm start
 
@@ -38,8 +40,7 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
 - [x] Roles/Permissions
 - [x] Components
 - [x] Pages
-- [ ] Collection
-- [ ] SEO
+- [x] Fields
 - [x] Asset Manager
 
 ## RoadMap
@@ -52,10 +53,7 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
  - [x] SurrealDB ([Surreal DB](https://surrealdb.com/))
  - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
- - [x] Form Validation ([Validator](https://github.com/Keats/validator))
  - [x] Display Form Validation Error
- - [x] Flash messages
- - [ ] Form validation middleware
  
 ### Dev help 
 
