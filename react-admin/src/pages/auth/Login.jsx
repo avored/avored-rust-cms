@@ -14,7 +14,7 @@ import { useTranslation } from "react-i18next";
 function Login() {
   const [t, i18] = useTranslation("global");
   const redirect = useNavigate();
-  const { register, handleSubmit } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     // Removed "formState: { errors }" from the object
     resolver: joiResolver(loginSchema),
   });
@@ -25,7 +25,7 @@ function Login() {
   };
 
   const isErrorExist = (key) => {
-        let message = errors[key]?.message;
+        let message = _.get(errors, key + '.message');
         if (message) {
           return 1;
         }
@@ -33,7 +33,7 @@ function Login() {
   }
 
   const getErrorMessage = (key) => {
-    let message = errors[key]?.message;
+    let message = _.get(errors, key + '.message');
     if (message) {
       return message;
     }
