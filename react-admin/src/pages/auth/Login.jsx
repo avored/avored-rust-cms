@@ -1,28 +1,28 @@
-import {useEffect} from "react"
-import logo from "../../assets/logo_only.svg"
-import { useNavigate, Link } from "react-router-dom"
-import { isEmpty } from "lodash"
-import InputField from "../../components/InputField"
-import {useForm} from 'react-hook-form'
-import {joiResolver} from '@hookform/resolvers/joi'
-import { useLogin } from "./hooks/useLogin"
-import { loginSchema } from "./schemas/login.schema"
-import _ from 'lodash'
-import { ErrorMessage } from "../../components/ErrorMessage"
-import {useTranslation} from "react-i18next";
+import { useEffect } from "react";
+import logo from "../../assets/logo_only.svg";
+import { useNavigate, Link } from "react-router-dom";
+import { isEmpty } from "lodash";
+import InputField from "../../components/InputField";
+import { useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { useLogin } from "./hooks/useLogin";
+import { loginSchema } from "./schemas/login.schema";
+import _ from "lodash";
+import { ErrorMessage } from "../../components/ErrorMessage";
+import { useTranslation } from "react-i18next";
 
 function Login() {
-  const [t, i18] = useTranslation('global');
+  const [t, i18] = useTranslation("global");
   const redirect = useNavigate();
-  const {register, handleSubmit, formState: {errors}} = useForm({
-    resolver: joiResolver(loginSchema)
+  const { register, handleSubmit } = useForm({
+    // Removed "formState: { errors }" from the object
+    resolver: joiResolver(loginSchema),
   });
-  const {mutate, isPending, error} = useLogin();
+  const { mutate, isPending, error } = useLogin();
 
-
-  const localeChange = ((e) => {
-    i18.changeLanguage(e.target.value)
-  })
+  const localeChange = (e) => {
+    i18.changeLanguage(e.target.value);
+  };
 
   const isErrorExist = (key) => {
         let message = errors[key]?.message;
@@ -33,13 +33,12 @@ function Login() {
   }
 
   const getErrorMessage = (key) => {
-    let message = errors[key].message;
+    let message = errors[key]?.message;
     if (message) {
       return message;
     }
     return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
   }
-
 
   // TODO: enhance to make this as an HOC
   // for "protecting" routes/pages
@@ -49,7 +48,7 @@ function Login() {
     if (!isEmpty(token)) {
       return redirect("/admin");
     }
-  }, []);
+  }, [redirect]); // Added "redirect" to the dependency array
 
   const submitHandler = (data) => {
     mutate(data);
@@ -117,10 +116,10 @@ function Login() {
             <div className="text-gray-600 text-center text-sm">
               {t("need_to_change_language")}
               <select
-                  onChange={((e) => localeChange(e))}
-                  className="outline-none border-none appearance-none pr-8"
+                onChange={(e) => localeChange(e)}
+                className="outline-none border-none appearance-none pr-8"
               >
-                  <option>en</option>
+                <option>en</option>
                 <option>fr</option>
               </select>
             </div>
