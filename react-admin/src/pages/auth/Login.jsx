@@ -20,10 +20,18 @@ function Login() {
   const {mutate, isPending, error} = useLogin();
 
   const isErrorExist = (key) => {
+        let message = errors[key]?.message;
+        if (message) {
+          return 1;
+        }
     return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
   }
 
   const getErrorMessage = (key) => {
+    let message = errors[key].message;
+    if (message) {
+      return message;
+    }
     return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
   }
 
@@ -65,7 +73,6 @@ function Login() {
                 name="email"
                 autoFocus={true}
                 register={register("email")}
-                errors={errors}
               />
               {isErrorExist("email") >= 0 && (
                 <ErrorMessage message={getErrorMessage("email")} />
@@ -77,7 +84,6 @@ function Login() {
                 type="password"
                 name="password"
                 register={register("password")}
-                errors={errors}
               />
               {isErrorExist("password") >= 0 && (
                 <ErrorMessage message={getErrorMessage("password")} />

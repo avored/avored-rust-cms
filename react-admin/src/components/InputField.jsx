@@ -26,11 +26,14 @@ const InputField = (props) => {
             {...props.register}
           />
         </div>
-        {props.errors[props.name].message && (
-          <div className="mt-1 text-red-600 text-sm">
-            {props.errors[props.name].message}
-          </div>
-        )}
+        {_.size(props.errorMessages) > 0 &&
+          props.errorMessages.map((errorMessage) => {
+            return (
+              <div key={errorMessage} className="mt-1 text-red-600 text-sm">
+                {errorMessage}
+              </div>
+            );
+          })}
       </div>
     );
 };
