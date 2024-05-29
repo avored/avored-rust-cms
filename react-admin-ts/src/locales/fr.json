@@ -1,0 +1,81 @@
+{
+  "sign_into_your_account": "Connectez-vous à votre compte",
+  "email_address": "Adresse e-mail",
+  "password": "Mot de passe",
+  "forgot_your_password": "Mot de passe oublié?",
+  "sign_in": "Se connecter",
+  "need_to_change_language": "Besoin de changer de langue ?",
+  "profile": "Profile",
+  "logout": "Logout",
+  "forgot_password": "Forgot passoword?",
+  "reset_password": "Reset password",
+  "common": {
+    "save": "Save",
+    "edit": "Edit",
+    "create": "Create",
+    "delete": "Delete",
+    "upload": "Upload",
+    "cancel": "Cancel",
+    "select": "Select",
+    "file": "File",
+    "id": "ID",
+    "name": "Name",
+    "fullname": "Fullname",
+    "email": "Email",
+    "action": "Action",
+    "add_field": "Add Field",
+    "identifier": "Identifier",
+    "created_at": "Created at",
+    "created_by": "Created by",
+    "updated_at": "Updated at",
+    "updated_by": "Updated by",
+    "text": "Text",
+    "textarea": "Textarea",
+    "table": "Table",
+    "permissions": "Permissions",
+    "page": "Page",
+    "component": "Component",
+    "asset": "Asset",
+    "admin_user": "Admin User",
+    "role": "Role",
+    "settings": "Settings",
+    "general": "General"
+  },
+  "asset": {
+    "asset_table": "Asset table",
+    "upload_asset": "Upload Asset",
+    "asset_file": "Asset File"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "content_manager": "Content Manager",
+    "page": "Page",
+    "components": "Components",
+    "assets_manager": "Assets Manager",
+    "management": "Management",
+    "team": "Team",
+    "admin_user": "Admin User",
+    "role": "Role",
+    "setting": "Setting"
+  },
+  "component": {
+    "components": "Components",
+    "information": "Component Information"
+  },
+  "roles": {
+    "roles": "Roles",
+    "generics": "Generics",
+    "information": "Role Information"
+  },
+  "pages": {
+    "pages": "Pages",
+    "information": "Page Information"
+  },
+  "admin_user": {
+    "admin_users": "Admin Users",
+    "information": "Admin User Information"
+  },
+  "settings": {
+    "site_name": "Site Name"
+  }
+}
