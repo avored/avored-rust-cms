@@ -7,6 +7,10 @@ function Logout() {
     localStorage.clear();
     redirect("/admin/login");
   }, [redirect]); // Added "redirect" to the dependency array
+
+  return (
+      <></>
+  )
 }
 
 export default Logout;
