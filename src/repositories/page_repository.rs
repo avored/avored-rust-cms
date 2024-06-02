@@ -84,7 +84,7 @@ impl PageRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        // println!("RESULT_OBJECT: {result_object:?}");
+
         let page_model: Result<PageModel> = result_object?.try_into();
 
         page_model

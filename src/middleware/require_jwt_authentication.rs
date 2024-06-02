@@ -77,7 +77,7 @@ pub async fn require_jwt_authentication (
 
     // if claims.sub.len() <= 0 {
     //     is_token_valid = true;
-    //     // println!("Claim admin_user {claims:?}");
+    //
     // }
     //
     // if is_token_valid {

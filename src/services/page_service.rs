@@ -57,8 +57,6 @@ impl PageService {
             .paginate(datastore, database_session, start)
             .await?;
 
-        // println!("{:?}", pages);
-
         Ok(PagePagination {
             data: pages,
             pagination,

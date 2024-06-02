@@ -15,6 +15,14 @@ pub struct UpdatableField {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
+    pub field_data: Option<Vec<UpdatableFieldDataRequest>>
+}
+
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct UpdatableFieldDataRequest {
+    pub label: String,
+    pub value: String,
 }
 
 impl UpdateComponentRequest {

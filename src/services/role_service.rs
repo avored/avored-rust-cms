@@ -97,8 +97,6 @@ impl RoleService {
             .paginate(datastore, database_session, start)
             .await?;
 
-        // println!("{:?}", roles);
-
         Ok(RolePagination {
             data: roles,
             pagination,

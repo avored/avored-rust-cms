@@ -10,10 +10,17 @@ pub struct FieldModel {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
+    pub field_data: Option<Vec<FieldDataModel>>,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct FieldDataModel {
+    pub label: String,
+    pub value: String
 }
 
 impl TryFrom<Object> for FieldModel {
@@ -109,11 +116,39 @@ impl TryFrom<Object> for FieldModel {
             None => String::from(""),
         };
 
+        let field_data = match val.get("field_data") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => surrealdb::sql::Object::default(),
+                            };
+
+                            let field_data_model: FieldDataModel = object.try_into()?;
+
+                            arr.push(field_data_model)
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
+
+        // let field_data = None;
+
         Ok(FieldModel {
             id,
             name,
             identifier,
             field_type,
+            field_data: Some(field_data),
             created_at,
             updated_at,
             created_by,
@@ -122,12 +157,53 @@ impl TryFrom<Object> for FieldModel {
     }
 }
 
+
+impl TryFrom<Object> for FieldDataModel {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<FieldDataModel> {
+        let label = match val.get("label") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+        let value = match val.get("value") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+
+        Ok(FieldDataModel {
+            label,
+            value
+        })
+    }
+}
+
+
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableFieldModel {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
+    pub field_data: Option<Vec<CreatableFieldDataModel>>,
     pub logged_in_username: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct CreatableFieldDataModel {
+    pub label: String,
+    pub value: String,
 }
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableFieldModel {
@@ -135,6 +211,7 @@ pub struct UpdatableFieldModel {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
+    pub field_data: Option<Vec<UpdatableFieldDataModel>>,
     pub logged_in_username: String,
 }
 
@@ -142,4 +219,10 @@ pub struct UpdatableFieldModel {
 pub struct FieldPagination {
     pub data: Vec<FieldModel>,
     pub pagination: Pagination,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableFieldDataModel {
+    pub label: String,
+    pub value: String,
 }

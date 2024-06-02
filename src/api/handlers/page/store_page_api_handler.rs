@@ -60,8 +60,6 @@ pub async fn store_page_api_handler(
         creatable_page.component_contents.push(creatable_component_content_model);
     }
 
-    // println!("Payload GENERATED: {:?}", creatable_page);
-
     let created_page_model = state
         .page_service
         .create_page(&state.db, creatable_page, logged_in_user)
