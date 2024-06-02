@@ -88,7 +88,6 @@ impl From<lettre::error::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        // println!("->> {:<12} - {self:?}", "INTO_RES");
         let response = match self {
             Error::BadRequestError(str) => {
                 // let tets = serde_json::to_string(&str);

@@ -86,7 +86,7 @@ impl AssetRepository {
     //         Some(object) => object,
     //         None => Err(Error::Generic("no record found")),
     //     };
-    //     // println!("RESULT_OBJECT: {result_object:?}");
+    //
     //     let asset_model: Result<AssetModel> = result_object?.try_into();
     //
     //     asset_model

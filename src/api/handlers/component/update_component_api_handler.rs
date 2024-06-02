@@ -6,10 +6,10 @@ use crate::{
 };
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
-use crate::api::handlers::component::request::update_component_request::UpdateComponentRequest;
+use crate::api::handlers::component::request::update_component_request::{UpdatableFieldDataRequest, UpdateComponentRequest};
 use crate::error::Error;
 use crate::models::component_model::{ComponentModel, UpdatableComponentModel};
-use crate::models::field_model::UpdatableFieldModel;
+use crate::models::field_model::{UpdatableFieldDataModel, UpdatableFieldModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 
@@ -45,13 +45,24 @@ pub async fn update_component_api_handler(
 
     for payload_field in payload.fields {
 
-        println!("Payload Fields: {payload_field:?}");
+        let mut updatable_field_data: Vec<UpdatableFieldDataModel> = vec![];
+        let update_field_data_requests: Vec<UpdatableFieldDataRequest> = payload_field.field_data.unwrap_or_else(|| vec![]);
+
+        for update_field_data_request in update_field_data_requests {
+            let update_field_data_option = UpdatableFieldDataModel {
+                label: update_field_data_request.label,
+                value: update_field_data_request.value
+            };
+            updatable_field_data.push(update_field_data_option);
+        }
+
         //@todo check for field ID and if not exist then create field and attached field
         let updatable_field = UpdatableFieldModel {
             id: payload_field.id,
             name: payload_field.name,
             identifier: payload_field.identifier,
             field_type: payload_field.field_type,
+            field_data: Some(updatable_field_data),
             logged_in_username: logged_in_user.email.clone(),
         };
         let updated_field = state
@@ -60,22 +71,7 @@ pub async fn update_component_api_handler(
             .await?;
 
         updated_component_model.fields.push(updated_field);
-        //
-        // // println!("Created component {:?}", created_component.clone());
-        // // println!("Created Field {:?}", created_field.clone());
-        //
-        // state
-        //     .component_service
-        //     .attach_component_with_field(
-        //         &state.db,
-        //         created_component.clone(),
-        //         created_field.clone(),
-        //         "admin@admin.com".to_string(),
-        //     )
-        //     .await?;
-        // // println!("ATTACHED: {:?}", created_field.clone());
-        //
-        // created_component.fields.push(created_field);
+
     }
 
 

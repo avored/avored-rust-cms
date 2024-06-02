@@ -1,10 +1,7 @@
-use std::collections::BTreeMap;
-
 use crate::error::{Error, Result};
-use crate::models::field_model::{CreatableFieldModel, FieldModel, UpdatableFieldModel};
+use crate::models::field_model::{CreatableFieldDataModel, CreatableFieldModel, FieldModel, UpdatableFieldDataModel, UpdatableFieldModel};
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::{Datetime, Value};
 
 use super::into_iter_objects;
 
@@ -46,21 +43,49 @@ impl FieldRepository {
         database_session: &Session,
         creatable_field_model: CreatableFieldModel,
     ) -> Result<FieldModel> {
-        let sql = "CREATE fields CONTENT $data";
 
-        let data: BTreeMap<String, Value> = [
-            ("name".into(), creatable_field_model.name.into()),
-            ("identifier".into(), creatable_field_model.identifier.into()),
-            ("field_type".into(), creatable_field_model.field_type.into()),
-            ("created_by".into(), creatable_field_model.logged_in_username.clone().into()),
-            ("updated_by".into(), creatable_field_model.logged_in_username.into()),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-        .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+        let mut field_data_sql = String::from("");
+        // field_data_sql.push_str("[");
+        let create_field_data_model: Vec<CreatableFieldDataModel> = creatable_field_model.field_data.unwrap_or_else(|| vec![]);
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        for creatable_field_data in create_field_data_model {
+            field_data_sql.push_str(&format!(
+                    "{open_brace} \
+                    label: '{label}', \
+                    value: '{value}'  \
+                    {close_brace}\
+                    ,",
+                    label = creatable_field_data.label,
+                    value = creatable_field_data.value,
+                    open_brace = String::from("{"),
+                    close_brace = String::from("}")
+                ));
+        }
+        // field_data_sql.pop();
+        // field_data_sql.push_str("]");
+
+        let sql = format!("
+                CREATE fields CONTENT {open_brace}
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    field_type: '{field_type}',
+                    field_data: [{field_data_sql}],
+                    created_by: '{logged_in_user_email}',
+                    updated_by: '{logged_in_user_email}',
+                    created_at: time::now(),
+                    updated_at: time::now(),
+                {close_brace};
+            ",
+            name = creatable_field_model.name,
+            identifier = creatable_field_model.identifier,
+            field_type = creatable_field_model.field_type,
+            field_data_sql = field_data_sql,
+            logged_in_user_email = creatable_field_model.logged_in_username,
+            open_brace = String::from("{"),
+            close_brace = String::from("}")
+        );
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
@@ -101,30 +126,51 @@ impl FieldRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_admin_user: UpdatableFieldModel,
+        updatable_field_model: UpdatableFieldModel,
     ) -> Result<FieldModel> {
-        let sql = "
-            UPDATE type::thing($table, $id) MERGE {
-                name: $name,
-                identifier: $identifier,
-                updated_by: $logged_in_user_name,
-                field_type: $field_type,
-                updated_at: time::now()
-            };";
+        let mut field_data_sql = String::from("");
 
-        let vars = BTreeMap::from([
-            ("name".into(), updatable_admin_user.name.into()),
-            ("identifier".into(), updatable_admin_user.identifier.into()),
-            ("field_type".into(), updatable_admin_user.field_type.into()),
-            (
-                "logged_in_user_name".into(),
-                updatable_admin_user.logged_in_username.into(),
-            ),
-            ("id".into(), updatable_admin_user.id.into()),
-            ("table".into(), "fields".into()),
-        ]);
+        let update_field_data_model: Vec<UpdatableFieldDataModel> = updatable_field_model.field_data.unwrap_or_else(|| vec![]);
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        for creatable_field_data in update_field_data_model {
+            field_data_sql.push_str(&format!(
+                "{open_brace} \
+                    label: '{label}', \
+                    value: '{value}'  \
+                    {close_brace}\
+                    ,",
+                label = creatable_field_data.label,
+                value = creatable_field_data.value,
+                open_brace = String::from("{"),
+                close_brace = String::from("}")
+            ));
+        }
+        // field_data_sql.pop();
+        // field_data_sql.push_str("]");
+
+        let sql = format!("
+                UPDATE fields:{field_id} MERGE {open_brace}
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    field_type: '{field_type}',
+                    field_data: [{field_data_sql}],
+                    created_by: '{logged_in_user_email}',
+                    updated_by: '{logged_in_user_email}',
+                    created_at: time::now(),
+                    updated_at: time::now(),
+                {close_brace};
+            ",
+            field_id = updatable_field_model.id,
+            name = updatable_field_model.name,
+            identifier = updatable_field_model.identifier,
+            field_type = updatable_field_model.field_type,
+            field_data_sql = field_data_sql,
+            logged_in_user_email = updatable_field_model.logged_in_username,
+            open_brace = String::from("{"),
+            close_brace = String::from("}")
+        );
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {

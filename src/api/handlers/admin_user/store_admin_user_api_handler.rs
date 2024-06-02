@@ -34,8 +34,6 @@ pub async fn store_admin_user_api_handler(
     while let Some(field) = multipart.next_field().await.expect("cant find next field") {
         let name = field.name().expect("field name missing");
 
-        println!("field name: {name}");
-
         match name {
             "image" => {
                 let s: String = rand::thread_rng()
@@ -136,8 +134,6 @@ pub async fn store_admin_user_api_handler(
     //     has_error = true;
     //     //@todo return validation error response
     // }
-
-    // println!("")
 
     let password = payload.password.as_bytes();
     let salt = SaltString::from_b64(&state.config.password_salt)?;

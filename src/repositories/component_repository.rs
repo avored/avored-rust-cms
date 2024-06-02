@@ -109,13 +109,13 @@ impl ComponentRepository {
         .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-        println!("find res: {:?}", responses);
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        // println!("RESULT_OBJECT: {result_object:?}");
+
         let component_model: Result<ComponentModel> = result_object?.try_into();
 
         component_model
@@ -235,7 +235,7 @@ impl ComponentRepository {
             .execute(sql.as_str(), database_session, Some(attached_data))
             .await?;
 
-        println!("com: {:?}", responses);
+
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);

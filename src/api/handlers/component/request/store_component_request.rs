@@ -6,14 +6,21 @@ use crate::models::validation_error::ErrorMessage;
 pub struct StoreComponentRequest {
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<Field>,
+    pub fields: Vec<FieldRequest>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct Field {
+pub struct FieldRequest {
     pub name: String,
     pub identifier: String,
     pub field_type: String,
+    pub field_data: Option<Vec<FieldDataRequest>>
+}
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct FieldDataRequest {
+    pub label: String,
+    pub value: String,
 }
 
 impl StoreComponentRequest {

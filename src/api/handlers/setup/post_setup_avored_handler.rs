@@ -138,6 +138,7 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD name ON TABLE fields TYPE string;
         DEFINE FIELD identifier ON TABLE fields TYPE string;
         DEFINE FIELD field_type ON TABLE fields TYPE string;
+        DEFINE FIELD field_data ON TABLE fields TYPE array;
         DEFINE FIELD created_by ON TABLE fields TYPE string;
         DEFINE FIELD updated_by ON TABLE fields TYPE string;
         DEFINE FIELD created_at ON TABLE fields TYPE datetime;

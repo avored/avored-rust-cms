@@ -5,10 +5,10 @@ use crate::{
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
-use crate::api::handlers::component::request::store_component_request::StoreComponentRequest;
+use crate::api::handlers::component::request::store_component_request::{FieldDataRequest, StoreComponentRequest};
 use crate::error::Error;
 use crate::models::component_model::{ComponentModel, CreatableComponent};
-use crate::models::field_model::CreatableFieldModel;
+use crate::models::field_model::{CreatableFieldDataModel, CreatableFieldModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 
@@ -43,10 +43,23 @@ pub async fn store_component_api_handler(
         .await?;
     
     for payload_field in payload.fields {
+        let mut creatable_field_data: Vec<CreatableFieldDataModel> = vec![];
+
+        let create_field_data_requests: Vec<FieldDataRequest> = payload_field.field_data.unwrap_or_else(|| vec![]);
+
+        for create_field_data_request in create_field_data_requests {
+            let create_field_data_option = CreatableFieldDataModel {
+                label: create_field_data_request.label,
+                value: create_field_data_request.value
+            };
+            creatable_field_data.push(create_field_data_option);
+        }
+
         let creatable_field = CreatableFieldModel {
             name: payload_field.name,
             identifier: payload_field.identifier,
             field_type: payload_field.field_type,
+            field_data: Some(creatable_field_data),
             logged_in_username: logged_in_user.email.clone(),
         };
 

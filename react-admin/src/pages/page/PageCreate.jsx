@@ -31,19 +31,30 @@ function PageCreate() {
     switch (componentField.field_type) {
       case "textarea":
         return <div>Textarea</div>;
+      case "radio":
+        return (
+            <div className="p-3">
+              <input id={componentField.identifier} type="radio" value={componentField.identifier}
+                     className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
+              <label htmlFor={componentField.identifier}
+                    className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                {componentField.name}
+              </label>
+            </div>
+        );
       case "text":
       default:
         return (
-          <div>
-            <InputField
-              label={componentField.name}
-              type="text"
-              name={componentField.identifier}
-              onChange={(e) =>
-                componentFieldContentOnChange(componentField.id, e.target.value)
-              }
-            />
-          </div>
+            <div>
+              <InputField
+                  label={componentField.name}
+                  type="text"
+                  name={componentField.identifier}
+                  onChange={(e) =>
+                      componentFieldContentOnChange(componentField.id, e.target.value)
+                  }
+              />
+            </div>
         );
     }
   };
