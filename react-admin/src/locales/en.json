@@ -70,7 +70,13 @@
   },
   "pages": {
     "pages": "Pages",
-    "information": "Page Information"
+    "information": "Page Information",
+    "component": {
+      "field_name": "Field Name",
+      "option_value": "Option value",
+      "option_label": "Option label",
+      "options": "Options"
+    }
   },
   "admin_user": {
     "admin_users": "Admin Users",
