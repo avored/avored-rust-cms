@@ -1,8 +1,9 @@
 import axios from 'axios';
 
-// @ts-ignore
-const baseURL = import.meta.env.VITE_AVORED_BACKEND_BASE_URL + "/api"
-
+const baseURL = process.env.REACT_APP_AVORED_BACKEND_BASE_URL + "/api"
+export default axios.create({
+    baseURL
+})
 
 // axios instance with 'withCredentials' flag
 export const client = axios.create({

@@ -73,6 +73,7 @@
     "information": "Page Information",
     "component": {
       "field_name": "Field Name",
+      "field_identifier": "Field Identifier",
       "option_value": "Option value",
       "option_label": "Option label",
       "options": "Options"
@@ -84,5 +85,8 @@
   },
   "settings": {
     "site_name": "Site Name"
+  },
+  "validation": {
+    "empty": "{{attribute}} is required."
   }
 }
