@@ -1,10 +1,7 @@
-import Joi from 'joi';
+import Joi from 'joi'
 
 export const ComponentEditSchema = Joi.object({
-    name: Joi.string().required().messages({
-        'string.name': 'Name is required.',
-    }),
-    // identifier: Joi.string().required().messages({
-    //     'string.empty': 'Identifier is required.',
-    // })
-});
+    name : Joi.string().required().messages({
+        'string.empty': 'Name is required field',
+    })
+})

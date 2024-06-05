@@ -28,7 +28,7 @@ function ComponentEdit() {
         setValue
     } = useForm<IEditableComponent>({
         // @todo fix the joiResolver
-        // resolver: joiResolver(ComponentEditSchema),
+        resolver: joiResolver(ComponentEditSchema),
         values
     })
     const {
