@@ -1,26 +1,36 @@
-import React, {useEffect, useState} from "react"
-import {Link} from "react-router-dom"
-import {PlusIcon, TrashIcon} from "@heroicons/react/24/solid"
+import React from "react"
+import {Link, useParams} from "react-router-dom"
+import {PlusIcon} from "@heroicons/react/24/solid"
+import {TrashIcon} from "@heroicons/react/16/solid"
 import InputField from "../../components/InputField"
-import {useStoreComponent} from "./hooks/useStoreComponent"
+import {useGetComponent} from "./hooks/useGetComponent"
+import {useUpdateComponent} from "./hooks/useUpdateComponent"
 import {useTranslation} from "react-i18next"
-import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
-import {ComponentCreateSchema} from "./schemas/component.create.schema"
-import ICreatableComponent from "../../types/field/ICreatableComponent"
+import {ComponentEditSchema} from "./schemas/component.edit.schema"
+import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
+import IEditableComponent from "../../types/field/IEditableComponent"
 
-function ComponentCreate() {
-    const {mutate} = useStoreComponent()
+function ComponentEdit() {
+
+    const [t] = useTranslation("global")
+    const params = useParams()
+    const {mutate} = useUpdateComponent(params.component_id)
+    const {data} = useGetComponent(params.component_id)
+    const values = data?.data.component_model
+
     const {
         control,
         register,
         handleSubmit,
         formState: {errors},
         setValue
-    } = useForm<ICreatableComponent>({
-        resolver: joiResolver(ComponentCreateSchema),
-    });
+    } = useForm<IEditableComponent>({
+        // @todo fix the joiResolver
+        // resolver: joiResolver(ComponentEditSchema),
+        values
+    })
     const {
         fields,
         append,
@@ -30,10 +40,8 @@ function ComponentCreate() {
         name: "fields",
     });
 
-    const [t] = useTranslation("global")
-
     const addFieldOnClick = (() => {
-        append({name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
+        append({id: '', name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
     })
 
     const deleteFieldOnClick = ((fieldIndex: number) => {
@@ -44,14 +52,14 @@ function ComponentCreate() {
         setValue(`fields.${fieldIndex}.field_type`, fieldTypeValue)
     })
 
-    const submitHandler = (data: any) => {
+    const submitHandler = ((data: any) => {
+        console.log(data)
         mutate(data)
-    };
-
+    })
 
     return (
         <div className="flex-1 bg-white">
-            <div className="px-5 pl-64 ">
+            <div className="px-5 pl-64">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
@@ -140,6 +148,13 @@ function ComponentCreate() {
                                                     <InputField
                                                         name={`fields.${index}.field_type`}
                                                         register={register(`fields.${index}.field_type`)}
+                                                    />
+                                                </div>
+                                                <div className="mt-3">
+                                                    <InputField
+                                                        type="text"
+                                                        name={register(`fields.${index}.id`)}
+                                                        register={register(`fields.${index}.id`)}
                                                     />
                                                 </div>
                                                 <div className="mt-3">
@@ -252,4 +267,4 @@ function ComponentCreate() {
     );
 }
 
-export default ComponentCreate
+export default ComponentEdit

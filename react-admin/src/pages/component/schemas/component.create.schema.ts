@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const componentCreateSchema = Joi.object({
+export const ComponentCreateSchema = Joi.object({
     name : Joi.string().required().messages({
         'string.name': 'Name is required.',
     }),

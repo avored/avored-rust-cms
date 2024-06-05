@@ -36,7 +36,6 @@ function AssetTable() {
     const file = e.target.files[0];
     setFile(file);
   };
-  console.log(t("asset.asset_table"));
 
   return (
     <div className="flex-1 bg-white">
