@@ -11,7 +11,7 @@ import {joiResolver} from "@hookform/resolvers/joi"
 import {ComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent from "../../types/field/IEditableComponent"
-import { ErrorMessage } from "../../components/ErrorMessage"
+import {ErrorMessage} from "../../components/ErrorMessage"
 import {IOptionField} from "../../types/field/IEditableField"
 
 function ComponentEdit() {
@@ -49,9 +49,17 @@ function ComponentEdit() {
     const deleteFieldOnClick = ((fieldIndex: number) => {
         remove(fieldIndex)
     })
-
-    const optionActionOnClick = ((e: React.MouseEvent, fieldIndex: number, field_data: Array<IOptionField> | undefined) => {
-        
+    const optionDeleteActionOnClick = ((
+        e: React.MouseEvent,
+        fieldIndex: number,
+        field_data: Array<IOptionField> | undefined,
+        option_index: number
+    ) => {
+        field_data?.splice(option_index, 1)
+        setValue(`fields.${fieldIndex}.field_data`, field_data)
+        trigger(`fields.${fieldIndex}`)
+    })
+    const optionAddActionOnClick = ((e: React.MouseEvent, fieldIndex: number, field_data: Array<IOptionField> | undefined) => {
         field_data?.push({label: '', value: ''})
         setValue(`fields.${fieldIndex}.field_data`, field_data)
         trigger(`fields.${fieldIndex}`)
@@ -89,7 +97,7 @@ function ComponentEdit() {
                                     register={register("name")}
                                     autoFocus={true}
                                 />
-                                <ErrorMessage message={getErrorMessage('name')} />
+                                <ErrorMessage message={getErrorMessage('name')}/>
                             </div>
                             <div className="mb-4">
                                 <InputField
@@ -194,7 +202,8 @@ function ComponentEdit() {
                                                     render={({field}) => {
                                                         return (
                                                             field.value.field_type === AvoRedFieldTypesEnum.SELECT ? (
-                                                                <div key={`field-type-${field.value.field_type}`} className="mt-3">
+                                                                <div key={`field-type-${field.value.field_type}`}
+                                                                     className="mt-3">
                                                                     <div className="w-full">
                                                                         <h6 className="font-semibold">
                                                                             {t("pages.component.options")}
@@ -202,49 +211,64 @@ function ComponentEdit() {
                                                                     </div>
 
                                                                     {field.value.field_data?.map((field_option, field_option_index) => {
-                                                                       return (
-                                                                           <div className="flex" key={`field-option-key-${field_option_index}-${field.value.id}`}>
-                                                                            <div className="w-1/2">
+                                                                        return (
+                                                                            <div className="flex w-full"
+                                                                                 key={`field-option-key-${field_option_index}-${field.value.id}`}>
+
+                                                                                <div className="w-1/2">
                                                                                     <label
                                                                                         htmlFor="hs-inline-leading-pricing-select-label"
                                                                                         className="text-sm text-gray-600"
                                                                                     >{t('pages.component.option_label')}
                                                                                     </label>
-                                                                                <InputField
-                                                                                    register={register(`fields.${index}.field_data.${field_option_index}.label`)}
-                                                                                    placeholder={t('pages.component.option_label')}
-                                                                                />
-                                                                            </div>
+                                                                                    <InputField
+                                                                                        register={register(`fields.${index}.field_data.${field_option_index}.label`)}
+                                                                                        placeholder={t('pages.component.option_label')}
+                                                                                    />
+                                                                                </div>
 
                                                                                 <div className="w-1/2 ml-3">
-                                                                                       
+
                                                                                     <label
                                                                                         htmlFor="hs-inline-leading-pricing-select-label"
                                                                                         className="text-sm text-gray-600"
                                                                                     >{t('pages.component.option_value')}
                                                                                     </label>
                                                                                     <div className="relative">
-                                                                                        
+
                                                                                         <InputField
                                                                                             register={register(`fields.${index}.field_data.${field_option_index}.value`)}
                                                                                             placeholder={t('pages.component.option_value')}
                                                                                         />
                                                                                         <div
-                                                                                            onClick={(e: React.MouseEvent) => optionActionOnClick(e, index, field.value.field_data)}
+                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, field.value.field_data, field_option_index)}
                                                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                                                         >
-
-                                                                                            <PlusIcon
-                                                                                                className="text-primary-500 w-6 h-6"/>
+                                                                                            <TrashIcon
+                                                                                                className="text-primary-500 w-4 h-4 mr-2"/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                            </div> 
-                                                                       ) 
+                                                                              
+
+                                                                            </div>
+                                                                        )
                                                                     })}
 
-                                                                   
-                                                                    
+                                                                    <div
+                                                                        className="mt-4 flex justify-center ring-1 ring-gray-300 rounded p-1"
+                                                                        onClick={(e: React.MouseEvent) => optionAddActionOnClick(e, index, field.value.field_data)}>
+                                                                        <button className="flex items-center"
+                                                                                type="button">
+                                                                            <PlusIcon
+                                                                                className="text-primary-500 h-6 w-6"/>
+                                                                            <span
+                                                                                className="text-sm ml-1 text-primary-500">
+                                                                                            {t("pages.component.add_option")}
+                                                                                        </span>
+                                                                        </button>
+                                                                    </div>
+
                                                                 </div>
                                                             ) : <></>
                                                         )

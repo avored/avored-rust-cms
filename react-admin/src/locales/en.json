@@ -76,7 +76,8 @@
       "field_identifier": "Field Identifier",
       "option_value": "Option value",
       "option_label": "Option label",
-      "options": "Options"
+      "options": "Options",
+      "add_option": "Add option"
     }
   },
   "admin_user": {
