@@ -70,7 +70,15 @@
   },
   "pages": {
     "pages": "Pages",
-    "information": "Page Information"
+    "information": "Page Information",
+    "component": {
+      "field_name": "Field Name",
+      "field_identifier": "Field Identifier",
+      "option_value": "Option value",
+      "option_label": "Option label",
+      "options": "Options",
+      "add_option": "Add option"
+    }
   },
   "admin_user": {
     "admin_users": "Admin Users",
@@ -78,5 +86,8 @@
   },
   "settings": {
     "site_name": "Site Name"
+  },
+  "validation": {
+    "empty": "{{attribute}} is required."
   }
 }

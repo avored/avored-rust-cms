@@ -43,8 +43,6 @@ const AssetTable: React.FC = () => {
     }
   };
 
-  console.log(t("asset.asset_table"));
-
   return (
     <div className="flex-1 bg-white">
       <div className="pl-64">
