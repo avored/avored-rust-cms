@@ -1,51 +1,49 @@
 import { useEffect } from "react";
 import logo from "../../assets/logo_only.svg";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { isEmpty } from "lodash";
 import InputField from "../../components/InputField";
 import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
+import { forgotPasswordSchema } from "./schemas/forgotPassword.schema";
 import _ from "lodash";
 import { ErrorMessage } from "../../components/ErrorMessage";
-import { useResetPassword } from "./hooks/useResetPassword";
-import { resetPasswordSchema } from "./schemas/resetPassword.schema";
+import { useForgotPassword } from "./hooks/useForgotPassword";
 import { useTranslation } from "react-i18next";
+import IErrorMessage from "../../types/common/IError";
+import IForgotPasswordPost from "../../types/auth/IForgotPasswordPost";
 
-function ResetPassword() {
+function ForgotPassword() {
   const redirect = useNavigate();
-  const token = useParams().token;
-  const { register, handleSubmit } = useForm({
-    resolver: joiResolver(resetPasswordSchema),
-  });
   const [t] = useTranslation("global");
-  const { mutate, isPending, error } = useResetPassword();
+  const {
+    register,
+    handleSubmit
+  } = useForm<IForgotPasswordPost>({
+    resolver: joiResolver(forgotPasswordSchema),
+  })
+  const {
+    mutate,
+    isPending,
+    error
+  } = useForgotPassword()
 
-  const isErrorExist = (key) => {
+  const isErrorExist = (key: string) => {
     return _.findIndex(
       _.get(error, "response.data.errors", []),
-      (err) => err.key === key
+      (err: IErrorMessage) => err.key === key
     );
   };
 
-  const getErrorMessage = (key) => {
+  const getErrorMessage = (key: string) => {
     return _.get(
       error,
       "response.data.errors." + isErrorExist("email") + ".message"
     );
   };
 
-  // TODO: enhance to make this as an HOC
-  // for "protecting" routes/pages
-  useEffect(() => {
-    /* to do make sure it execute once only..*/
-    const token = localStorage.getItem("AUTH_TOKEN");
-    if (!isEmpty(token)) {
-      return redirect("/admin");
-    }
-  }, [redirect]); // Added "redirect" to the dependency array
-
-  const submitHandler = (data) => {
-    mutate(data);
+  const submitHandler = (data: IForgotPasswordPost) => {
+    mutate(data)
   };
 
   return (
@@ -56,10 +54,9 @@ function ResetPassword() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          {t("reset_password")}
+          {t("forgot_password")}
         </h2>
       </div>
-      <div></div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
@@ -76,43 +73,13 @@ function ResetPassword() {
                 <ErrorMessage message={getErrorMessage("email")} />
               )}
             </div>
-            <div>
-              <InputField
-                label={t("password")}
-                type="password"
-                name="password"
-                register={register("password")}
-              />
-              {isErrorExist("password") >= 0 && (
-                <ErrorMessage message={getErrorMessage("password")} />
-              )}
-            </div>
-            <div>
-              <InputField
-                label="Confirm Password"
-                type="password"
-                name="confirm_password"
-                register={register("confirm_password")}
-              />
-              {isErrorExist("confirm_password") >= 0 && (
-                <ErrorMessage message={getErrorMessage("confirm_password")} />
-              )}
-            </div>
-            <div>
-              <InputField
-                type="hidden"
-                name="token"
-                value={token}
-                register={register("token")}
-              />
-            </div>
 
             <div>
               <button
                 type="submit"
                 className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
-                {isPending ? "Loading..." : t("reset_password")}
+                {isPending ? "Loading..." : t("forgot_password")}
               </button>
             </div>
           </form>
@@ -122,4 +89,4 @@ function ResetPassword() {
   );
 }
 
-export default ResetPassword;
+export default ForgotPassword;

@@ -1,38 +1,46 @@
-import { useEffect } from "react";
+import React, {ChangeEvent, useEffect} from "react";
 import logo from "../../assets/logo_only.svg";
 import { useNavigate, Link } from "react-router-dom";
 import { isEmpty } from "lodash";
 import InputField from "../../components/InputField";
-import { useForm } from "react-hook-form";
+import {SubmitHandler, useForm} from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useLogin } from "./hooks/useLogin";
 import { loginSchema } from "./schemas/login.schema";
 import _ from "lodash";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { useTranslation } from "react-i18next";
+import IErrorMessage from "../../types/common/IError";
+import ILoginPost from "../../types/auth/ILoginPost";
 
 function Login() {
   const [t, i18] = useTranslation("global");
-  const redirect = useNavigate();
-  const { register, handleSubmit, formState: { errors } } = useForm({
-    // Removed "formState: { errors }" from the object
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<ILoginPost>({
     resolver: joiResolver(loginSchema),
-  });
-  const { mutate, isPending, error } = useLogin();
+  })
+  const {
+    mutate,
+    isPending,
+    error
+  } = useLogin()
 
-  const localeChange = (e) => {
-    i18.changeLanguage(e.target.value);
-  };
+  const localeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    await i18.changeLanguage(e.target.value)
+  }
 
-  const isErrorExist = (key) => {
+  const isErrorExist = (key: string) => {
         let message = _.get(errors, key + '.message');
         if (message) {
           return 1;
         }
-    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
+    return _.findIndex(_.get(error, 'response.data.errors', []), ((err: IErrorMessage) => err.key === key))
   }
 
-  const getErrorMessage = (key) => {
+  const getErrorMessage = (key: string) => {
     let message = _.get(errors, key + '.message');
     if (message) {
       return message;
@@ -40,17 +48,7 @@ function Login() {
     return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
   }
 
-  // TODO: enhance to make this as an HOC
-  // for "protecting" routes/pages
-  useEffect(() => {
-    /* to do make sure it execute once only..*/
-    const token = localStorage.getItem("AUTH_TOKEN");
-    if (!isEmpty(token)) {
-      return redirect("/admin");
-    }
-  }, [redirect]); // Added "redirect" to the dependency array
-
-  const submitHandler = (data) => {
+  const submitHandler: SubmitHandler<ILoginPost> = (data) => {
     mutate(data);
   };
 
