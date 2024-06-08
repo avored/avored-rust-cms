@@ -3,6 +3,7 @@
   "not_found_404": "Not Found 404",
   "email_address": "Email Address",
   "password": "Password",
+  "confirmation_password": "Confirmed Password",
   "forgot_your_password": "Forgot your password?",
   "need_to_change_language": "Need to change a language?",
   "sign_in": "Sign in",
