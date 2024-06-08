@@ -1,45 +1,40 @@
-import {useEffect} from "react"
 import logo from "../../assets/logo_only.svg"
-import {useNavigate, useParams} from "react-router-dom"
-import { isEmpty } from "lodash"
+import { useNavigate, useParams } from "react-router-dom"
 import InputField from "../../components/InputField"
-import {useForm} from 'react-hook-form'
-import {joiResolver} from '@hookform/resolvers/joi'
-import _ from 'lodash'
+import { useForm } from "react-hook-form"
+import { joiResolver } from "@hookform/resolvers/joi"
+import _ from "lodash"
 import { ErrorMessage } from "../../components/ErrorMessage"
-import { useChangePassword } from "./hooks/useChangePassword"
-import { changePasswordSchema } from "./schemas/changePassword.schema"
+import { useResetPassword } from "./hooks/useResetPassword"
+import { resetPasswordSchema } from "./schemas/resetPassword.schema"
 import { useTranslation } from "react-i18next"
+import IErrorMessage from "../../types/common/IError"
+import IResetPasswordPost from "../../types/auth/IResetPasswordPost"
 
-function ChangePassword() {
+function ResetPassword() {
   const redirect = useNavigate();
-  const token = useParams().token
-  const {register, handleSubmit} = useForm({
-    resolver: joiResolver(changePasswordSchema)
+  const token = useParams().token;
+  const { register, handleSubmit } = useForm<IResetPasswordPost>({
+    resolver: joiResolver(resetPasswordSchema),
   });
   const [t] = useTranslation("global");
-  const {mutate, isPending, error} = useChangePassword();
+  const { mutate, isPending, error } = useResetPassword();
 
-  const isErrorExist = (key) => {
-    return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
-  }
+  const isErrorExist = (key: string) => {
+    return _.findIndex(
+      _.get(error, "response.data.errors", []),
+      (err: IErrorMessage) => err.key === key
+    );
+  };
 
-  const getErrorMessage = (key) => {
-    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
-  }
+  const getErrorMessage = (key: string) => {
+    return _.get(
+      error,
+      "response.data.errors." + isErrorExist("email") + ".message"
+    );
+  };
 
-
-  // TODO: enhance to make this as an HOC
-  // for "protecting" routes/pages
-  useEffect(() => {
-    /* to do make sure it execute once only..*/
-    const token = localStorage.getItem("AUTH_TOKEN");
-    if (!isEmpty(token)) {
-      return redirect("/admin");
-    }
-  }, []);
-
-  const submitHandler = (data) => {
+  const submitHandler = (data: IResetPasswordPost) => {
     mutate(data);
   };
 
@@ -61,10 +56,22 @@ function ChangePassword() {
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                label={t("New password")}
+                label={t("email_address")}
+                type="text"
+                name="email"
+                autoFocus={true}
+                register={register("email")}
+              />
+              {isErrorExist("email") >= 0 && (
+                <ErrorMessage message={getErrorMessage("email")} />
+              )}
+            </div>
+            <div>
+              <InputField
+                label={t("password")}
                 type="password"
-                name="new_password"
-                register={register("new_password")}
+                name="password"
+                register={register("password")}
               />
               {isErrorExist("password") >= 0 && (
                 <ErrorMessage message={getErrorMessage("password")} />
@@ -95,7 +102,7 @@ function ChangePassword() {
                 type="submit"
                 className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
-                {isPending ? "Loading..." : t("Change password")}
+                {isPending ? "Loading..." : t("reset_password")}
               </button>
             </div>
           </form>
@@ -105,4 +112,4 @@ function ChangePassword() {
   );
 }
 
-export default ChangePassword;
+export default ResetPassword;

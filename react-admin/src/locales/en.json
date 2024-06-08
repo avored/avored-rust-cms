@@ -11,6 +11,8 @@
   "forgot_password": "Forgot password?",
   "reset_password": "Reset password",
   "common": {
+    "avored": "AvoRed",
+    "rust_cms": "Rust CMS",
     "save": "Save",
     "edit": "Edit",
     "create": "Create",
@@ -21,7 +23,7 @@
     "file": "File",
     "id": "ID",
     "name": "Name",
-    "fullname": "Fullname",
+    "full_name": "Full name",
     "email": "Email",
     "action": "Action",
     "add_field": "Add Field",
@@ -40,7 +42,8 @@
     "admin_user": "Admin User",
     "role": "Role",
     "settings": "Settings",
-    "general": "General"
+    "general": "General",
+    "is_super_admin": "Is super admin"
   },
   "asset": {
     "asset_table": "Asset table",

@@ -1,3 +1,4 @@
+import {DateTime} from "luxon";
 
 const randomString = ((length: number = 16) => {
     let result = '';
@@ -11,6 +12,12 @@ const randomString = ((length: number = 16) => {
     return result;
 })
 
+const getFormattedDate = ((date: string) => {
+    let dateObject  = DateTime.fromJSDate(new Date(date))
+
+    return dateObject.toLocaleString(DateTime.DATE_MED)
+})
 export {
-    randomString
+    randomString,
+    getFormattedDate
 }
