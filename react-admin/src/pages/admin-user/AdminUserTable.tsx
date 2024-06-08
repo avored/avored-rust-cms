@@ -12,7 +12,6 @@ function AdminUserTable() {
 
     const adminUserTableResponse = useAdminUserTable();
     const adminUsers: Array<IAdminUserModel> = _.get(adminUserTableResponse, 'data.data.data', [])
-
     const [t] = useTranslation("global");
 
     const columnHelper = createColumnHelper<IAdminUserModel>()
@@ -34,7 +33,7 @@ function AdminUserTable() {
             header: t("common.is_super_admin"),
         }),
         columnHelper.accessor('roles', {
-            cell: info => getRoleNames(info.getValue()),
+            cell: info => getRoleNames(info.getValue() ?? []),
             header: t("common.role")
         }),
         columnHelper.accessor('created_at', {
@@ -60,8 +59,8 @@ function AdminUserTable() {
                     <Link
                         className="font-medium text-primary-600 hover:text-primary-800"
                         to={`/admin/admin-user-edit/${info.row.original.id}`}
-                       >
-                    {t("common.edit")}
+                    >
+                        {t("common.edit")}
                     </Link>
                 )
             },
@@ -84,11 +83,15 @@ function AdminUserTable() {
     })
 
     const getRoleNames = ((roles: Array<IRoleModel>) => {
+        if(roles.length === 0) {
+            console.log('sdfsdf')
+            return (<></>)
+        }
         return roles.map((role) => {
             return (
-                <>
-                    <span className="bg-gray-300 p-1 rounded mr-1">{role.name}</span>
-                </>
+                <span key={role.id} className="bg-gray-300 p-1 rounded mr-1">
+                    {role.name}
+                </span>
             )
         })
     })
@@ -109,7 +112,7 @@ function AdminUserTable() {
                 </div>
                 <div className="w-full block overflow-hidden">
                     <div className="overflow-x-scroll">
-                        <AvoRedTable table={table} />
+                        <AvoRedTable table={table}/>
                     </div>
                 </div>
             </div>

@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useState} from "react";
 import {Link, useParams} from "react-router-dom";
 import InputField from "../../components/InputField";
 import {Switch} from "@headlessui/react";
@@ -11,14 +11,16 @@ import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {AdminUserEditSchema} from "./schemas/admin.user.edit.schema";
-import IAdminUserUpdate from "../../types/admin-user/IAdminUserUpdate";
+import IAdminUserCreate from "../../types/admin-user/IAdminUserCreate";
+import {useStoreAdminUser} from "./hooks/useStoreAdminUser";
+import {AdminUserCreateSchema} from "./schemas/admin.user.create.schema";
 
-function AdminUserEdit() {
-    const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
+function AdminUserCreate() {
+    const [selectedOption, setSelectedOption] = useState([]);
     const params = useParams();
     const [t] = useTranslation("global")
-    const {data} = useGetAdminUser(params.admin_user_id);
-    const values: IAdminUserUpdate = data?.data.admin_user_model
+
+
     const {
         control,
         trigger,
@@ -26,19 +28,15 @@ function AdminUserEdit() {
         handleSubmit,
         formState: {errors},
         setValue
-    } = useForm<IAdminUserUpdate>({
-        resolver: joiResolver(AdminUserEditSchema, {allowUnknown: true}),
-        values
+    } = useForm<IAdminUserCreate>({
+        resolver: joiResolver(AdminUserCreateSchema, {allowUnknown: true})
     })
+
     const roleOptionResult = useGetRoleOptions();
-    const {mutate} = useUpdateAdminUser(params.admin_user_id ?? '');
+    const {mutate} = useStoreAdminUser()
+
     const roles = _.get(roleOptionResult, "data.data.options", []);
 
-    useMemo(() => {
-        let role_ids: Array<string> = []
-        _.get(values, 'roles', []).map((role) => role_ids.push(role.id))
-        setSelectedOption(role_ids)
-    }, [values])
 
     const isSuperAdminSwitchOnChange = ((e: boolean) => {
         if (!e) {
@@ -48,9 +46,9 @@ function AdminUserEdit() {
         trigger('is_super_admin')
     })
 
-    const submitHandler = async (data: IAdminUserUpdate) => {
+    const submitHandler = async (data: IAdminUserCreate) => {
+        data.role_ids = selectedOption;
         (typeof data.profile_image === 'object') ? data.image = data.profile_image[0]: delete data.image
-        data.role_ids = selectedOption
         mutate(data);
     };
 
@@ -69,6 +67,33 @@ function AdminUserEdit() {
                                     type="text"
                                     name="full_name"
                                     register={register("full_name")}
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("common.email")}
+                                    type="text"
+                                    name="email"
+                                    register={register("email")}
+                                />
+                            </div>
+
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("password")}
+                                    type="password"
+                                    name="password"
+                                    register={register("password")}
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("confirmation_password")}
+                                    type="password"
+                                    name="confirmation_password"
+                                    register={register("confirmation_password")}
                                     autoFocus
                                 />
                             </div>
@@ -121,28 +146,17 @@ function AdminUserEdit() {
                                 }}
                             />
 
-
                             <div className="flex items-center mt-3">
-                                <div className="ring-1 ring-gray-300 rounded">
-                                    <div className="p-3">
-                                        <img
-                                            className="h-48 w-48 rounded"
-                                            alt={values?.full_name}
-                                            src={`${values?.profile_image}`}
-                                        />
-                                    </div>
+                                <div className="mb-4">
+                                    <InputField
+                                        label="Profile Photo"
+                                        accept="image/*"
+                                        type="file"
+                                        name="profile_image"
+                                        register={register("profile_image")}
+                                    />
                                 </div>
-                                <div className="ml-5">
-                                    <div className="mb-4">
-                                        <InputField
-                                            accept="image/*"
-                                            label="New Profile Photo"
-                                            type="file"
-                                            name="profile_image"
-                                            register={register("profile_image")}
-                                        />
-                                    </div>
-                                </div>
+
                             </div>
                             <div className="flex items-center mt-5">
                                 <button
@@ -166,4 +180,4 @@ function AdminUserEdit() {
     );
 }
 
-export default AdminUserEdit;
+export default AdminUserCreate;
