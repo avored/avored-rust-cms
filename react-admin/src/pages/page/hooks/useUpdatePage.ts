@@ -3,7 +3,7 @@ import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
 
-export const useUpdatePage = (page_id) => {
+export const useUpdatePage = (page_id: string) => {
     const client = useAxios();
     const redirect = useNavigate();
     return useMutation({
