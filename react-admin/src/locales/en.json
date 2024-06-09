@@ -82,6 +82,32 @@
       "option_label": "Option label",
       "options": "Options",
       "add_option": "Add option"
+    },
+    "role": {
+      "permissions": {
+        "dashboard": "Dashboard",
+        "setting": "Setting",
+        "page_table": "Page table",
+        "page_create": "Page create",
+        "page_edit": "Page edit",
+        "page_delete": "Page delete",
+        "component_table": "Component table",
+        "component_create": "Component create",
+        "component_edit": "Component edit",
+        "component_delete": "Component delete",
+        "asset_table": "Asset table",
+        "asset_create": "Asset create",
+        "asset_edit": "Asset edit",
+        "asset_delete": "Asset delete",
+        "admin_user_table": "Admin user table",
+        "admin_user_create": "Admin user create",
+        "admin_user_edit": "Admin user edit",
+        "admin_user_delete": "Admin user delete",
+        "role_table": "Role table",
+        "role_create": "Role create",
+        "role_edit": "Role edit",
+        "role_delete": "Role delete"
+      }
     }
   },
   "admin_user": {

@@ -6,5 +6,6 @@ export default interface IRoleModel {
     created_by: string;
     updated_at: string;
     updated_by: string;
-    permissions: Array<string>
+    permissions: Array<string>;
+    action: string;
 }
