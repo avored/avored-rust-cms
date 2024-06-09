@@ -7,6 +7,10 @@ import _ from "lodash";
 import {useComponentAll} from "./hooks/useComponentAll";
 import {useStorePage} from "./hooks/useStorePage";
 import {useTranslation} from "react-i18next";
+import {useForm} from "react-hook-form";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {PageCreateSchema} from "./schemas/page.create.schema"
+import PageComponentTable from "./PageComponentTable";
 
 function PageCreate() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -14,6 +18,17 @@ function PageCreate() {
     const [pageComponents, setPageComponents] = useState([]);
     const [page, setPage] = useState({});
     const [t] = useTranslation("global");
+
+    const {
+        control,
+        register,
+        handleSubmit,
+        formState: {errors},
+        setValue,
+        getValues
+    } = useForm({
+        resolver: joiResolver(PageCreateSchema, {allowUnknown: true}),
+    });
 
     const component_all_api_response = useComponentAll();
     const components = _.get(component_all_api_response, "data.data", []);
@@ -164,10 +179,10 @@ function PageCreate() {
         );
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        mutate(page);
+    const submitHandler = async (data) => {
+        // e.preventDefault();
+        console.log(data)
+        // mutate(page);
     };
 
     return (
@@ -180,22 +195,20 @@ function PageCreate() {
                         </h1>
                         {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
                         {/*    receive mail.</p>*/}
-                        <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
-                                <input
-                                    type="text"
+                                <InputField
+                                    autofocus={true}
                                     placeholder="Name"
-                                    value={_.get(page, "name", "")}
-                                    onChange={(e) => pageNameOnChange(e.target.value)}
+                                    register={register("name")}
                                     className="border p-2 rounded w-full"
                                 />
                             </div>
                             <div className="mb-4">
-                                <input
+                                <InputField
                                     type="text"
                                     placeholder="Identifier"
-                                    value={_.get(page, "identifier", "")}
-                                    onChange={(e) => pageIdentifierOnChange(e.target.value)}
+                                    register={register("identifier")}
                                     className="border p-2 rounded w-full"
                                 />
                             </div>
@@ -214,8 +227,8 @@ function PageCreate() {
                                 >
                                     <PlusIcon className="text-primary-500 h-6 w-6"/>
                                     <span className="text-sm ml-1 text-primary-500">
-                    Add Component
-                  </span>
+                                        Add Component
+                                    </span>
                                 </button>
                             </div>
 
@@ -224,72 +237,7 @@ function PageCreate() {
                                 modal_header="Select Component"
                                 modal_body={
                                     <div className="text-primary-500">
-                                        <table className="min-w-full bg-white shadow-md rounded">
-                                            <thead>
-                                            <tr className="bg-gray-700 text-white">
-                                                <th className="py-3 px-4 rounded-l font-semibold text-left">
-                                                    {t("common.id")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.name")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.identifier")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.created_at")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.updated_at")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.created_by")}
-                                                </th>
-                                                <th className="py-3 px-4 font-semibol text-left">
-                                                    {t("common.updated_by")}
-                                                </th>
-                                                <th className="py-3 px-4 rounded-r font-semibol text-left">
-                                                    {t("common.action")}
-                                                </th>
-                                            </tr>
-                                            </thead>
-                                            <tbody className="">
-                                            {components.map((component) => {
-                                                return (
-                                                    <tr key={component.id} className="border-b">
-                                                        <td className="py-3 px-4">{component.id}</td>
-                                                        <td className="py-3 px-4">{component.name}</td>
-                                                        <td className="py-3 px-4">
-                                                            {component.identifier}
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {getFormattedDate(component.created_at)}
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {getFormattedDate(component.updated_at)}
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {component.created_by}
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            {component.updated_by}
-                                                        </td>
-                                                        <td className="py-3 px-4">
-                                                            <button
-                                                                type="button"
-                                                                className="font-medium text-primary-600 hover:text-primary-800"
-                                                                onClick={(e) =>
-                                                                    componentSelected(e, component.id)
-                                                                }
-                                                            >
-                                                                {t("common.select")}
-                                                            </button>
-                                                        </td>
-                                                    </tr>
-                                                );
-                                            })}
-                                            </tbody>
-                                        </table>
+                                        <PageComponentTable components={components} componentSelected={componentSelected} />
                                     </div>
                                 }
                                 isOpen={isComponentTableModalOpen}
