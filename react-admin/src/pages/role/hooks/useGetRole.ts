@@ -3,7 +3,7 @@ import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
 
-export const useGetRole = (role_id) => {
+export const useGetRole = (role_id: string) => {
     const client = useAxios()
     const redirect = useNavigate()
 
