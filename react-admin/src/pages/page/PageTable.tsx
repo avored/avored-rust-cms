@@ -11,7 +11,7 @@ import AvoRedTable from "../../components/AvoRedTable";
 
 function PageTable() {
     const [t] = useTranslation("global")
-    const page_api_table_response = useRoleTable();
+    const page_api_table_response = usePageTable();
     const pages: Array<IPageModel> = _.get(page_api_table_response, 'data.data.data', [])
 
     const columnHelper = createColumnHelper<IPageModel>()
