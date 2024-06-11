@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export const RoleCreateSchema = Joi.object({
+export const PageCreateSchema = Joi.object({
     name : Joi.string().required().messages({
         'string.empty': 'Name is required.',
     }),
