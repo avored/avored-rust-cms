@@ -103,11 +103,11 @@ impl PageRepository {
         //@todo skip the last loop with comma think of how to make a comma and skip the last one.
         for creatable_component_content_model in creatable_page_model.component_contents {
 
-            let mut component_fields_content_sql = String::from("");
+            let mut fields_sql = String::from("");
 
-            for creatable_component_field_content in creatable_component_content_model.component_fields_content {
+            for creatable_component_field_content in creatable_component_content_model.fields {
 
-                component_fields_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
+                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
                                                        id = creatable_component_field_content.id,
                                                        name = creatable_component_field_content.name,
                                                        identifier = creatable_component_field_content.identifier,
@@ -118,11 +118,11 @@ impl PageRepository {
                 ));
             }
 
-            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', component_fields_content: [{component_fields_content_sql}]  {close_brace}",
+            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', fields: [{fields_sql}]  {close_brace}",
                                                 id = creatable_component_content_model.id,
                                                 name = creatable_component_content_model.name,
                                                 identifier = creatable_component_content_model.identifier,
-                                                component_fields_content_sql = component_fields_content_sql,
+                                                 fields_sql = fields_sql,
                                                 open_brace = String::from("{"),
                                                 close_brace = String::from("}")
             ));
@@ -170,11 +170,11 @@ impl PageRepository {
         //@todo skip the last loop with comma think of how to make a comma and skip the last one.
         for updatable_component_content_model in updatable_admin_user.component_contents {
 
-            let mut component_fields_content_sql = String::from("");
+            let mut fields_sql = String::from("");
 
-            for updatable_component_field_content in updatable_component_content_model.component_fields_content {
+            for updatable_component_field_content in updatable_component_content_model.fields {
 
-                component_fields_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
+                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
                                                                id = updatable_component_field_content.id,
                                                                name = updatable_component_field_content.name,
                                                                identifier = updatable_component_field_content.identifier,
@@ -185,11 +185,11 @@ impl PageRepository {
                 ));
             }
 
-            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', component_fields_content: [{component_fields_content_sql}]  {close_brace}",
+            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', fields: [{fields_sql}]  {close_brace}",
                                                      id = updatable_component_content_model.id,
                                                      name = updatable_component_content_model.name,
                                                      identifier = updatable_component_content_model.identifier,
-                                                     component_fields_content_sql = component_fields_content_sql,
+                                                     fields_sql = fields_sql,
                                                      open_brace = String::from("{"),
                                                      close_brace = String::from("}")
             ));
