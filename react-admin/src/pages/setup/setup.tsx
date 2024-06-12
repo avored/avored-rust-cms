@@ -1,24 +1,33 @@
 import InputField from "../../components/InputField";
-import {useState} from "react";
 import {useStoreSetup} from "./hooks/useStoreSetup";
 import _ from "lodash";
 import {ErrorMessage} from "../../components/ErrorMessage";
+import {useForm} from "react-hook-form"
+import {joiResolver} from "@hookform/resolvers/joi";
+import {SettingSaveSchema} from "../setting/schemas/setting.save.schema";
+import SetupType from "../../types/settings/SetupType";
+import IErrorMessage from "../../types/common/IError";
 
 function Setup() {
-    const [email, setEmail] = useState("admin@admin.com")
-    const [password, setPassword] = useState("admin123")
     const {mutate, isPending, error} = useStoreSetup()
 
-    const isErrorExist = (key) => {
-        return _.findIndex(_.get(error, 'response.data.errors', []), ((err) => err.key === key))
+    const {
+        register,
+        handleSubmit,
+        formState: { errors }
+    } = useForm<SetupType>({
+        resolver: joiResolver(SettingSaveSchema, { allowUnknown: true })
+    });
+
+    const isErrorExist = (key: string) => {
+        return _.findIndex(_.get(error, 'response.data.errors', []), ((err: IErrorMessage) => err.key === key))
     }
 
-    const getErrorMessage = (key) => {
+    const getErrorMessage = (key: string) => {
         return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
       }
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        mutate({email: email, password: password})
+    const submitHandler = async (data: SetupType) => {
+        mutate(data)
     };
 
     return (
@@ -35,15 +44,14 @@ function Setup() {
 
             <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                 <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                    <form className="space-y-5" onSubmit={handleSubmit} action="/api/setup" method="POST">
+                    <form className="space-y-5" onSubmit={handleSubmit(submitHandler)}>
                         <div>
                             <div className="mt-3">
                                 <InputField
                                     label="Email Address"
                                     type="text"
                                     name="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    register={register('email')}
                                     autoFocus
                                 />
                                 {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
@@ -53,8 +61,7 @@ function Setup() {
                                 <InputField
                                     label="Password"
                                     type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    register={register('password')}
                                 />
                                 {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
                             </div>

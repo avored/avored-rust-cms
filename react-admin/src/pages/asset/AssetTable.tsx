@@ -34,7 +34,6 @@ function AssetTable() {
     setIsOpen(true);
   };
 
-
   const submitHandler: SubmitHandler<IAssetSave> = (data: IAssetSave) => {
     data.file = data.file_list ? data.file_list[0] : undefined;
     onCloseModal();

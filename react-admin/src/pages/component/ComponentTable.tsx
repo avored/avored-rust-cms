@@ -2,13 +2,14 @@ import {Link} from "react-router-dom";
 import {useComponentTable} from "./hooks/useComponentTable";
 import _ from "lodash";
 import { useTranslation } from "react-i18next";
+import IComponentModel from "../../types/component/IComponentModel";
 
 function ComponentTable() {
     const comoonent_api_table_response = useComponentTable()
     const components = _.get(comoonent_api_table_response, 'data.data.data', [])
     const [t] = useTranslation("global")
 
-    const getFormattedDate = ((date) => {
+    const getFormattedDate = ((date: string) => {
         var date_obj = new Date(date);
 
         return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
@@ -60,7 +61,7 @@ function ComponentTable() {
                 </tr>
               </thead>
               <tbody className="">
-                {components.map((component) => {
+                {components.map((component: IComponentModel) => {
                   return (
                     <tr key={component.id} className="border-b">
                       <td className="py-3 px-4">{component.id}</td>

@@ -1,5 +1,4 @@
 type SettingType = {
-
     id: string;
     identifier: string;
     value: string;

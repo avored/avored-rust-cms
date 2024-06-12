@@ -2,8 +2,6 @@ import {Link} from "react-router-dom"
 import _ from 'lodash'
 import {usePageTable} from "./hooks/usePageTable"
 import {useTranslation} from "react-i18next"
-import {useRoleTable} from "../role/hooks/useRoleTable";
-import IRoleModel from "../../types/admin-user/IRoleModel";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {getFormattedDate} from "../../lib/common";
 import IPageModel from "../../types/page/IPageModel";

@@ -2,13 +2,13 @@ import {useMutation} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import {useNavigate} from 'react-router-dom'
 import _ from 'lodash'
-import ILogin from "../../../types/auth/ILogin";
+import ILoginPost from "../../../types/auth/ILoginPost";
 
 export const useLogin = () => {
     const client = useAxios();
     const redirect = useNavigate();
     return useMutation({
-        mutationFn: async (data: ILogin) => {
+        mutationFn: async (data: ILoginPost) => {
             return await client.post('/login', data);
         },
         onSuccess: (res) => {

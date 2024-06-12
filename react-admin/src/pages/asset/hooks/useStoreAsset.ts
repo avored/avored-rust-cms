@@ -2,7 +2,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxios } from "../../../hooks/useAxios";
 import IAssetSave from "../../../types/asset/IAssetSave";
 
-
 export const useStoreAsset = () => {
   const client = useAxios();
   const queryClient = useQueryClient();

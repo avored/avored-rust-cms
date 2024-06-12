@@ -1,15 +1,22 @@
-import React, { Fragment } from "react";
+import React, {Fragment, ReactNode} from "react";
 import {Listbox, Transition} from "@headlessui/react";
 import {CheckIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
+
+type AvoRedMultiSelectFieldProps = {
+    label: string;
+    options: Array<any>;
+    selectedOption: any;
+    onChangeSelectedOption: any;
+}
 
 const AvoRedMultiSelectField = ({
                         label,
                         options = [],
                         selectedOption,
                         onChangeSelectedOption
-                    }) => {
+                    }: AvoRedMultiSelectFieldProps) => {
 
-    const getOption = ((optionId) => {
+    const getOption = ((optionId: any) => {
         return options.find(option => option.value === optionId)
     })
 
@@ -23,7 +30,7 @@ const AvoRedMultiSelectField = ({
                     className="w-full cursor-default h-8 rounded py-2 pl-3 pr-10 text-left text-sm shadow ring-1 ring-gray-400 focus:ring-primary-500 active:ring-primary-500 focus:outline-none"
                 >
                     <span className="block min-h:[5]">
-                        {selectedOption.map((optionId) => getOption(optionId).label ?? '').join(", ")}
+                        {selectedOption.map((optionId: any) => getOption(optionId).label ?? '').join(", ")}
                     </span>
                     <span className="pointer-events-none absolute inset-y-10  right-0 flex items-center pr-2">
                         <ChevronUpDownIcon

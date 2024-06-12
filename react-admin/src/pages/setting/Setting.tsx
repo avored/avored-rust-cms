@@ -17,7 +17,6 @@ function SettingPage() {
     const existing_settings : Array<SettingType> = _.get(setting_api_all_response, 'data.data', [])
     const values: SaveSettingType = {'settings': existing_settings}
     const {
-        control,
         register,
         handleSubmit,
         formState: { errors }

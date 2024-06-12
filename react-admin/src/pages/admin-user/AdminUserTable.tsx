@@ -3,7 +3,7 @@ import _ from "lodash"
 import {useAdminUserTable} from "./hooks/useAdminUserTable"
 import {useTranslation} from "react-i18next"
 import IAdminUserModel from "../../types/admin-user/IAdminUserModel"
-import {createColumnHelper, flexRender, getCoreRowModel, TableState, useReactTable} from "@tanstack/react-table"
+import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table"
 import {getFormattedDate} from "../../lib/common";
 import AvoRedTable from "../../components/AvoRedTable"
 import IRoleModel from "../../types/admin-user/IRoleModel";
