@@ -1,21 +1,14 @@
-import {useState} from "react"
 import {Link} from "react-router-dom"
 import {Switch} from "@headlessui/react"
-import _ from 'lodash'
 import {useStoreRole} from "./hooks/useStoreRole";
 import {useTranslation} from "react-i18next";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
-import ICreatableComponent from "../../types/field/ICreatableComponent";
+import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {ComponentCreateSchema} from "../component/schemas/component.create.schema";
 import ICreatableRole from "../../types/role/ICreatableRole";
 import {RoleCreateSchema} from "./schemas/role.create.schema";
 import InputField from "../../components/InputField";
-import {getValue} from "@testing-library/user-event/dist/utils";
 
 function RoleCreate() {
-
-    const [permissions, setPermissions] = useState([])
     const {mutate} = useStoreRole()
     const [t] = useTranslation("global")
 

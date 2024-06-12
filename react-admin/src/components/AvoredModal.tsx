@@ -1,12 +1,18 @@
-import React, {Fragment} from "react"
+import React, {Fragment, ReactNode} from "react"
 import { Dialog, Transition } from '@headlessui/react'
 
+type AvoRedModalProps = {
+    modal_header: ReactNode | string;
+    modal_body: ReactNode;
+    isOpen: boolean;
+    closeModal: any;
+}
 const AvoredModal = ({
     modal_header,
     modal_body,
     isOpen = false,
     closeModal
-}) => {
+}: AvoRedModalProps) => {
 
     return (
         <>

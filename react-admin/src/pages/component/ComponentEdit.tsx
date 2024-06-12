@@ -18,8 +18,8 @@ function ComponentEdit() {
 
     const [t] = useTranslation("global")
     const params = useParams()
-    const {mutate} = useUpdateComponent(params.component_id)
-    const {data} = useGetComponent(params.component_id)
+    const {mutate} = useUpdateComponent(params.component_id ?? '')
+    const {data} = useGetComponent(params.component_id ?? '')
     const values = data?.data.component_model
 
     const {

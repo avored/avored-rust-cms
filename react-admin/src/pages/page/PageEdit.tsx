@@ -1,62 +1,60 @@
-import {useState} from "react";
-import {Link} from "react-router-dom";
+import React, {useState} from "react";
+import {Link, useParams} from "react-router-dom";
 import {PlusIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import InputField from "../../components/InputField";
 import _ from "lodash";
 import {useComponentAll} from "./hooks/useComponentAll";
-import {useStorePage} from "./hooks/useStorePage";
+import {useGetPage} from "./hooks/useGetPage";
+import {useUpdatePage} from "./hooks/useUpdatePage";
 import {useTranslation} from "react-i18next";
-import {useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {PageCreateSchema} from "./schemas/page.create.schema"
+import {PageCreateSchema} from "./schemas/page.create.schema";
 import PageComponentTable from "./PageComponentTable";
 
-function PageCreate() {
+import IEditablePage, {
+    IEditablePageComponentFieldModel,
+    IEditablePageComponentModel
+} from "../../types/page/IEditablePage";
+
+function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
         useState(false);
-    const [pageComponents, setPageComponents] = useState([]);
-    const [page, setPage] = useState({});
+    const params = useParams();
     const [t] = useTranslation("global");
+
+    const component_all_api_response = useComponentAll();
+    const components = _.get(component_all_api_response, "data.data", []);
+
+    const {mutate} = useUpdatePage(params.page_id ?? '');
+
+    const {data} = useGetPage(params.page_id ?? '');
+    const values = data?.data.page_model
+
 
     const {
         control,
         register,
         handleSubmit,
-        formState: {errors},
-        setValue,
-        getValues
-    } = useForm({
+        formState: {errors}
+    } = useForm<IEditablePage>({
         resolver: joiResolver(PageCreateSchema, {allowUnknown: true}),
+        values
     });
 
-    const component_all_api_response = useComponentAll();
-    const components = _.get(component_all_api_response, "data.data", []);
+    const {
+        fields: components_content,
+        append
+    } = useFieldArray({
+        control,
+        name: "components_content",
+    });
 
-    const {mutate} = useStorePage();
-
-    const getFormattedDate = (date) => {
-        var date_obj = new Date(date);
-        return `${date_obj.getFullYear()}-${
-            date_obj.getMonth() + 1
-        }-${date_obj.getDate()}`;
-    };
-
-    const renderComponentFieldType = (componentField) => {
+    const renderComponentFieldType = (componentField: IEditablePageComponentFieldModel, pageComponentIndex: number, pageComponentFieldIndex: number) => {
         switch (componentField.field_type) {
             case "textarea":
                 return <div>Textarea</div>;
-            case "radio":
-                return (
-                    <div className="p-3">
-                        <input id={componentField.identifier} type="radio" value={componentField.identifier}
-                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                        <label htmlFor={componentField.identifier}
-                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            {componentField.name}
-                        </label>
-                    </div>
-                );
             case "text":
             default:
                 return (
@@ -65,36 +63,30 @@ function PageCreate() {
                             label={componentField.name}
                             type="text"
                             name={componentField.identifier}
-                            onChange={(e) =>
-                                componentFieldContentOnChange(componentField.id, e.target.value)
-                            }
+                            register={register(`components_content.${pageComponentIndex}.fields.${pageComponentFieldIndex}.field_content`)}
                         />
                     </div>
                 );
         }
     };
 
-    const renderComponentField = (componentField) => {
+    const renderComponentField = (componentField: IEditablePageComponentFieldModel, pageComponentIndex: number, pageComponentFieldIndex: number) => {
         return (
             <div className="ring-1 my-2 ring-gray-200" key={componentField.id}>
-                {renderComponentFieldType(componentField)}
+                {renderComponentFieldType(componentField, pageComponentIndex, pageComponentFieldIndex)}
             </div>
         );
     };
 
-    const componentSelected = (e, componentId) => {
+    const componentSelected = (e: React.MouseEvent, componentId: string) => {
         e.preventDefault();
         const selectedComponent = components.find(
-            (component) => component.id === componentId
+            (component: IEditablePageComponentModel) => component.id === componentId
         );
-
-        pageAddComponentSelected(selectedComponent);
         setIsComponentTableModalOpen(false);
 
-        setPageComponents((pageComponents) => [
-            ...pageComponents,
-            selectedComponent,
-        ]);
+        append(selectedComponent)
+
     };
 
     const addComponentOnClick = () => {
@@ -105,63 +97,8 @@ function PageCreate() {
         setIsComponentTableModalOpen(false);
     };
 
-    const pageNameOnChange = (value) => {
-        setPage({
-            ...page,
-            name: value,
-        });
-    };
-    const pageIdentifierOnChange = (value) => {
-        setPage({
-            ...page,
-            identifier: value,
-        });
-    };
-    const pageAddComponentSelected = (component) => {
-        var componentContent = {};
-        componentContent.id = component.id;
-        componentContent.name = component.name;
-        componentContent.identifier = component.identifier;
-        componentContent.component_fields_content = [];
 
-        component.fields.forEach((field) => {
-            var componentFieldContent = {};
-
-            componentFieldContent.id = field.id;
-            componentFieldContent.name = field.name;
-            componentFieldContent.identifier = field.identifier;
-            componentFieldContent.field_type = field.field_type;
-            componentFieldContent.field_content = "";
-
-            componentContent.component_fields_content.push(componentFieldContent);
-        });
-
-        if (_.isEmpty(_.get(page, "components_content"))) {
-            page["components_content"] = [];
-        }
-        page.components_content.push(componentContent);
-    };
-
-    const componentFieldContentOnChange = (componentFieldId, value) => {
-        page.components_content.forEach((componentContent) => {
-            componentContent.component_fields_content.forEach(
-                // Removed variable "componentField"
-                (componentFieldContent) => {
-                    if (componentFieldContent.id === componentFieldId) {
-                        componentFieldContent.field_content = value;
-                    }
-                }
-            );
-        });
-        const updatedComponentContent = page.components_content;
-
-        setPage({
-            ...page,
-            components_content: updatedComponentContent,
-        });
-    };
-
-    const renderComponent = (pageComponent) => {
+    const renderComponent = (pageComponent: IEditablePageComponentModel, pageComponentIndex: number) => {
         return (
             <div
                 key={pageComponent.id}
@@ -171,18 +108,16 @@ function PageCreate() {
                 <div>component identifier: {pageComponent.identifier}</div>
                 <div>
                     Component Fields
-                    {pageComponent.fields.map((componentField) => {
-                        return renderComponentField(componentField);
+                    {components_content.map((componentField, pageComponentFieldIndex) => {
+                        return renderComponentField(componentField, pageComponentIndex, pageComponentFieldIndex);
                     })}
                 </div>
             </div>
         );
     };
 
-    const submitHandler = async (data) => {
-        // e.preventDefault();
-        console.log(data)
-        // mutate(page);
+    const submitHandler = async (data: IEditablePage) => {
+        mutate(data)
     };
 
     return (
@@ -198,24 +133,24 @@ function PageCreate() {
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
-                                    autofocus={true}
                                     placeholder="Name"
-                                    register={register("name")}
+                                    name="name"
+                                    register={register('name')}
                                     className="border p-2 rounded w-full"
                                 />
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    type="text"
                                     placeholder="Identifier"
-                                    register={register("identifier")}
+                                    name="identifier"
+                                    register={register('identifier')}
                                     className="border p-2 rounded w-full"
                                 />
                             </div>
 
                             <div>
-                                {pageComponents.map((pageComponent) => {
-                                    return renderComponent(pageComponent);
+                                {components_content.map((pageComponent, pageComponentIndex) => {
+                                    return renderComponent(pageComponent, pageComponentIndex);
                                 })}
                             </div>
 
@@ -228,7 +163,7 @@ function PageCreate() {
                                     <PlusIcon className="text-primary-500 h-6 w-6"/>
                                     <span className="text-sm ml-1 text-primary-500">
                                         Add Component
-                                    </span>
+                                      </span>
                                 </button>
                             </div>
 
@@ -237,7 +172,8 @@ function PageCreate() {
                                 modal_header="Select Component"
                                 modal_body={
                                     <div className="text-primary-500">
-                                        <PageComponentTable components={components} componentSelected={componentSelected} />
+                                        <PageComponentTable components={components}
+                                                            componentSelected={componentSelected}/>
                                     </div>
                                 }
                                 isOpen={isComponentTableModalOpen}
@@ -265,4 +201,4 @@ function PageCreate() {
     );
 }
 
-export default PageCreate;
+export default PageEdit;

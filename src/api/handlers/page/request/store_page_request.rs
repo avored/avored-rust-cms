@@ -18,7 +18,7 @@ pub struct CreatableComponentContentRequest {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_fields_content: Vec<CreatableComponentFieldContentRequest>
+    pub fields: Vec<CreatableComponentFieldContentRequest>
 }
 
 

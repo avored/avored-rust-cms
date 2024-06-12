@@ -45,10 +45,10 @@ pub async fn update_page_api_handler(
             id: payload_component_content.id,
             name: payload_component_content.name,
             identifier: payload_component_content.identifier,
-            component_fields_content: vec![],
+            fields: vec![],
         };
 
-        for  payload_component_fields_data in  payload_component_content.component_fields_content {
+        for  payload_component_fields_data in  payload_component_content.fields {
             let updatable_component_field_content = UpdatableComponentFieldContentModel {
                 id: payload_component_fields_data.id,
                 name: payload_component_fields_data.name,
@@ -57,7 +57,7 @@ pub async fn update_page_api_handler(
                 field_content: payload_component_fields_data.field_content,
             };
 
-            updatable_component_content_model.component_fields_content.push(updatable_component_field_content);
+            updatable_component_content_model.fields.push(updatable_component_field_content);
         }
 
         updatable_page.component_contents.push(updatable_component_content_model);

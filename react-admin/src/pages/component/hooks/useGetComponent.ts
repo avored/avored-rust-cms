@@ -3,15 +3,15 @@ import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
 
-export const useGetAdminUser = (adminUserId) => {
+export const useGetComponent = (component_id: string) => {
     const client = useAxios()
     const redirect = useNavigate()
 
     return useQuery({
-        queryKey: ['admin-user', adminUserId],
+        queryKey: ['component', component_id],
         queryFn: (async () => {
             try {
-                return await client.get("/admin-user/" + adminUserId)
+                return await client.get("/component/" + component_id)
             } catch (error) {
                 if (_.get(error, 'response.status') === 401) {
                     localStorage.removeItem('AUTH_TOKEN')

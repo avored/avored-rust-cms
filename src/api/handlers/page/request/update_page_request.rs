@@ -19,7 +19,7 @@ pub struct UpdatableComponentContentRequest {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_fields_content: Vec<UpdatableComponentFieldContentRequest>
+    pub fields: Vec<UpdatableComponentFieldContentRequest>
 }
 
 

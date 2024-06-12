@@ -12,7 +12,7 @@ pub struct ComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_fields_content: Vec<ComponentFieldModel>,
+    pub fields: Vec<ComponentFieldModel>,
 }
 
 
@@ -170,7 +170,7 @@ impl TryFrom<Object> for ComponentContentModel {
             }
             None => String::from(""),
         };
-        let component_fields_content = match val.get("component_fields_content") {
+        let fields = match val.get("fields") {
             Some(val) => {
                 let value = match val.clone() {
                     Value::Array(v) => {
@@ -211,7 +211,7 @@ impl TryFrom<Object> for ComponentContentModel {
             id,
             name,
             identifier,
-            component_fields_content
+            fields
         })
     }
 }
@@ -310,7 +310,7 @@ pub struct CreatableComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_fields_content: Vec<CreatableComponentFieldContentModel>,
+    pub fields: Vec<CreatableComponentFieldContentModel>,
 }
 
 
@@ -339,7 +339,7 @@ pub struct UpdatableComponentContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub component_fields_content: Vec<UpdatableComponentFieldContentModel>,
+    pub fields: Vec<UpdatableComponentFieldContentModel>,
 }
 
 
