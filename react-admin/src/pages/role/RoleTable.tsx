@@ -2,8 +2,6 @@ import {Link} from "react-router-dom";
 import {useRoleTable} from "./hooks/useRoleTable";
 import _ from 'lodash';
 import {useTranslation} from "react-i18next";
-import {useAdminUserTable} from "../admin-user/hooks/useAdminUserTable";
-import IAdminUserModel from "../../types/admin-user/IAdminUserModel";
 import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
 import {getFormattedDate} from "../../lib/common";
 import IRoleModel from "../../types/admin-user/IRoleModel";

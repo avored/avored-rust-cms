@@ -1,9 +1,8 @@
-import {useState} from "react"
 import {Link} from "react-router-dom"
 import {Switch} from "@headlessui/react"
 import {useStoreRole} from "./hooks/useStoreRole";
 import {useTranslation} from "react-i18next";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
+import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import ICreatableRole from "../../types/role/ICreatableRole";
 import {RoleCreateSchema} from "./schemas/role.create.schema";

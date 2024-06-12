@@ -1,15 +1,14 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query"; // Removed "useQuery" from the import
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAxios } from "../../../hooks/useAxios";
-// import _ from 'lodash' // Removed unused import
-// import { useNavigate } from "react-router-dom"; // Removed unused import
+import IAssetSave from "../../../types/asset/IAssetSave";
+
 
 export const useStoreAsset = () => {
   const client = useAxios();
-  /* const redirect = useNavigate() */ // Removed unused variable
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: IAssetSave) => {
       return await client.post("/asset", data, {
         headers: {
           "Content-Type": "multipart/form-data; boundary=----",

@@ -5,14 +5,26 @@ import { useAssetTable } from "./hooks/useAssetTable";
 import _ from "lodash";
 import { useStoreAsset } from "./hooks/useStoreAsset";
 import { useTranslation } from "react-i18next";
+import { AssetSaveSchema } from "./schemas/asset.save.schema";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import IAssetSave from "../../types/asset/IAssetSave";
+import IAssetModel from "../../types/asset/IAssetModel";
 
 function AssetTable() {
   const [isOpen, setIsOpen] = useState(false);
-  const [file, setFile] = useState();
   const asset_api_table_response = useAssetTable();
-  const assets = _.get(asset_api_table_response, "data.data.data", []);
+  const assets: Array<IAssetModel> = _.get(asset_api_table_response, "data.data.data", []);
   const { mutate } = useStoreAsset();
   const [t] = useTranslation("global");
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: joiResolver(AssetSaveSchema, { allowUnknown: true }),
+  });
 
   const onCloseModal = () => {
     setIsOpen(false);
@@ -22,19 +34,11 @@ function AssetTable() {
     setIsOpen(true);
   };
 
-  const saveAsset = async (e) => {
-    e.preventDefault();
-    var formData = new FormData();
 
-    formData.append("file", file);
-    mutate(formData);
+  const submitHandler: SubmitHandler<IAssetSave> = (data: IAssetSave) => {
+    data.file = data.file_list ? data.file_list[0] : undefined;
     onCloseModal();
-
-    // todo invalid asset table here
-  };
-  const handleAssetChange = (e) => {
-    const file = e.target.files[0];
-    setFile(file);
+    mutate(data);
   };
 
   return (
@@ -59,41 +63,42 @@ function AssetTable() {
             modal_body={
               <div className="text-sm text-gray-500">
                 <div className="text-sm text-gray-500 rounded">
-                  <div className="py-5">
-                    <div className="flex">
-                      <div className="mt-3">
-                        {t("common.file")}
-                        <div className="mt-1">
-                          <InputField
-                            label={t("asset.asset_file")}
-                            type="file"
-                            name="file"
-                            onChange={handleAssetChange}
-                          />
+                  <form onSubmit={handleSubmit(submitHandler)}>
+                    <div className="py-5">
+                        <div className="flex">
+                        <div className="mt-3">
+                            {t("common.file")}
+                            <div className="mt-1">
+                            <InputField
+                                label={t("asset.asset_file")}
+                                type="file"
+                                name="file_list"
+                                register={register('file_list')}
+                            />
+                            </div>
                         </div>
-                      </div>
-                    </div>
+                        </div>
 
-                    <div className="flex flex-row mt-6 space-x-2 justify-evenly">
-                      <button
-                        type="button"
-                        onClick={saveAsset}
-                        className="w-full py-3 text-sm font-medium text-center text-white transition
-                                                duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg
-                                                hover:bg-red-500"
-                      >
-                        {t("common.upload")}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={onCloseModal}
-                        className="w-full py-3 text-sm text-center text-gray-500 transition duration-150
-                                                ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100"
-                      >
-                        {t("common.cancel")}
-                      </button>
+                        <div className="flex flex-row mt-6 space-x-2 justify-evenly">
+                        <button
+                            type="submit"
+                            className="w-full py-3 text-sm font-medium text-center text-white transition
+                                                    duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg
+                                                    hover:bg-red-500"
+                        >
+                            {t("common.upload")}
+                        </button>
+                        <button
+                            type="button"
+                            onClick={onCloseModal}
+                            className="w-full py-3 text-sm text-center text-gray-500 transition duration-150
+                                                    ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100"
+                        >
+                            {t("common.cancel")}
+                        </button>
+                        </div>
                     </div>
-                  </div>
+                  </form>
                 </div>
               </div>
             }
@@ -106,7 +111,7 @@ function AssetTable() {
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full p-2">
                   <div className="grid grid-cols-6 gap-4 mx-5">
-                    {assets.map((asset) => {
+                    {assets.map((asset: IAssetModel) => {
                       return (
                         <div key={asset.id} className="border rounded p-3">
                           <div className="h-32 mb-3">

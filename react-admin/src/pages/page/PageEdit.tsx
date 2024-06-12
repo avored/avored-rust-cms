@@ -21,8 +21,6 @@ import IEditablePage, {
 function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
         useState(false);
-    const [pageComponents, setPageComponents] = useState([]);
-    const [page, setPage] = useState({});
     const params = useParams();
     const [t] = useTranslation("global");
 
