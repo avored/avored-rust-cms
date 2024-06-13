@@ -74,6 +74,14 @@ function AppHeader() {
                             </MenuItem>
                             <MenuItem as="div">
                                 <Link
+                                    to={`/admin/admin-user-change-password`}
+                                    className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
+                                >
+                                    {t("change_password")}
+                                </Link>
+                            </MenuItem>
+                            <MenuItem as="div">
+                                <Link
                                     to="/admin/logout"
                                     className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
                                 >

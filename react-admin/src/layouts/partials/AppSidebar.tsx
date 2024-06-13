@@ -9,7 +9,7 @@ function AppSidebar() {
         <div className="flex">
             <div
                 className="w-64 max-h-screen top-0 pt-16 h-screen bg-gray-800 text-blue-100 fixed inset-y-0 left-0 transform transition duration-200 ease-in-out">
-                <nav className="px-4 pt-4 scroller overflow-y-scroll max-h-[calc(100vh-64px)]">
+                <nav className="px-4 pt-4 scroller max-h-[calc(100vh-64px)]">
                     <ul className="flex flex-col space-y-2">
                         <li className="text-sm text-gray-500 ">
                             <Link

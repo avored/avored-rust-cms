@@ -17,7 +17,7 @@ function AdminUserEdit() {
     const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
     const params = useParams();
     const [t] = useTranslation("global")
-    const {data} = useGetAdminUser(params.admin_user_id);
+    const {data} = useGetAdminUser(params.admin_user_id ?? '');
     const values: IAdminUserUpdate = data?.data.admin_user_model
     const {
         control,
