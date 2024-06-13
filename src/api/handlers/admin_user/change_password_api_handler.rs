@@ -1,0 +1,57 @@
+use std::sync::Arc;
+use argon2::{Argon2, PasswordHasher};
+use argon2::password_hash::SaltString;
+use axum::extract::{ State};
+use axum::{Extension, Json};
+use serde::Serialize;
+use crate::api::handlers::admin_user::request::change_password_request::ChangePasswordRequest;
+use crate::avored_state::AvoRedState;
+use crate::error::{Error, Result};
+use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
+
+pub async fn change_password_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
+    state: State<Arc<AvoRedState>>,
+    Json(payload): Json<ChangePasswordRequest>,
+) -> Result<Json<ChangePasswordResponse>> {
+    println!("->> {:<12} - change_password_api_handler", "HANDLER");
+
+    //@todo validate current user password
+    let error_messages = payload.validate()?;
+
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
+
+    let password = payload.password.as_bytes();
+    let salt = SaltString::from_b64(&state.config.password_salt)?;
+
+    let argon2 = Argon2::default();
+    let password_hash = argon2
+        .hash_password(password, &salt)
+        .expect("Error occurred while encrypted password")
+        .to_string();
+
+    let update_password_status = state
+        .admin_user_service
+        .update_password_by_email(&state.db, password_hash, logged_in_user.email)
+        .await?;
+
+    let response_data = ChangePasswordResponse {
+        status: update_password_status
+    };
+
+    Ok(Json(response_data))
+}
+
+
+#[derive(Serialize, Debug)]
+pub struct ChangePasswordResponse {
+    pub status: bool
+}

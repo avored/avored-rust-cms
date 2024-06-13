@@ -109,6 +109,7 @@ function PageEdit() {
                 <div>
                     Component Fields
                     {components_content.map((componentField, pageComponentFieldIndex) => {
+                        // @ts-ignore
                         return renderComponentField(componentField, pageComponentIndex, pageComponentFieldIndex);
                     })}
                 </div>
