@@ -1,11 +1,12 @@
-import {Link} from "react-router-dom"
+import { Link } from "react-router-dom"
 import _ from 'lodash'
-import {usePageTable} from "./hooks/usePageTable"
-import {useTranslation} from "react-i18next"
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
-import {getFormattedDate} from "../../lib/common";
+import { usePageTable } from "./hooks/usePageTable"
+import { useTranslation } from "react-i18next"
+import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { getFormattedDate } from "../../lib/common";
 import IPageModel from "../../types/page/IPageModel";
 import AvoRedTable from "../../components/AvoRedTable";
+import HasPermission from "../../components/HasPermission";
 
 function PageTable() {
     const [t] = useTranslation("global")
@@ -46,12 +47,14 @@ function PageTable() {
         columnHelper.accessor('action', {
             cell: info => {
                 return (
-                    <Link
-                        className="font-medium text-primary-600 hover:text-primary-800"
-                        to={`/admin/page-edit/${info.row.original.id}`}
-                    >
-                        {t("common.edit")}
-                    </Link>
+                    <HasPermission displayDenied={false} identifier="page_edit">
+                        <Link
+                            className="font-medium text-primary-600 hover:text-primary-800"
+                            to={`/admin/page-edit/${info.row.original.id}`}
+                        >
+                            {t("common.edit")}
+                        </Link>
+                    </HasPermission>
                 )
             },
             header: t("common.action"),
@@ -78,16 +81,22 @@ function PageTable() {
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         {t("pages.pages")}
                     </div>
-                    <Link
-                        className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/page-create"
-                    >
-                        {t("common.create")}
-                    </Link>
+                    <div className="ml-auto">
+                        <HasPermission displayDenied={false} identifier="page_create">
+                            <Link
+                                className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                to="/admin/page-create"
+                            >
+                                {t("common.create")}
+                            </Link>
+                        </HasPermission>
+                    </div>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <AvoRedTable table={table}/>
+                    <HasPermission identifier="page_table">
+                        <AvoRedTable table={table} />
+                    </HasPermission>
                 </div>
             </div>
         </div>

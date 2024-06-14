@@ -62,7 +62,7 @@ function RoleEdit() {
                   <>
                     <div className="mb-4 flex items-center">
                       <label
-                          htmlFor="dashboard_permission"
+                          htmlFor={switchKey}
                           className="text-sm text-gray-600"
                       >
                         {t(`pages.role.permissions.${switchKey}`)}
