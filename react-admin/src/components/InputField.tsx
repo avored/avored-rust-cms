@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 type AvoRedInputFieldProps = {
     type?: string;
-    name: string;
+    name?: string;
     label?: string;
     id?: string;
     required?: boolean;

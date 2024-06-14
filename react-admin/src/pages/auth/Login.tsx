@@ -6,10 +6,8 @@ import {SubmitHandler, useForm} from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useLogin } from "./hooks/useLogin";
 import { loginSchema } from "./schemas/login.schema";
-import _ from "lodash";
-import { ErrorMessage } from "../../components/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage";
 import { useTranslation } from "react-i18next";
-import IErrorMessage from "../../types/common/IError";
 import ILoginPost from "../../types/auth/ILoginPost";
 
 function Login() {
@@ -31,21 +29,7 @@ function Login() {
     await i18.changeLanguage(e.target.value)
   }
 
-  const isErrorExist = (key: string) => {
-        let message = _.get(errors, key + '.message');
-        if (message) {
-          return 1;
-        }
-    return _.findIndex(_.get(error, 'response.data.errors', []), ((err: IErrorMessage) => err.key === key))
-  }
 
-  const getErrorMessage = (key: string) => {
-    let message = _.get(errors, key + '.message');
-    if (message) {
-      return message;
-    }
-    return _.get(error, "response.data.errors." + isErrorExist('email') + ".message"   )
-  }
 
   const submitHandler: SubmitHandler<ILoginPost> = (data) => {
     mutate(data);
@@ -75,9 +59,7 @@ function Login() {
                 autoFocus={true}
                 register={register("email")}
               />
-              {isErrorExist("email") >= 0 && (
-                <ErrorMessage message={getErrorMessage("email")} />
-              )}
+              <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="email" />
             </div>
             <div>
               <InputField
@@ -86,9 +68,10 @@ function Login() {
                 name="password"
                 register={register("password")}
               />
-              {isErrorExist("password") >= 0 && (
-                <ErrorMessage message={getErrorMessage("password")} />
-              )}
+              <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="password" />
+              {/*{isErrorExist("password") >= 0 && (*/}
+              {/*  <ErrorMessage message={getErrorMessage("password")} />*/}
+              {/*)}*/}
             </div>
             <div className="flex items-center justify-end">
               <div className="text-sm">

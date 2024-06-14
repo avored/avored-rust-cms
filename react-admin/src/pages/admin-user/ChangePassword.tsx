@@ -5,7 +5,7 @@ import InputField from "../../components/InputField"
 import { useForm } from 'react-hook-form'
 import { joiResolver } from '@hookform/resolvers/joi'
 import _ from 'lodash'
-import { ErrorMessage } from "../../components/ErrorMessage"
+// import { ErrorMessage } from "../../components/ErrorMessage"
 import { useTranslation } from "react-i18next"
 import IChangePasswordPost from "../../types/auth/ChangePasswordPostType";
 import IErrorMessage from "../../types/common/IError";
@@ -56,9 +56,9 @@ function ChangePassword() {
                                     name="current_password"
                                     register={register("current_password")}
                                 />
-                                {isErrorExist("current_password") >= 0 && (
-                                    <ErrorMessage message={getErrorMessage("current_password")} />
-                                )}
+                                {/*{isErrorExist("current_password") >= 0 && (*/}
+                                {/*    <ErrorMessage message={getErrorMessage("current_password")} />*/}
+                                {/*)}*/}
                             </div>
                             <div>
                                 <InputField
@@ -67,9 +67,9 @@ function ChangePassword() {
                                     name="password"
                                     register={register("password")}
                                 />
-                                {isErrorExist("password") >= 0 && (
-                                    <ErrorMessage message={getErrorMessage("password")} />
-                                )}
+                                {/*{isErrorExist("password") >= 0 && (*/}
+                                {/*    <ErrorMessage message={getErrorMessage("password")} />*/}
+                                {/*)}*/}
                             </div>
                             <div>
                                 <InputField
@@ -78,9 +78,9 @@ function ChangePassword() {
                                     name="confirm_password"
                                     register={register("confirm_password")}
                                 />
-                                {isErrorExist("confirm_password") >= 0 && (
-                                    <ErrorMessage message={getErrorMessage("confirm_password")} />
-                                )}
+                                {/*{isErrorExist("confirm_password") >= 0 && (*/}
+                                {/*    <ErrorMessage message={getErrorMessage("confirm_password")} />*/}
+                                {/*)}*/}
                             </div>
 
                             <div className="flex items-center mt-5">

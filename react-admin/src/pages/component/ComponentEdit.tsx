@@ -11,7 +11,6 @@ import {joiResolver} from "@hookform/resolvers/joi"
 import {ComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent from "../../types/field/IEditableComponent"
-import {ErrorMessage} from "../../components/ErrorMessage"
 import {IOptionField} from "../../types/field/IEditableField"
 
 function ComponentEdit() {
@@ -97,7 +96,7 @@ function ComponentEdit() {
                                     register={register("name")}
                                     autoFocus={true}
                                 />
-                                <ErrorMessage message={getErrorMessage('name')}/>
+                                {/*<ErrorMessage message={getErrorMessage('name')}/>*/}
                             </div>
                             <div className="mb-4">
                                 <InputField
@@ -177,7 +176,7 @@ function ComponentEdit() {
                                                 <div className="mt-3">
                                                     <InputField
                                                         type="text"
-                                                        name={register(`fields.${index}.id`)}
+                                                        name={`fields.${index}.id`}
                                                         register={register(`fields.${index}.id`)}
                                                     />
                                                 </div>
@@ -222,6 +221,7 @@ function ComponentEdit() {
                                                                                     >{t('pages.component.option_label')}
                                                                                     </label>
                                                                                     <InputField
+                                                                                        name={`fields.${index}.field_data.${field_option_index}.label`}
                                                                                         register={register(`fields.${index}.field_data.${field_option_index}.label`)}
                                                                                         placeholder={t('pages.component.option_label')}
                                                                                     />
@@ -237,6 +237,7 @@ function ComponentEdit() {
                                                                                     <div className="relative">
 
                                                                                         <InputField
+                                                                                            name={`fields.${index}.field_data.${field_option_index}.label`}
                                                                                             register={register(`fields.${index}.field_data.${field_option_index}.value`)}
                                                                                             placeholder={t('pages.component.option_value')}
                                                                                         />
