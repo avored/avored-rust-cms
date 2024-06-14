@@ -5,9 +5,10 @@ use axum::{
 };
 use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
+use rust_i18n::t;
 use serde::Serialize;
 use tracing::log::error;
-use crate::models::validation_error::ErrorResponse;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -95,7 +96,18 @@ impl IntoResponse for Error {
                 (StatusCode::BAD_REQUEST, str).into_response()
             },
             Error::AuthenticationError => {
-                (StatusCode::UNAUTHORIZED, "Invalid Login detail given.").into_response()
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("email"),
+                    message: String::from(t!("email_password_not_matched"))
+                };
+
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors
+                };
+                (StatusCode::UNAUTHORIZED, error_response).into_response()
             },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
         };

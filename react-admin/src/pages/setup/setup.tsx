@@ -1,7 +1,6 @@
 import InputField from "../../components/InputField";
 import {useStoreSetup} from "./hooks/useStoreSetup";
 import _ from "lodash";
-import {ErrorMessage} from "../../components/ErrorMessage";
 import {useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi";
 import {SettingSaveSchema} from "../setting/schemas/setting.save.schema";
@@ -54,7 +53,7 @@ function Setup() {
                                     register={register('email')}
                                     autoFocus
                                 />
-                                {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
+                                {/*{(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}*/}
                             </div>
 
                             <div className="mt-3">
@@ -63,7 +62,7 @@ function Setup() {
                                     type="password"
                                     register={register('password')}
                                 />
-                                {(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}
+                                {/*{(isErrorExist('email') >=0) && <ErrorMessage message={getErrorMessage('email')} />}*/}
                             </div>
 
 

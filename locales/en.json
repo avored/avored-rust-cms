@@ -3,5 +3,6 @@
     "identifier": "identifier",
     "id": "Id",
     "value": "Value",
-    "validation_required": "%{attribute} is a required field."
+    "validation_required": "%{attribute} is a required field.",
+    "email_password_not_matched": "Email and Password did not match."
 }

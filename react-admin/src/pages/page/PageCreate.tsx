@@ -66,6 +66,7 @@ function PageCreate() {
                 return (
                     <div>
                         <InputField
+                            name={`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`}
                             label={componentField.name}
                             register={register(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`)}
                         />
@@ -135,10 +136,9 @@ function PageCreate() {
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
-                                    autofocus={true}
+                                    autoFocus={true}
                                     placeholder="Name"
                                     register={register("name")}
-                                    className="border p-2 rounded w-full"
                                 />
                             </div>
                             <div className="mb-4">
@@ -146,7 +146,6 @@ function PageCreate() {
                                     type="text"
                                     placeholder="Identifier"
                                     register={register("identifier")}
-                                    className="border p-2 rounded w-full"
                                 />
                             </div>
 

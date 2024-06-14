@@ -4,7 +4,7 @@ import InputField from "../../components/InputField"
 import { useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
 import _ from "lodash"
-import { ErrorMessage } from "../../components/ErrorMessage"
+// import { ErrorMessage } from "../../components/ErrorMessage"
 import { useResetPassword } from "./hooks/useResetPassword"
 import { resetPasswordSchema } from "./schemas/resetPassword.schema"
 import { useTranslation } from "react-i18next"
@@ -62,9 +62,9 @@ function ResetPassword() {
                 autoFocus={true}
                 register={register("email")}
               />
-              {isErrorExist("email") >= 0 && (
-                <ErrorMessage message={getErrorMessage("email")} />
-              )}
+              {/*{isErrorExist("email") >= 0 && (*/}
+              {/*  // <ErrorMessage message={getErrorMessage("email")} />*/}
+              {/*)}*/}
             </div>
             <div>
               <InputField
@@ -73,9 +73,9 @@ function ResetPassword() {
                 name="password"
                 register={register("password")}
               />
-              {isErrorExist("password") >= 0 && (
-                <ErrorMessage message={getErrorMessage("password")} />
-              )}
+              {/*{isErrorExist("password") >= 0 && (*/}
+              {/*  <ErrorMessage message={getErrorMessage("password")} />*/}
+              {/*)}*/}
             </div>
             <div>
               <InputField
@@ -84,9 +84,9 @@ function ResetPassword() {
                 name="confirm_password"
                 register={register("confirm_password")}
               />
-              {isErrorExist("confirm_password") >= 0 && (
-                <ErrorMessage message={getErrorMessage("confirm_password")} />
-              )}
+              {/*{isErrorExist("confirm_password") >= 0 && (*/}
+              {/*  <ErrorMessage message={getErrorMessage("confirm_password")} />*/}
+              {/*)}*/}
             </div>
             <div>
               <InputField

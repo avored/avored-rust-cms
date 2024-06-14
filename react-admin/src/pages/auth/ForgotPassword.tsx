@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { forgotPasswordSchema } from "./schemas/forgotPassword.schema";
 import _ from "lodash";
-import { ErrorMessage } from "../../components/ErrorMessage";
+// import { ErrorMessage } from "../../components/ErrorMessage";
 import { useForgotPassword } from "./hooks/useForgotPassword";
 import { useTranslation } from "react-i18next";
 import IErrorMessage from "../../types/common/IError";
@@ -69,9 +69,9 @@ function ForgotPassword() {
                 autoFocus={true}
                 register={register("email")}
               />
-              {isErrorExist("email") >= 0 && (
-                <ErrorMessage message={getErrorMessage("email")} />
-              )}
+              {/*{isErrorExist("email") >= 0 && (*/}
+              {/*  <ErrorMessage message={getErrorMessage("email")} />*/}
+              {/*)}*/}
             </div>
 
             <div>
