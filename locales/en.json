@@ -4,5 +4,6 @@
     "id": "Id",
     "value": "Value",
     "validation_required": "%{attribute} is a required field.",
-    "email_password_not_matched": "Email and Password did not match."
+    "email_password_not_matched": "Email and Password did not match.",
+    "admin_user_forbidden": "You are not allowed to perform this request. Please check with your administrator."
 }

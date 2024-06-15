@@ -5,6 +5,7 @@ type AvoRedInputFieldProps = {
     type?: string;
     name?: string;
     label?: string;
+    accept?: string;
     id?: string;
     required?: boolean;
     value?: string | number;

@@ -13,7 +13,7 @@ pub async fn fetch_admin_user_api_handler(
     AxumPath(admin_user_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>
 ) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - fetch_admin_user_api_handler {:?}", "HANDLER", logged_in_user);
+    println!("->> {:<12} - fetch_admin_user_api_handler", "HANDLER");
 
     let admin_user_model = state
         .admin_user_service

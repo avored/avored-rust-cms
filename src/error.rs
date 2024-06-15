@@ -22,7 +22,9 @@ pub enum Error {
 
     BadRequestError(ErrorResponse),
 
-    AuthenticationError
+    AuthenticationError,
+
+    FORBIDDEN
 }
 
 impl core::fmt::Display for Error {
@@ -91,8 +93,6 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         let response = match self {
             Error::BadRequestError(str) => {
-                // let tets = serde_json::to_string(&str);
-
                 (StatusCode::BAD_REQUEST, str).into_response()
             },
             Error::AuthenticationError => {
@@ -108,6 +108,20 @@ impl IntoResponse for Error {
                     errors
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
+            },
+            Error::FORBIDDEN => {
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("email"),
+                    message: String::from(t!("admin_user_forbidden"))
+                };
+
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors
+                };
+                (StatusCode::FORBIDDEN, error_response).into_response()
             },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
         };

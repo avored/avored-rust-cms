@@ -63,6 +63,7 @@ pub async fn admin_user_login_api_handler(
         sub: admin_user_model.clone().id,
         name: admin_user_model.clone().full_name,
         email:admin_user_model.clone().email,
+        admin_user_model: admin_user_model.clone(),
         exp,
         iat,
     };
