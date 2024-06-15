@@ -98,6 +98,25 @@ impl AdminUserService {
         }
     }
 
+    pub async fn has_permission(
+        &self,
+        logged_in_user: LoggedInUser,
+        permission_identifier: String
+    ) -> Result<bool> {
+        if logged_in_user.admin_user_model.is_super_admin {
+            return Ok(true)
+        }
+        let mut has_permission = false;
+        for role in logged_in_user.admin_user_model.roles {
+            for permission in role.permissions {
+                if permission == permission_identifier {
+                    has_permission = true;
+                }
+            }
+        }
+
+        return Ok(has_permission)
+    }
     pub async fn find_by_email(
         &self,
         (datastore, database_session): &DB,

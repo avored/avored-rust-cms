@@ -10,7 +10,7 @@ use serde::Serialize;
 use urlencoding::decode_binary;
 use crate::api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -20,6 +20,7 @@ pub async fn store_admin_user_api_handler(
     mut multipart: Multipart
 ) -> Result<Json<CreateAdminUserResponse>> {
     println!("->> {:<12} - store_admin_user_api_handler", "HANDLER");
+
 
     let mut payload = StoreAdminUserRequest {
         full_name: String::from(""),

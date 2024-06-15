@@ -6,7 +6,6 @@ use crate::error::{Error, Result};
 pub struct AvoRedConfigProvider {
     pub database_namespace: String,
     pub database_name: String,
-    pub session_secret_key: String,
     pub jwt_secret_key: String,
     pub front_end_app_url: String,
     pub back_end_app_url: String,
@@ -32,7 +31,6 @@ impl AvoRedConfigProvider {
         Ok(AvoRedConfigProvider {
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
             database_name: get_env("AVORED_DATABASE_NAME")?,
-            session_secret_key: get_env("AVORED_SESSION_SECRET_KEY")?,
             jwt_secret_key: get_env("AVORED_JWT_SECRET")?,
             front_end_app_url: get_env("AVORED_FRONT_END_APP_URL")?,
             back_end_app_url: get_env("AVORED_BACK_END_APP_URL")?,

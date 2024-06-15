@@ -82,7 +82,6 @@ function AdminUserCreate() {
                                     type="password"
                                     name="password"
                                     register={register("password")}
-                                    autoFocus
                                 />
                             </div>
                             <div className="mb-4">
@@ -91,7 +90,6 @@ function AdminUserCreate() {
                                     type="password"
                                     name="confirmation_password"
                                     register={register("confirmation_password")}
-                                    autoFocus
                                 />
                             </div>
 

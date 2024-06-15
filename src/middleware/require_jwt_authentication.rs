@@ -11,7 +11,7 @@ use serde::Serialize;
 use crate::avored_state::AvoRedState;
 use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, Default)]
 pub struct ErrorResponse {
     pub status: bool,
     pub message: String,
@@ -69,25 +69,10 @@ pub async fn require_jwt_authentication (
         id: claims.sub,
         name: claims.name,
         email: claims.email,
+        admin_user_model: claims.admin_user_model
     };
 
     req.extensions_mut().insert(logged_in_user);
-
-    //@todo improve the validation here with map str or something
-
-    // if claims.sub.len() <= 0 {
-    //     is_token_valid = true;
-    //
-    // }
-    //
-    // if is_token_valid {
-    //         let json_error = ErrorResponse {
-    //             status: false,
-    //             message: "Invalid token".to_string(),
-    //         };
-    //
-    //     return Err(StatusCode::UNAUTHORIZED, Json(json_error))
-    // }
 
     Ok(next.run(req).await)
 }
