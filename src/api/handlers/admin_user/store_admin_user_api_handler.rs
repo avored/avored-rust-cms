@@ -13,6 +13,7 @@ use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
 
 pub async fn store_admin_user_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -115,32 +116,15 @@ pub async fn store_admin_user_api_handler(
         }
     }
 
-    // let mut has_error = false;
-    // if payload.full_name.is_empty() {
-    //     has_error = true;
-    //     //@todo add validation
-    // }
-    // if payload.email.is_empty() {
-    //     has_error = true;
-    //     //@todo add validation
-    // }
-    // if payload.email.is_empty() {
-    //     has_error = true;
-    //     //@todo add validation
-    // }
-    //
-    // if payload.password.is_empty() {
-    //     has_error = true;
-    //     //@todo add validation
-    // }
-    // if payload.confirmation_password.is_empty() {
-    //     has_error = true;
-    //     //@todo add validation
-    // }
-    // if payload.password.ne(&payload.confirmation_password) {
-    //     has_error = true;
-    //     //@todo return validation error response
-    // }
+    let error_messages = payload.validate()?;
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+        return Err(Error::BadRequestError(error_response));
+    }
+    
 
     let password = payload.password.as_bytes();
     let salt = SaltString::from_b64(&state.config.password_salt)?;

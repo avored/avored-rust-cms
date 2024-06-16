@@ -17,7 +17,7 @@ impl StoreRoleRequest {
         if self.name.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: String::from("Name is a required field")
+                message: t!("validation_required", attribute = t!("name")).to_string()
             };
 
             errors.push(error_message);
@@ -26,7 +26,7 @@ impl StoreRoleRequest {
         if self.identifier.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: String::from(format!("Identifier is a required field {}", t!("name")))
+                message: String::from(format!("Identifier is a required field {}", t!("identifier")))
             };
 
             errors.push(error_message);

@@ -14,6 +14,7 @@ use crate::api::handlers::admin_user::request::update_admin_user_request::Update
 use crate::error::Error;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
 
 pub async fn update_admin_user_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -93,8 +94,14 @@ pub async fn update_admin_user_api_handler(
         }
     }
 
-    //@todo possible validation here
-
+    let error_messages = payload.validate()?;
+    if error_messages.len() > 0 {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+        return Err(Error::BadRequestError(error_response));
+    }
 
     let updateable_admin_user_model = UpdatableAdminUserModel {
         id: admin_user_id,
