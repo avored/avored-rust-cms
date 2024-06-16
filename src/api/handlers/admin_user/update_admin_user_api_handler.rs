@@ -11,6 +11,7 @@ use rand::Rng;
 use serde::Serialize;
 use urlencoding::decode_binary;
 use crate::api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
+use crate::error::Error;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -22,6 +23,13 @@ pub async fn update_admin_user_api_handler(
 ) -> Result<Json<UpdatableAdminUserResponse>> {
     println!("->> {:<12} - update_admin_user_api_handler", "HANDLER");
 
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("admin_user_edit"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
     let mut payload = UpdateAdminUserRequest {
         full_name: String::from(""),
         is_super_admin: false,

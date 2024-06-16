@@ -5,6 +5,7 @@ use crate::{
 
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
+use crate::error::Error;
 use crate::models::admin_user_model::AdminUserModel;
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -14,6 +15,14 @@ pub async fn fetch_admin_user_api_handler(
     state: State<Arc<AvoRedState>>
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - fetch_admin_user_api_handler", "HANDLER");
+
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user, String::from("get_admin_user"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
 
     let admin_user_model = state
         .admin_user_service

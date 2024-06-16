@@ -23,7 +23,6 @@ function RoleCreate() {
         resolver: joiResolver(RoleCreateSchema, {allowUnknown: true}),
     });
 
-
     const switchOnChange = ((key: string) => {
 
         let permissions = getValues('permissions') ?? [];
@@ -126,7 +125,8 @@ function RoleCreate() {
                                     <div className="p-3">
                                         {renderSwitch('dashboard')}
 
-                                        {renderSwitch('setting')}
+                                        {renderSwitch('get_setting')}
+                                        {renderSwitch('save_setting')}
                                     </div>
                                 </div>
 
@@ -139,6 +139,7 @@ function RoleCreate() {
                                         {renderSwitch('page_create')}
                                         {renderSwitch('page_edit')}
                                         {renderSwitch('page_delete')}
+                                        {renderSwitch('get_page')}
                                     </div>
                                 </div>
 
@@ -151,6 +152,7 @@ function RoleCreate() {
                                         {renderSwitch('component_create')}
                                         {renderSwitch('component_edit')}
                                         {renderSwitch('component_delete')}
+                                        {renderSwitch('get_component')}
                                     </div>
                                 </div>
                             </div>
@@ -178,6 +180,7 @@ function RoleCreate() {
                                         {renderSwitch('admin_user_create')}
                                         {renderSwitch('admin_user_edit')}
                                         {renderSwitch('admin_user_delete')}
+                                        {renderSwitch('get_admin_user')}
                                     </div>
                                 </div>
 
@@ -191,6 +194,7 @@ function RoleCreate() {
                                         {renderSwitch('role_create')}
                                         {renderSwitch('role_edit')}
                                         {renderSwitch('role_delete')}
+                                        {renderSwitch('get_role')}
                                     </div>
                                 </div>
                             </div>

@@ -7,6 +7,7 @@ import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/reac
 import {getFormattedDate} from "../../lib/common";
 import AvoRedTable from "../../components/AvoRedTable"
 import IRoleModel from "../../types/admin-user/IRoleModel";
+import HasPermission from "../../components/HasPermission"
 
 function AdminUserTable() {
 
@@ -83,8 +84,7 @@ function AdminUserTable() {
     })
 
     const getRoleNames = ((roles: Array<IRoleModel>) => {
-        if(roles.length === 0) {
-            console.log('sdfsdf')
+        if (roles.length === 0) {
             return (<></>)
         }
         return roles.map((role) => {
@@ -103,16 +103,20 @@ function AdminUserTable() {
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         {t("admin_user.admin_users")}
                     </div>
-                    <Link
-                        className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/admin-user-create"
-                    >
-                        {t("common.create")}
-                    </Link>
+                    <HasPermission displayDenied={false} identifier="admin_user_create">
+                        <Link
+                            className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                            to="/admin/admin-user-create"
+                        >
+                            {t("common.create")}
+                        </Link>
+                    </HasPermission>
                 </div>
                 <div className="w-full block overflow-hidden">
                     <div className="overflow-x-scroll">
-                        <AvoRedTable table={table}/>
+                        <HasPermission identifier="admin_user_table">
+                            <AvoRedTable table={table}/>
+                        </HasPermission>
                     </div>
                 </div>
             </div>

@@ -19,6 +19,14 @@ pub async fn update_role_api_handler(
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - update_role_api_handler", "HANDLER");
 
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("role_edit"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
+
     let error_messages = payload.validate()?;
 
     if error_messages.len() > 0 {
