@@ -1,4 +1,3 @@
-
 import logo from "../../assets/logo_only.svg";
 import {  Link } from "react-router-dom";
 import InputField from "../../components/InputField";
@@ -9,9 +8,11 @@ import { loginSchema } from "./schemas/login.schema";
 import ErrorMessage from "../../components/ErrorMessage";
 import { useTranslation } from "react-i18next";
 import ILoginPost from "../../types/auth/ILoginPost";
+import i18next from "i18next";
+import {changeLocale} from "../../lib/common";
 
 function Login() {
-  const [t, i18] = useTranslation("global");
+  const [t, i18n] = useTranslation("global");
   const {
     register,
     handleSubmit,
@@ -24,12 +25,6 @@ function Login() {
     isPending,
     error
   } = useLogin()
-
-  const localeChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    await i18.changeLanguage(e.target.value)
-  }
-
-
 
   const submitHandler: SubmitHandler<ILoginPost> = (data) => {
     mutate(data);
@@ -69,9 +64,6 @@ function Login() {
                 register={register("password")}
               />
               <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="password" />
-              {/*{isErrorExist("password") >= 0 && (*/}
-              {/*  <ErrorMessage message={getErrorMessage("password")} />*/}
-              {/*)}*/}
             </div>
             <div className="flex items-center justify-end">
               <div className="text-sm">
@@ -96,11 +88,11 @@ function Login() {
             <div className="text-gray-600 text-center text-sm">
               {t("need_to_change_language")}
               <select
-                onChange={(e) => localeChange(e)}
+                onChange={(e) => changeLocale(i18n, e.target.value)}
                 className="outline-none border-none appearance-none pr-8"
               >
-                <option>en</option>
-                <option>fr</option>
+                <option>{t("en")}</option>
+                <option>{t('fr')}</option>
               </select>
             </div>
           </form>

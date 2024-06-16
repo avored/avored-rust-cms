@@ -4,12 +4,12 @@ import InputField from "../../components/InputField"
 import { useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
 import _ from "lodash"
-// import { ErrorMessage } from "../../components/ErrorMessage"
 import { useResetPassword } from "./hooks/useResetPassword"
 import { resetPasswordSchema } from "./schemas/resetPassword.schema"
 import { useTranslation } from "react-i18next"
 import IErrorMessage from "../../types/common/IError"
 import IResetPasswordPost from "../../types/auth/IResetPasswordPost"
+import {changeLocale} from "../../lib/common";
 
 function ResetPassword() {
   const redirect = useNavigate();
@@ -17,7 +17,7 @@ function ResetPassword() {
   const { register, handleSubmit } = useForm<IResetPasswordPost>({
     resolver: joiResolver(resetPasswordSchema),
   });
-  const [t] = useTranslation("global");
+  const [t, i18n] = useTranslation("global");
   const { mutate, isPending, error } = useResetPassword();
 
   const isErrorExist = (key: string) => {
@@ -56,11 +56,11 @@ function ResetPassword() {
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                label={t("email_address")}
-                type="text"
-                name="email"
-                autoFocus={true}
-                register={register("email")}
+                  label={t("email_address")}
+                  type="text"
+                  name="email"
+                  autoFocus={true}
+                  register={register("email")}
               />
               {/*{isErrorExist("email") >= 0 && (*/}
               {/*  // <ErrorMessage message={getErrorMessage("email")} />*/}
@@ -68,42 +68,46 @@ function ResetPassword() {
             </div>
             <div>
               <InputField
-                label={t("password")}
-                type="password"
-                name="password"
-                register={register("password")}
+                  label={t("password")}
+                  type="password"
+                  name="password"
+                  register={register("password")}
               />
-              {/*{isErrorExist("password") >= 0 && (*/}
-              {/*  <ErrorMessage message={getErrorMessage("password")} />*/}
-              {/*)}*/}
             </div>
             <div>
               <InputField
-                label="Confirm Password"
-                type="password"
-                name="confirm_password"
-                register={register("confirm_password")}
+                  label="Confirm Password"
+                  type="password"
+                  name="confirm_password"
+                  register={register("confirm_password")}
               />
-              {/*{isErrorExist("confirm_password") >= 0 && (*/}
-              {/*  <ErrorMessage message={getErrorMessage("confirm_password")} />*/}
-              {/*)}*/}
             </div>
             <div>
               <InputField
-                type="hidden"
-                name="token"
-                value={token}
-                register={register("token")}
+                  type="hidden"
+                  name="token"
+                  value={token}
+                  register={register("token")}
               />
             </div>
 
             <div>
               <button
-                type="submit"
-                className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  type="submit"
+                  className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
               >
                 {isPending ? "Loading..." : t("reset_password")}
               </button>
+            </div>
+            <div className="text-gray-600 text-center text-sm">
+              {t("need_to_change_language")}
+              <select
+                  onChange={(e) => changeLocale(i18n, e.target.value)}
+                  className="outline-none border-none appearance-none pr-8"
+              >
+                <option>{t("en")}</option>
+                <option>{t('fr')}</option>
+              </select>
             </div>
           </form>
         </div>
