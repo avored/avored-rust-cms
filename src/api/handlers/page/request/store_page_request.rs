@@ -1,3 +1,4 @@
+use rust_i18n::t;
 use serde::Deserialize;
 
 use crate::models::validation_error::ErrorMessage;
@@ -39,7 +40,7 @@ impl StorePageRequest {
         if self.name.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: String::from("Name is a required field")
+                message: t!("validation_required", attribute = t!("name")).to_string()
             };
 
             errors.push(error_message);
@@ -48,7 +49,7 @@ impl StorePageRequest {
         if self.identifier.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: String::from("Identifier is a required field")
+                message: t!("validation_required", attribute = t!("identifier")).to_string()
             };
 
             errors.push(error_message);

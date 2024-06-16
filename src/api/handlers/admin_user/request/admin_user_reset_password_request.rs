@@ -1,4 +1,5 @@
 use email_address::EmailAddress;
+use rust_i18n::t;
 use serde::Deserialize;
 use crate::models::validation_error::ErrorMessage;
 
@@ -17,7 +18,7 @@ impl AdminUserResetPasswordRequest {
         if self.email.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: String::from("Email is a required field")
+                message: t!("validation_required", attribute = t!("email")).to_string()
             };
 
             errors.push(error_message);
@@ -26,7 +27,7 @@ impl AdminUserResetPasswordRequest {
         if ! EmailAddress::is_valid(&self.email) {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: String::from("Invalid email address")
+                message: t!("email_address_not_valid").to_string()
             };
 
             errors.push(error_message);
@@ -34,7 +35,7 @@ impl AdminUserResetPasswordRequest {
         if self.password.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: String::from("Password is a required field")
+                message: t!("validation_required", attribute = t!("password")).to_string()
             };
 
             errors.push(error_message);
@@ -42,7 +43,7 @@ impl AdminUserResetPasswordRequest {
         if self.confirm_password.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("confirm_password"),
-                message: String::from("Confirm password is a required field")
+                message: t!("validation_required", attribute = t!("confirm_password")).to_string()
             };
 
             errors.push(error_message);
@@ -50,7 +51,7 @@ impl AdminUserResetPasswordRequest {
         if self.token.len() <= 0 {
             let error_message = ErrorMessage {
                 key: String::from("token"),
-                message: String::from("Token is a required field")
+                message: t!("validation_required", attribute = t!("token")).to_string()
             };
 
             errors.push(error_message);
