@@ -6,6 +6,7 @@ import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/reac
 import {getFormattedDate} from "../../lib/common";
 import IRoleModel from "../../types/admin-user/IRoleModel";
 import AvoRedTable from "../../components/AvoRedTable";
+import HasPermission from "../../components/HasPermission";
 
 export default function RoleTable() {
     const [t] = useTranslation("global")
@@ -46,12 +47,14 @@ export default function RoleTable() {
         columnHelper.accessor('action', {
             cell: info => {
                 return (
-                    <Link
-                        className="font-medium text-primary-600 hover:text-primary-800"
-                        to={`/admin/role-edit/${info.row.original.id}`}
-                    >
-                        {t("common.edit")}
-                    </Link>
+                    <HasPermission displayDenied={false} identifier="role_edit">
+                        <Link
+                            className="font-medium text-primary-600 hover:text-primary-800"
+                            to={`/admin/role-edit/${info.row.original.id}`}
+                        >
+                            {t("common.edit")}
+                        </Link>
+                    </HasPermission>
                 )
             },
             header: t("common.action"),
@@ -78,17 +81,21 @@ export default function RoleTable() {
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         {t("roles.roles")}
                     </div>
+                    <HasPermission displayDenied={false} identifier="role_create">
                     <Link
                         className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                         to="/admin/role-create"
                     >
                         {t("common.create")}
                     </Link>
+                    </HasPermission>
                 </div>
 
                 <div className="w-full block overflow-hidden">
                     <div className="overflow-x-scroll">
-                        <AvoRedTable table={table}/>
+                        <HasPermission identifier="role_table">
+                            <AvoRedTable table={table}/>
+                        </HasPermission>
                     </div>
                 </div>
             </div>

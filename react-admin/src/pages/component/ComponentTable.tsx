@@ -1,8 +1,13 @@
 import {Link} from "react-router-dom";
 import {useComponentTable} from "./hooks/useComponentTable";
 import _ from "lodash";
-import { useTranslation } from "react-i18next";
+import {useTranslation} from "react-i18next";
 import IComponentModel from "../../types/component/IComponentModel";
+import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import IPageModel from "../../types/page/IPageModel";
+import {getFormattedDate} from "../../lib/common";
+import HasPermission from "../../components/HasPermission";
+import AvoRedTable from "../../components/AvoRedTable";
 
 function ComponentTable() {
     const comoonent_api_table_response = useComponentTable()
@@ -15,82 +20,91 @@ function ComponentTable() {
         return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
     })
 
-    return (
-      <div className="flex-1 bg-white">
-        <div className="px-5 ml-64">
-          <div className="flex items-center">
-            <div className="p-5 text-2xl font-semibold text-primary-500">
-              {t("component.components")}
-            </div>
-            <Link
-              className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              to="/admin/component-create"
-            >
-              {t("common.create")}
-            </Link>
-          </div>
-
-          <div className="overflow-x-hidden">
-            <table className="min-w-full bg-white shadow-md rounded">
-              <thead>
-                <tr className="bg-gray-700 text-white">
-                  <th className="py-3 px-4 rounded-l font-semibold text-left">
-                    {t("common.id")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.name")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.identifier")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.created_at")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.updated_at")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.created_by")}
-                  </th>
-                  <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.updated_by")}
-                  </th>
-                  <th className="py-3 px-4 rounded-r font-semibol text-left">
-                    {t("common.action")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="">
-                {components.map((component: IComponentModel) => {
-                  return (
-                    <tr key={component.id} className="border-b">
-                      <td className="py-3 px-4">{component.id}</td>
-                      <td className="py-3 px-4">{component.name}</td>
-                      <td className="py-3 px-4">{component.identifier}</td>
-                      <td className="py-3 px-4">
-                        {getFormattedDate(component.created_at)}
-                      </td>
-                      <td className="py-3 px-4">
-                        {getFormattedDate(component.updated_at)}
-                      </td>
-                      <td className="py-3 px-4">{component.created_by}</td>
-                      <td className="py-3 px-4">{component.updated_by}</td>
-                      <td className="py-3 px-4">
+    const columnHelper = createColumnHelper<IPageModel>()
+    const columns = [
+        columnHelper.accessor('id', {
+            cell: info => info.getValue(),
+            header: t("common.id")
+        }),
+        columnHelper.accessor('name', {
+            cell: info => info.getValue(),
+            header: t("common.name")
+        }),
+        columnHelper.accessor('identifier', {
+            cell: info => info.getValue(),
+            header: t("common.identifier")
+        }),
+        columnHelper.accessor('created_at', {
+            id: "created_at",
+            cell: info => getFormattedDate(info.getValue()),
+            header: t("common.created_at")
+        }),
+        columnHelper.accessor('created_by', {
+            cell: info => info.getValue(),
+            header: t("common.created_by")
+        }),
+        columnHelper.accessor('updated_at', {
+            cell: info => getFormattedDate(info.getValue()),
+            header: t("common.updated_at")
+        }),
+        columnHelper.accessor('updated_by', {
+            cell: info => info.getValue(),
+            header: t("common.updated_by")
+        }),
+        columnHelper.accessor('action', {
+            cell: info => {
+                return (
+                    <HasPermission displayDenied={false} identifier="component_edit">
                         <Link
-                          className="font-medium text-primary-600 hover:text-primary-800"
-                          to={`/admin/component-edit/${component.id}`}
+                            className="font-medium text-primary-600 hover:text-primary-800"
+                            to={`/admin/component-edit/${info.row.original.id}`}
                         >
-                          {t("common.edit")}
+                            {t("common.edit")}
                         </Link>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                    </HasPermission>
+                )
+            },
+            header: t("common.action"),
+            enableHiding: false
+        }),
+    ]
+
+    const table = useReactTable({
+        data: components,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        initialState: {
+            columnVisibility: {
+                created_at: false,
+                created_by: false
+            }
+        }
+    })
+
+    return (
+        <div className="flex-1 bg-white">
+            <div className="px-5 ml-64">
+                <div className="flex items-center">
+                    <div className="p-5 text-2xl font-semibold text-primary-500">
+                        {t("component.components")}
+                    </div>
+                    <HasPermission displayDenied={false} identifier="component_create">
+                        <Link
+                            className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                            to="/admin/component-create"
+                        >
+                            {t("common.create")}
+                        </Link>
+                    </HasPermission>
+                </div>
+
+                <div className="overflow-x-hidden">
+                    <HasPermission identifier="component_table">
+                        <AvoRedTable table={table}/>
+                    </HasPermission>
+                </div>
+            </div>
         </div>
-      </div>
     );
 }
 

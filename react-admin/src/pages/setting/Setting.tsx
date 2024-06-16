@@ -61,7 +61,6 @@ function SettingPage() {
                                     <InputField
                                         label={t("settings.site_name")}
                                         register={register(`settings.${getIdentifierIndex('general_site_name')}.value`)}
-                                        
                                         autoFocus
                                     />
                                 </div>

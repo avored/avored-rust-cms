@@ -23,7 +23,6 @@ function RoleCreate() {
         resolver: joiResolver(RoleCreateSchema, {allowUnknown: true}),
     });
 
-
     const switchOnChange = ((key: string) => {
 
         let permissions = getValues('permissions') ?? [];
