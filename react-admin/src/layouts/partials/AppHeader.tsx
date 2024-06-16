@@ -5,14 +5,14 @@ import {Link, useNavigate} from "react-router-dom";
 import {useEffect} from "react";
 import {useTranslation} from "react-i18next";
 import IAdminUserModel from "../../types/admin-user/IAdminUserModel";
+import {changeLocale} from "../../lib/common";
 
 function AppHeader() {
-    
     const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? ''
     const adminUser: IAdminUserModel = JSON.parse(auth_user_model)
 
     const navigate = useNavigate()
-    const [t] = useTranslation("global");
+    const [t, i18n] = useTranslation("global");
 
     useEffect(() => {
         if (!_.get(adminUser, 'id')) {
@@ -42,6 +42,36 @@ function AppHeader() {
                     </div>
                 </a>
                 <div className="ml-auto flex items-center">
+                    <Menu as="div" className="ml-3 inline-block relative">
+                        <MenuButton className="flex items-center">
+                            <div className="flex-shrink-0 w-10 h-10 relative">
+                                <img
+                                    className="w-10 h-10 ring-1 ring-white rounded-full"
+                                    src={`${import.meta.env.VITE_AVORED_BACKEND_BASE_URL}/public/images/locales/${i18n.language}.svg`}
+                                    alt={t(`locales.${i18n.language}_label`)}
+                                />
+                            </div>
+                            <div className="p-2 text-white text-left">
+                                {t(`locales.${i18n.language}_label`)}
+                            </div>
+                        </MenuButton>
+                        <MenuItems
+                            as="div"
+                            className="absolute shadow-md  z-30 py-1.5 rounded-md bg-white border border-gray-100 w-full"
+                        >
+                            <MenuItem as="div"
+                                      className="cursor-pointer"
+                                      onClick={((e) => changeLocale(i18n, "en"))}>
+                                   <span className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50">{t("english")}</span>
+                            </MenuItem>
+                            <MenuItem as="div" className="cursor-pointer"
+                                      onClick={((e) => changeLocale(i18n, "fr"))}>
+                                <span className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50">{t("french")}</span>
+                            </MenuItem>
+
+                        </MenuItems>
+                    </Menu>
+
                     <Menu as="div" className="ml-3 inline-block relative">
                         <MenuButton className="flex items-center">
                             <div className="flex-shrink-0 w-10 h-10 relative">

@@ -1,6 +1,7 @@
 import {DateTime} from "luxon";
 import { useLoggedInUser } from "../hooks/useLoggedInUser";
 import IRoleModel from "../types/admin-user/IRoleModel";
+import {i18n} from "i18next";
 
 const randomString = ((length: number = 16) => {
     let result = '';
@@ -12,6 +13,10 @@ const randomString = ((length: number = 16) => {
         counter += 1;
     }
     return result;
+})
+
+const changeLocale = ((i18n: i18n, lang_key: string) => {
+    i18n.changeLanguage(lang_key)
 })
 
 const getFormattedDate = ((date: string) => {
@@ -39,5 +44,6 @@ const hasPermission = ((identifier: string ): boolean => {
 export {
     randomString,
     getFormattedDate,
-    hasPermission
+    hasPermission,
+    changeLocale
 }

@@ -1,4 +1,5 @@
 {
+  "dashboard_demo_content": "Dashboard content goes here",
   "sign_into_your_account": "Sign into your account",
   "not_found_404": "Not Found 404",
   "email_address": "Email Address",
@@ -13,6 +14,14 @@
   "logout": "Logout",
   "forgot_password": "Forgot password?",
   "reset_password": "Reset password",
+  "en": "en",
+  "fr": "fr",
+  "english": "English",
+  "french": "French",
+  "locales": {
+    "en_label": "English",
+    "fr_label": "French"
+  },
   "common": {
     "avored": "AvoRed",
     "rust_cms": "Rust CMS",
