@@ -17,6 +17,15 @@ pub async fn store_role_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StoreRoleRequest>,
 ) -> Result<Json<CreatedRoleResponse>> {
+    println!("->> {:<12} - store_role_api_handler", "HANDLER");
+
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("role_create"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
 
     let error_messages = payload.validate()?;
 

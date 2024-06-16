@@ -19,6 +19,14 @@ pub async fn store_page_api_handler(
 ) -> Result<Json<CreatedPageResponse>> {
     let error_messages = payload.validate()?;
 
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("page_create"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
+
     if error_messages.len() > 0 {
         let error_response = ErrorResponse {
             status: false,

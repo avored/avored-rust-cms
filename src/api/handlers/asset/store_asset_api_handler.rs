@@ -10,6 +10,7 @@ use axum::extract::Multipart;
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
+use crate::error::Error;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel};
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -21,6 +22,14 @@ pub async fn store_asset_api_handler(
     mut multipart: Multipart,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - store_asset_api_handler", "HANDLER");
+
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("asset_create"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
 
     let mut creatable_asset_model = CreatableAssetModel::default();
     creatable_asset_model.logged_in_username = logged_in_user.email;

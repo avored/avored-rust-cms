@@ -9,5 +9,7 @@ pub async fn component_all_api_handler(
     state: State<Arc<AvoRedState>>
 ) -> Result<Json<Vec<ComponentModel>>> {
     println!("->> {:<12} - component_all_api_handler", "HANDLER");
+
+
     Ok(Json(state.component_service.all(&state.db).await?))
 }

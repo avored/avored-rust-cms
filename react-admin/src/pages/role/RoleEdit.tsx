@@ -131,7 +131,8 @@ function RoleEdit() {
                     <div className="p-3">
                       {renderSwitch('dashboard')}
 
-                      {renderSwitch('setting')}
+                      {renderSwitch('get_setting')}
+                      {renderSwitch('save_setting')}
                     </div>
                   </div>
 
@@ -144,6 +145,7 @@ function RoleEdit() {
                       {renderSwitch('page_create')}
                       {renderSwitch('page_edit')}
                       {renderSwitch('page_delete')}
+                      {renderSwitch('get_page')}
                     </div>
                   </div>
 
@@ -156,6 +158,7 @@ function RoleEdit() {
                       {renderSwitch('component_create')}
                       {renderSwitch('component_edit')}
                       {renderSwitch('component_delete')}
+                      {renderSwitch('get_component')}
                     </div>
                   </div>
                 </div>
@@ -183,6 +186,7 @@ function RoleEdit() {
                       {renderSwitch('admin_user_create')}
                       {renderSwitch('admin_user_edit')}
                       {renderSwitch('admin_user_delete')}
+                      {renderSwitch('get_admin_user')}
                     </div>
                   </div>
 
@@ -196,6 +200,7 @@ function RoleEdit() {
                       {renderSwitch('role_create')}
                       {renderSwitch('role_edit')}
                       {renderSwitch('role_delete')}
+                      {renderSwitch('get_role')}
                     </div>
                   </div>
                 </div>

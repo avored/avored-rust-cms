@@ -18,8 +18,15 @@ pub async fn store_component_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StoreComponentRequest>,
 ) -> Result<Json<CreatedComponentResponse>> {
-
     println!("->> {:<12} - store_component_api_handler", "HANDLER");
+
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("component_create"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
 
     let error_messages = payload.validate()?;
 
