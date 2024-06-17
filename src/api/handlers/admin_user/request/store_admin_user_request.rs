@@ -1,7 +1,6 @@
-use email_address::EmailAddress;
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::validation_error::ErrorMessage;
+use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct StoreAdminUserRequest {
@@ -16,7 +15,7 @@ pub struct StoreAdminUserRequest {
 impl StoreAdminUserRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
-        if self.full_name.len() <= 0 {
+        if !self.full_name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("full_name"),
                 message: t!("validation_required", attribute = t!("full_name")).to_string()
@@ -25,7 +24,7 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        if self.email.len() <= 0 {
+        if !self.email.required()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: t!("validation_required", attribute = t!("email")).to_string()
@@ -34,7 +33,7 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        if ! EmailAddress::is_valid(&self.email) {
+        if ! self.email.validate_email()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: t!("email_address_not_valid").to_string()
@@ -43,7 +42,7 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        if self.password.len() <= 0 {
+        if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: t!("validation_required", attribute = t!("password")).to_string()
@@ -53,7 +52,7 @@ impl StoreAdminUserRequest {
         }
 
 
-        if self.confirmation_password.len() <= 0 {
+        if !self.confirmation_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("confirmation_password"),
                 message: t!("validation_required", attribute = t!("confirmation_password")).to_string()

@@ -1,6 +1,6 @@
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::validation_error::ErrorMessage;
+use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdateSettingRequest {
@@ -18,7 +18,7 @@ impl UpdateSettingRequest {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut i = 0;
         for setting_request in &self.settings {
-            if setting_request.id.len() <= 0 {
+            if !setting_request.id.required()? {
                 let error_message = ErrorMessage {
                     key: format!("settings.{i}.id"),
                     message: String::from(t!("validation_required", attribute = t!("id")))
@@ -26,7 +26,7 @@ impl UpdateSettingRequest {
 
                 errors.push(error_message);
             }
-            if setting_request.value.len() <= 0 {
+            if !setting_request.value.required()? {
                 let error_message = ErrorMessage {
                     key: format!("settings.{i}.value"),
                     message: String::from(t!("validation_required", attribute = t!("value")))

@@ -1,3 +1,4 @@
+use email_address::EmailAddress;
 use serde::Serialize;
 
 #[derive(Debug, Serialize, Clone)]
@@ -10,4 +11,26 @@ pub struct ErrorMessage {
 pub struct ErrorResponse {
     pub status: bool,
     pub errors: Vec<ErrorMessage>
+}
+
+pub trait Validate {
+    fn required(&self) -> crate::error::Result<bool>;
+
+    fn validate_email(&self) -> crate::error::Result<bool>;
+}
+
+impl Validate for String {
+    fn required(&self) -> crate::error::Result<bool> {
+        if self.len() > 0 {
+            return Ok(true);
+        }
+        Ok(false)
+    }
+
+    fn validate_email(&self) -> crate::error::Result<bool> {
+        if !EmailAddress::is_valid(&self) {
+            return Ok(true);
+        }
+        Ok(false)
+    }
 }

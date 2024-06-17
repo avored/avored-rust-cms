@@ -31,7 +31,6 @@ rust_i18n::i18n!("locales");
 async fn main() -> Result<()> {
     init_log();
     let state = Arc::new(AvoRedState::new().await?);
-    // let config = config();
 
     let static_routing_service = ServeDir::new("public");
 

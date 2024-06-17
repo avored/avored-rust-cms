@@ -1,6 +1,6 @@
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::validation_error::ErrorMessage;
+use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct ChangePasswordRequest {
@@ -13,7 +13,7 @@ impl ChangePasswordRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
-        if self.current_password.len() <= 0 {
+        if !self.current_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("current_password"),
                 message: t!("validation_required", attribute = t!("current_password")).to_string()
@@ -22,7 +22,7 @@ impl ChangePasswordRequest {
             errors.push(error_message);
         }
 
-        if self.password.len() <= 0 {
+        if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: t!("validation_required", attribute = t!("password")).to_string()
@@ -31,7 +31,7 @@ impl ChangePasswordRequest {
             errors.push(error_message);
         }
 
-        if self.confirm_password.len() <= 0 {
+        if !self.confirm_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("confirm_password"),
                 message: t!("validation_required", attribute = t!("confirm_password")).to_string()
