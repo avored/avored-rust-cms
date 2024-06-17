@@ -1,3 +1,4 @@
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use lettre::{AsyncTransport, Message};
 use lettre::message::{header, MultiPart, SinglePart};
 use rand::distributions::{Alphanumeric, DistString};
@@ -98,6 +99,14 @@ impl AdminUserService {
         }
     }
 
+    pub fn compare_password(&self, plain_password: String, encrypted_password: String) -> Result<bool>
+    {
+        let argon2 = Argon2::default();
+
+        let parsed_hash = PasswordHash::new(&encrypted_password)?;
+
+        Ok(argon2.verify_password(plain_password.as_bytes(), &parsed_hash).is_ok())
+    }
     pub async fn has_permission(
         &self,
         logged_in_user: LoggedInUser,

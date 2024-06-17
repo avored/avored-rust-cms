@@ -3,12 +3,13 @@ use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
 use axum::extract::{ State};
 use axum::{Extension, Json};
+use rust_i18n::t;
 use serde::Serialize;
 use crate::api::handlers::admin_user::request::change_password_request::ChangePasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::token_claim_model::LoggedInUser;
-use crate::models::validation_error::ErrorResponse;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub async fn change_password_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -17,8 +18,24 @@ pub async fn change_password_api_handler(
 ) -> Result<Json<ChangePasswordResponse>> {
     println!("->> {:<12} - change_password_api_handler", "HANDLER");
 
-    //@todo validate current user password
-    let error_messages = payload.validate()?;
+    let mut error_messages = payload.validate()?;
+
+    let is_password_match: bool = state
+        .admin_user_service
+        .compare_password(
+            payload.current_password.clone(),
+            logged_in_user.admin_user_model.password
+        )?;
+
+    println!("password match: {}", is_password_match);
+
+    if !is_password_match {
+        let error_message = ErrorMessage {
+            key: String::from("password"),
+            message: t!("password_match_error").to_string()
+        };
+        error_messages.push(error_message);
+    }
 
     if error_messages.len() > 0 {
         let error_response = ErrorResponse {
