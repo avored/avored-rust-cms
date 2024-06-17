@@ -6,6 +6,7 @@
     "email_address_not_valid": "Email address is not valid",
     "confirmation_password": "Confirm password",
     "password_did_not_match_confirmation_password": "Password did not match with confirm password.",
+    "password_match_error": "Your password did not match with current password.",
     "password": "Password",
     "confirm_password": "Confirm password",
     "current_password": "Current password",
