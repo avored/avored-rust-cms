@@ -17,3 +17,42 @@ pub struct ResponseData {
     status: bool,
     data: String
 }
+
+
+
+
+#[cfg(test)]
+mod tests {
+    use std::sync::Arc;
+    use axum::http::StatusCode;
+    use serde_json::{json, Value};
+    use tower::ServiceExt;
+    use crate::api::handlers::health_check_api_handler::ResponseData;
+    use crate::api::rest_api_routes::rest_api_routes;
+    use crate::api::rest_api_routes::tests::send_get_request;
+    use crate::avored_state::AvoRedState;
+    use crate::error::Result;
+
+    #[tokio::test]
+    async fn test_health_check_api_handler() -> Result<()>
+    {
+        let state = Arc::new(AvoRedState::new().await?);
+
+        let app = rest_api_routes(state.clone());
+
+        let response = app.oneshot(send_get_request("/api/health-check")).await.unwrap();
+
+        let dummy_res = ResponseData {
+            status: true,
+            data: String::from("ok")
+        };
+        assert_eq!(response.status(), StatusCode::OK);
+
+        let res_b = response.into_body();
+        let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
+        let body: Value = serde_json::from_slice(&body).unwrap();
+        assert_eq!(body, json!(&dummy_res));
+
+        Ok(())
+    }
+}

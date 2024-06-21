@@ -4,6 +4,7 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 
 pub type DB = (Datastore, Session);
+
 pub struct AvoRedDatabaseProvider {
     pub db: DB,
 }

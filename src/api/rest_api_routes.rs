@@ -95,3 +95,19 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .with_state(state)
         .layer(cors_layer)
 }
+
+
+
+#[cfg(test)]
+pub mod tests {
+
+    use axum::{body::Body, http::Request};
+
+    pub fn send_get_request(uri: &str) -> Request<Body> {
+        Request::builder()
+            .uri(uri)
+            .method("GET")
+            .body(Body::empty())
+            .unwrap()
+    }
+}
