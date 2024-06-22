@@ -100,8 +100,12 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
 #[cfg(test)]
 pub mod tests {
-
-    use axum::{body::Body, http::Request};
+    use std::env;
+    use std::sync::Arc;
+    use axum::{body::Body, http::Request, Router};
+    use crate::api::rest_api_routes::rest_api_routes;
+    use crate::avored_state::AvoRedState;
+    use crate::error::Result;
 
     pub fn send_get_request(uri: &str) -> Request<Body> {
         Request::builder()
@@ -109,5 +113,16 @@ pub mod tests {
             .method("GET")
             .body(Body::empty())
             .unwrap()
+    }
+
+    pub async fn get_axum_app() -> Result<Router> {
+        env::set_var("AVORED_DATABASE_NAMESPACE", "public_test");
+        env::set_var("AVORED_DATABASE_NAME", "avored_cms_test");
+
+        let state = Arc::new(AvoRedState::new().await?);
+
+        let app = rest_api_routes(state.clone());
+
+       Ok(app)
     }
 }

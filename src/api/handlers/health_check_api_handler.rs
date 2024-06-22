@@ -23,22 +23,17 @@ pub struct ResponseData {
 
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
     use axum::http::StatusCode;
     use serde_json::{json, Value};
     use tower::ServiceExt;
     use crate::api::handlers::health_check_api_handler::ResponseData;
-    use crate::api::rest_api_routes::rest_api_routes;
-    use crate::api::rest_api_routes::tests::send_get_request;
-    use crate::avored_state::AvoRedState;
+    use crate::api::rest_api_routes::tests::{get_axum_app, send_get_request};
     use crate::error::Result;
 
     #[tokio::test]
     async fn test_health_check_api_handler() -> Result<()>
     {
-        let state = Arc::new(AvoRedState::new().await?);
-
-        let app = rest_api_routes(state.clone());
+        let app = get_axum_app().await.unwrap();
 
         let response = app.oneshot(send_get_request("/api/health-check")).await.unwrap();
 
