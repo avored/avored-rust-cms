@@ -33,7 +33,7 @@ function ComponentCreate() {
     const [t] = useTranslation("global")
 
     const addFieldOnClick = (() => {
-        append({name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
+        append({name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT, field_data: []})
     })
 
     const deleteFieldOnClick = ((fieldIndex: number) => {
@@ -159,55 +159,60 @@ function ComponentCreate() {
                                                     />
                                                 </div>
                                                 <Controller
-                                                    name={`fields.${index}.field_type`}
+                                                    name={`fields.${index}`}
                                                     render={({field}) => {
                                                         return (
-                                                            field.value === AvoRedFieldTypesEnum.SELECT ? (
+                                                            field.value.field_type === AvoRedFieldTypesEnum.SELECT ? (
                                                                 <div className="mt-3">
                                                                     <div className="w-full">
                                                                         <h6 className="font-semibold">
                                                                             {t("pages.component.options")}
                                                                         </h6>
                                                                     </div>
-                                                                    <div className="flex">
-                                                                        <div className="w-1/2">
-                                                                            <InputField
-                                                                                label={t('pages.component.option_label')}
-                                                                                placeholder={t('pages.component.option_label')}
-                                                                            />
-                                                                        </div>
 
-                                                                        <div
-                                                                            className="w-1/2 ml-3 w-full">
+                                                                    {field.value.field_data.map((field_data, field_data_index) => {
+                                                                        return (
 
-                                                                            <label
-                                                                                htmlFor="hs-inline-leading-pricing-select-label"
-                                                                                className="text-sm text-gray-600"
-                                                                            >{t('pages.component.option_value')}
-                                                                            </label>
-                                                                            <div className="relative">
-                                                                                <InputField
-                                                                                    placeholder={t('pages.component.option_value')}
-                                                                                />
-                                                                                <div
-                                                                                    onClick={(e: React.MouseEvent) => {
-                                                                                        alert("test")
-                                                                                    }}
-                                                                                    className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
-                                                                                >
+                                                                            <div className="flex">
+                                                                                <div className="w-1/2">
+                                                                                    <InputField
+                                                                                        label={t('pages.component.option_label')}
+                                                                                        placeholder={t('pages.component.option_label')}
+                                                                                        register={register(`fields.${index}.field_data.${field_data_index}.label`)}
+                                                                                    />
+                                                                                </div>
 
-                                                                                    <PlusIcon
-                                                                                        className="text-primary-500 w-6 h-6"/>
+                                                                                <div className="w-1/2 ml-3 w-full">
+                                                                                    <label
+                                                                                        htmlFor="hs-inline-leading-pricing-select-label"
+                                                                                        className="text-sm text-gray-600"
+                                                                                    >{t('pages.component.option_value')}
+                                                                                    </label>
+                                                                                    <div className="relative">
+                                                                                        <InputField
+                                                                                            placeholder={t('pages.component.option_value')}
+                                                                                            register={register(`fields.${index}.field_data.${field_data_index}.value`)}
+                                                                                        />
+                                                                                        <div
+                                                                                            onClick={(e: React.MouseEvent) => {
+                                                                                                alert("test")
+                                                                                            }}
+                                                                                            className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
+                                                                                        >
+
+                                                                                            <PlusIcon
+                                                                                                className="text-primary-500 w-6 h-6"/>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </div>
                                                                             </div>
-                                                                        </div>
-                                                                    </div>
+                                                                        )
+                                                                    })}
                                                                 </div>
                                                             ) : <></>
                                                         )
                                                     }}
                                                     control={control}
-                                                    defaultValue=""
                                                 />
 
 
