@@ -222,15 +222,24 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
         start: i64,
+        order_column: String,
+        order_type: String
     ) -> Result<Vec<AdminUserModel>> {
 
-        let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users LIMIT $limit START $start;";
+        let sql = format!("\
+            SELECT *, ->admin_user_role->roles.* as roles \
+            FROM admin_users \
+            ORDER {} {} \
+            LIMIT $limit \
+            START $start;\
+        ", order_column, order_type);
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
+            ("order_type".into(), "id".into()),
         ]);
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await.unwrap();
         let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
         for object in into_iter_objects(responses)? {
