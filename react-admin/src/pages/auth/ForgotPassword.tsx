@@ -2,41 +2,28 @@ import logo from "../../assets/logo_only.svg"
 import InputField from "../../components/InputField"
 import {useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
-import {forgotPasswordSchema} from "./schemas/forgotPassword.schema"
-import _ from "lodash"
+import {useForgotPasswordSchema} from "./schemas/forgotPassword.schema"
 import {useForgotPassword} from "./hooks/useForgotPassword"
 import {useTranslation} from "react-i18next"
-import IErrorMessage from "../../types/common/IError"
 import IForgotPasswordPost from "../../types/auth/IForgotPasswordPost"
 import {changeLocale} from "../../lib/common"
+import ErrorMessage from "../../components/ErrorMessage";
+import AvoRedButton from "../../components/AvoRedButton";
 
 function ForgotPassword() {
     const [t, i18n] = useTranslation("global")
     const {
         register,
-        handleSubmit
+        handleSubmit,
+        formState: { errors }
     } = useForm<IForgotPasswordPost>({
-        resolver: joiResolver(forgotPasswordSchema),
+        resolver: joiResolver(useForgotPasswordSchema()),
     })
     const {
         mutate,
         isPending,
         error
     } = useForgotPassword()
-
-    const isErrorExist = (key: string) => {
-        return _.findIndex(
-            _.get(error, "response.data.errors", []),
-            (err: IErrorMessage) => err.key === key
-        );
-    }
-
-    const getErrorMessage = (key: string) => {
-        return _.get(
-            error,
-            "response.data.errors." + isErrorExist("email") + ".message"
-        );
-    }
 
     const submitHandler = (data: IForgotPasswordPost) => {
         mutate(data)
@@ -45,7 +32,7 @@ function ForgotPassword() {
     return (
         <div className="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="flex justify-center">
-                <img src={logo} className="w-20 h-20" alt="Avored Rust Cms"/>
+                <img src={logo} className="w-20 h-20" alt={t("avored_cms_rust")}  />
             </div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -59,25 +46,23 @@ function ForgotPassword() {
                     <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
                         <div>
                             <InputField
-                                label={t("email_address")}
+                                label={t("email")}
                                 type="text"
                                 name="email"
                                 autoFocus={true}
                                 register={register("email")}
                             />
-                            {/*{isErrorExist("email") >= 0 && (*/}
-                            {/*  <ErrorMessage message={getErrorMessage("email")} />*/}
-                            {/*)}*/}
+                            <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="email"/>
                         </div>
 
                         <div>
-                            <button
-                                type="submit"
-                                className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                            >
-                                {isPending ? "Loading..." : t("forgot_password")}
-                            </button>
+                            <AvoRedButton
+                                label={t("forgot_password")}
+                                isPending={isPending}
+                                className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+                            />
                         </div>
+
                         <div className="text-gray-600 text-center text-sm">
                             {t("need_to_change_language")}
                             <select

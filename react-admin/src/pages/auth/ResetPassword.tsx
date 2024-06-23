@@ -56,7 +56,7 @@ function ResetPassword() {
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                  label={t("email_address")}
+                  label={t("email")}
                   type="text"
                   name="email"
                   autoFocus={true}

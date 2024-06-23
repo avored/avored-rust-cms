@@ -3,7 +3,7 @@ import {useTranslation} from "react-i18next"
 
 export const useLoginSchema = (() => {
 
-    const [t, i18n] = useTranslation("global")
+    const [t] = useTranslation("global")
     return Joi.object({
         email : Joi.string().email({ tlds: { allow: false } }).required().messages({
             'string.empty': t("empty_message", {attribute: t("email")}),

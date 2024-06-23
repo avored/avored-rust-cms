@@ -48,7 +48,7 @@ function Login() {
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                label={t("email_address")}
+                label={t("email")}
                 type="text"
                 name="email"
                 autoFocus={true}
@@ -77,7 +77,11 @@ function Login() {
             </div>
 
             <div>
-              <AvoRedButton label={t("sign_in")} className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500" />
+              <AvoRedButton
+                  label={t("sign_in")}
+                  isPending={isPending}
+                  className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+              />
             </div>
 
             <div className="text-gray-600 text-center text-sm">
