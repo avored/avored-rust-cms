@@ -16,7 +16,7 @@ function AdminUserTable() {
     const [sorting, setSorting] = useState<SortingState>([]);
     const adminUserTableResponse = useAdminUserTable({
         order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
-    });
+    })
 
     const customSorting = ((sorting: any) => {
         queryClient.invalidateQueries( {queryKey: ['admin-user-table']});

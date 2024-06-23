@@ -1,11 +1,8 @@
-import {useQuery, useQueryClient} from '@tanstack/react-query'
+import {useQuery} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
-
-type PaginateType = {
-    order?: string;
-}
+import PaginateType from "../../../types/misc/PaginateType";
 
 export const useAdminUserTable = (query: PaginateType) => {
     let query_string = "";

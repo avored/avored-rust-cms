@@ -2,16 +2,27 @@ import {Link} from "react-router-dom";
 import {useRoleTable} from "./hooks/useRoleTable";
 import _ from 'lodash';
 import {useTranslation} from "react-i18next";
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 import {getFormattedDate} from "../../lib/common";
 import IRoleModel from "../../types/admin-user/IRoleModel";
 import AvoRedTable from "../../components/AvoRedTable";
 import HasPermission from "../../components/HasPermission";
+import {useQueryClient} from "@tanstack/react-query";
+import {useState} from "react";
 
 export default function RoleTable() {
+    const queryClient = useQueryClient()
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [t] = useTranslation("global")
-    const role_api_table_response = useRoleTable();
+    const role_api_table_response = useRoleTable({
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+    });
     const roles: Array<IRoleModel> = _.get(role_api_table_response, 'data.data.data', [])
+
+    const customSorting = ((sorting: any) => {
+        queryClient.invalidateQueries( {queryKey: ['role-table']});
+        setSorting(sorting)
+    })
 
     const columnHelper = createColumnHelper<IRoleModel>()
     const columns = [
@@ -57,6 +68,7 @@ export default function RoleTable() {
                     </HasPermission>
                 )
             },
+            enableSorting: false,
             header: t("common.action"),
             enableHiding: false
         }),
@@ -71,7 +83,12 @@ export default function RoleTable() {
                 created_at: false,
                 created_by: false
             }
-        }
+        },
+        manualSorting: true,
+        onSortingChange: customSorting,
+        state: {
+            sorting
+        },
     })
 
     return (

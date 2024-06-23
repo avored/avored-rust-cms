@@ -23,7 +23,10 @@ pub async fn page_table_api_handler(
     }
 
     let current_page = query_param.page.unwrap_or(1);
-    let page_pagination = state.page_service.paginate(&state.db, current_page).await?;
+    let order = query_param.order.unwrap_or(String::from(""));
+    let page_pagination = state
+        .page_service
+        .paginate(&state.db, current_page, order).await?;
 
     Ok(Json(page_pagination))
 }

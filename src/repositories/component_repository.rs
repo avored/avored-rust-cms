@@ -24,13 +24,21 @@ impl ComponentRepository {
         datastore: &Datastore,
         database_session: &Session,
         start: i64,
+        order_column: String,
+        order_type: String
     ) -> Result<Vec<ComponentModel>> {
-        let sql = "SELECT * FROM components LIMIT $limit START $start;";
+        let sql = format!("\
+            SELECT * \
+            FROM components \
+            ORDER {} {} \
+            LIMIT $limit \
+            START $start;\
+        ", order_column, order_type);
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
         ]);
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
 
         let mut component_list: Vec<ComponentModel> = Vec::new();
 

@@ -25,14 +25,22 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         start: i64,
+        order_column: String,
+        order_type: String
     ) -> Result<Vec<PageModel>> {
-        let sql = "SELECT * FROM type::table($table) LIMIT $limit START $start;";
+        let sql = format!("\
+            SELECT * \
+            FROM type::table($table) \
+            ORDER {} {}
+            LIMIT $limit \
+            START $start;\
+        ", order_column, order_type);
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
             ("table".into(), PAGE_TABLE.into()),
         ]);
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
 
         let mut page_list: Vec<PageModel> = Vec::new();
 
