@@ -3,15 +3,25 @@ import _ from "lodash"
 import {useAdminUserTable} from "./hooks/useAdminUserTable"
 import {useTranslation} from "react-i18next"
 import IAdminUserModel from "../../types/admin-user/IAdminUserModel"
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table"
+import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table"
 import {getFormattedDate} from "../../lib/common";
 import AvoRedTable from "../../components/AvoRedTable"
 import IRoleModel from "../../types/admin-user/IRoleModel";
 import HasPermission from "../../components/HasPermission"
+import {useState} from "react";
+import {useQueryClient} from "@tanstack/react-query";
 
 function AdminUserTable() {
+    const queryClient = useQueryClient()
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const adminUserTableResponse = useAdminUserTable({
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+    })
 
-    const adminUserTableResponse = useAdminUserTable();
+    const customSorting = ((sorting: any) => {
+        queryClient.invalidateQueries( {queryKey: ['admin-user-table']});
+        setSorting(sorting)
+    })
     const adminUsers: Array<IAdminUserModel> = _.get(adminUserTableResponse, 'data.data.data', [])
     const [t] = useTranslation("global");
 
@@ -27,15 +37,17 @@ function AdminUserTable() {
         }),
         columnHelper.accessor('email', {
             cell: info => info.getValue(),
-            header: t("common.email")
+            header: t("common.email"),
         }),
         columnHelper.accessor('is_super_admin', {
             cell: info => info.getValue(),
             header: t("common.is_super_admin"),
+            enableSorting: false
         }),
         columnHelper.accessor('roles', {
             cell: info => getRoleNames(info.getValue() ?? []),
-            header: t("common.role")
+            header: t("common.role"),
+            enableSorting: false,
         }),
         columnHelper.accessor('created_at', {
             id: "created_at",
@@ -66,7 +78,8 @@ function AdminUserTable() {
                 )
             },
             header: t("common.action"),
-            enableHiding: false
+            enableHiding: false,
+            enableSorting: false
         }),
     ]
 
@@ -74,6 +87,11 @@ function AdminUserTable() {
         data: adminUsers,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        manualSorting: true,
+        onSortingChange: customSorting,
+        state: {
+            sorting
+        },
         initialState: {
             columnVisibility: {
                 created_at: false,

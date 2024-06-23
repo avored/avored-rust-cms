@@ -1,7 +1,6 @@
 import {Menu, MenuButton, MenuItem, MenuItems, Transition} from "@headlessui/react"
-import {ChevronDownIcon} from "@heroicons/react/24/solid"
+import {ChevronDownIcon, ChevronUpIcon} from "@heroicons/react/24/solid"
 import {Column, flexRender, Table} from "@tanstack/react-table"
-import {useState} from "react"
 
 
 interface Props {
@@ -9,7 +8,6 @@ interface Props {
 }
 
 const AvoRedTable = (props: Props) => {
-    const [columnVisibility, setColumnVisibility] = useState({})
     const getColumnName = ((column: Column<any>) => {
         return (typeof column.columnDef.header === 'string')  ? column.columnDef.header : column.id
     })
@@ -31,6 +29,7 @@ const AvoRedTable = (props: Props) => {
                         leaveTo="opacity-0 scale-95"
                     >
                         <MenuItems
+                            as="div"
                             anchor="bottom end"
                             className="w-52 origin-top-right rounded-xl border border-white/5 bg-white/5 p-1 text-sm/6 text-white [--anchor-gap:var(--spacing-1)] focus:outline-none"
                         >
@@ -66,14 +65,27 @@ const AvoRedTable = (props: Props) => {
                     <tr key={headerGroup.id} className="bg-gray-700 text-white">
                         {headerGroup.headers.map(header => (
                             <th key={header.id} className="py-3 px-4 font-semibol text-left">
-                                {header.isPlaceholder
-                                    ? null
-                                    : flexRender(
-                                        header.column.columnDef.header,
-                                        header.getContext()
-                                    )}
+                                <div
+                                    {...{
+                                        className: header.column.getCanSort()
+                                            ? 'select-none cursor-pointer flex items-center gap-1'
+                                            : '',
+                                        onClick: header.column.getToggleSortingHandler(),
+                                    }}
+                                >
+                                    {header.isPlaceholder
+                                        ? null
+                                        : flexRender(
+                                            header.column.columnDef.header,
+                                            header.getContext()
+                                        )}
+                                    {{
+                                        asc: <ChevronDownIcon className="h-4 w-4"/>,
+                                        desc: <ChevronUpIcon className="h-4 w-4"/>,
+                                    }[header.column.getIsSorted() as string] ?? null}
+                                </div>
                             </th>
-                        ))}
+                            ))}
                     </tr>
                 ))}
                 </thead>

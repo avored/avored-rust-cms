@@ -137,7 +137,6 @@ function PageEdit() {
                                     placeholder="Name"
                                     name="name"
                                     register={register('name')}
-                                    className="border p-2 rounded w-full"
                                 />
                             </div>
                             <div className="mb-4">
@@ -145,7 +144,6 @@ function PageEdit() {
                                     placeholder="Identifier"
                                     name="identifier"
                                     register={register('identifier')}
-                                    className="border p-2 rounded w-full"
                                 />
                             </div>
 

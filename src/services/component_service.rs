@@ -28,6 +28,7 @@ impl ComponentService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
+        order: String
     ) -> Result<ComponentPagination> {
         let start = (current_page - 1) * PER_PAGE;
         let to = start + PER_PAGE;
@@ -58,9 +59,17 @@ impl ComponentService {
             previous_page_number: (current_page - 1),
         };
 
+        let mut order_column = "id";
+        let mut order_type  = "ASC";
+        let mut parts = order.split(":");
+        if parts.clone().count() == 2 {
+            order_column = parts.clone().nth(0).unwrap_or("");
+            order_type = parts.nth(1).unwrap_or("");
+        }
+
         let components = self
             .component_repository
-            .paginate(datastore, database_session, start)
+            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
             .await?;
 
         Ok(ComponentPagination {

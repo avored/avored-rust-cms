@@ -2,16 +2,27 @@ import { Link } from "react-router-dom"
 import _ from 'lodash'
 import { usePageTable } from "./hooks/usePageTable"
 import { useTranslation } from "react-i18next"
-import { createColumnHelper, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 import { getFormattedDate } from "../../lib/common";
 import IPageModel from "../../types/page/IPageModel";
 import AvoRedTable from "../../components/AvoRedTable";
 import HasPermission from "../../components/HasPermission";
+import {useQueryClient} from "@tanstack/react-query";
+import {useState} from "react";
 
 function PageTable() {
+    const queryClient = useQueryClient()
+    const [sorting, setSorting] = useState<SortingState>([]);
     const [t] = useTranslation("global")
-    const page_api_table_response = usePageTable();
+    const page_api_table_response = usePageTable({
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+    });
     const pages: Array<IPageModel> = _.get(page_api_table_response, 'data.data.data', [])
+
+    const customSorting = ((sorting: any) => {
+        queryClient.invalidateQueries( {queryKey: ['page-table']});
+        setSorting(sorting)
+    })
 
     const columnHelper = createColumnHelper<IPageModel>()
     const columns = [
@@ -57,6 +68,7 @@ function PageTable() {
                     </HasPermission>
                 )
             },
+            enableSorting: false,
             header: t("common.action"),
             enableHiding: false
         }),
@@ -71,7 +83,12 @@ function PageTable() {
                 created_at: false,
                 created_by: false
             }
-        }
+        },
+        manualSorting: true,
+        onSortingChange: customSorting,
+        state: {
+            sorting
+        },
     })
 
     return (

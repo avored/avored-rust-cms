@@ -14,7 +14,7 @@ impl StoreRoleRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
-        if self.name.required()? {
+        if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
                 message: t!("validation_required", attribute = t!("name")).to_string()

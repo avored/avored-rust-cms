@@ -2,17 +2,26 @@ import {Link} from "react-router-dom";
 import {useComponentTable} from "./hooks/useComponentTable";
 import _ from "lodash";
 import {useTranslation} from "react-i18next";
-import IComponentModel from "../../types/component/IComponentModel";
-import {createColumnHelper, getCoreRowModel, useReactTable} from "@tanstack/react-table";
+import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 import IPageModel from "../../types/page/IPageModel";
-import {getFormattedDate} from "../../lib/common";
 import HasPermission from "../../components/HasPermission";
 import AvoRedTable from "../../components/AvoRedTable";
+import {useQueryClient} from "@tanstack/react-query";
+import {useState} from "react";
 
 function ComponentTable() {
-    const comoonent_api_table_response = useComponentTable()
+    const queryClient = useQueryClient()
+    const [sorting, setSorting] = useState<SortingState>([]);
+    const comoonent_api_table_response = useComponentTable({
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+    })
     const components = _.get(comoonent_api_table_response, 'data.data.data', [])
     const [t] = useTranslation("global")
+
+    const customSorting = ((sorting: any) => {
+        queryClient.invalidateQueries( {queryKey: ['component-table']});
+        setSorting(sorting)
+    })
 
     const getFormattedDate = ((date: string) => {
         var date_obj = new Date(date);
@@ -65,6 +74,7 @@ function ComponentTable() {
                 )
             },
             header: t("common.action"),
+            enableSorting: false,
             enableHiding: false
         }),
     ]
@@ -78,7 +88,12 @@ function ComponentTable() {
                 created_at: false,
                 created_by: false
             }
-        }
+        },
+        manualSorting: true,
+        onSortingChange: customSorting,
+        state: {
+            sorting
+        },
     })
 
     return (
