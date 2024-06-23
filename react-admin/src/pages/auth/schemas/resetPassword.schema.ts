@@ -1,16 +1,21 @@
 import Joi from 'joi';
+import {useTranslation} from "react-i18next";
 
-export const resetPasswordSchema = Joi.object({
-    email: Joi.string().required().messages({
-        'string.empty': 'Email address is required field'
-    }),
-    password: Joi.string().required().messages({
-        'string.empty': 'Password is required field'
-    }),
-    confirm_password: Joi.string().required().messages({
-        'string.empty': 'Confirm Password is required field'
-    }),
-    token: Joi.string().required().messages({
-        'string.empty': 'Token is required field'
-    }),
-});
+export const useResetPasswordSchema = (() => {
+    const [t] = useTranslation("global")
+    return Joi.object({
+        email: Joi.string().required().messages({
+            'string.empty': t("empty_message", {attribute: t("email")})
+        }),
+        password: Joi.string().required().messages({
+            'string.empty': t("empty_message", {attribute: t("password")})
+        }),
+        confirm_password: Joi.string().required().messages({
+            'string.empty': t("empty_message", {attribute: t("confirmation_password")})
+        }),
+        token: Joi.string().required().messages({
+            'string.empty': t("empty_message", {attribute: t("token")})
+        }),
+    })
+})
+// export const resetPasswordSchema = ;
