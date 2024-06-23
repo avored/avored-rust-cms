@@ -18,8 +18,8 @@ function ErrorMessage(props: ErrorMessageProps) {
     }
 
     const getErrorMessage = (key: string) => {
-        let message = _.get(props.frontendErrors, key + '.message');
-        console.log(key, message)
+        let message = _.get(props.frontendErrors, key + '.message')
+
         if (message) {
             return message;
         }

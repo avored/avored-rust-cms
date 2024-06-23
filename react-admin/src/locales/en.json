@@ -1,4 +1,8 @@
 {
+  "empty_message": "{{attribute}} is required field.",
+  "invalid_email": "The Email address field must be a valid email address.",
+  "avored_rust_cms": "Avored Rust Cms",
+  "email": "Email Address",
   "dashboard_demo_content": "Dashboard content goes here",
   "sign_into_your_account": "Sign into your account",
   "not_found_404": "Not Found 404",
@@ -132,8 +136,5 @@
   },
   "settings": {
     "site_name": "Site Name"
-  },
-  "validation": {
-    "empty": "{{attribute}} is required."
   }
 }

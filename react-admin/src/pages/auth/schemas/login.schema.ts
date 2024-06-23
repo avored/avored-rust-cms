@@ -1,11 +1,16 @@
-import Joi from 'joi';
+import Joi from 'joi'
+import {useTranslation} from "react-i18next"
 
-export const loginSchema = Joi.object({
-  email : Joi.string().email({ tlds: { allow: false } }).required().messages({
-        'string.empty': 'Email is not allowed to be empty',
-        'string.email': 'Invalid Email Address',
-      }),
-  password : Joi.string().required().messages({
-       'string.empty': 'Password is required field',
-      })
-});
+export const useLoginSchema = (() => {
+
+    const [t, i18n] = useTranslation("global")
+    return Joi.object({
+        email : Joi.string().email({ tlds: { allow: false } }).required().messages({
+            'string.empty': t("empty_message", {attribute: t("email")}),
+            'string.email': t("invalid_email"),
+        }),
+        password : Joi.string().required().messages({
+            'string.empty': t("empty_message", {attribute: t("password")}),
+        })
+    });
+})
