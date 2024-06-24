@@ -19,8 +19,6 @@ jobs:
     - uses: Swatinem/rust-cache@v2.4.0
     - name: Build
       run: cargo build --verbose
-#    - name: Run tests
-#      run: cargo test --verbose
     - name: Run releases
       run: cargo build --release
     - name: Copy files via ssh
@@ -29,7 +27,7 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./target/release"
+        source: "./target/release,./public,./data"
         target: ${{ secrets.RUST_TARGET_PATH }}
     - name: change file ownership
       uses: appleboy/ssh-action@v1.0.3
