@@ -1,8 +1,11 @@
 {
+  "empty_message": "{{attribute}} is required field.",
+  "invalid_email": "The Email address field must be a valid email address.",
+  "avored_rust_cms": "Avored Rust Cms",
+  "email": "Email Address",
   "dashboard_demo_content": "Dashboard content goes here",
   "sign_into_your_account": "Sign into your account",
   "not_found_404": "Not Found 404",
-  "email_address": "Email Address",
   "password": "Password",
   "confirmation_password": "Confirmed Password",
   "new_password": "New Password",
@@ -16,8 +19,38 @@
   "reset_password": "Reset password",
   "en": "en",
   "fr": "fr",
+  "current_password": "Current Password",
   "english": "English",
   "french": "French",
+  "admin_users": "Admin Users",
+  "id": "ID",
+  "full_name": "Full name",
+  "avored": "AvoRed",
+  "rust_cms": "Rust CMS",
+  "save": "Save",
+  "edit": "Edit",
+  "create": "Create",
+  "delete": "Delete",
+  "upload": "Upload",
+  "cancel": "Cancel",
+  "select": "Select",
+  "file": "File",
+  "name": "Name",
+  "action": "Action",
+  "add_field": "Add Field",
+  "identifier": "Identifier",
+  "created_at": "Created at",
+  "created_by": "Created by",
+  "updated_at": "Updated at",
+  "updated_by": "Updated by",
+  "text": "Text",
+  "textarea": "Textarea",
+  "table": "Table",
+  "permissions": "Permissions",
+  "page": "Page",
+  "role": "Role",
+  "general": "General",
+  "is_super_admin": "Is super admin",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
@@ -33,7 +66,7 @@
     "cancel": "Cancel",
     "select": "Select",
     "file": "File",
-    "id": "ID",
+    "admin_user_information": "Admin User Information",
     "name": "Name",
     "full_name": "Full name",
     "email": "Email",
@@ -126,14 +159,7 @@
       }
     }
   },
-  "admin_user": {
-    "admin_users": "Admin Users",
-    "information": "Admin User Information"
-  },
   "settings": {
     "site_name": "Site Name"
-  },
-  "validation": {
-    "empty": "{{attribute}} is required."
   }
 }

@@ -1,38 +1,27 @@
 import logo from "../../assets/logo_only.svg"
-import { useNavigate, useParams } from "react-router-dom"
+import { useParams } from "react-router-dom"
 import InputField from "../../components/InputField"
 import { useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
-import _ from "lodash"
 import { useResetPassword } from "./hooks/useResetPassword"
-import { resetPasswordSchema } from "./schemas/resetPassword.schema"
+import {useResetPasswordSchema} from "./schemas/resetPassword.schema"
 import { useTranslation } from "react-i18next"
-import IErrorMessage from "../../types/common/IError"
 import IResetPasswordPost from "../../types/auth/IResetPasswordPost"
 import {changeLocale} from "../../lib/common";
+import ErrorMessage from "../../components/ErrorMessage";
+import AvoRedButton from "../../components/AvoRedButton";
 
 function ResetPassword() {
-  const redirect = useNavigate();
   const token = useParams().token;
-  const { register, handleSubmit } = useForm<IResetPasswordPost>({
-    resolver: joiResolver(resetPasswordSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<IResetPasswordPost>({
+    resolver: joiResolver(useResetPasswordSchema()),
   });
   const [t, i18n] = useTranslation("global");
   const { mutate, isPending, error } = useResetPassword();
-
-  const isErrorExist = (key: string) => {
-    return _.findIndex(
-      _.get(error, "response.data.errors", []),
-      (err: IErrorMessage) => err.key === key
-    );
-  };
-
-  const getErrorMessage = (key: string) => {
-    return _.get(
-      error,
-      "response.data.errors." + isErrorExist("email") + ".message"
-    );
-  };
 
   const submitHandler = (data: IResetPasswordPost) => {
     mutate(data);
@@ -41,7 +30,7 @@ function ResetPassword() {
   return (
     <div className="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="flex justify-center">
-        <img src={logo} className="w-20 h-20" alt="Avored Rust Cms" />
+        <img src={logo} className="w-20 h-20" alt={t("avored_rust_cms")} />
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
@@ -56,15 +45,13 @@ function ResetPassword() {
           <form onSubmit={handleSubmit(submitHandler)} className="space-y-5">
             <div>
               <InputField
-                  label={t("email_address")}
+                  label={t("email")}
                   type="text"
                   name="email"
                   autoFocus={true}
                   register={register("email")}
               />
-              {/*{isErrorExist("email") >= 0 && (*/}
-              {/*  // <ErrorMessage message={getErrorMessage("email")} />*/}
-              {/*)}*/}
+              <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="email"/>
             </div>
             <div>
               <InputField
@@ -73,14 +60,16 @@ function ResetPassword() {
                   name="password"
                   register={register("password")}
               />
+              <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="password"/>
             </div>
             <div>
               <InputField
-                  label="Confirm Password"
+                  label={t("confirmation_password")}
                   type="password"
                   name="confirm_password"
                   register={register("confirm_password")}
               />
+              <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="confirm_password"/>
             </div>
             <div>
               <InputField
@@ -92,13 +81,13 @@ function ResetPassword() {
             </div>
 
             <div>
-              <button
-                  type="submit"
-                  className="group relative bg-primary-600 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              >
-                {isPending ? "Loading..." : t("reset_password")}
-              </button>
+              <AvoRedButton
+                  label={t("reset_password")}
+                  isPending={isPending}
+                  className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+              />
             </div>
+
             <div className="text-gray-600 text-center text-sm">
               {t("need_to_change_language")}
               <select
