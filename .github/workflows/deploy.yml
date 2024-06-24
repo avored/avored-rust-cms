@@ -42,8 +42,8 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
         source: "./dist"
-        target: ${{ secrets.RUST_TARGET_PATH }}
-#    
+        target: ${{ secrets.REACT_TARGET_PATH }}
+#
 #    - name: Copy files via ssh
 #      uses: appleboy/scp-action@master
 #      with:
