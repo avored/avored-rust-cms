@@ -21,14 +21,23 @@ jobs:
       run: cargo build --verbose
     - name: Run releases
       run: cargo build --release
-    - name: Copy files via ssh
+    - name: Deploy release
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./target/release,./locales"
+        source: "./target/release"
         target: ${{ secrets.RUST_TARGET_PATH }}
+    - name: Deploy release
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_KEY }}
+        source: "./public,./resources"
+        target: ${{ secrets.RUST_DEPLOY_PATH }}
+
 #    - name: change file ownership
 #      uses: appleboy/ssh-action@v1.0.3
 #      with:
