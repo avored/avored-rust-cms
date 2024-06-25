@@ -28,41 +28,16 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        working-directory: 'react-admin'
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: npm ci
-    - name: Run releases
-      run: npm run build
-#    - name: Copy files via ssh
-#      uses: appleboy/scp-action@master
-#      with:
-#        host: ${{ secrets.HOST }}
-#        username: ${{ secrets.USERNAME }}
-#        key: ${{ secrets.SSH_KEY }}
-#        source: "./dist"
-#        target: ${{ secrets.REACT_TARGET_PATH }}
-#
     - name: Copy files via ssh
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./react-admin/dist"
+        source: "./dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
-
-    - name: change file ownership
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.PORT }}
-        script: sudo chown -R www-data:www-data ${{ secrets.REACT_TARGET_PATH}}
