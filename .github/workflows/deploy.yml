@@ -36,6 +36,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
+    - name: Install dependencies
+      run: npm ci
     - name: Run releases
       run: npm run build
 #    - name: Copy files via ssh
