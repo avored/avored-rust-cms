@@ -28,6 +28,9 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: 'react-admin'
 
     steps:
     - name: Checkout code
