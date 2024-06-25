@@ -29,12 +29,12 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: "./target/release"
         target: ${{ secrets.RUST_TARGET_PATH }}
-    - name: change file ownership
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: ${{ secrets.PORT }}
-        script: sudo chown -R www-data:www-data ${{ secrets.RUST_TARGET_PATH}}
+#    - name: change file ownership
+#      uses: appleboy/ssh-action@v1.0.3
+#      with:
+#        host: ${{ secrets.HOST }}
+#        username: ${{ secrets.USERNAME }}
+#        key: ${{ secrets.SSH_KEY }}
+#        port: ${{ secrets.PORT }}
+#        script: sudo chown -R www-data:www-data ${{ secrets.RUST_TARGET_PATH}}
         
