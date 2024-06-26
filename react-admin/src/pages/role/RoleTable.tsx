@@ -28,32 +28,32 @@ export default function RoleTable() {
     const columns = [
         columnHelper.accessor('id', {
             cell: info => info.getValue(),
-            header: t("common.id")
+            header: t("id")
         }),
         columnHelper.accessor('name', {
             cell: info => info.getValue(),
-            header: t("common.name")
+            header: t("name")
         }),
         columnHelper.accessor('identifier', {
             cell: info => info.getValue(),
-            header: t("common.identifier")
+            header: t("identifier")
         }),
         columnHelper.accessor('created_at', {
             id: "created_at",
             cell: info => getFormattedDate(info.getValue()),
-            header: t("common.created_at")
+            header: t("created_at")
         }),
         columnHelper.accessor('created_by', {
             cell: info => info.getValue(),
-            header: t("common.created_by")
+            header: t("created_by")
         }),
         columnHelper.accessor('updated_at', {
             cell: info => getFormattedDate(info.getValue()),
-            header: t("common.updated_at")
+            header: t("updated_at")
         }),
         columnHelper.accessor('updated_by', {
             cell: info => info.getValue(),
-            header: t("common.updated_by")
+            header: t("updated_by")
         }),
         columnHelper.accessor('action', {
             cell: info => {
@@ -63,13 +63,13 @@ export default function RoleTable() {
                             className="font-medium text-primary-600 hover:text-primary-800"
                             to={`/admin/role-edit/${info.row.original.id}`}
                         >
-                            {t("common.edit")}
+                            {t("edit")}
                         </Link>
                     </HasPermission>
                 )
             },
             enableSorting: false,
-            header: t("common.action"),
+            header: t("action"),
             enableHiding: false
         }),
     ]
@@ -103,7 +103,7 @@ export default function RoleTable() {
                         className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                         to="/admin/role-create"
                     >
-                        {t("common.create")}
+                        {t("create")}
                     </Link>
                     </HasPermission>
                 </div>

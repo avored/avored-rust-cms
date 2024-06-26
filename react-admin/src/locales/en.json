@@ -51,6 +51,13 @@
   "role": "Role",
   "general": "General",
   "is_super_admin": "Is super admin",
+  "role_information": "Role Information",
+  "page_permission": "Page Permission",
+  "component_permission": "Component Permission",
+  "asset_permission": "Asset Permission",
+  "admin_user_permission": "Admin User Permission",
+  "role_permission": "Role Permission",
+  "generics": "Generics",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
@@ -110,11 +117,6 @@
   "component": {
     "components": "Components",
     "information": "Component Information"
-  },
-  "roles": {
-    "roles": "Roles",
-    "generics": "Generics",
-    "information": "Role Information"
   },
   "pages": {
     "pages": "Pages",
