@@ -7,6 +7,7 @@ import {joiResolver} from "@hookform/resolvers/joi";
 import ICreatableRole from "../../types/role/ICreatableRole";
 import {useRoleCreateSchema} from "./schemas/role.create.schema";
 import InputField from "../../components/InputField";
+import {RoleFields} from "./RoleFields";
 
 function RoleCreate() {
     const {mutate} = useStoreRole()
@@ -96,26 +97,9 @@ function RoleCreate() {
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
                             {t("role_information")}
                         </h1>
-                        {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
-                        {/*    receive mail.</p>*/}
+
                         <form onSubmit={handleSubmit(submitHandler)}>
-                            <div className="mb-4">
-                                <InputField
-                                    label={t('name')}
-                                    placeholder={t('name')}
-                                    name="name"
-                                    register={register("name")}
-                                    autoFocus={true}
-                                />
-                            </div>
-                            <div className="mb-4">
-                                <InputField
-                                    label={t('identifier')}
-                                    placeholder={t('identifier')}
-                                    name="identifier"
-                                    register={register("identifier")}
-                                />
-                            </div>
+                            <RoleFields register={register} />
 
                             <div className="mb-4 flex">
                                 <div className="border w-1/3 border-gray-200 rounded">

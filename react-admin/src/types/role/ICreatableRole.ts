@@ -1,6 +1,3 @@
+import IRoleFields from "./RoleFields";
 
-export default  interface ICreatableRole {
-    name: string;
-    identifier: string;
-    permissions: Array<string>;
-}
+export default  interface ICreatableRole extends IRoleFields {}
