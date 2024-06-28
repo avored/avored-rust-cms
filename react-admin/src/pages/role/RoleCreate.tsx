@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import ICreatableRole from "../../types/role/ICreatableRole";
-import {RoleCreateSchema} from "./schemas/role.create.schema";
+import {useRoleCreateSchema} from "./schemas/role.create.schema";
 import InputField from "../../components/InputField";
 
 function RoleCreate() {
@@ -20,7 +20,7 @@ function RoleCreate() {
         setValue,
         getValues
     } = useForm<ICreatableRole>({
-        resolver: joiResolver(RoleCreateSchema, {allowUnknown: true}),
+        resolver: joiResolver(useRoleCreateSchema(), {allowUnknown: true}),
     });
 
     const switchOnChange = ((key: string) => {
@@ -94,15 +94,15 @@ function RoleCreate() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
-                            {t("roles.information")}
+                            {t("role_information")}
                         </h1>
                         {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
                         {/*    receive mail.</p>*/}
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
-                                    label={t('common.name')}
-                                    placeholder={t('common.name')}
+                                    label={t('name')}
+                                    placeholder={t('name')}
                                     name="name"
                                     register={register("name")}
                                     autoFocus={true}
@@ -110,8 +110,8 @@ function RoleCreate() {
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    label={t('common.identifier')}
-                                    placeholder={t('common.identifier')}
+                                    label={t('identifier')}
+                                    placeholder={t('identifier')}
                                     name="identifier"
                                     register={register("identifier")}
                                 />
@@ -120,7 +120,7 @@ function RoleCreate() {
                             <div className="mb-4 flex">
                                 <div className="border w-1/3 border-gray-200 rounded">
                                     <div className="p-3 font-semibold border-b">
-                                        {t("roles.generics")}
+                                        {t("generics")}
                                     </div>
                                     <div className="p-3">
                                         {renderSwitch('dashboard')}
@@ -132,7 +132,7 @@ function RoleCreate() {
 
                                 <div className="border w-1/3 ml-3 border-gray-200 rounded">
                                     <div className="p-3 font-semibold border-b">
-                                        {`${t("common.page")} ${t("common.permissions")}`}
+                                        {t("page_permission")}
                                     </div>
                                     <div className="p-3">
                                         {renderSwitch('page_table')}
@@ -145,7 +145,7 @@ function RoleCreate() {
 
                                 <div className="border w-1/3 ml-3 border-gray-200 rounded">
                                     <div className="p-3 font-semibold border-b">
-                                        {`${t("common.component")} ${t("common.permissions")}`}
+                                        {t("component_permission")}
                                     </div>
                                     <div className="p-3">
                                         {renderSwitch('component_table')}
@@ -159,9 +159,9 @@ function RoleCreate() {
 
                             <div className="mb-4 flex">
                                 <div className="border w-1/3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">{`${t(
-                                        "common.asset"
-                                    )} ${t("common.permissions")}`}</div>
+                                    <div className="p-3 font-semibold border-b">
+                                        {t("asset_permission")}
+                                    </div>
                                     <div className="p-3">
                                         {renderSwitch('asset_table')}
                                         {renderSwitch('asset_create')}
@@ -172,7 +172,7 @@ function RoleCreate() {
 
                                 <div className="border w-1/3 ml-3 border-gray-200 rounded">
                                     <div className="p-3 font-semibold border-b">
-                                        {`${t("common.admin_user")} ${t("common.permissions")}`}
+                                        {t("admin_user_permission")}
                                     </div>
 
                                     <div className="p-3">
@@ -185,9 +185,9 @@ function RoleCreate() {
                                 </div>
 
                                 <div className="border w-1/3 ml-3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">{`${t(
-                                        "roles.roles"
-                                    )} ${t("common.permissions")}`}</div>
+                                    <div className="p-3 font-semibold border-b">
+                                        {t("role_permission")}
+                                    </div>
 
                                     <div className="p-3">
                                         {renderSwitch('role_table')}
@@ -204,13 +204,13 @@ function RoleCreate() {
                                     type="submit"
                                     className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
-                                    {t("common.save")}
+                                    {t("save")}
                                 </button>
                                 <Link
                                     to="/admin/role"
                                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                                 >
-                                    {t("common.cancel")}
+                                    {t("cancel")}
                                 </Link>
                             </div>
                         </form>

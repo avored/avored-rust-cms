@@ -9,7 +9,7 @@ import {useStorePage} from "./hooks/useStorePage";
 import {useTranslation} from "react-i18next";
 import {useFieldArray, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {PageCreateSchema} from "./schemas/page.create.schema"
+import {usePageCreateSchema} from "./schemas/page.create.schema"
 import PageComponentTable from "./PageComponentTable";
 import IComponentModel from "../../types/component/IComponentModel"
 import ICreatablePage, {
@@ -28,7 +28,7 @@ function PageCreate() {
         handleSubmit,
         formState: {errors}
     } = useForm<ICreatablePage>({
-        resolver: joiResolver(PageCreateSchema, {allowUnknown: true}),
+        resolver: joiResolver(usePageCreateSchema(), {allowUnknown: true}),
     });
 
     const {
@@ -47,7 +47,7 @@ function PageCreate() {
     const renderComponentFieldType = (componentField: ICreatablePageComponentFieldModel, pageComponentIndex: number, componentFieldIndex: number) => {
         switch (componentField.field_type) {
             case "textarea":
-                return <div>Textarea</div>;
+                return <div>{t("textarea")}</div>;
             case "radio":
                 return (
                     <div className="p-3">
@@ -137,14 +137,14 @@ function PageCreate() {
                             <div className="mb-4">
                                 <InputField
                                     autoFocus={true}
-                                    placeholder="Name"
+                                    placeholder={t("name")}
                                     register={register("name")}
                                 />
                             </div>
                             <div className="mb-4">
                                 <InputField
                                     type="text"
-                                    placeholder="Identifier"
+                                    placeholder={t("identifier")}
                                     register={register("identifier")}
                                 />
                             </div>
@@ -163,14 +163,14 @@ function PageCreate() {
                                 >
                                     <PlusIcon className="text-primary-500 h-6 w-6"/>
                                     <span className="text-sm ml-1 text-primary-500">
-                                        Add Component
+                                        {t("add_component")}
                                     </span>
                                 </button>
                             </div>
 
                             <AvoredModal
                                 closeModal={pageModelOnClose}
-                                modal_header="Select Component"
+                                modal_header={t("select_component")}
                                 modal_body={
                                     <div className="text-primary-500">
                                         <PageComponentTable components={components} componentSelected={componentSelected} />
@@ -184,13 +184,13 @@ function PageCreate() {
                                     type="submit"
                                     className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
-                                    {t("common.save")}
+                                    {t("save")}
                                 </button>
                                 <Link
                                     to="/admin/page"
                                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                                 >
-                                    {t("common.cancel")}
+                                    {t("cancel")}
                                 </Link>
                             </div>
                         </form>

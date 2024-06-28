@@ -6,10 +6,11 @@ import {joiResolver} from "@hookform/resolvers/joi";
 import {SettingSaveSchema} from "../setting/schemas/setting.save.schema";
 import SetupType from "../../types/settings/SetupType";
 import IErrorMessage from "../../types/common/IError";
+import {useTranslation} from "react-i18next";
 
 function Setup() {
     const {mutate, isPending, error} = useStoreSetup()
-
+    const [t] = useTranslation("global")
     const {
         register,
         handleSubmit,
@@ -34,7 +35,7 @@ function Setup() {
             className="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
                 <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                    Setup AvoRed
+                    {t("setup_avored")}
                 </h2>
             </div>
             <div>
@@ -47,7 +48,7 @@ function Setup() {
                         <div>
                             <div className="mt-3">
                                 <InputField
-                                    label="Email Address"
+                                    label={t("email")}
                                     type="text"
                                     name="email"
                                     register={register('email')}
@@ -58,7 +59,7 @@ function Setup() {
 
                             <div className="mt-3">
                                 <InputField
-                                    label="Password"
+                                    label={t("password")}
                                     type="password"
                                     register={register('password')}
                                 />
@@ -70,7 +71,7 @@ function Setup() {
                                 <button type="submit"
                                         disabled={isPending}
                                         className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
-                                    {isPending ? "Loading..." : "Submit"}
+                                    {isPending ? t("loading") : t("submit")}
                                 </button>
                             </div>
                         </div>

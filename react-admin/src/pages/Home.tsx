@@ -1,3 +1,4 @@
+import { ChevronRightIcon } from "@heroicons/react/24/solid";
 import logo from "../assets/logo_only.svg";
 function Dashboard() {
   return (
@@ -36,10 +37,7 @@ function Dashboard() {
                 </p>
               </div>
               <div className="self-center pl-5">
-                <i
-                  className="w-6 h-6 stroke-primary-500"
-                  data-feather="chevrons-right"
-                ></i>
+                <ChevronRightIcon className="w-6 h-6" />
               </div>
             </a>
 
@@ -51,6 +49,7 @@ function Dashboard() {
             >
               <div>
                 <div className="h-16 w-16 bg-primary-50 flex items-center justify-center rounded-full">
+
                   <i
                     className="w-7 h-7 stroke-primary-500"
                     data-feather="github"

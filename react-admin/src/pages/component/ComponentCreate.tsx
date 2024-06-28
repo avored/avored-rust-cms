@@ -7,7 +7,7 @@ import {useTranslation} from "react-i18next"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
-import {ComponentCreateSchema} from "./schemas/component.create.schema"
+import {useComponentCreateSchema} from "./schemas/component.create.schema"
 import ICreatableComponent from "../../types/field/ICreatableComponent"
 
 function ComponentCreate() {
@@ -19,7 +19,7 @@ function ComponentCreate() {
         formState: {errors},
         setValue
     } = useForm<ICreatableComponent>({
-        resolver: joiResolver(ComponentCreateSchema),
+        resolver: joiResolver(useComponentCreateSchema()),
     });
     const {
         fields,
@@ -55,13 +55,13 @@ function ComponentCreate() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                            {t("component.information")}
+                            {t("component_information")}
                         </h1>
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
-                                    label={t('common.name')}
-                                    placeholder={t('common.name')}
+                                    label={t('name')}
+                                    placeholder={t('name')}
                                     name="name"
                                     register={register("name")}
                                     autoFocus={true}
@@ -69,8 +69,8 @@ function ComponentCreate() {
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    label={t('common.identifier')}
-                                    placeholder={t('common.identifier')}
+                                    label={t('identifier')}
+                                    placeholder={t('identifier')}
                                     name="identifier"
                                     register={register("identifier")}
                                 />
@@ -106,7 +106,7 @@ function ComponentCreate() {
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
                                                 >
-                                                    {t("common.text")}
+                                                    {t("text")}
                                                 </div>
                                                 <div
                                                     onClick={(e) =>
@@ -118,7 +118,7 @@ function ComponentCreate() {
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
                                                 >
-                                                    {t("common.textarea")}
+                                                    {t("textarea")}
                                                 </div>
                                                 <div
                                                     onClick={(e) =>
@@ -130,7 +130,7 @@ function ComponentCreate() {
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
                                                 >
-                                                    {t("common.select")}
+                                                    {t("select")}
                                                 </div>
                                             </div>
 
@@ -146,16 +146,16 @@ function ComponentCreate() {
                                                     <InputField
                                                         name={`fields.${index}.name`}
                                                         register={register(`fields.${index}.name`)}
-                                                        label={t('pages.component.field_name')}
-                                                        placeholder={t('pages.component.field_name')}
+                                                        label={t('field_name')}
+                                                        placeholder={t('field_name')}
                                                     />
                                                 </div>
                                                 <div className="mt-3">
                                                     <InputField
                                                         name={`fields.${index}.identifier`}
                                                         register={register(`fields.${index}.identifier`)}
-                                                        label={t('pages.component.field_identifier')}
-                                                        placeholder={t('pages.component.field_identifier')}
+                                                        label={t('field_identifier')}
+                                                        placeholder={t('field_identifier')}
                                                     />
                                                 </div>
                                                 <Controller
@@ -166,7 +166,7 @@ function ComponentCreate() {
                                                                 <div className="mt-3">
                                                                     <div className="w-full">
                                                                         <h6 className="font-semibold">
-                                                                            {t("pages.component.options")}
+                                                                            {t("field_options")}
                                                                         </h6>
                                                                     </div>
 
@@ -176,8 +176,8 @@ function ComponentCreate() {
                                                                             <div className="flex">
                                                                                 <div className="w-1/2">
                                                                                     <InputField
-                                                                                        label={t('pages.component.option_label')}
-                                                                                        placeholder={t('pages.component.option_label')}
+                                                                                        label={t('field_option_label')}
+                                                                                        placeholder={t('field_option_label')}
                                                                                         register={register(`fields.${index}.field_data.${field_data_index}.label`)}
                                                                                     />
                                                                                 </div>
@@ -186,11 +186,11 @@ function ComponentCreate() {
                                                                                     <label
                                                                                         htmlFor="hs-inline-leading-pricing-select-label"
                                                                                         className="text-sm text-gray-600"
-                                                                                    >{t('pages.component.option_value')}
+                                                                                    >{t('field_option_value')}
                                                                                     </label>
                                                                                     <div className="relative">
                                                                                         <InputField
-                                                                                            placeholder={t('pages.component.option_value')}
+                                                                                            placeholder={t('field_option_value')}
                                                                                             register={register(`fields.${index}.field_data.${field_data_index}.value`)}
                                                                                         />
                                                                                         <div
@@ -230,7 +230,7 @@ function ComponentCreate() {
                                 >
                                     <PlusIcon className="text-primary-500 h-6 w-6"/>
                                     <span className="text-sm ml-1 text-primary-500">
-                                        {t("common.add_field")}
+                                        {t("add_field")}
                                     </span>
                                 </button>
                             </div>
@@ -240,13 +240,13 @@ function ComponentCreate() {
                                     type="submit"
                                     className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
-                                    {t("common.save")}
+                                    {t("save")}
                                 </button>
                                 <Link
                                     to="/admin/component"
                                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                                 >
-                                    {t("common.cancel")}
+                                    {t("cancel")}
                                 </Link>
                             </div>
                         </form>

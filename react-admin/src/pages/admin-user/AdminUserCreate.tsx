@@ -10,11 +10,10 @@ import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import IAdminUserCreate from "../../types/admin-user/IAdminUserCreate";
 import {useStoreAdminUser} from "./hooks/useStoreAdminUser";
-import {AdminUserCreateSchema} from "./schemas/admin.user.create.schema";
+import {useAdminUserCreateSchema} from "./schemas/admin.user.create.schema";
 
 function AdminUserCreate() {
     const [selectedOption, setSelectedOption] = useState([]);
-    const params = useParams();
     const [t] = useTranslation("global")
 
 
@@ -26,14 +25,12 @@ function AdminUserCreate() {
         formState: {errors},
         setValue
     } = useForm<IAdminUserCreate>({
-        resolver: joiResolver(AdminUserCreateSchema, {allowUnknown: true})
+        resolver: joiResolver(useAdminUserCreateSchema(), {allowUnknown: true})
     })
 
     const roleOptionResult = useGetRoleOptions();
     const {mutate} = useStoreAdminUser()
-
     const roles = _.get(roleOptionResult, "data.data.options", []);
-
 
     const isSuperAdminSwitchOnChange = ((e: boolean) => {
         if (!e) {
@@ -55,12 +52,12 @@ function AdminUserCreate() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
-                            {t("admin_user.information")}
+                            {t("admin_user_information")}
                         </h1>
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
-                                    label={t("common.full_name")}
+                                    label={t("full_name")}
                                     type="text"
                                     name="full_name"
                                     register={register("full_name")}
@@ -69,7 +66,7 @@ function AdminUserCreate() {
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    label={t("common.email")}
+                                    label={t("email")}
                                     type="text"
                                     name="email"
                                     register={register("email")}
@@ -104,7 +101,7 @@ function AdminUserCreate() {
                                                     htmlFor="is_super_admin_switch"
                                                     className="text-sm text-gray-600"
                                                 >
-                                                    Is Super Admin
+                                                    {t("is_super_admin")}
                                                 </label>
 
                                                 <Switch
@@ -127,7 +124,7 @@ function AdminUserCreate() {
                                                 <div className="mb-4">
                                                     <div className="relative z-10">
                                                         <AvoRedMultiSelectField
-                                                            label="Roles"
+                                                            label={t("roles")}
                                                             options={roles}
                                                             selectedOption={selectedOption}
                                                             onChangeSelectedOption={setSelectedOption}
@@ -158,13 +155,13 @@ function AdminUserCreate() {
                                     type="submit"
                                     className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                 >
-                                    {t("common.save")}
+                                    {t("save")}
                                 </button>
                                 <Link
                                     to="/admin/admin-user"
                                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                                 >
-                                    {t("common.cancel")}
+                                    {t("cancel")}
                                 </Link>
                             </div>
                         </form>
