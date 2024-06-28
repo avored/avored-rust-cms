@@ -96,7 +96,7 @@ export default function RoleTable() {
             <div className="px-5 ml-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
-                        {t("roles.roles")}
+                        {t("roles")}
                     </div>
                     <HasPermission displayDenied={false} identifier="role_create">
                     <Link

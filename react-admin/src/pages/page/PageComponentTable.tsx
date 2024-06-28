@@ -18,28 +18,28 @@ function PageComponentTable(props: IPageComponentProps) {
             <thead>
             <tr className="bg-gray-700 text-white">
                 <th className="py-3 px-4 rounded-l font-semibold text-left">
-                    {t("common.id")}
+                    {t("id")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.name")}
+                    {t("name")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.identifier")}
+                    {t("identifier")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.created_at")}
+                    {t("created_at")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.updated_at")}
+                    {t("updated_at")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.created_by")}
+                    {t("created_by")}
                 </th>
                 <th className="py-3 px-4 font-semibol text-left">
-                    {t("common.updated_by")}
+                    {t("updated_by")}
                 </th>
                 <th className="py-3 px-4 rounded-r font-semibol text-left">
-                    {t("common.action")}
+                    {t("action")}
                 </th>
             </tr>
             </thead>
@@ -72,7 +72,7 @@ function PageComponentTable(props: IPageComponentProps) {
                                     props.componentSelected(e, component.id)
                                 }
                             >
-                                {t("common.select")}
+                                {t("select")}
                             </button>
                         </td>
                     </tr>

@@ -38,7 +38,7 @@ function SettingPage() {
                 <div className="p-5">
                     <div className="flex items-center">
                         <div className="p-5 text-2xl font-semibold text-primary-500">
-                            {t("common.settings")}
+                            {t("settings")}
                         </div>
                     </div>
 
@@ -50,7 +50,7 @@ function SettingPage() {
                                         border-l-2 border-transparent px-2 py-2 font-semibold
                                         transition hover:border-l-primary-600"
                                 >
-                                    {t("common.general")}
+                                    {t("general")}
                                 </li>
                             </ul>
                         </div>
@@ -70,7 +70,7 @@ function SettingPage() {
                                         type="submit"
                                         className="mt-5 rounded-lg bg-primary-600 px-4 py-2 text-white"
                                     >
-                                        {t("common.save")}
+                                        {t("save")}
                                     </button>
                                 </div>
                             </form>

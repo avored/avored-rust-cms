@@ -34,10 +34,10 @@ function AppHeader() {
 
                     <div>
               <span className="text-2xl font-semibold">
-                  {t("common.avored")}
+                  {t("avored")}
               </span>
                         <span className="text-xs block">
-                  {t("common.rust_cms")}
+                  {t("rust_cms")}
               </span>
                     </div>
                 </a>

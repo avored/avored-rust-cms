@@ -53,7 +53,7 @@ function AssetTable() {
             onClick={openModal}
             className="ml-auto bg-primary-500 rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
           >
-            {t("common.create")}
+            {t("create")}
           </button>
           <AvoredModal
             isOpen={isOpen}
@@ -66,7 +66,7 @@ function AssetTable() {
                     <div className="py-5">
                         <div className="flex">
                         <div className="mt-3">
-                            {t("common.file")}
+                            {t("file")}
                             <div className="mt-1">
                             <InputField
                                 label={t("asset.asset_file")}
@@ -85,7 +85,7 @@ function AssetTable() {
                                                     duration-150 ease-linear bg-red-600 border border-red-600 rounded-lg
                                                     hover:bg-red-500"
                         >
-                            {t("common.upload")}
+                            {t("upload")}
                         </button>
                         <button
                             type="button"
@@ -93,7 +93,7 @@ function AssetTable() {
                             className="w-full py-3 text-sm text-center text-gray-500 transition duration-150
                                                     ease-linear bg-white border border-gray-200 rounded-lg hover:bg-gray-100"
                         >
-                            {t("common.cancel")}
+                            {t("cancel")}
                         </button>
                         </div>
                     </div>
