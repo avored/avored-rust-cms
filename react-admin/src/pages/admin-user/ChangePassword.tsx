@@ -6,14 +6,14 @@ import _ from 'lodash'
 import { useTranslation } from "react-i18next"
 import IChangePasswordPost from "../../types/auth/ChangePasswordPostType";
 import IErrorMessage from "../../types/common/IError";
-import { changePasswordSchema } from "./schemas/changePassword.schema"
+import {useChangePasswordSchema} from "./schemas/changePassword.schema"
 import { useChangePassword } from "./hooks/useChangePassword"
 import ErrorMessage from "../../components/ErrorMessage";
 import AvoRedButton from "../../components/AvoRedButton";
 
 function ChangePassword() {
     const { register, handleSubmit, formState: { errors } } = useForm<IChangePasswordPost>({
-        resolver: joiResolver(changePasswordSchema)
+        resolver: joiResolver(useChangePasswordSchema())
     });
     const [t] = useTranslation("global");
     const { mutate, isPending, error } = useChangePassword();

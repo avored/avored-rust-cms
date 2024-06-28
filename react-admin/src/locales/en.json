@@ -17,6 +17,9 @@
   "logout": "Logout",
   "forgot_password": "Forgot password?",
   "reset_password": "Reset password",
+  "admin_user_information": "Admin user information",
+  "new_profile_photo": "New Profile Photo",
+  "roles": "Roles",
   "en": "en",
   "fr": "fr",
   "current_password": "Current Password",
@@ -58,44 +61,20 @@
   "admin_user_permission": "Admin User Permission",
   "role_permission": "Role Permission",
   "generics": "Generics",
+  "confirm_password_does_not_match_with_current_password": "Confirm password does not match with new password",
+  "field_option_value": "Field option value",
+  "field_option_label": "Field option label",
+  "field_options": "Field options",
+  "field_name": "Field name",
+  "field_identifier": "Field identifier",
+  "add_component": "Add Component",
+  "select_component": "Select Component",
+  "setup_avored": "Setup avored",
+  "loading": "Loading...",
+  "component_information": "Component information",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
-  },
-  "common": {
-    "avored": "AvoRed",
-    "rust_cms": "Rust CMS",
-    "save": "Save",
-    "edit": "Edit",
-    "create": "Create",
-    "delete": "Delete",
-    "upload": "Upload",
-    "cancel": "Cancel",
-    "select": "Select",
-    "file": "File",
-    "admin_user_information": "Admin User Information",
-    "name": "Name",
-    "full_name": "Full name",
-    "email": "Email",
-    "action": "Action",
-    "add_field": "Add Field",
-    "identifier": "Identifier",
-    "created_at": "Created at",
-    "created_by": "Created by",
-    "updated_at": "Updated at",
-    "updated_by": "Updated by",
-    "text": "Text",
-    "textarea": "Textarea",
-    "table": "Table",
-    "permissions": "Permissions",
-    "page": "Page",
-    "component": "Component",
-    "asset": "Asset",
-    "admin_user": "Admin User",
-    "role": "Role",
-    "settings": "Settings",
-    "general": "General",
-    "is_super_admin": "Is super admin"
   },
   "asset": {
     "asset_table": "Asset table",
@@ -160,8 +139,5 @@
         "get_role": "Get role"
       }
     }
-  },
-  "settings": {
-    "site_name": "Site Name"
   }
 }
