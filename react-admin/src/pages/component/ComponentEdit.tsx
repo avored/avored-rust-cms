@@ -69,11 +69,6 @@ function ComponentEdit() {
         trigger(`fields.${fieldIndex}`)
     })
 
-    const getErrorMessage = ((name: string) => {
-        console.log(errors, name)
-        return ''
-    })
-
     const submitHandler = ((data: any) => {
         // console.log(data)
         mutate(data)
@@ -167,15 +162,27 @@ function ComponentEdit() {
 
                                             <div className="p-3 w-2/3">
                                                 <div className="mt-3">
-                                                    Field Type: {field.field_type}
+                                                    <Controller
+                                                        name={`fields.${index}.field_type`}
+                                                        render={({field}) => {
+                                                            return (
+                                                                <>
+                                                                    Field Type: {field.value}
+                                                                </>
+                                                            )
+                                                        }}
+                                                        control={control}
+                                                    />
+
                                                     <InputField
+                                                        type="hidden"
                                                         name={`fields.${index}.field_type`}
                                                         register={register(`fields.${index}.field_type`)}
                                                     />
                                                 </div>
                                                 <div className="mt-3">
                                                     <InputField
-                                                        type="text"
+                                                        type="hidden"
                                                         name={`fields.${index}.id`}
                                                         register={register(`fields.${index}.id`)}
                                                     />
@@ -209,10 +216,10 @@ function ComponentEdit() {
                                                                         </h6>
                                                                     </div>
 
-                                                                    {field.value.field_data?.map((field_option, field_option_index) => {
+                                                                    {field.value.field_data?.map((field_option, field_data_index) => {
                                                                         return (
                                                                             <div className="flex w-full"
-                                                                                 key={`field-option-key-${field_option_index}-${field.value.id}`}>
+                                                                                 key={`field-option-key-${field_data_index}-${field.value.id}`}>
 
                                                                                 <div className="w-1/2">
                                                                                     <label
@@ -221,8 +228,8 @@ function ComponentEdit() {
                                                                                     >{t('field_option_label')}
                                                                                     </label>
                                                                                     <InputField
-                                                                                        name={`fields.${index}.field_data.${field_option_index}.label`}
-                                                                                        register={register(`fields.${index}.field_data.${field_option_index}.label`)}
+                                                                                        name={`fields.${index}.field_data.${field_data_index}.label`}
+                                                                                        register={register(`fields.${index}.field_data.${field_data_index}.label`)}
                                                                                         placeholder={t('field_option_label')}
                                                                                     />
                                                                                 </div>
@@ -237,12 +244,12 @@ function ComponentEdit() {
                                                                                     <div className="relative">
 
                                                                                         <InputField
-                                                                                            name={`fields.${index}.field_data.${field_option_index}.label`}
-                                                                                            register={register(`fields.${index}.field_data.${field_option_index}.value`)}
+                                                                                            name={`fields.${index}.field_data.${field_data_index}.label`}
+                                                                                            register={register(`fields.${index}.field_data.${field_data_index}.value`)}
                                                                                             placeholder={t('field_option_value')}
                                                                                         />
                                                                                         <div
-                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, field.value.field_data, field_option_index)}
+                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, field.value.field_data, field_data_index)}
                                                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                                                         >
                                                                                             <TrashIcon
@@ -250,7 +257,7 @@ function ComponentEdit() {
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
-                                                                              
+
 
                                                                             </div>
                                                                         )

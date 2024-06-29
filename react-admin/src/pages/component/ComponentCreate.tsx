@@ -9,6 +9,7 @@ import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
 import {useComponentCreateSchema} from "./schemas/component.create.schema"
 import ICreatableComponent from "../../types/field/ICreatableComponent"
+import {IOptionField} from "../../types/field/IEditableField";
 
 function ComponentCreate() {
     const {mutate} = useStoreComponent()
@@ -17,7 +18,8 @@ function ComponentCreate() {
         register,
         handleSubmit,
         formState: {errors},
-        setValue
+        setValue,
+        trigger
     } = useForm<ICreatableComponent>({
         resolver: joiResolver(useComponentCreateSchema()),
     });
@@ -33,7 +35,7 @@ function ComponentCreate() {
     const [t] = useTranslation("global")
 
     const addFieldOnClick = (() => {
-        append({name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT, field_data: []})
+        append({name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
     })
 
     const deleteFieldOnClick = ((fieldIndex: number) => {
@@ -42,6 +44,25 @@ function ComponentCreate() {
 
     const fieldTypeButtonOnClick = ((fieldIndex: number, fieldTypeValue: string) => {
         setValue(`fields.${fieldIndex}.field_type`, fieldTypeValue)
+        setValue(`fields.${fieldIndex}.field_data`, [{label: '', value: ''}])
+        trigger(`fields.${fieldIndex}`)
+    })
+
+    const optionDeleteActionOnClick = ((
+        e: React.MouseEvent,
+        fieldIndex: number,
+        field_data: Array<IOptionField> | undefined,
+        option_index: number
+    ) => {
+        field_data?.splice(option_index, 1)
+        setValue(`fields.${fieldIndex}.field_data`, field_data)
+        trigger(`fields.${fieldIndex}`)
+    })
+
+    const optionAddActionOnClick = ((e: React.MouseEvent, fieldIndex: number, field_data: Array<IOptionField> | undefined) => {
+        field_data?.push({label: '', value: ''})
+        setValue(`fields.${fieldIndex}.field_data`, field_data)
+        trigger(`fields.${fieldIndex}`)
     })
 
     const submitHandler = (data: any) => {
@@ -136,9 +157,20 @@ function ComponentCreate() {
 
                                             <div className="p-3 w-2/3">
                                                 <div className="mt-3">
-                                                    Field Type: {field.field_type}
+                                                    <Controller
+                                                        name={`fields.${index}.field_type`}
+                                                        render={({field}) => {
+                                                            return (
+                                                                <>
+                                                                    Field Type: {field.value}
+                                                                </>
+                                                            )
+                                                        }}
+                                                        control={control}
+                                                    />
                                                     <InputField
                                                         name={`fields.${index}.field_type`}
+                                                        type="hidden"
                                                         register={register(`fields.${index}.field_type`)}
                                                     />
                                                 </div>
@@ -160,6 +192,7 @@ function ComponentCreate() {
                                                 </div>
                                                 <Controller
                                                     name={`fields.${index}`}
+                                                    control={control}
                                                     render={({field}) => {
                                                         return (
                                                             field.value.field_type === AvoRedFieldTypesEnum.SELECT ? (
@@ -170,7 +203,7 @@ function ComponentCreate() {
                                                                         </h6>
                                                                     </div>
 
-                                                                    {field.value.field_data.map((field_data, field_data_index) => {
+                                                                    {field.value.field_data?.map((field_data, field_data_index) => {
                                                                         return (
 
                                                                             <div className="flex">
@@ -194,25 +227,34 @@ function ComponentCreate() {
                                                                                             register={register(`fields.${index}.field_data.${field_data_index}.value`)}
                                                                                         />
                                                                                         <div
-                                                                                            onClick={(e: React.MouseEvent) => {
-                                                                                                alert("test")
-                                                                                            }}
+                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, field.value.field_data, field_data_index)}
                                                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                                                         >
-
-                                                                                            <PlusIcon
-                                                                                                className="text-primary-500 w-6 h-6"/>
+                                                                                            <TrashIcon
+                                                                                                className="text-primary-500 w-4 h-4 mr-2"/>
                                                                                         </div>
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
                                                                         )
                                                                     })}
+                                                                    <div
+                                                                        className="mt-4 flex justify-center ring-1 ring-gray-300 rounded p-1"
+                                                                        onClick={(e: React.MouseEvent) => optionAddActionOnClick(e, index, field.value.field_data)}>
+                                                                        <button className="flex items-center"
+                                                                                type="button">
+                                                                            <PlusIcon
+                                                                                className="text-primary-500 h-6 w-6"/>
+                                                                            <span
+                                                                                className="text-sm ml-1 text-primary-500">
+                                                                                            {t("add_option")}
+                                                                                        </span>
+                                                                        </button>
+                                                                    </div>
                                                                 </div>
                                                             ) : <></>
                                                         )
                                                     }}
-                                                    control={control}
                                                 />
 
 
