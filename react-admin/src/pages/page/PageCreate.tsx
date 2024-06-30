@@ -1,21 +1,23 @@
-import React, {useState} from "react";
-import {Link} from "react-router-dom";
-import {PlusIcon} from "@heroicons/react/24/solid";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { PlusIcon } from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import InputField from "../../components/InputField";
 import _ from "lodash";
-import {useComponentAll} from "./hooks/useComponentAll";
-import {useStorePage} from "./hooks/useStorePage";
-import {useTranslation} from "react-i18next";
-import {useFieldArray, useForm} from "react-hook-form";
-import {joiResolver} from "@hookform/resolvers/joi";
-import {usePageCreateSchema} from "./schemas/page.create.schema"
+import { useComponentAll } from "./hooks/useComponentAll";
+import { useStorePage } from "./hooks/useStorePage";
+import { useTranslation } from "react-i18next";
+import { useFieldArray, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import { usePageCreateSchema } from "./schemas/page.create.schema";
 import PageComponentTable from "./PageComponentTable";
-import IComponentModel from "../../types/component/IComponentModel"
+import IComponentModel from "../../types/component/IComponentModel";
 import ICreatablePage, {
     ICreatablePageComponentFieldModel,
-    ICreatablePageComponentModel
+    ICreatablePageComponentModel,
 } from "../../types/page/ICreatablePage";
+import ErrorMessage from "../../components/ErrorMessage";
+import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
 
 function PageCreate() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -26,37 +28,88 @@ function PageCreate() {
         control,
         register,
         handleSubmit,
-        formState: {errors}
+        formState: { errors },
+        setValue,
+        getValues
     } = useForm<ICreatablePage>({
-        resolver: joiResolver(usePageCreateSchema(), {allowUnknown: true}),
+        resolver: joiResolver(usePageCreateSchema(), { allowUnknown: true }),
     });
 
-    const {
-        fields: components_content,
-        append
-    } = useFieldArray({
+    const { fields: components_content, append } = useFieldArray({
         control,
         name: "components_content", //rename fields
     });
 
+    const setSelectedFieldDataOption = ((selected: Array<string>, pageComponentIndex: number, componentFieldIndex: number) => {
+        let val = selected.pop() ?? ''
+        setValue(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`, val)
+    })
+
+    const getSelectFieldDataOptionCurrentValue = ((pageComponentIndex: number, componentFieldIndex: number) => {
+
+        let val  = getValues(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`)
+        if (val) {
+            return [val]
+        }
+        return []
+    })
+
     const component_all_api_response = useComponentAll();
     const components = _.get(component_all_api_response, "data.data", []);
+    const { mutate, error } = useStorePage();
 
-    const {mutate} = useStorePage();
-
-    const renderComponentFieldType = (componentField: ICreatablePageComponentFieldModel, pageComponentIndex: number, componentFieldIndex: number) => {
+    const renderComponentFieldType = (
+        componentField: ICreatablePageComponentFieldModel,
+        pageComponentIndex: number,
+        componentFieldIndex: number,
+    ) => {
         switch (componentField.field_type) {
             case "textarea":
-                return <div>{t("textarea")}</div>;
+                return (
+                    <div className="p-3">
+            <textarea
+                {...register(
+                    `components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`,
+                )}
+            ></textarea>
+                        <label
+                            htmlFor={componentField.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentField.name}
+                        </label>
+                    </div>
+                );
+            case "select":
+                return (
+                    <div className="p-3">
+                        <AvoRedMultiSelectField
+                            label="test dropdown"
+                            selectedOption={getSelectFieldDataOptionCurrentValue(pageComponentIndex, componentFieldIndex)}
+                            options={componentField.field_data ?? []}
+                            onChangeSelectedOption={((val: Array<string>) => setSelectedFieldDataOption(val, pageComponentIndex, componentFieldIndex))}
+                        ></AvoRedMultiSelectField>
+                        <label
+                            htmlFor={componentField.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentField.name}
+                        </label>
+                    </div>
+                );
             case "radio":
                 return (
                     <div className="p-3">
-                        <input id={componentField.identifier}
-                               type="radio"
-                               value={componentField.identifier}
-                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                        <label htmlFor={componentField.identifier}
-                               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                        <input
+                            id={componentField.identifier}
+                            type="radio"
+                            value={componentField.identifier}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <label
+                            htmlFor={componentField.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
                             {componentField.name}
                         </label>
                     </div>
@@ -68,17 +121,28 @@ function PageCreate() {
                         <InputField
                             name={`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`}
                             label={componentField.name}
-                            register={register(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`)}
+                            register={register(
+                                `components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`,
+                            )}
                         />
                     </div>
                 );
         }
     };
 
-    const renderComponentField = (componentField: ICreatablePageComponentFieldModel, pageComponentIndex: number, componentFieldIndex: number) => {
+    const renderComponentField = (
+        componentField: ICreatablePageComponentFieldModel,
+        pageComponentIndex: number,
+        componentFieldIndex: number,
+    ) => {
         return (
             <div className="ring-1 my-2 ring-gray-200" key={componentField.id}>
-                {renderComponentFieldType(componentField, pageComponentIndex, componentFieldIndex)}
+                {JSON.stringify(componentField)}
+                {renderComponentFieldType(
+                    componentField,
+                    pageComponentIndex,
+                    componentFieldIndex,
+                )}
             </div>
         );
     };
@@ -86,11 +150,11 @@ function PageCreate() {
     const componentSelected = (e: React.MouseEvent, componentId: string) => {
         e.preventDefault();
         const selectedComponent = components.find(
-            (component: IComponentModel) => component.id === componentId
+            (component: IComponentModel) => component.id === componentId,
         );
         setIsComponentTableModalOpen(false);
 
-        append(selectedComponent)
+        append(selectedComponent);
     };
 
     const addComponentOnClick = () => {
@@ -101,7 +165,10 @@ function PageCreate() {
         setIsComponentTableModalOpen(false);
     };
 
-    const renderComponent = (pageComponent: ICreatablePageComponentModel, pageComponentIndex: number) => {
+    const renderComponent = (
+        pageComponent: ICreatablePageComponentModel,
+        pageComponentIndex: number,
+    ) => {
         return (
             <div
                 key={pageComponent.id}
@@ -112,7 +179,11 @@ function PageCreate() {
                 <div>
                     Component Fields
                     {pageComponent.fields.map((componentField, componentFieldIndex) => {
-                        return renderComponentField(componentField, pageComponentIndex, componentFieldIndex);
+                        return renderComponentField(
+                            componentField,
+                            pageComponentIndex,
+                            componentFieldIndex,
+                        );
                     })}
                 </div>
             </div>
@@ -129,10 +200,9 @@ function PageCreate() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
-                            {t("pages.information")}
+                            {t("page_information")}
                         </h1>
-                        {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
-                        {/*    receive mail.</p>*/}
+
                         <form onSubmit={handleSubmit(submitHandler)}>
                             <div className="mb-4">
                                 <InputField
@@ -140,12 +210,22 @@ function PageCreate() {
                                     placeholder={t("name")}
                                     register={register("name")}
                                 />
+                                <ErrorMessage
+                                    frontendErrors={errors}
+                                    backendErrors={error}
+                                    identifier="name"
+                                />
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    type="text"
+                                    label={t("identifier")}
                                     placeholder={t("identifier")}
                                     register={register("identifier")}
+                                />
+                                <ErrorMessage
+                                    frontendErrors={errors}
+                                    backendErrors={error}
+                                    identifier="identifier"
                                 />
                             </div>
 
@@ -161,10 +241,10 @@ function PageCreate() {
                                     className="flex"
                                     onClick={addComponentOnClick}
                                 >
-                                    <PlusIcon className="text-primary-500 h-6 w-6"/>
+                                    <PlusIcon className="text-primary-500 h-6 w-6" />
                                     <span className="text-sm ml-1 text-primary-500">
-                                        {t("add_component")}
-                                    </span>
+                    {t("add_component")}
+                  </span>
                                 </button>
                             </div>
 
@@ -173,7 +253,10 @@ function PageCreate() {
                                 modal_header={t("select_component")}
                                 modal_body={
                                     <div className="text-primary-500">
-                                        <PageComponentTable components={components} componentSelected={componentSelected} />
+                                        <PageComponentTable
+                                            components={components}
+                                            componentSelected={componentSelected}
+                                        />
                                     </div>
                                 }
                                 isOpen={isComponentTableModalOpen}

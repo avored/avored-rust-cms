@@ -72,6 +72,7 @@
   "setup_avored": "Setup avored",
   "loading": "Loading...",
   "component_information": "Component information",
+  "page_information": "Page Information",
   "locales": {
     "en_label": "English",
     "fr_label": "French"

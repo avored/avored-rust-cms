@@ -107,7 +107,7 @@ function AdminUserEdit() {
                                                 <div className="mb-4">
                                                     <div className="relative z-10">
                                                         <AvoRedMultiSelectField
-                                                            label="Roles"
+                                                            label={t("roles")}
                                                             options={roles}
                                                             selectedOption={selectedOption}
                                                             onChangeSelectedOption={setSelectedOption}

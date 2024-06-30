@@ -30,7 +30,7 @@ const AvoRedMultiSelectField = ({
                     className="w-full cursor-default h-8 rounded py-2 pl-3 pr-10 text-left text-sm shadow ring-1 ring-gray-400 focus:ring-primary-500 active:ring-primary-500 focus:outline-none"
                 >
                     <span className="block min-h:[5]">
-                        {selectedOption.map((optionId: any) => getOption(optionId).label ?? '').join(", ")}
+                        {selectedOption.map((optionId: string) => getOption(optionId)?.label ?? '').join(", ")}
                     </span>
                     <span className="pointer-events-none absolute inset-y-10  right-0 flex items-center pr-2">
                         <ChevronUpDownIcon

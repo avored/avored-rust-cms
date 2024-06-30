@@ -25,6 +25,7 @@ export interface IEditablePageComponentFieldModel {
     identifier: string;
     field_type: string;
     field_content: string;
+    field_data?: Array<any>;
     created_at: string;
     updated_at: string;
     created_by: string;
