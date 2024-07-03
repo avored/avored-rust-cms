@@ -191,6 +191,7 @@ function PageCreate() {
     };
 
     const submitHandler = async (data: ICreatablePage) => {
+        // console.log(data)
         mutate(data);
     };
 
@@ -243,8 +244,8 @@ function PageCreate() {
                                 >
                                     <PlusIcon className="text-primary-500 h-6 w-6" />
                                     <span className="text-sm ml-1 text-primary-500">
-                    {t("add_component")}
-                  </span>
+                                        {t("add_component")}
+                                    </span>
                                 </button>
                             </div>
 

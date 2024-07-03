@@ -24,9 +24,15 @@ export interface ICreatablePageComponentFieldModel {
     identifier: string;
     field_type: string;
     field_content: string;
-    field_data?: Array<any>;
+    field_data?: Array<ICreatablePageComponentFieldDataModel>;
     created_at: string;
     updated_at: string;
     created_by: string;
     updated_by: string;
+}
+
+export interface ICreatablePageComponentFieldDataModel {
+    label: string;
+    value: string;
+    field_data_content: string;
 }

@@ -114,25 +114,54 @@ impl PageRepository {
             let mut fields_sql = String::from("");
 
             for creatable_component_field_content in creatable_component_content_model.fields {
+                let mut field_data_sql = String::from("");
 
-                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
-                                                       id = creatable_component_field_content.id,
-                                                       name = creatable_component_field_content.name,
-                                                       identifier = creatable_component_field_content.identifier,
-                                                       field_type = creatable_component_field_content.field_type,
-                                                       field_content = creatable_component_field_content.field_content,
-                                                       open_brace = String::from("{"),
-                                                       close_brace = String::from("}")
+                for field_data_value in creatable_component_field_content.field_data {
+                    field_data_sql.push_str(
+                        &format!("{open_brace} \
+                                label: '{label}', \
+                                value: '{value}' \
+                                {close_brace}",
+                                open_brace = String::from("{"),
+                                label =  field_data_value.label,
+                                value = field_data_value.value,
+                                close_brace = String::from("},")
+                    ));
+                }
+
+                fields_sql.push_str(
+            &format!("{open_brace} \
+                        id: '{id}', \
+                        name: '{name}', \
+                        identifier: '{identifier}', \
+                        field_type: '{field_type}', \
+                        field_content: '{field_content}', \
+                        field_data: [{field_data_sql}]  \
+                        {close_brace}",
+                        id = creatable_component_field_content.id,
+                       name = creatable_component_field_content.name,
+                       identifier = creatable_component_field_content.identifier,
+                       field_type = creatable_component_field_content.field_type,
+                       field_data_sql = field_data_sql,
+                       field_content = creatable_component_field_content.field_content,
+                       open_brace = String::from("{"),
+                       close_brace = String::from("}")
                 ));
             }
 
-            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', fields: [{fields_sql}]  {close_brace}",
-                                                id = creatable_component_content_model.id,
-                                                name = creatable_component_content_model.name,
-                                                identifier = creatable_component_content_model.identifier,
-                                                 fields_sql = fields_sql,
-                                                open_brace = String::from("{"),
-                                                close_brace = String::from("}")
+            components_content_sql.push_str(
+                &format!("{open_brace} \
+                        id: '{id}', \
+                        name: '{name}', \
+                        identifier: '{identifier}', \
+                        fields: [{fields_sql}]  \
+                        {close_brace}",
+                        id = creatable_component_content_model.id,
+                        name = creatable_component_content_model.name,
+                        identifier = creatable_component_content_model.identifier,
+                        fields_sql = fields_sql,
+                        open_brace = String::from("{"),
+                        close_brace = String::from("}")
             ));
         }
 
@@ -182,14 +211,30 @@ impl PageRepository {
 
             for updatable_component_field_content in updatable_component_content_model.fields {
 
-                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}'  {close_brace}",
-                                                               id = updatable_component_field_content.id,
-                                                               name = updatable_component_field_content.name,
-                                                               identifier = updatable_component_field_content.identifier,
-                                                               field_type = updatable_component_field_content.field_type,
-                                                               field_content = updatable_component_field_content.field_content,
-                                                               open_brace = String::from("{"),
-                                                               close_brace = String::from("}")
+                let mut field_data_sql = String::from("");
+
+                for field_data_value in updatable_component_field_content.field_data {
+                    field_data_sql.push_str(
+                        &format!("{open_brace} \
+                                label: '{label}', \
+                                value: '{value}' \
+                                {close_brace}",
+                                 open_brace = String::from("{"),
+                                 label =  field_data_value.label,
+                                 value = field_data_value.value,
+                                 close_brace = String::from("},")
+                        ));
+                }
+
+                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}', field_data: [{field_data_sql}]  {close_brace}",
+                                             id = updatable_component_field_content.id,
+                                             name = updatable_component_field_content.name,
+                                             identifier = updatable_component_field_content.identifier,
+                                             field_type = updatable_component_field_content.field_type,
+                                             field_content = updatable_component_field_content.field_content,
+                                             field_data_sql = field_data_sql,
+                                             open_brace = String::from("{"),
+                                             close_brace = String::from("}")
                 ));
             }
 

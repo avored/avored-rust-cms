@@ -30,6 +30,13 @@ pub struct CreatableComponentFieldContentRequest {
     pub identifier: String,
     pub field_type: String,
     pub field_content: String,
+    pub field_data: Option<Vec<CreatablePageComponentFieldDataOptionRequest>>
+}
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct CreatablePageComponentFieldDataOptionRequest {
+    pub label: String,
+    pub value: String,
 }
 
 

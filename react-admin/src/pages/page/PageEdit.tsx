@@ -58,7 +58,7 @@ function PageEdit() {
     const getSelectFieldDataOptionCurrentValue = ((pageComponentIndex: number, componentFieldIndex: number) => {
 
         let val  = getValues(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`)
-        console.log(val)
+
         if (val) {
             return [val]
         }

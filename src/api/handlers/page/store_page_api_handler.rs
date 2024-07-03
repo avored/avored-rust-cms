@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel};
+use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel, CreatablePageComponentFieldDataModel};
 use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
@@ -54,12 +54,24 @@ pub async fn store_page_api_handler(
         };
 
         for  payload_component_fields_data in  payload_component_content.fields {
+            let mut payload_field_data_model_options: Vec<CreatablePageComponentFieldDataModel> = Vec::new();
+            let  payload_field_options_data = payload_component_fields_data.field_data.unwrap_or(Vec::new());
+
+            for payload_component_field_data_option in payload_field_options_data {
+                let creatable_page_field_option_data = CreatablePageComponentFieldDataModel {
+                    label: payload_component_field_data_option.label,
+                    value: payload_component_field_data_option.value,
+                };
+                payload_field_data_model_options.push(creatable_page_field_option_data);
+            }
+
             let creatable_component_field_content = CreatableComponentFieldContentModel {
                 id: payload_component_fields_data.id,
                 name: payload_component_fields_data.name,
                 identifier: payload_component_fields_data.identifier,
                 field_type: payload_component_fields_data.field_type,
                 field_content: payload_component_fields_data.field_content,
+                field_data: payload_field_data_model_options
             };
 
             creatable_component_content_model.fields.push(creatable_component_field_content);

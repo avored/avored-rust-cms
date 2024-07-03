@@ -1,16 +1,11 @@
 use rust_i18n::t;
 use serde::Deserialize;
-
 use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatePageRequest {
-    // #[validate(length(min = 1, message = "The name is a required field."))]
     pub name: String,
-
-    // #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
-
     pub components_content: Vec<UpdatableComponentContentRequest>,
 }
 
@@ -31,7 +26,16 @@ pub struct UpdatableComponentFieldContentRequest {
     pub identifier: String,
     pub field_type: String,
     pub field_content: String,
+    pub field_data: Option<Vec<EditablePageComponentFieldDataOptionRequest>>
 }
+
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct EditablePageComponentFieldDataOptionRequest {
+    pub label: String,
+    pub value: String,
+}
+
 
 impl UpdatePageRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {

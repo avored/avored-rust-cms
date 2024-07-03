@@ -23,6 +23,13 @@ pub struct ComponentFieldModel {
     pub identifier: String,
     pub field_type: String,
     pub field_content: String,
+    pub field_data: Vec<PageComponentFieldDataOption>
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct PageComponentFieldDataOption {
+    pub label: String,
+    pub value: String
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -195,18 +202,6 @@ impl TryFrom<Object> for ComponentContentModel {
             None => Vec::new(),
         };
 
-        // let field_type = match val.get("field_type") {
-        //     Some(val) => {
-        //         let value = match val.clone() {
-        //             Value::Strand(v) => v.as_string(),
-        //             _ => String::from(""),
-        //         };
-        //         value
-        //     }
-        //     None => String::from(""),
-        // };
-
-
         Ok(ComponentContentModel {
             id,
             name,
@@ -215,8 +210,6 @@ impl TryFrom<Object> for ComponentContentModel {
         })
     }
 }
-
-
 
 impl TryFrom<Object> for ComponentFieldModel {
     type Error = Error;
@@ -277,13 +270,71 @@ impl TryFrom<Object> for ComponentFieldModel {
             }
             None => String::from(""),
         };
+
+        let field_data = match val.get("field_data") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => surrealdb::sql::Object::default(),
+                            };
+
+                            let field_data_option: PageComponentFieldDataOption = object.try_into()?;
+
+                            arr.push(field_data_option)
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                };
+                value
+            }
+            None => Vec::new(),
+        };
         
         Ok(ComponentFieldModel {
             id,
             name,
             identifier,
             field_type,
-            field_content
+            field_content,
+            field_data
+        })
+    }
+}
+
+impl TryFrom<Object> for PageComponentFieldDataOption {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<PageComponentFieldDataOption> {
+        let label = match val.get("label") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+        let value = match val.get("value") {
+            Some(val) => {
+                let value = match val.clone() {
+                    Value::Strand(v) => v.as_string(),
+                    _ => String::from(""),
+                };
+                value
+            }
+            None => String::from(""),
+        };
+
+
+        Ok(PageComponentFieldDataOption {
+            label,
+            value
         })
     }
 }
@@ -322,6 +373,14 @@ pub struct CreatableComponentFieldContentModel {
     pub identifier: String,
     pub field_type: String,
     pub field_content: String,
+    pub field_data: Vec<CreatablePageComponentFieldDataModel>
+}
+
+
+#[derive(Deserialize, Debug, Clone, Default, Serialize)]
+pub struct CreatablePageComponentFieldDataModel {
+    pub label: String,
+    pub value: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -351,4 +410,12 @@ pub struct UpdatableComponentFieldContentModel {
     pub identifier: String,
     pub field_type: String,
     pub field_content: String,
+    pub field_data: Vec<UpdatablePageComponentFieldDataModel>
+}
+
+
+#[derive(Deserialize, Debug, Clone, Default, Serialize)]
+pub struct UpdatablePageComponentFieldDataModel {
+    pub label: String,
+    pub value: String,
 }

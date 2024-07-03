@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{PageModel, UpdatableComponentContentModel, UpdatableComponentFieldContentModel, UpdatablePageModel};
+use crate::models::page_model::{PageModel, UpdatableComponentContentModel, UpdatableComponentFieldContentModel, UpdatablePageComponentFieldDataModel, UpdatablePageModel};
 use crate::models::validation_error::ErrorResponse;
 use crate::{
     api::handlers::page::request::update_page_request::UpdatePageRequest,
@@ -57,12 +57,24 @@ pub async fn update_page_api_handler(
         };
 
         for  payload_component_fields_data in  payload_component_content.fields {
+            let mut payload_field_data_model_options: Vec<UpdatablePageComponentFieldDataModel> = Vec::new();
+            let  payload_field_options_data = payload_component_fields_data.field_data.unwrap_or(Vec::new());
+
+            for payload_component_field_data_option in payload_field_options_data {
+                let creatable_page_field_option_data = UpdatablePageComponentFieldDataModel {
+                    label: payload_component_field_data_option.label,
+                    value: payload_component_field_data_option.value,
+                };
+                payload_field_data_model_options.push(creatable_page_field_option_data);
+            }
+
             let updatable_component_field_content = UpdatableComponentFieldContentModel {
                 id: payload_component_fields_data.id,
                 name: payload_component_fields_data.name,
                 identifier: payload_component_fields_data.identifier,
                 field_type: payload_component_fields_data.field_type,
                 field_content: payload_component_fields_data.field_content,
+                field_data: payload_field_data_model_options
             };
 
             updatable_component_content_model.fields.push(updatable_component_field_content);
