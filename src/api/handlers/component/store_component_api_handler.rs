@@ -30,7 +30,7 @@ pub async fn store_component_api_handler(
 
     let error_messages = payload.validate()?;
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages
@@ -52,7 +52,7 @@ pub async fn store_component_api_handler(
     for payload_field in payload.fields {
         let mut creatable_field_data: Vec<CreatableFieldDataModel> = vec![];
 
-        let create_field_data_requests: Vec<FieldDataRequest> = payload_field.field_data.unwrap_or_else(|| vec![]);
+        let create_field_data_requests: Vec<FieldDataRequest> = payload_field.field_data.unwrap_or_else(std::vec::Vec::new);
 
         for create_field_data_request in create_field_data_requests {
             let create_field_data_option = CreatableFieldDataModel {

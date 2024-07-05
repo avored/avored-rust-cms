@@ -50,7 +50,7 @@ impl ComponentService {
         let pagination = Pagination {
             total: component_count.total,
             per_page: PER_PAGE,
-            current_page: current_page,
+            current_page,
             from: (start + 1),
             to,
             has_previous_page,
@@ -61,7 +61,7 @@ impl ComponentService {
 
         let mut order_column = "id";
         let mut order_type  = "ASC";
-        let mut parts = order.split(":");
+        let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
             order_type = parts.nth(1).unwrap_or("");

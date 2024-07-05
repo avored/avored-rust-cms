@@ -55,7 +55,7 @@ impl PageService {
 
         let mut order_column = "id";
         let mut order_type  = "ASC";
-        let mut parts = order.split(":");
+        let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
             order_type = parts.nth(1).unwrap_or("");

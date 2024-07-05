@@ -31,7 +31,7 @@ pub async fn update_component_api_handler(
 
     let error_messages = payload.validate()?;
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages
@@ -54,7 +54,7 @@ pub async fn update_component_api_handler(
     for payload_field in payload.fields {
 
         let mut updatable_field_data: Vec<UpdatableFieldDataModel> = vec![];
-        let update_field_data_requests: Vec<UpdatableFieldDataRequest> = payload_field.field_data.unwrap_or_else(|| vec![]);
+        let update_field_data_requests: Vec<UpdatableFieldDataRequest> = payload_field.field_data.unwrap_or_else(std::vec::Vec::new);
 
         for update_field_data_request in update_field_data_requests {
             let update_field_data_option = UpdatableFieldDataModel {

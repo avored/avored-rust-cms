@@ -57,12 +57,12 @@ impl AssetRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let total_count = match result_object {
+        
+
+        match result_object {
             Ok(obj) => obj.try_into(),
             Err(_) => Ok(ModelCount::default()),
-        };
-
-        total_count
+        }
     }
     //
     // pub async fn find_by_id(

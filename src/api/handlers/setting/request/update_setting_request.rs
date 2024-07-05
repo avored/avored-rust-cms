@@ -35,7 +35,7 @@ impl UpdateSettingRequest {
                 errors.push(error_message);
             }
 
-            i = i+1;
+            i += 1;
         }
         Ok(errors)
     }

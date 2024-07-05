@@ -21,14 +21,14 @@ pub trait Validate {
 
 impl Validate for String {
     fn required(&self) -> crate::error::Result<bool> {
-        if self.len() > 0 {
+        if !self.is_empty() {
             return Ok(true);
         }
         Ok(false)
     }
 
     fn validate_email(&self) -> crate::error::Result<bool> {
-        if !EmailAddress::is_valid(&self) {
+        if !EmailAddress::is_valid(self) {
             return Ok(false);
         }
         Ok(true)

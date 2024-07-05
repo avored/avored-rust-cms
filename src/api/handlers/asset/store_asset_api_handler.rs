@@ -14,7 +14,7 @@ use crate::error::Error;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel};
 use crate::models::token_claim_model::LoggedInUser;
 
-const ALLOW_TYPES: [&'static str; 3] = ["image/jpeg", "image/jpg", "image/png"];
+const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 
 pub async fn store_asset_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -58,7 +58,7 @@ pub async fn store_asset_api_handler(
                 creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
 
                 if !file_name.is_empty() {
-                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let file_ext = file_name.split('.').last().unwrap_or(".png");
                     let new_file_name = format!("{}.{}", s, file_ext);
 
                     let file_name = Path::new(&new_file_name).file_name().unwrap();

@@ -27,7 +27,7 @@ pub async fn store_page_api_handler(
         return Err(Error::FORBIDDEN);
     }
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages

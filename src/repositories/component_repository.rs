@@ -204,12 +204,12 @@ impl ComponentRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        let total_count = match result_object {
+        
+
+        match result_object {
             Ok(obj) => obj.try_into(),
             Err(_) => Ok(ModelCount::default()),
-        };
-
-        total_count
+        }
     }
 
     pub async fn attach_component_with_field(

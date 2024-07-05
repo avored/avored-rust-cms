@@ -26,7 +26,7 @@ impl StoreRoleRequest {
         if !self.identifier.required()? {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: String::from(format!("Identifier is a required field {}", t!("identifier")))
+                message: format!("Identifier is a required field {}", t!("identifier"))
             };
 
             errors.push(error_message);

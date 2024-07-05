@@ -37,7 +37,7 @@ pub async fn change_password_api_handler(
         error_messages.push(error_message);
     }
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages

@@ -23,7 +23,7 @@ pub async fn post_setup_avored_handler(
 
     let error_messages = payload.validate()?;
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages
@@ -195,7 +195,7 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD updated_at ON TABLE assets TYPE datetime;
     ";
 
-    let password = payload.password.as_str().as_bytes();
+    let password = payload.password.as_bytes();
     let salt = SaltString::from_b64(&state.config.password_salt)?;
 
     let argon2 = Argon2::default();

@@ -52,7 +52,6 @@ impl AdminUserService {
     ) -> Result<bool>
     {
         let from_address = String::from("info@avored.com");
-        let to_address = to_address;
         let email_subject = "Forgot your password?";
 
         let token = Alphanumeric.sample_string(&mut rand::thread_rng(), 22);
@@ -88,7 +87,7 @@ impl AdminUserService {
                     .singlepart(
                         SinglePart::builder()
                             .header(header::ContentType::TEXT_HTML)
-                            .body(String::from(forgot_password_email_content)),
+                            .body(forgot_password_email_content),
                     ),
             )?;
 
@@ -124,7 +123,7 @@ impl AdminUserService {
             }
         }
 
-        return Ok(has_permission)
+        Ok(has_permission)
     }
     pub async fn find_by_email(
         &self,
@@ -232,7 +231,7 @@ impl AdminUserService {
 
         let mut order_column = "id";
         let mut order_type  = "ASC";
-        let mut parts = order.split(":");
+        let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
             order_type = parts.nth(1).unwrap_or("");

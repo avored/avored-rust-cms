@@ -55,7 +55,7 @@ pub async fn store_admin_user_api_handler(
                 let data = field.bytes().await.expect("data expected");
 
                 if !file_name.is_empty() {
-                    let file_ext = file_name.split(".").last().unwrap_or(".png");
+                    let file_ext = file_name.split('.').last().unwrap_or(".png");
                     let new_file_name = format!("{}.{}", s, file_ext);
 
                     let file_name = Path::new(&new_file_name).file_name().unwrap();
@@ -117,7 +117,7 @@ pub async fn store_admin_user_api_handler(
     }
 
     let error_messages = payload.validate()?;
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages

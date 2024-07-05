@@ -75,7 +75,8 @@ impl TryFrom<Object> for PageModel {
 
         let components_content = match val.get("components_content") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Array(v) => {
                         let mut arr = Vec::new();
 
@@ -92,8 +93,7 @@ impl TryFrom<Object> for PageModel {
                         arr
                     }
                     _ => Vec::new(),
-                };
-                value
+                }
             }
             None => Vec::new(),
         };
@@ -148,38 +148,39 @@ impl TryFrom<Object> for ComponentContentModel {
     fn try_from(val: Object) -> Result<ComponentContentModel> {
         let id = match val.get("id") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let name = match val.get("name") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
 
         let identifier = match val.get("identifier") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let fields = match val.get("fields") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Array(v) => {
                         let mut arr = Vec::new();
 
@@ -196,8 +197,7 @@ impl TryFrom<Object> for ComponentContentModel {
                         arr
                     }
                     _ => Vec::new(),
-                };
-                value
+                }
             }
             None => Vec::new(),
         };
@@ -216,32 +216,32 @@ impl TryFrom<Object> for ComponentFieldModel {
     fn try_from(val: Object) -> Result<ComponentFieldModel> {
         let id = match val.get("id") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let name = match val.get("name") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
 
         let identifier = match val.get("identifier") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
@@ -249,11 +249,11 @@ impl TryFrom<Object> for ComponentFieldModel {
 
         let field_type = match val.get("field_type") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
@@ -262,18 +262,19 @@ impl TryFrom<Object> for ComponentFieldModel {
 
         let field_content = match val.get("field_content") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
 
         let field_data = match val.get("field_data") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Array(v) => {
                         let mut arr = Vec::new();
 
@@ -290,8 +291,7 @@ impl TryFrom<Object> for ComponentFieldModel {
                         arr
                     }
                     _ => Vec::new(),
-                };
-                value
+                }
             }
             None => Vec::new(),
         };
@@ -312,21 +312,21 @@ impl TryFrom<Object> for PageComponentFieldDataOption {
     fn try_from(val: Object) -> Result<PageComponentFieldDataOption> {
         let label = match val.get("label") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };
         let value = match val.get("value") {
             Some(val) => {
-                let value = match val.clone() {
+                
+                match val.clone() {
                     Value::Strand(v) => v.as_string(),
                     _ => String::from(""),
-                };
-                value
+                }
             }
             None => String::from(""),
         };

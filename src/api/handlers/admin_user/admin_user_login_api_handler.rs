@@ -34,7 +34,7 @@ pub async fn admin_user_login_api_handler(
 
     let error_messages = payload.validate()?;
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages
@@ -73,7 +73,7 @@ pub async fn admin_user_login_api_handler(
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret(&state.config.jwt_secret_key.as_ref()),
+        &EncodingKey::from_secret(state.config.jwt_secret_key.as_ref()),
     ).unwrap();
     let cookie = Cookie::build("token")
         .path("/")

@@ -25,7 +25,7 @@ pub async fn update_setting_all_api_handler(
 
     let error_messages = payload.validate()?;
 
-    if error_messages.len() > 0 {
+    if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
             errors: error_messages

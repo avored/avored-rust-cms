@@ -31,7 +31,7 @@ pub async fn fetch_role_api_handler(
         .await?;
     let response = FetchPageResponse {
         status: true,
-        role_model: role_model
+        role_model
     };
 
     Ok(Json(response))

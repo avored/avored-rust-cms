@@ -31,7 +31,7 @@ pub async fn fetch_page_api_handler(
         .await?;
     let response = FetchPageResponse {
         status: true,
-        page_model: page_model
+        page_model
     };
 
     Ok(Json(response))
