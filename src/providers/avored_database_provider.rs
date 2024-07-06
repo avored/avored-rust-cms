@@ -11,7 +11,9 @@ pub struct AvoRedDatabaseProvider {
 
 impl AvoRedDatabaseProvider {
     pub async fn register(config: AvoRedConfigProvider) -> Result<AvoRedDatabaseProvider> {
-        let datastore = Datastore::new("file://data/avored.db")
+        let folder_name = config.database_folder_name;
+        let path = format!("file://data/{folder_name}");
+        let datastore = Datastore::new(&path)
             .await
             .expect("there is issue with connecting with data/avored.db storage");
 

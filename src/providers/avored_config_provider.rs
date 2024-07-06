@@ -4,6 +4,7 @@ use crate::error::{Error, Result};
 
 #[derive(Debug, Clone)]
 pub struct AvoRedConfigProvider {
+    pub database_folder_name: String,
     pub database_namespace: String,
     pub database_name: String,
     pub jwt_secret_key: String,
@@ -29,6 +30,7 @@ impl AvoRedConfigProvider {
     pub fn register() -> Result<AvoRedConfigProvider> {
         dotenv().ok();
         Ok(AvoRedConfigProvider {
+            database_folder_name: get_env("AVORED_DATABASE_FOLDER_NAME")?,
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
             database_name: get_env("AVORED_DATABASE_NAME")?,
             jwt_secret_key: get_env("AVORED_JWT_SECRET")?,
