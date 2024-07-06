@@ -118,6 +118,7 @@ pub mod tests {
     pub async fn get_axum_app() -> Result<Router> {
         env::set_var("AVORED_DATABASE_NAMESPACE", "public_test");
         env::set_var("AVORED_DATABASE_NAME", "avored_cms_test");
+        env::set_var("AVORED_DATABASE_FOLDER_NAME", "avored.testdb");
 
         let state = Arc::new(AvoRedState::new().await?);
 
