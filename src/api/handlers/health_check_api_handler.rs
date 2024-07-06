@@ -47,7 +47,6 @@ mod tests {
         let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
         let body: Value = serde_json::from_slice(&body).unwrap();
         assert_eq!(body, json!(&dummy_res));
-
         Ok(())
     }
 }

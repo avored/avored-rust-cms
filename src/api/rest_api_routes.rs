@@ -115,10 +115,19 @@ pub mod tests {
             .unwrap()
     }
 
-    pub async fn get_axum_app() -> Result<Router> {
+    pub fn send_post_request(uri: &str, body: Body) -> Request<Body> {
+        Request::builder()
+            .uri(uri)
+            .header("content-type", "application/json")
+            .method("POST")
+            .body(body).unwrap()
+    }
+
+    pub async fn get_axum_app() -> Result<Router>
+    {
         env::set_var("AVORED_DATABASE_NAMESPACE", "public_test");
         env::set_var("AVORED_DATABASE_NAME", "avored_cms_test");
-        env::set_var("AVORED_DATABASE_FOLDER_NAME", "avored.testdb");
+        env::set_var("AVORED_DATABASE_FOLDER_NAME", "memory");
 
         let state = Arc::new(AvoRedState::new().await?);
 
