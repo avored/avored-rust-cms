@@ -40,11 +40,12 @@ function AdminUserEdit() {
         setSelectedOption(role_ids)
     }, [values])
 
-    const isSuperAdminSwitchOnChange = ((e: boolean) => {
-        if (!e) {
+    const isSuperAdminSwitchOnChange = ((is_checked: boolean) => {
+        if (is_checked) {
             setSelectedOption([])
         }
-        setValue("is_super_admin", e)
+        
+        setValue("is_super_admin", is_checked)
         trigger('is_super_admin')
     })
 
