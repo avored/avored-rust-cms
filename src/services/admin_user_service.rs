@@ -200,7 +200,7 @@ impl AdminUserService {
         current_page: i64,
         order: String,
     ) -> Result<AdminUserPagination> {
-        let start = (current_page - 1) * PER_PAGE;
+        let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
 
         let admin_user_model_count = self
@@ -213,7 +213,7 @@ impl AdminUserService {
             has_next_page = true;
         };
         let mut has_previous_page = false;
-        if current_page > 1 {
+        if current_page > 0 {
             has_previous_page = true;
         };
 

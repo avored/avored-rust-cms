@@ -1,6 +1,11 @@
 import {Menu, MenuButton, MenuItem, MenuItems, Transition} from "@headlessui/react"
-import {ChevronDownIcon, ChevronUpIcon} from "@heroicons/react/24/solid"
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+} from "@heroicons/react/24/solid";
 import {Column, flexRender, Table} from "@tanstack/react-table"
+import {ChevronLeftIcon} from "@heroicons/react/20/solid";
 
 
 interface Props {
@@ -47,8 +52,9 @@ const AvoRedTable = (props: Props) => {
                                                         onChange: column.getToggleVisibilityHandler(),
                                                     }}
                                                 />
-                                                <label htmlFor={`column-checkbox-visible-${column.id}`} className="pl-3">
-                                                    {getColumnName(column) }
+                                                <label htmlFor={`column-checkbox-visible-${column.id}`}
+                                                       className="pl-3">
+                                                    {getColumnName(column)}
                                                 </label>
                                             </>
                                         </MenuItem>
@@ -85,7 +91,7 @@ const AvoRedTable = (props: Props) => {
                                     }[header.column.getIsSorted() as string] ?? null}
                                 </div>
                             </th>
-                            ))}
+                        ))}
                     </tr>
                 ))}
                 </thead>
@@ -101,6 +107,24 @@ const AvoRedTable = (props: Props) => {
                 ))}
                 </tbody>
             </table>
+            <nav className="my-5 flex items-center -space-x-px">
+                <button type="button"
+                        onClick={() => props.table.previousPage()}
+                        disabled={!props.table.getCanPreviousPage()}
+                        className="py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+                    <ChevronLeftIcon className="w-4 h-4" />
+                    <span className="hidden sm:block">Previous</span>
+                </button>
+
+
+                <button type="button"
+                        onClick={() => props.table.nextPage()}
+                        disabled={!props.table.getCanNextPage()}
+                        className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+                    <span className="hidden sm:block">Next</span>
+                    <ChevronRightIcon className="w-4 h-4" />
+                </button>
+            </nav>
         </>
     )
 }

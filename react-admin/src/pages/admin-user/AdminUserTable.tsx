@@ -13,14 +13,21 @@ import {useQueryClient} from "@tanstack/react-query";
 
 function AdminUserTable() {
     const queryClient = useQueryClient()
+    const [pagination, setPagination] = useState({
+        pageIndex: 0, //initial page index
+        pageSize: 10, //default page size
+    });
     const [sorting, setSorting] = useState<SortingState>([]);
     const adminUserTableResponse = useAdminUserTable({
         order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
     })
 
-    const customSorting = ((sorting: any) => {
-        queryClient.invalidateQueries( {queryKey: ['admin-user-table']});
+    const customSorting = (async (sorting: any) => {
         setSorting(sorting)
+    })
+    const customPagination = (async (pagination: any) => {
+        setPagination(pagination)
     })
     const adminUsers: Array<IAdminUserModel> = _.get(adminUserTableResponse, 'data.data.data', [])
     const [t] = useTranslation("global");
@@ -83,21 +90,28 @@ function AdminUserTable() {
         }),
     ]
 
+    const total_record = _.get(adminUserTableResponse, 'data.data.pagination.total', 0)
+
     const table = useReactTable({
         data: adminUsers,
         columns,
         getCoreRowModel: getCoreRowModel(),
         manualSorting: true,
         onSortingChange: customSorting,
+        onPaginationChange: customPagination,
+        manualPagination: true,
         state: {
-            sorting
+            sorting,
+            pagination
         },
+        rowCount: adminUserTableResponse.data?.data.pagination.total,
         initialState: {
             columnVisibility: {
                 created_at: false,
                 created_by: false,
                 is_super_admin: false
-            }
+            },
+            pagination
         }
     })
 
@@ -119,7 +133,7 @@ function AdminUserTable() {
             <div className="px-5 ml-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
-                        {t("admin_users")}
+                        {t("admin_users")} {JSON.stringify(pagination)}
                     </div>
                     <HasPermission displayDenied={false} identifier="admin_user_create">
                         <Link
