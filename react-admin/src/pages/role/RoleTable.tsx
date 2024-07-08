@@ -13,14 +13,21 @@ import {useState} from "react";
 export default function RoleTable() {
     const queryClient = useQueryClient()
     const [sorting, setSorting] = useState<SortingState>([]);
+    const [pagination, setPagination] = useState({
+        pageIndex: 0, //initial page index
+        pageSize: 10, //default page size
+    });
     const [t] = useTranslation("global")
     const role_api_table_response = useRoleTable({
         order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
     });
+    const customPagination = (async (pagination: any) => {
+        setPagination(pagination)
+    })
     const roles: Array<IRoleModel> = _.get(role_api_table_response, 'data.data.data', [])
 
     const customSorting = ((sorting: any) => {
-        queryClient.invalidateQueries( {queryKey: ['role-table']});
         setSorting(sorting)
     })
 
@@ -78,7 +85,11 @@ export default function RoleTable() {
         data: roles,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        rowCount: role_api_table_response.data?.data.pagination.total,
+        onPaginationChange: customPagination,
+        manualPagination: true,
         initialState: {
+            pagination,
             columnVisibility: {
                 created_at: false,
                 created_by: false
@@ -87,7 +98,8 @@ export default function RoleTable() {
         manualSorting: true,
         onSortingChange: customSorting,
         state: {
-            sorting
+            sorting,
+            pagination
         },
     })
 

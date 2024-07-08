@@ -90,8 +90,6 @@ function AdminUserTable() {
         }),
     ]
 
-    const total_record = _.get(adminUserTableResponse, 'data.data.pagination.total', 0)
-
     const table = useReactTable({
         data: adminUsers,
         columns,
@@ -133,7 +131,7 @@ function AdminUserTable() {
             <div className="px-5 ml-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
-                        {t("admin_users")} {JSON.stringify(pagination)}
+                        {t("admin_users")}
                     </div>
                     <HasPermission displayDenied={false} identifier="admin_user_create">
                         <Link
