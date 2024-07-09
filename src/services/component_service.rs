@@ -30,7 +30,7 @@ impl ComponentService {
         current_page: i64,
         order: String
     ) -> Result<ComponentPagination> {
-        let start = (current_page - 1) * PER_PAGE;
+        let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
 
         let component_count = self

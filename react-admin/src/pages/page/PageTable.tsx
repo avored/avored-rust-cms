@@ -16,12 +16,19 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 
 function PageTable() {
-  const queryClient = useQueryClient();
+  const [pagination, setPagination] = useState({
+    pageIndex: 0, //initial page index
+    pageSize: 10, //default page size
+  });
   const [sorting, setSorting] = useState<SortingState>([]);
   const [t] = useTranslation("global");
   const page_api_table_response = usePageTable({
     order: sorting.map((s) => `${s.id}:${s.desc ? "DESC" : "ASC"}`).join(","),
+    page: pagination.pageIndex
   });
+  const customPagination = (async (pagination: any) => {
+    setPagination(pagination)
+  })
   const pages: Array<IPageModel> = _.get(
     page_api_table_response,
     "data.data.data",
@@ -29,7 +36,6 @@ function PageTable() {
   );
 
   const customSorting = (sorting: any) => {
-    queryClient.invalidateQueries({ queryKey: ["page-table"] });
     setSorting(sorting);
   };
 
@@ -87,16 +93,21 @@ function PageTable() {
     data: pages,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    rowCount: page_api_table_response.data?.data.pagination.total,
+    onPaginationChange: customPagination,
+    manualPagination: true,
     initialState: {
       columnVisibility: {
         created_at: false,
         created_by: false,
       },
+      pagination
     },
     manualSorting: true,
     onSortingChange: customSorting,
     state: {
       sorting,
+      pagination
     },
   });
 

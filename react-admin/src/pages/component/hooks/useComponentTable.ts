@@ -5,15 +5,21 @@ import {useNavigate} from 'react-router-dom'
 import PaginateType from "../../../types/misc/PaginateType";
 
 export const useComponentTable = (query: PaginateType) => {
+    let params: URLSearchParams = new URLSearchParams();
+    if (query.page && query.page > 0) {
+        params.append("page", query.page.toString())
+    }
+    if (query.order && query.order !== "") {
+        params.append("order", query.order)
+    }
     let query_string = "";
-    if (query.order !== "") {
-        const queryKey = query.order
-        query_string = "?" + new URLSearchParams(query).toString()
+    if (params.toString() !== "") {
+        query_string = "?" + params.toString()
     }
     const client = useAxios();
     const redirect = useNavigate();
     return useQuery({
-        queryKey: ['component-table'],
+        queryKey: ['component-table', query],
         queryFn: (async () => {
             try {
                 return await client.get("/component" + query_string)

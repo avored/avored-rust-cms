@@ -11,7 +11,6 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useState} from "react";
 
 export default function RoleTable() {
-    const queryClient = useQueryClient()
     const [sorting, setSorting] = useState<SortingState>([]);
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
