@@ -21,7 +21,7 @@ pub async fn role_table_api_handler(
         return Err(Error::FORBIDDEN);
     }
 
-    let current_page = query_param.page.unwrap_or(1);
+    let current_page = query_param.page.unwrap_or(0);
     let order = query_param.order.unwrap_or(String::from(""));
     let role_pagination = state.role_service.paginate(&state.db, current_page, order).await?;
 

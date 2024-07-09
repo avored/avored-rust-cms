@@ -5,15 +5,22 @@ import {useNavigate} from 'react-router-dom'
 import PaginateType from "../../../types/misc/PaginateType";
 
 export const usePageTable = (query: PaginateType) => {
-    let query_string = "";
-    if (query.order !== "") {
-        const queryKey = query.order
-        query_string = "?" + new URLSearchParams(query).toString()
+    let params: URLSearchParams = new URLSearchParams();
+    if (query.page && query.page > 0) {
+        params.append("page", query.page.toString())
     }
+    if (query.order && query.order !== "") {
+        params.append("order", query.order)
+    }
+    let query_string = "";
+    if (params.toString() !== "") {
+        query_string = "?" + params.toString()
+    }
+
     const client = useAxios();
     const redirect = useNavigate();
     return useQuery({
-        queryKey: ['page-table'],
+        queryKey: ['page-table', query],
         queryFn: (async () => {
             try {
                 return await client.get("/page" + query_string)

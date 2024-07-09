@@ -44,7 +44,7 @@ function AdminUserEdit() {
         if (is_checked) {
             setSelectedOption([])
         }
-        
+
         setValue("is_super_admin", is_checked)
         trigger('is_super_admin')
     })

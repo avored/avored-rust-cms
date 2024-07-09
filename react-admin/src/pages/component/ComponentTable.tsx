@@ -10,16 +10,23 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useState} from "react";
 
 function ComponentTable() {
-    const queryClient = useQueryClient()
     const [sorting, setSorting] = useState<SortingState>([]);
+    const [pagination, setPagination] = useState({
+        pageIndex: 0, //initial page index
+        pageSize: 10, //default page size
+    });
     const comoonent_api_table_response = useComponentTable({
         order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
     })
+    const customPagination = (async (pagination: any) => {
+        setPagination(pagination)
+    })
+
     const components = _.get(comoonent_api_table_response, 'data.data.data', [])
     const [t] = useTranslation("global")
 
     const customSorting = ((sorting: any) => {
-        queryClient.invalidateQueries( {queryKey: ['component-table']});
         setSorting(sorting)
     })
 
@@ -83,16 +90,22 @@ function ComponentTable() {
         data: components,
         columns,
         getCoreRowModel: getCoreRowModel(),
+        rowCount: comoonent_api_table_response.data?.data.pagination.total,
+        onPaginationChange: customPagination,
+        manualPagination: true,
+
         initialState: {
             columnVisibility: {
                 created_at: false,
                 created_by: false
-            }
+            },
+            pagination
         },
         manualSorting: true,
         onSortingChange: customSorting,
         state: {
-            sorting
+            sorting,
+            pagination
         },
     })
 
