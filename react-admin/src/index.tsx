@@ -1,6 +1,5 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {QueryClientProvider, QueryClient} from '@tanstack/react-query'
@@ -8,13 +7,19 @@ import en_locales from "./locales/en.json"
 import fr_locales from "./locales/fr.json"
 import i18next from "i18next";
 import {I18nextProvider} from "react-i18next";
+import "preline/preline";
+import { IStaticMethods } from "preline/preline";
 
 const queryClient = new QueryClient();
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-
 const currentLocale: string = localStorage.getItem("LOCALE") ?? "en"
 
-
+declare global {
+    interface Window {
+        HSStaticMethods: IStaticMethods;
+    }
+}
+window.HSStaticMethods.autoInit();
 i18next.init({
     interpolation: {escapeValue:false},
     lng: currentLocale,
