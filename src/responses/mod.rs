@@ -1,6 +1,7 @@
 use serde::Serialize;
 
 pub mod role;
+pub mod page;
 
 #[derive(Serialize)]
 pub struct ApiResponse<R> {

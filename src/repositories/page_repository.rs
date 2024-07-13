@@ -1,10 +1,10 @@
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-use surrealdb::sql::Value;
+use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
+use crate::models::page_model::{CreatablePageModel, PageModel, PutPageIdentifierModel, UpdatablePageModel};
 use crate::models::ModelCount;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::PER_PAGE;
@@ -251,7 +251,6 @@ impl PageRepository {
         let sql = format!("
                 UPDATE pages:{page_id} MERGE {open_brace}
                     name: '{name}',
-                    identifier: '{identifier}',
                     components_content: [{components_content_sql}],
                     updated_by: '{logged_in_user_email}',
                     updated_at: time::now(),
@@ -259,7 +258,6 @@ impl PageRepository {
             ",
                 page_id = updatable_admin_user.id,
                 name = updatable_admin_user.name,
-                identifier = updatable_admin_user.identifier,
                 components_content_sql = components_content_sql,
                 logged_in_user_email = logged_in_user.email,
                 open_brace = String::from("{"),
@@ -278,6 +276,60 @@ impl PageRepository {
         page_model
     }
 
+
+    pub async fn count_of_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: String
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count(identifier=$identifier) FROM pages GROUP ALL";
+
+        let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+
+        model_count
+    }
+
+    pub async fn update_page_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        put_page_identifier_model: PutPageIdentifierModel
+    ) -> Result<PageModel> {
+        let sql = "UPDATE type::thing($table, $id)
+                    SET
+                        identifier = $identifier,
+                        updated_at = $updated_at,
+                        updated_by = $updated_by
+                    ;
+        ";
+
+        let vars: BTreeMap<String, Value> = [
+            ("identifier".into(), put_page_identifier_model.identifier.into()),
+            ("table".into(), "pages".into()),
+            ("updated_at".into(), Datetime::default().into()),
+            ("updated_by".into(), put_page_identifier_model.logged_in_username.into()),
+            ("id".into(), put_page_identifier_model.id.into())
+        ].into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let updated_model: Result<PageModel> = result_object?.try_into();
+
+        updated_model
+    }
 
 
 }

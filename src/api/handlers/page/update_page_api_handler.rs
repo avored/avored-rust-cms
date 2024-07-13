@@ -42,7 +42,6 @@ pub async fn update_page_api_handler(
     let mut updatable_page = UpdatablePageModel {
         id: page_id,
         name: payload.name,
-        identifier: payload.identifier,
         component_contents: vec![],
         logged_in_username: logged_in_user.email.clone(),
     };

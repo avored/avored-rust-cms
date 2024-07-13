@@ -53,7 +53,6 @@ function RoleEdit() {
         setIsEditableIdentifier(false)
     })
     const saveIdentifierOnClick = (() => {
-        // console.log(getRoleIdentifierValue('identifier'))
         putRoleIdentifierMutate({identifier: getRoleIdentifierValue('identifier')})
         setIsEditableIdentifier(true)
     })
