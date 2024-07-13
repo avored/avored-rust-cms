@@ -364,7 +364,12 @@ pub struct CreatableComponentContentModel {
     pub fields: Vec<CreatableComponentFieldContentModel>,
 }
 
-
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutPageIdentifierModel {
+    pub id: String,
+    pub identifier: String,
+    pub logged_in_username: String
+}
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
 pub struct CreatableComponentFieldContentModel {
@@ -387,7 +392,6 @@ pub struct CreatablePageComponentFieldDataModel {
 pub struct UpdatablePageModel {
     pub id: String,
     pub name: String,
-    pub identifier: String,
     pub component_contents: Vec<UpdatableComponentContentModel>,
     pub logged_in_username: String,
 }

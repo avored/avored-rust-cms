@@ -41,7 +41,6 @@ pub async fn update_role_api_handler(
     let updateable_role_model = UpdatableRoleModel {
         id: role_id,
         name: payload.name,
-        identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
         permissions: payload.permissions,
     };

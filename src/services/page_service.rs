@@ -5,7 +5,8 @@ use crate::{
     repositories::page_repository::PageRepository,
     PER_PAGE,
 };
-use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel};
+use crate::models::ModelCount;
+use crate::models::page_model::{CreatablePageModel, PageModel, PutPageIdentifierModel, UpdatablePageModel};
 use crate::models::token_claim_model::LoggedInUser;
 
 pub struct PageService {
@@ -100,6 +101,26 @@ impl PageService {
     ) -> Result<PageModel> {
         self.page_repository
             .update_page(datastore, database_session, updatable_page_model, logged_in_user)
+            .await
+    }
+
+    pub async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        self.page_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+    pub async fn update_page_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_page_identifier_model: PutPageIdentifierModel
+    ) -> Result<PageModel> {
+        self.page_repository
+            .update_page_identifier(datastore, database_session, put_page_identifier_model)
             .await
     }
 }

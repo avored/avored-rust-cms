@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useState} from "react"
 import {Link, useParams} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
 import {TrashIcon} from "@heroicons/react/16/solid"
@@ -12,6 +12,9 @@ import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent from "../../types/field/IEditableComponent"
 import {IOptionField} from "../../types/field/IEditableField"
+import {usePutComponentIdentifier} from "./hooks/usePutComponentIdentifier"
+import {useComponentPutSchema} from "./schemas/component.put.schema";
+import {PutComponentIdentifierType} from "../../types/component/PutComponentIdentifierType";
 
 function ComponentEdit() {
 
@@ -40,6 +43,30 @@ function ComponentEdit() {
         control,
         name: "fields",
     });
+
+    const {
+        register: putComponentRegister,
+        getValues: getComponentIdentifierValue
+    } = useForm<PutComponentIdentifierType>({
+        resolver: joiResolver(useComponentPutSchema(), {allowUnknown: true}),
+        values: {
+            identifier: data?.data.component_model.identifier
+        }
+    });
+    const {mutate: putComponentIdentifierMutate} = usePutComponentIdentifier(params.component_id ?? '')
+    const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true)
+
+    const editableIdentifierOnClick = (() => {
+        setIsEditableIdentifier(false)
+    })
+    const saveIdentifierOnClick = (() => {
+        putComponentIdentifierMutate({identifier: getComponentIdentifierValue('identifier')})
+        setIsEditableIdentifier(true)
+    })
+
+    const cancelIdentifierOnClick = (() => {
+        setIsEditableIdentifier(true)
+    })
 
     const addFieldOnClick = (() => {
         append({id: '', name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
@@ -95,11 +122,35 @@ function ComponentEdit() {
                             </div>
                             <div className="mb-4">
                                 <InputField
-                                    label={t('identifier')}
-                                    placeholder={t('identifier')}
+                                    label={t("identifier")}
+                                    placeholder={t("identifier")}
                                     name="identifier"
-                                    register={register("identifier")}
+                                    register={putComponentRegister("identifier")}
+                                    disabled={isEditableIdentifier}
                                 />
+                                <div
+                                    className="mt-2"
+                                >
+                                    {isEditableIdentifier ? (
+                                        <>
+                                            <span onClick={editableIdentifierOnClick}
+                                                  className="text-xs text-blue-600 cursor-pointer">
+                                                {t("edit_identifier")}
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button type="button" onClick={saveIdentifierOnClick}
+                                                    className="text-xs text-blue-600 cursor-pointer">
+                                                {t('save')}
+                                            </button>
+                                            <button type="button" onClick={cancelIdentifierOnClick}
+                                                    className="ml-3 text-xs text-blue-600 cursor-pointer">
+                                                {t('cancel')}
+                                            </button>
+                                        </>
+                                    )}
+                                </div>
                             </div>
 
                             {fields.map((field, index) => {

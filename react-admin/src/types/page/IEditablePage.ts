@@ -4,7 +4,6 @@ import IFieldModel from "../component/IFieldModel";
 export default interface IEditablePage {
     id: string;
     name: string;
-    identifier: string;
     components_content: Array<IEditablePageComponentModel>
 }
 

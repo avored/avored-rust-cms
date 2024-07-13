@@ -142,11 +142,17 @@ pub struct CreatableComponent {
     pub logged_in_username: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutComponentIdentifierModel {
+    pub id: String,
+    pub identifier: String,
+    pub logged_in_username: String
+}
+
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableComponentModel {
     pub id: String,
     pub name: String,
-    pub identifier: String,
     pub logged_in_username: String,
 }
 

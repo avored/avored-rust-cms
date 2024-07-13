@@ -5,7 +5,6 @@ use crate::models::validation_error::{ErrorMessage, Validate};
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatePageRequest {
     pub name: String,
-    pub identifier: String,
     pub components_content: Vec<UpdatableComponentContentRequest>,
 }
 
@@ -45,15 +44,6 @@ impl UpdatePageRequest {
             let error_message = ErrorMessage {
                 key: String::from("name"),
                 message: t!("validation_required", attribute = t!("name")).to_string()
-            };
-
-            errors.push(error_message);
-        }
-
-        if !self.identifier.required()? {
-            let error_message = ErrorMessage {
-                key: String::from("identifier"),
-                message: t!("validation_required", attribute = t!("identifier")).to_string()
             };
 
             errors.push(error_message);

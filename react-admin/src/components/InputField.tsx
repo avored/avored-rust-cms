@@ -11,6 +11,7 @@ type AvoRedInputFieldProps = {
     value?: string | number;
     onChange?: () => void;
     autoFocus?: boolean;
+    disabled?: boolean;
     placeholder?: string;
     register: any;
 }
@@ -29,6 +30,7 @@ const InputField = (props: AvoRedInputFieldProps) => {
 
             <div className="mt-1">
                 <input
+                    disabled={props.disabled ?? false}
                     id={props.id ?? props.name}
                     type={props.type ?? "text"}
                     name={props.name}
@@ -36,7 +38,12 @@ const InputField = (props: AvoRedInputFieldProps) => {
                     value={props.value}
                     onChange={props.onChange}
                     autoFocus={props.autoFocus}
-                    className="appearance-none rounded-md ring-1 ring-gray-400 active::ring-primary-500 focus:ring-primary-500 relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none sm:text-sm focus:z-10"
+                    className="appearance-none rounded-md ring-1 ring-gray-400
+                            relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                            active::ring-primary-500
+                            focus:ring-primary-500 focus:outline-none focus:z-10
+                            disabled:bg-gray-200 disabled:opacity-70
+                            sm:text-sm "
                     placeholder={props.placeholder ?? props.label}
                     {...props.register}
                 />
