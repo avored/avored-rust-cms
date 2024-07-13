@@ -1,15 +1,29 @@
 import InputField from "../../components/InputField";
 import {useTranslation} from "react-i18next";
-import {UseFormRegister} from "react-hook-form";
+import {useForm, UseFormRegister} from "react-hook-form";
 import {useState} from "react";
+import {usePutRoleIdentifier} from "./hooks/usePutRoleIdentifier";
+import IEditableRole from "../../types/role/IEditableRole";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {useRoleEditSchema} from "./schemas/role.edit.schema";
+import {useRolePutSchema} from "./schemas/role.put.schema";
+import {PutRoleIdentifierType} from "../../types/role/PutRoleIdentifierType";
 
 type RoleFieldsParams = {
-    register: UseFormRegister<any>
+    register: UseFormRegister<any>;
+    role_id: string;
 }
 
-export const RoleFields = (({register}: RoleFieldsParams) => {
+export const RoleFields = (({register, role_id}: RoleFieldsParams) => {
     const [t] = useTranslation("global")
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true)
+    const {
+        register: putRoleRegister,
+        formState: {errors}
+    } = useForm<PutRoleIdentifierType>({
+        resolver: joiResolver(useRolePutSchema(), {allowUnknown: true})
+    });
+    const {mutate} = usePutRoleIdentifier(role_id)
     const editableIdentifierOnClick = (() => {
         setIsEditableIdentifier(false)
     })
@@ -36,7 +50,7 @@ export const RoleFields = (({register}: RoleFieldsParams) => {
             label={t("identifier")}
             placeholder={t("identifier")}
             name="identifier"
-            register={register("identifier")}
+            register={putRoleRegister("identifier")}
             disabled={isEditableIdentifier}
           />
           <div

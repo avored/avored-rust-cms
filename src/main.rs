@@ -15,15 +15,15 @@ use crate::{
 use crate::api::rest_api_routes::rest_api_routes;
 
 const PER_PAGE: i64 = 10;
-
-mod api;
-mod avored_state;
-mod error;
-mod middleware;
 mod models;
+mod api;
+mod middleware;
 mod providers;
 mod repositories;
 mod services;
+pub mod responses;
+mod avored_state;
+mod error;
 
 rust_i18n::i18n!("locales");
 

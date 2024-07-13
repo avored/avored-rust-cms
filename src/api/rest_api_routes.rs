@@ -37,7 +37,8 @@ use crate::api::handlers::{
     openapi_api_handler::openapi_api_handler,
     setting::setting_all_api_handler::setting_all_api_handler,
     setting::update_setting_all_api_handler::update_setting_all_api_handler,
-    admin_user::change_password_api_handler::change_password_api_handler
+    admin_user::change_password_api_handler::change_password_api_handler,
+    role::put_role_identifier_api_handler::put_role_identifier_api_handler
 };
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -68,6 +69,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))
         .route("/api/role/:role_id", get(fetch_role_api_handler))
+        .route("/api/put-role-identifier/:role_id", put(put_role_identifier_api_handler))
         .route("/api/role/:role_id", put(update_role_api_handler))
         .route("/api/admin-user", get(admin_user_table_api_handler))
         .route("/api/admin-user", post(store_admin_user_api_handler))

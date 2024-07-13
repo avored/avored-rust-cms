@@ -8,7 +8,8 @@ use crate::{
     repositories::role_repository::RoleRepository,
     PER_PAGE,
 };
-use crate::models::role_model::RoleOptionModel;
+use crate::models::ModelCount;
+use crate::models::role_model::{PutRoleIdentifierModel, RoleOptionModel};
 
 pub struct RoleService {
     role_repository: RoleRepository,
@@ -37,26 +38,6 @@ impl RoleService {
 
         Ok(role_options)
     }
-
-    // pub async fn find_by_id(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     id: String,
-    // ) -> Result<RoleModel> {
-    //     self.role_repository
-    //         .find_by_id(datastore, database_session, id)
-    //         .await
-    // }
-
-    // pub async fn update_role(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     updateable_role_model: UpdatableAdminUserModel,
-    // ) -> Result<AdminUserModel> {
-    //     self.admin_user_repository
-    //         .update_admin_user(datastore, database_session, updateable_admin_user_model)
-    //         .await
-    // }
 
     pub async fn paginate(
         &self,
@@ -110,6 +91,26 @@ impl RoleService {
             data: roles,
             pagination,
         })
+    }
+
+    pub async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        self.role_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+    pub async fn update_role_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_role_identifier_model: PutRoleIdentifierModel
+    ) -> Result<RoleModel> {
+        self.role_repository
+            .update_role_identifier(datastore, database_session, put_role_identifier_model)
+            .await
     }
 
     pub async fn create_role(

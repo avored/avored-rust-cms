@@ -47,6 +47,13 @@ impl From<surrealdb::err::Error> for Error {
     }
 }
 
+
+// impl From<surrealdb::sql::Datetime> for Error {
+//     fn from(_val: surrealdb::sql::Datetime) -> Self {
+//         Error::Generic("Surreal data time Error".to_string())
+//     }
+// }
+
 impl From<argon2::password_hash::Error> for Error {
     fn from(_val: argon2::password_hash::Error) -> Self {
         Error::Generic("Password hasher error".to_string())
