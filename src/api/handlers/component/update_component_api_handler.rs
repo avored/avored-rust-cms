@@ -43,7 +43,6 @@ pub async fn update_component_api_handler(
     let updateable_component_model = UpdatableComponentModel {
         id: component_id,
         name: payload.name,
-        identifier: payload.identifier,
         logged_in_username: logged_in_user.email.clone(),
     };
     let mut updated_component_model = state

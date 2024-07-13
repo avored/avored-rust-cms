@@ -41,6 +41,7 @@ use crate::api::handlers::{
     role::put_role_identifier_api_handler::put_role_identifier_api_handler,
     page::put_page_identifier_api_handler::put_page_identifier_api_handler
 };
+use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
@@ -64,6 +65,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/component", post(store_component_api_handler))
         .route("/api/component/:component_id", get(fetch_component_api_handler))
         .route("/api/component/:component_id", put(update_component_api_handler))
+        .route("/api/put-component-identifier/:page_id", put(put_component_identifier_api_handler))
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
         .route("/api/role-options", get(role_option_api_handler))

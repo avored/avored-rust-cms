@@ -11,6 +11,8 @@ use crate::{
     repositories::component_repository::ComponentRepository,
     PER_PAGE,
 };
+use crate::models::component_model::PutComponentIdentifierModel;
+use crate::models::ModelCount;
 
 pub struct ComponentService {
     component_repository: ComponentRepository,
@@ -115,16 +117,6 @@ impl ComponentService {
             .await
     }
 
-    // pub async fn delete_component(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     component_id: String,
-    // ) -> Result<bool> {
-    //     self.component_repository
-    //         .delete_component(datastore, database_session, component_id)
-    //         .await
-    // }
-
     pub async fn attach_component_with_field(
         &self,
         (datastore, database_session): &DB,
@@ -140,6 +132,26 @@ impl ComponentService {
                 field_model,
                 logged_in_username,
             )
+            .await
+    }
+
+    pub async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        self.component_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+    pub async fn update_component_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_component_identifier_model: PutComponentIdentifierModel
+    ) -> Result<ComponentModel> {
+        self.component_repository
+            .update_component_identifier(datastore, database_session, put_component_identifier_model)
             .await
     }
 }
