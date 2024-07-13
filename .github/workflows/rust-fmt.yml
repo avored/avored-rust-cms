@@ -1,4 +1,4 @@
-name: AvoRedCMS
+name: Rust check
 
 on: [push, pull_request]
 
