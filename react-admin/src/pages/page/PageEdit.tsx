@@ -194,7 +194,7 @@ function PageEdit() {
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
-                            {t("pages_information")}
+                            {t("page_information")}
                         </h1>
                         {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
                         {/*    receive mail.</p>*/}
