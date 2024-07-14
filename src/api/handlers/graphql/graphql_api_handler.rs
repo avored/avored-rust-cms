@@ -1,16 +1,16 @@
 use std::sync::Arc;
-use axum::extract::State;
+use axum::Extension;
 use juniper_axum::extract::JuniperRequest;
 use juniper_axum::response::JuniperResponse;
-use crate::avored_state::AvoRedState;
+use crate::providers::avored_graphql_provider::{AvoRedGraphqlSchema, Context};
 
 pub async fn graphql_api_handler(
-    state: State<Arc<AvoRedState>>,
+    Extension(schema): Extension<Arc<AvoRedGraphqlSchema>>,
+    Extension(ctx): Extension<Arc<Context>>,
     JuniperRequest(request): JuniperRequest,
 ) -> JuniperResponse {
     println!("->> {:<12} - graphql_api_handler", "HANDLER");
-    let schematest = state.clone();
-
-    JuniperResponse(request.execute(&schematest.schema, &()).await)
-
+    let res  = request.execute(&*schema, &ctx).await;
+    JuniperResponse(res)
 }
+

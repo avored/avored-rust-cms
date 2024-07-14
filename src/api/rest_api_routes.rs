@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
-use axum::{routing::get, Router, middleware};
+use axum::{routing::get, Router, middleware, Extension};
 use axum::routing::{MethodFilter, on, post, put};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use axum::http::header::HeaderValue;
+use juniper::{EmptyMutation, EmptySubscription};
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use tower_http::cors::CorsLayer;
@@ -43,8 +44,10 @@ use crate::api::handlers::{
 };
 use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
+use crate::providers::avored_graphql_provider::{Context, AvoRedGraphqlSchema};
+use crate::query::AvoRedQuery;
 
-pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
+pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
 
     let front_end_app_url = &state.config.front_end_app_url;
 
@@ -60,6 +63,12 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
             axum::http::Method::DELETE,
             axum::http::Method::OPTIONS,
         ]);
+
+    let schema = AvoRedGraphqlSchema::new(
+        AvoRedQuery,
+        EmptyMutation::new(),
+        EmptySubscription::new()
+    );
 
     Router::new()
         .route("/api/component", get(component_table_api_handler))
@@ -105,6 +114,8 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
         .with_state(state)
         .layer(cors_layer)
+        .layer(Extension(Arc::new(schema)))
+        .layer(Extension(ctx))
 }
 
 
