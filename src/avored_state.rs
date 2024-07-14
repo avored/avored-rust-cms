@@ -1,6 +1,7 @@
 use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
+use crate::providers::avored_graphql_provider::{AvoRedGraphqlContext, AvoRedGraphqlProvider, AvoRedGraphqlSchema};
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::component_repository::ComponentRepository;
@@ -20,6 +21,8 @@ use crate::services::setting_service::SettingService;
 
 pub struct AvoRedState {
     pub config: AvoRedConfigProvider,
+    pub schema: AvoRedGraphqlSchema,
+    pub context: AvoRedGraphqlContext,
     pub template: AvoRedTemplateProvider,
     pub db: DB,
     pub admin_user_service: AdminUserService,
@@ -33,6 +36,7 @@ pub struct AvoRedState {
 
 impl AvoRedState {
     pub async fn new() -> Result<AvoRedState> {
+        let avored_graphql_provider = AvoRedGraphqlProvider::register().await?;
         let avored_config_provider = AvoRedConfigProvider::register()?;
         let avored_database_provider =
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
@@ -60,6 +64,8 @@ impl AvoRedState {
 
         Ok(AvoRedState {
             config: avored_config_provider,
+            schema: avored_graphql_provider.schema,
+            context: avored_graphql_provider.context,
             template: avored_template_provider,
             db: avored_database_provider.db,
             admin_user_service,

@@ -24,6 +24,7 @@ mod services;
 pub mod responses;
 mod avored_state;
 mod error;
+mod query;
 
 rust_i18n::i18n!("locales");
 
