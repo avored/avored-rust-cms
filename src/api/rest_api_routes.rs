@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use axum::{routing::get, Router, middleware};
-use axum::routing::{post, put};
+use axum::routing::{MethodFilter, on, post, put};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use axum::http::header::HeaderValue;
 use crate::avored_state::AvoRedState;
@@ -42,6 +42,7 @@ use crate::api::handlers::{
     page::put_page_identifier_api_handler::put_page_identifier_api_handler
 };
 use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
+use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
@@ -89,6 +90,10 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/openapi.json", get(openapi_api_handler))
         .route("/api/setting", get(setting_all_api_handler))
         .route("/api/setting", post(update_setting_all_api_handler))
+        .route("/graphql", on(
+            MethodFilter::GET.or(MethodFilter::POST),
+            graphql_api_handler,
+        ),)
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_jwt_authentication,

@@ -8,4 +8,5 @@ pub mod asset;
 pub mod component;
 pub mod setup;
 pub mod setting;
+pub mod graphql;
 
