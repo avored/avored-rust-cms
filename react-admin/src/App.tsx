@@ -27,6 +27,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import ChangePassword from './pages/admin-user/ChangePassword';
 import { ModelTablePage } from "./pages/models/ModelTablePage";
 import {ModelCreatePage} from "./pages/models/ModelCreatePage";
+import { ModelEditPage } from "./pages/models/ModelEditPage";
 
 function App() {
     return (
@@ -52,6 +53,7 @@ function App() {
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
                     <Route path="/admin/model"   element={<ModelTablePage />} />
                     <Route path="/admin/model-create"   element={<ModelCreatePage />} />
+                    <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />
                     <Route path="/admin/page"   element={<PageTable />} />
                     <Route path="/admin/page-create"   element={<PageCreate />} />
                     <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />

@@ -1,8 +1,8 @@
 use crate::{error::Result, models::{
     model_model::{CreatableModel, ModelModel},
 }, PER_PAGE, providers::avored_database_provider::DB, repositories::model_repository::ModelRepository};
-use crate::models::model_model::ModelPagination;
-use crate::models::Pagination;
+use crate::models::model_model::{ModelPagination, PutModelIdentifierModel, UpdatableModelModel};
+use crate::models::{ModelCount, Pagination};
 
 pub struct ModelService {
     model_repository: ModelRepository,
@@ -77,5 +77,47 @@ impl ModelService {
             data: paginated_models,
             pagination,
         })
+    }
+
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: String,
+    ) -> Result<ModelModel> {
+        self.model_repository
+            .find_by_id(datastore, database_session, id)
+            .await
+    }
+
+
+    pub async fn update_model_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_model_identifier_model: PutModelIdentifierModel
+    ) -> Result<ModelModel> {
+        self.model_repository
+            .update_model_identifier(datastore, database_session, put_model_identifier_model)
+            .await
+    }
+
+    pub async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        self.model_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+
+    pub async fn update_model(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_model_model: UpdatableModelModel,
+    ) -> Result<ModelModel> {
+        self.model_repository
+            .update_model(datastore, database_session, updatable_model_model)
+            .await
     }
 }

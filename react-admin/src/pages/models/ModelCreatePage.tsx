@@ -6,7 +6,7 @@ import {joiResolver} from "@hookform/resolvers/joi";
 import ErrorMessage from "../../components/ErrorMessage";
 import {CreatableModelType} from "../../types/model/CreatableModelType";
 import {useStoreModel} from "./hooks/useStoreModel";
-import {usePageCreateSchema} from "./schemas/PageCreateSchema";
+import {useModelCreateSchema} from "./schemas/ModelCreateSchema";
 
 export const ModelCreatePage = () => {
     const [t] = useTranslation("global")
@@ -16,7 +16,7 @@ export const ModelCreatePage = () => {
         handleSubmit,
         formState: {errors},
     } = useForm<CreatableModelType>({
-        resolver: joiResolver(usePageCreateSchema(), {allowUnknown: true}),
+        resolver: joiResolver(useModelCreateSchema(), {allowUnknown: true}),
     })
 
     const submitHandler = ((data: CreatableModelType) => {

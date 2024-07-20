@@ -7,7 +7,6 @@ import IEditableRole from "../../types/role/IEditableRole";
 import {useRoleEditSchema} from "./schemas/role.edit.schema";
 import {useUpdateRole} from "./hooks/useUpdateRole";
 import {useGetRole} from "./hooks/useGetRole";
-import {RoleFields} from "./RoleFields";
 import InputField from "../../components/InputField";
 import {useState} from "react";
 import {PutRoleIdentifierType} from "../../types/role/PutRoleIdentifierType";
@@ -81,8 +80,7 @@ function RoleEdit() {
     })
 
     const submitHandler = ((data: IEditableRole) => {
-        console.log(data)
-        // mutate(data)
+        mutate(data)
     })
 
     const renderSwitch = ((switchKey: string) => {

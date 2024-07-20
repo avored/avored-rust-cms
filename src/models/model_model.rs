@@ -21,6 +21,21 @@ pub struct ModelPagination {
 }
 
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutModelIdentifierModel {
+    pub id: String,
+    pub identifier: String,
+    pub logged_in_username: String
+}
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableModelModel {
+    pub id: String,
+    pub name: String,
+    pub logged_in_username: String
+}
+
 impl TryFrom<Object> for ModelModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ModelModel> {
