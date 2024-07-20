@@ -13,6 +13,7 @@ use crate::{
     error::Result
 };
 use crate::api::rest_api_routes::rest_api_routes;
+use crate::providers::avored_graphql_provider::{ Context};
 
 const PER_PAGE: i64 = 10;
 mod models;
@@ -32,11 +33,12 @@ rust_i18n::i18n!("locales");
 async fn main() -> Result<()> {
     init_log();
     let state = Arc::new(AvoRedState::new().await?);
+    let ctx = Arc::new(Context::new().await?);
 
     let static_routing_service = ServeDir::new("public");
 
     let app = Router::new()
-        .merge(rest_api_routes(state.clone()))
+        .merge(rest_api_routes(state.clone(), ctx))
         .nest_service("/public", static_routing_service)
         .layer(DefaultBodyLimit::max(104857600))
     ;
