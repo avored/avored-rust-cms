@@ -4,13 +4,13 @@ import {useStoreRole} from "./hooks/useStoreRole";
 import {useTranslation} from "react-i18next";
 import {Controller, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import ICreatableRole from "../../types/role/ICreatableRole";
 import {useRoleCreateSchema} from "./schemas/role.create.schema";
 import InputField from "../../components/InputField";
-import {RoleFields} from "./RoleFields";
+import ErrorMessage from "../../components/ErrorMessage";
+import {CreatableRoleType} from "../../types/role/CreatableRoleType";
 
 function RoleCreate() {
-    const {mutate} = useStoreRole()
+    const {mutate, error} = useStoreRole()
     const [t] = useTranslation("global")
 
     const {
@@ -20,7 +20,7 @@ function RoleCreate() {
         formState: {errors},
         setValue,
         getValues
-    } = useForm<ICreatableRole>({
+    } = useForm<CreatableRoleType>({
         resolver: joiResolver(useRoleCreateSchema(), {allowUnknown: true}),
     });
 
@@ -43,7 +43,7 @@ function RoleCreate() {
         return (index >= 0)
     })
 
-    const submitHandler = ((data: ICreatableRole) => {
+    const submitHandler = ((data: CreatableRoleType) => {
         mutate(data)
     })
 
@@ -99,7 +99,25 @@ function RoleCreate() {
                         </h1>
 
                         <form onSubmit={handleSubmit(submitHandler)}>
-                            <RoleFields register={register} />
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("name")}
+                                    placeholder={t("name")}
+                                    name="name"
+                                    register={register("name")}
+                                    autoFocus={true}
+                                />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
+                            </div>
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("identifier")}
+                                    placeholder={t("identifier")}
+                                    name="identifier"
+                                    register={register("identifier")}
+                                />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="identifier" />
+                            </div>
 
                             <div className="mb-4 flex">
                                 <div className="border w-1/3 border-gray-200 rounded">

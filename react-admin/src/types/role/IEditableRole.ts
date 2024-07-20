@@ -1,5 +1,5 @@
-import IRoleFields from "./RoleFields";
-
-export default  interface IEditableRole extends IRoleFields {
+export default  interface IEditableRole {
     id: string;
+    name: string;
+    permissions: Array<string>;
 }

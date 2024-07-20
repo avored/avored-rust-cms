@@ -14,9 +14,11 @@ use crate::services::field_service::FieldService;
 use crate::services::page_service::PageService;
 use crate::services::role_service::RoleService;
 use crate::repositories::asset_repository::AssetRepository;
+use crate::repositories::model_repository::ModelRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::setting_repository::SettingRepository;
 use crate::services::asset_service::AssetService;
+use crate::services::model_service::ModelService;
 use crate::services::setting_service::SettingService;
 
 pub struct AvoRedState {
@@ -31,7 +33,8 @@ pub struct AvoRedState {
     pub field_service: FieldService,
     pub page_service: PageService,
     pub asset_service: AssetService,
-    pub setting_service: SettingService
+    pub setting_service: SettingService,
+    pub model_service: ModelService
 }
 
 impl juniper::Context for AvoRedState{}
@@ -47,6 +50,7 @@ impl AvoRedState {
             avored_config_provider.clone()
         ).await?;
 
+        let model_repository = ModelRepository::new();
         let admin_user_repository = AdminUserRepository::new();
         let role_repository = RoleRepository::new();
         let component_repository = ComponentRepository::new();
@@ -63,6 +67,7 @@ impl AvoRedState {
         let page_service = PageService::new(page_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;
+        let model_service = ModelService::new(model_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -74,7 +79,8 @@ impl AvoRedState {
             field_service,
             page_service,
             asset_service,
-            setting_service
+            setting_service,
+            model_service
         })
     }
 }

@@ -2,19 +2,18 @@ import {useMutation} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
-import {PutRoleIdentifierType} from "../../../types/role/PutRoleIdentifierType";
+import {CreatableModelType} from "../../../types/model/CreatableModelType";
 
-export const usePutRoleIdentifier = (role_id: string) => {
+export const useStoreModel = () => {
     const client = useAxios();
     const redirect = useNavigate();
     return useMutation({
-        mutationFn: async (data: PutRoleIdentifierType) => {
-            const url = '/put-role-identifier/'  + role_id;
-            return await client.put(url , JSON.stringify(data));
+        mutationFn: async (data: CreatableModelType) => {
+            return await client.post('/model', JSON.stringify(data));
         },
         onSuccess: (res) => {
             if (_.get(res, 'data.status') === true) {
-                redirect("/admin/role-edit/" + role_id)
+                redirect("/admin/model")
             }
         }
     })

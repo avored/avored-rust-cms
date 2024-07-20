@@ -11,6 +11,7 @@ pub mod role_repository;
 
 pub mod asset_repository;
 pub mod setting_repository;
+pub mod model_repository;
 
 fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {
     let response = responses

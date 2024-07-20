@@ -9,4 +9,5 @@ pub mod component;
 pub mod setup;
 pub mod setting;
 pub mod graphql;
+pub mod model;
 
