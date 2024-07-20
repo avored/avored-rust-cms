@@ -1,7 +1,7 @@
 import {Link, Outlet} from "react-router-dom";
 import {Menu} from "@headlessui/react";
 import {useTranslation} from "react-i18next";
-import {ChevronDownIcon, FilmIcon, RocketLaunchIcon, CpuChipIcon} from "@heroicons/react/24/solid";
+import {ChevronDownIcon, FilmIcon, RocketLaunchIcon, CpuChipIcon, DeviceTabletIcon} from "@heroicons/react/24/solid";
 
 function AppSidebar() {
     const [t] = useTranslation("global");
@@ -56,6 +56,17 @@ function AppSidebar() {
                                 </div>
                                 <div>{t("sidebar.assets_manager")}</div>
                             </Link>
+
+                            <Link
+                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
+                                to={`/admin/model`}
+                            >
+                                <div className="pr-2">
+                                    <DeviceTabletIcon className="h-4 w-4" />
+                                </div>
+                                <div>{t("model")}</div>
+                            </Link>
+
                         </li>
 
                         <div className="section border-b pt-4 mb-4 text-xs text-gray-600 border-gray-700 pb-1 pl-3">

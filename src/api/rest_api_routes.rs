@@ -44,6 +44,8 @@ use crate::api::handlers::{
 };
 use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
+use crate::api::handlers::model::model_table_api_handler::model_table_api_handler;
+use crate::api::handlers::model::store_model_api_handler::store_model_api_handler;
 use crate::providers::avored_graphql_provider::{Context, AvoRedGraphqlSchema};
 use crate::query::AvoRedQuery;
 
@@ -90,6 +92,8 @@ pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
         .route("/api/admin-user/:admin_user_id", put(update_admin_user_api_handler))
         .route("/api/logged-in-user", get(logged_in_user_api_handler))
         .route("/api/admin-user/:admin_user_id", get(fetch_admin_user_api_handler))
+        .route("/api/model", get(model_table_api_handler))
+        .route("/api/model", post(store_model_api_handler))
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
         .route("/api/page/:page_id", put(update_page_api_handler))

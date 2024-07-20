@@ -74,6 +74,8 @@
   "loading": "Loading...",
   "component_information": "Component information",
   "page_information": "Page Information",
+  "model": "Model",
+  "model_information": "Model Information",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
@@ -95,21 +97,7 @@
     "role": "Role",
     "setting": "Setting"
   },
-  "component": {
-    "components": "Components",
-    "information": "Component Information"
-  },
   "pages": {
-    "pages": "Pages",
-    "information": "Page Information",
-    "component": {
-      "field_name": "Field Name",
-      "field_identifier": "Field Identifier",
-      "option_value": "Option value",
-      "option_label": "Option label",
-      "options": "Options",
-      "add_option": "Add option"
-    },
     "role": {
       "permissions": {
         "dashboard": "Dashboard",

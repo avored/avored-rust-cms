@@ -1,0 +1,63 @@
+use std::sync::Arc;
+
+use crate::error::Error;
+use crate::models::validation_error::ErrorResponse;
+use crate::{
+    avored_state::AvoRedState, error::Result
+};
+use axum::{Extension, extract::State, Json};
+use serde::Serialize;
+use crate::api::handlers::model::request::store_model_request::StoreModelRequest;
+use crate::models::model_model::{CreatableModel, ModelModel};
+use crate::models::token_claim_model::LoggedInUser;
+
+
+pub async fn store_model_api_handler(
+    Extension(logged_in_user): Extension<LoggedInUser>,
+    state: State<Arc<AvoRedState>>,
+    Json(payload): Json<StoreModelRequest>,
+) -> Result<Json<CreatedModelResponse>> {
+    println!("->> {:<12} - store_model_api_handler", "HANDLER");
+
+    let has_permission_bool = state
+        .admin_user_service
+        .has_permission(logged_in_user.clone(), String::from("model_create"))
+        .await?;
+    if !has_permission_bool {
+        return Err(Error::FORBIDDEN);
+    }
+
+    let error_messages = payload.validate()?;
+
+    if !error_messages.is_empty() {
+        let error_response = ErrorResponse {
+            status: false,
+            errors: error_messages
+        };
+
+        return Err(Error::BadRequestError(error_response));
+    }
+
+    let creatable_model = CreatableModel {
+        name: payload.name,
+        identifier: payload.identifier,
+        logged_in_username: logged_in_user.email
+    };
+
+    let created_model_model = state
+        .model_service
+        .create_model(&state.db, creatable_model)
+        .await?;
+    let response = CreatedModelResponse {
+        status: true,
+        model_model: created_model_model
+    };
+
+    Ok(Json(response))
+}
+
+#[derive(Serialize, Debug)]
+pub struct CreatedModelResponse {
+    pub status: bool,
+    pub model_model: ModelModel
+}
