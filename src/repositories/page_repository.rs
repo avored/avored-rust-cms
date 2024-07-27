@@ -26,7 +26,7 @@ impl PageRepository {
         database_session: &Session,
         start: i64,
         order_column: String,
-        order_type: String
+        order_type: String,
     ) -> Result<Vec<PageModel>> {
         let sql = format!("\
             SELECT * \
@@ -103,66 +103,60 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         creatable_page_model: CreatablePageModel,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<PageModel> {
-
         let mut components_content_sql = String::from("");
 
         //@todo skip the last loop with comma think of how to make a comma and skip the last one.
         for creatable_component_content_model in creatable_page_model.component_contents {
+            let mut elements_sql = String::from("");
 
-            let mut fields_sql = String::from("");
+            for creatable_component_element_content in creatable_component_content_model.elements {
+                let mut element_data_sql = String::from("");
 
-            for creatable_component_field_content in creatable_component_content_model.fields {
-                let mut field_data_sql = String::from("");
-
-                for field_data_value in creatable_component_field_content.field_data {
-                    field_data_sql.push_str(
+                for element_data_value in creatable_component_element_content.element_data {
+                    element_data_sql.push_str(
                         &format!("{open_brace} \
                                 label: '{label}', \
                                 value: '{value}' \
-                                {close_brace}",
-                                open_brace = String::from("{"),
-                                label =  field_data_value.label,
-                                value = field_data_value.value,
-                                close_brace = String::from("},")
-                    ));
+                                {close_brace},",
+                                 open_brace = String::from("{"),
+                                 label = element_data_value.label,
+                                 value = element_data_value.value,
+                                 close_brace = String::from("},")
+                        ));
                 }
 
-                fields_sql.push_str(
-            &format!("{open_brace} \
-                        id: '{id}', \
+                elements_sql.push_str(
+                    &format!("{open_brace} \
                         name: '{name}', \
                         identifier: '{identifier}', \
-                        field_type: '{field_type}', \
-                        field_content: '{field_content}', \
-                        field_data: [{field_data_sql}]  \
-                        {close_brace}",
-                        id = creatable_component_field_content.id,
-                       name = creatable_component_field_content.name,
-                       identifier = creatable_component_field_content.identifier,
-                       field_type = creatable_component_field_content.field_type,
-                       field_data_sql = field_data_sql,
-                       field_content = creatable_component_field_content.field_content,
-                       open_brace = String::from("{"),
-                       close_brace = String::from("}")
-                ));
+                        element_type: '{element_type}', \
+                        element_content: '{element_content}', \
+                        element_data: [{element_data_sql}]  \
+                        {close_brace},",
+                             name = creatable_component_element_content.name,
+                             identifier = creatable_component_element_content.identifier,
+                             element_type = creatable_component_element_content.element_type,
+                             element_data_sql = element_data_sql,
+                             element_content = creatable_component_element_content.element_content,
+                             open_brace = String::from("{"),
+                             close_brace = String::from("}")
+                    ));
             }
 
             components_content_sql.push_str(
                 &format!("{open_brace} \
-                        id: '{id}', \
                         name: '{name}', \
                         identifier: '{identifier}', \
-                        fields: [{fields_sql}]  \
-                        {close_brace}",
-                        id = creatable_component_content_model.id,
-                        name = creatable_component_content_model.name,
-                        identifier = creatable_component_content_model.identifier,
-                        fields_sql = fields_sql,
-                        open_brace = String::from("{"),
-                        close_brace = String::from("}")
-            ));
+                        elements: [{elements_sql}]  \
+                        {close_brace},",
+                         name = creatable_component_content_model.name,
+                         identifier = creatable_component_content_model.identifier,
+                         elements_sql = elements_sql,
+                         open_brace = String::from("{"),
+                         close_brace = String::from("}")
+                ));
         }
 
         let sql = format!("
@@ -176,12 +170,12 @@ impl PageRepository {
                     updated_at: time::now(),
                 {close_brace};
             ",
-            name = creatable_page_model.name,
-            identifier = creatable_page_model.identifier,
-            components_content_sql = components_content_sql,
-            logged_in_user_email = logged_in_user.email,
-            open_brace = String::from("{"),
-            close_brace = String::from("}")
+                          name = creatable_page_model.name,
+                          identifier = creatable_page_model.identifier,
+                          components_content_sql = components_content_sql,
+                          logged_in_user_email = logged_in_user.email,
+                          open_brace = String::from("{"),
+                          close_brace = String::from("}")
         );
         let responses = datastore.execute(&sql, database_session, None).await?;
 
@@ -200,49 +194,45 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         updatable_admin_user: UpdatablePageModel,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<PageModel> {
         let mut components_content_sql = String::from("");
 
         //@todo skip the last loop with comma think of how to make a comma and skip the last one.
         for updatable_component_content_model in updatable_admin_user.component_contents {
+            let mut elements_sql = String::from("");
 
-            let mut fields_sql = String::from("");
+            for updatable_component_element_content in updatable_component_content_model.elements {
+                let mut element_data_sql = String::from("");
 
-            for updatable_component_field_content in updatable_component_content_model.fields {
-
-                let mut field_data_sql = String::from("");
-
-                for field_data_value in updatable_component_field_content.field_data {
-                    field_data_sql.push_str(
+                for element_data_value in updatable_component_element_content.element_data {
+                    element_data_sql.push_str(
                         &format!("{open_brace} \
                                 label: '{label}', \
                                 value: '{value}' \
-                                {close_brace}",
+                                {close_brace},",
                                  open_brace = String::from("{"),
-                                 label =  field_data_value.label,
-                                 value = field_data_value.value,
+                                 label = element_data_value.label,
+                                 value = element_data_value.value,
                                  close_brace = String::from("},")
                         ));
                 }
 
-                fields_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', field_type: '{field_type}', field_content: '{field_content}', field_data: [{field_data_sql}]  {close_brace}",
-                                             id = updatable_component_field_content.id,
-                                             name = updatable_component_field_content.name,
-                                             identifier = updatable_component_field_content.identifier,
-                                             field_type = updatable_component_field_content.field_type,
-                                             field_content = updatable_component_field_content.field_content,
-                                             field_data_sql = field_data_sql,
-                                             open_brace = String::from("{"),
-                                             close_brace = String::from("}")
+                elements_sql.push_str(&format!("{open_brace} name: '{name}', identifier: '{identifier}', element_type: '{element_type}', element_content: '{element_content}', element_data: [{element_data_sql}]  {close_brace},",
+                                               name = updatable_component_element_content.name,
+                                               identifier = updatable_component_element_content.identifier,
+                                               element_type = updatable_component_element_content.element_type,
+                                               element_content = updatable_component_element_content.element_content,
+                                               element_data_sql = element_data_sql,
+                                               open_brace = String::from("{"),
+                                               close_brace = String::from("}")
                 ));
             }
 
-            components_content_sql.push_str(&format!("{open_brace} id: '{id}', name: '{name}', identifier: '{identifier}', fields: [{fields_sql}]  {close_brace}",
-                                                     id = updatable_component_content_model.id,
+            components_content_sql.push_str(&format!("{open_brace} name: '{name}', identifier: '{identifier}', elements: [{elements_sql}]  {close_brace},",
                                                      name = updatable_component_content_model.name,
                                                      identifier = updatable_component_content_model.identifier,
-                                                     fields_sql = fields_sql,
+                                                     elements_sql = elements_sql,
                                                      open_brace = String::from("{"),
                                                      close_brace = String::from("}")
             ));
@@ -256,13 +246,14 @@ impl PageRepository {
                     updated_at: time::now(),
                 {close_brace};
             ",
-                page_id = updatable_admin_user.id,
-                name = updatable_admin_user.name,
-                components_content_sql = components_content_sql,
-                logged_in_user_email = logged_in_user.email,
-                open_brace = String::from("{"),
-                close_brace = String::from("}")
+                          page_id = updatable_admin_user.id,
+                          name = updatable_admin_user.name,
+                          components_content_sql = components_content_sql,
+                          logged_in_user_email = logged_in_user.email,
+                          open_brace = String::from("{"),
+                          close_brace = String::from("}")
         );
+        println!("SQL: {}", sql);
 
         let responses = datastore.execute(&sql, database_session, None).await?;
 
@@ -281,7 +272,7 @@ impl PageRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        identifier: String
+        identifier: String,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(identifier=$identifier) FROM pages GROUP ALL";
 
@@ -302,7 +293,7 @@ impl PageRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        put_page_identifier_model: PutPageIdentifierModel
+        put_page_identifier_model: PutPageIdentifierModel,
     ) -> Result<PageModel> {
         let sql = "UPDATE type::thing($table, $id)
                     SET
@@ -330,6 +321,4 @@ impl PageRepository {
 
         updated_model
     }
-
-
 }

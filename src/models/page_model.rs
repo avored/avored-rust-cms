@@ -9,21 +9,19 @@ use super::Pagination;
 // This one should contain components and components fields with content
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ComponentContentModel {
-    pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<ComponentFieldModel>,
+    pub elements: Vec<ComponentElementModel>,
 }
 
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-pub struct ComponentFieldModel {
-    pub id: String,
+pub struct ComponentElementModel {
     pub name: String,
     pub identifier: String,
-    pub field_type: String,
-    pub field_content: String,
-    pub field_data: Vec<PageComponentFieldDataOption>
+    pub element_type: String,
+    pub element_content: String,
+    pub element_data: Vec<PageComponentFieldDataOption>
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -146,16 +144,6 @@ impl TryFrom<Object> for PageModel {
 impl TryFrom<Object> for ComponentContentModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentContentModel> {
-        let id = match val.get("id") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
         let name = match val.get("name") {
             Some(val) => {
                 
@@ -177,7 +165,7 @@ impl TryFrom<Object> for ComponentContentModel {
             }
             None => String::from(""),
         };
-        let fields = match val.get("fields") {
+        let elements = match val.get("elements") {
             Some(val) => {
                 
                 match val.clone() {
@@ -190,7 +178,7 @@ impl TryFrom<Object> for ComponentContentModel {
                                 _ => surrealdb::sql::Object::default(),
                             };
 
-                            let order_product_model: ComponentFieldModel = object.try_into()?;
+                            let order_product_model: ComponentElementModel = object.try_into()?;
 
                             arr.push(order_product_model)
                         }
@@ -203,27 +191,17 @@ impl TryFrom<Object> for ComponentContentModel {
         };
 
         Ok(ComponentContentModel {
-            id,
             name,
             identifier,
-            fields
+            elements
         })
     }
 }
 
-impl TryFrom<Object> for ComponentFieldModel {
+impl TryFrom<Object> for ComponentElementModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<ComponentFieldModel> {
-        let id = match val.get("id") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
+    fn try_from(val: Object) -> Result<ComponentElementModel> {
+
         let name = match val.get("name") {
             Some(val) => {
                 
@@ -247,7 +225,7 @@ impl TryFrom<Object> for ComponentFieldModel {
         };
 
 
-        let field_type = match val.get("field_type") {
+        let element_type = match val.get("element_type") {
             Some(val) => {
                 
                 match val.clone() {
@@ -260,7 +238,7 @@ impl TryFrom<Object> for ComponentFieldModel {
 
 
 
-        let field_content = match val.get("field_content") {
+        let element_content = match val.get("element_content") {
             Some(val) => {
                 
                 match val.clone() {
@@ -271,7 +249,7 @@ impl TryFrom<Object> for ComponentFieldModel {
             None => String::from(""),
         };
 
-        let field_data = match val.get("field_data") {
+        let element_data = match val.get("element_data") {
             Some(val) => {
                 
                 match val.clone() {
@@ -296,13 +274,12 @@ impl TryFrom<Object> for ComponentFieldModel {
             None => Vec::new(),
         };
         
-        Ok(ComponentFieldModel {
-            id,
+        Ok(ComponentElementModel {
             name,
             identifier,
-            field_type,
-            field_content,
-            field_data
+            element_type,
+            element_content,
+            element_data
         })
     }
 }
@@ -358,10 +335,9 @@ pub struct CreatablePageModel {
 // This one should contain components and components fields with content
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreatableComponentContentModel {
-    pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<CreatableComponentFieldContentModel>,
+    pub elements: Vec<CreatableComponentElementContentModel>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -372,18 +348,17 @@ pub struct PutPageIdentifierModel {
 }
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-pub struct CreatableComponentFieldContentModel {
-    pub id: String,
+pub struct CreatableComponentElementContentModel {
     pub name: String,
     pub identifier: String,
-    pub field_type: String,
-    pub field_content: String,
-    pub field_data: Vec<CreatablePageComponentFieldDataModel>
+    pub element_type: String,
+    pub element_content: String,
+    pub element_data: Vec<CreatablePageComponentElementDataModel>
 }
 
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-pub struct CreatablePageComponentFieldDataModel {
+pub struct CreatablePageComponentElementDataModel {
     pub label: String,
     pub value: String,
 }
@@ -399,27 +374,23 @@ pub struct UpdatablePageModel {
 // This one should contain components and components fields with content
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct UpdatableComponentContentModel {
-    pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<UpdatableComponentFieldContentModel>,
+    pub elements: Vec<UpdatableComponentElementContentModel>,
 }
 
-
-
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-pub struct UpdatableComponentFieldContentModel {
-    pub id: String,
+pub struct UpdatableComponentElementContentModel {
     pub name: String,
     pub identifier: String,
-    pub field_type: String,
-    pub field_content: String,
-    pub field_data: Vec<UpdatablePageComponentFieldDataModel>
+    pub element_type: String,
+    pub element_content: String,
+    pub element_data: Vec<UpdatablePageComponentElementDataModel>
 }
 
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-pub struct UpdatablePageComponentFieldDataModel {
+pub struct UpdatablePageComponentElementDataModel {
     pub label: String,
     pub value: String,
 }

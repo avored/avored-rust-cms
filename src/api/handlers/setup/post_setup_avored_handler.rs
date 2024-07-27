@@ -146,7 +146,7 @@ pub async fn post_setup_avored_handler(
         CREATE pages CONTENT {
             name: 'Home Page',
             identifier: 'home-page',
-            components_content: [{id: 'test id', name: 'test name', identifier: 'test identifier', fields: [{id: 'test id', name: 'test name', identifier: 'test identifier', field_type: 'text', field_content: 'test field content 1'}] }],
+            components_content: [{id: 'test id', name: 'test name', identifier: 'test identifier', elements: [{name: 'test name', identifier: 'test identifier', element_type: 'text', element_content: 'test field content 1'}] }],
             created_by: $full_name,
             updated_by: $full_name,
             created_at: time::now(),

@@ -82,15 +82,15 @@ impl ComponentRepository {
             let mut element_data_sql = String::from("");
             let update_element_data_model: Vec<ComponentElementDataModel> = element.element_data.unwrap_or_default();
 
-            for update_element_data in update_element_data_model {
+            for create_element_data in update_element_data_model {
                 element_data_sql.push_str(&format!(
                     "{open_brace} \
                     label: '{label}', \
                     value: '{value}'  \
-                    {close_brace}\
-                    ,",
-                    label = update_element_data.label,
-                    value = update_element_data.value,
+                    {close_brace},\
+                    ",
+                    label = create_element_data.label,
+                    value = create_element_data.value,
                     open_brace = String::from("{"),
                     close_brace = String::from("}")
                 ));
@@ -102,7 +102,7 @@ impl ComponentRepository {
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
                                 element_data: [{element_data_sql}],
-                                {close_brace}",
+                                {close_brace},",
                     open_brace = String::from("{"),
                     name =  element.name,
                     identifier = element.identifier,
@@ -187,8 +187,8 @@ impl ComponentRepository {
                     "{open_brace} \
                     label: '{label}', \
                     value: '{value}'  \
-                    {close_brace}\
-                    ,",
+                    {close_brace},\
+                    ",
                     label = creatable_element_data.label,
                     value = creatable_element_data.value,
                     open_brace = String::from("{"),
@@ -202,7 +202,7 @@ impl ComponentRepository {
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
                                 element_data: [{element_data_sql}],
-                                {close_brace}",
+                                {close_brace},",
                          open_brace = String::from("{"),
                          name =  element.name,
                          identifier = element.identifier,
@@ -213,13 +213,14 @@ impl ComponentRepository {
         }
 
         let sql = format!("\
-            UPDATE components \
+            UPDATE components:{id} \
                 MERGE {open_brace} \
                     name: '{name}',
                     elements: [{element_sql}],
                     updated_by: '{logged_in_user_email}',
                     updated_at: time::now(),
                 {close_brace}",
+                            id = updatable_component_model.id,
                           open_brace = String::from("{"),
                           name = updatable_component_model.name,
                           element_sql = element_sql,

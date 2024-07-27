@@ -15,16 +15,15 @@ export interface IEditablePageComponentModel {
     updated_at: string;
     created_by: string;
     updated_by: string;
-    fields: Array<IEditablePageComponentFieldModel>
+    elements: Array<IEditablePageComponentFieldModel>
 }
 
 export interface IEditablePageComponentFieldModel {
-    id: string;
     name: string;
     identifier: string;
-    field_type: string;
-    field_content: string;
-    field_data?: Array<IEditablePageComponentFieldDataModel>;
+    element_type: string;
+    element_content: string;
+    element_data?: Array<IEditablePageComponentFieldDataModel>;
     created_at: string;
     updated_at: string;
     created_by: string;
@@ -35,5 +34,5 @@ export interface IEditablePageComponentFieldModel {
 export interface IEditablePageComponentFieldDataModel {
     label: string;
     value: string;
-    field_data_content: string;
+    element_data_content: string;
 }
