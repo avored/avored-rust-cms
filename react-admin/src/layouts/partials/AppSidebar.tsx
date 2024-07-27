@@ -45,7 +45,7 @@ function AppSidebar() {
                                 <div className="pr-2">
                                     <CpuChipIcon className="h-4 w-4"/>
                                 </div>
-                                <div>{t("sidebar.components")}</div>
+                                <div>{t("components")}</div>
                             </Link>
                             <Link
                                 to={`/admin/asset`}
