@@ -1,24 +1,30 @@
-import { useState } from 'react'
-import logo from './assets/logo_only.svg'
-import './App.css'
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import DashboardPage from "./pages/Dashboard/DashboardPage"
+import AppLayout from "./layout/AppLayout"
+import "preline/preline"
+import { IStaticMethods } from "preline/preline";
+import { useEffect } from "react";
+import './index.css'
+
+declare global {
+  interface Window {
+    HSStaticMethods: IStaticMethods;
+  }
+}
 
 function App() {
-  const [count, setCount] = useState(0)
 
+  useEffect(() => {
+    window.HSStaticMethods.autoInit();
+  })
   return (
-    <>
-      <div>
-        <a href="https://avored.com" target="_blank">
-          <img src={logo} className="logo" alt="AvoRed logo" />
-        </a>
-      </div>
-      <h1>AvoRed content management system</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   )
 }
 
