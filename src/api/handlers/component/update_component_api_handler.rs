@@ -6,10 +6,9 @@ use crate::{
 };
 use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
 use serde::Serialize;
-use crate::api::handlers::component::request::update_component_request::{UpdatableFieldDataRequest, UpdateComponentRequest};
+use crate::api::handlers::component::request::update_component_request::UpdateComponentRequest;
 use crate::error::Error;
-use crate::models::component_model::{ComponentModel, UpdatableComponentModel};
-use crate::models::field_model::{UpdatableFieldDataModel, UpdatableFieldModel};
+use crate::models::component_model::{ComponentModel, UpdatableComponentElementModel, UpdatableComponentModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 
@@ -40,47 +39,26 @@ pub async fn update_component_api_handler(
         return Err(Error::BadRequestError(error_response));
     }
 
-    let updateable_component_model = UpdatableComponentModel {
+    let mut updatable_elements: Vec<UpdatableComponentElementModel> = vec![];
+    for payload_element in payload.elements {
+
+        let updatable_component_element_model = UpdatableComponentElementModel {
+            name: payload_element.name
+        };
+        updatable_elements.push(updatable_component_element_model);
+    }
+
+
+    let updatable_component_model = UpdatableComponentModel {
         id: component_id,
         name: payload.name,
         logged_in_username: logged_in_user.email.clone(),
+        elements: updatable_elements
     };
-    let mut updated_component_model = state
+    let updated_component_model = state
         .component_service
-        .update_component(&state.db, updateable_component_model)
+        .update_component(&state.db, updatable_component_model)
         .await?;
-
-    for payload_field in payload.fields {
-
-        let mut updatable_field_data: Vec<UpdatableFieldDataModel> = vec![];
-        let update_field_data_requests: Vec<UpdatableFieldDataRequest> = payload_field.field_data.unwrap_or_else(std::vec::Vec::new);
-
-        for update_field_data_request in update_field_data_requests {
-            let update_field_data_option = UpdatableFieldDataModel {
-                label: update_field_data_request.label,
-                value: update_field_data_request.value
-            };
-            updatable_field_data.push(update_field_data_option);
-        }
-
-        //@todo check for field ID and if not exist then create field and attached field
-        let updatable_field = UpdatableFieldModel {
-            id: payload_field.id,
-            name: payload_field.name,
-            identifier: payload_field.identifier,
-            field_type: payload_field.field_type,
-            field_data: Some(updatable_field_data),
-            logged_in_username: logged_in_user.email.clone(),
-        };
-        let updated_field = state
-            .field_service
-            .update_field(&state.db, updatable_field)
-            .await?;
-
-        updated_component_model.fields.push(updated_field);
-
-    }
-
 
     let response = UpdatedComponentResponse {
         status: true,

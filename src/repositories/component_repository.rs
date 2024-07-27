@@ -2,7 +2,6 @@ use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
 use crate::models::component_model::{ComponentModel, CreatableComponent, PutComponentIdentifierModel, UpdatableComponentModel};
-use crate::models::field_model::FieldModel;
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -76,20 +75,39 @@ impl ComponentRepository {
         database_session: &Session,
         creatable_component_model: CreatableComponent,
     ) -> Result<ComponentModel> {
-        let sql = "CREATE components CONTENT $data";
 
-        let data: BTreeMap<String, Value> = [
-            ("name".into(), creatable_component_model.name.into()),
-            ("identifier".into(), creatable_component_model.identifier.into()),
-            ("created_by".into(), creatable_component_model.logged_in_username.clone().into()),
-            ("updated_by".into(), creatable_component_model.logged_in_username.into()),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-        .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+        let mut element_sql = String::from("");
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        for element in creatable_component_model.elements {
+            element_sql.push_str(
+                &format!("{open_brace} \
+                                name: '{name}', \
+                                {close_brace}",
+                         open_brace = String::from("{"),
+                         name =  element.name,
+                         close_brace = String::from("}")
+                ));
+        }
+
+        let sql = format!("\
+            CREATE components \
+                CONTENT {open_brace} \
+                    name: '{name}',
+                    identifier: '{identifier}',
+                    elements: [{element_sql}],
+                    created_by: '{logged_in_user_email}',
+                    updated_by: '{logged_in_user_email}',
+                    created_at: time::now(),
+                    updated_at: time::now(),
+                {close_brace}",
+            open_brace = String::from("{"),
+            name = creatable_component_model.name,
+            identifier = creatable_component_model.identifier,
+            element_sql = element_sql,
+            logged_in_user_email = creatable_component_model.logged_in_username,
+            close_brace = String::from("}"));
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
@@ -132,23 +150,38 @@ impl ComponentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_admin_user: UpdatableComponentModel,
+        updatable_component_model: UpdatableComponentModel,
     ) -> Result<ComponentModel> {
-        let sql = "
-            UPDATE type::thing($table, $id) MERGE {
-                name: $name,
-                updated_by: $logged_in_user_name,
-                updated_at: time::now()
-            };";
 
-        let vars = BTreeMap::from([
-            ("name".into(), updatable_admin_user.name.into()),
-            ("logged_in_user_name".into(), updatable_admin_user.logged_in_username.into(),),
-            ("id".into(), updatable_admin_user.id.into()),
-            ("table".into(), "components".into()),
-        ]);
+        let mut element_sql = String::from("");
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        for element in updatable_component_model.elements {
+            element_sql.push_str(
+                &format!("{open_brace} \
+                                name: '{name}', \
+                                {close_brace}",
+                         open_brace = String::from("{"),
+                         name =  element.name,
+                         close_brace = String::from("}")
+                ));
+        }
+
+        let sql = format!("\
+            UPDATE components \
+                MERGE {open_brace} \
+                    name: '{name}',
+                    elements: [{element_sql}],
+                    updated_by: '{logged_in_user_email}',
+                    updated_at: time::now(),
+                {close_brace}",
+                          open_brace = String::from("{"),
+                          name = updatable_component_model.name,
+                          element_sql = element_sql,
+                          logged_in_user_email = updatable_component_model.logged_in_username,
+                          close_brace = String::from("}"));
+
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
@@ -178,46 +211,6 @@ impl ComponentRepository {
             Ok(obj) => obj.try_into(),
             Err(_) => Ok(ModelCount::default()),
         }
-    }
-
-    pub async fn attach_component_with_field(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        component_model: ComponentModel,
-        field_model: FieldModel,
-        logged_in_username: String,
-    ) -> Result<bool> {
-        let sql = format!(
-            "RELATE {}:{}->{}->{}:{} \
-                SET \
-                created_by=$created_by, \
-                updated_by=$updated_by, \
-                created_at=$created_at, \
-                updated_at=$updated_at\
-            ;",
-            "components", component_model.id, "component_field", "fields", field_model.id
-        );
-
-        let attached_data: BTreeMap<String, Value> = [
-            ("created_by".into(), logged_in_username.clone().into()),
-            ("updated_by".into(), logged_in_username.into()),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-        .into();
-
-        let responses = datastore
-            .execute(sql.as_str(), database_session, Some(attached_data))
-            .await?;
-
-
-        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        if response.is_ok() {
-            return Ok(true);
-        }
-
-        Ok(true)
     }
 
     pub async fn count_of_identifier(
