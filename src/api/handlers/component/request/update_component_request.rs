@@ -5,24 +5,23 @@ use crate::models::validation_error::{ErrorMessage, Validate};
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdateComponentRequest {
     pub name: String,
-    pub fields: Vec<UpdatableField>,
+    pub elements: Vec<UpdatableElementRequest>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct UpdatableField {
-    pub id: String,
+pub struct UpdatableElementRequest {
     pub name: String,
     pub identifier: String,
-    pub field_type: String,
-    pub field_data: Option<Vec<UpdatableFieldDataRequest>>
+    pub element_type: String,
+    pub element_data: Option<Vec<UpdatableComponentElementDataRequest>>
 }
 
-
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct UpdatableFieldDataRequest {
+pub struct UpdatableComponentElementDataRequest {
     pub label: String,
     pub value: String,
 }
+
 
 impl UpdateComponentRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {

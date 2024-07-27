@@ -1,4 +1,3 @@
-use crate::models::field_model::FieldModel;
 use crate::{
     error::Result,
     models::{
@@ -114,24 +113,6 @@ impl ComponentService {
     ) -> Result<ComponentModel> {
         self.component_repository
             .update_component(datastore, database_session, updatable_component_model)
-            .await
-    }
-
-    pub async fn attach_component_with_field(
-        &self,
-        (datastore, database_session): &DB,
-        component_model: ComponentModel,
-        field_model: FieldModel,
-        logged_in_username: String,
-    ) -> Result<bool> {
-        self.component_repository
-            .attach_component_with_field(
-                datastore,
-                database_session,
-                component_model,
-                field_model,
-                logged_in_username,
-            )
             .await
     }
 

@@ -6,16 +6,15 @@ import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "
 import IPageModel from "../../types/page/IPageModel";
 import HasPermission from "../../components/HasPermission";
 import AvoRedTable from "../../components/AvoRedTable";
-import {useQueryClient} from "@tanstack/react-query";
 import {useState} from "react";
 
-function ComponentTable() {
+export const ComponentTablePage = (() => {
     const [sorting, setSorting] = useState<SortingState>([]);
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
         pageSize: 10, //default page size
     });
-    const comoonent_api_table_response = useComponentTable({
+    const component_api_table_response = useComponentTable({
         order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
         page: pagination.pageIndex
     })
@@ -23,7 +22,7 @@ function ComponentTable() {
         setPagination(pagination)
     })
 
-    const components = _.get(comoonent_api_table_response, 'data.data.data', [])
+    const components = _.get(component_api_table_response, 'data.data.data', [])
     const [t] = useTranslation("global")
 
     const customSorting = ((sorting: any) => {
@@ -90,7 +89,7 @@ function ComponentTable() {
         data: components,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        rowCount: comoonent_api_table_response.data?.data.pagination.total,
+        rowCount: component_api_table_response.data?.data.pagination.total,
         onPaginationChange: customPagination,
         manualPagination: true,
 
@@ -114,7 +113,7 @@ function ComponentTable() {
             <div className="px-5 ml-64">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
-                        {t("component.components")}
+                        {t("components")}
                     </div>
                     <HasPermission displayDenied={false} identifier="component_create">
                         <Link
@@ -134,6 +133,4 @@ function ComponentTable() {
             </div>
         </div>
     );
-}
-
-export default ComponentTable
+})
