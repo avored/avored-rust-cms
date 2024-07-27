@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::component_model::{ComponentModel, CreatableComponent, PutComponentIdentifierModel, UpdatableComponentModel};
+use crate::models::component_model::{ComponentElementDataModel, ComponentModel, CreatableComponent, PutComponentIdentifierModel, UpdatableComponentModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -79,13 +79,35 @@ impl ComponentRepository {
         let mut element_sql = String::from("");
 
         for element in creatable_component_model.elements {
+            let mut element_data_sql = String::from("");
+            let update_element_data_model: Vec<ComponentElementDataModel> = element.element_data.unwrap_or_default();
+
+            for update_element_data in update_element_data_model {
+                element_data_sql.push_str(&format!(
+                    "{open_brace} \
+                    label: '{label}', \
+                    value: '{value}'  \
+                    {close_brace}\
+                    ,",
+                    label = update_element_data.label,
+                    value = update_element_data.value,
+                    open_brace = String::from("{"),
+                    close_brace = String::from("}")
+                ));
+            }
+
             element_sql.push_str(
                 &format!("{open_brace} \
                                 name: '{name}', \
+                                identifier: '{identifier}', \
+                                element_type: '{element_type}', \
+                                element_data: [{element_data_sql}],
                                 {close_brace}",
-                         open_brace = String::from("{"),
-                         name =  element.name,
-                         close_brace = String::from("}")
+                    open_brace = String::from("{"),
+                    name =  element.name,
+                    identifier = element.identifier,
+                    element_type = element.element_type,
+                    close_brace = String::from("}")
                 ));
         }
 
@@ -156,12 +178,36 @@ impl ComponentRepository {
         let mut element_sql = String::from("");
 
         for element in updatable_component_model.elements {
+
+            let mut element_data_sql = String::from("");
+            let create_element_data_model: Vec<ComponentElementDataModel> = element.element_data.unwrap_or_default();
+
+            for creatable_element_data in create_element_data_model {
+                element_data_sql.push_str(&format!(
+                    "{open_brace} \
+                    label: '{label}', \
+                    value: '{value}'  \
+                    {close_brace}\
+                    ,",
+                    label = creatable_element_data.label,
+                    value = creatable_element_data.value,
+                    open_brace = String::from("{"),
+                    close_brace = String::from("}")
+                ));
+            }
+
             element_sql.push_str(
                 &format!("{open_brace} \
                                 name: '{name}', \
+                                identifier: '{identifier}', \
+                                element_type: '{element_type}', \
+                                element_data: [{element_data_sql}],
                                 {close_brace}",
                          open_brace = String::from("{"),
                          name =  element.name,
+                         identifier = element.identifier,
+                         element_type = element.element_type,
+                         element_data_sql = element_data_sql,
                          close_brace = String::from("}")
                 ));
         }

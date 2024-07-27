@@ -11,7 +11,16 @@ pub struct StoreComponentRequest {
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct CreatableElementRequest {
-    pub name: String
+    pub name: String,
+    pub identifier: String,
+    pub element_type: String,
+    pub element_data: Option<Vec<CreatableComponentElementDataRequest>>
+}
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct CreatableComponentElementDataRequest {
+    pub label: String,
+    pub value: String,
 }
 
 impl StoreComponentRequest {

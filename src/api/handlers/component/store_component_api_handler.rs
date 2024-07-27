@@ -5,9 +5,9 @@ use crate::{
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
-use crate::api::handlers::component::request::store_component_request::StoreComponentRequest;
+use crate::api::handlers::component::request::store_component_request::{CreatableComponentElementDataRequest, StoreComponentRequest};
 use crate::error::Error;
-use crate::models::component_model::{ComponentModel, CreatableComponent, CreatableComponentElementModel};
+use crate::models::component_model::{ComponentElementDataModel, ComponentModel, CreatableComponent, CreatableComponentElementModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 
@@ -41,8 +41,24 @@ pub async fn store_component_api_handler(
     let mut creatable_elements: Vec<CreatableComponentElementModel> = vec![];
     for payload_element in payload.elements {
 
+        let mut creatable_element_data: Vec<ComponentElementDataModel> = vec![];
+
+        let create_element_data_requests: Vec<CreatableComponentElementDataRequest> = payload_element.element_data.unwrap_or_else(std::vec::Vec::new);
+
+        for create_element_data_request in create_element_data_requests {
+            let create_element_data_option = ComponentElementDataModel {
+                label: create_element_data_request.label,
+                value: create_element_data_request.value
+            };
+            creatable_element_data.push(create_element_data_option);
+        }
+
         let creatable_component_element_model = CreatableComponentElementModel {
-            name: payload_element.name
+            name: payload_element.name,
+            identifier: payload_element.identifier,
+            element_type: payload_element.element_type,
+            element_data: Some(creatable_element_data)
+
         };
         creatable_elements.push(creatable_component_element_model);
     }

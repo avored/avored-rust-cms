@@ -10,8 +10,18 @@ pub struct UpdateComponentRequest {
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatableElementRequest {
-    pub name: String
+    pub name: String,
+    pub identifier: String,
+    pub element_type: String,
+    pub element_data: Option<Vec<UpdatableComponentElementDataRequest>>
 }
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct UpdatableComponentElementDataRequest {
+    pub label: String,
+    pub value: String,
+}
+
 
 impl UpdateComponentRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
