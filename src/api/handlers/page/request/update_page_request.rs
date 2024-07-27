@@ -8,29 +8,24 @@ pub struct UpdatePageRequest {
     pub components_content: Vec<UpdatableComponentContentRequest>,
 }
 
-
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatableComponentContentRequest {
-    pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<UpdatableComponentFieldContentRequest>
+    pub elements: Vec<UpdatableComponentElementContentRequest>
 }
 
-
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct UpdatableComponentFieldContentRequest {
-    pub id: String,
+pub struct UpdatableComponentElementContentRequest {
     pub name: String,
     pub identifier: String,
-    pub field_type: String,
-    pub field_content: String,
-    pub field_data: Option<Vec<EditablePageComponentFieldDataOptionRequest>>
+    pub element_type: String,
+    pub element_content: String,
+    pub element_data: Option<Vec<EditablePageComponentElementDataOptionRequest>>
 }
 
-
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct EditablePageComponentFieldDataOptionRequest {
+pub struct EditablePageComponentElementDataOptionRequest {
     pub label: String,
     pub value: String,
 }

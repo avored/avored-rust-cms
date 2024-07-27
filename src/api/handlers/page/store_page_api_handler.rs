@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentFieldContentModel, CreatablePageModel, PageModel, CreatablePageComponentFieldDataModel};
+use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentElementContentModel, CreatablePageModel, PageModel, CreatablePageComponentElementDataModel};
 use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
@@ -47,34 +47,32 @@ pub async fn store_page_api_handler(
 
     for payload_component_content in payload.components_content {
         let mut  creatable_component_content_model = CreatableComponentContentModel {
-            id: payload_component_content.id,
             name: payload_component_content.name,
             identifier: payload_component_content.identifier,
-            fields: vec![],
+            elements: vec![],
         };
 
-        for  payload_component_fields_data in  payload_component_content.fields {
-            let mut payload_field_data_model_options: Vec<CreatablePageComponentFieldDataModel> = Vec::new();
-            let  payload_field_options_data = payload_component_fields_data.field_data.unwrap_or(Vec::new());
+        for  payload_component_elements_data in  payload_component_content.elements {
+            let mut payload_element_data_model_options: Vec<CreatablePageComponentElementDataModel> = Vec::new();
+            let  payload_element_options_data = payload_component_elements_data.element_data.unwrap_or(Vec::new());
 
-            for payload_component_field_data_option in payload_field_options_data {
-                let creatable_page_field_option_data = CreatablePageComponentFieldDataModel {
-                    label: payload_component_field_data_option.label,
-                    value: payload_component_field_data_option.value,
+            for payload_component_element_data_option in payload_element_options_data {
+                let creatable_page_element_option_data = CreatablePageComponentElementDataModel {
+                    label: payload_component_element_data_option.label,
+                    value: payload_component_element_data_option.value,
                 };
-                payload_field_data_model_options.push(creatable_page_field_option_data);
+                payload_element_data_model_options.push(creatable_page_element_option_data);
             }
 
-            let creatable_component_field_content = CreatableComponentFieldContentModel {
-                id: payload_component_fields_data.id,
-                name: payload_component_fields_data.name,
-                identifier: payload_component_fields_data.identifier,
-                field_type: payload_component_fields_data.field_type,
-                field_content: payload_component_fields_data.field_content,
-                field_data: payload_field_data_model_options
+            let creatable_component_element_content = CreatableComponentElementContentModel {
+                name: payload_component_elements_data.name,
+                identifier: payload_component_elements_data.identifier,
+                element_type: payload_component_elements_data.element_type,
+                element_content: payload_component_elements_data.element_content,
+                element_data: payload_element_data_model_options
             };
 
-            creatable_component_content_model.fields.push(creatable_component_field_content);
+            creatable_component_content_model.elements.push(creatable_component_element_content);
         }
 
         creatable_page.component_contents.push(creatable_component_content_model);

@@ -11,18 +11,14 @@ import { useTranslation } from "react-i18next";
 import { useFieldArray, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import PageComponentTable from "./PageComponentTable";
-
 import IEditablePage, {
     IEditablePageComponentFieldModel,
     IEditablePageComponentModel,
 } from "../../types/page/IEditablePage";
 import { usePageEditSchema } from "./schemas/page.edit.schema";
 import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
-import {PutRoleIdentifierType} from "../../types/role/PutRoleIdentifierType";
-import {useRolePutSchema} from "../role/schemas/role.put.schema";
 import {usePagePutSchema} from "./schemas/page.put.schema";
 import {PutPageIdentifierType} from "../../types/page/PutPageIdentifierType";
-import {usePutRoleIdentifier} from "../role/hooks/usePutRoleIdentifier";
 import {usePutPageIdentifier} from "./hooks/usePutPageIdentifier";
 
 function PageEdit() {
@@ -83,12 +79,12 @@ function PageEdit() {
 
     const setSelectedFieldDataOption = ((selected: Array<string>, pageComponentIndex: number, componentFieldIndex: number) => {
         let val = selected.pop() ?? ''
-        setValue(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`, val)
+        setValue(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`, val)
     })
 
     const getSelectFieldDataOptionCurrentValue = ((pageComponentIndex: number, componentFieldIndex: number) => {
 
-        let val  = getValues(`components_content.${pageComponentIndex}.fields.${componentFieldIndex}.field_content`)
+        let val  = getValues(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`)
 
         if (val) {
             return [val]
@@ -101,13 +97,13 @@ function PageEdit() {
         pageComponentIndex: number,
         pageComponentFieldIndex: number,
     ) => {
-        switch (componentField.field_type) {
+        switch (componentField.element_type) {
             case "textarea":
                 return (
                     <div className="p-3">
             <textarea
                 {...register(
-                    `components_content.${pageComponentIndex}.fields.${pageComponentFieldIndex}.field_content`,
+                    `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
                 )}
             ></textarea>
                         <label
@@ -124,7 +120,7 @@ function PageEdit() {
                         <AvoRedMultiSelectField
                             label="test dropdown"
                             selectedOption={getSelectFieldDataOptionCurrentValue(pageComponentIndex, pageComponentFieldIndex)}
-                            options={componentField.field_data ?? []}
+                            options={componentField.element_data ?? []}
                             onChangeSelectedOption={((val: Array<string>) => setSelectedFieldDataOption(val, pageComponentIndex, pageComponentFieldIndex))}
                         ></AvoRedMultiSelectField>
                         <label
@@ -144,7 +140,7 @@ function PageEdit() {
                             type="text"
                             name={componentField.identifier}
                             register={register(
-                                `components_content.${pageComponentIndex}.fields.${pageComponentFieldIndex}.field_content`,
+                                `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
                             )}
                         />
                     </div>
@@ -159,7 +155,7 @@ function PageEdit() {
     ) => {
         return (
 
-            <div className="ring-1 my-2 ring-gray-200" key={componentField.id}>
+            <div className="ring-1 my-2 ring-gray-200" key={componentField.identifier}>
                 {JSON.stringify(componentField)}
                 {renderComponentFieldType(
                     componentField,
@@ -202,10 +198,10 @@ function PageEdit() {
                 <div>component identifier: {pageComponent.identifier}</div>
                 <div>
                     Component Fields
-                    {pageComponent.fields.map((componentField, pageComponentFieldIndex) => {
+                    {pageComponent.elements.map((componentElement, pageComponentFieldIndex) => {
                         // @ts-ignore
                         return renderComponentField(
-                            componentField,
+                            componentElement,
                             pageComponentIndex,
                             pageComponentFieldIndex,
                         );

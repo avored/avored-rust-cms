@@ -12,25 +12,22 @@ pub struct StorePageRequest {
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct CreatableComponentContentRequest {
-    pub id: String,
     pub name: String,
     pub identifier: String,
-    pub fields: Vec<CreatableComponentFieldContentRequest>
-}
-
-
-#[derive(Deserialize, Debug, Clone, Default)]
-pub struct CreatableComponentFieldContentRequest {
-    pub id: String,
-    pub name: String,
-    pub identifier: String,
-    pub field_type: String,
-    pub field_content: String,
-    pub field_data: Option<Vec<CreatablePageComponentFieldDataOptionRequest>>
+    pub elements: Vec<CreatableComponentElementContentRequest>
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct CreatablePageComponentFieldDataOptionRequest {
+pub struct CreatableComponentElementContentRequest {
+    pub name: String,
+    pub identifier: String,
+    pub element_type: String,
+    pub element_content: String,
+    pub element_data: Option<Vec<CreatablePageComponentElementDataOptionRequest>>
+}
+
+#[derive(Deserialize, Debug, Clone, Default)]
+pub struct CreatablePageComponentElementDataOptionRequest {
     pub label: String,
     pub value: String,
 }
