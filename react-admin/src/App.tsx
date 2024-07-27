@@ -15,7 +15,7 @@ import RoleCreate from "./pages/role/RoleCreate";
 import RoleEdit from "./pages/role/RoleEdit";
 import AssetTable from "./pages/asset/AssetTable";
 import {ComponentCreatePage} from "./pages/component/ComponentCreatePage";
-import ComponentEdit from "./pages/component/ComponentEdit";
+import {ComponentEditPage} from "./pages/component/ComponentEditPage";
 import Setup from "./pages/setup/setup";
 import Logout from "./pages/auth/Logout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -47,7 +47,7 @@ function App() {
                     <Route path="/admin/asset"   element={<AssetTable />} />
                     <Route path="/admin/component"   element={<ComponentTablePage />} />
                     <Route path="/admin/component-create"   element={<ComponentCreatePage />} />
-                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEdit />} />
+                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />

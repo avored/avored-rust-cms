@@ -10,17 +10,20 @@ import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
 import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
-import IEditableComponent from "../../types/field/IEditableComponent"
-import {IOptionField} from "../../types/field/IEditableField"
+import IEditableComponent, {
+  EditableComponentElementDataType,
+  
+} from "../../types/component/IEditableComponent";
 import {usePutComponentIdentifier} from "./hooks/usePutComponentIdentifier"
 import {useComponentPutSchema} from "./schemas/component.put.schema";
 import {PutComponentIdentifierType} from "../../types/component/PutComponentIdentifierType";
+import ErrorMessage from "../../components/ErrorMessage";
 
-function ComponentEdit() {
+export const  ComponentEditPage = (() => {
 
     const [t] = useTranslation("global")
     const params = useParams()
-    const {mutate} = useUpdateComponent(params.component_id ?? '')
+    const {mutate, error} = useUpdateComponent(params.component_id ?? '')
     const {data} = useGetComponent(params.component_id ?? '')
     const values = data?.data.component_model
 
@@ -36,12 +39,12 @@ function ComponentEdit() {
         values
     })
     const {
-        fields,
+        fields: elements,
         append,
         remove
     } = useFieldArray({
         control,
-        name: "fields",
+        name: "elements",
     });
 
     const {
@@ -69,35 +72,34 @@ function ComponentEdit() {
     })
 
     const addFieldOnClick = (() => {
-        append({id: '', name: '', identifier: '', field_type: AvoRedFieldTypesEnum.TEXT})
+        append({name: '', identifier: '', element_type: AvoRedFieldTypesEnum.TEXT})
     })
 
-    const deleteFieldOnClick = ((fieldIndex: number) => {
-        remove(fieldIndex)
+    const deleteElementOnClick = ((elementIndex: number) => {
+        remove(elementIndex)
     })
     const optionDeleteActionOnClick = ((
         e: React.MouseEvent,
-        fieldIndex: number,
-        field_data: Array<IOptionField> | undefined,
+        elementIndex: number,
+        element_data: Array<EditableComponentElementDataType> | undefined,
         option_index: number
     ) => {
-        field_data?.splice(option_index, 1)
-        setValue(`fields.${fieldIndex}.field_data`, field_data)
-        trigger(`fields.${fieldIndex}`)
+        element_data?.splice(option_index, 1)
+        setValue(`elements.${elementIndex}.element_data`, element_data)
+        trigger(`elements.${elementIndex}`)
     })
-    const optionAddActionOnClick = ((e: React.MouseEvent, fieldIndex: number, field_data: Array<IOptionField> | undefined) => {
-        field_data?.push({label: '', value: ''})
-        setValue(`fields.${fieldIndex}.field_data`, field_data)
-        trigger(`fields.${fieldIndex}`)
+    const optionAddActionOnClick = ((e: React.MouseEvent, elementIndex: number, element_data: Array<EditableComponentElementDataType> | undefined) => {
+        element_data?.push({label: '', value: ''})
+        setValue(`elements.${elementIndex}.element_data`, element_data)
+        trigger(`elements.${elementIndex}`)
     })
-    const fieldTypeButtonOnClick = ((fieldIndex: number, fieldTypeValue: string) => {
-        setValue(`fields.${fieldIndex}.field_type`, fieldTypeValue)
-        setValue(`fields.${fieldIndex}.field_data`, [{label: '', value: ''}])
-        trigger(`fields.${fieldIndex}`)
+    const elementTypeButtonOnClick = ((elementIndex: number, fieldTypeValue: string) => {
+        setValue(`elements.${elementIndex}.element_type`, fieldTypeValue)
+        setValue(`elements.${elementIndex}.element_data`, [{label: '', value: ''}])
+        trigger(`elements.${elementIndex}`)
     })
 
     const submitHandler = ((data: any) => {
-        // console.log(data)
         mutate(data)
     })
 
@@ -118,7 +120,7 @@ function ComponentEdit() {
                                     register={register("name")}
                                     autoFocus={true}
                                 />
-                                {/*<ErrorMessage message={getErrorMessage('name')}/>*/}
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
                             </div>
                             <div className="mb-4">
                                 <InputField
@@ -128,6 +130,7 @@ function ComponentEdit() {
                                     register={putComponentRegister("identifier")}
                                     disabled={isEditableIdentifier}
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="identifier" />
                                 <div
                                     className="mt-2"
                                 >
@@ -153,17 +156,17 @@ function ComponentEdit() {
                                 </div>
                             </div>
 
-                            {fields.map((field, index) => {
+                            {elements.map((element, index) => {
                                 return (
                                     <div
-                                        key={`field-${index}-key`}
+                                        key={`element-${index}-key`}
                                         className="block ring-1 ring-gray-300 mb-4 rounded p-5"
                                     >
                                         <div className="flex w-full">
                                             <button
                                                 type="button"
                                                 onClick={() => {
-                                                    deleteFieldOnClick(index);
+                                                    deleteElementOnClick(index);
                                                 }}
                                                 className="ml-auto"
                                             >
@@ -175,10 +178,10 @@ function ComponentEdit() {
                                             <div className="border-r p-5 w-1/3">
                                                 <div
                                                     onClick={(e) =>
-                                                        fieldTypeButtonOnClick(index, AvoRedFieldTypesEnum.TEXT)
+                                                        elementTypeButtonOnClick(index, AvoRedFieldTypesEnum.TEXT)
                                                     }
                                                     className={`${
-                                                        field.field_type === AvoRedFieldTypesEnum.TEXT
+                                                        element.element_type === AvoRedFieldTypesEnum.TEXT
                                                             ? "bg-primary-300"
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
@@ -187,10 +190,10 @@ function ComponentEdit() {
                                                 </div>
                                                 <div
                                                     onClick={(e) =>
-                                                        fieldTypeButtonOnClick(index, AvoRedFieldTypesEnum.TEXTAREA)
+                                                        elementTypeButtonOnClick(index, AvoRedFieldTypesEnum.TEXTAREA)
                                                     }
                                                     className={`${
-                                                        field.field_type === AvoRedFieldTypesEnum.TEXTAREA
+                                                        element.element_type === AvoRedFieldTypesEnum.TEXTAREA
                                                             ? "bg-primary-300"
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
@@ -199,10 +202,10 @@ function ComponentEdit() {
                                                 </div>
                                                 <div
                                                     onClick={(e) =>
-                                                        fieldTypeButtonOnClick(index, AvoRedFieldTypesEnum.SELECT)
+                                                        elementTypeButtonOnClick(index, AvoRedFieldTypesEnum.SELECT)
                                                     }
                                                     className={`${
-                                                        field.field_type === AvoRedFieldTypesEnum.SELECT
+                                                        element.element_type === AvoRedFieldTypesEnum.SELECT
                                                             ? "bg-primary-300"
                                                             : "bg-gray-300"
                                                     } ring-1 p-3 mt-3 rounded`}
@@ -214,7 +217,7 @@ function ComponentEdit() {
                                             <div className="p-3 w-2/3">
                                                 <div className="mt-3">
                                                     <Controller
-                                                        name={`fields.${index}.field_type`}
+                                                        name={`elements.${index}.element_type`}
                                                         render={({field}) => {
                                                             return (
                                                                 <>
@@ -227,61 +230,55 @@ function ComponentEdit() {
 
                                                     <InputField
                                                         type="hidden"
-                                                        name={`fields.${index}.field_type`}
-                                                        register={register(`fields.${index}.field_type`)}
+                                                        name={`elements.${index}.element_type`}
+                                                        register={register(`elements.${index}.element_type`)}
+                                                    />
+                                                </div>
+                                                
+                                                <div className="mt-3">
+                                                    <InputField
+                                                        name={`elements.${index}.name`}
+                                                        register={register(`elements.${index}.name`)}
+                                                        label={t('element_name')}
+                                                        placeholder={t('element_name')}
                                                     />
                                                 </div>
                                                 <div className="mt-3">
                                                     <InputField
-                                                        type="hidden"
-                                                        name={`fields.${index}.id`}
-                                                        register={register(`fields.${index}.id`)}
-                                                    />
-                                                </div>
-                                                <div className="mt-3">
-                                                    <InputField
-                                                        name={`fields.${index}.name`}
-                                                        register={register(`fields.${index}.name`)}
-                                                        label={t('field_name')}
-                                                        placeholder={t('field_name')}
-                                                    />
-                                                </div>
-                                                <div className="mt-3">
-                                                    <InputField
-                                                        name={`fields.${index}.identifier`}
-                                                        register={register(`fields.${index}.identifier`)}
-                                                        label={t('field_identifier')}
-                                                        placeholder={t('field_identifier')}
+                                                        name={`elements.${index}.identifier`}
+                                                        register={register(`elements.${index}.identifier`)}
+                                                        label={t('element_identifier')}
+                                                        placeholder={t('element_identifier')}
                                                     />
                                                 </div>
                                                 <Controller
-                                                    name={`fields.${index}`}
-                                                    render={({field}) => {
+                                                    name={`elements.${index}`}
+                                                    render={({field: element}) => {
                                                         return (
-                                                            field.value.field_type === AvoRedFieldTypesEnum.SELECT ? (
-                                                                <div key={`field-type-${field.value.field_type}`}
+                                                            element.value.element_type === AvoRedFieldTypesEnum.SELECT ? (
+                                                                <div key={`field-type-${element.value.element_type}`}
                                                                      className="mt-3">
                                                                     <div className="w-full">
                                                                         <h6 className="font-semibold">
-                                                                            {t("field_options")}
+                                                                            {t("element_options")}
                                                                         </h6>
                                                                     </div>
 
-                                                                    {field.value.field_data?.map((field_option, field_data_index) => {
+                                                                    {element.value.element_data?.map((element_option, element_data_index) => {
                                                                         return (
                                                                             <div className="flex w-full"
-                                                                                 key={`field-option-key-${field_data_index}-${field.value.id}`}>
+                                                                                 key={`element-option-key-${element_data_index}-${element.value.identifier}`}>
 
                                                                                 <div className="w-1/2">
                                                                                     <label
                                                                                         htmlFor="hs-inline-leading-pricing-select-label"
                                                                                         className="text-sm text-gray-600"
-                                                                                    >{t('field_option_label')}
+                                                                                    >{t('element_option_label')}
                                                                                     </label>
                                                                                     <InputField
-                                                                                        name={`fields.${index}.field_data.${field_data_index}.label`}
-                                                                                        register={register(`fields.${index}.field_data.${field_data_index}.label`)}
-                                                                                        placeholder={t('field_option_label')}
+                                                                                        name={`elements.${index}.element_data.${element_data_index}.label`}
+                                                                                        register={register(`elements.${index}.element_data.${element_data_index}.label`)}
+                                                                                        placeholder={t('element_option_label')}
                                                                                     />
                                                                                 </div>
 
@@ -290,17 +287,17 @@ function ComponentEdit() {
                                                                                     <label
                                                                                         htmlFor="hs-inline-leading-pricing-select-label"
                                                                                         className="text-sm text-gray-600"
-                                                                                    >{t('field_option_value')}
+                                                                                    >{t('element_option_value')}
                                                                                     </label>
                                                                                     <div className="relative">
 
                                                                                         <InputField
-                                                                                            name={`fields.${index}.field_data.${field_data_index}.label`}
-                                                                                            register={register(`fields.${index}.field_data.${field_data_index}.value`)}
-                                                                                            placeholder={t('field_option_value')}
+                                                                                            name={`elements.${index}.element_data.${element_data_index}.label`}
+                                                                                            register={register(`elements.${index}.element_data.${element_data_index}.value`)}
+                                                                                            placeholder={t('element_option_value')}
                                                                                         />
                                                                                         <div
-                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, field.value.field_data, field_data_index)}
+                                                                                            onClick={(e: React.MouseEvent) => optionDeleteActionOnClick(e, index, element.value.element_data, element_data_index)}
                                                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                                                         >
                                                                                             <TrashIcon
@@ -316,7 +313,7 @@ function ComponentEdit() {
 
                                                                     <div
                                                                         className="mt-4 flex justify-center ring-1 ring-gray-300 rounded p-1"
-                                                                        onClick={(e: React.MouseEvent) => optionAddActionOnClick(e, index, field.value.field_data)}>
+                                                                        onClick={(e: React.MouseEvent) => optionAddActionOnClick(e, index, element.value.element_data)}>
                                                                         <button className="flex items-center"
                                                                                 type="button">
                                                                             <PlusIcon
@@ -375,6 +372,4 @@ function ComponentEdit() {
             </div>
         </div>
     );
-}
-
-export default ComponentEdit
+})

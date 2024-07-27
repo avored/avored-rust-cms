@@ -8,7 +8,7 @@ import { AvoRedFieldTypesEnum } from "../../types/field/AvoRedFieldTypesEnum";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useComponentCreateSchema } from "./schemas/component.create.schema";
-import ICreatableComponent, {CreatableElementDataType} from "../../types/field/ICreatableComponent";
+import ICreatableComponent, {CreatableElementDataType} from "../../types/component/ICreatableComponent";
 import ErrorMessage from "../../components/ErrorMessage";
 
 export const ComponentCreatePage = (() => {
