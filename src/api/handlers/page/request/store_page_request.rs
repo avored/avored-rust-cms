@@ -5,12 +5,8 @@ use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StorePageRequest {
-    // #[validate(length(min = 1, message = "The name is a required field."))]
     pub name: String,
-
-    // #[validate(length(min = 1, message = "The identifier is a required field."))]
     pub identifier: String,
-
     pub components_content: Vec<CreatableComponentContentRequest>,
 }
 

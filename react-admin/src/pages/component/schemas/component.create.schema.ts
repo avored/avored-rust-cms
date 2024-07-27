@@ -11,6 +11,6 @@ export const useComponentCreateSchema = (() => {
         identifier : Joi.string().required().messages({
             'string.empty': t("empty_message", {attribute: t("identifier")}),
         }),
-        fields : Joi.array()
+        elements : Joi.array()
     })
 })

@@ -2,7 +2,7 @@ import {useMutation} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
-import ICreatableComponent from "../../../types/field/ICreatableComponent";
+import ICreatableComponent from "../../../types/component/ICreatableComponent";
 
 export const useStoreComponent = () => {
     const client = useAxios();

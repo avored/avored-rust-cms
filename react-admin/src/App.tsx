@@ -14,9 +14,8 @@ import RoleTable from "./pages/role/RoleTable";
 import RoleCreate from "./pages/role/RoleCreate";
 import RoleEdit from "./pages/role/RoleEdit";
 import AssetTable from "./pages/asset/AssetTable";
-import ComponentTable from "./pages/component/ComponentTable";
-import ComponentCreate from "./pages/component/ComponentCreate";
-import ComponentEdit from "./pages/component/ComponentEdit";
+import {ComponentCreatePage} from "./pages/component/ComponentCreatePage";
+import {ComponentEditPage} from "./pages/component/ComponentEditPage";
 import Setup from "./pages/setup/setup";
 import Logout from "./pages/auth/Logout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -28,6 +27,7 @@ import ChangePassword from './pages/admin-user/ChangePassword';
 import { ModelTablePage } from "./pages/models/ModelTablePage";
 import {ModelCreatePage} from "./pages/models/ModelCreatePage";
 import { ModelEditPage } from "./pages/models/ModelEditPage";
+import {ComponentTablePage} from "./pages/component/ComponentTablePage";
 
 function App() {
     return (
@@ -45,9 +45,9 @@ function App() {
                     <Route path="/admin"   element={<Dashboard />} />
                     <Route path="/admin/logout"   element={<Logout />} />
                     <Route path="/admin/asset"   element={<AssetTable />} />
-                    <Route path="/admin/component"   element={<ComponentTable />} />
-                    <Route path="/admin/component-create"   element={<ComponentCreate />} />
-                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEdit />} />
+                    <Route path="/admin/component"   element={<ComponentTablePage />} />
+                    <Route path="/admin/component-create"   element={<ComponentCreatePage />} />
+                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
