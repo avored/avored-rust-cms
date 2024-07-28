@@ -19,6 +19,7 @@ pub struct ErrorResponse {
 
 pub async fn require_jwt_authentication (
     state: State<Arc<AvoRedState>>,
+    // Extension(ctx): Extension<Arc<Context>>,
     cookie_jar: CookieJar,
     mut req: Request<Body>,
     next: Next,
