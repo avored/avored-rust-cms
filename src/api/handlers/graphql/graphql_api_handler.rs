@@ -4,7 +4,7 @@ use axum::extract::State;
 use juniper_axum::extract::JuniperRequest;
 use juniper_axum::response::JuniperResponse;
 use crate::avored_state::AvoRedState;
-use crate::providers::avored_graphql_provider::{AvoRedGraphqlSchema, Context};
+use crate::providers::avored_graphql_provider::{AvoRedGraphqlSchema};
 
 pub async fn graphql_api_handler(
     Extension(schema): Extension<Arc<AvoRedGraphqlSchema>>,

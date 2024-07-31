@@ -49,10 +49,10 @@ use crate::api::handlers::model::model_table_api_handler::model_table_api_handle
 use crate::api::handlers::model::put_model_identifier_api_handler::put_model_identifier_api_handler;
 use crate::api::handlers::model::store_model_api_handler::store_model_api_handler;
 use crate::api::handlers::model::update_model_api_handler::update_model_api_handler;
-use crate::providers::avored_graphql_provider::{Context, AvoRedGraphqlSchema};
+use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
-pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
+pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
     let front_end_app_url = &state.config.front_end_app_url;
 
@@ -125,7 +125,6 @@ pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
         .with_state(state)
         .layer(cors_layer)
         .layer(Extension(Arc::new(schema)))
-        .layer(Extension(ctx))
 }
 
 
