@@ -1,4 +1,15 @@
-use juniper::{FieldError, FieldResult, graphql_object, graphql_scalar, GraphQLObject, GraphQLScalar, InputValue, ParseScalarResult, ParseScalarValue, ScalarToken, ScalarValue, Value};
+use juniper::{
+    FieldResult,
+    graphql_object,
+    GraphQLObject,
+    GraphQLScalar,
+    InputValue,
+    ParseScalarResult,
+    ParseScalarValue,
+    ScalarToken,
+    ScalarValue,
+    Value
+};
 use surrealdb::sql::Datetime;
 use crate::avored_state::AvoRedState;
 use crate::query::AvoRedQuery;
@@ -6,10 +17,13 @@ use crate::query::AvoRedQuery;
 #[graphql_object]
 #[graphql(context = AvoRedState)]
 impl AvoRedQuery {
-    pub async fn api_version(context: &AvoRedState) -> FieldResult<TestRoleModel>   {
+    pub async fn api_version(
+        context: &AvoRedState
+    ) -> FieldResult<TestRoleModel> {
         let mut test = TestRoleModel::default();
         let user = UserId(Datetime::default());
         test.id = user;
+        let _test_state = context;
         // let current_page: i64= 0;
         // let order = String::from("");
         // let admin_user_pagination = context
@@ -54,7 +68,7 @@ fn parse_token<S: ScalarValue>(value: ScalarToken<'_>) -> ParseScalarResult<S> {
         .or_else(|_| <i32 as ParseScalarValue<S>>::from_str(value))
 }
 
-fn from_input<S>(input: &InputValue<S>) -> Result<UserId, String>
+fn from_input<S>(_input: &InputValue<S>) -> Result<UserId, String>
 where
     S: ScalarValue
 {

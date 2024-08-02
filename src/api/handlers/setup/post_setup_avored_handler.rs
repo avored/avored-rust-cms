@@ -48,8 +48,8 @@ pub async fn post_setup_avored_handler(
         CREATE settings CONTENT {
             identifier: 'general_site_name',
             value: 'Avored rust cms',
-            created_by: $full_name,
-            updated_by: $full_name,
+            created_by: $email,
+            updated_by: $email,
             created_at: time::now(),
             updated_at: time::now()
         };
@@ -75,8 +75,8 @@ pub async fn post_setup_avored_handler(
             password: $password,
             profile_image: $profile_image,
             is_super_admin: $is_super_admin,
-            created_by: $full_name,
-            updated_by: $full_name,
+            created_by: $email,
+            updated_by: $email,
             created_at: time::now(),
             updated_at: time::now()
         };
@@ -103,8 +103,8 @@ pub async fn post_setup_avored_handler(
         CREATE roles CONTENT {
             name: 'Administrator',
             identifier: 'administrator',
-            created_by: $full_name,
-            updated_by: $full_name,
+            created_by: $email,
+            updated_by: $email,
             created_at: time::now(),
             updated_at: time::now()
         };
@@ -147,8 +147,8 @@ pub async fn post_setup_avored_handler(
             name: 'Home Page',
             identifier: 'home-page',
             components_content: [{id: 'test id', name: 'test name', identifier: 'test identifier', elements: [{name: 'test name', identifier: 'test identifier', element_type: 'text', element_content: 'test field content 1'}] }],
-            created_by: $full_name,
-            updated_by: $full_name,
+            created_by: $email,
+            updated_by: $email,
             created_at: time::now(),
             updated_at: time::now()
         };

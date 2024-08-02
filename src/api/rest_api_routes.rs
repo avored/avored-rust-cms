@@ -40,7 +40,8 @@ use crate::api::handlers::{
     setting::update_setting_all_api_handler::update_setting_all_api_handler,
     admin_user::change_password_api_handler::change_password_api_handler,
     role::put_role_identifier_api_handler::put_role_identifier_api_handler,
-    page::put_page_identifier_api_handler::put_page_identifier_api_handler
+    page::put_page_identifier_api_handler::put_page_identifier_api_handler,
+    cms::fetch_page_cms_api_handler::fetch_page_cms_api_handler,
 };
 use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
@@ -122,6 +123,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/login", post(admin_user_login_api_handler))
         .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
+        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
         .layer(cors_layer)
         .layer(Extension(Arc::new(schema)))
