@@ -1,7 +1,7 @@
 import avoredLogo from '/avored.svg'
 import {useState} from "react";
 
-const Dashboard = (() => {
+const HomePage = (() => {
     const [count, setCount] = useState(0)
     return(
         <div className="flex w-full justify-center items-center h-screen">
@@ -27,4 +27,4 @@ const Dashboard = (() => {
     )
 })
 
-export default Dashboard
+export default HomePage

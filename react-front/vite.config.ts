@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
+import viteTsconfigPaths from 'vite-tsconfig-paths'
+import svgr from "vite-plugin-svgr"
 
-// https://vitejs.dev/config/
 export default defineConfig({
+  plugins: [react(), viteTsconfigPaths(), svgr()],
   server: {
-    port: 5173
+    // this ensures that the browser opens upon server start
+    open: true,
+    // this sets a default port to 3000
+    port: 5173,
   },
-  plugins: [react()],
 })

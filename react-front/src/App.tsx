@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import DashboardPage from "./pages/Dashboard/DashboardPage"
+import HomePage from "./pages/home/HomePage"
 import AppLayout from "./layout/AppLayout"
 import "preline/preline"
 import { IStaticMethods } from "preline/preline";
@@ -21,7 +21,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route element={<AppLayout />}>
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<HomePage />} />
         </Route>
       </Routes>
     </BrowserRouter>

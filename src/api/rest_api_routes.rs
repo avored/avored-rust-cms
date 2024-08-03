@@ -55,11 +55,16 @@ use crate::query::AvoRedQuery;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
-    let front_end_app_url = &state.config.front_end_app_url;
+    let react_admin_url = &state.config.react_admin_app_url;
+    let react_front_url = &state.config.react_frontend_app_url;
 
-    println!("FRONT END CORS ALLOWED URL: {front_end_app_url}");
-    let cors_layer = CorsLayer::new()
-        .allow_origin(front_end_app_url.parse::<HeaderValue>().unwrap())
+    let origins = [
+        react_admin_url.parse().unwrap(),
+        react_front_url.parse().unwrap(),
+    ];
+
+    let cors = CorsLayer::new()
+        .allow_origin(origins)
         .allow_headers([CONTENT_TYPE, AUTHORIZATION])
         .allow_methods([
             axum::http::Method::GET,
@@ -125,11 +130,9 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
         .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
-        .layer(cors_layer)
+        .layer(cors)
         .layer(Extension(Arc::new(schema)))
 }
-
-
 
 #[cfg(test)]
 pub mod tests {
