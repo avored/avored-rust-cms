@@ -2,7 +2,7 @@ import { ContactSection } from "./ContactSection";
 import FeaturesSection from "./FeaturesSection";
 import MainHeroSection from "./MainHeroSection";
 import RepositoryInformation from "./RepositoryInformation";
-import {useHomeCmsPage} from "./hooks/useHomeCmsPage'";
+import {useHomeCmsPage} from "./hooks/useHomeCmsPage";
 import _ from "lodash";
 import {ComponentContentType} from "../../types/CmsPageType";
 

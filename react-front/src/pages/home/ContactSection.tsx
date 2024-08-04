@@ -1,8 +1,8 @@
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useContactUsForm} from "./hooks/useContactUsForm.ts";
+import {useContactUsForm} from "./hooks/useContactUsForm";
 import {useForm} from "react-hook-form";
-import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema.ts";
-import {ContactUsType} from "../../types/ContactUsType.ts";
+import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema";
+import {ContactUsType} from "../../types/ContactUsType";
 import {ComponentContentType} from "../../types/CmsPageType";
 import {GetElementValue} from "../../lib/page";
 

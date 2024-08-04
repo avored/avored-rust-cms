@@ -1,6 +1,6 @@
-import {useAxios} from "../../../hooks/useAxios.ts";
+import {useAxios} from "../../../hooks/useAxios";
 import {useMutation} from "@tanstack/react-query";
-import {ContactUsType} from "../../../types/ContactUsType.ts";
+import {ContactUsType} from "../../../types/ContactUsType";
 
 export const useContactUsForm = () => {
     const client = useAxios();
