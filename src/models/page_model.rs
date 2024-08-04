@@ -2,7 +2,7 @@ use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 
-use super::Pagination;
+use super::{BaseModel, Pagination};
 
 
 
@@ -45,31 +45,10 @@ pub struct PageModel {
 impl TryFrom<Object> for PageModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<PageModel> {
-        let id = match val.get("id") {
-            Some(val) => match val.clone() {
-                Value::Thing(v) => {
-                    let id = v.id;
-                    id.to_string()
-                }
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-        let name = match val.get("name") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
 
-        let identifier = match val.get("identifier") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
+        let id = val.get("id").get_id()?;
+        let name = val.get("name").get_string()?;
+        let identifier = val.get("identifier").get_string()?;
 
         let components_content = match val.get("components_content") {
             Some(val) => {
@@ -96,36 +75,10 @@ impl TryFrom<Object> for PageModel {
             None => Vec::new(),
         };
 
-        let created_at = match val.get("created_at") {
-            Some(val) => match val.clone() {
-                Value::Datetime(v) => v,
-                _ => Datetime::default(),
-            },
-            None => Datetime::default(),
-        };
-        let updated_at = match val.get("updated_at") {
-            Some(val) => match val.clone() {
-                Value::Datetime(v) => v,
-                _ => Datetime::default(),
-            },
-            None => Datetime::default(),
-        };
-
-        let created_by = match val.get("created_by") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let updated_by = match val.get("updated_by") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
+        let created_at = val.get("created_at").get_datetime()?;
+        let updated_at = val.get("updated_at").get_datetime()?;
+        let created_by = val.get("created_by").get_string()?;
+        let updated_by = val.get("updated_by").get_string()?;
 
         Ok(PageModel {
             id,
@@ -144,27 +97,8 @@ impl TryFrom<Object> for PageModel {
 impl TryFrom<Object> for ComponentContentModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentContentModel> {
-        let name = match val.get("name") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let identifier = match val.get("identifier") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
+        let name = val.get("name").get_string()?;
+        let identifier = val.get("identifier").get_string()?;
         let elements = match val.get("elements") {
             Some(val) => {
                 
@@ -202,52 +136,10 @@ impl TryFrom<Object> for ComponentElementModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentElementModel> {
 
-        let name = match val.get("name") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let identifier = match val.get("identifier") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-
-        let element_type = match val.get("element_type") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-
-
-        let element_content = match val.get("element_content") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
+        let name = val.get("name").get_string()?;
+        let identifier = val.get("identifier").get_string()?;
+        let element_type = val.get("element_type").get_string()?;
+        let element_content = val.get("element_content").get_string()?;
 
         let element_data = match val.get("element_data") {
             Some(val) => {
@@ -287,27 +179,8 @@ impl TryFrom<Object> for ComponentElementModel {
 impl TryFrom<Object> for PageComponentFieldDataOption {
     type Error = Error;
     fn try_from(val: Object) -> Result<PageComponentFieldDataOption> {
-        let label = match val.get("label") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-        let value = match val.get("value") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
 
         Ok(PageComponentFieldDataOption {
             label,

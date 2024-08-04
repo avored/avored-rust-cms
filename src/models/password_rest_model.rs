@@ -1,6 +1,7 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
+use crate::models::BaseModel;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct PasswordResetModel {
@@ -13,39 +14,10 @@ pub struct PasswordResetModel {
 impl TryFrom<Object> for PasswordResetModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<PasswordResetModel> {
-        let id = match val.get("id") {
-            Some(val) => match val.clone() {
-                Value::Thing(v) => {
-                    let id = v.id;
-                    id.to_string()
-                }
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-        let email = match val.get("email") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let token = match val.get("token") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let created_at = match val.get("created_at") {
-            Some(val) => match val.clone() {
-                Value::Datetime(v) => v,
-                _ => Datetime::default(),
-            },
-            None => Datetime::default(),
-        };
+        let id = val.get("id").get_id()?;
+        let email = val.get("email").get_string()?;
+        let token = val.get("token").get_string()?;
+        let created_at = val.get("created_at").get_datetime()?;
 
         Ok(PasswordResetModel {
             id,

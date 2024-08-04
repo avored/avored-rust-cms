@@ -3,7 +3,6 @@ use std::sync::Arc;
 use axum::{routing::get, Router, middleware, Extension};
 use axum::routing::{MethodFilter, on, post, put};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
-use axum::http::header::HeaderValue;
 use juniper::{EmptyMutation, EmptySubscription};
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;

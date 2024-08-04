@@ -4,7 +4,7 @@ use surrealdb::sql::{Datetime, Object, Value};
 use utoipa::ToSchema;
 use crate::models::role_model::RoleModel;
 
-use super::Pagination;
+use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
 pub struct AdminUserModel {
@@ -26,63 +26,11 @@ pub struct AdminUserModel {
 impl TryFrom<Object> for AdminUserModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<AdminUserModel> {
-        let id = match val.get("id") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Thing(v) => {
-                        let id = v.id;
-                        id.to_string()
-                    }
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-        let full_name = match val.get("full_name") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let email = match val.get("email") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let password = match val.get("password") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let mut profile_image = match val.get("profile_image") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
+        let id = val.get("id").get_id()?;
+        let full_name = val.get("full_name").get_string()?;
+        let email = val.get("email").get_string()?;
+        let password = val.get("password").get_string()?;
+        let mut profile_image = val.get("profile_image").get_string()?;
         if profile_image.is_empty() {
             profile_image = String::from("https://place-hold.it/250x250");
         } else {
@@ -90,16 +38,7 @@ impl TryFrom<Object> for AdminUserModel {
             profile_image = format!("http://localhost:8080/public/{}", profile_image);
         }
 
-        let is_super_admin = match val.get("is_super_admin") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Bool(v) => v,
-                    _ => false,
-                }
-            }
-            None => false,
-        };
+        let is_super_admin = val.get("is_super_admin").get_bool()?;
 
         let roles = match val.get("roles") {
             Some(val) => {
@@ -127,48 +66,10 @@ impl TryFrom<Object> for AdminUserModel {
         };
 
 
-        let created_at = match val.get("created_at") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Datetime(v) => v,
-                    _ => Datetime::default(),
-                }
-            }
-            None => Datetime::default(),
-        };
-        let updated_at = match val.get("updated_at") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Datetime(v) => v,
-                    _ => Datetime::default(),
-                }
-            }
-            None => Datetime::default(),
-        };
-
-        let created_by = match val.get("created_by") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
-
-        let updated_by = match val.get("updated_by") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
-            None => String::from(""),
-        };
+        let created_at = val.get("created_at").get_datetime()?;
+        let updated_at = val.get("updated_at").get_datetime()?;
+        let created_by = val.get("created_by").get_string()?;
+        let updated_by = val.get("updated_by").get_string()?;
 
         Ok(AdminUserModel {
             id,

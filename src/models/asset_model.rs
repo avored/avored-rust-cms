@@ -1,8 +1,8 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use surrealdb::sql::{Datetime, Object};
 
-use super::Pagination;
+use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetModel {
@@ -21,84 +21,16 @@ pub struct AssetModel {
 impl TryFrom<Object> for AssetModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<AssetModel> {
-        let id = match val.get("id") {
-            Some(val) => match val.clone() {
-                Value::Thing(v) => {
-                    let id = v.id;
-                    id.to_string()
-                }
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-        let file_name = match val.get("file_name") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let file_path = match val.get("file_path") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let file_size = match val.get("file_size") {
-            Some(val) => match val.clone() {
-                Value::Number(v) => v.as_int(),
-                _ => 0,
-            },
-            None => 0,
-        };
-
-        let file_type = match val.get("file_type") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-        let information = match val.get("information") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-        let created_at = match val.get("created_at") {
-            Some(val) => match val.clone() {
-                Value::Datetime(v) => v,
-                _ => Datetime::default(),
-            },
-            None => Datetime::default(),
-        };
-        let updated_at = match val.get("updated_at") {
-            Some(val) => match val.clone() {
-                Value::Datetime(v) => v,
-                _ => Datetime::default(),
-            },
-            None => Datetime::default(),
-        };
-
-        let created_by = match val.get("created_by") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
-
-        let updated_by = match val.get("updated_by") {
-            Some(val) => match val.clone() {
-                Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
-            },
-            None => String::from(""),
-        };
+        let id = val.get("id").get_id()?;
+        let file_name = val.get("file_name").get_string()?;
+        let file_path = val.get("file_path").get_string()?;
+        let file_size = val.get("file_size").get_int()?;
+        let file_type = val.get("file_type").get_string()?;
+        let information = val.get("information").get_string()?;
+        let created_at = val.get("created_at").get_datetime()?;
+        let updated_at = val.get("updated_at").get_datetime()?;
+        let created_by = val.get("created_by").get_string()?;
+        let updated_by = val.get("updated_by").get_string()?;
 
         Ok(AssetModel {
             id,
