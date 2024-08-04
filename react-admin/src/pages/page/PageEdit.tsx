@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import {PlusIcon, TrashIcon} from "@heroicons/react/24/solid";
 import AvoredModal from "../../components/AvoredModal";
 import InputField from "../../components/InputField";
 import _ from "lodash";
@@ -72,7 +72,13 @@ function PageEdit() {
         setIsEditableIdentifier(true)
     })
 
-    const { fields: components_content, append } = useFieldArray({
+    const deleteComponentOnClick = ((e: React.MouseEvent, componentIndex: number) => {
+        e.stopPropagation()
+        e.preventDefault()
+        remove(componentIndex)
+    })
+
+    const { fields: components_content, append, remove } = useFieldArray({
         control,
         name: "components_content",
     });
@@ -192,6 +198,9 @@ function PageEdit() {
                 key={pageComponent.id}
                 className="my-5 ring-1 ring-gray-200 rounded p-3"
             >
+                <div className="flex w-full justify-end">
+                    <TrashIcon onClick={e => deleteComponentOnClick(e, pageComponentIndex)} className="w-4 h-4" />
+                </div>
 
                 <div>component name: {pageComponent.name}</div>
                 <div>component identifier: {pageComponent.identifier}</div>
