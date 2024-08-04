@@ -1,4 +1,4 @@
-import React, {useState} from "react"
+import React, {ChangeEvent, ReactEventHandler, useState} from "react"
 import {Link, useParams} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
 import {TrashIcon} from "@heroicons/react/16/solid"
@@ -8,6 +8,7 @@ import {useUpdateComponent} from "./hooks/useUpdateComponent"
 import {useTranslation} from "react-i18next"
 import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
+import slug from 'slug'
 import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent, {
@@ -78,7 +79,8 @@ export const  ComponentEditPage = (() => {
     const deleteElementOnClick = ((elementIndex: number) => {
         remove(elementIndex)
     })
-    const optionDeleteActionOnClick = ((
+
+    const optionDeleteActionOnClick = (async (
         e: React.MouseEvent,
         elementIndex: number,
         element_data: Array<EditableComponentElementDataType> | undefined,
@@ -86,21 +88,35 @@ export const  ComponentEditPage = (() => {
     ) => {
         element_data?.splice(option_index, 1)
         setValue(`elements.${elementIndex}.element_data`, element_data)
-        trigger(`elements.${elementIndex}`)
+        await trigger(`elements.${elementIndex}`)
     })
-    const optionAddActionOnClick = ((e: React.MouseEvent, elementIndex: number, element_data: Array<EditableComponentElementDataType> | undefined) => {
+
+    const optionAddActionOnClick = (async (
+        e: React.MouseEvent,
+        elementIndex: number,
+        element_data: Array<EditableComponentElementDataType> | undefined
+    ) => {
         element_data?.push({label: '', value: ''})
         setValue(`elements.${elementIndex}.element_data`, element_data)
-        trigger(`elements.${elementIndex}`)
+        await trigger(`elements.${elementIndex}`)
     })
-    const elementTypeButtonOnClick = ((elementIndex: number, fieldTypeValue: string) => {
+
+    const elementTypeButtonOnClick = (async (
+        elementIndex: number,
+        fieldTypeValue: string
+    ) => {
         setValue(`elements.${elementIndex}.element_type`, fieldTypeValue)
         setValue(`elements.${elementIndex}.element_data`, [{label: '', value: ''}])
-        trigger(`elements.${elementIndex}`)
+        await trigger(`elements.${elementIndex}`)
     })
 
     const submitHandler = ((data: any) => {
         mutate(data)
+    })
+
+    const ElementNameOnChange = (async (e: React.KeyboardEvent<HTMLInputElement>, elementIndex: number) => {
+        setValue(`elements.${elementIndex}.identifier`, slug(e.currentTarget.value))
+        await trigger(`elements.${elementIndex}`)
     })
 
     return (
@@ -221,7 +237,7 @@ export const  ComponentEditPage = (() => {
                                                         render={({field}) => {
                                                             return (
                                                                 <>
-                                                                    Field Type: {field.value}
+                                                                {t!('field_type')}: {field.value}
                                                                 </>
                                                             )
                                                         }}
@@ -239,6 +255,7 @@ export const  ComponentEditPage = (() => {
                                                     <InputField
                                                         name={`elements.${index}.name`}
                                                         register={register(`elements.${index}.name`)}
+                                                        onKeyUp={e => ElementNameOnChange(e, index)}
                                                         label={t('element_name')}
                                                         placeholder={t('element_name')}
                                                     />

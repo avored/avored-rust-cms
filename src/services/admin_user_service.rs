@@ -47,7 +47,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,
-        front_end_url: &str,
+        react_admin_url: &str,
         to_address: String
     ) -> Result<bool>
     {
@@ -66,7 +66,7 @@ impl AdminUserService {
             .create_password_reset(datastore, database_session, creatable_password_reset_model)
             .await?;
 
-        let link = format!("{front_end_url}/admin/reset-password/{}", password_reset_model.token);
+        let link = format!("{react_admin_url}/admin/reset-password/{}", password_reset_model.token);
         let data = ForgotPasswordViewModel {
             link
         };

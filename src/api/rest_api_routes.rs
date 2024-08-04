@@ -40,7 +40,8 @@ use crate::api::handlers::{
     setting::update_setting_all_api_handler::update_setting_all_api_handler,
     admin_user::change_password_api_handler::change_password_api_handler,
     role::put_role_identifier_api_handler::put_role_identifier_api_handler,
-    page::put_page_identifier_api_handler::put_page_identifier_api_handler
+    page::put_page_identifier_api_handler::put_page_identifier_api_handler,
+    cms::fetch_page_cms_api_handler::fetch_page_cms_api_handler,
 };
 use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
@@ -49,16 +50,21 @@ use crate::api::handlers::model::model_table_api_handler::model_table_api_handle
 use crate::api::handlers::model::put_model_identifier_api_handler::put_model_identifier_api_handler;
 use crate::api::handlers::model::store_model_api_handler::store_model_api_handler;
 use crate::api::handlers::model::update_model_api_handler::update_model_api_handler;
-use crate::providers::avored_graphql_provider::{Context, AvoRedGraphqlSchema};
+use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
-pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
+pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 
-    let front_end_app_url = &state.config.front_end_app_url;
+    let react_admin_url = &state.config.react_admin_app_url;
+    let react_front_url = &state.config.react_frontend_app_url;
 
-    println!("FRONT END CORS ALLOWED URL: {front_end_app_url}");
-    let cors_layer = CorsLayer::new()
-        .allow_origin(front_end_app_url.parse::<HeaderValue>().unwrap())
+    let origins = [
+        react_admin_url.parse().unwrap(),
+        react_front_url.parse().unwrap(),
+    ];
+
+    let cors = CorsLayer::new()
+        .allow_origin(origins)
         .allow_headers([CONTENT_TYPE, AUTHORIZATION])
         .allow_methods([
             axum::http::Method::GET,
@@ -122,13 +128,11 @@ pub fn rest_api_routes(state: Arc<AvoRedState>, ctx: Arc<Context>) -> Router {
         .route("/api/login", post(admin_user_login_api_handler))
         .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
+        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
-        .layer(cors_layer)
+        .layer(cors)
         .layer(Extension(Arc::new(schema)))
-        .layer(Extension(ctx))
 }
-
-
 
 #[cfg(test)]
 pub mod tests {
