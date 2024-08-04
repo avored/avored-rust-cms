@@ -4,16 +4,17 @@ import MainHeroSection from "./MainHeroSection";
 import RepositoryInformation from "./RepositoryInformation";
 import {useHomeCmsPage} from "./hooks/useHomeCmsPage'";
 import _ from "lodash";
+import {ComponentContentType} from "../../types/CmsPageType";
 
 const HomePage = () => {
     const {data: home_page_model} = useHomeCmsPage()
-    const GetComponent = ((component_identifier: string) => {
+    const GetComponent = ((component_identifier: string): ComponentContentType | undefined => {
         const components =  _.get(home_page_model, 'data.data.page_model.components_content', [])
-        return components.find((com: any) => {
+        return components.find((com: ComponentContentType) => {
             return com.identifier === component_identifier
         })
     })
-    // console.log(home_page_model.data.data.page_model.components_content)
+    console.log(home_page_model?.data.data?.page_model?.components_content)
   return (
     <>
       <div className="relative bg-white overflow-hidden">
@@ -28,7 +29,7 @@ const HomePage = () => {
         </div>
       </div>
 
-      <RepositoryInformation />
+      <RepositoryInformation RepositoryComponent={GetComponent('repository-component')} />
       <FeaturesSection />
       <ContactSection />
     </>

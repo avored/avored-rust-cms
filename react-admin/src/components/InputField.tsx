@@ -1,5 +1,5 @@
 import _ from 'lodash';
-
+import React from "react";
 
 type AvoRedInputFieldProps = {
     type?: string;
@@ -9,7 +9,9 @@ type AvoRedInputFieldProps = {
     id?: string;
     required?: boolean;
     value?: string | number;
-    onChange?: () => void;
+    onChange?: (e: React.ChangeEvent<HTMLInputElement>, ...args: any[]) => void;
+    onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>, ...args: any[]) => void;
+    onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>, ...args: any[]) => void;
     autoFocus?: boolean;
     disabled?: boolean;
     placeholder?: string;
@@ -37,6 +39,8 @@ const InputField = (props: AvoRedInputFieldProps) => {
                     required={props.required}
                     value={props.value}
                     onChange={props.onChange}
+                    onKeyDown={props.onKeyDown}
+                    onKeyUp={props.onKeyUp}
                     autoFocus={props.autoFocus}
                     className="appearance-none rounded-md ring-1 ring-gray-400
                             relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900

@@ -4,9 +4,15 @@ import {
   StarIcon,
 } from "@heroicons/react/24/solid";
 import { useRepositoryInformation } from "./hooks/useRepositoryInformation";
+import {ComponentContentType} from "../../types/CmsPageType";
+import {GetElementValue} from "../../lib/page";
 
-const RepositoryInformation = () => {
-  const repositoryInformation = useRepositoryInformation();
+type RepositoryComponentProps = {
+  RepositoryComponent?: ComponentContentType
+}
+
+const RepositoryInformation = (props: RepositoryComponentProps) => {
+  console.log(props)
   return (
     <>
       <hr />
@@ -22,11 +28,11 @@ const RepositoryInformation = () => {
             </div>
           </div>
           <div className="ml-3 group-hover:text-white">
-            <h5 className="text-lg p-3 heading-font font-semibold">Rate Us</h5>
+            <h5 className="text-lg p-3 heading-font font-semibold">
+              {GetElementValue(props.RepositoryComponent, 'rate-us-title')}
+            </h5>
             <p className="text-sm">
-              Help us by giving a star on GitHub. Spread the word by
-              recommending AvoRed to your network and help to get the better
-              product.
+              {GetElementValue(props.RepositoryComponent, 'rate-us-description')}
             </p>
           </div>
         </div>
@@ -39,15 +45,15 @@ const RepositoryInformation = () => {
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
               {/*{repositoryInformation.data?.data.data.commit ?? 1234}*/}
-              1234
+              {GetElementValue(props.RepositoryComponent, 'commit-number')}
             </div>
           </div>
           <div className="ml-3 group-hover:text-white">
-            <h5 className="text-lg p-3 heading-font font-semibold">Commit</h5>
+            <h5 className="text-lg p-3 heading-font font-semibold">
+              {GetElementValue(props.RepositoryComponent, 'commit-title')}
+            </h5>
             <p className="text-sm">
-              Our project has over 500 commits, showcasing our team's
-              dedication. Each commit enhances features, fixes bugs, and
-              improves performance, ensuring a high-quality software product.
+              {GetElementValue(props.RepositoryComponent, 'commit-description')}
             </p>
           </div>
         </div>
@@ -59,17 +65,15 @@ const RepositoryInformation = () => {
               </div>
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
-              {/*{JSON.stringify(repositoryInformation.data?.data.data.contribute)}*/}
-              5
+              {GetElementValue(props.RepositoryComponent, 'contribute-number')}
             </div>
           </div>
           <div className="ml-3">
             <h5 className="text-lg group-hover:text-white p-3 heading-font font-semibold">
-              Contribute
+              {GetElementValue(props.RepositoryComponent, 'contribute-title')}
             </h5>
             <p className="text-sm">
-              Wish to contribute, AvoRed is 100% free and open-source under the
-              GPL-3.0 license. Fork it on GitHub and help make it better
+              {GetElementValue(props.RepositoryComponent, 'contribute-description')}
             </p>
           </div>
         </div>

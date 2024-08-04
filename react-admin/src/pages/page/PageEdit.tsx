@@ -156,7 +156,6 @@ function PageEdit() {
         return (
 
             <div className="ring-1 my-2 ring-gray-200" key={componentField.identifier}>
-                {JSON.stringify(componentField)}
                 {renderComponentFieldType(
                     componentField,
                     pageComponentIndex,

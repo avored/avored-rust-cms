@@ -7,6 +7,7 @@ import IPageModel from "../../types/page/IPageModel";
 import HasPermission from "../../components/HasPermission";
 import AvoRedTable from "../../components/AvoRedTable";
 import {useState} from "react";
+import { getFormattedDate } from "../../lib/common";
 
 export const ComponentTablePage = (() => {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -27,12 +28,6 @@ export const ComponentTablePage = (() => {
 
     const customSorting = ((sorting: any) => {
         setSorting(sorting)
-    })
-
-    const getFormattedDate = ((date: string) => {
-        var date_obj = new Date(date);
-
-        return `${date_obj.getFullYear()}-${date_obj.getMonth() + 1}-${date_obj.getDate()}`;
     })
 
     const columnHelper = createColumnHelper<IPageModel>()

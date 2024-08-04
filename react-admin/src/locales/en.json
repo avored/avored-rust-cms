@@ -78,6 +78,7 @@
   "model": "Model",
   "model_information": "Model Information",
   "components": "Components",
+  "field_type": "Field type",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
