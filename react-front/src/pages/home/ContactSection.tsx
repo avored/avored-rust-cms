@@ -3,8 +3,13 @@ import {useContactUsForm} from "./hooks/useContactUsForm.ts";
 import {useForm} from "react-hook-form";
 import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema.ts";
 import {ContactUsType} from "../../types/ContactUsType.ts";
+import {ComponentContentType} from "../../types/CmsPageType";
+import {GetElementValue} from "../../lib/page";
 
-export const ContactSection = (() => {
+type ContactUsComponentProps = {
+    ContactUsComponent?: ComponentContentType
+}
+export const ContactSection = ((props: ContactUsComponentProps) => {
     const {
         register,
         handleSubmit,
@@ -40,29 +45,11 @@ export const ContactSection = (() => {
                 <div className="md:flex flex-row pt-10">
                 <div className="md:w-1/2 w-full pr-5">
                         <div className="text-xl mb-3">
-                            Need help developing content management solution with Avoprimary?
+                            {GetElementValue(props.ContactUsComponent, 'contact-us-title')}
                         </div>
                         <div className="text-sm">
                             <p>
-                                We'd love to talk with you about your cms projects
-                                whether it's a brand new website or a rework of your existing
-                                one. We would happily answer any questions you may have about
-                                developing with Avoprimary.
-                            </p>
-                            <p>
-              <span className="font-semibold">
-                Do not have a development team?
-              </span>
-                                Don't worry, we can implement the Avoprimary solution for you
-                                according to your business requirements. We can surely help
-                                you achieve your goals with a customized Avoprimary design.
-                            </p>
-                            <p>
-              <span className="font-semibold">
-                For a FREE consultation with our expert development team,
-                simply leave your details below and we'll get back to you
-                soon.
-              </span>
+                                {GetElementValue(props.ContactUsComponent, 'contact-us-description')}
                             </p>
                         </div>
                     </div>

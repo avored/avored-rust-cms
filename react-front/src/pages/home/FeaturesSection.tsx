@@ -1,4 +1,10 @@
-const FeaturesSection = () => {
+import {ComponentContentType} from "../../types/CmsPageType";
+import {GetElementValue} from "../../lib/page";
+
+type KeyFeaturesComponentProps = {
+    KeyFeaturesComponent?: ComponentContentType
+}
+const FeaturesSection = (props: KeyFeaturesComponentProps) => {
     return (
         <>
             <div className="text-4xl text-primary-700 pl-5 font-semibold heading-font mt-10">
@@ -8,35 +14,26 @@ const FeaturesSection = () => {
                 <div className="md:flex flex-row">
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font text-xl">
-                            Content Modeling
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-modeling-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            A flexible and customizable content modeling system that allows
-                            users to define content structures (schemas) and relationships
-                            between different content types. This enables the creation of
-                            structured content that can be reused across various platforms and
-                            channels.
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-modeling-description')}
                         </div>
                     </div>
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font text-xl">
-                            API-first Approach
+                            {GetElementValue(props.KeyFeaturesComponent, 'api-first-approach-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            Built with an API-first architecture, allowing content to be
-                            accessed and delivered via APIs (RESTful or GraphQL). This
-                            decoupled approach enables content to be distributed to any device
-                            or platform, facilitating omnichannel content delivery.
+                            {GetElementValue(props.KeyFeaturesComponent, 'api-first-approach-description')}
                         </div>
                     </div>
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font text-xl">
-                            Content Versioning and History
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-versioning-and-history-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            Support for content versioning and revision history, allowing
-                            users to track changes, revert to previous versions, and
-                            collaborate effectively on content creation and updates.
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-versioning-and-history-description')}
                         </div>
                     </div>
                 </div>
@@ -45,36 +42,26 @@ const FeaturesSection = () => {
                 <div className="md:flex flex-row">
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font text-xl">
-                            Scalability and Performance
+                            {GetElementValue(props.KeyFeaturesComponent, 'scalability-and-performance-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            Designed to handle large volumes of content and high traffic
-                            efficiently, with features such as caching, CDN (Content Delivery
-                            Network) support, and scalability options to ensure optimal
-                            performance across diverse environments.
+                            {GetElementValue(props.KeyFeaturesComponent, 'scalability-and-performance-description')}
                         </div>
                     </div>
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font heading-font text-xl">
-                            Integration Capabilities
+                            {GetElementValue(props.KeyFeaturesComponent, 'integration-capabilities-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            Extensive integration capabilities with third-party services,
-                            tools, and frameworks through webhooks, plugins, or custom
-                            integrations. This allows seamless connectivity with other systems
-                            such as eCommerce platforms, CRM systems, analytics tools, and
-                            more.
+                            {GetElementValue(props.KeyFeaturesComponent, 'integration-capabilities-description')}
                         </div>
                     </div>
                     <div className="md:w-1/3 w-full hover:bg-primary-600 rounded-lg hover:text-white p-6 mt-3">
                         <div className="font-semibold heading-font text-xl">
-                            Content Localization and Internationalization
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-localization-and-internationalization-title')}
                         </div>
                         <div className="text-left text-sm mt-3">
-                            Capabilities to manage multilingual and localized content
-                            efficiently, including tools for translating content, managing
-                            language variations, and adapting content for different regions or
-                            markets.
+                            {GetElementValue(props.KeyFeaturesComponent, 'content-localization-and-internationalization-description')}
                         </div>
                     </div>
                 </div>

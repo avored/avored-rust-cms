@@ -14,7 +14,7 @@ const HomePage = () => {
             return com.identifier === component_identifier
         })
     })
-    console.log(home_page_model?.data.data?.page_model?.components_content)
+    // console.log(home_page_model?.data.data?.page_model?.components_content)
   return (
     <>
       <div className="relative bg-white overflow-hidden">
@@ -30,8 +30,8 @@ const HomePage = () => {
       </div>
 
       <RepositoryInformation RepositoryComponent={GetComponent('repository-component')} />
-      <FeaturesSection />
-      <ContactSection />
+      <FeaturesSection KeyFeaturesComponent={GetComponent('key-features-component')} />
+      <ContactSection ContactUsComponent={GetComponent('contact-us-component')} />
     </>
   );
 };
