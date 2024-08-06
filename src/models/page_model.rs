@@ -11,14 +11,26 @@ pub struct ComponentContentModel {
     pub elements: Vec<ComponentElementModel>,
 }
 
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageElementContentDataType {
+    StringType(String),
+    Int64(i64)
+}
 
+impl Default for PageElementContentDataType {
+    fn default() -> PageElementContentDataType {
+        PageElementContentDataType::StringType("hello string".to_string())
+    }
+}
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
 pub struct ComponentElementModel {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
-    pub element_content: String,
+    pub element_data_type: String,
+    pub element_content: PageElementContentDataType,
     pub element_data: Vec<PageComponentFieldDataOption>
 }
 
@@ -136,7 +148,21 @@ impl TryFrom<Object> for ComponentElementModel {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
         let element_type = val.get("element_type").get_string()?;
-        let element_content = val.get("element_content").get_string()?;
+        let element_data_type = val.get("element_data_type").get_string()?;
+        // let element_content = val.get("element_content").get_string()?;
+
+        let element_content = match element_data_type.as_str() {
+            "TEXT" => {
+                let value = val.get("element_content").get_string()?;
+
+                PageElementContentDataType::StringType(value)
+            },
+            "INT" => {
+                let value = val.get("element_content").get_int()?;
+                PageElementContentDataType::Int64(value)
+            },
+            _ => PageElementContentDataType::default()
+        };
 
         // let element_data: Vec<PageComponentFieldDataOption> = val.get("element_data").get_array()?;
         let element_data = match val.get("element_data") {
@@ -168,6 +194,7 @@ impl TryFrom<Object> for ComponentElementModel {
             name,
             identifier,
             element_type,
+            element_data_type,
             element_content,
             element_data
         })
