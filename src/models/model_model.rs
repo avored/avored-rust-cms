@@ -1,6 +1,6 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use surrealdb::sql::{Datetime, Object};
 use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

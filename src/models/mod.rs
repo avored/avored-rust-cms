@@ -38,6 +38,8 @@ pub trait  BaseModel {
     fn get_datetime(&self) -> Result<Datetime>;
     fn get_bool(&self) -> Result<bool>;
     fn get_int(&self) -> Result<i64>;
+
+    // fn get_array<T>(&self) -> Result<Vec<T>>;
 }
 impl BaseModel for Option<&Value> {
 
@@ -103,6 +105,31 @@ impl BaseModel for Option<&Value> {
 
         Ok(value)
     }
+
+    // fn get_array<T>(&self) -> Result<Vec<T>> where T : TryFrom<Object> {
+    //     let value = match self.to_owned() {
+    //         Some(val) => match val.clone() {
+    //             Value::Array(v) => {
+    //                 let mut arr: Vec<T> = Vec::new();
+    //
+    //                 for array in v.into_iter() {
+    //                     let object = match array.clone() {
+    //                         Value::Object(v) => v,
+    //                         _ => Object::default(),
+    //                     };
+    //                     let field_data_option: T = object.try_into()?;
+    //
+    //                     arr.push(field_data_option)
+    //                 }
+    //                 arr
+    //             }
+    //             _ => Vec::new(),
+    //         },
+    //         None => Vec::new(),
+    //     };
+    //
+    //     Ok(value)
+    // }
 }
 
 impl TryFrom<Object> for ModelCount {

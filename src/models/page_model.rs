@@ -1,10 +1,7 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
-
 use super::{BaseModel, Pagination};
-
-
 
 // This one should contain components and components fields with content
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -13,6 +10,7 @@ pub struct ComponentContentModel {
     pub identifier: String,
     pub elements: Vec<ComponentElementModel>,
 }
+
 
 
 #[derive(Deserialize, Debug, Clone, Default, Serialize)]
@@ -93,7 +91,6 @@ impl TryFrom<Object> for PageModel {
     }
 }
 
-
 impl TryFrom<Object> for ComponentContentModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentContentModel> {
@@ -141,9 +138,10 @@ impl TryFrom<Object> for ComponentElementModel {
         let element_type = val.get("element_type").get_string()?;
         let element_content = val.get("element_content").get_string()?;
 
+        // let element_data: Vec<PageComponentFieldDataOption> = val.get("element_data").get_array()?;
         let element_data = match val.get("element_data") {
             Some(val) => {
-                
+
                 match val.clone() {
                     Value::Array(v) => {
                         let mut arr = Vec::new();
