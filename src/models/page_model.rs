@@ -20,7 +20,7 @@ pub enum PageElementContentDataType {
 
 impl Default for PageElementContentDataType {
     fn default() -> PageElementContentDataType {
-        PageElementContentDataType::StringType("hello string".to_string())
+        PageElementContentDataType::StringType("".to_string())
     }
 }
 
@@ -251,6 +251,7 @@ pub struct CreatableComponentElementContentModel {
     pub identifier: String,
     pub element_type: String,
     pub element_content: String,
+    pub element_data_type: String,
     pub element_data: Vec<CreatablePageComponentElementDataModel>
 }
 
@@ -283,6 +284,7 @@ pub struct UpdatableComponentElementContentModel {
     pub identifier: String,
     pub element_type: String,
     pub element_content: String,
+    pub element_data_type: String,
     pub element_data: Vec<UpdatablePageComponentElementDataModel>
 }
 

@@ -21,6 +21,7 @@ pub struct UpdatableComponentElementContentRequest {
     pub identifier: String,
     pub element_type: String,
     pub element_content: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<EditablePageComponentElementDataOptionRequest>>
 }
 
