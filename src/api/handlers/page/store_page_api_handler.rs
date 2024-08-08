@@ -69,6 +69,7 @@ pub async fn store_page_api_handler(
                 identifier: payload_component_elements_data.identifier,
                 element_type: payload_component_elements_data.element_type,
                 element_content: payload_component_elements_data.element_content,
+                element_data_type: payload_component_elements_data.element_data_type,
                 element_data: payload_element_data_model_options
             };
 

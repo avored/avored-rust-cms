@@ -22,6 +22,7 @@ export interface IEditablePageComponentFieldModel {
     name: string;
     identifier: string;
     element_type: string;
+    element_data_type: string;
     element_content: string;
     element_data?: Array<IEditablePageComponentFieldDataModel>;
     created_at: string;

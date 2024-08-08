@@ -132,12 +132,14 @@ impl PageRepository {
                         name: '{name}', \
                         identifier: '{identifier}', \
                         element_type: '{element_type}', \
+                        element_data_type: '{element_data_type}', \
                         element_content: '{element_content}', \
                         element_data: [{element_data_sql}]  \
                         {close_brace},",
                              name = creatable_component_element_content.name,
                              identifier = creatable_component_element_content.identifier,
                              element_type = creatable_component_element_content.element_type,
+                             element_data_type = creatable_component_element_content.element_data_type,
                              element_data_sql = element_data_sql,
                              element_content = creatable_component_element_content.element_content,
                              open_brace = String::from("{"),
@@ -218,23 +220,35 @@ impl PageRepository {
                         ));
                 }
 
-                elements_sql.push_str(&format!("{open_brace} name: '{name}', identifier: '{identifier}', element_type: '{element_type}', element_content: '{element_content}', element_data: [{element_data_sql}]  {close_brace},",
-                                               name = updatable_component_element_content.name,
-                                               identifier = updatable_component_element_content.identifier,
-                                               element_type = updatable_component_element_content.element_type,
-                                               element_content = updatable_component_element_content.element_content,
-                                               element_data_sql = element_data_sql,
-                                               open_brace = String::from("{"),
-                                               close_brace = String::from("}")
+                elements_sql.push_str(&format!("{open_brace} \
+                        name: '{name}', \
+                        identifier: '{identifier}', \
+                        element_type: '{element_type}', \
+                        element_data_type: '{element_data_type}', \
+                        element_content: '{element_content}', \
+                        element_data: [{element_data_sql}\
+                   ]  {close_brace},",
+                       name = updatable_component_element_content.name,
+                       identifier = updatable_component_element_content.identifier,
+                       element_type = updatable_component_element_content.element_type,
+                       element_content = updatable_component_element_content.element_content,
+                       element_data_type = updatable_component_element_content.element_data_type,
+                       element_data_sql = element_data_sql,
+                       open_brace = String::from("{"),
+                       close_brace = String::from("}")
                 ));
             }
 
-            components_content_sql.push_str(&format!("{open_brace} name: '{name}', identifier: '{identifier}', elements: [{elements_sql}]  {close_brace},",
-                                                     name = updatable_component_content_model.name,
-                                                     identifier = updatable_component_content_model.identifier,
-                                                     elements_sql = elements_sql,
-                                                     open_brace = String::from("{"),
-                                                     close_brace = String::from("}")
+            components_content_sql.push_str(&format!("{open_brace} \
+                    name: '{name}', \
+                    identifier: '{identifier}', \
+                    elements: [{elements_sql}]  \
+                {close_brace},",
+                     name = updatable_component_content_model.name,
+                     identifier = updatable_component_content_model.identifier,
+                     elements_sql = elements_sql,
+                     open_brace = String::from("{"),
+                     close_brace = String::from("}")
             ));
         }
 
@@ -253,7 +267,6 @@ impl PageRepository {
                           open_brace = String::from("{"),
                           close_brace = String::from("}")
         );
-        println!("SQL: {}", sql);
 
         let responses = datastore.execute(&sql, database_session, None).await?;
 

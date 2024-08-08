@@ -27,8 +27,6 @@ pub async fn change_password_api_handler(
             logged_in_user.admin_user_model.password
         )?;
 
-    println!("password match: {}", is_password_match);
-
     if !is_password_match {
         let error_message = ErrorMessage {
             key: String::from("password"),

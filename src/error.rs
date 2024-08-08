@@ -42,15 +42,15 @@ impl From<serde_json::Error> for Error {
 }
 
 impl From<surrealdb::err::Error> for Error {
-    fn from(_val: surrealdb::err::Error) -> Self {
+    fn from(val: surrealdb::err::Error) -> Self {
+        error!("there is an issue with surreal db: {val:?}");
         Error::Generic("Surreal Error".to_string())
     }
 }
-
-
-// impl From<surrealdb::sql::Datetime> for Error {
-//     fn from(_val: surrealdb::sql::Datetime) -> Self {
-//         Error::Generic("Surreal data time Error".to_string())
+//
+// impl From<<T as TryFrom<Object>>::Error> for Error {
+//     fn from(_val: surrealdb::err::Error) -> Self {
+//         Error::Generic("Surreal Error".to_string())
 //     }
 // }
 
@@ -65,6 +65,13 @@ impl From<RenderError> for Error {
         Error::Generic("handlebar error".to_string())
     }
 }
+
+// impl TryFrom<Object> for Error {
+//     fn try_from(actual_error: Object) -> Self {
+//         error!("there is an issue while rendering the handlebar template: {actual_error:?}");
+//         Error::Generic("handlebar error".to_string())
+//     }
+// }
 
 impl From<TemplateError> for Error {
     fn from(actual_error: TemplateError) -> Self {
