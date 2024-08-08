@@ -1,6 +1,3 @@
-import IComponentModel from "../component/IComponentModel";
-import IFieldModel from "../component/IFieldModel";
-
 export default interface ICreatablePage {
     name: string;
     identifier: string;
@@ -15,24 +12,25 @@ export interface ICreatablePageComponentModel {
     updated_at: string;
     created_by: string;
     updated_by: string;
-    fields: Array<ICreatablePageComponentFieldModel>
+    elements: Array<ICreatablePageComponentElementModel>
 }
 
-export interface ICreatablePageComponentFieldModel {
+export interface ICreatablePageComponentElementModel {
     id: string;
     name: string;
     identifier: string;
-    field_type: string;
-    field_content: string;
-    field_data?: Array<ICreatablePageComponentFieldDataModel>;
+    element_type: string;
+    element_data_type: string;
+    element_content: string;
+    element_data?: Array<ICreatablePageComponentElementDataModel>;
     created_at: string;
     updated_at: string;
     created_by: string;
     updated_by: string;
 }
 
-export interface ICreatablePageComponentFieldDataModel {
+export interface ICreatablePageComponentElementDataModel {
     label: string;
     value: string;
-    field_data_content: string;
+    element_data_content: string;
 }

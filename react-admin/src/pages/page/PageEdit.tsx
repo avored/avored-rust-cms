@@ -85,7 +85,7 @@ function PageEdit() {
 
     const setSelectedFieldDataOption = ((selected: Array<string>, pageComponentIndex: number, componentFieldIndex: number) => {
         let val = selected.pop() ?? ''
-        setValue(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`, val)
+        setValue(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`, val);
     })
 
     const getSelectFieldDataOptionCurrentValue = ((pageComponentIndex: number, componentFieldIndex: number) => {

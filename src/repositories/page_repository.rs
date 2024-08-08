@@ -267,7 +267,7 @@ impl PageRepository {
                           open_brace = String::from("{"),
                           close_brace = String::from("}")
         );
-        
+
         let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
