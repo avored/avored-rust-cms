@@ -101,12 +101,14 @@ impl ComponentRepository {
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
+                                element_data_type: '{element_data_type}', \
                                 element_data: [{element_data_sql}],
                                 {close_brace},",
                     open_brace = String::from("{"),
                     name =  element.name,
                     identifier = element.identifier,
                     element_type = element.element_type,
+                    element_data_type = element.element_data_type,
                     close_brace = String::from("}")
                 ));
         }
@@ -201,14 +203,16 @@ impl ComponentRepository {
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
-                                element_data: [{element_data_sql}],
+                                element_data_type: '{element_data_type}', \
+                                element_data: [{element_data_sql}], \
                                 {close_brace},",
-                         open_brace = String::from("{"),
-                         name =  element.name,
-                         identifier = element.identifier,
-                         element_type = element.element_type,
-                         element_data_sql = element_data_sql,
-                         close_brace = String::from("}")
+                    open_brace = String::from("{"),
+                    name =  element.name,
+                    identifier = element.identifier,
+                    element_type = element.element_type,
+                    element_data_type = element.element_data_type,
+                    element_data_sql = element_data_sql,
+                    close_brace = String::from("}")
                 ));
         }
 

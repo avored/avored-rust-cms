@@ -20,6 +20,7 @@ pub struct ComponentElementModel {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<ComponentElementDataModel>>
 }
 
@@ -80,6 +81,7 @@ impl TryFrom<Object> for ComponentElementModel {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
         let element_type = val.get("element_type").get_string()?;
+        let element_data_type = val.get("element_data_type").get_string()?;
         let element_data = match val.get("element_data") {
             Some(val) => {
 
@@ -109,6 +111,7 @@ impl TryFrom<Object> for ComponentElementModel {
             name,
             identifier,
             element_type,
+            element_data_type,
             element_data :Some(element_data)
         })
     }
@@ -162,6 +165,7 @@ pub struct CreatableComponentElementModel {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<ComponentElementDataModel>>,
 }
 
@@ -187,6 +191,7 @@ pub struct UpdatableComponentElementModel {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<ComponentElementDataModel>>,
 }
 

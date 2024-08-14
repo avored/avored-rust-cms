@@ -213,18 +213,28 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 //     }
 // }
 
+
 #[cfg(test)]
 pub mod tests {
     use std::env;
     use std::sync::Arc;
-    use axum::{body::Body, http::Request, Router};
-    use crate::api::rest_api_routes::rest_api_routes;
+    use axum::body::Body;
+    use axum::http::{self, header, Request};
+    use axum::Router;
+    use jsonwebtoken::{encode, EncodingKey, Header};
     use crate::avored_state::AvoRedState;
     use crate::error::Result;
+    use crate::models::admin_user_model::AdminUserModel;
+    use crate::models::token_claim_model::TokenClaims;
 
-    pub fn send_get_request(uri: &str) -> Request<Body> {
+    use super::rest_api_routes;
+
+    pub fn send_get_request(uri: &str, token: String) -> Request<Body> {
+
         Request::builder()
             .uri(uri)
+            .header(header::AUTHORIZATION, format!("Bearer {token}"))
+            .header(header::CONTENT_TYPE, "application/json")
             .method("GET")
             .body(Body::empty())
             .unwrap()
@@ -233,21 +243,59 @@ pub mod tests {
     pub fn send_post_request(uri: &str, body: Body) -> Request<Body> {
         Request::builder()
             .uri(uri)
-            .header("content-type", "application/json")
+            .header(http::header::CONTENT_TYPE, "application/json")
             .method("POST")
-            .body(body).unwrap()
+            .body(body)
+            .unwrap()
     }
 
-    pub async fn get_axum_app() -> Result<Router>
+    pub fn get_auth_token(state: Arc<AvoRedState>) -> Result<String> {
+        let now = chrono::Utc::now();
+        let iat = now.timestamp() as usize;
+        let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
+        let admin_user_model = AdminUserModel::default();
+
+        let claims: TokenClaims = TokenClaims {
+            sub: admin_user_model.clone().id,
+            name: admin_user_model.clone().full_name,
+            email:admin_user_model.clone().email,
+            admin_user_model: admin_user_model.clone(),
+            exp,
+            iat,
+        };
+        Ok(encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(state.config.jwt_secret_key.as_ref()),
+        ).unwrap())
+    }
+
+    pub async fn get_axum_app() -> Result<(Router, Arc<AvoRedState>)>
     {
         env::set_var("AVORED_DATABASE_NAMESPACE", "public_test");
         env::set_var("AVORED_DATABASE_NAME", "avored_cms_test");
-        env::set_var("AVORED_DATABASE_FOLDER_NAME", "memory");
+        env::set_var("AVORED_DATABASE_PATH", "memory");
+
+
+        env::set_var("AVORED_PASSWORD_SALT", "UnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTest");
+
+        env::set_var("AVORED_JWT_SECRET", "UnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTest");
+        env::set_var("AVORED_JWT_EXPIRED_IN", "60");
+        env::set_var("AVORED_JWT_MAXAGE", "60");
+
+        env::set_var("AVORED_REACT_FRONTEND_APP_URL", "http://localhost:5173");
+        env::set_var("AVORED_REACT_ADMIN_APP_URL", "http://localhost:3000");
+        env::set_var("AVORED_BACK_END_APP_URL", "http://localhost:8080");
+
+        env::set_var("SMTP_HOST", "http://smtp.url");
+        env::set_var("SMTP_USERNAME", "smtp_username");
+        env::set_var("SMTP_PASSWORD", "smtp_password");
+        env::set_var("SMTP_PORT", "587");
 
         let state = Arc::new(AvoRedState::new().await?);
 
         let app = rest_api_routes(state.clone());
 
-       Ok(app)
+        Ok((app, state))
     }
 }

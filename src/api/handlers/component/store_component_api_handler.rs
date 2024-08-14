@@ -57,6 +57,7 @@ pub async fn store_component_api_handler(
             name: payload_element.name,
             identifier: payload_element.identifier,
             element_type: payload_element.element_type,
+            element_data_type: payload_element.element_data_type,
             element_data: Some(creatable_element_data)
 
         };
