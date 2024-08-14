@@ -10,6 +10,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import IAssetSave from "../../types/asset/IAssetSave";
 import IAssetModel from "../../types/asset/IAssetModel";
+import { FolderPlusIcon, PlusIcon } from "@heroicons/react/24/solid";
 
 function AssetTable() {
   const [isOpen, setIsOpen] = useState(false);
@@ -109,24 +110,29 @@ function AssetTable() {
             <div className="flex flex-col mt-6">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full p-2">
-                  <div className="grid grid-cols-6 gap-4 mx-5">
-                    {assets.map((asset: IAssetModel) => {
-                      return (
-                        <div key={asset.id} className="border rounded p-3">
-                          <div className="h-32 mb-3">
-                            <img
-                              src={`http://localhost:8080/${asset.file_path}`}
-                              className="h-32"
-                              alt={asset.file_name}
-                            />
-                          </div>
-                          <h6 className="text-sm font-semibold">
-                            {asset.file_name} {/* Added file name to h6 */}
-                          </h6>
+                    <div className="grid grid-cols-6 gap-4 mx-5">
+                        <div className="border h-48 flex w-full justify-center items-center rounded p-3">
+                            <div className="mb-3">
+                                <FolderPlusIcon className="w-12 text-primary-500 h-12"/>
+                            </div>
                         </div>
-                      );
-                    })}
-                  </div>
+                        {assets.map((asset: IAssetModel) => {
+                            return (
+                                <div key={asset.id} className="border rounded p-3">
+                                    <div className="h-32 mb-3">
+                                        <img
+                                            src={`http://localhost:8080/${asset.file_path}`}
+                                            className="h-32"
+                                            alt={asset.file_name}
+                                        />
+                                    </div>
+                                    <h6 className="text-sm font-semibold">
+                                        {asset.file_name} {/* Added file name to h6 */}
+                                    </h6>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
               </div>
             </div>
