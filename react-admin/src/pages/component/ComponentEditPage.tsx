@@ -73,7 +73,7 @@ export const  ComponentEditPage = (() => {
     })
 
     const addFieldOnClick = (() => {
-        append({name: '', identifier: '', element_type: AvoRedFieldTypesEnum.TEXT})
+        append({name: '', identifier: '', element_type: AvoRedFieldTypesEnum.TEXT, element_data_type: "TEXT"})
     })
 
     const deleteElementOnClick = ((elementIndex: number) => {
@@ -107,6 +107,9 @@ export const  ComponentEditPage = (() => {
     ) => {
         setValue(`elements.${elementIndex}.element_type`, fieldTypeValue)
         setValue(`elements.${elementIndex}.element_data`, [{label: '', value: ''}])
+        // Ideally value of this data type can be based on element
+        // e.g: Number Input field will have INT(It should match rust backend type) data type
+        setValue(`elements.${elementIndex}.element_data_type`, 'TEXT');
         await trigger(`elements.${elementIndex}`)
     })
 

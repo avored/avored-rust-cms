@@ -13,6 +13,7 @@ pub struct UpdatableElementRequest {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<UpdatableComponentElementDataRequest>>
 }
 

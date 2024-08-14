@@ -18,9 +18,6 @@ pub struct ResponseData {
     data: String
 }
 
-
-
-
 #[cfg(test)]
 mod tests {
     use axum::http::StatusCode;
@@ -33,9 +30,9 @@ mod tests {
     #[tokio::test]
     async fn test_health_check_api_handler() -> Result<()>
     {
-        let app = get_axum_app().await.unwrap();
+        let (app, _state) = get_axum_app().await.unwrap();
 
-        let response = app.oneshot(send_get_request("/api/health-check")).await.unwrap();
+        let response = app.oneshot(send_get_request("/api/health-check", String::from(""))).await.unwrap();
 
         let dummy_res = ResponseData {
             status: true,

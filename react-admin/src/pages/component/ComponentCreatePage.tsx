@@ -31,7 +31,7 @@ export const ComponentCreatePage = (() => {
   const [t] = useTranslation("global");
 
   const addElementOnClick = () => {
-    append({ name: "", identifier: "", element_type: AvoRedFieldTypesEnum.TEXT });
+    append({ name: "", identifier: "", element_type: AvoRedFieldTypesEnum.TEXT, element_data_type: 'TEXT' });
   };
 
   const deleteElementOnClick = (elementIndex: number) => {
@@ -44,6 +44,9 @@ export const ComponentCreatePage = (() => {
   ) => {
     setValue(`elements.${fieldIndex}.element_type`, fieldTypeValue);
     setValue(`elements.${fieldIndex}.element_data`, [{ label: "", value: "" }]);
+    // Ideally value of this data type can be based on element
+    // e.g: Number Input field will have INT(It should match rust backend type) data type
+    setValue(`elements.${fieldIndex}.element_data_type`, 'TEXT');
     trigger(`elements.${fieldIndex}`);
   };
 
@@ -228,7 +231,7 @@ export const ComponentCreatePage = (() => {
                                                       />
                                                     </div>
 
-                                                    <div className="w-1/2 ml-3 w-full">
+                                                    <div className="w-1/2 ml-3">
                                                       <label
                                                           htmlFor="hs-inline-leading-pricing-select-label"
                                                           className="text-sm text-gray-600"

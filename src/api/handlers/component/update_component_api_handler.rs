@@ -58,6 +58,7 @@ pub async fn update_component_api_handler(
             name: payload_element.name,
             identifier: payload_element.identifier,
             element_type: payload_element.element_type,
+            element_data_type: payload_element.element_data_type,
             element_data: Some(updatable_element_data)
         };
         updatable_elements.push(updatable_component_element_model);

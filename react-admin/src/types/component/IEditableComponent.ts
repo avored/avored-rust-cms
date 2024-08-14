@@ -9,6 +9,7 @@ export type EditableComponentElementType = {
     name: string;
     identifier: string;
     element_type: string;
+    element_data_type: string;
     element_data?: Array<EditableComponentElementDataType>
 }
 
