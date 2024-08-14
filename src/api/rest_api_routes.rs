@@ -274,7 +274,7 @@ pub mod tests {
     {
         env::set_var("AVORED_DATABASE_NAMESPACE", "public_test");
         env::set_var("AVORED_DATABASE_NAME", "avored_cms_test");
-        env::set_var("AVORED_DATABASE_PATH", "memory");
+        env::set_var("AVORED_DATABASE_FOLDER_NAME", "memory");
 
 
         env::set_var("AVORED_PASSWORD_SALT", "UnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTestUnitTest");
