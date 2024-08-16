@@ -98,9 +98,6 @@ impl AssetRepository {
         database_session: &Session,
         creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
-
-        println!("REPO MODEL: {creatable_asset_model:?}");
-
         let sql = "CREATE assets CONTENT $data";
 
         let data: BTreeMap<String, Value> = [

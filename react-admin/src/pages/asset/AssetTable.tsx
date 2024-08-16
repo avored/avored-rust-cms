@@ -18,8 +18,9 @@ function AssetTable() {
   const assets: Array<IAssetModel> = _.get(asset_api_table_response, "data.data.data", []);
   const { mutate } = useStoreAsset();
   const [t] = useTranslation("global");
+  const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
 
-  const {
+    const {
     register,
     handleSubmit,
     formState: { errors }
@@ -110,7 +111,7 @@ function AssetTable() {
             <div className="flex flex-col mt-6">
               <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div className="inline-block min-w-full p-2">
-                    <div className="grid grid-cols-6 gap-4 mx-5">
+                    <div className="grid grid-cols-6  gap-4 mx-5">
                         <div className="border h-48 flex w-full justify-center items-center rounded p-3">
                             <div className="mb-3">
                                 <FolderPlusIcon className="w-12 text-primary-500 h-12"/>
@@ -119,16 +120,16 @@ function AssetTable() {
                         {assets.map((asset: IAssetModel) => {
                             return (
                                 <div key={asset.id} className="border rounded p-3">
-                                    <div className="h-32 mb-3">
+                                    <div className="flex justify-center h-40 mb-3">
                                         <img
-                                            src={`http://localhost:8080/${asset.file_path}`}
-                                            className="h-32"
+                                            src={`${backend_url}/${asset.file_path}`}
+                                            className="h-40"
                                             alt={asset.file_name}
                                         />
                                     </div>
-                                    <h6 className="text-sm font-semibold">
+                                    <div className="flex justify-center text-xs text-gray-500">
                                         {asset.file_name} {/* Added file name to h6 */}
-                                    </h6>
+                                    </div>
                                 </div>
                             );
                         })}

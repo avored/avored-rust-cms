@@ -41,7 +41,7 @@ pub async fn store_asset_api_handler(
             "file" => {
                 let s: String = rand::thread_rng()
                     .sample_iter(&Alphanumeric)
-                    .take(32)
+                    .take(16)
                     .map(char::from)
                     .collect();
 
