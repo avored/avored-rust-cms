@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactEventHandler, useState} from "react"
+import React, {useState} from "react"
 import {Link, useParams} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
 import {TrashIcon} from "@heroicons/react/16/solid"
@@ -13,7 +13,6 @@ import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent, {
   EditableComponentElementDataType,
-  
 } from "../../types/component/IEditableComponent";
 import {usePutComponentIdentifier} from "./hooks/usePutComponentIdentifier"
 import {useComponentPutSchema} from "./schemas/component.put.schema";
