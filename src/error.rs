@@ -41,6 +41,13 @@ impl From<serde_json::Error> for Error {
     }
 }
 
+
+impl From<std::io::Error> for Error {
+    fn from(_val: std::io::Error) -> Self {
+        Error::Generic("tokio file create folder error ".to_string())
+    }
+}
+
 impl From<surrealdb::err::Error> for Error {
     fn from(val: surrealdb::err::Error) -> Self {
         error!("there is an issue with surreal db: {val:?}");

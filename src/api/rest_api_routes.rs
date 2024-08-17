@@ -1,53 +1,55 @@
 use std::sync::Arc;
-use axum::{routing::get, Router, middleware, Extension};
-use axum::routing::{MethodFilter, on, post, put};
+use axum::{middleware, routing::get, Extension, Router};
+use axum::routing::{on, post, put, MethodFilter};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use juniper::{EmptyMutation, EmptySubscription};
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use tower_http::cors::CorsLayer;
 use crate::api::handlers::{
-    page::page_table_api_handler::page_table_api_handler,
+    admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
     admin_user::admin_user_login_api_handler::admin_user_login_api_handler,
-    component_all_api_handler::component_all_api_handler,
-    health_check_api_handler::health_check_api_handler,
-    page::store_page_api_handler::store_page_api_handler,
-    page::update_page_api_handler::update_page_api_handler,
-    page::fetch_page_api_handler::fetch_page_api_handler,
+    admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler,
     admin_user::admin_user_table_api_handler::admin_user_table_api_handler,
+    admin_user::change_password_api_handler::change_password_api_handler,
+    admin_user::fetch_admin_user_api_handler::fetch_admin_user_api_handler,
+    admin_user::logged_in_user_api_handler::logged_in_user_api_handler,
     admin_user::store_admin_user_api_handler::store_admin_user_api_handler,
     admin_user::update_admin_user_api_handler::update_admin_user_api_handler,
-    admin_user::fetch_admin_user_api_handler::fetch_admin_user_api_handler,
-    role::role_table_api_handler::role_table_api_handler,
-    role::fetch_role_api_handler::fetch_role_api_handler,
-    role::store_role_api_handler::store_role_api_handler,
-    role::update_role_api_handler::update_role_api_handler,
-    role::role_option_api_handler::role_option_api_handler,
     asset::asset_table_api_handler::asset_table_api_handler,
     asset::store_asset_api_handler::store_asset_api_handler,
+    cms::fetch_page_cms_api_handler::fetch_page_cms_api_handler,
     component::component_table_api_handler::component_table_api_handler,
-    component::store_component_api_handler::store_component_api_handler,
     component::fetch_component_api_handler::fetch_component_api_handler,
+    component::store_component_api_handler::store_component_api_handler,
     component::update_component_api_handler::update_component_api_handler,
-    setup::post_setup_avored_handler::post_setup_avored_handler,
-    admin_user::logged_in_user_api_handler::logged_in_user_api_handler,
-    admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
-    admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler,
-    openapi_api_handler::openapi_api_handler,
+    page::fetch_page_api_handler::fetch_page_api_handler,
+    page::page_table_api_handler::page_table_api_handler,
+    page::put_page_identifier_api_handler::put_page_identifier_api_handler,
+    page::store_page_api_handler::store_page_api_handler,
+    page::update_page_api_handler::update_page_api_handler,
+    role::fetch_role_api_handler::fetch_role_api_handler,
+    role::put_role_identifier_api_handler::put_role_identifier_api_handler,
+    role::role_option_api_handler::role_option_api_handler,
+    role::role_table_api_handler::role_table_api_handler,
+    role::store_role_api_handler::store_role_api_handler,
+    role::update_role_api_handler::update_role_api_handler,
     setting::setting_all_api_handler::setting_all_api_handler,
     setting::update_setting_all_api_handler::update_setting_all_api_handler,
-    admin_user::change_password_api_handler::change_password_api_handler,
-    role::put_role_identifier_api_handler::put_role_identifier_api_handler,
-    page::put_page_identifier_api_handler::put_page_identifier_api_handler,
-    cms::fetch_page_cms_api_handler::fetch_page_cms_api_handler,
+    setup::post_setup_avored_handler::post_setup_avored_handler,
+    misc::health_check_api_handler::health_check_api_handler,
+    misc::openapi_api_handler::openapi_api_handler,
+    component::component_all_api_handler::component_all_api_handler,
+    component::put_component_identifier_api_handler::put_component_identifier_api_handler,
+    model::fetch_model_api_handler::fetch_model_api_handler,
+    model::model_table_api_handler::model_table_api_handler,
+    model::put_model_identifier_api_handler::put_model_identifier_api_handler,
+    model::store_model_api_handler::store_model_api_handler,
+    model::update_model_api_handler::update_model_api_handler,
+    asset::store_asset_folder_api_handler::store_asset_folder_api_handler,
 };
-use crate::api::handlers::component::put_component_identifier_api_handler::put_component_identifier_api_handler;
+
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
-use crate::api::handlers::model::fetch_model_api_handler::fetch_model_api_handler;
-use crate::api::handlers::model::model_table_api_handler::model_table_api_handler;
-use crate::api::handlers::model::put_model_identifier_api_handler::put_model_identifier_api_handler;
-use crate::api::handlers::model::store_model_api_handler::store_model_api_handler;
-use crate::api::handlers::model::update_model_api_handler::update_model_api_handler;
 use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
@@ -87,6 +89,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/put-component-identifier/:page_id", put(put_component_identifier_api_handler))
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
+        .route("/api/asset-folder", post(store_asset_folder_api_handler))
         .route("/api/role-options", get(role_option_api_handler))
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))

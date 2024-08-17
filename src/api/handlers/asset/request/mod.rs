@@ -1,0 +1,1 @@
+pub mod store_asset_folder_request;

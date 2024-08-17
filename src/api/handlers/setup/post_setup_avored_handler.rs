@@ -170,17 +170,7 @@ pub async fn post_setup_avored_handler(
 
 
         REMOVE TABLE assets;
-        DEFINE TABLE assets;
 
-        DEFINE FIELD file_name      ON TABLE assets TYPE string;
-        DEFINE FIELD file_path      ON TABLE assets TYPE string;
-        DEFINE FIELD file_size      ON TABLE assets TYPE int;
-        DEFINE FIELD file_type      ON TABLE assets TYPE string;
-        DEFINE FIELD information    ON TABLE assets TYPE string;
-        DEFINE FIELD created_by ON TABLE assets TYPE string;
-        DEFINE FIELD updated_by ON TABLE assets TYPE string;
-        DEFINE FIELD created_at ON TABLE assets TYPE datetime;
-        DEFINE FIELD updated_at ON TABLE assets TYPE datetime;
     ";
 
     let password = payload.password.as_bytes();

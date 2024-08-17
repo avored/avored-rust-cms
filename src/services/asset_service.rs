@@ -1,6 +1,8 @@
+use std::path::Path;
 use crate::{error::Result, PER_PAGE, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository};
-use crate::models::asset_model::{CreatableAssetModel, AssetModel, AssetPagination};
+use crate::models::asset_model::{AssetPagination, CreatableAssetModelNew, MetaDataType, NewAssetModel};
 use crate::models::Pagination;
+use crate::models::token_claim_model::LoggedInUser;
 
 pub struct AssetService {
     asset_repository: AssetRepository,
@@ -70,10 +72,39 @@ impl AssetService {
     pub async fn create_asset(
         &self,
         (datastore, database_session): &DB,
-        creatable_asset_model: CreatableAssetModel,
-    ) -> Result<AssetModel> {
+        creatable_asset_model: CreatableAssetModelNew,
+    ) -> Result<NewAssetModel> {
         self.asset_repository
             .create_asset(datastore, database_session, creatable_asset_model)
+            .await
+    }
+
+
+    pub async fn create_asset_folder(
+        &self,
+        (datastore, database_session): &DB,
+        name: String,
+        logged_in_user: LoggedInUser
+    ) -> Result<NewAssetModel> {
+
+        let full_path = Path::new("public").join("upload").join(name.clone());
+        // @todo createa folder in file system here...
+        let _create_dir = tokio::fs::create_dir_all(full_path).await?;
+
+        // @todo if we have a parent_id then use the path from parent_id to build a new path
+        let relative_path = format!("/public/upload/{}", name);
+
+        let creatable_asset_model = CreatableAssetModelNew {
+            logged_in_username: logged_in_user.email,
+            parent_id: "".to_string(),
+            name: name.clone(),
+            path: relative_path,
+            asset_type: "FOLDER".to_string(),
+            metadata: MetaDataType::FolderTypeMetaData {},
+        };
+
+        self.asset_repository
+            .create_asset_folder(datastore, database_session, creatable_asset_model)
             .await
     }
 
