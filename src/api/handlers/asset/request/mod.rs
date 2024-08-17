@@ -1,1 +1,1 @@
-pub mod store_asset_folder_request;
+pub mod create_folder_request;

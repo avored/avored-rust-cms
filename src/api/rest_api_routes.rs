@@ -46,7 +46,7 @@ use crate::api::handlers::{
     model::put_model_identifier_api_handler::put_model_identifier_api_handler,
     model::store_model_api_handler::store_model_api_handler,
     model::update_model_api_handler::update_model_api_handler,
-    asset::store_asset_folder_api_handler::store_asset_folder_api_handler,
+    asset::create_folder_api_handler::create_folder_api_handler,
 };
 
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
@@ -89,7 +89,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/put-component-identifier/:page_id", put(put_component_identifier_api_handler))
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
-        .route("/api/asset-folder", post(store_asset_folder_api_handler))
+        .route("/api/create-folder", post(create_folder_api_handler))
         .route("/api/role-options", get(role_option_api_handler))
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))

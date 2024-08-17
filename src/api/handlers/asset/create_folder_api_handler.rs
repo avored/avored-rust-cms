@@ -3,17 +3,17 @@ use crate::{
     avored_state::AvoRedState, error::Result
 };
 use axum::{Extension, extract::State, Json};
-use crate::api::handlers::asset::request::store_asset_folder_request::StoreAssetFolderRequest;
+use crate::api::handlers::asset::request::create_folder_request::CreateFolderRequest;
 use crate::error::Error;
 use crate::models::asset_model::NewAssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
 
-pub async fn store_asset_folder_api_handler(
+pub async fn create_folder_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
-    Json(payload): Json<StoreAssetFolderRequest>,
+    Json(payload): Json<CreateFolderRequest>,
 ) -> Result<Json<ApiResponse<NewAssetModel>>> {
     println!("->> {:<12} - store_asset_folder_api_handler", "HANDLER");
 

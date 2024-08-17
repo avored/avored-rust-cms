@@ -10,9 +10,11 @@ import IAssetSave from "../../types/asset/IAssetSave"
 import IAssetModel from "../../types/asset/IAssetModel"
 import { AssetUploadModal } from "./AssetUploadModal"
 import { DisplayAsset } from "./DisplayAsset";
+import { CreateFolderModal } from "./CreateFolderModal";
 
 function AssetTable() {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isUploadAssetModalOpen, setIsUploadAssetModalOpen] = useState(false)
+  const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false)
   const asset_api_table_response = useAssetTable()
   const assets: Array<IAssetModel> = _.get(
     asset_api_table_response,
@@ -22,6 +24,7 @@ function AssetTable() {
   const { mutate } = useStoreAsset()
   const [t] = useTranslation("global")
 
+
   const {
     register,
     handleSubmit,
@@ -30,19 +33,28 @@ function AssetTable() {
     resolver: joiResolver(AssetSaveSchema, { allowUnknown: true }),
   });
 
-  const onCloseModal = () => {
-    setIsOpen(false);
+  const onCloseCreateFolderModal = () => {
+    setIsCreateFolderModalOpen(false);
   };
 
-  const openModal = () => {
-    setIsOpen(true);
+  const openCreateFolderModal = () => {
+    setIsCreateFolderModalOpen(true);
   };
+  const onCloseUploadModal = () => {
+    setIsUploadAssetModalOpen(false);
+  };
+
+  const openUploadAssetModal = () => {
+    setIsUploadAssetModalOpen(true);
+  };
+
 
   const submitHandler: SubmitHandler<IAssetSave> = (data: IAssetSave) => {
     data.file = data.file_list ? data.file_list[0] : undefined;
-    onCloseModal();
+    onCloseUploadModal();
     mutate(data);
   };
+
 
   return (
     <div className="flex-1 bg-white">
@@ -54,14 +66,14 @@ function AssetTable() {
           <div className="ml-auto">
             <button
               type="button"
-              onClick={openModal}
+              onClick={openUploadAssetModal}
               className="bg-primary-500 rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
             >
               {t("upload_asset")}
             </button>
             <button
               type="button"
-              onClick={openModal}
+              onClick={openCreateFolderModal}
               className="ml-3 bg-gray-400 rounded-md bg-black/20 px-4 py-2 text-sm font-medium text-white hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75"
             >
               {t("create_folder")}
@@ -70,11 +82,15 @@ function AssetTable() {
 
           <div className="">
             <AssetUploadModal
-              onCloseModal={onCloseModal}
-              isOpen={isOpen}
+              onCloseModal={onCloseUploadModal}
+              isOpen={isUploadAssetModalOpen}
               submitHandler={submitHandler}
               handleSubmit={handleSubmit}
               register={register}
+            />
+            <CreateFolderModal
+                onCloseModal={onCloseCreateFolderModal}
+                isOpen={isCreateFolderModalOpen}
             />
           </div>
         </div>
@@ -87,7 +103,7 @@ function AssetTable() {
                   <div className="grid grid-cols-6  gap-4 mx-5">
                     {assets.map((asset: IAssetModel) => {
                       return (
-                          <DisplayAsset asset={asset} />
+                          <DisplayAsset key={asset.id} asset={asset} />
                       );
                     })}
                   </div>

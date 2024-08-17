@@ -7,16 +7,14 @@ type DisplayAssetProp = {
 };
 export const DisplayAsset = ({ asset }: DisplayAssetProp) => {
   const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
-  const displayFolder = () => {
-    return <></>;
-  };
+
 
   return (
     <>
       <div key={asset.id} className="border rounded p-3">
           <div className="mb-2 flex">
               <div className="hs-dropdown relative ml-auto inline-flex">
-                  <button id="hs-dropdown-folder-options" type="button"
+                  <button id={`hs-dropdown-folder-options-${asset.id}`} type="button"
                           className="hs-dropdown-toggle hover:bg-gray-50"
                           aria-haspopup="menu" aria-expanded="false" aria-label="Dropdown">
                       <EllipsisHorizontalCircleIcon className="text-gray-400 w-6 h-6"/>

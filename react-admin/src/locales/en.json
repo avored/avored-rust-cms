@@ -82,6 +82,7 @@
   "upload_asset": "Upload asset",
   "asset_table": "Asset table",
   "create_folder": "Create folder",
+  "folder_name": "Folder name",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
