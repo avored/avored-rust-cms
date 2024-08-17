@@ -71,6 +71,17 @@ impl PageRepository {
         model_count
     }
 
+    pub async fn remove_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        page_id: &String) -> Result<bool>
+    {
+        let sql = format!("DELETE pages:{page_id}");
+        datastore.execute(&sql, database_session, None).await?;
+        Ok(true)
+    }
+
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,

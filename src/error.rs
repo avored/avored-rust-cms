@@ -24,7 +24,9 @@ pub enum Error {
 
     AuthenticationError,
 
-    FORBIDDEN
+    FORBIDDEN,
+
+    NotFound(String)
 }
 
 impl core::fmt::Display for Error {
@@ -136,6 +138,9 @@ impl IntoResponse for Error {
                     errors
                 };
                 (StatusCode::FORBIDDEN, error_response).into_response()
+            },
+            Error::NotFound(msg) => {
+                (StatusCode::NOT_FOUND, msg).into_response()
             },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
         };
