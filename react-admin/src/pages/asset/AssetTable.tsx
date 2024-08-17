@@ -9,6 +9,7 @@ import { joiResolver } from "@hookform/resolvers/joi"
 import IAssetSave from "../../types/asset/IAssetSave"
 import IAssetModel from "../../types/asset/IAssetModel"
 import { AssetUploadModal } from "./AssetUploadModal"
+import { DisplayAsset } from "./DisplayAsset";
 
 function AssetTable() {
   const [isOpen, setIsOpen] = useState(false)
@@ -20,7 +21,6 @@ function AssetTable() {
   )
   const { mutate } = useStoreAsset()
   const [t] = useTranslation("global")
-  const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL
 
   const {
     register,
@@ -87,18 +87,7 @@ function AssetTable() {
                   <div className="grid grid-cols-6  gap-4 mx-5">
                     {assets.map((asset: IAssetModel) => {
                       return (
-                        <div key={asset.id} className="border rounded p-3">
-                          <div className="flex justify-center h-40 mb-3">
-                            <img
-                              src={`${backend_url}/${asset.path}`}
-                              className="h-40"
-                              alt={asset.name}
-                            />
-                          </div>
-                          <div className="flex justify-center text-xs text-gray-500">
-                            {asset.name} {/* Added file name to h6 */}
-                          </div>
-                        </div>
+                          <DisplayAsset asset={asset} />
                       );
                     })}
                   </div>

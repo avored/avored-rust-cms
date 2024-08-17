@@ -22,7 +22,7 @@ pub struct NewAssetModel {
 pub enum MetaDataType {
     // values can be folder color or no of files
     FolderTypeMetaData {
-
+        color: String
     },
     // file type might have a metadata as
     // file_type, file_size
@@ -34,22 +34,23 @@ pub enum MetaDataType {
 impl MetaDataType {
     pub fn get_file_metadata(&self) -> FileTypeMetaDataStruct {
         match self.to_owned() {
-            self::MetaDataType::FileTypeMetaData {file_type} => {
+            MetaDataType::FileTypeMetaData {file_type} => {
                 FileTypeMetaDataStruct {
                     file_type
                 }
             },
-            MetaDataType::FolderTypeMetaData {} => {
+            MetaDataType::FolderTypeMetaData { color } => {
+                let _ = color;
                 FileTypeMetaDataStruct::default()
             }
         }
     }
     pub fn get_folder_metadata(&self) -> FolderTypeMetaDataStruct {
         match self.to_owned() {
-            MetaDataType::FolderTypeMetaData {} => {
-                FolderTypeMetaDataStruct {}
+            MetaDataType::FolderTypeMetaData {color} => {
+                FolderTypeMetaDataStruct {color}
             },
-            MetaDataType::FileTypeMetaData {file_type} => {
+            MetaDataType::FileTypeMetaData { file_type} => {
                 let _ = file_type;
                 FolderTypeMetaDataStruct::default()
             }
@@ -63,11 +64,13 @@ pub struct FileTypeMetaDataStruct {
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub struct FolderTypeMetaDataStruct {}
+pub struct FolderTypeMetaDataStruct {
+    pub color: String
+}
 
 impl Default for MetaDataType {
     fn default() -> MetaDataType {
-        MetaDataType::FolderTypeMetaData {}
+        MetaDataType::FolderTypeMetaData {color: String::from("")}
     }
 }
 
@@ -101,19 +104,19 @@ impl TryFrom<Object> for NewAssetModel {
                 }
             },
             "FOLDER" => {
-                // let _object = match val.get("metadata") {
-                //     Some(val) => {
-                //         match val.clone() {
-                //             Value::Object(v) => v,
-                //             _ => Object::default(),
-                //         }
-                //     }
-                //     None => Object::default(),
-                // };
-                // let file_metadata: FolderTypeMetaDataStruct = object.try_into()?;
-                MetaDataType::FolderTypeMetaData {}
+                let object = match val.get("metadata") {
+                    Some(val) => {
+                        match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        }
+                    }
+                    None => Object::default(),
+                };
+                let folder_metadata: FolderTypeMetaDataStruct = object.try_into()?;
+                MetaDataType::FolderTypeMetaData {color: folder_metadata.color}
             },
-            _ => MetaDataType::FolderTypeMetaData {}
+            _ => MetaDataType::FolderTypeMetaData {color: String::from("text-gray-400")}
         };
 
         Ok(NewAssetModel {
@@ -145,9 +148,9 @@ impl TryFrom<Object> for  FileTypeMetaDataStruct {
 impl TryFrom<Object> for  FolderTypeMetaDataStruct {
     type Error = Error;
     fn try_from(val: Object) -> Result<FolderTypeMetaDataStruct> {
-        // let file_type = val.get("file_type").get_string()?;
+        let color = val.get("color").get_string()?;
         Ok(FolderTypeMetaDataStruct {
-
+            color
         })
     }
 }

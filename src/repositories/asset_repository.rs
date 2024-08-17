@@ -110,11 +110,15 @@ impl AssetRepository {
         creatable_asset_model: CreatableAssetModelNew,
     ) -> Result<NewAssetModel> {
         let sql = "CREATE assets CONTENT $data";
-        let metadata = "{}";
+        let meta = creatable_asset_model.metadata.get_folder_metadata();
+        let metadata: BTreeMap<String, Value> = [
+            ("color".into(), meta.color.into()),
+        ].into();
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
             ("path".into(), creatable_asset_model.path.into(),),
+            ("asset_type".into(), creatable_asset_model.asset_type.into(),),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
             ("metadata".into(), metadata.into()),
             ("created_by".into(), creatable_asset_model.logged_in_username.clone().into(),),

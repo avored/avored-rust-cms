@@ -93,6 +93,7 @@ impl AssetService {
 
         // @todo if we have a parent_id then use the path from parent_id to build a new path
         let relative_path = format!("/public/upload/{}", name);
+        let color= String::from("text-gray-400");
 
         let creatable_asset_model = CreatableAssetModelNew {
             logged_in_username: logged_in_user.email,
@@ -100,7 +101,7 @@ impl AssetService {
             name: name.clone(),
             path: relative_path,
             asset_type: "FOLDER".to_string(),
-            metadata: MetaDataType::FolderTypeMetaData {},
+            metadata: MetaDataType::FolderTypeMetaData {color},
         };
 
         self.asset_repository
