@@ -18,6 +18,7 @@ import ICreatablePage, {
 } from "../../types/page/ICreatablePage";
 import ErrorMessage from "../../components/ErrorMessage";
 import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
+import slug from 'slug'
 
 function PageCreate() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -30,7 +31,9 @@ function PageCreate() {
         handleSubmit,
         formState: { errors },
         setValue,
-        getValues
+        getValues,
+        getFieldState,
+        watch
     } = useForm<ICreatablePage>({
         resolver: joiResolver(usePageCreateSchema(), { allowUnknown: true }),
     });
@@ -43,7 +46,7 @@ function PageCreate() {
     const setSelectedElementDataOption = ((selected: Array<string>, pageComponentIndex: number, componentElementIndex: number) => {
         let val = selected.pop() ?? ''
 
-        // @todo fix this one
+        // @todo fix this onese
         // Currently all data types is text but will be depend on element_type???
         setValue(`components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_data_type`, 'TEXT')
         setValue(`components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_content`, val)
@@ -206,6 +209,10 @@ function PageCreate() {
         mutate(data);
     };
 
+    const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        setValue('identifier', slug(e.currentTarget.value || ''))
+    }
+
     return (
         <div className="flex-1 bg-white">
             <div className="px-5 pl-64 ">
@@ -221,6 +228,7 @@ function PageCreate() {
                                     autoFocus={true}
                                     placeholder={t("name")}
                                     register={register("name")}
+                                    onKeyUp={e => onNameChange(e)}
                                 />
                                 <ErrorMessage
                                     frontendErrors={errors}
@@ -253,7 +261,7 @@ function PageCreate() {
                                     className="flex"
                                     onClick={addComponentOnClick}
                                 >
-                                    <PlusIcon className="text-primary-500 h-6 w-6" />
+                                    <PlusIcon className="text-primary-500 h-6 w-6"/>
                                     <span className="text-sm ml-1 text-primary-500">
                                         {t("add_component")}
                                     </span>
