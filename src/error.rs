@@ -24,7 +24,9 @@ pub enum Error {
 
     AuthenticationError,
 
-    FORBIDDEN
+    FORBIDDEN,
+
+    Forbidden
 }
 
 impl core::fmt::Display for Error {

@@ -130,13 +130,16 @@ impl AssetService {
             .await
     }
 
-    // pub async fn update_asset(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     updatable_asset_model: UpdatableAssetModel,
-    // ) -> Result<AssetModel> {
-    //     self.asset_repository
-    //         .update_asset(datastore, database_session, updatable_asset_model)
-    //         .await
-    // }
+    pub async fn update_asset_path(
+        &self,
+        (datastore, database_session): &DB,
+        name: &str,
+        new_path: &str,
+        asset_id: &str,
+        logged_in_username: &str
+    ) -> Result<NewAssetModel> {
+        self.asset_repository
+            .update_asset_path(datastore, database_session, name, new_path, asset_id, logged_in_username)
+            .await
+    }
 }

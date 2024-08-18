@@ -185,4 +185,40 @@ impl AssetRepository {
 
         Ok(())
     }
+
+    pub async fn update_asset_path(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        name: &str,
+        new_path: &str,
+        asset_id: &str,
+        logged_in_username: &str
+    ) -> Result<NewAssetModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                path: $path,
+                name: $name,
+                updated_by: $logged_in_user_name,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("path".into(), new_path.into()),
+            ("name".into(), name.into()),
+            ("logged_in_user_name".into(), logged_in_username.into()),
+            ("id".into(), asset_id.into()),
+            ("table".into(), ASSET_TABLE.into()),
+        ]);
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+
+        asset_model
+    }
 }
