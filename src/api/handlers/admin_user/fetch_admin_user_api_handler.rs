@@ -21,7 +21,7 @@ pub async fn fetch_admin_user_api_handler(
         .has_permission(logged_in_user, String::from("get_admin_user"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let admin_user_model = state

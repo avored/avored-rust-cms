@@ -22,7 +22,7 @@ pub async fn fetch_component_api_handler(
         .has_permission(logged_in_user, String::from("get_component"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let component_model = state
