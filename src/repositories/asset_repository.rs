@@ -140,4 +140,49 @@ impl AssetRepository {
 
         asset_model
     }
+
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        asset_id: &str,
+    ) -> Result<NewAssetModel> {
+        let sql =
+            "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), asset_id.into()),
+            ("table".into(), ASSET_TABLE.into()),
+        ].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+
+        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+
+        asset_model
+    }
+
+    pub async fn delete_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        asset_id: &str,
+    ) -> Result<()> {
+        let sql =
+            "DELETE type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), asset_id.into()),
+            ("table".into(), ASSET_TABLE.into()),
+        ].into();
+
+        // find a way to get a response from query
+        datastore.execute(sql, database_session, Some(vars)).await?;
+
+        Ok(())
+    }
 }

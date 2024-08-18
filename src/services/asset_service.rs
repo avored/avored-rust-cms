@@ -79,6 +79,27 @@ impl AssetService {
             .await
     }
 
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        asset_id: &str
+    ) -> Result<NewAssetModel> {
+        self.asset_repository
+            .find_by_id(datastore, database_session, asset_id)
+            .await
+    }
+
+    pub async fn delete_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        asset_id: &str,
+    ) -> Result<()> {
+        self.asset_repository
+            .delete_by_id(datastore, database_session, &asset_id)
+            .await?;
+
+        Ok(())
+    }
 
     pub async fn create_asset_folder(
         &self,

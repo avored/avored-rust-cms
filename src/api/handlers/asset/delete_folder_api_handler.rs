@@ -2,23 +2,19 @@ use std::sync::Arc;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
-use axum::{Extension, extract::State, Json};
+use axum::{Extension, extract::State};
 use axum::extract::Path;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use tokio::fs;
-use crate::api::handlers::asset::request::create_folder_request::CreateFolderRequest;
 use crate::error::Error;
-use crate::models::asset_model::NewAssetModel;
 use crate::models::token_claim_model::LoggedInUser;
-use crate::models::validation_error::ErrorResponse;
-use crate::responses::ApiResponse;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub async fn delete_folder_api_handler(
     Path(asset_id): Path<String>,
     Extension(logged_in_user): Extension<LoggedInUser>,
-    state: State<Arc<AvoRedState>>,
-    Json(payload): Json<CreateFolderRequest>,
+    state: State<Arc<AvoRedState>>
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - delete_folder_api_handler", "HANDLER");
 
@@ -30,38 +26,40 @@ pub async fn delete_folder_api_handler(
         return Err(Error::FORBIDDEN);
     }
 
-    let error_messages = payload.validate()?;
+    let asset_model = state.asset_service
+        .find_by_id(&state.db, &asset_id)
+        .await?;
 
-    if !error_messages.is_empty() {
-        let error_response = ErrorResponse {
-            status: false,
-            errors: error_messages
-        };
+    let folder_path = format!("./{path}", path = asset_model.path);
 
-        return Err(Error::BadRequestError(error_response));
+    // @todo return early
+    if fs::try_exists(&folder_path).await? {
+        let mut entries = fs::read_dir(&folder_path).await?;
+        let mut counter = 0;
+
+        while let Some(_entry) = entries.next_entry().await? {
+            counter += 1;
+        }
+
+        if counter > 0 {
+            let error_messages = vec![ErrorMessage {
+                key: String::from("folder_existed"),
+                message: String::from("folder is not empty. Please make sure folder is empty before deleting it.")
+            }];
+            let error_response = ErrorResponse {
+                status: false,
+                errors: error_messages
+            };
+
+            return Err(Error::BadRequestError(error_response));
+        }
+        tokio::fs::remove_dir(&folder_path).await?;
     }
 
-    //@todo make sure folder is empty before delete?
-    // delete the asset table record
-    let mut entries = fs::read_dir("public/upload").await?;
-    // let counter = entries.into_iter
-    let mut counter = 0;
-    while let Some(entry) = entries.next_entry().await? {
-        // Here, `entry` is a `DirEntry`.
-        println!("{:?}: {}", entry.file_name(), entry.ino());
-        counter += 1;
-    }
-
-    println!("counter: {counter}");
-    // let created_asset_folder = state
-    //     .asset_service
-    //     .create_asset_folder(&state.db, payload.name, logged_in_user)
-    //     .await?;
-
-    let created_response = ApiResponse {
-        status: true,
-        data: String::from("OK")
-    };
+    state
+        .asset_service
+        .delete_by_id(&state.db, &asset_id)
+        .await?;
 
     Ok(StatusCode::OK)
 }
