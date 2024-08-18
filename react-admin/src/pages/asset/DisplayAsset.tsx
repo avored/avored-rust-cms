@@ -1,13 +1,20 @@
 import IAssetModel from "../../types/asset/IAssetModel";
 import React from "react";
 import {EllipsisHorizontalCircleIcon, FolderPlusIcon} from "@heroicons/react/24/outline";
+import {useDeleteFolder} from "./hooks/useDeleteFolder";
 
 type DisplayAssetProp = {
   asset: IAssetModel;
 };
 export const DisplayAsset = ({ asset }: DisplayAssetProp) => {
   const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
-
+  const {mutate: deleteFolderMutate} = useDeleteFolder();
+    const onRemoveAssetOnClick = ((e: React.MouseEvent<HTMLAnchorElement>, type: string, asset_id: string) => {
+        e.preventDefault()
+        if (type === "FOLDER") {
+            deleteFolderMutate({asset_id})
+        }
+    })
 
   return (
     <>
@@ -24,6 +31,7 @@ export const DisplayAsset = ({ asset }: DisplayAssetProp) => {
                       className="hs-dropdown-menu transition-[opacity,margin] duration hs-dropdown-open:opacity-100 opacity-0 hidden min-w-[38px] bg-white shadow-md rounded-lg p-1 space-y-0.5 mt-2  after:h-4 after:absolute after:-bottom-4 after:start-0 after:w-full before:h-4 before:absolute before:-top-4 before:start-0 before:w-full"
                       role="menu" aria-orientation="vertical" aria-labelledby="hs-dropdown-default">
                       <a className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
+                         onClick={e => onRemoveAssetOnClick(e, asset.asset_type, asset.id)}
                          href="#">
                           Remove
                       </a>
