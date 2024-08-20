@@ -23,7 +23,7 @@ pub async fn delete_folder_api_handler(
         .has_permission(logged_in_user.clone(), String::from("delete_folder_create"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let asset_model = state.asset_service
