@@ -18,7 +18,7 @@ pub async fn setting_all_api_handler(
         .has_permission(logged_in_user, String::from("get_setting"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     Ok(Json(state.setting_service.all(&state.db).await?))

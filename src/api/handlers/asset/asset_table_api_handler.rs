@@ -19,7 +19,7 @@ pub async fn asset_table_api_handler(
         .has_permission(logged_in_user, String::from("asset_table"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let current_page = query_param.page.unwrap_or(1);

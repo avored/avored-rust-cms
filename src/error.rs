@@ -24,8 +24,6 @@ pub enum Error {
 
     AuthenticationError,
 
-    FORBIDDEN,
-
     Forbidden
 }
 
@@ -132,7 +130,7 @@ impl IntoResponse for Error {
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
             },
-            Error::FORBIDDEN => {
+            Error::Forbidden => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),

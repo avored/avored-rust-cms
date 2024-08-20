@@ -28,7 +28,7 @@ pub async fn store_asset_api_handler(
         .has_permission(logged_in_user.clone(), String::from("asset_create"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     //@todo we need to move this logic to service

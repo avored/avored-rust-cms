@@ -25,7 +25,7 @@ pub async fn update_page_api_handler(
         .has_permission(logged_in_user.clone(), String::from("page_edit"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let error_messages = payload.validate()?;

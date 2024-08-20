@@ -27,7 +27,7 @@ pub async fn put_model_identifier_api_handler(
         .has_permission(logged_in_user.clone(), String::from("model_edit"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let error_messages = payload.validate(state.clone()).await?;
