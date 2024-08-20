@@ -61,7 +61,7 @@ pub async fn delete_folder_api_handler(
         .delete_by_id(&state.db, &asset_id)
         .await?;
     if !result {
-        return Ok(Error::Generic(String::from("there is an issue while deleting an folder")))
+        return Err(Error::Generic(String::from("there is an issue while deleting an folder")));
     }
 
     Ok(StatusCode::OK)

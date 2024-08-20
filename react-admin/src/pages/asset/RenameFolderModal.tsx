@@ -4,25 +4,28 @@ import React from "react";
 import {useTranslation} from "react-i18next";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useCreateFolderSchema} from "./schemas/create.folder.schema";
-import {CreateFolderType} from "../../types/asset/CreateFolderType";
-import {useStoreAsset} from "./hooks/useStoreAsset";
 import {useCreateFolder} from "./hooks/useCreateFolder";
+import {useRenameFolderSchema} from "./schemas/rename.folder.schema";
+import IAssetModel from "../../types/asset/IAssetModel";
+import {RenameFolderType} from "../../types/asset/RenameFolderType";
+import {useRenameFolder} from "./hooks/useRenameFolder";
 
-type CreateFolderModalProps = {
+type RenameFolderModalProps = {
     isOpen: any,
     onCloseModal: any,
+    asset: IAssetModel
 }
 
-export const CreateFolderModal = (({
-                                      isOpen,
-                                      onCloseModal,
-                                  }: CreateFolderModalProps) => {
+export const RenameFolderModal = (({
+                                       isOpen,
+                                       onCloseModal,
+                                       asset
+                                  }: RenameFolderModalProps) => {
     const [t] = useTranslation("global");
-    const { mutate } = useCreateFolder()
+    const { mutate } = useRenameFolder()
 
 
-    const submitHandler: SubmitHandler<CreateFolderType>  = ((data: CreateFolderType) => {
+    const submitHandler: SubmitHandler<RenameFolderType>  = ((data: RenameFolderType) => {
         onCloseModal()
         mutate(data)
     })
@@ -30,8 +33,9 @@ export const CreateFolderModal = (({
     const {
         register,
         handleSubmit,
-    } = useForm<CreateFolderType>({
-        resolver: joiResolver(useCreateFolderSchema(), { allowUnknown: true }),
+    } = useForm<RenameFolderType>({
+        resolver: joiResolver(useRenameFolderSchema(), { allowUnknown: true }),
+        values: asset
     });
 
     return (
@@ -40,7 +44,7 @@ export const CreateFolderModal = (({
                 <AvoredModal
                     isOpen={isOpen}
                     closeModal={onCloseModal}
-                    modal_header={t("create_folder")}
+                    modal_header={t("rename_folder")}
                     modal_body={
                         <div className="text-sm text-gray-500">
                             <div className="text-sm text-gray-500 rounded">
@@ -49,12 +53,12 @@ export const CreateFolderModal = (({
                                         <div className="flex">
                                             <div className="w-full mt-3">
 
-                                                <InputField
-                                                    label={t("folder_name")}
-                                                    type="text"
-                                                    name="name"
-                                                    register={register('name')}
-                                                />
+                                                    <InputField
+                                                        label={t("folder_name")}
+                                                        type="text"
+                                                        name="name"
+                                                        register={register('name')}
+                                                    />
 
                                             </div>
                                         </div>

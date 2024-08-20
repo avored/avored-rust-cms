@@ -82,6 +82,9 @@
   "upload_asset": "Upload asset",
   "asset_table": "Asset table",
   "create_folder": "Create folder",
+  "rename_folder": "Rename folder",
+  "rename": "Rename",
+  "remove": "Remove",
   "folder_name": "Folder name",
   "locales": {
     "en_label": "English",

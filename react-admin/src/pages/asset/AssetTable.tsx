@@ -40,6 +40,8 @@ function AssetTable() {
   const openCreateFolderModal = () => {
     setIsCreateFolderModalOpen(true);
   };
+
+
   const onCloseUploadModal = () => {
     setIsUploadAssetModalOpen(false);
   };
@@ -92,6 +94,7 @@ function AssetTable() {
                 onCloseModal={onCloseCreateFolderModal}
                 isOpen={isCreateFolderModalOpen}
             />
+
           </div>
         </div>
 
@@ -103,7 +106,10 @@ function AssetTable() {
                   <div className="grid grid-cols-6  gap-4 mx-5">
                     {assets.map((asset: IAssetModel) => {
                       return (
-                          <DisplayAsset key={asset.id} asset={asset} />
+                          <>
+                            <DisplayAsset key={asset.id} asset={asset} />
+                          </>
+
                       );
                     })}
                   </div>
