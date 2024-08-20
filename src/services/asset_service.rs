@@ -93,12 +93,10 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         asset_id: &str,
-    ) -> Result<()> {
+    ) -> Result<bool> {
         self.asset_repository
             .delete_by_id(datastore, database_session, &asset_id)
-            .await?;
-
-        Ok(())
+            .await
     }
 
     pub async fn create_asset_folder(

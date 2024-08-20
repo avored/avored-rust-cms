@@ -56,10 +56,13 @@ pub async fn delete_folder_api_handler(
         tokio::fs::remove_dir(&folder_path).await?;
     }
 
-    state
+    let result = state
         .asset_service
         .delete_by_id(&state.db, &asset_id)
         .await?;
+    if !result {
+        return Ok(Error::Generic(String::from("there is an issue while deleting an folder")))
+    }
 
     Ok(StatusCode::OK)
 }

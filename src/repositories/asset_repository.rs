@@ -172,7 +172,7 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         asset_id: &str,
-    ) -> Result<()> {
+    ) -> Result<bool> {
         let sql =
             "DELETE type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
@@ -181,9 +181,18 @@ impl AssetRepository {
         ].into();
 
         // find a way to get a response from query
-        datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        Ok(())
+        let response = responses
+            .into_iter()
+            .next()
+            .map(|rp| rp.output());
+        let query_result = match response {
+            Some(object) => object.is_ok(),
+            None => false
+        };
+
+        Ok(query_result)
     }
 
     pub async fn update_asset_path(
