@@ -95,7 +95,7 @@ impl AssetService {
         asset_id: &str,
     ) -> Result<bool> {
         self.asset_repository
-            .delete_by_id(datastore, database_session, &asset_id)
+            .delete_by_id(datastore, database_session, asset_id)
             .await
     }
 
@@ -108,7 +108,7 @@ impl AssetService {
 
         let full_path = Path::new("public").join("upload").join(name.clone());
         // @todo createa folder in file system here...
-        let _create_dir = tokio::fs::create_dir_all(full_path).await?;
+        tokio::fs::create_dir_all(full_path).await?;
 
         // @todo if we have a parent_id then use the path from parent_id to build a new path
         let relative_path = format!("/public/upload/{}", name);
