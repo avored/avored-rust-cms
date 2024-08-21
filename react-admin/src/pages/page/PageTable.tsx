@@ -12,10 +12,13 @@ import { getFormattedDate } from "../../lib/common";
 import IPageModel from "../../types/page/IPageModel";
 import AvoRedTable from "../../components/AvoRedTable";
 import HasPermission from "../../components/HasPermission";
-import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import {useEffect, useState} from "react";
+import AvoredModal from "../../components/AvoredModal";
+import {usePageRemoveModal} from "./hooks/usePageRemoveModal";
+import {useDeletePage} from "./hooks/useDeletePage";
 
 function PageTable() {
+    const { isOpen, updateOpen, setValToRemove, valToRemove } = usePageRemoveModal()
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
         pageSize: 10, //default page size
@@ -26,6 +29,7 @@ function PageTable() {
         order: sorting.map((s) => `${s.id}:${s.desc ? "DESC" : "ASC"}`).join(","),
         page: pagination.pageIndex
     });
+    const { mutate, isPending, isSuccess, data } = useDeletePage();
     const customPagination = (async (pagination: any) => {
         setPagination(pagination)
     })
@@ -35,9 +39,28 @@ function PageTable() {
         [],
     );
 
+    useEffect(() => {
+        if (isSuccess) {
+            updateOpen(false);
+            page_api_table_response.refetch().then();
+        }
+    }, [isSuccess]);
+
     const customSorting = (sorting: any) => {
         setSorting(sorting);
     };
+
+    const onDeleteSelect = (e: React.MouseEvent<HTMLAnchorElement>, value: IPageModel) => {
+        e.preventDefault()
+        updateOpen(true)
+        setValToRemove(value);
+    }
+
+    const onDeleteItem = async () => {
+        if (valToRemove?.id) {
+            mutate(valToRemove?.id)
+        }
+    }
 
     const columnHelper = createColumnHelper<IPageModel>();
     const columns = [
@@ -80,6 +103,15 @@ function PageTable() {
                         >
                             {t("edit")}
                         </Link>
+                        <div>
+                            <Link
+                                className="font-medium text-primary-600 hover:text-primary-800"
+                                to='#'
+                                onClick={(e) => onDeleteSelect(e, info.row.original)}
+                            >
+                                {t("delete")}
+                            </Link>
+                        </div>
                     </HasPermission>
                 );
             },
@@ -136,6 +168,17 @@ function PageTable() {
                     </HasPermission>
                 </div>
             </div>
+            <AvoredModal
+                closeModal={() => updateOpen(false)}
+                modal_header={t('intention_to_remove_page', {page_var: valToRemove?.name})}
+                modal_body={
+                    <div>
+                    <button onClick={() => updateOpen(false)} className="mr-2 ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">Cancel</button>
+                        <button onClick={onDeleteItem} className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">{isPending ? 'Loading...' : 'Remove'}</button>
+                    </div>
+            }
+                isOpen={isOpen}
+            ></AvoredModal>
         </div>
     );
 }

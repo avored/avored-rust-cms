@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactEventHandler, useState} from "react"
+import React, {useState} from "react"
 import {Link, useParams} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
 import {TrashIcon} from "@heroicons/react/16/solid"

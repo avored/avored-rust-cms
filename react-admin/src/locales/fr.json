@@ -1,4 +1,5 @@
 {
+  "intention_to_remove_page": "Are you sure you want to remove the page {{page_var}}?",
   "dashboard_demo_content": "Le contenu du tableau de bord va ici",
   "sign_into_your_account": "Connectez-vous à votre compte",
   "email_address": "Adresse e-mail",
