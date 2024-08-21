@@ -79,14 +79,16 @@
   "model_information": "Model Information",
   "components": "Components",
   "field_type": "Field type",
+  "upload_asset": "Upload asset",
+  "asset_table": "Asset table",
+  "create_folder": "Create folder",
+  "rename_folder": "Rename folder",
+  "rename": "Rename",
+  "remove": "Remove",
+  "folder_name": "Folder name",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
-  },
-  "asset": {
-    "asset_table": "Asset table",
-    "upload_asset": "Upload Asset",
-    "asset_file": "Asset File"
   },
   "sidebar": {
     "dashboard": "Dashboard",

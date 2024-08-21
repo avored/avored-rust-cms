@@ -121,9 +121,9 @@ impl TryFrom<Object> for ComponentContentModel {
                                 _ => surrealdb::sql::Object::default(),
                             };
 
-                            let order_product_model: ComponentElementModel = object.try_into()?;
+                            let component_element_model: ComponentElementModel = object.try_into()?;
 
-                            arr.push(order_product_model)
+                            arr.push(component_element_model)
                         }
                         arr
                     }
