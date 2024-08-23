@@ -36,9 +36,11 @@ pub async fn create_folder_api_handler(
         return Err(Error::BadRequestError(error_response));
     }
 
+    let parent_id = payload.parent_id.unwrap_or_default();
+
     let created_asset_folder = state
         .asset_service
-        .create_asset_folder(&state.db, payload.name, logged_in_user)
+        .create_asset_folder(&state.db, payload.name, parent_id, logged_in_user)
         .await?;
 
     let created_response = ApiResponse {

@@ -5,6 +5,7 @@ use crate::models::validation_error::{ErrorMessage, Validate};
 #[derive(Deserialize, Debug, Clone)]
 pub struct CreateFolderRequest {
     pub name: String,
+    pub parent_id: Option<String>
 }
 
 impl CreateFolderRequest {

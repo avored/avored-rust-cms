@@ -36,14 +36,16 @@ impl core::fmt::Display for Error {
 impl std::error::Error for Error {}
 
 impl From<serde_json::Error> for Error {
-    fn from(_val: serde_json::Error) -> Self {
+    fn from(val: serde_json::Error) -> Self {
+        error!("there is an issue with serde json error: {val:?}");
         Error::Generic("Serde struct to string  Error".to_string())
     }
 }
 
 
 impl From<std::io::Error> for Error {
-    fn from(_val: std::io::Error) -> Self {
+    fn from(val: std::io::Error) -> Self {
+        error!("there is an issue with creating io error: {val:?}");
         Error::Generic("tokio file create folder error ".to_string())
     }
 }

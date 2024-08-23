@@ -22,8 +22,9 @@ pub async fn asset_table_api_handler(
         return Err(Error::Forbidden);
     }
 
+    let parent_id = query_param.parent_id.unwrap_or_default();
     let current_page = query_param.page.unwrap_or(1);
-    let asset_pagination = state.asset_service.paginate(&state.db, current_page).await?;
+    let asset_pagination = state.asset_service.paginate(&state.db, current_page, parent_id).await?;
 
     Ok(Json(asset_pagination))
 }

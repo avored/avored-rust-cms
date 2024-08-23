@@ -24,13 +24,23 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         start: i64,
+        parent_id: String
     ) -> Result<Vec<NewAssetModel>> {
-        let sql = "SELECT * FROM type::table($table) LIMIT $limit START $start;";
-        let vars = BTreeMap::from([
+        let sql;
+        let vars;
+
+        // @todo fix this one
+
+        sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
+        vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
             ("table".into(), ASSET_TABLE.into()),
+            ("parent_id".into(), parent_id.into()),
         ]);
+
+
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let mut asset_list: Vec<NewAssetModel> = Vec::new();
@@ -48,9 +58,11 @@ impl AssetRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
+        parent_id: String
     ) -> Result<ModelCount> {
-        let sql = "SELECT count() FROM assets GROUP ALL;";
-        let responses = datastore.execute(sql, database_session, None).await?;
+        let sql = format!("SELECT count() FROM assets WHERE parent_id = '{}' GROUP ALL;", parent_id);
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
