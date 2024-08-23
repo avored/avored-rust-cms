@@ -1,4 +1,3 @@
-use std::path::Path;
 use crate::{error::Result, PER_PAGE, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository};
 use crate::models::asset_model::{AssetPagination, CreatableAssetModelNew, MetaDataType, NewAssetModel};
 use crate::models::Pagination;
@@ -18,13 +17,14 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
+        parent_id: String
     ) -> Result<AssetPagination> {
         let start = (current_page - 1) * PER_PAGE;
         let to = start + PER_PAGE;
 
         let asset_model_count = self
             .asset_repository
-            .get_total_count(datastore, database_session)
+            .get_total_count(datastore, database_session, parent_id.clone())
             .await?;
 
         let mut has_next_page = false;
@@ -50,7 +50,7 @@ impl AssetService {
 
         let assets = self
             .asset_repository
-            .paginate(datastore, database_session, start)
+            .paginate(datastore, database_session, start, parent_id)
             .await?;
 
         Ok(AssetPagination {
@@ -101,24 +101,32 @@ impl AssetService {
 
     pub async fn create_asset_folder(
         &self,
-        (datastore, database_session): &DB,
+        db: &DB,
         name: String,
+        parent_id: String,
         logged_in_user: LoggedInUser
     ) -> Result<NewAssetModel> {
+        let (datastore, database_session) = db;
 
-        let full_path = Path::new("public").join("upload").join(name.clone());
-        // @todo createa folder in file system here...
-        tokio::fs::create_dir_all(full_path).await?;
+        let mut full_path = format!("public/upload/{}", name.clone());
 
-        // @todo if we have a parent_id then use the path from parent_id to build a new path
-        let relative_path = format!("/public/upload/{}", name);
+        if !parent_id.is_empty() {
+            let asset = self
+                .find_by_id(db, &parent_id)
+                .await?;
+
+            full_path = format!("{}/{}",asset.path, name.clone());
+        }
+        tokio::fs::create_dir_all(&format!("./{}", full_path.clone())).await?;
+
+        // @todo fix this default color????
         let color= String::from("text-gray-400");
 
         let creatable_asset_model = CreatableAssetModelNew {
             logged_in_username: logged_in_user.email,
-            parent_id: "".to_string(),
+            parent_id,
             name: name.clone(),
-            path: relative_path,
+            path: full_path,
             asset_type: "FOLDER".to_string(),
             metadata: MetaDataType::FolderTypeMetaData {color},
         };
