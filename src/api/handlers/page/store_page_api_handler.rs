@@ -2,15 +2,15 @@ use std::sync::Arc;
 
 use crate::error::Error;
 use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentElementContentModel, CreatablePageModel, PageModel, CreatablePageComponentElementDataModel};
-use crate::models::validation_error::ErrorResponse;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use crate::{
     avored_state::AvoRedState, error::Result
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
+use tracing::log::error;
 use crate::api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::models::token_claim_model::LoggedInUser;
-
 
 pub async fn store_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -36,17 +36,15 @@ pub async fn store_page_api_handler(
         return Err(Error::BadRequestError(error_response));
     }
     
-    let mut  creatable_page = CreatablePageModel {
+    let mut creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email.clone(),
         component_contents: vec![]
     };
 
-    //
-
     for payload_component_content in payload.components_content {
-        let mut  creatable_component_content_model = CreatableComponentContentModel {
+        let mut creatable_component_content_model = CreatableComponentContentModel {
             name: payload_component_content.name,
             identifier: payload_component_content.identifier,
             elements: vec![],
@@ -82,13 +80,34 @@ pub async fn store_page_api_handler(
     let created_page_model = state
         .page_service
         .create_page(&state.db, creatable_page, logged_in_user)
-        .await?;
-    let response = CreatedPageResponse {
-        status: true,
-        page_model: created_page_model
-    };
+        .await;
 
-    Ok(Json(response))
+    match created_page_model {
+        Ok(val) => {
+            let response = CreatedPageResponse {
+                status: true,
+                page_model: val
+            };
+
+            Ok(Json(response))
+        },
+        Err(e) => match e {
+            Error::Generic(ref msg) if msg == "Duplicate error" => {
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("identifier"),
+                    message: String::from("identifier should be unique".to_string())
+                };
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors
+                };
+                Err(Error::BadRequestError(error_response))
+            },
+            _ => Err(Error::Generic("Internal Server Error".to_string())),
+        }
+    }
 }
 
 #[derive(Serialize, Debug)]

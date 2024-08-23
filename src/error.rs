@@ -51,7 +51,10 @@ impl From<std::io::Error> for Error {
 impl From<surrealdb::err::Error> for Error {
     fn from(val: surrealdb::err::Error) -> Self {
         error!("there is an issue with surreal db: {val:?}");
-        Error::Generic("Surreal Error".to_string())
+        match &val {
+            IndexExists=> Error::Generic("Duplicate error".to_string()),
+            _ => Error::Generic("Surreal Error".to_string()),
+        }
     }
 }
 //
