@@ -71,6 +71,25 @@ impl PageRepository {
         model_count
     }
 
+    pub async fn remove_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        page_id: &String) -> Result<bool>
+    {
+        let sql = format!("DELETE pages:{page_id}");
+        let responses = datastore.execute(&sql, database_session, None).await?;
+        let response = responses
+            .into_iter()
+            .next()
+            .map(|rp| rp.output());
+        let query_result = match response {
+            Some(object) => object.is_ok(), // there is another method is_err() as well
+            None => false
+        };
+        Ok(query_result)
+    }
+
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,

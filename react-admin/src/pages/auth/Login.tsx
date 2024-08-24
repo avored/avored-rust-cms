@@ -80,7 +80,7 @@ function Login() {
                             <AvoRedButton
                                 label={t("sign_in")}
                                 isPending={isPending}
-                                className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+                                className="bg-primary-600 hover:bg-primary-500 focus:ring-primary-500"
                             />
                         </div>
 

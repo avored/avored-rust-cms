@@ -1,4 +1,5 @@
 {
+  "intention_to_remove_page": "Are you sure you want to remove the page {{page_var}}?",
   "empty_message": "{{attribute}} is required field.",
   "invalid_email": "The Email address field must be a valid email address.",
   "avored_rust_cms": "Avored Rust Cms",

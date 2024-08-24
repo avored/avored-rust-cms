@@ -7,6 +7,8 @@ use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use tower_http::cors::CorsLayer;
 use crate::api::handlers::{
+
+    page::delete_page_handler::delete_page_handler,
     admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
     admin_user::admin_user_login_api_handler::admin_user_login_api_handler,
     admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler,
@@ -116,6 +118,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/page", post(store_page_api_handler))
         .route("/api/page/:page_id", put(update_page_api_handler))
         .route("/api/page/:page_id", get(fetch_page_api_handler))
+        .route("/api/page/:page_id", delete(delete_page_handler))
         .route("/api/put-page-identifier/:page_id", put(put_page_identifier_api_handler))
         .route("/api/component-all", get(component_all_api_handler))
         .route("/api/openapi.json", get(openapi_api_handler))
