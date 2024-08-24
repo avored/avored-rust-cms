@@ -8,7 +8,6 @@ use crate::{
 };
 use axum::{Extension, extract::State, Json};
 use serde::Serialize;
-use tracing::log::error;
 use crate::api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::models::token_claim_model::LoggedInUser;
 
