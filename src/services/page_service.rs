@@ -73,7 +73,7 @@ impl PageService {
     }
 
     pub async fn remove_by_id(&self, (datastore, database_session): &DB, id: &String) -> Result<bool> {
-        self.page_repository.remove_by_id(datastore,database_session, &id).await?;
+        self.page_repository.remove_by_id(datastore,database_session, id).await?;
         Ok(true)
     }
 

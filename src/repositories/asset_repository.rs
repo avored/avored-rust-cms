@@ -26,13 +26,13 @@ impl AssetRepository {
         start: i64,
         parent_id: String
     ) -> Result<Vec<NewAssetModel>> {
-        let sql;
-        let vars;
+        
+        
 
         // @todo fix this one
 
-        sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
-        vars = BTreeMap::from([
+        let sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
+        let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
             ("table".into(), ASSET_TABLE.into()),

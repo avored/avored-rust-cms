@@ -55,11 +55,7 @@ impl From<std::io::Error> for Error {
 impl From<surrealdb::err::Error> for Error {
     fn from(val: surrealdb::err::Error) -> Self {
         error!("there is an issue with surreal db: {val:?}");
-        match val {
-            //@todo fix it
-            IndexExists=> Error::Generic("Duplicate error".to_string()),
-            _ => Error::Generic("Surreal Error".to_string()),
-        }
+        Error::Generic("Surreal Error".to_string())
     }
 }
 //
@@ -120,7 +116,17 @@ impl From<lettre::error::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        let response = match self {
+        
+
+        // Create a placeholder Axum response.
+        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        // let mut response = self {
+        //
+        // }
+        // Insert the Error into the response.
+        // response.extensions_mut().insert(response);
+
+        match self {
             Error::BadRequestError(str) => {
                 (StatusCode::BAD_REQUEST, str).into_response()
             },
@@ -156,17 +162,7 @@ impl IntoResponse for Error {
                 (StatusCode::NOT_FOUND, msg).into_response()
             },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
-        };
-
-        // Create a placeholder Axum response.
-        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
-        // let mut response = self {
-        //
-        // }
-        // Insert the Error into the response.
-        // response.extensions_mut().insert(response);
-
-        response
+        }
     }
 }
 impl IntoResponse for ErrorResponse {

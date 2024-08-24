@@ -95,7 +95,7 @@ pub async fn store_page_api_handler(
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("identifier"),
-                    message: String::from("identifier should be unique".to_string())
+                    message: "identifier should be unique".to_string()
                 };
                 errors.push(error_message);
                 let error_response = ErrorResponse {
