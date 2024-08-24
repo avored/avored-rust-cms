@@ -9,7 +9,6 @@ use tower_http::cors::CorsLayer;
 use crate::api::handlers::{
 
     page::delete_page_handler::delete_page_handler,
-    page::page_table_api_handler::page_table_api_handler,
     admin_user::admin_user_forgot_password_api_handler::admin_user_forgot_password_api_handler,
     admin_user::admin_user_login_api_handler::admin_user_login_api_handler,
     admin_user::admin_user_reset_password_api_handler::admin_user_reset_password_api_handler,
