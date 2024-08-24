@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use serde::Serialize;
 use crate::{ error::Result };
-use axum::{Extension, extract::Path, Json};
+use axum::{Extension, extract::Path};
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -19,7 +19,7 @@ pub async fn delete_page_handler(
         .has_permission(logged_in_user.clone(), String::from("page_delete"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
     state.page_service.remove_by_id(&state.db, &page_id).await?;
     Ok(StatusCode::OK)
