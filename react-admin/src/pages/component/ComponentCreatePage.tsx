@@ -10,6 +10,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useComponentCreateSchema } from "./schemas/component.create.schema";
 import ICreatableComponent, {CreatableElementDataType} from "../../types/component/ICreatableComponent";
 import ErrorMessage from "../../components/ErrorMessage";
+import slug from "slug";
 
 export const ComponentCreatePage = (() => {
   const { mutate, error } = useStoreComponent();
@@ -75,6 +76,10 @@ export const ComponentCreatePage = (() => {
     mutate(data);
   };
 
+  const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setValue('identifier', slug(e.currentTarget.value || ''))
+  }
+
   return (
       <div className="flex-1 bg-white">
         <div className="px-5 pl-64 ">
@@ -91,6 +96,7 @@ export const ComponentCreatePage = (() => {
                       name="name"
                       register={register("name")}
                       autoFocus={true}
+                      onKeyUp={e => onNameChange(e)}
                   />
                   <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
                 </div>
@@ -175,7 +181,7 @@ export const ComponentCreatePage = (() => {
                             <div className="mt-3">
                               <Controller
                                   name={`elements.${index}.element_type`}
-                                  render={({ field: element }) => {
+                                  render={({field: element}) => {
                                     return <>{t!('element_type')}: {element.value}</>;
                                   }}
                                   control={control}
@@ -205,7 +211,7 @@ export const ComponentCreatePage = (() => {
                             <Controller
                                 name={`elements.${index}`}
                                 control={control}
-                                render={({ field: element }) => {
+                                render={({field: element}) => {
                                   return element.value.element_type ===
                                   AvoRedFieldTypesEnum.SELECT ? (
                                       <div className="mt-3">
@@ -258,7 +264,7 @@ export const ComponentCreatePage = (() => {
                                                             }
                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                         >
-                                                          <TrashIcon className="text-primary-500 w-4 h-4 mr-2" />
+                                                          <TrashIcon className="text-primary-500 w-4 h-4 mr-2"/>
                                                         </div>
                                                       </div>
                                                     </div>
@@ -280,7 +286,7 @@ export const ComponentCreatePage = (() => {
                                               className="flex items-center"
                                               type="button"
                                           >
-                                            <PlusIcon className="text-primary-500 h-6 w-6" />
+                                            <PlusIcon className="text-primary-500 h-6 w-6"/>
                                             <span className="text-sm ml-1 text-primary-500">
                                       {t("add_option")}
                                     </span>
@@ -304,7 +310,7 @@ export const ComponentCreatePage = (() => {
                       className="flex"
                       onClick={addElementOnClick}
                   >
-                    <PlusIcon className="text-primary-500 h-6 w-6" />
+                    <PlusIcon className="text-primary-500 h-6 w-6"/>
                     <span className="text-sm ml-1 text-primary-500">
                     {t("add_element")}
                   </span>

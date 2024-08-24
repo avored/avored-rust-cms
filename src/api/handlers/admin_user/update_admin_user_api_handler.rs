@@ -29,7 +29,7 @@ pub async fn update_admin_user_api_handler(
         .has_permission(logged_in_user.clone(), String::from("admin_user_edit"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
     let mut payload = UpdateAdminUserRequest {
         full_name: String::from(""),

@@ -24,9 +24,9 @@ pub enum Error {
 
     AuthenticationError,
 
-    FORBIDDEN,
+    NotFound(String),
 
-    NotFound(String)
+    Forbidden
 }
 
 impl core::fmt::Display for Error {
@@ -40,6 +40,13 @@ impl std::error::Error for Error {}
 impl From<serde_json::Error> for Error {
     fn from(_val: serde_json::Error) -> Self {
         Error::Generic("Serde struct to string  Error".to_string())
+    }
+}
+
+
+impl From<std::io::Error> for Error {
+    fn from(_val: std::io::Error) -> Self {
+        Error::Generic("tokio file create folder error ".to_string())
     }
 }
 
@@ -125,7 +132,7 @@ impl IntoResponse for Error {
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
             },
-            Error::FORBIDDEN => {
+            Error::Forbidden => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),

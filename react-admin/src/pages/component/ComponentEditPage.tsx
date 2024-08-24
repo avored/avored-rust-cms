@@ -13,7 +13,6 @@ import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent, {
   EditableComponentElementDataType,
-  
 } from "../../types/component/IEditableComponent";
 import {usePutComponentIdentifier} from "./hooks/usePutComponentIdentifier"
 import {useComponentPutSchema} from "./schemas/component.put.schema";
