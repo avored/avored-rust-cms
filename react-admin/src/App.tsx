@@ -44,7 +44,7 @@ function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
                     <Route path="/admin/logout"   element={<Logout />} />
-                    <Route path="/admin/asset"   element={<AssetTable />} />
+                    <Route path="/admin/asset/:asset_id?"   element={<AssetTable />} />
                     <Route path="/admin/component"   element={<ComponentTablePage />} />
                     <Route path="/admin/component-create"   element={<ComponentCreatePage />} />
                     <Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />
