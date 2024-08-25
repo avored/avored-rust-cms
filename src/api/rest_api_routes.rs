@@ -51,7 +51,7 @@ use crate::api::handlers::{
     asset::create_folder_api_handler::create_folder_api_handler,
     asset::delete_folder_api_handler::delete_folder_api_handler,
     asset::rename_asset_api_handler::rename_asset_api_handler,
-    asset::delete_asset_api_handler::delete_asset_api_handler
+    asset::delete_asset_api_handler::delete_asset_api_handler,
 };
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
 use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
@@ -95,8 +95,8 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/asset", post(store_asset_api_handler))
         .route("/api/rename-asset/:asset_id", post(rename_asset_api_handler))
         .route("/api/create-folder", post(create_folder_api_handler))
-        .route("/api/delete-asset/:asset_id", delete(delete_asset_api_handler))
         .route("/api/delete-folder/:asset_id", delete(delete_folder_api_handler))
+        .route("/api/delete-asset/:asset_id", delete(delete_asset_api_handler))
         .route("/api/role-options", get(role_option_api_handler))
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))

@@ -15,11 +15,11 @@ pub async fn delete_asset_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>
 ) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - delete_folder_api_handler", "HANDLER");
+    println!("->> {:<12} - delete_asset_api_handler", "HANDLER");
 
     let has_permission_bool = state
         .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("delete_asset_create"))
+        .has_permission(logged_in_user.clone(), String::from("delete_asset"))
         .await?;
     if !has_permission_bool {
         return Err(Error::Forbidden);
