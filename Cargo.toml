@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.7.5", features = ["multipart"] }
-serde = { version = "1.0.208", features = ["derive"] }
+serde = { version = "1.0.209", features = ["derive"] }
 tokio = { version = "1.39.3", features = ["full"] }
 tracing = "0.1.40"
 tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
@@ -22,7 +22,7 @@ serde_json = "1.0.124"
 surrealdb = { version = "1.5.4", features = ["kv-rocksdb", "kv-mem"] }
 jsonwebtoken = "9.3.0"
 chrono = { version = "0.4.38", features = [] }
-email_address = "0.2.4"
+email_address = "0.2.9"
 rust-i18n = "3.1.1"
 lettre = { version = "0.11.7", features = ["tokio1-native-tls"] }
 handlebars = "6.0.0"
@@ -30,6 +30,7 @@ utoipa = "4.2.3"
 juniper = "0.16.1"
 juniper_axum = { version = "0.1.0", features = ["subscriptions"] }
 tokio-stream = "0.1.15"
+
 
 [dev-dependencies]
 mockall = "0.13.0"

@@ -62,7 +62,7 @@ function RoleCreate() {
                                     htmlFor="dashboard_permission"
                                     className="text-sm text-gray-600"
                                 >
-                                    {t(`pages.role.permissions.${switchKey}`)}
+                                    {t(switchKey)}
                                 </label>
                                 <Switch
                                     checked={permissionAllowed('setting')}
@@ -133,7 +133,6 @@ function RoleCreate() {
                                     </div>
                                     <div className="p-3">
                                         {renderSwitch('dashboard')}
-
                                         {renderSwitch('get_setting')}
                                         {renderSwitch('save_setting')}
                                     </div>

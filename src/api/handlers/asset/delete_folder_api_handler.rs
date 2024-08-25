@@ -20,7 +20,7 @@ pub async fn delete_folder_api_handler(
 
     let has_permission_bool = state
         .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("delete_folder_create"))
+        .has_permission(logged_in_user.clone(), String::from("delete_folder"))
         .await?;
     if !has_permission_bool {
         return Err(Error::Forbidden);

@@ -19,7 +19,7 @@ pub async fn create_folder_api_handler(
 
     let has_permission_bool = state
         .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("create_folder_create"))
+        .has_permission(logged_in_user.clone(), String::from("create_folder"))
         .await?;
     if !has_permission_bool {
         return Err(Error::Forbidden);
