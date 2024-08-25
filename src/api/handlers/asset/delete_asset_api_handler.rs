@@ -9,7 +9,6 @@ use axum::response::IntoResponse;
 use tokio::fs;
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub async fn delete_asset_api_handler(
     Path(asset_id): Path<String>,

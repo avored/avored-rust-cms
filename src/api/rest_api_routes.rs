@@ -95,7 +95,6 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/asset", post(store_asset_api_handler))
         .route("/api/rename-asset/:asset_id", post(rename_asset_api_handler))
         .route("/api/create-folder", post(create_folder_api_handler))
-        .route("/api/delete-asset/:asset_id", delete(delete_asset_api_handler))
         .route("/api/delete-folder/:asset_id", delete(delete_folder_api_handler))
         .route("/api/delete-asset/:asset_id", delete(delete_asset_api_handler))
         .route("/api/role-options", get(role_option_api_handler))
