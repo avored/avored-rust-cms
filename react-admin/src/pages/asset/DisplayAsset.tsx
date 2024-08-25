@@ -7,11 +7,13 @@ import {
 import { useDeleteFolder } from "./hooks/useDeleteFolder";
 import { RenameFolderModal } from "./RenameFolderModal";
 import { useTranslation } from "react-i18next";
+import {Link} from "react-router-dom";
 
 type DisplayAssetProp = {
   asset: IAssetModel;
+  openFolder: any
 };
-export const DisplayAsset = ({ asset }: DisplayAssetProp) => {
+export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
   const [isRenameFolderModalOpen, setIsRenameFolderModalOpen] = useState(false);
   const [t] = useTranslation("global");
 
@@ -98,11 +100,27 @@ export const DisplayAsset = ({ asset }: DisplayAssetProp) => {
             </>
           )}
         </div>
-        <div className="flex justify-center bg-gray-100 text-xs text-slate-900 py-2 px-1 rounded">
-          <div className="">
-            {asset.name}
+        <div className="flex justify-center  text-xs text-slate-900">
+          <div className="w-full items-center">
+            {asset.asset_type === "FOLDER" ? (
+              <>
+                <button
+                    onClick={e => openFolder(e, asset.id)}
+                    className="bg-gray-100 py-2 px-1 rounded w-full hover:bg-gray-200" type="button">
+                  <Link to={`/admin/asset/${asset.id}`}>
+                    {asset.name}
+                  </Link>
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="text-ellipsis w-full overflow-hidden bg-gray-100 py-2 px-1 rounded">
 
-            {/** ADD COPY ICON AND Allow them to copy the file name **/}
+                {/** ADD COPY ICON AND Allow them to copy the file name **/}
+                {asset.name}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

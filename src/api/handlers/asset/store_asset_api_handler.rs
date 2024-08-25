@@ -75,6 +75,7 @@ pub async fn store_asset_api_handler(
                             .find_by_id(&state.db, &query_parent_id)
                             .await?;
 
+                        creatable_asset_model.parent_id = query_parent_id;
                         asset_file = format!("{}/{}", parent_asset.path, new_file_name.clone());
                     } else {
                         asset_file = format!("public/upload/{}", new_file_name.clone());

@@ -64,7 +64,7 @@ export const CreateFolderModal = (({
                                                 type="submit"
                                                 className="px-4 py-2 text-sm font-medium text-center text-white transition
                                                     duration-150 ease-linear bg-primary-600 border border-primary-600 rounded-lg
-                                                    hover:bg-red-500"
+                                                    hover:bg-primary-500"
                                             >
                                                 {t("create")}
                                             </button>

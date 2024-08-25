@@ -1,29 +1,34 @@
-import React, { useState } from "react"
-import { useAssetTable } from "./hooks/useAssetTable"
-import _ from "lodash"
-import { useStoreAsset } from "./hooks/useStoreAsset"
-import { useTranslation } from "react-i18next"
-import { AssetSaveSchema } from "./schemas/asset.save.schema"
-import { SubmitHandler, useForm } from "react-hook-form"
-import { joiResolver } from "@hookform/resolvers/joi"
-import IAssetSave from "../../types/asset/IAssetSave"
-import IAssetModel from "../../types/asset/IAssetModel"
-import { AssetUploadModal } from "./AssetUploadModal"
+import React, { useState } from "react";
+import { useAssetTable } from "./hooks/useAssetTable";
+import _ from "lodash";
+import { useStoreAsset } from "./hooks/useStoreAsset";
+import { useTranslation } from "react-i18next";
+import { AssetSaveSchema } from "./schemas/asset.save.schema";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { joiResolver } from "@hookform/resolvers/joi";
+import IAssetSave from "../../types/asset/IAssetSave";
+import IAssetModel from "../../types/asset/IAssetModel";
+import { AssetUploadModal } from "./AssetUploadModal";
 import { DisplayAsset } from "./DisplayAsset";
 import { CreateFolderModal } from "./CreateFolderModal";
+import {useParams} from "react-router-dom";
 
 function AssetTable() {
-  const [isUploadAssetModalOpen, setIsUploadAssetModalOpen] = useState(false)
-  const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false)
-  const asset_api_table_response = useAssetTable()
+  const [isUploadAssetModalOpen, setIsUploadAssetModalOpen] = useState(false);
+  const [isCreateFolderModalOpen, setIsCreateFolderModalOpen] = useState(false);
+
+  const params = useParams()
+  const asset_id: string = params.asset_id ?? ''
+
+  const asset_api_table_response = useAssetTable(asset_id);
   const assets: Array<IAssetModel> = _.get(
     asset_api_table_response,
     "data.data.data",
     [],
-  )
-  const { mutate } = useStoreAsset()
-  const [t] = useTranslation("global")
+  );
 
+  const { mutate } = useStoreAsset(asset_id);
+  const [t] = useTranslation("global");
 
   const {
     register,
@@ -33,6 +38,11 @@ function AssetTable() {
     resolver: joiResolver(AssetSaveSchema, { allowUnknown: true }),
   });
 
+  const openFolder = (e: React.MouseEvent<HTMLElement>, asset_id: string) => {
+    e.preventDefault();
+    console.log(asset_id);
+  };
+
   const onCloseCreateFolderModal = () => {
     setIsCreateFolderModalOpen(false);
   };
@@ -40,7 +50,6 @@ function AssetTable() {
   const openCreateFolderModal = () => {
     setIsCreateFolderModalOpen(true);
   };
-
 
   const onCloseUploadModal = () => {
     setIsUploadAssetModalOpen(false);
@@ -50,13 +59,11 @@ function AssetTable() {
     setIsUploadAssetModalOpen(true);
   };
 
-
   const submitHandler: SubmitHandler<IAssetSave> = (data: IAssetSave) => {
     data.file = data.file_list ? data.file_list[0] : undefined;
     onCloseUploadModal();
     mutate(data);
   };
-
 
   return (
     <div className="flex-1 bg-white">
@@ -91,10 +98,9 @@ function AssetTable() {
               register={register}
             />
             <CreateFolderModal
-                onCloseModal={onCloseCreateFolderModal}
-                isOpen={isCreateFolderModalOpen}
+              onCloseModal={onCloseCreateFolderModal}
+              isOpen={isCreateFolderModalOpen}
             />
-
           </div>
         </div>
 
@@ -106,10 +112,11 @@ function AssetTable() {
                   <div className="grid grid-cols-6  gap-4 mx-5">
                     {assets.map((asset: IAssetModel) => {
                       return (
-                          <>
-                            <DisplayAsset key={asset.id} asset={asset} />
-                          </>
-
+                        <DisplayAsset
+                          openFolder={openFolder}
+                          key={asset.id}
+                          asset={asset}
+                        />
                       );
                     })}
                   </div>
