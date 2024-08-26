@@ -44,6 +44,12 @@ impl From<serde_json::Error> for Error {
     }
 }
 
+impl From<dotenvy::Error> for Error {
+    fn from(val: dotenvy::Error) -> Self {
+        error!("there is an issue with loading env file: {val:?}");
+        Error::Generic("there is an issue with loading env file".to_string())
+    }
+}
 
 impl From<std::io::Error> for Error {
     fn from(val: std::io::Error) -> Self {

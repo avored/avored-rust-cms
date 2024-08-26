@@ -1,6 +1,9 @@
 /node_modules
 .DS_Store
-.env
+.env.dev
+.env.test
+.env.stag
+.env.prod
 .idea
 .vscode
 /target

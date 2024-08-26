@@ -29,7 +29,16 @@ pub struct AvoRedConfigProvider {
 
 impl AvoRedConfigProvider {
     pub fn register() -> Result<AvoRedConfigProvider> {
-        dotenv().ok();
+        dotenv()?;
+
+        match get_env("APP_ENV")?.as_str() {
+            "prod" => dotenvy::from_filename_override(".env.prod")?,
+            "stag" => dotenvy::from_filename_override(".env.stag")?,
+            "test" => dotenvy::from_filename_override(".env.test")?,
+            // as if it won't match any we load dev as default
+            _ => dotenvy::from_filename_override(".env")?,
+        };
+
         Ok(AvoRedConfigProvider {
             database_folder_name: get_env("AVORED_DATABASE_FOLDER_NAME")?,
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
