@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::error::Error;
 use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentElementContentModel, CreatablePageModel, PageModel, CreatablePageComponentElementDataModel};
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -16,7 +16,7 @@ pub async fn store_page_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
 ) -> Result<Json<CreatedPageResponse>> {
-    let error_messages = payload.validate()?;
+    let error_messages = payload.validate(&state).await?;
 
     let has_permission_bool = state
         .admin_user_service
@@ -79,34 +79,14 @@ pub async fn store_page_api_handler(
     let created_page_model = state
         .page_service
         .create_page(&state.db, creatable_page, logged_in_user)
-        .await;
+        .await?;
 
-    match created_page_model {
-        Ok(val) => {
-            let response = CreatedPageResponse {
-                status: true,
-                page_model: val
-            };
+    let response = CreatedPageResponse {
+        status: true,
+        page_model: created_page_model
+    };
 
-            Ok(Json(response))
-        },
-        Err(e) => match e {
-            Error::Generic(ref msg) if msg == "Duplicate error" => {
-                let mut errors: Vec<ErrorMessage> = vec![];
-                let error_message = ErrorMessage {
-                    key: String::from("identifier"),
-                    message: "identifier should be unique".to_string()
-                };
-                errors.push(error_message);
-                let error_response = ErrorResponse {
-                    status: false,
-                    errors
-                };
-                Err(Error::BadRequestError(error_response))
-            },
-            _ => Err(Error::Generic("Internal Server Error".to_string())),
-        }
-    }
+    Ok(Json(response))
 }
 
 #[derive(Serialize, Debug)]

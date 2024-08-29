@@ -20,5 +20,4 @@ jobs:
           override: true
       - name: Rust Check
         run: |
-          cp .env.example .env
           cargo check
