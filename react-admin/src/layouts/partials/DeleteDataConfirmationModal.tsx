@@ -1,15 +1,21 @@
 import { Button, Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import {useTranslation} from "react-i18next";
+import {useDeleteDemoData} from "../../hooks/useDeleteDemoData";
 
-type InstallDataConfirmationModalProp = {
+type DeleteDataConfirmationModalProp = {
     isOpen: any,
     close: any
 }
-export const InstallDataConfirmationModal = (({
+export const DeleteDataConfirmationModal = (({
     isOpen,
     close
-}: InstallDataConfirmationModalProp) => {
+}: DeleteDataConfirmationModalProp) => {
     const [t] = useTranslation("global")
+    const { mutate } = useDeleteDemoData()
+    const onConfirmButtonOnClick = (() => {
+        mutate()
+        close()
+    })
     return (
         <Dialog open={isOpen} as="div" className="relative z-30 focus:outline-none" onClose={close}>
             <div className="fixed inset-0 z-30 w-screen overflow-y-auto">
@@ -21,12 +27,12 @@ export const InstallDataConfirmationModal = (({
                             {t("are_you_sure")}
                         </DialogTitle>
                         <p className="mt-2 text-sm/6 text-white/50">
-                            {t("install_demo_data_description")}
+                            {t("delete_demo_data_description")}
                         </p>
                         <div className="mt-4">
                             <Button
                                 className="inline-flex items-center gap-2 rounded-md bg-gray-700 py-1.5 px-3 text-sm/6 font-semibold text-white shadow-inner shadow-white/10 focus:outline-none data-[hover]:bg-gray-600 data-[focus]:outline-1 data-[focus]:outline-white data-[open]:bg-gray-700"
-                                onClick={close}
+                                onClick={onConfirmButtonOnClick}
                             >
                                 {t("confirm")}
                             </Button>

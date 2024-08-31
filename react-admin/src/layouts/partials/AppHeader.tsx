@@ -2,36 +2,55 @@ import logo from "../../assets/logo_only.svg";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import _ from "lodash";
 import { Link, useNavigate } from "react-router-dom";
-import {useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import IAdminUserModel from "../../types/admin-user/IAdminUserModel";
 import { changeLocale } from "../../lib/common";
-import { useQuery } from "urql";
-import { ApiVersionQuery } from "../../query/misc/ApiVersion";
-import {InstallDataConfirmationModal} from "../../pages/setting/InstallDataConfirmationModal";
+import { useAxios } from "../../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import {InstallDataConfirmationModal} from "./InstallDataConfirmationModal";
+import {DeleteDataConfirmationModal} from "./DeleteDataConfirmationModal";
 
 function AppHeader() {
   const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
   const adminUser: IAdminUserModel = JSON.parse(auth_user_model);
-  const [result] = useQuery({
-    query: ApiVersionQuery,
+  const redirect = useNavigate();
+  const client = useAxios();
+  const { data } = useQuery({
+    queryKey: ["logged-in-user"],
+    queryFn: async () => {
+      try {
+        const assetUrl: string = "/logged-in-user";
+        return await client.get(assetUrl);
+      } catch (error) {
+        redirect("/admin/login");
+      }
+    },
   });
+
+  const install_demo_data = _.get(data, "data.data.demo_data_status", false);
 
   const navigate = useNavigate();
   const [t, i18n] = useTranslation("global");
-  let [isOpen, setIsOpen] = useState(false)
+  let [isInstallDemoDataVisible, setIsInstallDemoDataVisible] = useState(false);
+  let [isDeleteDemoDataVisible, setIsDeleteDemoDataVisible] = useState(false);
 
-  const open = (() => {
-    setIsOpen(true)
-  })
-
-  const close = (() =>{
-    setIsOpen(false)
-  })
-
-  const openConfirmationModal = (e: React.MouseEvent<HTMLElement>) => {
-    open()
+  const openInstallDemoDataVisible = () => {
+    setIsInstallDemoDataVisible(true);
   };
+
+  const closeInstallDemoDataVisible = () => {
+    setIsInstallDemoDataVisible(false);
+  };
+
+  const openDeleteDemoDataVisible = () => {
+    setIsDeleteDemoDataVisible(true);
+  };
+
+  const closeDeleteDemoDataVisible = () => {
+    setIsDeleteDemoDataVisible(false);
+  };
+
 
   useEffect(() => {
     if (!_.get(adminUser, "id")) {
@@ -42,7 +61,8 @@ function AppHeader() {
 
   return (
     <header className="h-16 py-2 flex shadow-lg px-4 fixed inset-y-0 md:sticky bg-gray-800 z-40">
-      <InstallDataConfirmationModal close={close} isOpen={isOpen} />
+      <InstallDataConfirmationModal close={closeInstallDemoDataVisible} isOpen={isInstallDemoDataVisible} />
+      <DeleteDataConfirmationModal close={closeDeleteDemoDataVisible} isOpen={isDeleteDemoDataVisible} />
       <div className="flex w-full">
         <a
           href="/admin"
@@ -54,9 +74,7 @@ function AppHeader() {
 
           <div>
             <span className="text-2xl font-semibold">{t("avored")}</span>
-            <span className="text-xs block">
-              {t("rust_cms")} {result.data?.apiVersion}
-            </span>
+            <span className="text-xs block">{t("rust_cms")}</span>
           </div>
         </a>
         <div className="ml-auto flex items-center">
@@ -136,14 +154,30 @@ function AppHeader() {
                   {t("change_password")}
                 </Link>
               </MenuItem>
-              <MenuItem as="div">
-                <div
-                  onClick={(e) => openConfirmationModal(e)}
-                  className="flex cursor-pointer items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
-                >
-                  {t("install_demo_data")}
-                </div>
-              </MenuItem>
+              {install_demo_data ? (
+                <>
+                  <MenuItem as="div">
+                    <div
+                      onClick={openDeleteDemoDataVisible}
+                      className="flex cursor-pointer items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
+                    >
+                      {t("delete_demo_data")}
+                    </div>
+                  </MenuItem>
+                </>
+              ) : (
+                <>
+                  <MenuItem as="div">
+                    <div
+                      onClick={openInstallDemoDataVisible}
+                      className="flex cursor-pointer items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
+                    >
+                      {t("install_demo_data")}
+                    </div>
+                  </MenuItem>
+                </>
+              )}
+
               <MenuItem as="div">
                 <Link
                   to={`/admin/logout`}
