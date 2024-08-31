@@ -54,6 +54,8 @@ use crate::api::handlers::{
     asset::delete_asset_api_handler::delete_asset_api_handler,
 };
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
+use crate::api::handlers::misc::delete_demo_data_api_handler::delete_demo_data_api_handler;
+use crate::api::handlers::misc::install_demo_data_api_handler::install_demo_data_api_handler;
 use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
@@ -124,6 +126,8 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/openapi.json", get(openapi_api_handler))
         .route("/api/setting", get(setting_all_api_handler))
         .route("/api/setting", post(update_setting_all_api_handler))
+        .route("/api/install-demo-data", post(install_demo_data_api_handler))
+        .route("/api/delete-demo-data", post(delete_demo_data_api_handler))
         // .route("/test", get(test_handler))
         .route("/graphql", on(
             MethodFilter::GET.or(MethodFilter::POST),

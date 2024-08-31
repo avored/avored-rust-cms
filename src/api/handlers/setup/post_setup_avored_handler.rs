@@ -143,32 +143,6 @@ pub async fn post_setup_avored_handler(
         DEFINE FIELD updated_at ON TABLE pages TYPE datetime;
         DEFINE INDEX pages_identifier_index ON TABLE pages COLUMNS identifier UNIQUE;
 
-        CREATE pages CONTENT {
-            name: 'Home Page',
-            identifier: 'home-page',
-            components_content: [
-                {
-                    id: 'test id',
-                    name: 'test name',
-                    identifier: 'test identifier',
-                    elements: [
-                        {
-                            name: 'test name',
-                            identifier: 'test identifier',
-                            element_type: 'text',
-                            element_data_type: 'TEXT',
-                            element_content: 'test field content 1'
-                        }
-                    ]
-                }
-            ],
-            created_by: $email,
-            updated_by: $email,
-            created_at: time::now(),
-            updated_at: time::now()
-        };
-
-
         REMOVE TABLE assets;
 
     ";

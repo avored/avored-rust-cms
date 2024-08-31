@@ -80,6 +80,11 @@ export const ComponentCreatePage = (() => {
     setValue('identifier', slug(e.currentTarget.value || ''))
   }
 
+  const ElementNameOnChange = (async (e: React.KeyboardEvent<HTMLInputElement>, elementIndex: number) => {
+    setValue(`elements.${elementIndex}.identifier`, slug(e.currentTarget.value))
+    await trigger(`elements.${elementIndex}`)
+  })
+
   return (
       <div className="flex-1 bg-white">
         <div className="px-5 pl-64 ">
@@ -198,6 +203,7 @@ export const ComponentCreatePage = (() => {
                                   register={register(`elements.${index}.name`)}
                                   label={t("element_name")}
                                   placeholder={t("element_name")}
+                                  onKeyUp={e => ElementNameOnChange(e, index)}
                               />
                             </div>
                             <div className="mt-3">

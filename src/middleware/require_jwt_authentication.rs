@@ -65,11 +65,13 @@ pub async fn require_jwt_authentication (
             (StatusCode::UNAUTHORIZED, Json(json_error))
         })?
         .claims;
+    let file_exist = tokio::fs::try_exists("public/install_demo").await.unwrap_or(false);
 
     let logged_in_user = LoggedInUser {
         id: claims.sub,
         name: claims.name,
         email: claims.email,
+        demo_data_status: file_exist,
         admin_user_model: claims.admin_user_model
     };
 
