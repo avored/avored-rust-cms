@@ -35,6 +35,7 @@ impl AvoRedConfigProvider {
             "prod" => dotenvy::from_filename_override(".env.prod")?,
             "stag" => dotenvy::from_filename_override(".env.stag")?,
             "test" => dotenvy::from_filename_override(".env.test")?,
+            "dev" => dotenvy::from_filename_override(".env.dev")?,
             // as if it won't match any we load dev as default
             _ => dotenvy::from_filename_override(".env")?,
         };

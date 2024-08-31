@@ -59,7 +59,7 @@ function SettingPage() {
                             <form onSubmit={handleSubmit(submitHandler)}>
                                 <div className="sm:items-center sm:justify-between">
                                     <InputField
-                                        label={t("settings.site_name")}
+                                        label={t("site_name")}
                                         register={register(`settings.${getIdentifierIndex('general_site_name')}.value`)}
                                         autoFocus
                                     />
@@ -82,4 +82,5 @@ function SettingPage() {
     );
 
 }
+
 export default SettingPage;

@@ -131,6 +131,9 @@ impl ComponentRepository {
             logged_in_user_email = creatable_component_model.logged_in_username,
             close_brace = String::from("}"));
 
+
+        println!("CREATE COMPONENT: SQL: {sql}");
+
         let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();

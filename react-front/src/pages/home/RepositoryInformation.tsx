@@ -24,7 +24,7 @@ const RepositoryInformation = (props: RepositoryComponentProps) => {
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
               {/*{repositoryInformation.data?.data.data.star ?? 65}*/}
-              65
+              {GetElementValue(props.RepositoryComponent, 'rate-us-number')}
             </div>
           </div>
           <div className="ml-3 group-hover:text-white">
