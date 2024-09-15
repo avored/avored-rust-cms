@@ -2,40 +2,26 @@ use rust_i18n::t;
 use serde::Deserialize;
 use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, Validate};
+use crate::error::Result;
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StorePageRequest {
     pub name: String,
     pub identifier: String,
-    pub components_content: Vec<CreatableComponentContentRequest>,
+    pub page_fields: Vec<CreatablePageFieldRequest>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct CreatableComponentContentRequest {
+pub struct CreatablePageFieldRequest {
     pub name: String,
     pub identifier: String,
-    pub elements: Vec<CreatableComponentElementContentRequest>
+    pub data_type: String,
+    pub field_type: String,
+    pub field_content: String,
 }
-
-#[derive(Deserialize, Debug, Clone, Default)]
-pub struct CreatableComponentElementContentRequest {
-    pub name: String,
-    pub identifier: String,
-    pub element_type: String,
-    pub element_content: String,
-    pub element_data_type: String,
-    pub element_data: Option<Vec<CreatablePageComponentElementDataOptionRequest>>
-}
-
-#[derive(Deserialize, Debug, Clone, Default)]
-pub struct CreatablePageComponentElementDataOptionRequest {
-    pub label: String,
-    pub value: String,
-}
-
 
 impl StorePageRequest {
-    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<Vec<ErrorMessage>> {
+    pub async fn validate(&self, state: &AvoRedState) -> Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
         if !self.name.required()? {

@@ -8,7 +8,7 @@ import { useComponentAll } from "./hooks/useComponentAll";
 import { useGetPage } from "./hooks/useGetPage";
 import { useUpdatePage } from "./hooks/useUpdatePage";
 import { useTranslation } from "react-i18next";
-import { useFieldArray, useForm } from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import PageComponentTable from "./PageComponentTable";
 import IEditablePage, {
@@ -20,6 +20,8 @@ import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
 import {usePagePutSchema} from "./schemas/page.put.schema";
 import {PutPageIdentifierType} from "../../types/page/PutPageIdentifierType";
 import {usePutPageIdentifier} from "./hooks/usePutPageIdentifier";
+import {EditablePageType} from "../../types/page/EditablePageType";
+import {AvoRedDataType, AvoRedFieldType} from "../../types/page/CreatablePageType";
 
 function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -42,11 +44,17 @@ function PageEdit() {
         handleSubmit,
         formState: { errors },
         getValues,
-        setValue
-    } = useForm<IEditablePage>({
+        setValue,
+        trigger
+    } = useForm<EditablePageType>({
         resolver: joiResolver(usePageEditSchema(), { allowUnknown: true }),
         values,
     });
+
+
+    const deletePageFieldOnClick = (e: any, index: number) => {
+        remove(index);
+    };
 
     const {
         register: putPageRegister,
@@ -72,116 +80,27 @@ function PageEdit() {
         setIsEditableIdentifier(true)
     })
 
-    const deleteComponentOnClick = ((e: React.MouseEvent, componentIndex: number) => {
-        e.stopPropagation()
-        e.preventDefault()
-        remove(componentIndex)
-    })
-
-    const { fields: components_content, append, remove } = useFieldArray({
+    const { fields, append, remove } = useFieldArray({
         control,
-        name: "components_content",
+        name: "page_fields",
     });
 
-    const setSelectedFieldDataOption = ((selected: Array<string>, pageComponentIndex: number, componentFieldIndex: number) => {
-        let val = selected.pop() ?? ''
-        setValue(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`, val);
-    })
-
-    const getSelectFieldDataOptionCurrentValue = ((pageComponentIndex: number, componentFieldIndex: number) => {
-
-        let val  = getValues(`components_content.${pageComponentIndex}.elements.${componentFieldIndex}.element_content`)
-
-        if (val) {
-            return [val]
-        }
-        return []
-    })
-
-    const renderComponentFieldType = (
-        componentField: IEditablePageComponentFieldModel,
-        pageComponentIndex: number,
-        pageComponentFieldIndex: number,
+    const fieldTypeOnClick = async (
+        e: any,
+        index: number,
+        field_type: AvoRedFieldType,
+        data_type: AvoRedDataType,
     ) => {
-        switch (componentField.element_type) {
-            case "textarea":
-                return (
-                    <div className="p-3">
-            <textarea
-                {...register(
-                    `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
-                )}
-            ></textarea>
-                        <label
-                            htmlFor={componentField.identifier}
-                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                            {componentField.name}
-                        </label>
-                    </div>
-                );
-            case "select":
-                return (
-                    <div className="p-3">
-                        <AvoRedMultiSelectField
-                            label="test dropdown"
-                            selectedOption={getSelectFieldDataOptionCurrentValue(pageComponentIndex, pageComponentFieldIndex)}
-                            options={componentField.element_data ?? []}
-                            onChangeSelectedOption={((val: Array<string>) => setSelectedFieldDataOption(val, pageComponentIndex, pageComponentFieldIndex))}
-                        ></AvoRedMultiSelectField>
-                        <label
-                            htmlFor={componentField.identifier}
-                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                        >
-                            {componentField.name}
-                        </label>
-                    </div>
-                );
-            case "text":
-            default:
-                return (
-                    <div>
-                        <InputField
-                            label={componentField.name}
-                            type="text"
-                            name={componentField.identifier}
-                            register={register(
-                                `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
-                            )}
-                        />
-                    </div>
-                );
-        }
-    };
-
-    const renderComponentField = (
-        componentField: IEditablePageComponentFieldModel,
-        pageComponentIndex: number,
-        pageComponentFieldIndex: number,
-    ) => {
-        return (
-
-            <div className="ring-1 my-2 ring-gray-200" key={componentField.identifier}>
-                {renderComponentFieldType(
-                    componentField,
-                    pageComponentIndex,
-                    pageComponentFieldIndex,
-                )}
-            </div>
-        );
-    };
-
-    const componentSelected = (e: React.MouseEvent, componentId: string) => {
         e.preventDefault();
-        const selectedComponent = components.find(
-            (component: IEditablePageComponentModel) => component.id === componentId,
-        );
-        setIsComponentTableModalOpen(false);
-
-        append(selectedComponent);
+        setValue(`page_fields.${index}.field_type`, field_type);
+        setValue(`page_fields.${index}.data_type`, data_type);
+        await trigger(`page_fields.${index}`);
     };
 
-    const addComponentOnClick = () => {
+
+    const addComponentOnClick = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault()
+        console.log("test")
         setIsComponentTableModalOpen(true);
     };
 
@@ -189,37 +108,7 @@ function PageEdit() {
         setIsComponentTableModalOpen(false);
     };
 
-    const renderComponent = (
-        pageComponent: IEditablePageComponentModel,
-        pageComponentIndex: number,
-    ) => {
-        return (
-            <div
-                key={pageComponent.id}
-                className="my-5 ring-1 ring-gray-200 rounded p-3"
-            >
-                <div className="flex w-full justify-end">
-                    <TrashIcon onClick={e => deleteComponentOnClick(e, pageComponentIndex)} className="w-4 h-4" />
-                </div>
-
-                <div>component name: {pageComponent.name}</div>
-                <div>component identifier: {pageComponent.identifier}</div>
-                <div>
-                    Component Fields
-                    {pageComponent.elements.map((componentElement, pageComponentFieldIndex) => {
-                        // @ts-ignore
-                        return renderComponentField(
-                            componentElement,
-                            pageComponentIndex,
-                            pageComponentFieldIndex,
-                        );
-                    })}
-                </div>
-            </div>
-        );
-    };
-
-    const submitHandler = async (data: IEditablePage) => {
+    const submitHandler = async (data: EditablePageType) => {
         mutate(data);
     };
 
@@ -280,19 +169,114 @@ function PageEdit() {
                   </div>
                 </div>
 
-                <div>
-                  {components_content.map(
-                    (pageComponent, pageComponentIndex) => {
-                      return renderComponent(pageComponent, pageComponentIndex);
-                    },
-                  )}
-                </div>
+                  {fields.map((field, index) => {
+                      return (
+                          <div
+                              key={field.id}
+                              className="relative hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                          >
+                              <Controller
+                                  name={`page_fields.${index}`}
+                                  render={({field: page_field}) => {
+                                      return (
+                                          <>
+                                              <div
+                                                  onClick={(e) => deletePageFieldOnClick(e, index)}
+                                                  className="absolute right-0 top-0 mt-3 mr-5"
+                                              >
+                                                  <TrashIcon className="w-4 h-4" />
+                                              </div>
+                                              <div className="flex mt-3 w-full justify-center">
+                                                  <div className="flex-1 p-3">
+                                                      <div className="p-3 bg-gray-200 rounded">
+                                                          <div className="mb-4 mt-3 w-full flex justify-center">
+                                                              <div className="w-1/2">
+                                                                  <InputField
+                                                                      label={t("field_name")}
+                                                                      placeholder={t("field_name")}
+                                                                      register={register(
+                                                                          `page_fields.${index}.name`,
+                                                                      )}
+                                                                  />
+                                                              </div>
+                                                              <div className="w-1/2 ml-3">
+                                                                  <InputField
+                                                                      label={t("field_identifier")}
+                                                                      placeholder={t("field_identifier")}
+                                                                      register={register(
+                                                                          `page_fields.${index}.identifier`,
+                                                                      )}
+                                                                  />
+                                                              </div>
+                                                          </div>
+                                                          <InputField
+                                                              label={t("hidden")}
+                                                              placeholder={t("data_type")}
+                                                              register={register(
+                                                                  `page_fields.${index}.data_type`,
+                                                              )}
+                                                          />
+                                                          <InputField
+                                                              label={t("hidden")}
+                                                              placeholder={t("field_type")}
+                                                              register={register(
+                                                                  `page_fields.${index}.field_type`,
+                                                              )}
+                                                          />
+                                                          <div className="mb-4">
+                                                              <InputField
+                                                                  label={t("field_content")}
+                                                                  placeholder={t("field_content")}
+                                                                  register={register(`page_fields.${index}.field_content`)}
+                                                              />
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                                  <div className="w-96 border-l p-3 mr-auto">
+                                                      <div
+                                                          onClick={(e) =>
+                                                              fieldTypeOnClick(
+                                                                  e,
+                                                                  index,
+                                                                  AvoRedFieldType.TEXT,
+                                                                  AvoRedDataType.TEXT,
+                                                              )
+                                                          }
+                                                          className={`${page_field.value.field_type === AvoRedFieldType.TEXT ? "bg-primary-300" : ""} 
+                              ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                                      >
+                                                          TEXT FIELD
+                                                      </div>
+                                                      <div
+                                                          onClick={(e) =>
+                                                              fieldTypeOnClick(
+                                                                  e,
+                                                                  index,
+                                                                  AvoRedFieldType.TEXTAREA,
+                                                                  AvoRedDataType.TEXT,
+                                                              )
+                                                          }
+                                                          className={`${page_field.value.field_type === AvoRedFieldType.TEXTAREA ? "bg-primary-300" : ""} 
+                              ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                                      >
+                                                          TEXTAREA FIELD
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </>
+                                      );
+                                  }}
+                                  control={control}
+                              />
+                          </div>
+                      );
+                  })}
 
                 <div className="mb-4 flex items-center justify-center ring-1 ring-gray-400 rounded p-5">
                   <button
                     type="button"
                     className="flex"
-                    onClick={addComponentOnClick}
+                    onClick={e => addComponentOnClick(e)}
                   >
                     <PlusIcon className="text-primary-500 h-6 w-6" />
                     <span className="text-sm ml-1 text-primary-500">
@@ -300,20 +284,6 @@ function PageEdit() {
                     </span>
                   </button>
                 </div>
-
-                <AvoredModal
-                  closeModal={pageModelOnClose}
-                  modal_header={t("select_component")}
-                  modal_body={
-                    <div className="text-primary-500">
-                      <PageComponentTable
-                        components={components}
-                        componentSelected={componentSelected}
-                      />
-                    </div>
-                  }
-                  isOpen={isComponentTableModalOpen}
-                ></AvoredModal>
 
                 <div className="flex items-center">
                   <button
@@ -323,7 +293,7 @@ function PageEdit() {
                     {t("save")}
                   </button>
                   <Link
-                    to="/admin/page"
+                    to={`/admin/page`}
                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                   >
                     {t("cancel")}

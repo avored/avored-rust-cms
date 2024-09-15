@@ -509,7 +509,7 @@ pub async fn install_demo_data_api_handler(
                         {
                             name: 'Contact us description',
                             identifier: 'contact-us-description',
-                            element_type: 'text',
+                            element_type: 'textarea',
                             element_data_type: 'TEXT',
                             element_data: [],
                             element_content: 'We had love to talk with you about your cms projects whether it is a brand new website or a rework of your existing one. We would happily answer any questions you may have about developing with avored. Do not have a development team?Do not worry, we can implement the avored solution for you according to your business requirements. We can surely help you achieve your goals with a customized avored design. For a FREE consultation with our expert development team, simply leave your details below and we will get back to you soon.'
