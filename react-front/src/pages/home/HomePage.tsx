@@ -25,9 +25,9 @@ const HomePage = () => {
         </div>
       </div>
 
-      <RepositoryInformation RepositoryComponent={GetPageFields()} />
-      <FeaturesSection KeyFeaturesComponent={GetPageFields()} />
-      <ContactSection ContactUsComponent={GetPageFields()} />
+      <RepositoryInformation page_fields={GetPageFields()} />
+      <FeaturesSection page_fields={GetPageFields()} />
+      <ContactSection page_fields={GetPageFields()} />
     </>
   );
 };

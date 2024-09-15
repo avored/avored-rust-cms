@@ -6,7 +6,6 @@ type PageFieldsProps = {
 }
 
 const MainHeroSection = ((props: PageFieldsProps) => {
-    console.log("props hero ", props)
     return (
         <>
         <div className="mx-auto">
