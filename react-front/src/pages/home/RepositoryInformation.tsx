@@ -3,15 +3,14 @@ import {
   PuzzlePieceIcon,
   StarIcon,
 } from "@heroicons/react/24/solid";
-import {PageFieldType} from "../../types/CmsPageType";
 import {GetElementValue} from "../../lib/page";
+import {PageFieldType} from "../../types/CmsPageType";
 
 type RepositoryComponentProps = {
   page_fields: PageFieldType[]
 }
 
 const RepositoryInformation = (props: RepositoryComponentProps) => {
-  console.log(props)
   return (
     <>
       <hr />
