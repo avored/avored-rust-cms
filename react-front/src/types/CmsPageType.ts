@@ -9,7 +9,7 @@ export type CmsPageModelType = {
     id: string,
     name: string,
     identifier: string,
-    components_content: ComponentContentType[],
+    page_fields: Array<PageFieldType>,
     created_by: string,
     updated_by: string,
     created_at: Date,
@@ -19,15 +19,10 @@ export type CmsPageModelType = {
 export enum AvoRedElementType {
     TEXT = "text"
 }
-export type ComponentContentType = {
-    element_content: string;
-    element_data: ComponentContentDataType[];
-    element_type: AvoRedElementType;
+export type PageFieldType = {
+    field_content: string;
+    data_type: String;
+    field_type: AvoRedElementType;
     identifier: string;
     name: string;
-}
-
-export type ComponentContentDataType = {
-    label: string,
-    value: string
 }
