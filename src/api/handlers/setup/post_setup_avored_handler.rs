@@ -136,7 +136,6 @@ pub async fn post_setup_avored_handler(
 
         DEFINE FIELD name ON TABLE pages TYPE string;
         DEFINE FIELD identifier ON TABLE pages TYPE string;
-        DEFINE FIELD components_content ON TABLE pages TYPE array;
         DEFINE FIELD created_by ON TABLE pages TYPE string;
         DEFINE FIELD updated_by ON TABLE pages TYPE string;
         DEFINE FIELD created_at ON TABLE pages TYPE datetime;
@@ -144,6 +143,10 @@ pub async fn post_setup_avored_handler(
         DEFINE INDEX pages_identifier_index ON TABLE pages COLUMNS identifier UNIQUE;
 
         REMOVE TABLE assets;
+        DEFINE TABLE assets;
+
+
+        DEFINE TABLE fields;
 
     ";
 

@@ -28,7 +28,7 @@ pub struct AvoRedState {
     pub page_service: PageService,
     pub asset_service: AssetService,
     pub setting_service: SettingService,
-    pub model_service: ModelService
+    pub model_service: ModelService,
 }
 
 impl juniper::Context for AvoRedState{}
@@ -70,7 +70,7 @@ impl AvoRedState {
             page_service,
             asset_service,
             setting_service,
-            model_service
+            model_service,
         })
     }
 }

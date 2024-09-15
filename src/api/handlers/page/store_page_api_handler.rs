@@ -1,21 +1,22 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{CreatableComponentContentModel, CreatableComponentElementContentModel, CreatablePageModel, PageModel, CreatablePageComponentElementDataModel};
+use crate::models::page_model::{CreatablePageField, NewCreatablePageModel, NewPageModel};
 use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
 use axum::{Extension, extract::State, Json};
-use serde::Serialize;
 use crate::api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::responses::ApiResponse;
 
 pub async fn store_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
-) -> Result<Json<CreatedPageResponse>> {
+) -> Result<Json<ApiResponse<NewPageModel>>> {
+    println!("->> {:<12} - store_page_api_handler", "HANDLER");
     let error_messages = payload.validate(&state).await?;
 
     let has_permission_bool = state
@@ -34,63 +35,34 @@ pub async fn store_page_api_handler(
 
         return Err(Error::BadRequestError(error_response));
     }
-    
-    let mut creatable_page = CreatablePageModel {
+
+    let mut creatable_page = NewCreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
-        logged_in_username: logged_in_user.email.clone(),
-        component_contents: vec![]
+        logged_in_username: logged_in_user.name.clone(),
+        page_fields: vec![]
     };
 
-    for payload_component_content in payload.components_content {
-        let mut creatable_component_content_model = CreatableComponentContentModel {
-            name: payload_component_content.name,
-            identifier: payload_component_content.identifier,
-            elements: vec![],
+    for  payload_page_field in  payload.page_fields {
+        let creatable_page_field_model = CreatablePageField {
+            name: payload_page_field.name,
+            identifier: payload_page_field.identifier,
+            data_type: payload_page_field.data_type,
+            field_type: payload_page_field.field_type,
+            field_content: payload_page_field.field_content
         };
-
-        for  payload_component_elements_data in  payload_component_content.elements {
-            let mut payload_element_data_model_options: Vec<CreatablePageComponentElementDataModel> = Vec::new();
-            let  payload_element_options_data = payload_component_elements_data.element_data.unwrap_or(Vec::new());
-
-            for payload_component_element_data_option in payload_element_options_data {
-                let creatable_page_element_option_data = CreatablePageComponentElementDataModel {
-                    label: payload_component_element_data_option.label,
-                    value: payload_component_element_data_option.value,
-                };
-                payload_element_data_model_options.push(creatable_page_element_option_data);
-            }
-
-            let creatable_component_element_content = CreatableComponentElementContentModel {
-                name: payload_component_elements_data.name,
-                identifier: payload_component_elements_data.identifier,
-                element_type: payload_component_elements_data.element_type,
-                element_content: payload_component_elements_data.element_content,
-                element_data_type: payload_component_elements_data.element_data_type,
-                element_data: payload_element_data_model_options
-            };
-
-            creatable_component_content_model.elements.push(creatable_component_element_content);
-        }
-
-        creatable_page.component_contents.push(creatable_component_content_model);
+        creatable_page.page_fields.push(creatable_page_field_model);
     }
 
     let created_page_model = state
         .page_service
-        .create_page(&state.db, creatable_page, logged_in_user)
+        .new_create_page(&state.db, creatable_page)
         .await?;
 
-    let response = CreatedPageResponse {
+    let response = ApiResponse {
         status: true,
-        page_model: created_page_model
+        data: created_page_model
     };
 
     Ok(Json(response))
-}
-
-#[derive(Serialize, Debug)]
-pub struct CreatedPageResponse {
-    pub status: bool,
-    pub page_model: PageModel
 }

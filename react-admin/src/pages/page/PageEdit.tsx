@@ -181,7 +181,9 @@ function PageEdit() {
         append(selectedComponent);
     };
 
-    const addComponentOnClick = () => {
+    const addComponentOnClick = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault()
+        console.log("test")
         setIsComponentTableModalOpen(true);
     };
 
@@ -292,7 +294,7 @@ function PageEdit() {
                   <button
                     type="button"
                     className="flex"
-                    onClick={addComponentOnClick}
+                    onClick={e => addComponentOnClick(e)}
                   >
                     <PlusIcon className="text-primary-500 h-6 w-6" />
                     <span className="text-sm ml-1 text-primary-500">
