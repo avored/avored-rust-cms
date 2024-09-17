@@ -3,6 +3,7 @@ use serde::Deserialize;
 use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, Validate};
 use crate::error::Result;
+use crate::models::page_model::{PageDataType, PageFieldContentType, PageFieldType};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StorePageRequest {
@@ -15,9 +16,9 @@ pub struct StorePageRequest {
 pub struct CreatablePageFieldRequest {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
-    pub field_type: String,
-    pub field_content: String,
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType,
 }
 
 impl StorePageRequest {

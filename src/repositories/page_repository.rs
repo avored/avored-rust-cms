@@ -4,9 +4,8 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PutPageIdentifierModel};
+use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldType, PutPageIdentifierModel};
 use crate::models::ModelCount;
-use crate::models::token_claim_model::LoggedInUser;
 use crate::PER_PAGE;
 
 use super::into_iter_objects;
@@ -365,12 +364,27 @@ impl PageRepository {
         let mut page_fields: Vec<Value> = vec![];
 
         for created_page_field in creatable_page_model.page_fields {
+
+
+            let data_type_value: Value = match created_page_field.data_type {
+                PageDataType::TEXT(v) =>  v.into(),
+            };
+
+            let field_type_value: Value = match created_page_field.field_type {
+                PageFieldType::TEXT(v) =>  v.into(),
+            };
+
+            let field_content_value: Value = match created_page_field.field_content {
+                PageFieldContentType::StringType(v) =>  v.into(),
+                PageFieldContentType::Int64(v) => v.into(),
+            };
+
             let page_field: BTreeMap<String, Value> = [
                 ("name".into(), created_page_field.name.into()),
                 ("identifier".into(), created_page_field.identifier.into()),
-                ("data_type".into(), created_page_field.data_type.into()),
-                ("field_type".into(), created_page_field.field_type.into()),
-                ("field_content".into(), created_page_field.field_content.into()),
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+                ("field_content".into(), field_content_value),
             ].into();
 
             page_fields.push(page_field.into());
@@ -401,8 +415,6 @@ impl PageRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        println!("{:#?}", result_object);
-
         let model: Result<NewPageModel> = result_object?.try_into();
 
         model
@@ -419,12 +431,25 @@ impl PageRepository {
         let mut page_fields: Vec<Value> = vec![];
 
         for updatable_page_field in updatable_page_model.page_fields {
+
+            let data_type_value: Value = match updatable_page_field.data_type {
+                PageDataType::TEXT(v) =>  v.into(),
+            };
+
+            let field_type_value: Value = match updatable_page_field.field_type {
+                PageFieldType::TEXT(v) =>  v.into(),
+            };
+            let field_content_value: Value = match updatable_page_field.field_content {
+                PageFieldContentType::StringType(v) =>  v.into(),
+                PageFieldContentType::Int64(v) => v.into(),
+            };
+
             let page_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_page_field.name.into()),
                 ("identifier".into(), updatable_page_field.identifier.into()),
-                ("data_type".into(), updatable_page_field.data_type.into()),
-                ("field_type".into(), updatable_page_field.field_type.into()),
-                ("field_content".into(), updatable_page_field.field_content.into()),
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+                ("field_content".into(), field_content_value),
             ].into();
 
             page_fields.push(page_field.into());
@@ -455,8 +480,6 @@ impl PageRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-
-        println!("{:#?}", result_object);
 
         let model: Result<NewPageModel> = result_object?.try_into();
 

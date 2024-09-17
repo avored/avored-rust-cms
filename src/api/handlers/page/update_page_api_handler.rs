@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{CreatablePageField, NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, UpdatablePageField};
+use crate::models::page_model::{NewPageModel, NewUpdatablePageModel, UpdatablePageField};
 use crate::{
     api::handlers::page::request::update_page_request::UpdatePageRequest,
     avored_state::AvoRedState, error::Result

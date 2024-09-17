@@ -7,7 +7,6 @@ use crate::{
 };
 use crate::models::ModelCount;
 use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PutPageIdentifierModel};
-use crate::models::token_claim_model::LoggedInUser;
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -86,17 +85,6 @@ impl PageService {
             .find_by_id(datastore, database_session, id)
             .await
     }
-
-    // pub async fn create_page(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     creatable_page_model: CreatablePageModel,
-    //     logged_in_user: LoggedInUser
-    // ) -> Result<PageModel> {
-    //     self.page_repository
-    //         .create_page(datastore, database_session, creatable_page_model, logged_in_user)
-    //         .await
-    // }
 
     pub async fn new_create_page(
         &self,

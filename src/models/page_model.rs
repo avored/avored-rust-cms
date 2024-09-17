@@ -3,54 +3,43 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use super::{BaseModel, Pagination};
 
-// // This one should contain components and components fields with content
-// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-// pub struct ComponentContentModel {
-//     pub name: String,
-//     pub identifier: String,
-//     pub elements: Vec<ComponentElementModel>,
-// }
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageFieldContentType {
+    StringType(String),
+    Int64(i64)
+}
 
-// #[derive(Deserialize, Debug, Clone, Serialize)]
-// #[serde(untagged)]
-// pub enum PageElementContentDataType {
-//     StringType(String),
-//     Int64(i64)
-// }
+impl Default for PageFieldContentType {
+    fn default() -> PageFieldContentType {
+        PageFieldContentType::StringType("".to_string())
+    }
+}
 
-// impl Default for PageElementContentDataType {
-//     fn default() -> PageElementContentDataType {
-//         PageElementContentDataType::StringType("".to_string())
-//     }
-// }
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageFieldType {
+    TEXT(String)
+}
 
-// #[derive(Deserialize, Debug, Clone, Default, Serialize)]
-// pub struct ComponentElementModel {
-//     pub name: String,
-//     pub identifier: String,
-//     pub element_type: String,
-//     pub element_data_type: String,
-//     pub element_content: PageElementContentDataType,
-//     pub element_data: Vec<PageComponentFieldDataOption>
-// }
+impl Default for PageFieldType {
+    fn default() -> PageFieldType {
+        PageFieldType::TEXT("TEXT".to_string())
+    }
+}
 
-// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-// pub struct PageComponentFieldDataOption {
-//     pub label: String,
-//     pub value: String
-// }
 
-// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-// pub struct PageModel {
-//     pub id: String,
-//     pub name: String,
-//     pub identifier: String,
-//     pub components_content: Vec<ComponentContentModel>,
-//     pub created_at: Datetime,
-//     pub updated_at: Datetime,
-//     pub created_by: String,
-//     pub updated_by: String,
-// }
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageDataType {
+    TEXT(String)
+}
+
+impl Default for PageDataType {
+    fn default() -> PageDataType {
+        PageDataType::TEXT("TEXT".to_string())
+    }
+}
 
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -69,61 +58,11 @@ pub struct NewPageModel {
 pub struct PageFieldModel {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
-    pub field_type: String,
-    pub field_content: String,
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType,
 }
 
-// impl TryFrom<Object> for PageModel {
-//     type Error = Error;
-//     fn try_from(val: Object) -> Result<PageModel> {
-//
-//         let id = val.get("id").get_id()?;
-//         let name = val.get("name").get_string()?;
-//         let identifier = val.get("identifier").get_string()?;
-//
-//         let components_content = match val.get("components_content") {
-//             Some(val) => {
-//
-//                 match val.clone() {
-//                     Value::Array(v) => {
-//                         let mut arr = Vec::new();
-//
-//                         for array in v.into_iter() {
-//                             let object = match array.clone() {
-//                                 Value::Object(v) => v,
-//                                 _ => surrealdb::sql::Object::default(),
-//                             };
-//
-//                             let order_product_model: ComponentContentModel = object.try_into()?;
-//
-//                             arr.push(order_product_model)
-//                         }
-//                         arr
-//                     }
-//                     _ => Vec::new(),
-//                 }
-//             }
-//             None => Vec::new(),
-//         };
-//
-//         let created_at = val.get("created_at").get_datetime()?;
-//         let updated_at = val.get("updated_at").get_datetime()?;
-//         let created_by = val.get("created_by").get_string()?;
-//         let updated_by = val.get("updated_by").get_string()?;
-//
-//         Ok(PageModel {
-//             id,
-//             name,
-//             identifier,
-//             components_content,
-//             created_at,
-//             updated_at,
-//             created_by,
-//             updated_by,
-//         })
-//     }
-// }
 
 impl TryFrom<Object> for NewPageModel {
     type Error = Error;
@@ -143,7 +82,7 @@ impl TryFrom<Object> for NewPageModel {
                                     for array in v.into_iter() {
                                         let object = match array.clone() {
                                             Value::Object(v) => v,
-                                            _ => surrealdb::sql::Object::default(),
+                                            _ => Object::default(),
                                         };
 
                                         let page_field: PageFieldModel = object.try_into()?;
@@ -182,9 +121,37 @@ impl TryFrom<Object> for PageFieldModel {
     fn try_from(val: Object) -> Result<PageFieldModel> {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
-        let data_type = val.get("data_type").get_string()?;
-        let field_type = val.get("field_type").get_string()?;
-        let field_content = val.get("field_content").get_string()?;
+        let data_type_str = val.get("data_type").get_string()?;
+
+        let data_type = match data_type_str.as_str() {
+            "TEXT" => {
+                PageDataType::TEXT("TEXT".to_string())
+            },
+
+            _ => PageDataType::default()
+        };
+
+        let field_type_str = val.get("field_type").get_string()?;
+        let field_type = match field_type_str.as_str() {
+            "TEXT" => {
+                PageFieldType::TEXT("TEXT".to_string())
+            },
+
+            _ => PageFieldType::default()
+        };
+
+        let field_content = match data_type_str.as_str() {
+            "TEXT" => {
+                let value = val.get("field_content").get_string()?;
+
+                PageFieldContentType::StringType(value)
+            },
+            "INT" => {
+                let value = val.get("field_content").get_int()?;
+                PageFieldContentType::Int64(value)
+            },
+            _ => PageFieldContentType::default()
+        };
 
         Ok(PageFieldModel {
             name,
@@ -195,96 +162,12 @@ impl TryFrom<Object> for PageFieldModel {
         })
     }
 }
-//
-// impl TryFrom<Object> for ComponentElementModel {
-//     type Error = Error;
-//     fn try_from(val: Object) -> Result<ComponentElementModel> {
-//
-//         let name = val.get("name").get_string()?;
-//         let identifier = val.get("identifier").get_string()?;
-//         let element_type = val.get("element_type").get_string()?;
-//         let element_data_type = val.get("element_data_type").get_string()?;
-//         // let element_content = val.get("element_content").get_string()?;
-//
-//         let element_content = match element_data_type.as_str() {
-//             "TEXT" => {
-//                 let value = val.get("element_content").get_string()?;
-//
-//                 PageElementContentDataType::StringType(value)
-//             },
-//             "INT" => {
-//                 let value = val.get("element_content").get_int()?;
-//                 PageElementContentDataType::Int64(value)
-//             },
-//             _ => PageElementContentDataType::default()
-//         };
-//
-//         // let element_data: Vec<PageComponentFieldDataOption> = val.get("element_data").get_array()?;
-//         let element_data = match val.get("element_data") {
-//             Some(val) => {
-//
-//                 match val.clone() {
-//                     Value::Array(v) => {
-//                         let mut arr = Vec::new();
-//
-//                         for array in v.into_iter() {
-//                             let object = match array.clone() {
-//                                 Value::Object(v) => v,
-//                                 _ => surrealdb::sql::Object::default(),
-//                             };
-//
-//                             let field_data_option: PageComponentFieldDataOption = object.try_into()?;
-//
-//                             arr.push(field_data_option)
-//                         }
-//                         arr
-//                     }
-//                     _ => Vec::new(),
-//                 }
-//             }
-//             None => Vec::new(),
-//         };
-//
-//         Ok(ComponentElementModel {
-//             name,
-//             identifier,
-//             element_type,
-//             element_data_type,
-//             element_content,
-//             element_data
-//         })
-//     }
-// }
-//
-// impl TryFrom<Object> for PageComponentFieldDataOption {
-//     type Error = Error;
-//     fn try_from(val: Object) -> Result<PageComponentFieldDataOption> {
-//         let label = val.get("label").get_string()?;
-//         let value = val.get("value").get_string()?;
-//
-//         Ok(PageComponentFieldDataOption {
-//             label,
-//             value
-//         })
-//     }
-// }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct PagePagination {
     pub data: Vec<NewPageModel>,
     pub pagination: Pagination,
 }
-
-
-
-// #[derive(Serialize, Debug, Deserialize, Clone)]
-// pub struct CreatablePageModel {
-//     pub name: String,
-//     pub identifier: String,
-//     pub logged_in_username: String,
-//     pub component_contents: Vec<CreatableComponentContentModel>,
-// }
-
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct NewCreatablePageModel {
@@ -298,9 +181,9 @@ pub struct NewCreatablePageModel {
 pub struct CreatablePageField {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
-    pub field_type: String,
-    pub field_content: String
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType,
 }
 
 
@@ -319,9 +202,9 @@ pub struct NewUpdatablePageModel {
 pub struct UpdatablePageField {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
-    pub field_type: String,
-    pub field_content: String
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType
 }
 
 
