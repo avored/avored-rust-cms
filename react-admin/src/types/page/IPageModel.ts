@@ -8,3 +8,15 @@ export default interface IPageModel {
     updated_by: string;
     action: string;
 }
+
+
+export enum PageDataType {
+    TEXT = "TEXT",
+    INT = "INT"
+}
+
+
+export enum PageFieldType {
+    TEXT = "TEXT",
+    TEXTAREA = "TEXTAREA"
+}

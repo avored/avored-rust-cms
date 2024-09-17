@@ -10,18 +10,12 @@ import { useUpdatePage } from "./hooks/useUpdatePage";
 import { useTranslation } from "react-i18next";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
-import PageComponentTable from "./PageComponentTable";
-import IEditablePage, {
-    IEditablePageComponentFieldModel,
-    IEditablePageComponentModel,
-} from "../../types/page/IEditablePage";
 import { usePageEditSchema } from "./schemas/page.edit.schema";
-import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
 import {usePagePutSchema} from "./schemas/page.put.schema";
 import {PutPageIdentifierType} from "../../types/page/PutPageIdentifierType";
 import {usePutPageIdentifier} from "./hooks/usePutPageIdentifier";
 import {EditablePageType} from "../../types/page/EditablePageType";
-import {AvoRedDataType, AvoRedFieldType} from "../../types/page/CreatablePageType";
+import {PageDataType, PageFieldType} from "../../types/page/IPageModel";
 
 function PageEdit() {
     const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -88,8 +82,8 @@ function PageEdit() {
     const fieldTypeOnClick = async (
         e: any,
         index: number,
-        field_type: AvoRedFieldType,
-        data_type: AvoRedDataType,
+        field_type: PageFieldType,
+        data_type: PageDataType,
     ) => {
         e.preventDefault();
         setValue(`page_fields.${index}.field_type`, field_type);
@@ -238,11 +232,11 @@ function PageEdit() {
                                                               fieldTypeOnClick(
                                                                   e,
                                                                   index,
-                                                                  AvoRedFieldType.TEXT,
-                                                                  AvoRedDataType.TEXT,
+                                                                  PageFieldType.TEXT,
+                                                                  PageDataType.TEXT,
                                                               )
                                                           }
-                                                          className={`${page_field.value.field_type === AvoRedFieldType.TEXT ? "bg-primary-300" : ""} 
+                                                      className={`${page_field.value.field_type === PageFieldType.TEXT ? "bg-primary-300" : ""} 
                               ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                                       >
                                                           TEXT FIELD
@@ -252,11 +246,11 @@ function PageEdit() {
                                                               fieldTypeOnClick(
                                                                   e,
                                                                   index,
-                                                                  AvoRedFieldType.TEXTAREA,
-                                                                  AvoRedDataType.TEXT,
+                                                                  PageFieldType.TEXTAREA,
+                                                                  PageDataType.TEXT,
                                                               )
                                                           }
-                                                          className={`${page_field.value.field_type === AvoRedFieldType.TEXTAREA ? "bg-primary-300" : ""} 
+                                                          className={`${page_field.value.field_type === PageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
                               ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                                       >
                                                           TEXTAREA FIELD

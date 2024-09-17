@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import InputField from "../../components/InputField";
-import { useComponentAll } from "./hooks/useComponentAll";
 import { useStorePage } from "./hooks/useStorePage";
 import { useTranslation } from "react-i18next";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
@@ -11,11 +10,9 @@ import { usePageCreateSchema } from "./schemas/page.create.schema";
 import ErrorMessage from "../../components/ErrorMessage";
 import slug from "slug";
 import {
-  AvoRedDataType,
-  AvoRedFieldType,
-  CreatableFieldType,
   CreatablePageType,
 } from "../../types/page/CreatablePageType";
+import {PageDataType, PageFieldType} from "../../types/page/IPageModel";
 
 function PageCreate() {
   // const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
@@ -45,8 +42,8 @@ function PageCreate() {
     append({
       name: "",
       identifier: "",
-      data_type: AvoRedDataType.TEXT,
-      field_type: AvoRedFieldType.TEXT,
+      data_type: PageDataType.TEXT,
+      field_type: PageFieldType.TEXT,
       field_content: ""
     });
   };
@@ -66,8 +63,8 @@ function PageCreate() {
   const fieldTypeOnClick = async (
     e: any,
     index: number,
-    field_type: AvoRedFieldType,
-    data_type: AvoRedDataType,
+    field_type: PageFieldType,
+    data_type: PageDataType,
   ) => {
     e.preventDefault();
     setValue(`page_fields.${index}.field_type`, field_type);
@@ -187,11 +184,11 @@ function PageCreate() {
                                     fieldTypeOnClick(
                                       e,
                                       index,
-                                      AvoRedFieldType.TEXT,
-                                      AvoRedDataType.TEXT,
+                                      PageFieldType.TEXT,
+                                      PageDataType.TEXT,
                                     )
                                   }
-                                  className={`${page_field.value.field_type === AvoRedFieldType.TEXT ? "bg-primary-300" : ""} 
+                                  className={`${page_field.value.field_type === PageFieldType.TEXT ? "bg-primary-300" : ""} 
                               ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                 >
                                   TEXT FIELD
@@ -201,11 +198,11 @@ function PageCreate() {
                                     fieldTypeOnClick(
                                       e,
                                       index,
-                                      AvoRedFieldType.TEXTAREA,
-                                      AvoRedDataType.TEXT,
+                                      PageFieldType.TEXTAREA,
+                                      PageDataType.TEXT,
                                     )
                                   }
-                                  className={`${page_field.value.field_type === AvoRedFieldType.TEXTAREA ? "bg-primary-300" : ""} 
+                                  className={`${page_field.value.field_type === PageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
                               ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                 >
                                   TEXTAREA FIELD

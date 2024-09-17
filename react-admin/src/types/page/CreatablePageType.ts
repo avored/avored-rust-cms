@@ -1,3 +1,5 @@
+import {PageDataType, PageFieldType} from "./IPageModel";
+
 export type CreatablePageType = {
     name: string;
     identifier: string;
@@ -7,18 +9,8 @@ export type CreatablePageType = {
 export type CreatableFieldType = {
     name: string;
     identifier: string;
-    data_type: AvoRedDataType;
-    field_type: AvoRedFieldType;
+    data_type: PageDataType;
+    field_type: PageFieldType;
     field_content: string | number;
 }
 
-export enum AvoRedFieldType {
-    TEXT = "TEXT",
-    TEXTAREA = "TEXTAREA"
-}
-
-
-export enum AvoRedDataType {
-    TEXT = "TEXT",
-    INT = "INT"
-}
