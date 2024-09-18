@@ -14,7 +14,7 @@ import { usePageEditSchema } from "./schemas/page.edit.schema";
 import {usePagePutSchema} from "./schemas/page.put.schema";
 import {PutPageIdentifierType} from "../../types/page/PutPageIdentifierType";
 import {usePutPageIdentifier} from "./hooks/usePutPageIdentifier";
-import {EditablePageType} from "../../types/page/EditablePageType";
+import {EditableFieldType, EditablePageType} from "../../types/page/EditablePageType";
 import {PageDataType, PageFieldType} from "../../types/page/IPageModel";
 
 function PageEdit() {
@@ -90,20 +90,42 @@ function PageEdit() {
         setValue(`page_fields.${index}.data_type`, data_type);
         await trigger(`page_fields.${index}`);
     };
+    
+    const renderField = (field: EditableFieldType, index: number) => {
+      switch (field.field_type) {
+        case "TEXT":
+          return (
+            <div className="mb-4">
+              <InputField
+                label={t("field_content")}
+                placeholder={t("field_content")}
+                register={register(`page_fields.${index}.field_content`)}
+              />
+            </div>
+          );
+        default:
+          return (
+            <div className="mb-4">
+                <textarea className="w-full rounded"
+                    {...register(`page_fields.${index}.field_content`)}
+                ></textarea>
+            </div>
+          );
+      }
+    };
 
-
-    const addComponentOnClick = (e: React.MouseEvent<HTMLElement>) => {
-        e.preventDefault()
-        console.log("test")
-        setIsComponentTableModalOpen(true);
+    const addFieldOnClick = (e: React.MouseEvent<HTMLElement>) => {
+      e.preventDefault();
+      console.log("test");
+      setIsComponentTableModalOpen(true);
     };
 
     const pageModelOnClose = () => {
-        setIsComponentTableModalOpen(false);
+      setIsComponentTableModalOpen(false);
     };
 
     const submitHandler = async (data: EditablePageType) => {
-        mutate(data);
+      mutate(data);
     };
 
     return (
@@ -163,118 +185,114 @@ function PageEdit() {
                   </div>
                 </div>
 
-                  {fields.map((field, index) => {
-                      return (
-                          <div
-                              key={field.id}
-                              className="relative hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
-                          >
-                              <Controller
-                                  name={`page_fields.${index}`}
-                                  render={({field: page_field}) => {
-                                      return (
-                                          <>
-                                              <div
-                                                  onClick={(e) => deletePageFieldOnClick(e, index)}
-                                                  className="absolute right-0 top-0 mt-3 mr-5"
-                                              >
-                                                  <TrashIcon className="w-4 h-4" />
-                                              </div>
-                                              <div className="flex mt-3 w-full justify-center">
-                                                  <div className="flex-1 p-3">
-                                                      <div className="p-3 bg-gray-200 rounded">
-                                                          <div className="mb-4 mt-3 w-full flex justify-center">
-                                                              <div className="w-1/2">
-                                                                  <InputField
-                                                                      label={t("field_name")}
-                                                                      placeholder={t("field_name")}
-                                                                      register={register(
-                                                                          `page_fields.${index}.name`,
-                                                                      )}
-                                                                  />
-                                                              </div>
-                                                              <div className="w-1/2 ml-3">
-                                                                  <InputField
-                                                                      label={t("field_identifier")}
-                                                                      placeholder={t("field_identifier")}
-                                                                      register={register(
-                                                                          `page_fields.${index}.identifier`,
-                                                                      )}
-                                                                  />
-                                                              </div>
-                                                          </div>
-                                                          <InputField
-                                                              label={t("hidden")}
-                                                              placeholder={t("data_type")}
-                                                              register={register(
-                                                                  `page_fields.${index}.data_type`,
-                                                              )}
-                                                          />
-                                                          <InputField
-                                                              label={t("hidden")}
-                                                              placeholder={t("field_type")}
-                                                              register={register(
-                                                                  `page_fields.${index}.field_type`,
-                                                              )}
-                                                          />
-                                                          <div className="mb-4">
-                                                              <InputField
-                                                                  label={t("field_content")}
-                                                                  placeholder={t("field_content")}
-                                                                  register={register(`page_fields.${index}.field_content`)}
-                                                              />
-                                                          </div>
-                                                      </div>
-                                                  </div>
-                                                  <div className="w-96 border-l p-3 mr-auto">
-                                                      <div
-                                                          onClick={(e) =>
-                                                              fieldTypeOnClick(
-                                                                  e,
-                                                                  index,
-                                                                  PageFieldType.TEXT,
-                                                                  PageDataType.TEXT,
-                                                              )
-                                                          }
-                                                      className={`${page_field.value.field_type === PageFieldType.TEXT ? "bg-primary-300" : ""} 
+                {fields.map((field, index) => {
+                  return (
+                    <div
+                      key={field.id}
+                      className="relative hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                    >
+                      <Controller
+                        name={`page_fields.${index}`}
+                        render={({ field: page_field }) => {
+                          return (
+                            <>
+                              <div
+                                onClick={(e) =>
+                                  deletePageFieldOnClick(e, index)
+                                }
+                                className="absolute right-0 top-0 mt-3 mr-5"
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </div>
+                              <div className="flex mt-3 w-full justify-center">
+                                <div className="flex-1 p-3">
+                                  <div className="p-3 bg-gray-200 rounded">
+                                    <div className="mb-4 mt-3 w-full flex justify-center">
+                                      <div className="w-1/2">
+                                        <InputField
+                                          label={t("field_name")}
+                                          placeholder={t("field_name")}
+                                          register={register(
+                                            `page_fields.${index}.name`,
+                                          )}
+                                        />
+                                      </div>
+                                      <div className="w-1/2 ml-3">
+                                        <InputField
+                                          label={t("field_identifier")}
+                                          placeholder={t("field_identifier")}
+                                          register={register(
+                                            `page_fields.${index}.identifier`,
+                                          )}
+                                        />
+                                      </div>
+                                    </div>
+                                    <InputField
+                                      type="hidden"
+                                      placeholder={t("data_type")}
+                                      register={register(
+                                        `page_fields.${index}.data_type`,
+                                      )}
+                                    />
+                                    <InputField
+                                      type="hidden"
+                                      placeholder={t("field_type")}
+                                      register={register(
+                                        `page_fields.${index}.field_type`,
+                                      )}
+                                    />
+                                    {renderField(page_field.value, index)}
+                                  </div>
+                                </div>
+                                <div className="w-96 border-l p-3 mr-auto">
+                                  <div
+                                    onClick={(e) =>
+                                      fieldTypeOnClick(
+                                        e,
+                                        index,
+                                        PageFieldType.TEXT,
+                                        PageDataType.TEXT,
+                                      )
+                                    }
+                                    className={`${page_field.value.field_type === PageFieldType.TEXT ? "bg-primary-300" : ""} 
                               ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                                      >
-                                                          TEXT FIELD
-                                                      </div>
-                                                      <div
-                                                          onClick={(e) =>
-                                                              fieldTypeOnClick(
-                                                                  e,
-                                                                  index,
-                                                                  PageFieldType.TEXTAREA,
-                                                                  PageDataType.TEXT,
-                                                              )
-                                                          }
-                                                          className={`${page_field.value.field_type === PageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
+                                  >
+                                    TEXT FIELD
+                                  </div>
+                                  <div
+                                    onClick={(e) =>
+                                      fieldTypeOnClick(
+                                        e,
+                                        index,
+                                        PageFieldType.TEXTAREA,
+                                        PageDataType.TEXT,
+                                      )
+                                    }
+                                    className={`${page_field.value.field_type === PageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
                               ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                                      >
-                                                          TEXTAREA FIELD
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </>
-                                      );
-                                  }}
-                                  control={control}
-                              />
-                          </div>
-                      );
-                  })}
+                                  >
+                                    TEXTAREA FIELD
+                                  </div>
+                                </div>
+                              </div>
+                            </>
+                          );
+                        }}
+                        control={control}
+                      />
+                    </div>
+                  );
+                })}
 
                 <div className="mb-4 flex items-center justify-center ring-1 ring-gray-400 rounded p-5">
                   <button
                     type="button"
                     className="flex"
-                    onClick={e => addComponentOnClick(e)}
+                    onClick={(e) => addFieldOnClick(e)}
                   >
                     <PlusIcon className="text-primary-500 h-6 w-6" />
                     <span className="text-sm ml-1 text-primary-500">
-                      {t("add_component")}
+                      {t("add_field")}
                     </span>
                   </button>
                 </div>
