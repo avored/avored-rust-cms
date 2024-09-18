@@ -41,7 +41,7 @@ pub async fn admin_user_reset_password_api_handler(
             status: false,
             errors: error_messages
         };
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
 

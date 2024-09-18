@@ -29,7 +29,7 @@ pub async fn post_setup_avored_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
 
@@ -201,7 +201,7 @@ impl SetupAvoRedRequest {
     fn validate(&self) -> Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
-        if self.email.len() <= 0 {
+        if self.email.len() == 0 {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: String::from("Email is a required field")
@@ -219,7 +219,7 @@ impl SetupAvoRedRequest {
             errors.push(error_message);
         }
 
-        if self.password.len() <= 0 {
+        if self.password.len() == 0 {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: String::from("Password is a required field")

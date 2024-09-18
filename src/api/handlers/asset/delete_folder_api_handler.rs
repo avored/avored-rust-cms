@@ -51,7 +51,7 @@ pub async fn delete_folder_api_handler(
                 errors: error_messages
             };
 
-            return Err(Error::BadRequestError(error_response));
+            return Err(Error::BadRequest(error_response));
         }
         tokio::fs::remove_dir(&folder_path).await?;
     }

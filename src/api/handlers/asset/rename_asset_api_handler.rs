@@ -34,7 +34,7 @@ pub async fn rename_asset_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
 

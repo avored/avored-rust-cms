@@ -40,7 +40,7 @@ pub async fn admin_user_login_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let admin_user_model = state
@@ -56,7 +56,7 @@ pub async fn admin_user_login_api_handler(
         )?;
 
     if !is_password_match {
-        return Err(Error::AuthenticationError);
+        return Err(Error::Authentication);
     }
 
     let now = chrono::Utc::now();

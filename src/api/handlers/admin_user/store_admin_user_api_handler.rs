@@ -122,7 +122,7 @@ pub async fn store_admin_user_api_handler(
             status: false,
             errors: error_messages
         };
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
     
 

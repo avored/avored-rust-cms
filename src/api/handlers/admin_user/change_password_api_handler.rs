@@ -41,7 +41,7 @@ pub async fn change_password_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let password = payload.password.as_bytes();

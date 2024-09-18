@@ -18,11 +18,11 @@ pub enum Error {
 
     Generic(String),
 
-    CreateModelError(String),
+    CreateModel(String),
 
-    BadRequestError(ErrorResponse),
+    BadRequest(ErrorResponse),
 
-    AuthenticationError,
+    Authentication,
 
     NotFound(String),
 
@@ -133,10 +133,10 @@ impl IntoResponse for Error {
         // response.extensions_mut().insert(response);
 
         match self {
-            Error::BadRequestError(str) => {
+            Error::BadRequest(str) => {
                 (StatusCode::BAD_REQUEST, str).into_response()
             },
-            Error::AuthenticationError => {
+            Error::Authentication => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),

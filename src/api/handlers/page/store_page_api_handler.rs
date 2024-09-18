@@ -33,7 +33,7 @@ pub async fn store_page_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let mut creatable_page = NewCreatablePageModel {

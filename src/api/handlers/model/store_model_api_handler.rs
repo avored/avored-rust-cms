@@ -35,7 +35,7 @@ pub async fn store_model_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let creatable_model = CreatableModel {
