@@ -201,7 +201,7 @@ impl SetupAvoRedRequest {
     fn validate(&self) -> Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
-        if self.email.len() == 0 {
+        if self.email.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: String::from("Email is a required field")
@@ -219,7 +219,7 @@ impl SetupAvoRedRequest {
             errors.push(error_message);
         }
 
-        if self.password.len() == 0 {
+        if self.password.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: String::from("Password is a required field")

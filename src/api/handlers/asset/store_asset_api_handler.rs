@@ -34,8 +34,10 @@ pub async fn store_asset_api_handler(
 
     //@todo we need to move this logic to service
     // we need to make the parent_id works as per it path will be changed too. if exist
-    let mut creatable_asset_model = CreatableAssetModelNew::default();
-    creatable_asset_model.logged_in_username = logged_in_user.email;
+    let mut creatable_asset_model = CreatableAssetModelNew {
+        logged_in_username: logged_in_user.email,
+        .. Default::default()
+    };
     let mut is_allow_file_type = true;
 
     while let Some(field) = multipart.next_field().await.unwrap() {
