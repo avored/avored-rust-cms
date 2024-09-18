@@ -367,12 +367,12 @@ impl PageRepository {
 
 
             let data_type_value: Value = match created_page_field.data_type {
-                PageDataType::TEXT(v) =>  v.into(),
+                PageDataType::Text(v) =>  v.into(),
             };
 
             let field_type_value: Value = match created_page_field.field_type {
-                PageFieldType::TEXT(v) =>  v.into(),
-                PageFieldType::TEXTAREA(v) => v.into()
+                PageFieldType::Text(v) =>  v.into(),
+                PageFieldType::Textarea(v) => v.into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
@@ -434,12 +434,12 @@ impl PageRepository {
         for updatable_page_field in updatable_page_model.page_fields {
 
             let data_type_value: Value = match updatable_page_field.data_type {
-                PageDataType::TEXT(v) =>  v.into(),
+                PageDataType::Text(v) =>  v.into(),
             };
 
             let field_type_value: Value = match updatable_page_field.field_type {
-                PageFieldType::TEXT(v) =>  v.into(),
-                PageFieldType::TEXTAREA(v) => v.into()
+                PageFieldType::Text(v) =>  v.into(),
+                PageFieldType::Textarea(v) => v.into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::StringType(v) =>  v.into(),

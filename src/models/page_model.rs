@@ -19,13 +19,13 @@ impl Default for PageFieldContentType {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldType {
-    TEXT(String),
-    TEXTAREA(String)
+    Text(String),
+    Textarea(String)
 }
 
 impl Default for PageFieldType {
     fn default() -> PageFieldType {
-        PageFieldType::TEXT("TEXT".to_string())
+        PageFieldType::Text("TEXT".to_string())
     }
 }
 
@@ -33,12 +33,12 @@ impl Default for PageFieldType {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageDataType {
-    TEXT(String)
+    Text(String)
 }
 
 impl Default for PageDataType {
     fn default() -> PageDataType {
-        PageDataType::TEXT("TEXT".to_string())
+        PageDataType::Text("TEXT".to_string())
     }
 }
 
@@ -126,7 +126,7 @@ impl TryFrom<Object> for PageFieldModel {
 
         let data_type = match data_type_str.as_str() {
             "TEXT" => {
-                PageDataType::TEXT("TEXT".to_string())
+                PageDataType::Text("TEXT".to_string())
             },
 
             _ => PageDataType::default()
@@ -135,10 +135,10 @@ impl TryFrom<Object> for PageFieldModel {
         let field_type_str = val.get("field_type").get_string()?;
         let field_type = match field_type_str.as_str() {
             "TEXT" => {
-                PageFieldType::TEXT("TEXT".to_string())
+                PageFieldType::Text("TEXT".to_string())
             },
             "TEXTAREA" => {
-                PageFieldType::TEXTAREA("TEXTAREA".to_string())
+                PageFieldType::Textarea("TEXTAREA".to_string())
             },
 
             _ => PageFieldType::default()
