@@ -5,10 +5,10 @@ export type EditablePageType = {
     id: string;
     name: string;
     identifier: string;
-    page_fields?: Array<CreatableFieldType>
+    page_fields?: Array<EditableFieldType>
 }
 
-export type CreatableFieldType = {
+export type EditableFieldType = {
     name: string;
     identifier: string;
     data_type: PageDataType;

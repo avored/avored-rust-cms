@@ -19,7 +19,8 @@ impl Default for PageFieldContentType {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldType {
-    TEXT(String)
+    TEXT(String),
+    TEXTAREA(String)
 }
 
 impl Default for PageFieldType {
@@ -135,6 +136,9 @@ impl TryFrom<Object> for PageFieldModel {
         let field_type = match field_type_str.as_str() {
             "TEXT" => {
                 PageFieldType::TEXT("TEXT".to_string())
+            },
+            "TEXTAREA" => {
+                PageFieldType::TEXTAREA("TEXTAREA".to_string())
             },
 
             _ => PageFieldType::default()
