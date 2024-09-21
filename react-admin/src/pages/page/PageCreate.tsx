@@ -63,7 +63,9 @@ function PageCreate() {
   };
 
   const deletePageFieldOnClick = (e: any, index: number) => {
+    e.preventDefault();
     remove(index);
+    setCurrentIndex(0);
   };
 
   const submitHandler = async (data: CreatablePageType) => {
@@ -131,7 +133,7 @@ function PageCreate() {
                             <div className="flex w-full">
                               <div className="flex-1 pr-3">
                                 <div className="mb-3">
-                                  current index: {currentIndex}
+                                  
                                   <InputField
                                       placeholder={t("page_field_name")}
                                       label={t("page_field_name")}
@@ -241,55 +243,59 @@ function PageCreate() {
                   >
                     <Controller
                       name={`page_fields.${index}`}
-                      render={({field: page_field}) => {
+                      render={({ field: page_field }) => {
                         return (
-                            <>
-                              <div
-                                  onClick={(e) => deletePageFieldOnClick(e, index)}
-                                  className="absolute right-0 top-0 mt-3 mr-5"
-                              >
-                                <TrashIcon className="w-4 h-4"/>
-                              </div>
-                              <div className="flex mt-3 w-full justify-center">
-                                <div className="flex-1 p-3">
-                                  <div className="p-3 bg-gray-200 rounded">
-                                    <div className="flex text-sm w-full border-gray-300 border-b py-2">
-                                      <div className="flex-1 overflow-hidden">
-                                        <span>{page_field.value.name}</span>
-                                        <span className="ml-1 text-xs text-gray-500">
+                          <>
+                            <div className="flex mt-3 w-full justify-center">
+                              <div className="flex-1 p-3">
+                                <div className="p-3 bg-gray-200 rounded">
+                                  <div className="flex text-sm w-full border-gray-300 border-b py-2">
+                                    <div className="flex-1 overflow-hidden">
+                                      <span>{page_field.value.name}</span>
+                                      <span className="ml-1 text-xs text-gray-500">
                                         ({page_field.value.identifier})
                                       </span>
-                                      </div>
-                                      <div className="ml-auto">
+                                    </div>
+                                    <div className="ml-auto flex items-center">
+                                      <div>
                                         <button
-                                            type="button"
-                                            className="outline-none"
-                                            onClick={() => setIsOpen(true)}
+                                          type="button"
+                                          className="outline-none"
+                                          onClick={() => setIsOpen(true)}
                                         >
-                                          <Cog8ToothIcon className="w-5 h-5"/>
+                                          <Cog8ToothIcon className="w-5 h-5" />
                                         </button>
                                       </div>
+                                      <div
+                                        onClick={(e) =>
+                                          deletePageFieldOnClick(e, index)
+                                        }
+                                        className="ml-3"
+                                      >
+                                        <TrashIcon className="w-4 h-4" />
+                                      </div>
                                     </div>
-
-                                    <InputField
-                                        type="hidden"
-                                        placeholder={t("data_type")}
-                                        register={register(
-                                            `page_fields.${index}.data_type`,
-                                        )}
-                                    />
-                                    <InputField
-                                        type="hidden"
-                                        placeholder={t("field_type")}
-                                        register={register(
-                                            `page_fields.${index}.field_type`,
-                                        )}
-                                    />
-                                    {renderField(page_field.value, index)}
                                   </div>
+
+                                  <InputField
+                                    type="hidden"
+                                    placeholder={t("data_type")}
+                                    register={register(
+                                      `page_fields.${index}.data_type`,
+                                    )}
+                                  />
+                                  <InputField
+                                    type="hidden"
+                                    placeholder={t("field_type")}
+                                    register={register(
+                                      `page_fields.${index}.field_type`,
+                                    )}
+                                  />
+                                  {renderField(page_field.value, index)}
                                 </div>
                               </div>
-                            </>
+                            </div>
+                          </>
                         );
                       }}
                       control={control}
