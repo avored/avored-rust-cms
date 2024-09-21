@@ -10,13 +10,13 @@ export default interface IPageModel {
 }
 
 
-export enum PageDataType {
+export enum AvoRedPageDataTYpe {
     TEXT = "TEXT",
     INT = "INT"
 }
 
 
-export enum PageFieldType {
+export enum AvoRedPageFieldType {
     TEXT = "TEXT",
     TEXTAREA = "TEXTAREA"
 }

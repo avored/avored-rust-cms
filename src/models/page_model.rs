@@ -29,6 +29,11 @@ impl Default for PageFieldType {
     }
 }
 
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageFieldData {
+    SelectFieldData {}
+}
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]

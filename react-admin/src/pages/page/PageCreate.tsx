@@ -12,11 +12,9 @@ import slug from "slug";
 import {
   CreatablePageType,
 } from "../../types/page/CreatablePageType";
-import {PageDataType, PageFieldType} from "../../types/page/IPageModel";
+import {AvoRedPageDataTYpe, AvoRedPageFieldType} from "../../types/page/IPageModel";
 
 function PageCreate() {
-  // const [isComponentTableModalOpen, setIsComponentTableModalOpen] =
-  //   useState(false);
   const [t] = useTranslation("global");
 
   const {
@@ -42,8 +40,8 @@ function PageCreate() {
     append({
       name: "",
       identifier: "",
-      data_type: PageDataType.TEXT,
-      field_type: PageFieldType.TEXT,
+      data_type: AvoRedPageDataTYpe.TEXT,
+      field_type: AvoRedPageFieldType.TEXT,
       field_content: ""
     });
   };
@@ -63,8 +61,8 @@ function PageCreate() {
   const fieldTypeOnClick = async (
     e: any,
     index: number,
-    field_type: PageFieldType,
-    data_type: PageDataType,
+    field_type: AvoRedPageFieldType,
+    data_type: AvoRedPageDataTYpe,
   ) => {
     e.preventDefault();
     setValue(`page_fields.${index}.field_type`, field_type);
@@ -184,11 +182,11 @@ function PageCreate() {
                                     fieldTypeOnClick(
                                       e,
                                       index,
-                                      PageFieldType.TEXT,
-                                      PageDataType.TEXT,
+                                        AvoRedPageFieldType.TEXT,
+                                        AvoRedPageDataTYpe.TEXT,
                                     )
                                   }
-                                  className={`${page_field.value.field_type === PageFieldType.TEXT ? "bg-primary-300" : ""} 
+                                  className={`${page_field.value.field_type === AvoRedPageFieldType.TEXT ? "bg-primary-300" : ""} 
                               ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                 >
                                   TEXT FIELD
@@ -198,11 +196,11 @@ function PageCreate() {
                                     fieldTypeOnClick(
                                       e,
                                       index,
-                                      PageFieldType.TEXTAREA,
-                                      PageDataType.TEXT,
+                                        AvoRedPageFieldType.TEXTAREA,
+                                        AvoRedPageDataTYpe.TEXT,
                                     )
                                   }
-                                  className={`${page_field.value.field_type === PageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
+                                  className={`${page_field.value.field_type === AvoRedPageFieldType.TEXTAREA ? "bg-primary-300" : ""} 
                               ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                 >
                                   TEXTAREA FIELD

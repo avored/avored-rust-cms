@@ -16,13 +16,15 @@ export type CmsPageModelType = {
     updated_at: Date
 }
 
-export enum AvoRedElementType {
-    TEXT = "text"
+export enum AvoRedFieldType {
+    TEXT = "TEXT",
+    TEXTAREA = "TEXTAREA"
 }
+
 export type PageFieldType = {
     field_content: string;
     data_type: String;
-    field_type: AvoRedElementType;
+    field_type: AvoRedFieldType;
     identifier: string;
     name: string;
 }
