@@ -83,17 +83,6 @@ function PageEdit() {
     remove(index);
   };
 
-  const fieldTypeOnClick = async (
-    e: any,
-    index: number,
-    field_type: AvoRedPageFieldType,
-    data_type: AvoRedPageDataTYpe,
-  ) => {
-    e.preventDefault();
-    setValue(`page_fields.${index}.field_type`, field_type);
-    setValue(`page_fields.${index}.data_type`, data_type);
-    await trigger(`page_fields.${index}`);
-  };
 
   const onPageFieldChange = async (
     index: number,
@@ -163,81 +152,80 @@ function PageEdit() {
             <h1 className="text-xl font-semibold mb-4 text-gray-900">
               {t("page_information")}
             </h1>
-            <AvoredModal
-              closeModal={() => setIsOpen(false)}
-              modal_header={`Page Field`}
-              modal_body={
-                <div className="block">
-                  <div className="flex w-full">
-                    <div className="flex-1 pr-3">
-                      <div className="mb-3">
-                        <InputField
-                          placeholder={t("page_field_name")}
-                          label={t("page_field_name")}
-                          register={register(
-                            `page_fields.${currentIndex}.name`,
-                          )}
-                        />
-                      </div>
-                      <div className="mb-3">
-                        <InputField
-                          placeholder={t("page_field_identifier")}
-                          label={t("page_field_identifier")}
-                          register={register(
-                            `page_fields.${currentIndex}.identifier`,
-                          )}
-                        />
-                      </div>
-                    </div>
-                    <div className="ml-auto">
-                      <div className="w-64 border-l p-3 mr-auto">
-                        <div
-                          onClick={() =>
-                            onPageFieldChange(
-                              currentIndex,
-                              AvoRedPageFieldType.TEXT,
-                              AvoRedPageDataTYpe.TEXT,
-                            )
-                          }
-                          className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
-                              ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                        >
-                          {t("text_field")}
-                        </div>
-                        <div
-                          onClick={() =>
-                            onPageFieldChange(
-                              currentIndex,
-                              AvoRedPageFieldType.TEXTAREA,
-                              AvoRedPageDataTYpe.TEXT,
-                            )
-                          }
-                          className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXTAREA ? "bg-primary-200" : "bg-gray-300"}  
-                            ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                        >
-                          {t("textarea_field")}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <hr className="mt-3" />
-                  <div className="mt-3">
-                    <button
-                      type="button"
-                      onClick={() => setIsOpen(false)}
-                      className="bg-primary-500 px-3 py-2 rounded text-white"
-                    >
-                      Create Page field
-                    </button>
-                  </div>
-                </div>
-              }
-              isOpen={isOpen}
-            ></AvoredModal>
 
-            {/*<p className="text-gray-600 dark:text-gray-300 mb-6">Use a permanent address where you can*/}
-            {/*    receive mail.</p>*/}
             <form onSubmit={handleSubmit(submitHandler)}>
+              <AvoredModal
+                  closeModal={() => setIsOpen(false)}
+                  modal_header={`Page Field`}
+                  modal_body={
+                    <div className="block">
+                      <div className="flex w-full">
+                        <div className="flex-1 pr-3">
+                          <div className="mb-3">
+                            <InputField
+                                placeholder={t("page_field_name")}
+                                label={t("page_field_name")}
+                                register={register(
+                                    `page_fields.${currentIndex}.name`,
+                                )}
+                            />
+                          </div>
+                          <div className="mb-3">
+                            <InputField
+                                placeholder={t("page_field_identifier")}
+                                label={t("page_field_identifier")}
+                                register={register(
+                                    `page_fields.${currentIndex}.identifier`,
+                                )}
+                            />
+                          </div>
+                        </div>
+                        <div className="ml-auto">
+                          <div className="w-64 border-l p-3 mr-auto">
+                            <div
+                                onClick={() =>
+                                    onPageFieldChange(
+                                        currentIndex,
+                                        AvoRedPageFieldType.TEXT,
+                                        AvoRedPageDataTYpe.TEXT,
+                                    )
+                                }
+                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
+                              ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                            >
+                              {t("text_field")}
+                            </div>
+                            <div
+                                onClick={() =>
+                                    onPageFieldChange(
+                                        currentIndex,
+                                        AvoRedPageFieldType.TEXTAREA,
+                                        AvoRedPageDataTYpe.TEXT,
+                                    )
+                                }
+                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXTAREA ? "bg-primary-200" : "bg-gray-300"}  
+                            ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                            >
+                              {t("textarea_field")}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <hr className="mt-3" />
+                      <div className="mt-3">
+                        <button
+                            type="button"
+                            onClick={() => setIsOpen(false)}
+                            className="bg-primary-500 px-3 py-2 rounded text-white"
+                        >
+                          Create Page field
+                        </button>
+                      </div>
+                    </div>
+                  }
+                  isOpen={isOpen}
+              ></AvoredModal>
+
               <div className="mb-4">
                 <InputField
                   placeholder={t("name")}
