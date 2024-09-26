@@ -373,7 +373,8 @@ impl PageRepository {
             let field_type_value: Value = match created_page_field.field_type {
                 PageFieldType::Text =>  "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
-                PageFieldType::Select => "Select".into()
+                PageFieldType::Select => "Select".into(),
+                PageFieldType::TextEditor => "TextEditor".into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
@@ -455,7 +456,8 @@ impl PageRepository {
             let field_type_value: Value = match updatable_page_field.field_type {
                 PageFieldType::Text =>  "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
-                PageFieldType::Select => "Select".into()
+                PageFieldType::Select => "Select".into(),
+                PageFieldType::TextEditor => "TextEditor".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::StringType(v) =>  v.into(),

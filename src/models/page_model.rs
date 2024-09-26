@@ -21,7 +21,8 @@ impl Default for PageFieldContentType {
 pub enum PageFieldType {
     Text,
     Textarea,
-    Select
+    Select,
+    TextEditor
 }
 
 impl Default for PageFieldType {
@@ -31,7 +32,6 @@ impl Default for PageFieldType {
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(untagged)]
 pub enum PageFieldData {
     SelectFieldData {
         select_field_options : Vec<PageSelectFieldData>
@@ -181,6 +181,9 @@ impl TryFrom<Object> for PageFieldModel {
             },
             "Select" => {
                 PageFieldType::Select
+            },
+            "TextEditor" => {
+                PageFieldType::TextEditor
             },
 
             _ => PageFieldType::default()

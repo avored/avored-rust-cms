@@ -50,6 +50,7 @@
   "text_field": "Text field",
   "textarea_field": "Textarea field",
   "select_field": "Select field",
+  "text_editor_field": "Text editor field",
   "field_content": "Field content",
   "identifier": "Identifier",
   "created_at": "Created at",

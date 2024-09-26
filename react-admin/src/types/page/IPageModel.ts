@@ -19,5 +19,6 @@ export enum AvoRedPageDataType {
 export enum AvoRedPageFieldType {
     TEXT = "Text",
     TEXTAREA = "Textarea",
-    SELECT = "Select"
+    SELECT = "Select",
+    TextEditor = "TextEditor"
 }

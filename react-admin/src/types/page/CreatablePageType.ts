@@ -12,12 +12,13 @@ export type CreatableFieldType = {
     data_type: AvoRedPageDataType;
     field_type: AvoRedPageFieldType;
     field_content: string | number;
-    field_data?: AvoRedPageFieldData
+    field_data?: AvoRedPageFieldData,
 }
 
 export type AvoRedPageFieldData = {
     select_field_options: Array<AvoRedPageFieldSelectFieldDataOptions>
 }
+export type EmptyPageFieldData = {}
 
 export type AvoRedPageFieldSelectFieldDataOptions = {
     label: string;

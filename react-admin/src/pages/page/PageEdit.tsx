@@ -13,7 +13,6 @@ import { usePagePutSchema } from "./schemas/page.put.schema";
 import { PutPageIdentifierType } from "../../types/page/PutPageIdentifierType";
 import { usePutPageIdentifier } from "./hooks/usePutPageIdentifier";
 import {
-  EditableFieldType,
   EditablePageType,
 } from "../../types/page/EditablePageType";
 import {
@@ -22,6 +21,7 @@ import {
 } from "../../types/page/IPageModel";
 import _ from "lodash";
 import {AvoRedPageFieldSelectFieldDataOptions, CreatableFieldType} from "../../types/page/CreatablePageType";
+import SimpleMdeReact from "react-simplemde-editor";
 
 function PageEdit() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -214,6 +214,7 @@ function PageEdit() {
   const optionRemoveOnClick = (async (e: React.MouseEvent<HTMLButtonElement>, field_index: number, option_index: number) => {
     e.preventDefault()
     const page_field: CreatableFieldType = getValues(`page_fields.${field_index}`);
+    // if (page_field.field_d)
     page_field.field_data?.select_field_options.splice(option_index, 1);
 
     await trigger(`page_fields.${field_index}`)
@@ -229,59 +230,89 @@ function PageEdit() {
     await trigger("page_fields")
   })
 
+  const textEditorOnChange = ((value: string, field_index: number) => {
+    setValue(`page_fields.${field_index}.field_content`, value)
+  })
+  const textEditorGetValue = ((field_index: number): string => {
+    return getValues(`page_fields.${field_index}.field_content`) as string
+  })
+
   const renderField = (field: CreatableFieldType, index: number) => {
     switch (field.field_type) {
       case AvoRedPageFieldType.TEXTAREA:
         return (
-            <div className="mb-4">
-              <label className="text-sm text-gray-600">
-                {t!("field_content")}
-              </label>
-              <textarea
-                  className="w-full rounded"
-                  {...register(`page_fields.${index}.field_content`)}
-              ></textarea>
-            </div>
+          <div className="mb-4">
+            <label className="text-sm text-gray-600">
+              {t!("field_content")}
+            </label>
+            <textarea
+              className="w-full rounded"
+              {...register(`page_fields.${index}.field_content`)}
+            ></textarea>
+          </div>
         );
       case AvoRedPageFieldType.SELECT:
         return (
-            <div className="mb-4">
-              <label className="text-sm text-gray-600">
-                {t!("field_content")}
-              </label>
+          <div className="mb-4">
+            <label className="text-sm text-gray-600">
+              {t!("field_content")}
+            </label>
 
-              <select {...register(`page_fields.${index}.field_content`)}
-                      className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none">
-                {field.field_data?.select_field_options.map((option) => {
-                  return <option key={option.value} value={option.value}>{option.label}</option>;
-                })}
-
-              </select>
-            </div>
+            <select
+              {...register(`page_fields.${index}.field_content`)}
+              className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
+            >
+              {field.field_data?.select_field_options.map((option) => {
+                return (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         );
       case AvoRedPageFieldType.TEXT:
         return (
-            <div className="mb-4">
-              <InputField
-                  label={t("field_content")}
-                  placeholder={t("field_content")}
-                  register={register(`page_fields.${index}.field_content`)}
+          <div className="mb-4">
+            <InputField
+              label={t("field_content")}
+              placeholder={t("field_content")}
+              register={register(`page_fields.${index}.field_content`)}
+            />
+          </div>
+        );
+      case AvoRedPageFieldType.TextEditor:
+        return (
+          <div className="mb-4">
+            <label className="text-sm text-gray-600">
+              {t!("field_content")}
+            </label>
+            <div className="h-96">
+              <SimpleMdeReact
+                options={{
+                  minHeight: "300px",
+                }}
+                value={textEditorGetValue(index)}
+                onChange={(contentValue) =>
+                  textEditorOnChange(contentValue, index)
+                }
               />
             </div>
+          </div>
         );
       default:
         return (
-            <div className="mb-4">
-              <InputField
-                  label={t("field_content")}
-                  placeholder={t("field_content")}
-                  register={register(`page_fields.${index}.field_content`)}
-              />
-            </div>
+          <div className="mb-4">
+            <InputField
+              label={t("field_content")}
+              placeholder={t("field_content")}
+              register={register(`page_fields.${index}.field_content`)}
+            />
+          </div>
         );
     }
   };
-
 
   const addFieldOnClick = async (
     e: React.MouseEvent<HTMLElement>,
@@ -294,7 +325,7 @@ function PageEdit() {
       identifier: "",
       data_type: AvoRedPageDataType.TEXT,
       field_type: AvoRedPageFieldType.TEXT,
-      field_content: "",
+      field_content: ""
     });
     await trigger("page_fields");
 
@@ -347,7 +378,6 @@ function PageEdit() {
                             <div className="w-full">
                               {renderFieldData(currentIndex)}
                             </div>
-
                           </div>
                           <div className="ml-auto">
                             <div className="w-64 border-l p-3 mr-auto">
@@ -389,6 +419,19 @@ function PageEdit() {
                   ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                               >
                                 {t("select_field")}
+                              </div>
+                              <div
+                                onClick={() =>
+                                  onPageFieldChange(
+                                    currentIndex,
+                                    AvoRedPageFieldType.TextEditor,
+                                    AvoRedPageDataType.TEXT,
+                                  )
+                                }
+                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TextEditor ? "bg-primary-200" : "bg-gray-300"}  
+                  ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                              >
+                                {t("text_editor_field")}
                               </div>
                             </div>
                           </div>
