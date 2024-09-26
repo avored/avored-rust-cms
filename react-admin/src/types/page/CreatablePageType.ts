@@ -1,4 +1,4 @@
-import {AvoRedPageDataTYpe, AvoRedPageFieldType} from "./IPageModel";
+import {AvoRedPageDataType, AvoRedPageFieldType} from "./IPageModel";
 
 export type CreatablePageType = {
     name: string;
@@ -9,8 +9,17 @@ export type CreatablePageType = {
 export type CreatableFieldType = {
     name: string;
     identifier: string;
-    data_type: AvoRedPageDataTYpe;
+    data_type: AvoRedPageDataType;
     field_type: AvoRedPageFieldType;
     field_content: string | number;
+    field_data?: AvoRedPageFieldData
 }
 
+export type AvoRedPageFieldData = {
+    select_field_options: Array<AvoRedPageFieldSelectFieldDataOptions>
+}
+
+export type AvoRedPageFieldSelectFieldDataOptions = {
+    label: string;
+    value: string;
+}

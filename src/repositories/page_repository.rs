@@ -4,7 +4,7 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldType, PutPageIdentifierModel};
+use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PutPageIdentifierModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -371,13 +371,27 @@ impl PageRepository {
             };
 
             let field_type_value: Value = match created_page_field.field_type {
-                PageFieldType::Text(v) =>  v.into(),
-                PageFieldType::Textarea(v) => v.into()
+                PageFieldType::Text =>  "Text".into(),
+                PageFieldType::Textarea => "Textarea".into(),
+                PageFieldType::Select => "Select".into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
                 PageFieldContentType::StringType(v) =>  v.into(),
                 PageFieldContentType::Int64(v) => v.into(),
+            };
+
+            let field_data_value: Value = match created_page_field.field_data {
+                PageFieldData::SelectFieldData { select_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in select_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::None => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -386,6 +400,7 @@ impl PageRepository {
                 ("data_type".into(), data_type_value),
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
+                ("field_data".into(), field_data_value),
             ].into();
 
             page_fields.push(page_field.into());
@@ -438,12 +453,26 @@ impl PageRepository {
             };
 
             let field_type_value: Value = match updatable_page_field.field_type {
-                PageFieldType::Text(v) =>  v.into(),
-                PageFieldType::Textarea(v) => v.into()
+                PageFieldType::Text =>  "Text".into(),
+                PageFieldType::Textarea => "Textarea".into(),
+                PageFieldType::Select => "Select".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::StringType(v) =>  v.into(),
                 PageFieldContentType::Int64(v) => v.into(),
+            };
+
+            let field_data_value: Value = match updatable_page_field.field_data {
+                PageFieldData::SelectFieldData { select_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in select_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::None => "".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -452,6 +481,7 @@ impl PageRepository {
                 ("data_type".into(), data_type_value),
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
+                ("field_data".into(), field_data_value),
             ].into();
 
             page_fields.push(page_field.into());

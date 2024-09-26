@@ -17,7 +17,7 @@ pub struct UpdatablePageField {
     pub data_type: PageDataType,
     pub field_type: PageFieldType,
     pub field_content: PageFieldContentType,
-    pub field_data: Option<PageFieldData>
+    pub field_data: PageFieldData
 }
 
 impl UpdatePageRequest {

@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
@@ -17,22 +18,39 @@ impl Default for PageFieldContentType {
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(untagged)]
 pub enum PageFieldType {
-    Text(String),
-    Textarea(String)
+    Text,
+    Textarea,
+    Select
 }
 
 impl Default for PageFieldType {
     fn default() -> PageFieldType {
-        PageFieldType::Text("TEXT".to_string())
+        PageFieldType::Text
     }
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldData {
-    SelectFieldData {}
+    SelectFieldData {
+        select_field_options : Vec<PageSelectFieldData>
+    },
+    None
+}
+
+
+impl Default for PageFieldData {
+    fn default() -> PageFieldData {
+        PageFieldData::None
+    }
+}
+
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct PageSelectFieldData {
+    pub label: String,
+    pub value: String
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -67,41 +85,57 @@ pub struct PageFieldModel {
     pub data_type: PageDataType,
     pub field_type: PageFieldType,
     pub field_content: PageFieldContentType,
+    pub field_data: PageFieldData
 }
 
+
+impl TryFrom<PageSelectFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: PageSelectFieldData) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("label".into(), val.label.into()),
+            ("value".into(), val.value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
 
 impl TryFrom<Object> for NewPageModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<NewPageModel> {
+
+        // println!("OBJECT: {:?}", val.clone());
 
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
 
         let page_fields = match val.get("page_fields") {
-                        Some(val) => {
+            Some(val) => {
 
-                            match val.clone() {
-                                Value::Array(v) => {
-                                    let mut arr = Vec::new();
+                match val.clone() {
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
 
-                                    for array in v.into_iter() {
-                                        let object = match array.clone() {
-                                            Value::Object(v) => v,
-                                            _ => Object::default(),
-                                        };
+                        for array in v.into_iter() {
+                            let object = match array.clone() {
+                                Value::Object(v) => v,
+                                _ => Object::default(),
+                            };
 
-                                        let page_field: PageFieldModel = object.try_into()?;
+                            let page_field: PageFieldModel = object.try_into()?;
 
-                                        arr.push(page_field)
-                                    }
-                                    arr
-                                }
-                                _ => Vec::new(),
-                            }
+                            arr.push(page_field)
                         }
-                        None => Vec::new(),
-                    };
+                        arr
+                    }
+                    _ => Vec::new(),
+                }
+            }
+            None => Vec::new(),
+        };
 
 
         let created_at = val.get("created_at").get_datetime()?;
@@ -139,11 +173,14 @@ impl TryFrom<Object> for PageFieldModel {
 
         let field_type_str = val.get("field_type").get_string()?;
         let field_type = match field_type_str.as_str() {
-            "TEXT" => {
-                PageFieldType::Text("TEXT".to_string())
+            "Text" => {
+                PageFieldType::Text
             },
-            "TEXTAREA" => {
-                PageFieldType::Textarea("TEXTAREA".to_string())
+            "Textarea" => {
+                PageFieldType::Textarea
+            },
+            "Select" => {
+                PageFieldType::Select
             },
 
             _ => PageFieldType::default()
@@ -162,12 +199,68 @@ impl TryFrom<Object> for PageFieldModel {
             _ => PageFieldContentType::default()
         };
 
+        let field_data = match field_type_str.as_str() {
+            "Select" => {
+                let options = match val.get("field_data") {
+                    Some(val) => {
+                        match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: PageSelectFieldData = object.try_into()?;
+
+                                    arr.push(option)
+                                }
+
+                                PageFieldData::SelectFieldData {
+                                    select_field_options: arr
+                                }
+                            }
+                            _ => {
+
+                                PageFieldData::None
+                            },
+                        }
+                    }
+                    None => {
+                        PageFieldData::None
+                    },
+                };
+
+                options
+            },
+
+            _ => PageFieldData::None
+        };
+
+
+
+
         Ok(PageFieldModel {
             name,
             identifier,
             data_type,
             field_type,
             field_content,
+            field_data
+        })
+    }
+}
+
+impl TryFrom<Object> for PageSelectFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<PageSelectFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+        Ok(PageSelectFieldData {
+            label,
+            value
         })
     }
 }
@@ -193,6 +286,7 @@ pub struct CreatablePageField {
     pub data_type: PageDataType,
     pub field_type: PageFieldType,
     pub field_content: PageFieldContentType,
+    pub field_data: PageFieldData
 }
 
 
@@ -213,7 +307,8 @@ pub struct UpdatablePageField {
     pub identifier: String,
     pub data_type: PageDataType,
     pub field_type: PageFieldType,
-    pub field_content: PageFieldContentType
+    pub field_content: PageFieldContentType,
+    pub field_data: PageFieldData
 }
 
 

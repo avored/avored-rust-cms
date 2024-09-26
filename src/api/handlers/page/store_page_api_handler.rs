@@ -50,6 +50,7 @@ pub async fn store_page_api_handler(
             data_type: payload_page_field.data_type,
             field_type: payload_page_field.field_type,
             field_content: payload_page_field.field_content,
+            field_data: payload_page_field.field_data
         };
         creatable_page.page_fields.push(creatable_page_field_model);
     }

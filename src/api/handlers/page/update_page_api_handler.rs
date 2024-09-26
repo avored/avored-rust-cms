@@ -60,7 +60,8 @@ pub async fn update_page_api_handler(
             identifier: payload_page_field.identifier,
             data_type: payload_page_field.data_type,
             field_type: payload_page_field.field_type,
-            field_content: payload_page_field.field_content
+            field_content: payload_page_field.field_content,
+            field_data: payload_page_field.field_data
         };
         updatable_page.page_fields.push(page_field_model);
     }

@@ -1,4 +1,5 @@
-import {PageDataType, PageFieldType} from "./IPageModel";
+import {AvoRedPageFieldData} from "./CreatablePageType";
+import {AvoRedPageDataType, AvoRedPageFieldType} from "./IPageModel";
 
 
 export type EditablePageType = {
@@ -11,8 +12,9 @@ export type EditablePageType = {
 export type EditableFieldType = {
     name: string;
     identifier: string;
-    data_type: PageDataType;
-    field_type: PageFieldType;
+    data_type: AvoRedPageDataType;
+    field_type: AvoRedPageFieldType;
     field_content: string | number;
+    field_data?: AvoRedPageFieldData
 }
 
