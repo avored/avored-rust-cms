@@ -2,7 +2,7 @@
 AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database.
 
 
-[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
+[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
 
 ### Join community via slack
 [![Join community via Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/avoredrustcms/shared_invite/zt-22031l11y-EYp3a3oWVVFaZ8WCWZAkJQ)
