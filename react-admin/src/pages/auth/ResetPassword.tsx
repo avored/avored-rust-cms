@@ -78,6 +78,7 @@ function ResetPassword() {
                                 value={token}
                                 register={register("token")}
                             />
+                            <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="token"/>
                         </div>
 
                         <div>

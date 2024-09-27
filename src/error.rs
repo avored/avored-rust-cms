@@ -64,15 +64,10 @@ impl From<surrealdb::err::Error> for Error {
         Error::Generic("Surreal Error".to_string())
     }
 }
-//
-// impl From<<T as TryFrom<Object>>::Error> for Error {
-//     fn from(_val: surrealdb::err::Error) -> Self {
-//         Error::Generic("Surreal Error".to_string())
-//     }
-// }
 
 impl From<argon2::password_hash::Error> for Error {
-    fn from(_val: argon2::password_hash::Error) -> Self {
+    fn from(val: argon2::password_hash::Error) -> Self {
+        error!("there is an issue while encrypting password with argon2: {val:?}");
         Error::Generic("Password hasher error".to_string())
     }
 }
@@ -83,12 +78,6 @@ impl From<RenderError> for Error {
     }
 }
 
-// impl TryFrom<Object> for Error {
-//     fn try_from(actual_error: Object) -> Self {
-//         error!("there is an issue while rendering the handlebar template: {actual_error:?}");
-//         Error::Generic("handlebar error".to_string())
-//     }
-// }
 
 impl From<TemplateError> for Error {
     fn from(actual_error: TemplateError) -> Self {
