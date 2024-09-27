@@ -1,13 +1,12 @@
 use std::sync::Arc;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
 use axum::extract::State;
 use axum::Json;
 use serde::Serialize;
 use crate::api::handlers::admin_user::request::admin_user_reset_password_request::AdminUserResetPasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::models::validation_error::ErrorResponse;
+use crate::responses::ApiResponse;
 
 #[derive(Serialize, Default)]
 pub struct ForgotPasswordViewModel {
@@ -17,24 +16,10 @@ pub struct ForgotPasswordViewModel {
 pub async fn admin_user_reset_password_api_handler(
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<AdminUserResetPasswordRequest>,
-) -> Result<Json<ResponseData>> {
+) -> Result<Json<ApiResponse<bool>>> {
     println!("->> {:<12} - admin_user_reset_password_api_handler", "HANDLER");
 
-    let mut error_messages = payload.validate()?;
-
-    //@tood move this token validation logic to validate method.
-    let password_reset_model = state
-        .admin_user_service
-        .get_password_reset_by_email(&state.db, payload.email.clone())
-        .await?;
-
-    if password_reset_model.token != payload.token {
-        let error_message = ErrorMessage {
-            key: String::from("token"),
-            message: String::from("token did not match please try again")
-        };
-        error_messages.push(error_message);
-    }
+    let error_messages = payload.validate(&state).await?;
 
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
@@ -43,26 +28,33 @@ pub async fn admin_user_reset_password_api_handler(
         };
         return Err(Error::BadRequest(error_response));
     }
+    println!("->> {:<12} - admin_user_reset_password_api_handler2", "HANDLER");
 
-
-    let password = payload.password.as_bytes();
-    let salt = SaltString::from_b64(&state.config.password_salt)?;
-
-    let argon2 = Argon2::default();
-    let password_hash = argon2
-        .hash_password(password, &salt)
-        .expect("Error occurred while encrypted password")
-        .to_string();
+    let password_hash = state
+        .admin_user_service
+        .get_password_hash_from_raw_password(payload.password, &state.config.password_salt)?;
 
     let update_password_status = state
         .admin_user_service
-        .update_password_by_email(&state.db, password_hash, payload.email)
+        .update_password_by_email(&state.db, password_hash, payload.email.clone())
         .await?;
 
-
-    let response_data = ResponseData {
-        status: update_password_status
+    let mut response_data = ApiResponse {
+        status: false,
+        data: false
     };
+
+    if update_password_status {
+        let expired_status = state
+            .admin_user_service
+            .expire_password_token_by_email_and_token(&state.db, payload.email, payload.token)
+            .await?;
+
+        response_data = ApiResponse {
+            status: true,
+            data: expired_status
+        };
+    }
 
     Ok(Json(response_data))
 }
