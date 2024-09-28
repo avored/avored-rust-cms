@@ -376,13 +376,13 @@ dependencies = [
 
 [[package]]
 name = "axum"
-version = "0.7.6"
+version = "0.7.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8f43644eed690f5374f1af436ecd6aea01cd201f6fbdf0178adaf6907afb2cec"
+checksum = "504e3947307ac8326a5437504c517c4b56716c9d98fac0028c2acc7ca47d70ae"
 dependencies = [
  "async-trait",
  "axum-core",
- "base64 0.21.7",
+ "base64 0.22.1",
  "bytes",
  "futures-util",
  "http",
@@ -405,7 +405,7 @@ dependencies = [
  "sha1",
  "sync_wrapper 1.0.1",
  "tokio",
- "tokio-tungstenite",
+ "tokio-tungstenite 0.24.0",
  "tower 0.5.1",
  "tower-layer",
  "tower-service",
@@ -414,9 +414,9 @@ dependencies = [
 
 [[package]]
 name = "axum-core"
-version = "0.4.4"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e6b8ba012a258d63c9adfa28b9ddcf66149da6f986c5b5452e629d5ee64bf00"
+checksum = "09f2bd6146b97ae3359fa0cc6d6b376d9539582c7b4220f041a33ec24c226199"
 dependencies = [
  "async-trait",
  "bytes",
@@ -1547,9 +1547,9 @@ dependencies = [
 
 [[package]]
 name = "handlebars"
-version = "6.0.0"
+version = "6.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5226a0e122dc74917f3a701484482bed3ee86d016c7356836abbaa033133a157"
+checksum = "ce25b617d1375ef96eeb920ae717e3da34a02fc979fe632c75128350f9e1f74a"
 dependencies = [
  "log",
  "pest",
@@ -3886,9 +3886,9 @@ checksum = "cd0b0ec5f1c1ca621c432a25813d8d60c88abe6d3e08a3eb9cf37d97a0fe3d73"
 
 [[package]]
 name = "serde"
-version = "1.0.209"
+version = "1.0.210"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "99fce0ffe7310761ca6bf9faf5115afbc19688edd00171d81b1bb1b116c63e09"
+checksum = "c8e3592472072e6e22e0a54d5904d9febf8508f65fb8552499a1abc7d1078c3a"
 dependencies = [
  "serde_derive",
 ]
@@ -3904,9 +3904,9 @@ dependencies = [
 
 [[package]]
 name = "serde_derive"
-version = "1.0.209"
+version = "1.0.210"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5831b979fd7b5439637af1752d535ff49f4860c0f341d1baeb6faf0f4242170"
+checksum = "243902eda00fad750862fc144cea25caca5e20d615af0a81bee94ca738f1df1f"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -4276,9 +4276,9 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "surrealdb"
-version = "2.0.1"
+version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "54a327b352feacd0e724399dcb6a673acd6fb2a88e0dc9c3fed7758d97dceef1"
+checksum = "39763f42366823f524ded4e423420fe990352a18665f00151521ea49f590d33e"
 dependencies = [
  "arrayvec",
  "async-channel",
@@ -4304,7 +4304,7 @@ dependencies = [
  "surrealdb-core",
  "thiserror",
  "tokio",
- "tokio-tungstenite",
+ "tokio-tungstenite 0.23.1",
  "tokio-util",
  "tracing",
  "trice",
@@ -4317,9 +4317,9 @@ dependencies = [
 
 [[package]]
 name = "surrealdb-core"
-version = "2.0.1"
+version = "2.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80433611bdf00df5ff59d52a708b60ac23598db3e3f9460cde625ea925c8f776"
+checksum = "12d8339a5d2968dedee86705482becc6a6181a07cc30ed2e674526a81bd7389e"
 dependencies = [
  "addr",
  "ahash 0.8.11",
@@ -4686,8 +4686,20 @@ dependencies = [
  "rustls-pki-types",
  "tokio",
  "tokio-rustls",
- "tungstenite",
+ "tungstenite 0.23.0",
  "webpki-roots",
+]
+
+[[package]]
+name = "tokio-tungstenite"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "edc5f74e248dc973e0dbb7b74c7e0d6fcc301c694ff50049504004ef4d0cdcd9"
+dependencies = [
+ "futures-util",
+ "log",
+ "tokio",
+ "tungstenite 0.24.0",
 ]
 
 [[package]]
@@ -4782,9 +4794,9 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.6.0"
+version = "0.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "41515cc9e193536d93fd0dbbea0c73819c08eca76e0b30909a325c3ec90985bb"
+checksum = "8437150ab6bbc8c5f0f519e3d5ed4aa883a83dd4cdd3d1b21f9482936046cb97"
 dependencies = [
  "bitflags 2.6.0",
  "bytes",
@@ -4925,6 +4937,24 @@ dependencies = [
  "sha1",
  "thiserror",
  "url",
+ "utf-8",
+]
+
+[[package]]
+name = "tungstenite"
+version = "0.24.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "18e5b8366ee7a95b16d32197d0b2604b43a0be89dc5fac9f8e96ccafbaedda8a"
+dependencies = [
+ "byteorder",
+ "bytes",
+ "data-encoding",
+ "http",
+ "httparse",
+ "log",
+ "rand",
+ "sha1",
+ "thiserror",
  "utf-8",
 ]
 
