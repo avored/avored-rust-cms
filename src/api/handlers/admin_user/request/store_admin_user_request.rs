@@ -1,5 +1,6 @@
 use rust_i18n::t;
 use serde::Deserialize;
+use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone)]
@@ -13,7 +14,8 @@ pub struct StoreAdminUserRequest {
 }
 
 impl StoreAdminUserRequest {
-    pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
+    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<Vec<ErrorMessage>> {
+
         let mut errors: Vec<ErrorMessage> = vec![];
         if !self.full_name.required()? {
             let error_message = ErrorMessage {
@@ -51,7 +53,6 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-
         if !self.confirmation_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("confirmation_password"),
@@ -69,6 +70,21 @@ impl StoreAdminUserRequest {
 
             errors.push(error_message);
         }
+
+        let admin_user_model = state
+            .admin_user_service
+            .count_of_email(&state.db, self.email.clone())
+            .await?;
+
+        if admin_user_model.total > 0 {
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: t!("validation_count", attribute = t!("email")).to_string()
+            };
+
+            errors.push(error_message);
+        }
+
 
 
         Ok(errors)

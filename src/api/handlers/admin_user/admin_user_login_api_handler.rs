@@ -108,10 +108,9 @@ pub struct LoginResponseData {
 mod tests {
     use axum::body::Body;
     use axum::http::StatusCode;
-    use serde_json::json;
     use tower::ServiceExt;
-    use crate::api::rest_api_routes::tests::{get_auth_token, get_axum_app, send_post_request};
-    use crate::error::{Result, Error};
+    use crate::api::rest_api_routes::tests::{ get_axum_app, send_post_request};
+    use crate::error::{Result};
 
 
     #[tokio::test]

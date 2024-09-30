@@ -3,6 +3,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use axum::extract::multipart::MultipartError;
 use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
 use rust_i18n::t;
@@ -41,6 +42,14 @@ impl From<serde_json::Error> for Error {
     fn from(val: serde_json::Error) -> Self {
         error!("there is an issue with serde json error: {val:?}");
         Error::Generic("Serde struct to string  Error".to_string())
+    }
+}
+
+
+impl From<MultipartError> for Error {
+    fn from(val: MultipartError) -> Self {
+        error!("there is an issue with multipart error: {val:?}");
+        Error::Generic("multipart can not find next field".to_string())
     }
 }
 

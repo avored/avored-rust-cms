@@ -1,7 +1,5 @@
 use std::path::Path;
 use std::sync::Arc;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
 use axum::extract::{Multipart,  State};
 use axum::{Extension, Json};
 use rand::distributions::Alphanumeric;
@@ -39,8 +37,8 @@ pub async fn store_admin_user_api_handler(
     };
     let mut profile_image = String::from("");
 
-    while let Some(field) = multipart.next_field().await.expect("cant find next field") {
-        let name = field.name().expect("field name missing");
+    while let Some(field) = multipart.next_field().await? {
+        let name = field.name().unwrap_or_default();
 
         match name {
             "image" => {
@@ -116,7 +114,8 @@ pub async fn store_admin_user_api_handler(
         }
     }
 
-    let error_messages = payload.validate()?;
+    let error_messages = payload.validate(&state).await?;
+
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
@@ -124,16 +123,12 @@ pub async fn store_admin_user_api_handler(
         };
         return Err(Error::BadRequest(error_response));
     }
-    
 
-    let password = payload.password.as_bytes();
-    let salt = SaltString::from_b64(&state.config.password_salt)?;
-
-    let argon2 = Argon2::default();
-    let password_hash = argon2
-        .hash_password(password, &salt)
-        .expect("Error occurred while encrypted password")
-        .to_string();
+    let password_hash = state
+        .admin_user_service
+        .get_password_hash_from_raw_password(
+            payload.password, &state.config.password_salt
+        )?;
 
     let creatable_admin_user = CreatableAdminUserModel {
         full_name: payload.full_name,
@@ -164,3 +159,4 @@ pub struct CreateAdminUserResponse {
     pub status: bool,
     pub admin_user_model: AdminUserModel
 }
+

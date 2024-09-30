@@ -18,6 +18,7 @@ use crate::{
 use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
 use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::ModelCount;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
@@ -310,5 +311,15 @@ impl AdminUserService {
             .hash_password(password, &salt)?.to_string();
 
         Ok(password_hash)
+    }
+
+    pub async fn count_of_email(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+    ) -> Result<ModelCount> {
+        self.admin_user_repository
+            .count_of_email(datastore, database_session, email)
+            .await
     }
 }
