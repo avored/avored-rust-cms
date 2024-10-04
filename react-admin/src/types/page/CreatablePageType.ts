@@ -1,12 +1,12 @@
 import {AvoRedPageDataType, AvoRedPageFieldType} from "./IPageModel";
 
-export type CreatablePageType = {
+export type SavePageType = {
     name: string;
     identifier: string;
-    page_fields?: Array<CreatableFieldType>
+    page_fields?: Array<SaveFieldType>
 }
 
-export type CreatableFieldType = {
+export type SaveFieldType = {
     name: string;
     identifier: string;
     data_type: AvoRedPageDataType;

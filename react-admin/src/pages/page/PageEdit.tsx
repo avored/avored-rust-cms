@@ -17,7 +17,6 @@ import { usePageEditSchema } from "./schemas/page.edit.schema";
 import { usePagePutSchema } from "./schemas/page.put.schema";
 import { PutPageIdentifierType } from "../../types/page/PutPageIdentifierType";
 import { usePutPageIdentifier } from "./hooks/usePutPageIdentifier";
-import { EditablePageType } from "../../types/page/EditablePageType";
 import {
   AvoRedPageDataType,
   AvoRedPageFieldType,
@@ -25,9 +24,11 @@ import {
 import _ from "lodash";
 import {
   AvoRedPageFieldSelectFieldDataOptions,
-  CreatableFieldType,
+  SaveFieldType,
+  SavePageType,
 } from "../../types/page/CreatablePageType";
 import SimpleMdeReact from "react-simplemde-editor";
+import { PageFieldModal } from "./PageFieldModal";
 
 function PageEdit() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -50,7 +51,7 @@ function PageEdit() {
     getValues,
     setValue,
     trigger,
-  } = useForm<EditablePageType>({
+  } = useForm<SavePageType>({
     resolver: joiResolver(usePageEditSchema(), { allowUnknown: true }),
     values,
   });
@@ -110,7 +111,7 @@ function PageEdit() {
     field_index: number,
   ) => {
     e.preventDefault();
-    const page_field: CreatableFieldType = getValues(
+    const page_field: SaveFieldType = getValues(
       `page_fields.${field_index}`,
     );
     const empty_option: AvoRedPageFieldSelectFieldDataOptions = {
@@ -124,7 +125,7 @@ function PageEdit() {
   };
 
   const renderFieldData = (current_index: number) => {
-    const page_field: CreatableFieldType = getValues(
+    const page_field: SaveFieldType = getValues(
       `page_fields.${current_index}`,
     );
 
@@ -231,7 +232,7 @@ function PageEdit() {
     option_index: number,
   ) => {
     e.preventDefault();
-    const page_field: CreatableFieldType = getValues(
+    const page_field: SaveFieldType = getValues(
       `page_fields.${field_index}`,
     );
     // if (page_field.field_d)
@@ -271,7 +272,7 @@ function PageEdit() {
     return getValues(`page_fields.${field_index}.field_content`) as string;
   };
 
-  const renderField = (field: CreatableFieldType, index: number) => {
+  const renderField = (field: SaveFieldType, index: number) => {
     switch (field.field_type) {
       case AvoRedPageFieldType.TEXTAREA:
         return (
@@ -367,7 +368,7 @@ function PageEdit() {
     setIsOpen(true);
   };
 
-  const submitHandler = async (data: EditablePageType) => {
+  const submitHandler = async (data: SavePageType) => {
     mutate(data);
   };
 
@@ -383,107 +384,14 @@ function PageEdit() {
             <form onSubmit={handleSubmit(submitHandler)}>
               {_.size(fields) > 0 ? (
                 <>
-                  <AvoredModal
-                    closeModal={() => setIsOpen(false)}
-                    modal_header={`Page Field`}
-                    modal_body={
-                      <div className="block">
-                        <div className="flex w-full">
-                          <div className="flex-1 pr-3">
-                            <div className="mb-3">
-                              <InputField
-                                placeholder={t("page_field_name")}
-                                label={t("page_field_name")}
-                                register={register(
-                                  `page_fields.${currentIndex}.name`,
-                                )}
-                              />
-                            </div>
-                            <div className="mb-3">
-                              <InputField
-                                placeholder={t("page_field_identifier")}
-                                label={t("page_field_identifier")}
-                                register={register(
-                                  `page_fields.${currentIndex}.identifier`,
-                                )}
-                              />
-                            </div>
-
-                            <div className="w-full">
-                              {renderFieldData(currentIndex)}
-                            </div>
-                          </div>
-                          <div className="ml-auto">
-                            <div className="w-64 border-l p-3 mr-auto">
-                              <div
-                                onClick={() =>
-                                  onPageFieldChange(
-                                    currentIndex,
-                                    AvoRedPageFieldType.TEXT,
-                                    AvoRedPageDataType.TEXT,
-                                  )
-                                }
-                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
-                              ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                              >
-                                {t("text_field")}
-                              </div>
-                              <div
-                                onClick={() =>
-                                  onPageFieldChange(
-                                    currentIndex,
-                                    AvoRedPageFieldType.TEXTAREA,
-                                    AvoRedPageDataType.TEXT,
-                                  )
-                                }
-                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TEXTAREA ? "bg-primary-200" : "bg-gray-300"}  
-                            ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                              >
-                                {t("textarea_field")}
-                              </div>
-                              <div
-                                onClick={() =>
-                                  onPageFieldChange(
-                                    currentIndex,
-                                    AvoRedPageFieldType.SELECT,
-                                    AvoRedPageDataType.TEXT,
-                                  )
-                                }
-                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.SELECT ? "bg-primary-200" : "bg-gray-300"}  
-                  ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                              >
-                                {t("select_field")}
-                              </div>
-                              <div
-                                onClick={() =>
-                                  onPageFieldChange(
-                                    currentIndex,
-                                    AvoRedPageFieldType.TextEditor,
-                                    AvoRedPageDataType.TEXT,
-                                  )
-                                }
-                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.TextEditor ? "bg-primary-200" : "bg-gray-300"}  
-                  ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                              >
-                                {t("text_editor_field")}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <hr className="mt-3" />
-                        <div className="mt-3">
-                          <button
-                            type="button"
-                            onClick={() => setIsOpen(false)}
-                            className="bg-primary-500 px-3 py-2 rounded text-white"
-                          >
-                            Create Page field
-                          </button>
-                        </div>
-                      </div>
-                    }
-                    isOpen={isOpen}
-                  ></AvoredModal>
+                  <PageFieldModal 
+                    register={register}
+                    currentIndex={currentIndex}
+                    getValues={getValues}
+                    setValue={setValue}
+                    trigger={trigger}
+                    setIsOpen={setIsOpen}
+                    isOpen={isOpen} />
                 </>
               ) : (
                 <></>
