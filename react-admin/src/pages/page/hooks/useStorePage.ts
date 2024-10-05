@@ -2,14 +2,13 @@ import {useMutation} from '@tanstack/react-query'
 import { useAxios } from '../../../hooks/useAxios'
 import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
-import ICreatablePage from "../../../types/page/ICreatablePage";
-import {CreatableFieldType, CreatablePageType} from "../../../types/page/CreatablePageType";
+import {SavePageType} from "../../../types/page/CreatablePageType";
 
 export const useStorePage = () => {
     const client = useAxios();
     const redirect = useNavigate();
     return useMutation({
-        mutationFn: async (data: CreatablePageType) => {
+        mutationFn: async (data: SavePageType) => {
             // @todo possible fixed this None(String) | Object union type issue
             const postdata : any = data;
 
