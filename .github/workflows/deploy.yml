@@ -41,4 +41,4 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: "./react-admin/dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
-        
+
