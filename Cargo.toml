@@ -25,7 +25,7 @@ chrono = { version = "0.4.38", features = [] }
 email_address = "0.2.9"
 rust-i18n = "3.1.2"
 lettre = { version = "0.11.9", features = ["tokio1-native-tls"] }
-handlebars = "6.0.1"
+handlebars = "6.1.0"
 utoipa = "4.2.3"
 juniper = "0.16.1"
 juniper_axum = { version = "0.1.0", features = ["subscriptions"] }
