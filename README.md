@@ -1,5 +1,5 @@
 # Avored rust content management system
-AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database.
+AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database. 
 
 
 [![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
