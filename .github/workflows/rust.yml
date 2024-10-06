@@ -19,8 +19,12 @@ jobs:
       run: cargo build --verbose
     - name: Run releases
       run: cargo build --release
+  releases:
+    runs-on: ubuntu-latest
+    steps:
     - name: Deploy release
       uses: appleboy/scp-action@master
+
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
