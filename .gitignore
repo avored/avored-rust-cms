@@ -6,7 +6,11 @@
 .env.prod
 .idea
 .vscode
-/target
+/target/debug
+/target/release
+/target/tmp
+/target/.rustc_info.json
+/target/CACHEDIR.TAG
 /public/upload
 /public/log
 /public/install_demo
