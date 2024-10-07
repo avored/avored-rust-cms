@@ -67,6 +67,10 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     let origins = [
         react_admin_url.parse().unwrap(),
         react_front_url.parse().unwrap(),
+
+        // Ideally we need to think about how to handle multiple cors url for frontend.
+        // env file should handle multiple array style url list
+        "https://www.avored.com"
     ];
 
     let cors = CorsLayer::new()
