@@ -31,10 +31,3 @@ pub async fn admin_user_table_api_handler(
 
     Ok(Json(admin_user_pagination))
 }
-
-
-#[derive(Serialize, Debug)]
-pub struct FetchPageResponse {
-    pub status: bool,
-    pub page_model: AdminUserPagination
-}

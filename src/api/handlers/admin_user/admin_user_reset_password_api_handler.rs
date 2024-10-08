@@ -28,7 +28,6 @@ pub async fn admin_user_reset_password_api_handler(
         };
         return Err(Error::BadRequest(error_response));
     }
-    println!("->> {:<12} - admin_user_reset_password_api_handler2", "HANDLER");
 
     let password_hash = state
         .admin_user_service

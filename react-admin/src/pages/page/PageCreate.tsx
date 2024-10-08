@@ -116,7 +116,6 @@ function PageCreate() {
                 options={{
                   minHeight: "300px",
                 }}
-                value={`# test`}
                 onChange={(contentValue) =>
                   textEditorOnChange(contentValue, index)
                 }
