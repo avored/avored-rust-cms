@@ -4,7 +4,6 @@ use argon2::password_hash::SaltString;
 use axum::extract::{ State};
 use axum::{Extension, Json};
 use rust_i18n::t;
-use serde::Serialize;
 use crate::api::handlers::admin_user::request::change_password_request::ChangePasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
