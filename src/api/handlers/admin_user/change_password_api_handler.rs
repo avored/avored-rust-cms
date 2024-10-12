@@ -4,18 +4,18 @@ use argon2::password_hash::SaltString;
 use axum::extract::{ State};
 use axum::{Extension, Json};
 use rust_i18n::t;
-use serde::Serialize;
 use crate::api::handlers::admin_user::request::change_password_request::ChangePasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::responses::ApiResponse;
 
-pub async fn change_password_api_handler(
+pub async fn change_password_api_handler (
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<ChangePasswordRequest>,
-) -> Result<Json<ChangePasswordResponse>> {
+) -> Result<Json<ApiResponse<bool>>> {
     println!("->> {:<12} - change_password_api_handler", "HANDLER");
 
     let mut error_messages = payload.validate()?;
@@ -58,15 +58,10 @@ pub async fn change_password_api_handler(
         .update_password_by_email(&state.db, password_hash, logged_in_user.email)
         .await?;
 
-    let response_data = ChangePasswordResponse {
-        status: update_password_status
+    let response_data = ApiResponse {
+        status: true,
+        data: update_password_status
     };
 
     Ok(Json(response_data))
-}
-
-
-#[derive(Serialize, Debug)]
-pub struct ChangePasswordResponse {
-    pub status: bool
 }

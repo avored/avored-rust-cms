@@ -45,6 +45,13 @@ impl From<serde_json::Error> for Error {
     }
 }
 
+impl From<jsonwebtoken::errors::Error> for Error {
+    fn from(val: jsonwebtoken::errors::Error) -> Self {
+        error!("there is an issue with jsonwebtoken error: {val:?}");
+        Error::Generic("Json web token error".to_string())
+    }
+}
+
 
 impl From<MultipartError> for Error {
     fn from(val: MultipartError) -> Self {

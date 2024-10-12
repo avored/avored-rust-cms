@@ -374,7 +374,8 @@ impl PageRepository {
                 PageFieldType::Text =>  "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
-                PageFieldType::TextEditor => "TextEditor".into()
+                PageFieldType::TextEditor => "TextEditor".into(),
+                PageFieldType::Radio => "Radio".into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
@@ -386,6 +387,15 @@ impl PageRepository {
                 PageFieldData::SelectFieldData { select_field_options } =>  {
                     let mut options: Vec<Value> = vec![];
                     for option in select_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::RadioFieldData { radio_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in radio_field_options {
                         let val: Value = option.try_into()?;
                         options.push(val);
                     }
@@ -457,7 +467,8 @@ impl PageRepository {
                 PageFieldType::Text =>  "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
-                PageFieldType::TextEditor => "TextEditor".into()
+                PageFieldType::TextEditor => "TextEditor".into(),
+                PageFieldType::Radio => "Radio".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::StringType(v) =>  v.into(),
@@ -468,6 +479,15 @@ impl PageRepository {
                 PageFieldData::SelectFieldData { select_field_options } =>  {
                     let mut options: Vec<Value> = vec![];
                     for option in select_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::RadioFieldData { radio_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in radio_field_options {
                         let val: Value = option.try_into()?;
                         options.push(val);
                     }

@@ -16,11 +16,18 @@ export type SaveFieldType = {
 }
 
 export type AvoRedPageFieldData = {
-    select_field_options: Array<AvoRedPageFieldSelectFieldDataOptions>
+    select_field_options?: Array<AvoRedPageFieldSelectFieldDataOptions>,
+    radio_field_options?: Array<AvoRedPageFieldRadioFieldDataOptions>
 }
 export type EmptyPageFieldData = {}
 
 export type AvoRedPageFieldSelectFieldDataOptions = {
+    label: string;
+    value: string;
+}
+
+
+export type AvoRedPageFieldRadioFieldDataOptions = {
     label: string;
     value: string;
 }

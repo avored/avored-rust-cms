@@ -74,7 +74,7 @@ pub async fn admin_user_login_api_handler(
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(state.config.jwt_secret_key.as_ref()),
-    ).unwrap();
+    )?;
     let cookie = Cookie::build("token")
         .path("/")
         // .max_age(Duration::h)
@@ -90,7 +90,6 @@ pub async fn admin_user_login_api_handler(
         data: token,
         admin_user: admin_user_model
     };
-
 
     Ok(Json(response_data))
 }

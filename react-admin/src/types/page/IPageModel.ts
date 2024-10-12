@@ -20,5 +20,6 @@ export enum AvoRedPageFieldType {
     TEXT = "Text",
     TEXTAREA = "Textarea",
     SELECT = "Select",
-    TextEditor = "TextEditor"
-}
+    TextEditor = "TextEditor",
+    Radio = "Radio"
+ }

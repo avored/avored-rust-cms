@@ -22,7 +22,8 @@ pub enum PageFieldType {
     Text,
     Textarea,
     Select,
-    TextEditor
+    TextEditor,
+    Radio
 }
 
 impl Default for PageFieldType {
@@ -32,9 +33,13 @@ impl Default for PageFieldType {
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
 pub enum PageFieldData {
     SelectFieldData {
-        select_field_options : Vec<PageSelectFieldData>
+        select_field_options: Vec<PageSelectFieldData>
+    },
+    RadioFieldData {
+        radio_field_options: Vec<PageRadioFieldData>
     },
     None
 }
@@ -49,6 +54,12 @@ impl Default for PageFieldData {
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub struct PageSelectFieldData {
+    pub label: String,
+    pub value: String
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct PageRadioFieldData {
     pub label: String,
     pub value: String
 }
@@ -102,11 +113,22 @@ impl TryFrom<PageSelectFieldData> for Value {
     }
 }
 
+impl TryFrom<PageRadioFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: PageRadioFieldData) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("label".into(), val.label.into()),
+            ("value".into(), val.value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
+
 impl TryFrom<Object> for NewPageModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<NewPageModel> {
-
-        // println!("OBJECT: {:?}", val.clone());
 
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
@@ -185,6 +207,9 @@ impl TryFrom<Object> for PageFieldModel {
             "TextEditor" => {
                 PageFieldType::TextEditor
             },
+            "Radio" => {
+                PageFieldType::Radio
+            },
 
             _ => PageFieldType::default()
         };
@@ -238,6 +263,41 @@ impl TryFrom<Object> for PageFieldModel {
 
                 options
             },
+            "Radio" => {
+                let options = match val.get("field_data") {
+                    Some(val) => {
+                        match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: PageRadioFieldData = object.try_into()?;
+
+                                    arr.push(option)
+                                }
+
+                                PageFieldData::RadioFieldData {
+                                    radio_field_options: arr
+                                }
+                            }
+                            _ => {
+
+                                PageFieldData::None
+                            },
+                        }
+                    }
+                    None => {
+                        PageFieldData::None
+                    },
+                };
+
+                options
+            },
 
             _ => PageFieldData::None
         };
@@ -262,6 +322,18 @@ impl TryFrom<Object> for PageSelectFieldData {
         let label = val.get("label").get_string()?;
         let value = val.get("value").get_string()?;
         Ok(PageSelectFieldData {
+            label,
+            value
+        })
+    }
+}
+
+impl TryFrom<Object> for PageRadioFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<PageRadioFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+        Ok(PageRadioFieldData {
             label,
             value
         })
