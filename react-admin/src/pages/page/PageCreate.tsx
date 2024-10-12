@@ -1,10 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  Cog8ToothIcon,
-  PlusIcon,
-  TrashIcon,
-} from "@heroicons/react/24/solid";
+import { Cog8ToothIcon, PlusIcon, TrashIcon } from "@heroicons/react/24/solid";
 import InputField from "../../components/InputField";
 import { useStorePage } from "./hooks/useStorePage";
 import { useTranslation } from "react-i18next";
@@ -15,6 +11,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import "easymde/dist/easymde.min.css";
 import slug from "slug";
 import {
+  AvoRedPageFieldRadioFieldDataOptions,
   SaveFieldType,
   SavePageType,
 } from "../../types/page/CreatablePageType";
@@ -78,8 +75,8 @@ function PageCreate() {
   };
 
   const submitHandler = async (data: SavePageType) => {
-    // console.log(data)
-    mutate(data);
+    console.log(data)
+    // mutate(data);
   };
 
   const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -89,7 +86,6 @@ function PageCreate() {
   const textEditorOnChange = (value: string, field_index: number) => {
     setValue(`page_fields.${field_index}.field_content`, value);
   };
-
 
   const renderField = (field: SaveFieldType, index: number) => {
     switch (field.field_type) {
@@ -123,6 +119,35 @@ function PageCreate() {
             </div>
           </div>
         );
+      case AvoRedPageFieldType.Radio:
+        return (
+            <div className="mb-4">
+              <label className="text-sm text-gray-600">
+                {t!("field_content")}
+              </label>
+              {field.field_data?.radio_field_options?.map(
+                  (option: AvoRedPageFieldRadioFieldDataOptions) => {
+                    return (
+                          <div key={`avredo-radio-${option.value}`} className="w-full">
+                            <input
+                                id={`avored-radio-${option.value}`}
+                                type="radio"
+                                value={option.value}
+                                {...register(`page_fields.${index}.field_content`)}
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                                htmlFor={`avored-radio-${option.value}`}
+                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              {option.label}
+                            </label>
+                          </div>
+                    );
+                  },
+              )}
+            </div>
+        );
       case AvoRedPageFieldType.SELECT:
         return (
           <div className="mb-4">
@@ -134,7 +159,7 @@ function PageCreate() {
               {...register(`page_fields.${index}.field_content`)}
               className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
             >
-              {field.field_data?.select_field_options.map((option) => {
+              {field.field_data?.select_field_options?.map((option) => {
                 return (
                   <option key={option.value} value={option.value}>
                     {option.label}
@@ -179,15 +204,15 @@ function PageCreate() {
 
             <form onSubmit={handleSubmit(submitHandler)}>
               {_.size(fields) > 0 ? (
-                <PageFieldModal 
+                <PageFieldModal
                   register={register}
                   currentIndex={currentIndex}
                   getValues={getValues}
                   setValue={setValue}
                   trigger={trigger}
                   setIsOpen={setIsOpen}
-                  isOpen={isOpen} />
-                
+                  isOpen={isOpen}
+                />
               ) : (
                 <></>
               )}
