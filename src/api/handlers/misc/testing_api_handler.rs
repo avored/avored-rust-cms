@@ -8,7 +8,7 @@ pub async fn testing_api_handler(
     println!("->> {:<12} - testing_api_handler", "HANDLER");
 
 
-    println!("->> {:<12} - {:?}", "Payload", payload);
+    println!("->> {:<12} - {:?}", "Payload", payload.name);
 
     let response = ResponseData {
         status: true,
@@ -22,24 +22,24 @@ pub async fn testing_api_handler(
 #[derive(Deserialize, Debug)]
 pub struct TestingRequest {
     name: String,
-    field_data: TestFieldData
+    // field_data: TestFieldData
 }
 
-
-#[derive(Deserialize, Debug)]
-pub enum TestFieldData {
-    SelectFieldData {
-        select_field_option: TestingFieldOption
-    },
-    None
-}
-
-
-#[derive(Deserialize, Debug)]
-pub struct TestingFieldOption {
-    pub label: String,
-    pub value: String
-}
+//
+// #[derive(Deserialize, Debug)]
+// pub enum TestFieldData {
+//     SelectFieldData {
+//         select_field_option: TestingFieldOption
+//     },
+//     None
+// }
+//
+//
+// #[derive(Deserialize, Debug)]
+// pub struct TestingFieldOption {
+//     pub label: String,
+//     pub value: String
+// }
 
 #[derive(Serialize)]
 pub struct ResponseData {

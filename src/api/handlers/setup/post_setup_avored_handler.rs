@@ -183,6 +183,7 @@ pub async fn post_setup_avored_handler(
 }
 
 #[derive(Serialize, Debug)]
+#[cfg_attr(test, derive(Deserialize, Eq, PartialEq, Copy, Clone, Default))]
 pub struct SetupViewModel {
     pub status: bool,
 }

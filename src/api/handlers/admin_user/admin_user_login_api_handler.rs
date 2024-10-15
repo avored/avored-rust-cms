@@ -4,7 +4,7 @@ use axum::http::{header, Response};
 use axum::Json;
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use utoipa::ToSchema;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
@@ -95,11 +95,11 @@ pub async fn admin_user_login_api_handler(
 }
 
 
-#[derive(Serialize, ToSchema)]
+#[derive(Serialize, ToSchema, Deserialize, Debug)]
 pub struct LoginResponseData {
-    status: bool,
-    data: String,
-    admin_user: AdminUserModel
+    pub status: bool,
+    pub data: String,
+    pub admin_user: AdminUserModel
 }
 
 

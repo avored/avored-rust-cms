@@ -161,9 +161,12 @@ pub mod tests {
     use std::env;
     use std::sync::Arc;
     use axum::body::Body;
-    use axum::http::{self, header, Request};
+    use axum::http::{self, header, Request, StatusCode};
     use axum::Router;
     use jsonwebtoken::{encode, EncodingKey, Header};
+    use tower::ServiceExt;
+    use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
+    use crate::api::handlers::setup::post_setup_avored_handler::SetupViewModel;
     use crate::avored_state::AvoRedState;
     use crate::error::Result;
     use crate::models::admin_user_model::AdminUserModel;
@@ -189,6 +192,56 @@ pub mod tests {
             .method("POST")
             .body(body)
             .unwrap()
+    }
+
+    pub async fn setup_avored_db(app: Router)  {
+        let payload = Body::from(
+            r#"{
+                    "email": "admin@admin.com",
+                    "password": "admin123"
+                }"#,
+        );
+        let expected_response = SetupViewModel {
+            status: true
+        };
+        let response = app.oneshot(send_post_request("/api/setup", payload)).await.unwrap();
+
+
+        assert_eq!(response.status(), StatusCode::OK);
+
+
+        let res_b = response.into_body();
+        let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
+
+        let body_str = String::from_utf8(body.to_vec())
+            .expect("Failed to convert body to string");
+
+        let body: SetupViewModel = serde_json::from_str(&body_str)
+            .expect("Failed to parse JSON");
+        assert_eq!(body, expected_response);
+    }
+
+    pub async fn get_login_response(app: Router) -> Result<LoginResponseData>  {
+        let payload = Body::from(
+            r#"{
+                    "email": "admin@admin.com",
+                    "password": "admin123"
+                }"#,
+        );
+
+        let response = app.oneshot(send_post_request("/api/login", payload)).await.unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let res_b = response.into_body();
+        let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
+
+        let body_str: String = String::from_utf8(body.to_vec())
+            .expect("Failed to convert body to string");
+
+
+        let body: LoginResponseData = serde_json::from_str(&body_str)
+            .expect("Failed to parse JSON");
+
+        Ok(body)
     }
 
     pub fn get_auth_token(state: Arc<AvoRedState>) -> Result<String> {
