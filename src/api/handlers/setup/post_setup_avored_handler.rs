@@ -29,7 +29,7 @@ pub async fn post_setup_avored_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
 
@@ -136,51 +136,18 @@ pub async fn post_setup_avored_handler(
 
         DEFINE FIELD name ON TABLE pages TYPE string;
         DEFINE FIELD identifier ON TABLE pages TYPE string;
-        DEFINE FIELD components_content ON TABLE pages TYPE array;
         DEFINE FIELD created_by ON TABLE pages TYPE string;
         DEFINE FIELD updated_by ON TABLE pages TYPE string;
         DEFINE FIELD created_at ON TABLE pages TYPE datetime;
         DEFINE FIELD updated_at ON TABLE pages TYPE datetime;
         DEFINE INDEX pages_identifier_index ON TABLE pages COLUMNS identifier UNIQUE;
 
-        CREATE pages CONTENT {
-            name: 'Home Page',
-            identifier: 'home-page',
-            components_content: [
-                {
-                    id: 'test id',
-                    name: 'test name',
-                    identifier: 'test identifier',
-                    elements: [
-                        {
-                            name: 'test name',
-                            identifier: 'test identifier',
-                            element_type: 'text',
-                            element_data_type: 'TEXT',
-                            element_content: 'test field content 1'
-                        }
-                    ]
-                }
-            ],
-            created_by: $email,
-            updated_by: $email,
-            created_at: time::now(),
-            updated_at: time::now()
-        };
-
-
         REMOVE TABLE assets;
         DEFINE TABLE assets;
 
-        DEFINE FIELD file_name      ON TABLE assets TYPE string;
-        DEFINE FIELD file_path      ON TABLE assets TYPE string;
-        DEFINE FIELD file_size      ON TABLE assets TYPE int;
-        DEFINE FIELD file_type      ON TABLE assets TYPE string;
-        DEFINE FIELD information    ON TABLE assets TYPE string;
-        DEFINE FIELD created_by ON TABLE assets TYPE string;
-        DEFINE FIELD updated_by ON TABLE assets TYPE string;
-        DEFINE FIELD created_at ON TABLE assets TYPE datetime;
-        DEFINE FIELD updated_at ON TABLE assets TYPE datetime;
+
+        DEFINE TABLE fields;
+
     ";
 
     let password = payload.password.as_bytes();
@@ -216,6 +183,7 @@ pub async fn post_setup_avored_handler(
 }
 
 #[derive(Serialize, Debug)]
+#[cfg_attr(test, derive(Deserialize, Eq, PartialEq, Copy, Clone, Default))]
 pub struct SetupViewModel {
     pub status: bool,
 }
@@ -234,7 +202,7 @@ impl SetupAvoRedRequest {
     fn validate(&self) -> Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
 
-        if self.email.len() <= 0 {
+        if self.email.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: String::from("Email is a required field")
@@ -252,7 +220,7 @@ impl SetupAvoRedRequest {
             errors.push(error_message);
         }
 
-        if self.password.len() <= 0 {
+        if self.password.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: String::from("Password is a required field")

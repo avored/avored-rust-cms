@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::models::page_model::PageModel;
+use crate::models::page_model::NewPageModel;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -22,7 +22,7 @@ pub async fn fetch_page_api_handler(
         .has_permission(logged_in_user, String::from("get_page"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let page_model = state
@@ -41,5 +41,5 @@ pub async fn fetch_page_api_handler(
 #[derive(Serialize, Debug)]
 pub struct FetchPageResponse {
     pub status: bool,
-    pub page_model: PageModel
+    pub page_model: NewPageModel
 }

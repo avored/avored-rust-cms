@@ -8,3 +8,18 @@ export default interface IPageModel {
     updated_by: string;
     action: string;
 }
+
+
+export enum AvoRedPageDataType {
+    TEXT = "TEXT",
+    INT = "INT"
+}
+
+
+export enum AvoRedPageFieldType {
+    TEXT = "Text",
+    TEXTAREA = "Textarea",
+    SELECT = "Select",
+    TextEditor = "TextEditor",
+    Radio = "Radio"
+ }

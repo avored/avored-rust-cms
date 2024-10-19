@@ -1,8 +1,8 @@
 # Avored rust content management system
-AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database.
+AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database. 
 
 
-[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
+[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
 
 ### Join community via slack
 [![Join community via Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/avoredrustcms/shared_invite/zt-22031l11y-EYp3a3oWVVFaZ8WCWZAkJQ)
@@ -15,10 +15,10 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
 
     git clone https://github.com/avored/avored-rust-cms.git
     cd avored-cms
-    cp .env.example .env    //Basically copy the .env.example file to .env
+    cp .env .env.dev    //Basically copy the .env.example file to .env
     
 
-Set up your `.env` file you can rename the existing `.env.example` file make sure the database username and password setup correctly.
+Set up your `.env.dev` file you can rename the existing `.env.prod` file make sure the database folder name, password salt, jwt secret setup properly random string and smtp information setup right if you wanted to use the forgot password feature(optional) NOTE: for local dev smtp info can be ignored.
 
 ### Start your application backend
     cargo run
@@ -48,11 +48,11 @@ Visit `localhost:3000/admin` to access the react admin for the portal. Right now
  - [ ] GraphQL API
  - [ ] Content Workflow
 
-##### Seting up full Stack project in RUST
+##### Setting up full Stack project in RUST
 
  - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
  - [x] SurrealDB ([Surreal DB](https://surrealdb.com/))
- - [x] VIEW ([Handlebars](https://github.com/sunng87/handlebars-rust))
+ - [x] Email Views ([Handlebars](https://github.com/sunng87/handlebars-rust))
  - [x] Display Form Validation Error
  
 ### Dev help 
@@ -67,10 +67,9 @@ How to render a variable in handlebar template
 
     {{ variable_name }}
 
-How to call heloper method in handlebar template 
+How to call helper method in handlebar template 
 
     {{ helper_method_name "argument" ~}}
 
-
-How to start a surrealdb
+How to start a surreal db
 surreal start --user root --pass root --bind 0.0.0.0:8000 file://test.db

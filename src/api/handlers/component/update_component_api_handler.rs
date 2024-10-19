@@ -25,7 +25,7 @@ pub async fn update_component_api_handler(
         .has_permission(logged_in_user.clone(), String::from("component_edit"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let error_messages = payload.validate()?;
@@ -36,7 +36,7 @@ pub async fn update_component_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let mut updatable_elements: Vec<UpdatableComponentElementModel> = vec![];
@@ -58,6 +58,7 @@ pub async fn update_component_api_handler(
             name: payload_element.name,
             identifier: payload_element.identifier,
             element_type: payload_element.element_type,
+            element_data_type: payload_element.element_data_type,
             element_data: Some(updatable_element_data)
         };
         updatable_elements.push(updatable_component_element_model);

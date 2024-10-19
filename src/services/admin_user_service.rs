@@ -1,4 +1,5 @@
-use argon2::{Argon2, PasswordHash, PasswordVerifier};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use argon2::password_hash::SaltString;
 use lettre::{AsyncTransport, Message};
 use lettre::message::{header, MultiPart, SinglePart};
 use rand::distributions::{Alphanumeric, DistString};
@@ -17,6 +18,7 @@ use crate::{
 use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
 use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::ModelCount;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
@@ -60,6 +62,8 @@ impl AdminUserService {
             email: to_address.clone(),
             token,
         };
+
+        //@todo before creating a token make sure expire any past token that could have been generated?
 
         let password_reset_model = self
             .password_reset_repository
@@ -106,6 +110,7 @@ impl AdminUserService {
 
         Ok(argon2.verify_password(plain_password.as_bytes(), &parsed_hash).is_ok())
     }
+
     pub async fn has_permission(
         &self,
         logged_in_user: LoggedInUser,
@@ -125,6 +130,7 @@ impl AdminUserService {
 
         Ok(has_permission)
     }
+
     pub async fn find_by_email(
         &self,
         (datastore, database_session): &DB,
@@ -149,9 +155,10 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         email: String,
+        token: String
     ) -> Result<PasswordResetModel> {
         self.password_reset_repository
-            .get_password_reset_by_email(datastore, database_session, email)
+            .get_password_reset_by_email(datastore, database_session, email, token)
             .await
     }
 
@@ -163,6 +170,17 @@ impl AdminUserService {
     ) -> Result<bool> {
         self.admin_user_repository
             .update_password_by_email(datastore, database_session, new_password, email)
+            .await
+    }
+
+    pub async fn expire_password_token_by_email_and_token(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+        token: String
+    ) -> Result<bool> {
+        self.password_reset_repository
+            .expire_password_token_by_email_and_token(datastore, database_session, email, token)
             .await
     }
 
@@ -277,5 +295,31 @@ impl AdminUserService {
         }
 
         Ok(admin_user_model)
+    }
+
+    pub fn get_password_hash_from_raw_password(
+        &self,
+        raw_password: String,
+        password_salt: &String
+    ) -> Result<String>{
+
+        let password = raw_password.as_bytes();
+        let salt = SaltString::from_b64(password_salt)?;
+
+        let argon2 = Argon2::default();
+        let password_hash = argon2
+            .hash_password(password, &salt)?.to_string();
+
+        Ok(password_hash)
+    }
+
+    pub async fn count_of_email(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+    ) -> Result<ModelCount> {
+        self.admin_user_repository
+            .count_of_email(datastore, database_session, email)
+            .await
     }
 }

@@ -101,12 +101,14 @@ impl ComponentRepository {
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
+                                element_data_type: '{element_data_type}', \
                                 element_data: [{element_data_sql}],
                                 {close_brace},",
                     open_brace = String::from("{"),
                     name =  element.name,
                     identifier = element.identifier,
                     element_type = element.element_type,
+                    element_data_type = element.element_data_type,
                     close_brace = String::from("}")
                 ));
         }
@@ -128,6 +130,9 @@ impl ComponentRepository {
             element_sql = element_sql,
             logged_in_user_email = creatable_component_model.logged_in_username,
             close_brace = String::from("}"));
+
+
+        println!("CREATE COMPONENT: SQL: {sql}");
 
         let responses = datastore.execute(&sql, database_session, None).await?;
 
@@ -201,14 +206,16 @@ impl ComponentRepository {
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
-                                element_data: [{element_data_sql}],
+                                element_data_type: '{element_data_type}', \
+                                element_data: [{element_data_sql}], \
                                 {close_brace},",
-                         open_brace = String::from("{"),
-                         name =  element.name,
-                         identifier = element.identifier,
-                         element_type = element.element_type,
-                         element_data_sql = element_data_sql,
-                         close_brace = String::from("}")
+                    open_brace = String::from("{"),
+                    name =  element.name,
+                    identifier = element.identifier,
+                    element_type = element.element_type,
+                    element_data_type = element.element_data_type,
+                    element_data_sql = element_data_sql,
+                    close_brace = String::from("}")
                 ));
         }
 

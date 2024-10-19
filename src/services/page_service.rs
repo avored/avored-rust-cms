@@ -6,8 +6,7 @@ use crate::{
     PER_PAGE,
 };
 use crate::models::ModelCount;
-use crate::models::page_model::{CreatablePageModel, PageModel, PutPageIdentifierModel, UpdatablePageModel};
-use crate::models::token_claim_model::LoggedInUser;
+use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PutPageIdentifierModel};
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -72,35 +71,38 @@ impl PageService {
         })
     }
 
+    pub async fn remove_by_id(&self, (datastore, database_session): &DB, id: &String) -> Result<bool> {
+        self.page_repository.remove_by_id(datastore,database_session, id).await?;
+        Ok(true)
+    }
+
     pub async fn find_by_id(
         &self,
         (datastore, database_session): &DB,
         id: String,
-    ) -> Result<PageModel> {
+    ) -> Result<NewPageModel> {
         self.page_repository
             .find_by_id(datastore, database_session, id)
             .await
     }
 
-    pub async fn create_page(
+    pub async fn new_create_page(
         &self,
         (datastore, database_session): &DB,
-        creatable_page_model: CreatablePageModel,
-        logged_in_user: LoggedInUser
-    ) -> Result<PageModel> {
+        creatable_page_model: NewCreatablePageModel
+    ) -> Result<NewPageModel> {
         self.page_repository
-            .create_page(datastore, database_session, creatable_page_model, logged_in_user)
+            .new_create_page(datastore, database_session, creatable_page_model)
             .await
     }
 
     pub async fn update_page(
         &self,
         (datastore, database_session): &DB,
-        updatable_page_model: UpdatablePageModel,
-        logged_in_user: LoggedInUser
-    ) -> Result<PageModel> {
+        updatable_page_model: NewUpdatablePageModel
+    ) -> Result<NewPageModel> {
         self.page_repository
-            .update_page(datastore, database_session, updatable_page_model, logged_in_user)
+            .new_update_page(datastore, database_session, updatable_page_model)
             .await
     }
 
@@ -118,7 +120,7 @@ impl PageService {
         &self,
         (datastore, database_session): &DB,
         put_page_identifier_model: PutPageIdentifierModel
-    ) -> Result<PageModel> {
+    ) -> Result<NewPageModel> {
         self.page_repository
             .update_page_identifier(datastore, database_session, put_page_identifier_model)
             .await

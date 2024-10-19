@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactEventHandler, useState} from "react"
+import React, {useState} from "react"
 import {Link, useParams} from "react-router-dom"
 import {PlusIcon} from "@heroicons/react/24/solid"
 import {TrashIcon} from "@heroicons/react/16/solid"
@@ -13,7 +13,6 @@ import {useComponentEditSchema} from "./schemas/component.edit.schema"
 import {AvoRedFieldTypesEnum} from "../../types/field/AvoRedFieldTypesEnum"
 import IEditableComponent, {
   EditableComponentElementDataType,
-  
 } from "../../types/component/IEditableComponent";
 import {usePutComponentIdentifier} from "./hooks/usePutComponentIdentifier"
 import {useComponentPutSchema} from "./schemas/component.put.schema";
@@ -73,7 +72,7 @@ export const  ComponentEditPage = (() => {
     })
 
     const addFieldOnClick = (() => {
-        append({name: '', identifier: '', element_type: AvoRedFieldTypesEnum.TEXT})
+        append({name: '', identifier: '', element_type: AvoRedFieldTypesEnum.TEXT, element_data_type: "TEXT"})
     })
 
     const deleteElementOnClick = ((elementIndex: number) => {
@@ -107,6 +106,9 @@ export const  ComponentEditPage = (() => {
     ) => {
         setValue(`elements.${elementIndex}.element_type`, fieldTypeValue)
         setValue(`elements.${elementIndex}.element_data`, [{label: '', value: ''}])
+        // Ideally value of this data type can be based on element
+        // e.g: Number Input field will have INT(It should match rust backend type) data type
+        setValue(`elements.${elementIndex}.element_data_type`, 'TEXT');
         await trigger(`elements.${elementIndex}`)
     })
 

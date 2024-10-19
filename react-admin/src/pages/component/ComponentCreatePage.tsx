@@ -10,6 +10,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import { useComponentCreateSchema } from "./schemas/component.create.schema";
 import ICreatableComponent, {CreatableElementDataType} from "../../types/component/ICreatableComponent";
 import ErrorMessage from "../../components/ErrorMessage";
+import slug from "slug";
 
 export const ComponentCreatePage = (() => {
   const { mutate, error } = useStoreComponent();
@@ -31,7 +32,7 @@ export const ComponentCreatePage = (() => {
   const [t] = useTranslation("global");
 
   const addElementOnClick = () => {
-    append({ name: "", identifier: "", element_type: AvoRedFieldTypesEnum.TEXT });
+    append({ name: "", identifier: "", element_type: AvoRedFieldTypesEnum.TEXT, element_data_type: 'TEXT' });
   };
 
   const deleteElementOnClick = (elementIndex: number) => {
@@ -44,6 +45,9 @@ export const ComponentCreatePage = (() => {
   ) => {
     setValue(`elements.${fieldIndex}.element_type`, fieldTypeValue);
     setValue(`elements.${fieldIndex}.element_data`, [{ label: "", value: "" }]);
+    // Ideally value of this data type can be based on element
+    // e.g: Number Input field will have INT(It should match rust backend type) data type
+    setValue(`elements.${fieldIndex}.element_data_type`, 'TEXT');
     trigger(`elements.${fieldIndex}`);
   };
 
@@ -72,6 +76,15 @@ export const ComponentCreatePage = (() => {
     mutate(data);
   };
 
+  const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    setValue('identifier', slug(e.currentTarget.value || ''))
+  }
+
+  const ElementNameOnChange = (async (e: React.KeyboardEvent<HTMLInputElement>, elementIndex: number) => {
+    setValue(`elements.${elementIndex}.identifier`, slug(e.currentTarget.value))
+    await trigger(`elements.${elementIndex}`)
+  })
+
   return (
       <div className="flex-1 bg-white">
         <div className="px-5 pl-64 ">
@@ -88,6 +101,7 @@ export const ComponentCreatePage = (() => {
                       name="name"
                       register={register("name")}
                       autoFocus={true}
+                      onKeyUp={e => onNameChange(e)}
                   />
                   <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
                 </div>
@@ -172,7 +186,7 @@ export const ComponentCreatePage = (() => {
                             <div className="mt-3">
                               <Controller
                                   name={`elements.${index}.element_type`}
-                                  render={({ field: element }) => {
+                                  render={({field: element}) => {
                                     return <>{t!('element_type')}: {element.value}</>;
                                   }}
                                   control={control}
@@ -189,6 +203,7 @@ export const ComponentCreatePage = (() => {
                                   register={register(`elements.${index}.name`)}
                                   label={t("element_name")}
                                   placeholder={t("element_name")}
+                                  onKeyUp={e => ElementNameOnChange(e, index)}
                               />
                             </div>
                             <div className="mt-3">
@@ -202,7 +217,7 @@ export const ComponentCreatePage = (() => {
                             <Controller
                                 name={`elements.${index}`}
                                 control={control}
-                                render={({ field: element }) => {
+                                render={({field: element}) => {
                                   return element.value.element_type ===
                                   AvoRedFieldTypesEnum.SELECT ? (
                                       <div className="mt-3">
@@ -228,7 +243,7 @@ export const ComponentCreatePage = (() => {
                                                       />
                                                     </div>
 
-                                                    <div className="w-1/2 ml-3 w-full">
+                                                    <div className="w-1/2 ml-3">
                                                       <label
                                                           htmlFor="hs-inline-leading-pricing-select-label"
                                                           className="text-sm text-gray-600"
@@ -255,7 +270,7 @@ export const ComponentCreatePage = (() => {
                                                             }
                                                             className="absolute inset-y-0 end-0 z-40 flex items-center text-gray-500"
                                                         >
-                                                          <TrashIcon className="text-primary-500 w-4 h-4 mr-2" />
+                                                          <TrashIcon className="text-primary-500 w-4 h-4 mr-2"/>
                                                         </div>
                                                       </div>
                                                     </div>
@@ -277,7 +292,7 @@ export const ComponentCreatePage = (() => {
                                               className="flex items-center"
                                               type="button"
                                           >
-                                            <PlusIcon className="text-primary-500 h-6 w-6" />
+                                            <PlusIcon className="text-primary-500 h-6 w-6"/>
                                             <span className="text-sm ml-1 text-primary-500">
                                       {t("add_option")}
                                     </span>
@@ -301,7 +316,7 @@ export const ComponentCreatePage = (() => {
                       className="flex"
                       onClick={addElementOnClick}
                   >
-                    <PlusIcon className="text-primary-500 h-6 w-6" />
+                    <PlusIcon className="text-primary-500 h-6 w-6"/>
                     <span className="text-sm ml-1 text-primary-500">
                     {t("add_element")}
                   </span>

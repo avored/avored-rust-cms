@@ -1,41 +1,28 @@
 use rust_i18n::t;
 use serde::Deserialize;
+use crate::models::page_model::{PageDataType, PageFieldContentType, PageFieldType, PageFieldData};
 use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatePageRequest {
     pub name: String,
-    pub components_content: Vec<UpdatableComponentContentRequest>,
+    pub identifier: String,
+    pub page_fields: Vec<UpdatablePageField>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
-pub struct UpdatableComponentContentRequest {
+pub struct UpdatablePageField {
     pub name: String,
     pub identifier: String,
-    pub elements: Vec<UpdatableComponentElementContentRequest>
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType,
+    pub field_data: PageFieldData
 }
-
-#[derive(Deserialize, Debug, Clone, Default)]
-pub struct UpdatableComponentElementContentRequest {
-    pub name: String,
-    pub identifier: String,
-    pub element_type: String,
-    pub element_content: String,
-    pub element_data_type: String,
-    pub element_data: Option<Vec<EditablePageComponentElementDataOptionRequest>>
-}
-
-#[derive(Deserialize, Debug, Clone, Default)]
-pub struct EditablePageComponentElementDataOptionRequest {
-    pub label: String,
-    pub value: String,
-}
-
 
 impl UpdatePageRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
-
         if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),

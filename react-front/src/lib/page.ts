@@ -1,8 +1,10 @@
 import _ from "lodash";
+import {PageFieldType} from "../types/CmsPageType";
 
-export const GetElementValue = ((component: any, element_identifier: string) => {
-    const element = _.get(component, 'elements', []).find((ele: any) => {
+export const GetElementValue = ((fields: Array<PageFieldType>, element_identifier: string) => {
+    console.log(fields, "fields");
+    const field = fields.find((ele: any) => {
         return ele.identifier === element_identifier
     })
-    return _.get(element, 'element_content', '')
+    return _.get(field, 'field_content', '')
 })

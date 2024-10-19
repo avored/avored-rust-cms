@@ -1,23 +1,23 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{PageModel, UpdatableComponentContentModel, UpdatableComponentElementContentModel, UpdatablePageComponentElementDataModel, UpdatablePageModel};
-use crate::models::validation_error::ErrorResponse;
+use crate::models::page_model::{NewPageModel, NewUpdatablePageModel, UpdatablePageField};
 use crate::{
     api::handlers::page::request::update_page_request::UpdatePageRequest,
     avored_state::AvoRedState, error::Result
 };
 
 use axum::{Extension, extract::{Path as AxumPath, State}, Json};
-use serde::Serialize;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
+use crate::responses::ApiResponse;
 
 pub async fn update_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     AxumPath(page_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<UpdatePageRequest>,
-) -> Result<Json<UpdatablePageResponse>> {
+) -> Result<Json<ApiResponse<NewPageModel>>> {
     println!("->> {:<12} - update_page_api_handler", "HANDLER");
 
     let has_permission_bool = state
@@ -25,7 +25,7 @@ pub async fn update_page_api_handler(
         .has_permission(logged_in_user.clone(), String::from("page_edit"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let error_messages = payload.validate()?;
@@ -36,68 +36,52 @@ pub async fn update_page_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
-    let mut updatable_page = UpdatablePageModel {
-        id: page_id,
+    let page_model = state
+        .page_service
+        .find_by_id(&state.db, page_id)
+        .await?;
+
+    let mut updatable_page = NewUpdatablePageModel {
+        id: page_model.id,
         name: payload.name,
-        component_contents: vec![],
-        logged_in_username: logged_in_user.email.clone(),
+        identifier: payload.identifier,
+        logged_in_username: logged_in_user.name.clone(),
+        page_fields: vec![],
+        created_at: page_model.created_at,
+        created_by: page_model.created_by
     };
 
-
-    for payload_component_content in payload.components_content {
-        let mut  updatable_component_content_model = UpdatableComponentContentModel {
-            name: payload_component_content.name,
-            identifier: payload_component_content.identifier,
-            elements: vec![],
+    for  payload_page_field in  payload.page_fields {
+        let page_field_model = UpdatablePageField {
+            name: payload_page_field.name,
+            identifier: payload_page_field.identifier,
+            data_type: payload_page_field.data_type,
+            field_type: payload_page_field.field_type,
+            field_content: payload_page_field.field_content,
+            field_data: payload_page_field.field_data
         };
-
-        for  payload_component_elements_data in  payload_component_content.elements {
-            let mut payload_element_data_model_options: Vec<UpdatablePageComponentElementDataModel> = Vec::new();
-            let  payload_element_options_data = payload_component_elements_data.element_data.unwrap_or(Vec::new());
-
-            for payload_component_element_data_option in payload_element_options_data {
-                let creatable_page_element_option_data = UpdatablePageComponentElementDataModel {
-                    label: payload_component_element_data_option.label,
-                    value: payload_component_element_data_option.value,
-                };
-                payload_element_data_model_options.push(creatable_page_element_option_data);
-            }
-
-            let updatable_component_element_content = UpdatableComponentElementContentModel {
-                name: payload_component_elements_data.name,
-                identifier: payload_component_elements_data.identifier,
-                element_type: payload_component_elements_data.element_type,
-                element_content: payload_component_elements_data.element_content,
-                element_data_type: payload_component_elements_data.element_data_type,
-                element_data: payload_element_data_model_options
-            };
-
-            updatable_component_content_model.elements.push(updatable_component_element_content);
-        }
-
-        updatable_page.component_contents.push(updatable_component_content_model);
+        updatable_page.page_fields.push(page_field_model);
     }
 
-
-
-    let updated_page_model = state
+    let created_page_model = state
         .page_service
-        .update_page(&state.db, updatable_page, logged_in_user)
+        .update_page(&state.db, updatable_page)
         .await?;
-    let response = UpdatablePageResponse {
+
+    let response = ApiResponse {
         status: true,
-        page_model: updated_page_model
+        data: created_page_model
     };
 
     Ok(Json(response))
 }
 
 
-#[derive(Serialize, Debug)]
-pub struct UpdatablePageResponse {
-    pub status: bool,
-    pub page_model: PageModel
-}
+// #[derive(Serialize, Debug)]
+// pub struct UpdatablePageResponse {
+//     pub status: bool,
+//     pub page_model: NewPageModel
+// }

@@ -10,7 +10,7 @@ export const useHomeCmsPage = (): UseQueryResult<AxiosResponse<CmsPageType>> => 
         queryKey: ['home-cms-page'],
         queryFn: (async () => {
             try {
-                return await client.get<CmsPageType>("/cms/page/ym2z7ls4kpb4gp5kh7d2")
+                return await client.get<CmsPageType>("/cms/page/wvb4100904eaf3ykz64c")
             } catch (error) {
                 //@todo display error
             }

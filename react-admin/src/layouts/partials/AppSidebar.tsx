@@ -54,7 +54,7 @@ function AppSidebar() {
                                 <div className="pr-2">
                                     <FilmIcon className="h-4 w-4" />
                                 </div>
-                                <div>{t("sidebar.assets_manager")}</div>
+                                <div>{t("asset_manager")}</div>
                             </Link>
 
                             <Link

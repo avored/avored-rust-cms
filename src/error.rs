@@ -3,6 +3,7 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use axum::extract::multipart::MultipartError;
 use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
 use rust_i18n::t;
@@ -18,13 +19,15 @@ pub enum Error {
 
     Generic(String),
 
-    CreateModelError(String),
+    CreateModel(String),
 
-    BadRequestError(ErrorResponse),
+    BadRequest(ErrorResponse),
 
-    AuthenticationError,
+    Authentication,
 
-    FORBIDDEN
+    NotFound(String),
+
+    Forbidden
 }
 
 impl core::fmt::Display for Error {
@@ -36,8 +39,38 @@ impl core::fmt::Display for Error {
 impl std::error::Error for Error {}
 
 impl From<serde_json::Error> for Error {
-    fn from(_val: serde_json::Error) -> Self {
+    fn from(val: serde_json::Error) -> Self {
+        error!("there is an issue with serde json error: {val:?}");
         Error::Generic("Serde struct to string  Error".to_string())
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for Error {
+    fn from(val: jsonwebtoken::errors::Error) -> Self {
+        error!("there is an issue with jsonwebtoken error: {val:?}");
+        Error::Generic("Json web token error".to_string())
+    }
+}
+
+
+impl From<MultipartError> for Error {
+    fn from(val: MultipartError) -> Self {
+        error!("there is an issue with multipart error: {val:?}");
+        Error::Generic("multipart can not find next field".to_string())
+    }
+}
+
+impl From<dotenvy::Error> for Error {
+    fn from(val: dotenvy::Error) -> Self {
+        error!("there is an issue with loading env file: {val:?}");
+        Error::Generic("there is an issue with loading env file".to_string())
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(val: std::io::Error) -> Self {
+        error!("there is an issue with creating io error: {val:?}");
+        Error::Generic("tokio file create folder error ".to_string())
     }
 }
 
@@ -47,15 +80,10 @@ impl From<surrealdb::err::Error> for Error {
         Error::Generic("Surreal Error".to_string())
     }
 }
-//
-// impl From<<T as TryFrom<Object>>::Error> for Error {
-//     fn from(_val: surrealdb::err::Error) -> Self {
-//         Error::Generic("Surreal Error".to_string())
-//     }
-// }
 
 impl From<argon2::password_hash::Error> for Error {
-    fn from(_val: argon2::password_hash::Error) -> Self {
+    fn from(val: argon2::password_hash::Error) -> Self {
+        error!("there is an issue while encrypting password with argon2: {val:?}");
         Error::Generic("Password hasher error".to_string())
     }
 }
@@ -66,12 +94,6 @@ impl From<RenderError> for Error {
     }
 }
 
-// impl TryFrom<Object> for Error {
-//     fn try_from(actual_error: Object) -> Self {
-//         error!("there is an issue while rendering the handlebar template: {actual_error:?}");
-//         Error::Generic("handlebar error".to_string())
-//     }
-// }
 
 impl From<TemplateError> for Error {
     fn from(actual_error: TemplateError) -> Self {
@@ -105,11 +127,21 @@ impl From<lettre::error::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        let response = match self {
-            Error::BadRequestError(str) => {
+        
+
+        // Create a placeholder Axum response.
+        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
+        // let mut response = self {
+        //
+        // }
+        // Insert the Error into the response.
+        // response.extensions_mut().insert(response);
+
+        match self {
+            Error::BadRequest(str) => {
                 (StatusCode::BAD_REQUEST, str).into_response()
             },
-            Error::AuthenticationError => {
+            Error::Authentication => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),
@@ -123,7 +155,7 @@ impl IntoResponse for Error {
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
             },
-            Error::FORBIDDEN => {
+            Error::Forbidden => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),
@@ -137,18 +169,11 @@ impl IntoResponse for Error {
                 };
                 (StatusCode::FORBIDDEN, error_response).into_response()
             },
+            Error::NotFound(msg) => {
+                (StatusCode::NOT_FOUND, msg).into_response()
+            },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
-        };
-
-        // Create a placeholder Axum response.
-        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
-        // let mut response = self {
-        //
-        // }
-        // Insert the Error into the response.
-        // response.extensions_mut().insert(response);
-
-        response
+        }
     }
 }
 impl IntoResponse for ErrorResponse {

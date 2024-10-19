@@ -1,7 +1,6 @@
 use std::sync::Arc;
 use axum::extract::{Query, State};
 use axum::{Extension, Json};
-use serde::Serialize;
 use crate::api::handlers::page::request::page_table_request::PageTableRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
@@ -20,7 +19,7 @@ pub async fn admin_user_table_api_handler(
         .has_permission(logged_in_user, String::from("admin_user_table"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let current_page = query_param.page.unwrap_or(0);
@@ -30,11 +29,4 @@ pub async fn admin_user_table_api_handler(
         .paginate(&state.db, current_page, order).await?;
 
     Ok(Json(admin_user_pagination))
-}
-
-
-#[derive(Serialize, Debug)]
-pub struct FetchPageResponse {
-    pub status: bool,
-    pub page_model: AdminUserPagination
 }

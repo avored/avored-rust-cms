@@ -11,6 +11,7 @@ import {joiResolver} from "@hookform/resolvers/joi";
 import IAdminUserCreate from "../../types/admin-user/IAdminUserCreate";
 import {useStoreAdminUser} from "./hooks/useStoreAdminUser";
 import {useAdminUserCreateSchema} from "./schemas/admin.user.create.schema";
+import ErrorMessage from "../../components/ErrorMessage";
 
 function AdminUserCreate() {
     const [selectedOption, setSelectedOption] = useState([]);
@@ -29,7 +30,7 @@ function AdminUserCreate() {
     })
 
     const roleOptionResult = useGetRoleOptions();
-    const {mutate} = useStoreAdminUser()
+    const {mutate, error} = useStoreAdminUser()
     const roles = _.get(roleOptionResult, "data.data.options", []);
 
     const isSuperAdminSwitchOnChange = ((e: boolean) => {
@@ -63,6 +64,7 @@ function AdminUserCreate() {
                                     register={register("full_name")}
                                     autoFocus
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="full_name" />
                             </div>
                             <div className="mb-4">
                                 <InputField
@@ -71,6 +73,7 @@ function AdminUserCreate() {
                                     name="email"
                                     register={register("email")}
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="email" />
                             </div>
 
                             <div className="mb-4">
@@ -80,6 +83,7 @@ function AdminUserCreate() {
                                     name="password"
                                     register={register("password")}
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="password" />
                             </div>
                             <div className="mb-4">
                                 <InputField
@@ -88,6 +92,7 @@ function AdminUserCreate() {
                                     name="confirmation_password"
                                     register={register("confirmation_password")}
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="confirmation_password" />
                             </div>
 
                             <Controller

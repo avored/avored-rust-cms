@@ -1,0 +1,1614 @@
+{
+	"info": {
+		"_postman_id": "d879ff3c-62f9-4f2c-b661-55e165a7b8b5",
+		"name": "Avored cms",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2574274",
+		"_collection_link": "https://martian-zodiac-784161.postman.co/workspace/Local~08c1ff74-0bb3-4dd2-aa49-48ca9ebb777b/collection/2574274-d879ff3c-62f9-4f2c-b661-55e165a7b8b5?action=share&source=collection_link&creator=2574274"
+	},
+	"item": [
+		{
+			"name": "Page Admin API",
+			"item": [
+				{
+					"name": "Page Table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/page",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Page",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"about us page\", \"identifier\": \"about-us-1231\", \"content\": \"Content about us DATA PAGE\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page/ym2z7ls4kpb4gp5kh7d2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page",
+								"ym2z7ls4kpb4gp5kh7d2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CMS fetch page",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"about us page\", \"identifier\": \"about-us-1231\", \"content\": \"Content about us DATA PAGE\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/cms/page/ym2z7ls4kpb4gp5kh7d2",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"cms",
+								"page",
+								"ym2z7ls4kpb4gp5kh7d2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Page",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"About US\",\n    \"identifier\": \"about-us-{{$randomAlphaNumeric}}\",\n    \"components_content\": [\n        {\n            \"name\": \"update test name\", \n            \"identifier\": \"test-identifier\",\n            \"elements\": [\n                {\n                    \"name\": \"test name\",\n                    \"identifier\": \"test identifier\",\n                    \"element_type\": \"text\",\n                    \"element_data_type\": \"TEXT\",\n                    \"element_content\": \"test field content 1\"\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Page new",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"select dropdown-1\",\n  \"identifier\": \"select-dropdown-1-{{$randomAlphaNumeric}}\",\n  \"page_fields\": [\n    {\n      \"name\": \"test dropdown\",\n      \"identifier\": \"test-dropdown\",\n      \"data_type\": \"TEXT\",\n      \"field_type\": \"Select\",\n      \"field_content\": \"\",\n      \"field_data\": {\n          \"select_field_options\": [\n            {\n              \"label\": \"label1\",\n              \"value\": \"value1\"\n            },\n            {\n              \"label\": \"label2\",\n              \"value\": \"value2\"\n            }\n          ]\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Page Radio field",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"About us page with radio field\",\n  \"identifier\": \"about-us-page-radio-field-{{$randomAlphaNumeric}}\",\n  \"page_fields\": [\n    {\n      \"name\": \"test radio field\",\n      \"identifier\": \"test-radio-field-{{$randomAlphaNumeric}}\",\n      \"data_type\": \"TEXT\",\n      \"field_type\": \"Radio\",\n      \"field_content\": \"test\",\n      \"field_data\": {\n        \"select_field_options\" : [{}]\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Page",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"About us update\",\n    \"identifier\": \"5knwdjk1ook0q37l1hyr\",\n    \"components_content\": [\n        {\n            \"name\": \"update test name\", \n            \"identifier\": \"test-identifier\",\n            \"elements\": [\n                {\n                    \"name\": \"test name\",\n                    \"identifier\": \"test identifier\",\n                    \"element_type\": \"text\",\n                    \"element_data_type\": \"TEXT\",\n                    \"element_content\": \"test field content 2\"\n                }\n            ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page/iu6qk85maak7673x7wzk",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page",
+								"iu6qk85maak7673x7wzk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Page new",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"page name\",\n    \"identifier\": \"page-name-6\",\n    \"page_fields\": [\n    {\n      \"name\": \"test dropdown\",\n      \"identifier\": \"test-dropdown\",\n      \"data_type\": \"TEXT\",\n      \"field_type\": \"SELECT\",\n      \"field_content\": \"\",\n      \"field_data\": {\n          \"select_field_options\": [\n            {\n              \"label\": \"label2\",\n              \"value\": \"value2\"\n            },\n            {\n              \"label\": \"label3\",\n              \"value\": \"value3\"\n            }\n          ]\n      }\n    }\n  ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/page/ylc4tsi1eizchyp0xjg1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"page",
+								"ylc4tsi1eizchyp0xjg1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Misc Admin",
+			"item": [
+				{
+					"name": "health check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/health-check",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"health-check"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setup API",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@admin.com\", \n    \"password\": \"admin213\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/setup",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"setup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Openapi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/openapi.json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"openapi.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Install demo data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/install-demo-data",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"install-demo-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove demo data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/delete-demo-data",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"delete-demo-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Graphql API",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query {\n    apiVersion {\n        id\n    }\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "{{url}}/graphql",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"graphql"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "API Docs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/openapi.json",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"openapi.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setting all",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/setting",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"setting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Setting update",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n    \n    \"settings\": [\n        {\n            \"id\": \"h79hk3g62vftp05p2o12\",\n            \"value\": \"avored rust cms update\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/setting",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"setting"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Testing request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test\",\n    \"field_data\": {\n        \"select_field_option\": [\n            {\n                \"label\": \"label1\",\n                \"value\": \"value1\"\n            }\n        ]\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/testing",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"testing"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Admin User Admin API",
+			"item": [
+				{
+					"name": "Logged In User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/logged-in-user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"logged-in-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Admin User Table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/admin-user?order=created_at:DESC",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin-user"
+							],
+							"query": [
+								{
+									"key": "order",
+									"value": "created_at:DESC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Admin User",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data;  boundary=----"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name",
+									"value": "admin {{$randomWords}}}",
+									"type": "text"
+								},
+								{
+									"key": "email",
+									"value": "{{$randomExampleEmail}}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1eea5c8c-71fb-4410-8bed-5eac0efb126f"
+								},
+								{
+									"key": "role_ids[]",
+									"value": "17h7b55inbxxlwgis98x",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "password",
+									"value": "admin123",
+									"type": "text"
+								},
+								{
+									"key": "confirmation_password",
+									"value": "admin123",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/admin-user",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin-user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password Admin user",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"content-type": true
+						}
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"admin213\", \n    \"password\": \"admin123\",\n    \"confirm_password\": \"admin123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/change-password",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"change-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Admin User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "content",
+								"value": "multipart/form-data;  boundary=----",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "full_name",
+									"value": "admin2",
+									"type": "text"
+								},
+								{
+									"key": "is_super_admin",
+									"value": "false",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"type": "file",
+									"src": "postman-cloud:///1eea5c8c-71fb-4410-8bed-5eac0efb126f"
+								},
+								{
+									"key": "role_ids[]",
+									"value": "1szojatwrr95iepmp2b7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/admin-user/eqv4nbtb8lhky8dnzm0n",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin-user",
+								"eqv4nbtb8lhky8dnzm0n"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Admin User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/admin-user/99s7r4h8zguz5dz7rvh3",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"admin-user",
+								"99s7r4h8zguz5dz7rvh3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Role Admin API",
+			"item": [
+				{
+					"name": "RoleTable",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/role",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RoleOptions",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/role-options",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"role-options"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Role",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"about us page\", \"identifier\": \"about-us-1231\", \"content\": \"Content about us DATA PAGE\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/role/1lp8drqo4p86orlcyt2o",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								"1lp8drqo4p86orlcyt2o"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Another Role {{$randomWords}}\", \r\n    \"identifier\": \"another-role-{{$randomLoremSlug}}\", \r\n    \"permissions\": [\r\n        \"dashboard\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/role",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"role"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Role Identifier check",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"another-role-totam-molestiae-aut\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/put-role-identifier/0bzqwga7eglbo10qurba",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"put-role-identifier",
+								"0bzqwga7eglbo10qurba"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Role",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"name\": \"Another Role 2 update\", \"identifier\": \"another role-2\", \"permissions\": [\"dashboard\", \"admin_user_table\"]}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/role/ze8ww8hvq2bet21b9n1i",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"role",
+								"ze8ww8hvq2bet21b9n1i"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Asset admin API",
+			"item": [
+				{
+					"name": "Asset Table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/asset",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"asset"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Asset",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "multipart/form-data;  boundary=----",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1eea5c8c-71fb-4410-8bed-5eac0efb126f"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{url}}/api/asset?parent_id=406axwdq7sl7x9r6gqhx",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"asset"
+							],
+							"query": [
+								{
+									"key": "parent_id",
+									"value": "406axwdq7sl7x9r6gqhx"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Rename Asset",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"updated_folder_name_{{$randomAlphaNumeric}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/rename-asset/r3pp9t2hdjj7yo977gt9",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"rename-asset",
+								"r3pp9t2hdjj7yo977gt9"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Directory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"folder_name_{{$randomAlphaNumeric}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/create-folder",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"create-folder"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Asset",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"fodler_name_{{$randomAlphaNumeric}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/delete-asset/r4c97kkc0c1fie4rs19y",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"delete-asset",
+								"r4c97kkc0c1fie4rs19y"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Directory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"fodler_name_{{$randomAlphaNumeric}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/delete-folder/had2xywy9kg5qknfgve7",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"delete-folder",
+								"had2xywy9kg5qknfgve7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Component admin API",
+			"item": [
+				{
+					"name": "Component table",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/component",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"component"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Fetch Component",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/component/3xmz9eu0hrpefiofdyns",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"component",
+								"3xmz9eu0hrpefiofdyns"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Component ALL",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}/api/component-all",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"component-all"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Store Component",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"{{$randomWords}} title\", \n    \"identifier\": \"seo-{{$randomInt}}\", \n    \"elements\": [\n        {\n            \"name\": \"{{$randomWords}}\",\n            \"identifier\": \"element-identifier-{{$randomInt}}\",\n            \"element_type\": \"select\",\n            \"element_data_type\": \"TEXT\",\n            \"element_data\": [\n                    {\n                        \"label\": \"option 1\",\n                        \"value\": \"value 1\"\n                    }\n                ]\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/component",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"component"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Component",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Tennessee Accountability Practical title update \",\n    \"elements\": [\n            {\n                \"name\": \"Palau Turnpike Update\",\n                \"identifier\": \"element-identifier-{{$randomInt}}\",\n                \"element_type\": \"select\",\n                \"element_data\": [\n                    {\n                        \"label\": \"option 1\",\n                        \"value\": \"value 1\"\n                    }\n                ]\n            }\n        ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/api/component/v4kklp63hjt18h33iz39",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"api",
+								"component",
+								"v4kklp63hjt18h33iz39"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "login api",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"pm.globals.set(\"token\", jsonData.data);",
+							"",
+							"pm.collectionVariables.set(\"token\", jsonData.data)",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@admin.com\", \n    \"password\": \"admin213\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/api/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "token",
+			"type": "string"
+		}
+	]
+}

@@ -14,6 +14,7 @@ pub struct CreatableElementRequest {
     pub name: String,
     pub identifier: String,
     pub element_type: String,
+    pub element_data_type: String,
     pub element_data: Option<Vec<CreatableComponentElementDataRequest>>
 }
 

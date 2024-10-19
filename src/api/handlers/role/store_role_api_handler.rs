@@ -24,7 +24,7 @@ pub async fn store_role_api_handler(
         .has_permission(logged_in_user.clone(), String::from("role_create"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
     let error_messages = payload.validate()?;
@@ -35,7 +35,7 @@ pub async fn store_role_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let creatable_role = CreatableRole {

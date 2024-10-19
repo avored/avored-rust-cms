@@ -96,7 +96,7 @@ function RoleEdit() {
                                     htmlFor={switchKey}
                                     className="text-sm text-gray-600"
                                 >
-                                    {t(`pages.role.permissions.${switchKey}`)}
+                                    {t(switchKey)}
                                 </label>
                                 <Switch
                                     checked={permissionAllowed('setting')}
@@ -225,8 +225,10 @@ function RoleEdit() {
                                         <div className="p-3">
                                             {renderSwitch('asset_table')}
                                             {renderSwitch('asset_create')}
-                                            {renderSwitch('asset_edit')}
+                                            {renderSwitch('rename_asset')}
                                             {renderSwitch('asset_delete')}
+                                            {renderSwitch('create_folder')}
+                                            {renderSwitch('delete_folder')}
                                         </div>
                                     </div>
 

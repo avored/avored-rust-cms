@@ -3,16 +3,14 @@ import {
   PuzzlePieceIcon,
   StarIcon,
 } from "@heroicons/react/24/solid";
-import { useRepositoryInformation } from "./hooks/useRepositoryInformation";
-import {ComponentContentType} from "../../types/CmsPageType";
 import {GetElementValue} from "../../lib/page";
+import {PageFieldType} from "../../types/CmsPageType";
 
 type RepositoryComponentProps = {
-  RepositoryComponent?: ComponentContentType
+  page_fields: PageFieldType[]
 }
 
 const RepositoryInformation = (props: RepositoryComponentProps) => {
-  console.log(props)
   return (
     <>
       <hr />
@@ -23,16 +21,15 @@ const RepositoryInformation = (props: RepositoryComponentProps) => {
               <StarIcon className="h-12 w-12" />
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
-              {/*{repositoryInformation.data?.data.data.star ?? 65}*/}
-              65
+              {GetElementValue(props.page_fields, 'rate-us-number')}
             </div>
           </div>
           <div className="ml-3 group-hover:text-white">
             <h5 className="text-lg p-3 heading-font font-semibold">
-              {GetElementValue(props.RepositoryComponent, 'rate-us-title')}
+              {GetElementValue(props.page_fields, 'rate-us-title')}
             </h5>
             <p className="text-sm">
-              {GetElementValue(props.RepositoryComponent, 'rate-us-description')}
+              {GetElementValue(props.page_fields, 'rate-us-description')}
             </p>
           </div>
         </div>
@@ -45,15 +42,15 @@ const RepositoryInformation = (props: RepositoryComponentProps) => {
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
               {/*{repositoryInformation.data?.data.data.commit ?? 1234}*/}
-              {GetElementValue(props.RepositoryComponent, 'commit-number')}
+              {GetElementValue(props.page_fields, 'commit-number')}
             </div>
           </div>
           <div className="ml-3 group-hover:text-white">
             <h5 className="text-lg p-3 heading-font font-semibold">
-              {GetElementValue(props.RepositoryComponent, 'commit-title')}
+              {GetElementValue(props.page_fields, 'commit-title')}
             </h5>
             <p className="text-sm">
-              {GetElementValue(props.RepositoryComponent, 'commit-description')}
+              {GetElementValue(props.page_fields, 'commit-description')}
             </p>
           </div>
         </div>
@@ -65,15 +62,15 @@ const RepositoryInformation = (props: RepositoryComponentProps) => {
               </div>
             </div>
             <div className="text-lg group-hover:text-white font-semibold mt-3">
-              {GetElementValue(props.RepositoryComponent, 'contribute-number')}
+              {GetElementValue(props.page_fields, 'contribute-number')}
             </div>
           </div>
           <div className="ml-3">
             <h5 className="text-lg group-hover:text-white p-3 heading-font font-semibold">
-              {GetElementValue(props.RepositoryComponent, 'contribute-title')}
+              {GetElementValue(props.page_fields, 'contribute-title')}
             </h5>
             <p className="text-sm">
-              {GetElementValue(props.RepositoryComponent, 'contribute-description')}
+              {GetElementValue(props.page_fields, 'contribute-description')}
             </p>
           </div>
         </div>

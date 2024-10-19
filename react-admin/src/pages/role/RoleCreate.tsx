@@ -8,6 +8,8 @@ import {useRoleCreateSchema} from "./schemas/role.create.schema";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import {CreatableRoleType} from "../../types/role/CreatableRoleType";
+import React from "react";
+import slug from "slug";
 
 function RoleCreate() {
     const {mutate, error} = useStoreRole()
@@ -60,7 +62,7 @@ function RoleCreate() {
                                     htmlFor="dashboard_permission"
                                     className="text-sm text-gray-600"
                                 >
-                                    {t(`pages.role.permissions.${switchKey}`)}
+                                    {t(switchKey)}
                                 </label>
                                 <Switch
                                     checked={permissionAllowed('setting')}
@@ -89,6 +91,10 @@ function RoleCreate() {
         )
     })
 
+    const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        setValue('identifier', slug(e.currentTarget.value || ''))
+    }
+
     return (
         <div className="flex-1 bg-white">
             <div className="px-5 pl-64 ">
@@ -104,6 +110,7 @@ function RoleCreate() {
                                     label={t("name")}
                                     placeholder={t("name")}
                                     name="name"
+                                    onKeyUp={e => onNameChange(e)}
                                     register={register("name")}
                                     autoFocus={true}
                                 />
@@ -126,7 +133,6 @@ function RoleCreate() {
                                     </div>
                                     <div className="p-3">
                                         {renderSwitch('dashboard')}
-
                                         {renderSwitch('get_setting')}
                                         {renderSwitch('save_setting')}
                                     </div>

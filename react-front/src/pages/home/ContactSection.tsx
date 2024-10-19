@@ -3,11 +3,11 @@ import {useContactUsForm} from "./hooks/useContactUsForm";
 import {useForm} from "react-hook-form";
 import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema";
 import {ContactUsType} from "../../types/ContactUsType";
-import {ComponentContentType} from "../../types/CmsPageType";
+import {PageFieldType} from "../../types/CmsPageType";
 import {GetElementValue} from "../../lib/page";
 
 type ContactUsComponentProps = {
-    ContactUsComponent?: ComponentContentType
+    page_fields: PageFieldType[]
 }
 export const ContactSection = ((props: ContactUsComponentProps) => {
     const {
@@ -45,11 +45,11 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
                 <div className="md:flex flex-row pt-10">
                 <div className="md:w-1/2 w-full pr-5">
                         <div className="text-xl mb-3">
-                            {GetElementValue(props.ContactUsComponent, 'contact-us-title')}
+                            {GetElementValue(props.page_fields, 'contact-us-title')}
                         </div>
                         <div className="text-sm">
                             <p>
-                                {GetElementValue(props.ContactUsComponent, 'contact-us-description')}
+                                {GetElementValue(props.page_fields, 'contact-us-description')}
                             </p>
                         </div>
                     </div>

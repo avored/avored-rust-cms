@@ -6,6 +6,8 @@ use crate::error::Error;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
 use crate::repositories::into_iter_objects;
 
+const PASSWORD_RESET_TABLE: &str = "password_reset";
+
 #[derive(Clone)]
 pub struct PasswordResetRepository {}
 
@@ -25,9 +27,10 @@ impl PasswordResetRepository {
         let data: BTreeMap<String, Value> = [
             ("email".into(), creatable_password_reset_model.email.into()),
             ("token".into(), creatable_password_reset_model.token.into()),
+            ("status".into(), "Active".into()),
             ("created_at".into(), Datetime::default().into()),
-        ]
-            .into();
+        ].into();
+
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
@@ -47,9 +50,43 @@ impl PasswordResetRepository {
         datastore: &Datastore,
         database_session: &Session,
         email: String,
+        token: String,
     ) -> crate::error::Result<PasswordResetModel> {
-        let sql = "SELECT * FROM password_reset WHERE email=$email";
-        let vars: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+        let sql = "SELECT * FROM type::table($table) WHERE email=$email and token=$password_token";
+        let vars: BTreeMap<String, Value> = [
+            ("password_token".into(), token.clone().into()),
+            ("email".into(), email.clone().into()),
+            ("table".into(), PASSWORD_RESET_TABLE.into()),
+        ].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::NotFound(format!("no record found to reset password for email {}", email))),
+        };
+        let password_reset_model: crate::error::Result<PasswordResetModel> = result_object?.try_into();
+
+        password_reset_model
+    }
+
+    pub async fn expire_password_token_by_email_and_token(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        email: String,
+        token: String
+    ) -> crate::error::Result<bool> {
+        let sql = "
+            UPDATE type::table($table) SET status=$status WHERE email=$email and token=$password_token";
+
+        let vars = BTreeMap::from([
+            ("status".into(), "Expire".into()),
+            ("email".into(), email.clone().into()),
+            ("password_token".into(), token.into()),
+            ("table".into(), PASSWORD_RESET_TABLE.into()),
+        ]);
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -58,8 +95,11 @@ impl PasswordResetRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let password_reset_model: crate::error::Result<PasswordResetModel> = result_object?.try_into();
 
-        password_reset_model
+        if result_object.is_ok() {
+            return Ok(true);
+        }
+
+        Err(Error::Generic(format!("issue while updating password by email: {email}")))
     }
 }

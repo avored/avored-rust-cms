@@ -3,12 +3,25 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
 use crate::models::BaseModel;
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default, PartialEq)]
 pub struct PasswordResetModel {
     pub id: String,
     pub email: String,
     pub token: String,
+    pub status: PasswordResetTokenStatus,
     pub created_at: Datetime,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, PartialEq)]
+pub enum PasswordResetTokenStatus {
+    Active,
+    Expire
+}
+
+impl Default for PasswordResetTokenStatus {
+    fn default() -> PasswordResetTokenStatus {
+        PasswordResetTokenStatus::Expire
+    }
 }
 
 impl TryFrom<Object> for PasswordResetModel {
@@ -18,12 +31,18 @@ impl TryFrom<Object> for PasswordResetModel {
         let email = val.get("email").get_string()?;
         let token = val.get("token").get_string()?;
         let created_at = val.get("created_at").get_datetime()?;
+        let status = match val.get("status").get_string()?.as_str() {
+            "Active" => PasswordResetTokenStatus::Active,
+            "Expire" => PasswordResetTokenStatus::Active,
+            _ => PasswordResetTokenStatus::Expire
+        };
 
         Ok(PasswordResetModel {
             id,
             email,
             token,
             created_at,
+            status
         })
     }
 }

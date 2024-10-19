@@ -4,7 +4,7 @@ use axum::http::{header, Response};
 use axum::Json;
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use utoipa::ToSchema;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
@@ -40,7 +40,7 @@ pub async fn admin_user_login_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let admin_user_model = state
@@ -56,7 +56,7 @@ pub async fn admin_user_login_api_handler(
         )?;
 
     if !is_password_match {
-        return Err(Error::AuthenticationError);
+        return Err(Error::Authentication);
     }
 
     let now = chrono::Utc::now();
@@ -74,7 +74,7 @@ pub async fn admin_user_login_api_handler(
         &Header::default(),
         &claims,
         &EncodingKey::from_secret(state.config.jwt_secret_key.as_ref()),
-    ).unwrap();
+    )?;
     let cookie = Cookie::build("token")
         .path("/")
         // .max_age(Duration::h)
@@ -91,14 +91,49 @@ pub async fn admin_user_login_api_handler(
         admin_user: admin_user_model
     };
 
-
     Ok(Json(response_data))
 }
 
 
-#[derive(Serialize, ToSchema)]
+#[derive(Serialize, ToSchema, Deserialize, Debug)]
 pub struct LoginResponseData {
-    status: bool,
-    data: String,
-    admin_user: AdminUserModel
+    pub status: bool,
+    pub data: String,
+    pub admin_user: AdminUserModel
+}
+
+
+#[cfg(test)]
+mod tests {
+    use axum::body::Body;
+    use axum::http::StatusCode;
+    use tower::ServiceExt;
+    use crate::api::rest_api_routes::tests::{ get_axum_app, send_post_request};
+    use crate::error::{Result};
+
+
+    #[tokio::test]
+    async fn test_admin_user_login_api_handler() -> Result<()>
+    {
+        let (app, state) = get_axum_app().await.unwrap();
+        //@todo do a post request to a setup
+        // then do a post request with username and password
+
+        let payload = Body::from(
+            r#"{
+                    "email": "admin@admin.com",
+                    "password": "admin123"
+                }"#,
+        );
+
+        let response = app.oneshot(send_post_request("/api/setup", payload)).await.unwrap();
+
+        assert_eq!(response.status(), StatusCode::OK);
+        let res_b = response.into_body();
+        let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
+
+        println!("response: {:?}", body);
+
+        Ok(())
+    }
 }

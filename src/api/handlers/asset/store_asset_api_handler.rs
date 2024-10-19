@@ -1,4 +1,3 @@
-use std::path::Path;
 use std::sync::Arc;
 
 use crate::{
@@ -6,12 +5,13 @@ use crate::{
     error::Result
 };
 use axum::{Extension, extract::State, Json, response::IntoResponse};
-use axum::extract::Multipart;
+use axum::extract::{Multipart, Query};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
+use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
 use crate::error::Error;
-use crate::models::asset_model::{AssetModel, CreatableAssetModel};
+use crate::models::asset_model::{CreatableAssetModelNew, MetaDataType, NewAssetModel};
 use crate::models::token_claim_model::LoggedInUser;
 
 const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
@@ -19,6 +19,7 @@ const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 pub async fn store_asset_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
+    Query(query_param): Query<StoreAssetRequest>,
     mut multipart: Multipart,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - store_asset_api_handler", "HANDLER");
@@ -28,11 +29,15 @@ pub async fn store_asset_api_handler(
         .has_permission(logged_in_user.clone(), String::from("asset_create"))
         .await?;
     if !has_permission_bool {
-        return Err(Error::FORBIDDEN);
+        return Err(Error::Forbidden);
     }
 
-    let mut creatable_asset_model = CreatableAssetModel::default();
-    creatable_asset_model.logged_in_username = logged_in_user.email;
+    //@todo we need to move this logic to service
+    // we need to make the parent_id works as per it path will be changed too. if exist
+    let mut creatable_asset_model = CreatableAssetModelNew {
+        logged_in_username: logged_in_user.email,
+        .. Default::default()
+    };
     let mut is_allow_file_type = true;
 
     while let Some(field) = multipart.next_field().await.unwrap() {
@@ -41,12 +46,14 @@ pub async fn store_asset_api_handler(
             "file" => {
                 let s: String = rand::thread_rng()
                     .sample_iter(&Alphanumeric)
-                    .take(32)
+                    .take(16)
                     .map(char::from)
                     .collect();
 
                 let file_type = field.content_type().unwrap().to_string();
-                creatable_asset_model.file_type = field.content_type().unwrap().to_string();
+
+                // file type should be part of metadata
+                // creatable_asset_model.file_type = field.content_type().unwrap().to_string();
 
                 is_allow_file_type = ALLOW_TYPES.contains(&file_type.as_str());
 
@@ -55,20 +62,36 @@ pub async fn store_asset_api_handler(
                 }
                 let file_name = field.file_name().unwrap().to_string();
                 let data = field.bytes().await.unwrap();
-                creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
+                // file size should be part of metadata
+                // creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
 
                 if !file_name.is_empty() {
                     let file_ext = file_name.split('.').last().unwrap_or(".png");
                     let new_file_name = format!("{}.{}", s, file_ext);
+                    let query_parent_id = query_param.parent_id.clone().unwrap_or_default();
+                    let asset_file;
 
-                    let file_name = Path::new(&new_file_name).file_name().unwrap();
+                    if !query_parent_id.is_empty() {
+                        let parent_asset = &state
+                            .asset_service
+                            .find_by_id(&state.db, &query_parent_id)
+                            .await?;
 
-                    let asset_file = format!("public/upload/{}", new_file_name.clone());
-                    creatable_asset_model.file_name = new_file_name.clone();
-                    creatable_asset_model.file_path = asset_file;
+                        creatable_asset_model.parent_id = query_parent_id;
+                        asset_file = format!("{}/{}", parent_asset.path, new_file_name.clone());
+                    } else {
+                        asset_file = format!("public/upload/{}", new_file_name.clone());
+                    }
 
-                    let full_path = Path::new("public").join("upload").join(file_name);
-                    tokio::fs::write(full_path, data).await.unwrap();
+                    creatable_asset_model.name = new_file_name.clone();
+                    creatable_asset_model.path = asset_file.clone();
+                    creatable_asset_model.asset_type = String::from("FILE");
+                    creatable_asset_model.metadata = MetaDataType::FileTypeMetaData {file_type};
+
+                    let full_path = format!("./{}", asset_file);
+
+
+                    tokio::fs::write(full_path, data).await?;
                 }
             },
             &_ => continue
@@ -76,7 +99,7 @@ pub async fn store_asset_api_handler(
     }
 
     if !is_allow_file_type {
-        let asset_model = AssetModel::default();
+        let asset_model = NewAssetModel::default();
         let creatable_asset_response = AssetResponseViewModel {
             asset_model,
             success: false
@@ -99,6 +122,6 @@ pub async fn store_asset_api_handler(
 
 #[derive(Serialize)]
 pub struct AssetResponseViewModel {
-    pub asset_model: AssetModel,
+    pub asset_model: NewAssetModel,
     pub success: bool
 }

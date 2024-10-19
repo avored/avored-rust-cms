@@ -16,5 +16,6 @@ pub struct LoggedInUser {
     pub id: String,
     pub name: String,
     pub email: String,
+    pub demo_data_status: bool,
     pub admin_user_model: AdminUserModel
 }

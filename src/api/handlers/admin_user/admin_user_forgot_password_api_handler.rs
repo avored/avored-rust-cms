@@ -6,16 +6,17 @@ use crate::api::handlers::admin_user::request::admin_user_forgot_password_reques
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::validation_error::ErrorResponse;
+use crate::responses::ApiResponse;
 
 #[derive(Serialize, Default)]
 pub struct ForgotPasswordViewModel {
     pub link: String
 }
 
-pub async fn admin_user_forgot_password_api_handler(
+pub async fn admin_user_forgot_password_api_handler (
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<AdminUserForgotPasswordRequest>,
-) -> Result<Json<ResponseData>> {
+) -> Result<Json<ApiResponse<bool>>> {
     println!("->> {:<12} - admin_user_forgot_password_api_handler", "HANDLER");
 
     let error_messages = payload.validate()?;
@@ -26,7 +27,7 @@ pub async fn admin_user_forgot_password_api_handler(
             errors: error_messages
         };
 
-        return Err(Error::BadRequestError(error_response));
+        return Err(Error::BadRequest(error_response));
     }
 
     let template = &state.template;
@@ -36,15 +37,10 @@ pub async fn admin_user_forgot_password_api_handler(
         .sent_forgot_password_email(&state.db, template, react_admin_url, payload.email)
         .await?;
 
-    let response_data = ResponseData {
-        status: sent_status
+    let response_data = ApiResponse {
+        status: true,
+        data: sent_status,
     };
 
     Ok(Json(response_data))
-}
-
-
-#[derive(Serialize)]
-pub struct ResponseData {
-    status: bool
 }

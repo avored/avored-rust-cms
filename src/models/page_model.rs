@@ -20,11 +20,11 @@ pub struct TextContentType {
     pub text_value: String
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
-pub struct  IntegerContentType {
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub struct IntegerContentType {
     pub integer_value: i64
 }
-
 
 impl Default for PageFieldContentType {
     fn default() -> PageFieldContentType {
@@ -114,7 +114,6 @@ pub struct PageFieldModel {
     pub field_data: PageFieldData
 }
 
-
 impl TryFrom<TextContentType> for Value {
     type Error = Error;
     fn try_from(val: TextContentType) -> Result<Value> {
@@ -126,6 +125,7 @@ impl TryFrom<TextContentType> for Value {
         Ok(val_val.into())
     }
 }
+
 
 impl TryFrom<IntegerContentType> for Value {
     type Error = Error;
