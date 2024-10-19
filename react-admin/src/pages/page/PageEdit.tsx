@@ -21,7 +21,7 @@ import {
 } from "../../types/page/IPageModel";
 import _ from "lodash";
 import {
-  AvoRedPageFieldRadioFieldDataOptions,
+  AvoRedPageFieldRadioFieldDataOptions, PageFieldContent, PageTextContent,
   SaveFieldType,
   SavePageType,
 } from "../../types/page/CreatablePageType";
@@ -95,10 +95,18 @@ function PageEdit() {
   };
 
   const textEditorOnChange = (value: string, field_index: number) => {
-    setValue(`page_fields.${field_index}.field_content`, value);
+    const text_content: PageTextContent = {
+      text_value: value,
+    };
+    const page_content: PageFieldContent =  {
+      text_value: text_content
+    }
+    setValue(`page_fields.${field_index}.field_content`, page_content);
   };
   const textEditorGetValue = (field_index: number): string => {
-    return getValues(`page_fields.${field_index}.field_content`) as string;
+    const page_field_content: PageFieldContent =  getValues(`page_fields.${field_index}.field_content`);
+
+    return (page_field_content.text_value?.text_value) as string;
   };
 
   const renderField = (field: SaveFieldType, index: number) => {
@@ -208,13 +216,18 @@ function PageEdit() {
     max_index: number,
   ) => {
     e.preventDefault();
-
+    const empty_content: PageTextContent =  {
+      text_value: "",
+    }
+    const empty_page_content: PageFieldContent = {
+      text_value: empty_content
+    };
     append({
       name: "",
       identifier: "",
       data_type: AvoRedPageDataType.TEXT,
       field_type: AvoRedPageFieldType.TEXT,
-      field_content: "",
+      field_content: empty_page_content,
     });
     await trigger("page_fields");
 

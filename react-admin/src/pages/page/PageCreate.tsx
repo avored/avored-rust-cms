@@ -11,7 +11,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import "easymde/dist/easymde.min.css";
 import slug from "slug";
 import {
-  AvoRedPageFieldRadioFieldDataOptions,
+  AvoRedPageFieldRadioFieldDataOptions, PageFieldContent, PageTextContent,
   SaveFieldType,
   SavePageType,
 } from "../../types/page/CreatablePageType";
@@ -84,7 +84,13 @@ function PageCreate() {
   };
 
   const textEditorOnChange = (value: string, field_index: number) => {
-    setValue(`page_fields.${field_index}.field_content`, value);
+    const text_content: PageTextContent = {
+      text_value: value,
+    };
+    const page_content: PageFieldContent =  {
+      text_value: text_content
+    }
+    setValue(`page_fields.${field_index}.field_content`, page_content);
   };
 
   const renderField = (field: SaveFieldType, index: number) => {
