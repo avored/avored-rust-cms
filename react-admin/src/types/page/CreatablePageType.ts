@@ -11,8 +11,22 @@ export type SaveFieldType = {
     identifier: string;
     data_type: AvoRedPageDataType;
     field_type: AvoRedPageFieldType;
+    field_content: PageFieldContent;
     field_data?: AvoRedPageFieldData,
 }
+
+export type PageFieldContent = {
+    text_value?: PageTextContent,
+    integer_value?: PageIntegerContent
+}
+
+export type PageTextContent = {
+    text_value: string;
+}
+export type PageIntegerContent = {
+    integer_value: number;
+}
+
 
 export type AvoRedPageFieldData = {
     select_field_options?: Array<AvoRedPageFieldSelectFieldDataOptions>,
