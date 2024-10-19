@@ -1,8 +1,8 @@
 import {Menu, MenuButton, MenuItem, MenuItems, Transition} from "@headlessui/react"
 import {
-  ChevronDownIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
+    ChevronDownIcon,
+    ChevronRightIcon,
+    ChevronUpIcon, ExclamationTriangleIcon,
 } from "@heroicons/react/24/solid";
 import {Column, flexRender, Table} from "@tanstack/react-table"
 import {ChevronLeftIcon} from "@heroicons/react/20/solid";
@@ -96,31 +96,64 @@ const AvoRedTable = (props: Props) => {
                 ))}
                 </thead>
                 <tbody>
-                {props.table.getRowModel().rows.map(row => (
-                    <tr key={row.id} className="border-b">
-                        {row.getVisibleCells().map(cell => (
-                            <td key={cell.id} className="py-3 px-4">
-                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                            </td>
-                        ))}
+
+                {(props.table.getRowModel().rows.length <= 0) ? (
+                    <tr>
+                        <td colSpan={props.table.getHeaderGroups()[0].headers.length}>
+                            <div className="flex w-full justify-center py-10">
+                                <ExclamationTriangleIcon className="h-8 w-8" />
+                                <span className="ml-5">
+                                    Sorry no records found
+                                </span>
+                            </div>
+                        </td>
                     </tr>
-                ))}
+                ) : (
+                    <>
+                        {props.table.getRowModel().rows.map(row => (
+                            <tr key={row.id} className="border-b">
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id} className="py-3 px-4">
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </>
+                )}
+
+
                 </tbody>
             </table>
             <nav className="my-5 flex items-center -space-x-px">
                 <button type="button"
                         onClick={() => props.table.previousPage()}
                         disabled={!props.table.getCanPreviousPage()}
-                        className="py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+                        className="bg-primary-400 ring-1 text-white ring-primary-600 py-2 px-2.5 inline-flex
+                                    justify-center items-center gap-x-1.5 text-sm
+                                    first:rounded-s-lg last:rounded-e-lg
+                                    focus:outline-none focus:bg-gray-100
+                                    disabled:opacity-90
+                                    disabled:ring-gray-200
+                                    disabled:bg-gray-200
+                                    disabled:text-gray-800
+                                    disabled:pointer-events-none">
                     <ChevronLeftIcon className="w-4 h-4" />
                     <span className="hidden sm:block">Previous</span>
                 </button>
 
-
                 <button type="button"
                         onClick={() => props.table.nextPage()}
                         disabled={!props.table.getCanNextPage()}
-                        className="min-h-[38px] min-w-[38px] py-2 px-2.5 inline-flex justify-center items-center gap-x-1.5 text-sm first:rounded-s-lg last:rounded-e-lg border border-gray-200 text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 disabled:opacity-50 disabled:pointer-events-none dark:border-neutral-700 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">
+                        className="bg-primary-400 ring-1 text-white ring-primary-600 py-2 px-2.5 inline-flex
+                                    justify-center items-center gap-x-1.5 text-sm
+                                    first:rounded-s-lg last:rounded-e-lg
+                                    focus:outline-none focus:bg-gray-100
+                                    disabled:opacity-90
+                                    disabled:ring-gray-200
+                                    disabled:bg-gray-200
+                                    disabled:text-gray-800
+                                    disabled:pointer-events-none">
                     <span className="hidden sm:block">Next</span>
                     <ChevronRightIcon className="w-4 h-4" />
                 </button>

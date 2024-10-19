@@ -6,12 +6,14 @@ type AvoRedModalProps = {
     modal_body: ReactNode;
     isOpen: boolean;
     closeModal: any;
+    widthClass?: string
 }
 const AvoredModal = ({
     modal_header,
     modal_body,
     isOpen = false,
-    closeModal
+    closeModal,
+    widthClass
 }: AvoRedModalProps) => {
 
     return (
@@ -30,7 +32,7 @@ const AvoredModal = ({
                         <div className="fixed inset-0 bg-black/25" />
                     </Transition.Child>
 
-                    <div className="fixed inset-0 overflow-y-auto">
+                    <div className={`fixed ${widthClass ?? 'max-w-3xl'} mx-auto inset-0 overflow-y-auto`}>
                         <div className="flex min-h-full items-center justify-center p-4 text-center">
                             <Transition.Child
                                 as={Fragment}

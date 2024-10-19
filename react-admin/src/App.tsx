@@ -21,7 +21,7 @@ import Logout from "./pages/auth/Logout";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import AvoRedApiTesting from "./pages/setting/AvoRedApiTesting";
-import Setting from "./pages/setting/Setting";
+import SettingPage from "./pages/setting/SettingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ChangePassword from './pages/admin-user/ChangePassword';
 import { ModelTablePage } from "./pages/models/ModelTablePage";
@@ -44,7 +44,7 @@ function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/admin"   element={<Dashboard />} />
                     <Route path="/admin/logout"   element={<Logout />} />
-                    <Route path="/admin/asset"   element={<AssetTable />} />
+                    <Route path="/admin/asset/:asset_id?"   element={<AssetTable />} />
                     <Route path="/admin/component"   element={<ComponentTablePage />} />
                     <Route path="/admin/component-create"   element={<ComponentCreatePage />} />
                     <Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />
@@ -62,7 +62,7 @@ function App() {
                     <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEdit />} />
                     <Route path="/admin/admin-user-change-password" element={<ChangePassword/>}/>
                     <Route path="/admin/api-test"   element={<AvoRedApiTesting />} />
-                    <Route path="/admin/setting"   element={<Setting />} />
+                    <Route path="/admin/setting"   element={<SettingPage />} />
                 </Route>
 
                 <Route path="*"   element={<NotFoundPage />} />
