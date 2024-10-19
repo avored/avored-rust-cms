@@ -47,153 +47,119 @@ function PageCreate() {
 
   const { mutate, error } = useStorePage();
 
-  const addFieldOnClick = async (
-    e: React.MouseEvent<HTMLElement>,
-    max_index: number,
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    append({
-      name: "",
-      identifier: "",
-      data_type: AvoRedPageDataType.TEXT,
-      field_type: AvoRedPageFieldType.TEXT,
-      field_content: "",
-    });
-    await trigger("page_fields");
-    setCurrentIndex(max_index);
-
-    // @todo fix this one
-    setIsOpen(true);
-  };
-
-  const deletePageFieldOnClick = (e: any, index: number) => {
-    e.preventDefault();
-    remove(index);
-    setCurrentIndex(0);
-  };
-
-  const submitHandler = async (data: SavePageType) => {
-    console.log(data)
-    // mutate(data);
-  };
-
-  const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    setValue("identifier", slug(e.currentTarget.value || ""));
-  };
-
-  const textEditorOnChange = (value: string, field_index: number) => {
-    const text_content: PageTextContent = {
-      text_value: value,
-    };
-    const page_content: PageFieldContent =  {
-      text_value: text_content
-    }
-    setValue(`page_fields.${field_index}.field_content`, page_content);
-  };
-
-  const renderField = (field: SaveFieldType, index: number) => {
-    switch (field.field_type) {
-      case AvoRedPageFieldType.TEXTAREA:
-        return (
-          <div className="mb-4">
-            <label className="text-sm text-gray-600">
-              {t!("field_content")}
-            </label>
-            <textarea
-              className="w-full rounded"
-              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
-            ></textarea>
-          </div>
-        );
-      case AvoRedPageFieldType.TextEditor:
-        return (
-          <div className="mb-4">
-            <label className="text-sm text-gray-600">
-              {t!("field_content")}
-            </label>
-            <div className="h-96">
-              <SimpleMdeReact
-                options={{
-                  minHeight: "300px",
-                }}
-                onChange={(contentValue) =>
-                  textEditorOnChange(contentValue, index)
-                }
-              />
-            </div>
-          </div>
-        );
-      case AvoRedPageFieldType.Radio:
-        return (
-            <div className="mb-4">
-              <label className="text-sm text-gray-600">
-                {t!("field_content")}
-              </label>
-              {field.field_data?.radio_field_options?.map(
-                  (option: AvoRedPageFieldRadioFieldDataOptions) => {
-                    return (
-                          <div key={`avredo-radio-${option.value}`} className="w-full">
-                            <input
-                                id={`avored-radio-${option.value}`}
-                                type="radio"
-                                value={option.value}
-                                {...register(`page_fields.${index}.field_content.text_value.text_value`)}
-                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            <label
-                                htmlFor={`avored-radio-${option.value}`}
-                                className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              {option.label}
-                            </label>
-                          </div>
-                    );
-                  },
-              )}
-            </div>
-        );
-      case AvoRedPageFieldType.SELECT:
-        return (
-          <div className="mb-4">
-            <label className="text-sm text-gray-600">
-              {t!("field_content")}
-            </label>
-
-            <select
-              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
-              className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
-            >
-              {field.field_data?.select_field_options?.map((option) => {
+    const renderComponentElementType = (
+        componentElement: ICreatablePageComponentElementModel,
+        pageComponentIndex: number,
+        componentElementIndex: number,
+    ) => {
+        switch (componentElement.element_type) {
+            case "textarea":
                 return (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                    <div className="p-3">
+            <textarea
+                {...register(
+                    `components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_content`,
+                )}
+            ></textarea>
+                        <label
+                            htmlFor={componentElement.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentElement.name}
+                        </label>
+                    </div>
                 );
-              })}
-            </select>
-          </div>
+            case "select":
+                return (
+                    <div className="p-3">
+                        <AvoRedMultiSelectField
+                            label="test dropdown"
+                            selectedOption={getSelectElementDataOptionCurrentValue(pageComponentIndex, componentElementIndex)}
+                            options={componentElement.element_data ?? []}
+                            onChangeSelectedOption={((val: Array<string>) => setSelectedElementDataOption(val, pageComponentIndex, componentElementIndex))}
+                        ></AvoRedMultiSelectField>
+                        <label
+                            htmlFor={componentElement.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentElement.name}
+                        </label>
+                    </div>
+                );
+            case "radio":
+                return (
+                    <div className="p-3">
+                        <input
+                            id={componentElement.identifier}
+                            type="radio"
+                            value={componentElement.identifier}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <label
+                            htmlFor={componentElement.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentElement.name}
+                        </label>
+                    </div>
+                );
+            case "text":
+            default:
+                return (
+                    <div>
+                        <InputField
+                            name={`components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_content`}
+                            label={componentElement.name}
+                            register={register(
+                                `components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_content`,
+                            )}
+                        />
+                        <InputField
+                            type="hidden"
+                            value="TEXT"
+                            register={register(
+                                `components_content.${pageComponentIndex}.elements.${componentElementIndex}.element_data_type`,
+                            )}
+                        />
+                    </div>
+                );
+        }
+    };
+
+    const renderComponentElement = (
+        componentElement: ICreatablePageComponentElementModel,
+        pageComponentIndex: number,
+        componentElementIndex: number,
+    ) => {
+        return (
+            <div className="ring-1 my-2 ring-gray-200" key={componentElement.identifier}>
+                {JSON.stringify(componentElement)}
+                {renderComponentElementType(
+                    componentElement,
+                    pageComponentIndex,
+                    componentElementIndex,
+                )}
+            </div>
         );
       case AvoRedPageFieldType.TEXT:
         return (
-          <div className="mb-4">
-            <InputField
-              label={t("field_content")}
-              placeholder={t("field_content")}
-              register={register(`page_fields.${index}.field_content.text_value.text_value`)}
-            />
-          </div>
-        );
-      default:
-        return (
-          <div className="mb-4">
-            <InputField
-              label={t("field_content")}
-              placeholder={t("field_content")}
-              register={register(`page_fields.${index}.field_content.text_value.text_value`)}
-            />
-          </div>
+            <div
+                key={pageComponent.id}
+                className="my-5 ring-1 ring-gray-200 rounded p-3"
+            >
+                <div>component name: {pageComponent.name}</div>
+                <div>component identifier: {pageComponent.identifier}</div>
+                <div>
+                    Component Fields
+                    {pageComponent.elements.map((componentElement, componentElementIndex) => {
+                        return renderComponentElement(
+                            componentElement,
+                            pageComponentIndex,
+                            componentElementIndex,
+                        );
+                    })}
+                </div>
+            </div>
         );
     }
   };

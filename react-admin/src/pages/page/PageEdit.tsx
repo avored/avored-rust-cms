@@ -118,68 +118,57 @@ function PageEdit() {
               {t!("field_content")}
             </label>
             <textarea
-              className="w-full rounded"
-              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
+                {...register(
+                    `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
+                )}
             ></textarea>
-          </div>
-        );
-      case AvoRedPageFieldType.Radio:
-        return (
-            <div className="mb-4">
-              <label className="text-sm text-gray-600">
-                {t!("field_content")}
-              </label>
-              {field.field_data?.radio_field_options?.map((option: AvoRedPageFieldRadioFieldDataOptions) => {
-                  return (
-                        <div key={`avored-radio-${option.value}`} className="w-full">
-                          <input
-                              id={`avored-radio-${option.value}`}
-                              type="radio"
-                              value={option.value}
-                              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
-                              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
-                          <label
-                              htmlFor={`avored-radio-${option.value}`}
-                              className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                            {option.label}
-                          </label>
-                        </div>
-                  );
-              })}
-            </div>
-        );
-      case AvoRedPageFieldType.SELECT:
-        return (
-            <div className="mb-4">
-              <label className="text-sm text-gray-600">
-                {t!("field_content")}
-              </label>
-
-              <select
-                  {...register(`page_fields.${index}.field_content.text_value.text_value`)}
-                  className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
-              >
-                {field.field_data?.select_field_options?.map((option) => {
-                return (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
+                        <label
+                            htmlFor={componentField.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentField.name}
+                        </label>
+                    </div>
                 );
-              })}
-            </select>
-          </div>
-        );
-      case AvoRedPageFieldType.TEXT:
-        return (
-          <div className="mb-4">
-            <InputField
-              label={t("field_content")}
-              placeholder={t("field_content")}
-              register={register(`page_fields.${index}.field_content.text_value.text_value`)}
-            />
-          </div>
-        );
-      case AvoRedPageFieldType.TextEditor:
+            case "select":
+                return (
+                    <div className="p-3">
+                        <AvoRedMultiSelectField
+                            label="test dropdown"
+                            selectedOption={getSelectFieldDataOptionCurrentValue(pageComponentIndex, pageComponentFieldIndex)}
+                            options={componentField.element_data ?? []}
+                            onChangeSelectedOption={((val: Array<string>) => setSelectedFieldDataOption(val, pageComponentIndex, pageComponentFieldIndex))}
+                        ></AvoRedMultiSelectField>
+                        <label
+                            htmlFor={componentField.identifier}
+                            className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                        >
+                            {componentField.name}
+                        </label>
+                    </div>
+                );
+            case "text":
+            default:
+                return (
+                    <div>
+                        <InputField
+                            label={componentField.name}
+                            type="text"
+                            name={componentField.identifier}
+                            register={register(
+                                `components_content.${pageComponentIndex}.elements.${pageComponentFieldIndex}.element_content`,
+                            )}
+                        />
+                    </div>
+                );
+        }
+    };
+
+    const renderComponentField = (
+        componentField: IEditablePageComponentFieldModel,
+        pageComponentIndex: number,
+        pageComponentFieldIndex: number,
+    ) => {
         return (
           <div className="mb-4">
             <label className="text-sm text-gray-600">
@@ -252,7 +241,7 @@ function PageEdit() {
             <form onSubmit={handleSubmit(submitHandler)}>
               {_.size(fields) > 0 ? (
                 <>
-                  <PageFieldModal 
+                  <PageFieldModal
                     register={register}
                     currentIndex={currentIndex}
                     getValues={getValues}
