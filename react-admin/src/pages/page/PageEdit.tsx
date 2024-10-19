@@ -119,7 +119,7 @@ function PageEdit() {
             </label>
             <textarea
               className="w-full rounded"
-              {...register(`page_fields.${index}.field_content`)}
+              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
             ></textarea>
           </div>
         );
@@ -136,7 +136,7 @@ function PageEdit() {
                               id={`avored-radio-${option.value}`}
                               type="radio"
                               value={option.value}
-                              {...register(`page_fields.${index}.field_content`)}
+                              {...register(`page_fields.${index}.field_content.text_value.text_value`)}
                               className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"/>
                           <label
                               htmlFor={`avored-radio-${option.value}`}
@@ -156,7 +156,7 @@ function PageEdit() {
               </label>
 
               <select
-                  {...register(`page_fields.${index}.field_content`)}
+                  {...register(`page_fields.${index}.field_content.text_value.text_value`)}
                   className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
               >
                 {field.field_data?.select_field_options?.map((option) => {
@@ -175,7 +175,7 @@ function PageEdit() {
             <InputField
               label={t("field_content")}
               placeholder={t("field_content")}
-              register={register(`page_fields.${index}.field_content`)}
+              register={register(`page_fields.${index}.field_content.text_value.text_value`)}
             />
           </div>
         );
@@ -204,7 +204,7 @@ function PageEdit() {
             <InputField
               label={t("field_content")}
               placeholder={t("field_content")}
-              register={register(`page_fields.${index}.field_content`)}
+              register={register(`page_fields.${index}.field_content.text_value.text_value`)}
             />
           </div>
         );
@@ -236,7 +236,8 @@ function PageEdit() {
   };
 
   const submitHandler = async (data: SavePageType) => {
-    mutate(data);
+      console.log(data)
+    // mutate(data);
   };
 
   return (
