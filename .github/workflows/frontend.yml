@@ -1,4 +1,4 @@
-name: ReactAdmin deploy
+name: Frontend deploy
 
 on:
   push:
@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
           run:
-            working-directory: 'react-admin'
+            working-directory: 'react-front'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -39,6 +39,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./react-admin/dist"
+        source: "./react-front/dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
 
