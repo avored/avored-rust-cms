@@ -379,8 +379,8 @@ impl PageRepository {
             };
 
             let field_content_value: Value = match created_page_field.field_content {
-                PageFieldContentType::StringType(v) =>  v.into(),
-                PageFieldContentType::Int64(v) => v.into(),
+                PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
+                PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
             };
 
             let field_data_value: Value = match created_page_field.field_data {
@@ -471,8 +471,8 @@ impl PageRepository {
                 PageFieldType::Radio => "Radio".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
-                PageFieldContentType::StringType(v) =>  v.into(),
-                PageFieldContentType::Int64(v) => v.into(),
+                PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
+                PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
             };
 
             let field_data_value: Value = match updatable_page_field.field_data {

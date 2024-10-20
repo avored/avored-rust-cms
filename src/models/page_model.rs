@@ -7,13 +7,28 @@ use super::{BaseModel, Pagination};
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldContentType {
-    StringType(String),
-    Int64(i64)
+    TextContentType {
+        text_value: TextContentType
+    },
+    IntegerContentType {
+        integer_value: IntegerContentType
+    },
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub struct TextContentType {
+    pub text_value: String
+}
+
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub struct IntegerContentType {
+    pub integer_value: i64
 }
 
 impl Default for PageFieldContentType {
     fn default() -> PageFieldContentType {
-        PageFieldContentType::StringType("".to_string())
+        PageFieldContentType::TextContentType { text_value: TextContentType::default() }
     }
 }
 
@@ -99,6 +114,30 @@ pub struct PageFieldModel {
     pub field_data: PageFieldData
 }
 
+impl TryFrom<TextContentType> for Value {
+    type Error = Error;
+    fn try_from(val: TextContentType) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("text_value".into(), val.text_value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
+
+
+impl TryFrom<IntegerContentType> for Value {
+    type Error = Error;
+    fn try_from(val: IntegerContentType) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("integer_value".into(), val.integer_value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
 
 impl TryFrom<PageSelectFieldData> for Value {
     type Error = Error;
@@ -216,13 +255,52 @@ impl TryFrom<Object> for PageFieldModel {
 
         let field_content = match data_type_str.as_str() {
             "TEXT" => {
-                let value = val.get("field_content").get_string()?;
+                let options = match val.get("field_content") {
 
-                PageFieldContentType::StringType(value)
-            },
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+
+                        println!("before test {:?}", object);
+                        let option: TextContentType = object.try_into()?;
+                        println!("test {:?}", option);
+
+                        option
+                    },
+                    None => {
+                        TextContentType::default()
+                    },
+                };
+
+                PageFieldContentType::TextContentType {
+                    text_value: options
+                }
+            }
             "INT" => {
-                let value = val.get("field_content").get_int()?;
-                PageFieldContentType::Int64(value)
+                let options = match val.get("field_content") {
+
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+
+                        let option: IntegerContentType = object.try_into()?;
+
+                        option
+                    },
+                    None => {
+                        IntegerContentType {
+                            integer_value: 0
+                        }
+                    },
+                };
+
+                PageFieldContentType::IntegerContentType {
+                    integer_value: options
+                }
             },
             _ => PageFieldContentType::default()
         };
@@ -312,6 +390,26 @@ impl TryFrom<Object> for PageFieldModel {
             field_type,
             field_content,
             field_data
+        })
+    }
+}
+
+impl TryFrom<Object> for TextContentType {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<TextContentType> {
+        let value = val.get("text_value").get_string()?;
+        Ok(TextContentType {
+            text_value: value
+        })
+    }
+}
+
+impl TryFrom<Object> for IntegerContentType {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<IntegerContentType> {
+        let value = val.get("value").get_int()?;
+        Ok(IntegerContentType {
+            integer_value: value
         })
     }
 }
