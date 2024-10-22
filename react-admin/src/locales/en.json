@@ -52,6 +52,7 @@
   "select_field": "Select field",
   "text_editor_field": "Text editor field",
   "radio_field": "Radio field",
+  "checkbox_field": "Checkbox field",
   "field_content": "Field content",
   "identifier": "Identifier",
   "created_at": "Created at",

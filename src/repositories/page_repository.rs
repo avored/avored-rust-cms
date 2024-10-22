@@ -375,13 +375,27 @@ impl PageRepository {
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
-                PageFieldType::Radio => "Radio".into()
+                PageFieldType::Radio => "Radio".into(),
+                PageFieldType::Checkbox => "Checkbox".into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
                 PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
                 PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
+                PageFieldContentType::ArrayContentType { array_value } => {
+                    // let mut array_val: Vec<Value> = vec![];
+                    // for option in array_value {
+                    //     let val: Value = option.try_into()?;
+                    //     array_val.push(val);
+                    // }
+
+                    // array_val.into()
+
+                    array_value.try_into()?
+                },
             };
+
+            println!("before create save data: {:?}", field_content_value);
 
             let field_data_value: Value = match created_page_field.field_data {
                 PageFieldData::SelectFieldData { select_field_options } =>  {
@@ -396,6 +410,15 @@ impl PageRepository {
                 PageFieldData::RadioFieldData { radio_field_options } =>  {
                     let mut options: Vec<Value> = vec![];
                     for option in radio_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::CheckboxFieldData { checkbox_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in checkbox_field_options {
                         let val: Value = option.try_into()?;
                         options.push(val);
                     }
@@ -468,11 +491,23 @@ impl PageRepository {
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
-                PageFieldType::Radio => "Radio".into()
+                PageFieldType::Radio => "Radio".into(),
+                PageFieldType::Checkbox => "Checkbox".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
                 PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
+                PageFieldContentType::ArrayContentType { array_value } => {
+                    // let mut array_val: Vec<Value> = vec![];
+                    // for option in array_value {
+                    //     let val: Value = option.try_into()?;
+                    //     array_val.push(val);
+                    // }
+
+                    // array_val.into()
+
+                    array_value.try_into()?
+                },
             };
 
             let field_data_value: Value = match updatable_page_field.field_data {
@@ -488,6 +523,15 @@ impl PageRepository {
                 PageFieldData::RadioFieldData { radio_field_options } =>  {
                     let mut options: Vec<Value> = vec![];
                     for option in radio_field_options {
+                        let val: Value = option.try_into()?;
+                        options.push(val);
+                    }
+
+                    options.into()
+                },
+                PageFieldData::CheckboxFieldData { checkbox_field_options } =>  {
+                    let mut options: Vec<Value> = vec![];
+                    for option in checkbox_field_options {
                         let val: Value = option.try_into()?;
                         options.push(val);
                     }

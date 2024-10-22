@@ -3,6 +3,7 @@ import InputField from "../../components/InputField";
 import { useTranslation } from "react-i18next";
 import { AvoRedPageDataType, AvoRedPageFieldType } from "../../types/page/IPageModel";
 import {
+  AvoRedPageFieldCheckboxFieldDataOptions,
   AvoRedPageFieldData,
   AvoRedPageFieldRadioFieldDataOptions,
   AvoRedPageFieldSelectFieldDataOptions,
@@ -47,6 +48,18 @@ export const PageFieldModal = (({
     );
     await trigger("page_fields");
   };
+
+  const checkboxOptionLabelOnChange = async (
+    e: any,
+    field_index: number,
+    option_index: number,
+) => {
+  setValue(
+      `page_fields.${field_index}.field_data.checkbox_field_options.${option_index}.label`,
+      e.target.value,
+  );
+  await trigger("page_fields");
+};
     
   const optionLabelOnChange = async (
     e: any,
@@ -85,6 +98,18 @@ export const PageFieldModal = (({
     await trigger("page_fields");
   };
 
+  const checkboxOptionValueOnChange = async (
+    e: any,
+    field_index: number,
+    option_index: number,
+) => {
+  setValue(
+      `page_fields.${field_index}.field_data.checkbox_field_options.${option_index}.value`,
+      e.target.value,
+  );
+  await trigger("page_fields");
+};
+
   
   const optionAddOnClick = async (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -122,6 +147,24 @@ export const PageFieldModal = (({
     await trigger("page_fields");
   };
 
+  const checkboxOptionAddOnClick = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    field_index: number,
+) => {
+  e.preventDefault();
+  const page_field: SaveFieldType = getValues(
+      `page_fields.${field_index}`,
+  );
+  const empty_option: AvoRedPageFieldCheckboxFieldDataOptions = {
+    label: "",
+    value: "",
+  };
+
+  page_field.field_data?.checkbox_field_options?.push(empty_option);
+
+  await trigger("page_fields");
+};
+
   const optionRemoveOnClick = async (
     e: React.MouseEvent<HTMLButtonElement>,
     field_index: number,
@@ -149,6 +192,20 @@ export const PageFieldModal = (({
 
     await trigger(`page_fields.${field_index}`);
   };
+
+  const checkboxOptionRemoveOnClick = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    field_index: number,
+    option_index: number,
+) => {
+  e.preventDefault();
+  const page_field: SaveFieldType = getValues(
+      `page_fields.${field_index}`,
+  );
+  page_field.field_data?.checkbox_field_options?.splice(option_index, 1);
+
+  await trigger(`page_fields.${field_index}`);
+};
 
   const renderFieldData = (current_index: number) => {
     const page_field: SaveFieldType = getValues(
@@ -339,6 +396,100 @@ export const PageFieldModal = (({
                 )}
               </>
           );
+
+          case AvoRedPageFieldType.Checkbox:
+            return (
+                <>
+                  {_.get(page_field, 'field_data.checkbox_field_options', []).map(
+                      (option, option_index) => {
+                        return (
+                            <div key={`avored-checkbox-${option_index}`} className="block mt-3 w-full">
+                              <div className="flex w-full items-center">
+                                <div className="w-1/2">
+                                  <div className="block">
+                                    <input
+                                        value={option.label}
+                                        onChange={(e) =>
+                                            checkboxOptionLabelOnChange(
+                                                e,
+                                                current_index,
+                                                option_index,
+                                            )
+                                        }
+                                        placeholder={t("label")}
+                                        className="appearance-none rounded-md ring-1 ring-gray-400
+                                        relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                                        active::ring-primary-500
+                                        focus:ring-primary-500 focus:outline-none focus:z-10
+                                        disabled:bg-gray-200 disabled:opacity-70
+                                        sm:text-sm "
+                                    />
+                                  </div>
+                                </div>
+                                <div className="w-1/2 ml-3">
+                                  <div className="flex items-center w-full">
+                                    <div>
+                                      <input
+                                          value={option.value}
+                                          onChange={(e) =>
+                                              checkboxOptionValueOnChange(
+                                                  e,
+                                                  current_index,
+                                                  option_index,
+                                              )
+                                          }
+                                          placeholder={t("value")}
+                                          className="appearance-none rounded-md ring-1 ring-gray-400
+                                        relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                                        active::ring-primary-500
+                                        focus:ring-primary-500 focus:outline-none focus:z-10
+                                        disabled:bg-gray-200 disabled:opacity-70
+                                        sm:text-sm "
+                                      />
+                                    </div>
+                                    <div>
+                                      {_.size(getValues(
+                                          `page_fields.${current_index}.field_data.checkbox_field_options`,
+                                      )) ===
+                                      option_index + 1 ? (
+                                          <>
+                                            <button
+                                                onClick={(e) =>
+                                                    checkboxOptionAddOnClick(e, currentIndex)
+                                                }
+                                                className="ml-2"
+                                            >
+                                              <PlusIcon className="w-5 h-5" />
+                                            </button>
+                                          </>
+                                      ) : (
+                                          <>
+                                            <button
+                                                onClick={(e) =>
+                                                    checkboxOptionRemoveOnClick(
+                                                        e,
+                                                        currentIndex,
+                                                        option_index,
+                                                    )
+                                                }
+                                                className="ml-2"
+                                            >
+                                              <MinusIcon className="w-5 h-5" />
+                                            </button>
+                                          </>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                        );
+                      },
+                  )}
+                </>
+            );
+
+
         default:
           return <></>;
       }
@@ -389,6 +540,30 @@ export const PageFieldModal = (({
           setValue(`page_fields.${index}.field_data`, radio_field_data);
 
           break;
+        case AvoRedPageFieldType.Checkbox:
+            const checkbox_empty_option: AvoRedPageFieldCheckboxFieldDataOptions = {
+              label: "",
+              value: "",
+            };
+
+            const existing_content = getValues(`page_fields.${index}.field_content`);
+            
+            // delete the property as it has beed added as part of default values
+            delete existing_content.text_value;
+            delete existing_content.integer_value;
+            setValue(`page_fields.${index}.field_content`, existing_content);
+            
+  
+            const checkbox_field_data: AvoRedPageFieldData = {
+              checkbox_field_options: [],
+            };
+            if (typeof checkbox_field_data.checkbox_field_options == "undefined") {
+              checkbox_field_data.checkbox_field_options = [];
+            }
+            checkbox_field_data.checkbox_field_options.push(checkbox_empty_option);
+            setValue(`page_fields.${index}.field_data`, checkbox_field_data);
+  
+            break;
         default:
           break;
       }
@@ -493,6 +668,19 @@ export const PageFieldModal = (({
                   ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                             >
                               {t("radio_field")}
+                            </div>
+                            <div
+                                onClick={() =>
+                                    onPageFieldChange(
+                                        currentIndex,
+                                        AvoRedPageFieldType.Checkbox,
+                                        AvoRedPageDataType.Array_Text,
+                                    )
+                                }
+                                className={`${getValues(`page_fields.${currentIndex}.field_type`) === AvoRedPageFieldType.Checkbox ? "bg-primary-200" : "bg-gray-300"}  
+                  ring-1 mt-2 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                            >
+                              {t("checkbox_field")}
                             </div>
                           </div>
                         </div>
