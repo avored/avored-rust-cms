@@ -17,7 +17,8 @@ export type SaveFieldType = {
 
 export type PageFieldContent = {
     text_value?: PageTextContent,
-    integer_value?: PageIntegerContent
+    integer_value?: PageIntegerContent,
+    array_value?: PageArrayContent
 }
 
 export type PageTextContent = {
@@ -27,10 +28,15 @@ export type PageIntegerContent = {
     integer_value: number;
 }
 
+export type PageArrayContent = {
+    array_value: Array<string>;
+}
+
 
 export type AvoRedPageFieldData = {
     select_field_options?: Array<AvoRedPageFieldSelectFieldDataOptions>,
     radio_field_options?: Array<AvoRedPageFieldRadioFieldDataOptions>
+    checkbox_field_options?: Array<AvoRedPageFieldCheckboxFieldDataOptions>
 }
 export type EmptyPageFieldData = {}
 
@@ -41,6 +47,12 @@ export type AvoRedPageFieldSelectFieldDataOptions = {
 
 
 export type AvoRedPageFieldRadioFieldDataOptions = {
+    label: string;
+    value: string;
+}
+
+
+export type AvoRedPageFieldCheckboxFieldDataOptions = {
     label: string;
     value: string;
 }

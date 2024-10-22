@@ -13,11 +13,20 @@ pub enum PageFieldContentType {
     IntegerContentType {
         integer_value: IntegerContentType
     },
+    ArrayContentType {
+        array_value: ArrayContentType
+    },
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct TextContentType {
     pub text_value: String
+}
+
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub struct ArrayContentType {
+    pub array_value: Vec<String>
 }
 
 
@@ -38,7 +47,8 @@ pub enum PageFieldType {
     Textarea,
     Select,
     TextEditor,
-    Radio
+    Radio,
+    Checkbox
 }
 
 impl Default for PageFieldType {
@@ -55,6 +65,9 @@ pub enum PageFieldData {
     },
     RadioFieldData {
         radio_field_options: Vec<PageRadioFieldData>
+    },
+    CheckboxFieldData {
+        checkbox_field_options: Vec<PageCheckboxFieldData>
     },
     None
 }
@@ -78,6 +91,14 @@ pub struct PageRadioFieldData {
     pub label: String,
     pub value: String
 }
+
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub struct PageCheckboxFieldData {
+    pub label: String,
+    pub value: String
+}
+
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
@@ -139,6 +160,18 @@ impl TryFrom<IntegerContentType> for Value {
     }
 }
 
+impl TryFrom<ArrayContentType> for Value {
+    type Error = Error;
+    fn try_from(val: ArrayContentType) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("array_value".into(), val.array_value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
+
 impl TryFrom<PageSelectFieldData> for Value {
     type Error = Error;
     fn try_from(val: PageSelectFieldData) -> Result<Value> {
@@ -155,6 +188,19 @@ impl TryFrom<PageSelectFieldData> for Value {
 impl TryFrom<PageRadioFieldData> for Value {
     type Error = Error;
     fn try_from(val: PageRadioFieldData) -> Result<Value> {
+
+        let val_val: BTreeMap<String, Value> = [
+            ("label".into(), val.label.into()),
+            ("value".into(), val.value.into()),
+        ].into();
+
+        Ok(val_val.into())
+    }
+}
+
+impl TryFrom<PageCheckboxFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: PageCheckboxFieldData) -> Result<Value> {
 
         let val_val: BTreeMap<String, Value> = [
             ("label".into(), val.label.into()),
@@ -228,6 +274,9 @@ impl TryFrom<Object> for PageFieldModel {
             "TEXT" => {
                 PageDataType::Text("TEXT".to_string())
             },
+            "Array_Text" => {
+                PageDataType::Text("Array_Text".to_string())
+            },
 
             _ => PageDataType::default()
         };
@@ -249,6 +298,9 @@ impl TryFrom<Object> for PageFieldModel {
             "Radio" => {
                 PageFieldType::Radio
             },
+            "Checkbox" => {
+                PageFieldType::Checkbox
+            },
 
             _ => PageFieldType::default()
         };
@@ -263,9 +315,9 @@ impl TryFrom<Object> for PageFieldModel {
                             _ => Object::default(),
                         };
 
-                        println!("before test {:?}", object);
+                        // println!("before test {:?}", object);
                         let option: TextContentType = object.try_into()?;
-                        println!("test {:?}", option);
+                        // println!("test {:?}", option);
 
                         option
                     },
@@ -302,6 +354,32 @@ impl TryFrom<Object> for PageFieldModel {
                     integer_value: options
                 }
             },
+            "Array_Text" => {
+                let array_val = match val.get("field_content") {
+                    Some(val) => {
+                        
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+                        println!("before obj 0 {:?}", object);
+                        let option: ArrayContentType = object.try_into()?;
+
+                        option
+                    },
+                    None => {
+                        ArrayContentType {
+                            array_value: vec![]
+                        }
+                    },
+                };
+                // let array_obj = ArrayContentType {
+                //     array_value: array_val
+                // };
+                PageFieldContentType::ArrayContentType  {
+                    array_value: array_val 
+                }
+            }
             _ => PageFieldContentType::default()
         };
 
@@ -377,6 +455,42 @@ impl TryFrom<Object> for PageFieldModel {
                 options
             },
 
+            "Checkbox" => {
+                let options = match val.get("field_data") {
+                    Some(val) => {
+                        match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: PageCheckboxFieldData = object.try_into()?;
+
+                                    arr.push(option)
+                                }
+
+                                PageFieldData::CheckboxFieldData {
+                                    checkbox_field_options: arr
+                                }
+                            }
+                            _ => {
+
+                                PageFieldData::None
+                            },
+                        }
+                    }
+                    None => {
+                        PageFieldData::None
+                    },
+                };
+
+                options
+            },
+
             _ => PageFieldData::None
         };
 
@@ -414,12 +528,51 @@ impl TryFrom<Object> for IntegerContentType {
     }
 }
 
+impl TryFrom<Object> for ArrayContentType {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ArrayContentType> {
+
+        let array_value = match val.get("array_value") {
+            Some(val) => {
+                match val.clone() { 
+                    Value::Array(v) => {
+                        let mut arr = Vec::new();
+                        for array in v.into_iter() {
+                            arr.push(array.as_string())
+                        }
+                        arr
+                    }
+                    _ => Vec::new(),
+                }
+            }
+            None => Vec::new(),
+        };
+
+        Ok(ArrayContentType {
+            array_value
+        })
+
+    }
+}
+
 impl TryFrom<Object> for PageSelectFieldData {
     type Error = Error;
     fn try_from(val: Object) -> Result<PageSelectFieldData> {
         let label = val.get("label").get_string()?;
         let value = val.get("value").get_string()?;
         Ok(PageSelectFieldData {
+            label,
+            value
+        })
+    }
+}
+
+impl TryFrom<Object> for PageCheckboxFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<PageCheckboxFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+        Ok(PageCheckboxFieldData {
             label,
             value
         })
@@ -491,4 +644,3 @@ pub struct PutPageIdentifierModel {
     pub identifier: String,
     pub logged_in_username: String
 }
-

@@ -59,6 +59,8 @@ pub async fn store_page_api_handler(
         .page_service
         .new_create_page(&state.db, creatable_page)
         .await?;
+    // println!("PAge payload: {:?}", payload);
+    // let created_page_model = NewPageModel::default();
 
     let response = ApiResponse {
         status: true,

@@ -11,6 +11,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import "easymde/dist/easymde.min.css";
 import slug from "slug";
 import {
+    AvoRedPageFieldCheckboxFieldDataOptions,
     AvoRedPageFieldRadioFieldDataOptions, PageFieldContent, PageTextContent,
     SaveFieldType,
     SavePageType,
@@ -159,6 +160,36 @@ function PageCreate() {
                         )}
                     </div>
                 );
+
+                case AvoRedPageFieldType.Checkbox:
+                    return (
+                        <div className="mb-4">
+                            <label className="text-sm text-gray-600">
+                                {t!("field_content")}
+                            </label>
+                            {field.field_data?.checkbox_field_options?.map(
+                                (option: AvoRedPageFieldCheckboxFieldDataOptions) => {
+                                    return (
+                                        <div key={`avredo-checkbox-${option.value}`} className="w-full">
+                                            <input
+                                                id={`avored-checkbox-${option.value}`}
+                                                type="checkbox"
+                                                value={option.value}
+                                                {...register(`page_fields.${index}.field_content.array_value.array_value`)}
+                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                            />
+                                            <label
+                                                htmlFor={`avored-checkbox-${option.value}`}
+                                                className="ms-2 text-sm  rounded font-medium text-gray-900 dark:text-gray-300"
+                                            >
+                                                {option.label}
+                                            </label>
+                                        </div>
+                                    );
+                                },
+                            )}
+                        </div>
+                    );
             case AvoRedPageFieldType.SELECT:
                 return (
                     <div className="mb-4">

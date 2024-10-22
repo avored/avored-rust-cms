@@ -12,7 +12,8 @@ export default interface IPageModel {
 
 export enum AvoRedPageDataType {
     TEXT = "TEXT",
-    INT = "INT"
+    INT = "INT",
+    Array_Text = "Array_Text"
 }
 
 
@@ -21,5 +22,6 @@ export enum AvoRedPageFieldType {
     TEXTAREA = "Textarea",
     SELECT = "Select",
     TextEditor = "TextEditor",
-    Radio = "Radio"
+    Radio = "Radio",
+    Checkbox = "Checkbox"
  }
