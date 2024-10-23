@@ -109,13 +109,13 @@ mod tests {
     use axum::http::StatusCode;
     use tower::ServiceExt;
     use crate::api::rest_api_routes::tests::{ get_axum_app, send_post_request};
-    use crate::error::{Result};
+    use crate::error::Result;
 
 
     #[tokio::test]
     async fn test_admin_user_login_api_handler() -> Result<()>
     {
-        let (app, state) = get_axum_app().await.unwrap();
+        let (app, _state) = get_axum_app().await.unwrap();
         //@todo do a post request to a setup
         // then do a post request with username and password
 

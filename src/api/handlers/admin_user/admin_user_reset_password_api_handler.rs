@@ -31,7 +31,7 @@ pub async fn admin_user_reset_password_api_handler(
 
     let password_hash = state
         .admin_user_service
-        .get_password_hash_from_raw_password(payload.password, &state.config.password_salt)?;
+        .get_password_hash_from_raw_password(payload.password, &state.config.password_salt.as_str())?;
 
     let update_password_status = state
         .admin_user_service

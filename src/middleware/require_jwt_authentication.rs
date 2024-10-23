@@ -33,7 +33,10 @@ pub async fn require_jwt_authentication (
                 .and_then(|auth_header| auth_header.to_str().ok())
                 .and_then(|auth_value| {
                     if auth_value.starts_with("Bearer ") {
-                        Some(auth_value[7..].to_owned())
+                        match auth_value.strip_prefix("Bearer ") {
+                            Some(auth) => Some(auth.to_owned()),
+                            _ => None
+                        }
                     } else {
                         None
                     }
@@ -79,5 +82,3 @@ pub async fn require_jwt_authentication (
 
     Ok(next.run(req).await)
 }
-
-

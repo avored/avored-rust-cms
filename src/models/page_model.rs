@@ -41,8 +41,9 @@ impl Default for PageFieldContentType {
     }
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum PageFieldType {
+    #[default]
     Text,
     Textarea,
     Select,
@@ -51,13 +52,8 @@ pub enum PageFieldType {
     Checkbox
 }
 
-impl Default for PageFieldType {
-    fn default() -> PageFieldType {
-        PageFieldType::Text
-    }
-}
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
 #[serde(untagged)]
 pub enum PageFieldData {
     SelectFieldData {
@@ -69,14 +65,8 @@ pub enum PageFieldData {
     CheckboxFieldData {
         checkbox_field_options: Vec<PageCheckboxFieldData>
     },
+    #[default]
     None
-}
-
-
-impl Default for PageFieldData {
-    fn default() -> PageFieldData {
-        PageFieldData::None
-    }
 }
 
 

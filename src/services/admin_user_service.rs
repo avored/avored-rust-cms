@@ -300,7 +300,7 @@ impl AdminUserService {
     pub fn get_password_hash_from_raw_password(
         &self,
         raw_password: String,
-        password_salt: &String
+        password_salt: &str
     ) -> Result<String>{
 
         let password = raw_password.as_bytes();

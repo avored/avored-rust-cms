@@ -11,16 +11,16 @@ pub struct UpdateSettingRequest {
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatableSettingRequest {
     pub id: String,
+    pub identifier: String,
     pub value: String
 }
 impl UpdateSettingRequest {
     pub fn validate(&self) -> crate::error::Result<Vec<ErrorMessage>> {
         let mut errors: Vec<ErrorMessage> = vec![];
-        let mut i = 0;
         for setting_request in &self.settings {
             if !setting_request.id.required()? {
                 let error_message = ErrorMessage {
-                    key: format!("settings.{i}.id"),
+                    key: format!("settings.{}.id", setting_request.identifier),
                     message: String::from(t!("validation_required", attribute = t!("id")))
                 };
 
@@ -28,14 +28,12 @@ impl UpdateSettingRequest {
             }
             if !setting_request.value.required()? {
                 let error_message = ErrorMessage {
-                    key: format!("settings.{i}.value"),
+                    key: format!("settings.{}.value", setting_request.identifier),
                     message: String::from(t!("validation_required", attribute = t!("value")))
                 };
 
                 errors.push(error_message);
             }
-
-            i += 1;
         }
         Ok(errors)
     }

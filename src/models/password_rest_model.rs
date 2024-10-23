@@ -12,16 +12,11 @@ pub struct PasswordResetModel {
     pub created_at: Datetime,
 }
 
-#[derive(Serialize, Debug, Deserialize, Clone, PartialEq)]
+#[derive(Serialize, Debug, Deserialize, Clone, PartialEq, Default)]
 pub enum PasswordResetTokenStatus {
     Active,
+    #[default]
     Expire
-}
-
-impl Default for PasswordResetTokenStatus {
-    fn default() -> PasswordResetTokenStatus {
-        PasswordResetTokenStatus::Expire
-    }
 }
 
 impl TryFrom<Object> for PasswordResetModel {
