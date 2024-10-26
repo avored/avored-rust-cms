@@ -48,6 +48,7 @@ pub async fn update_page_api_handler(
         id: page_model.id,
         name: payload.name,
         identifier: payload.identifier,
+        status: payload.status,
         logged_in_username: logged_in_user.name.clone(),
         page_fields: vec![],
         created_at: page_model.created_at,
