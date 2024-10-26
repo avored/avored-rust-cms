@@ -230,7 +230,7 @@ impl PageRepository {
 
                     options.into()
                 },
-                PageFieldData::None => "null".into(),
+                PageFieldData::NoneFieldData {none: _} => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -339,7 +339,7 @@ impl PageRepository {
 
                     options.into()
                 },
-                PageFieldData::None => "".into(),
+                PageFieldData::NoneFieldData { none: _ } => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [

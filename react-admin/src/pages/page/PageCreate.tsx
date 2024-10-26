@@ -18,7 +18,7 @@ import {
 } from "../../types/page/CreatablePageType";
 import {
     AvoRedPageDataType,
-    AvoRedPageFieldType,
+    AvoRedPageFieldType, AvoRedPageStatus,
 } from "../../types/page/IPageModel";
 import _ from "lodash";
 import SimpleMdeReact from "react-simplemde-editor";
@@ -82,6 +82,7 @@ function PageCreate() {
     };
 
     const submitHandler = async (data: SavePageType) => {
+        data.status = AvoRedPageStatus.Draft
         mutate(data);
     };
 
@@ -234,165 +235,192 @@ function PageCreate() {
         }
     };
 
+    const saveAsPublishedOnClick = ((e: React.MouseEvent) => {
+        e.preventDefault()
+        e.stopPropagation()
+
+        const data: SavePageType = {
+            name: getValues("name"),
+            identifier: getValues("identifier"),
+            page_fields: getValues("page_fields"),
+            status: AvoRedPageStatus.Published
+        };
+        mutate(data)
+    })
     // template start here
     return (
         <div className="flex-1 bg-white">
+            <form onSubmit={handleSubmit(submitHandler)}>
             <div className="px-5 pl-64 ">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
                             {t("page_information")}
                         </h1>
+                        <div className="flex w-full">
+                            <div className="w-5/6 pr-3">
 
-                        <form onSubmit={handleSubmit(submitHandler)}>
-                            {_.size(fields) > 0 ? (
-                                <PageFieldModal
-                                    register={register}
-                                    currentIndex={currentIndex}
-                                    getValues={getValues}
-                                    setValue={setValue}
-                                    trigger={trigger}
-                                    setIsOpen={setIsOpen}
-                                    isOpen={isOpen}
-                                />
-                            ) : (
-                                <></>
-                            )}
+                                {_.size(fields) > 0 ? (
+                                    <PageFieldModal
+                                        register={register}
+                                        currentIndex={currentIndex}
+                                        getValues={getValues}
+                                        setValue={setValue}
+                                        trigger={trigger}
+                                        setIsOpen={setIsOpen}
+                                        isOpen={isOpen}
+                                    />
+                                ) : (
+                                    <></>
+                                )}
 
-                            <div className="flex w-full">
-                                <div className="w-1/2">
-                                    <div className="mb-4">
-                                        <InputField
-                                            autoFocus={true}
-                                            label={t("name")}
-                                            placeholder={t("name")}
-                                            register={register("name")}
-                                            onKeyUp={(e) => onNameChange(e)}
-                                        />
-                                        <ErrorMessage
-                                            frontendErrors={errors}
-                                            backendErrors={error}
-                                            identifier="name"
-                                        />
+                                <div className="flex w-full">
+                                    <div className="w-1/2">
+                                        <div className="mb-4">
+                                            <InputField
+                                                autoFocus={true}
+                                                label={t("name")}
+                                                placeholder={t("name")}
+                                                register={register("name")}
+                                                onKeyUp={(e) => onNameChange(e)}
+                                            />
+                                            <ErrorMessage
+                                                frontendErrors={errors}
+                                                backendErrors={error}
+                                                identifier="name"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="w-1/2 ml-3">
+                                        <div className="mb-4">
+                                            <InputField
+                                                label={t("identifier")}
+                                                placeholder={t("identifier")}
+                                                register={register("identifier")}
+                                            />
+                                            <ErrorMessage
+                                                frontendErrors={errors}
+                                                backendErrors={error}
+                                                identifier="identifier"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="w-1/2 ml-3">
-                                    <div className="mb-4">
-                                        <InputField
-                                            label={t("identifier")}
-                                            placeholder={t("identifier")}
-                                            register={register("identifier")}
-                                        />
-                                        <ErrorMessage
-                                            frontendErrors={errors}
-                                            backendErrors={error}
-                                            identifier="identifier"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            {/*}<!-- FIELD CARD -->*/}
-                            {fields.map((field, index) => {
-                                return (
-                                    <div
-                                        key={field.id}
-                                        className="hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
-                                    >
-                                        <Controller
-                                            name={`page_fields.${index}`}
-                                            render={({ field: page_field }) => {
-                                                return (
-                                                    <>
-                                                        <div className="flex mt-3 w-full justify-center">
-                                                            <div className="flex-1 p-3">
-                                                                <div className="p-3 bg-gray-200 rounded">
-                                                                    <div className="flex text-sm w-full border-gray-300 border-b py-2">
-                                                                        <div className="flex-1">
-                                                                            <span>{page_field.value.name}</span>
-                                                                            <span className="ml-1 text-xs text-gray-500">
-                                        ({page_field.value.identifier})
-                                      </span>
-                                                                        </div>
-                                                                        <div className="ml-auto flex items-center">
-                                                                            <div>
-                                                                                <button
-                                                                                    type="button"
-                                                                                    className="outline-none"
-                                                                                    onClick={() => setIsOpen(true)}
+                                {/*}<!-- FIELD CARD -->*/}
+                                {fields.map((field, index) => {
+                                    return (
+                                        <div
+                                            key={field.id}
+                                            className="hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                                        >
+                                            <Controller
+                                                name={`page_fields.${index}`}
+                                                render={({field: page_field}) => {
+                                                    return (
+                                                        <>
+                                                            <div className="flex mt-3 w-full justify-center">
+                                                                <div className="flex-1 p-3">
+                                                                    <div className="p-3 bg-gray-200 rounded">
+                                                                        <div
+                                                                            className="flex text-sm w-full border-gray-300 border-b py-2">
+                                                                            <div className="flex-1">
+                                                                                <span>{page_field.value.name}</span>
+                                                                                <span
+                                                                                    className="ml-1 text-xs text-gray-500">
+                                            ({page_field.value.identifier})
+                                          </span>
+                                                                            </div>
+                                                                            <div className="ml-auto flex items-center">
+                                                                                <div>
+                                                                                    <button
+                                                                                        type="button"
+                                                                                        className="outline-none"
+                                                                                        onClick={() => setIsOpen(true)}
+                                                                                    >
+                                                                                        <Cog8ToothIcon className="w-5 h-5"/>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div
+                                                                                    onClick={(e) =>
+                                                                                        deletePageFieldOnClick(e, index)
+                                                                                    }
+                                                                                    className="ml-3"
                                                                                 >
-                                                                                    <Cog8ToothIcon className="w-5 h-5" />
-                                                                                </button>
-                                                                            </div>
-                                                                            <div
-                                                                                onClick={(e) =>
-                                                                                    deletePageFieldOnClick(e, index)
-                                                                                }
-                                                                                className="ml-3"
-                                                                            >
-                                                                                <TrashIcon className="w-4 h-4" />
+                                                                                    <TrashIcon className="w-4 h-4"/>
+                                                                                </div>
                                                                             </div>
                                                                         </div>
-                                                                    </div>
 
-                                                                    <InputField
-                                                                        type="hidden"
-                                                                        placeholder={t("data_type")}
-                                                                        register={register(
-                                                                            `page_fields.${index}.data_type`,
-                                                                        )}
-                                                                    />
-                                                                    <InputField
-                                                                        type="hidden"
-                                                                        placeholder={t("field_type")}
-                                                                        register={register(
-                                                                            `page_fields.${index}.field_type`,
-                                                                        )}
-                                                                    />
-                                                                    {renderField(page_field.value, index)}
+                                                                        <InputField
+                                                                            type="hidden"
+                                                                            placeholder={t("data_type")}
+                                                                            register={register(
+                                                                                `page_fields.${index}.data_type`,
+                                                                            )}
+                                                                        />
+                                                                        <InputField
+                                                                            type="hidden"
+                                                                            placeholder={t("field_type")}
+                                                                            register={register(
+                                                                                `page_fields.${index}.field_type`,
+                                                                            )}
+                                                                        />
+                                                                        {renderField(page_field.value, index)}
+                                                                    </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </>
-                                                );
-                                            }}
-                                            control={control}
-                                        />
-                                    </div>
-                                );
-                            })}
+                                                        </>
+                                                    );
+                                                }}
+                                                control={control}
+                                            />
+                                        </div>
+                                    );
+                                })}
 
-                            <div className="mb-4 flex items-center justify-center ring-1 ring-gray-400 rounded p-5">
-                                <button
-                                    type="button"
-                                    className="flex"
-                                    onClick={(e) => addFieldOnClick(e, fields.length)}
-                                >
-                                    <PlusIcon className="text-primary-500 h-6 w-6" />
-                                    <span className="text-sm ml-1 text-primary-500">
-                    {t("add_field")}
-                  </span>
-                                </button>
-                            </div>
+                                <div className="mb-4 flex items-center justify-center ring-1 ring-gray-400 rounded p-5">
+                                    <button
+                                        type="button"
+                                        className="flex"
+                                        onClick={(e) => addFieldOnClick(e, fields.length)}
+                                    >
+                                        <PlusIcon className="text-primary-500 h-5 w-5">
+                                        </PlusIcon>
+                                        <span className="text-sm ml-1 text-primary-500">
+                                            {t("add_field")}
+                                        </span>
+                                    </button>
+                                </div>
 
-                            <hr />
-                            <div className="mt-5  flex items-center">
-                                <button
-                                    type="submit"
-                                    className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                >
-                                    {t("save")}
-                                </button>
-                                <Link
-                                    to={`/admin/page`}
-                                    className="ml-auto font-medium text-gray-600 hover:text-gray-500"
-                                >
-                                    {t("cancel")}
-                                </Link>
                             </div>
-                        </form>
+                            <div className="w-1/6 px-2 ml-auto">
+                                <div className="mt-7">
+                                    <button type="submit"
+                                            className="bg-gray-500 rounded px-4 py-2 text-white">
+                                        {t("save_as_draft")}
+                                    </button>
+                                </div>
+                                <div className="mt-5">
+                                    <button type="button"
+                                        onClick={e => saveAsPublishedOnClick(e)}
+                                        className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
+                                        {t("published")}
+                                    </button>
+                                </div>
+                                <div className="mt-5">
+                                    <Link
+                                        to={`/admin/page`}
+                                        className="mt-5 font-medium text-gray-600 hover:text-gray-500"
+                                    >
+                                        {t("cancel")}
+                                    </Link>
+                                </div>
+                        </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     );
 }

@@ -90,7 +90,7 @@ pub struct ArrayContentType {
 
 
 
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldData {
     SelectFieldData {
@@ -102,8 +102,9 @@ pub enum PageFieldData {
     CheckboxFieldData {
         checkbox_field_options: Vec<PageCheckboxFieldData>
     },
-    #[default]
-    None
+    NoneFieldData {
+        none: String
+    }
 }
 
 
@@ -136,6 +137,13 @@ pub struct PageCheckboxFieldData {
 impl Default for PageFieldContentType {
     fn default() -> PageFieldContentType {
         PageFieldContentType::TextContentType { text_value: TextContentType::default() }
+    }
+}
+
+
+impl Default for PageFieldData {
+    fn default() -> PageFieldData {
+        PageFieldData::NoneFieldData { none: String::from("") }
     }
 }
 
@@ -442,14 +450,11 @@ impl TryFrom<Object> for PageFieldModel {
                                     select_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") }
                         }
                     }
                     None => {
-                        PageFieldData::None
+                        PageFieldData::NoneFieldData { none: String::from("") }
                     },
                 };
 
@@ -477,15 +482,10 @@ impl TryFrom<Object> for PageFieldModel {
                                     radio_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") },
                         }
                     }
-                    None => {
-                        PageFieldData::None
-                    },
+                    None => PageFieldData::NoneFieldData { none: String::from("") },
                 };
 
                 options
@@ -513,21 +513,16 @@ impl TryFrom<Object> for PageFieldModel {
                                     checkbox_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") },
                         }
                     }
-                    None => {
-                        PageFieldData::None
-                    },
+                    None => PageFieldData::NoneFieldData { none: String::from("") },
                 };
 
                 options
             },
 
-            _ => PageFieldData::None
+            _ => PageFieldData::NoneFieldData { none: String::from("") }
         };
 
 

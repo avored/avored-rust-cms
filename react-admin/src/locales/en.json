@@ -33,6 +33,8 @@
   "avored": "AvoRed",
   "rust_cms": "Rust CMS",
   "save": "Save",
+  "save_as_draft": "Save as draft",
+  "published": "Published",
   "edit": "Edit",
   "create": "Create",
   "delete": "Delete",

@@ -1,8 +1,9 @@
-import {AvoRedPageDataType, AvoRedPageFieldType} from "./IPageModel";
+import {AvoRedPageDataType, AvoRedPageFieldType, AvoRedPageStatus} from "./IPageModel";
 
 export type SavePageType = {
     name: string;
     identifier: string;
+    status: AvoRedPageStatus;
     page_fields?: Array<SaveFieldType>
 }
 
