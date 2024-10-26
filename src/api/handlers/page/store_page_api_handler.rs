@@ -39,6 +39,7 @@ pub async fn store_page_api_handler(
     let mut creatable_page = NewCreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
+        status: payload.status,
         logged_in_username: logged_in_user.name.clone(),
         page_fields: vec![]
     };

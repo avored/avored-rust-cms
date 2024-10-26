@@ -15,7 +15,7 @@ export const useStorePage = () => {
             postdata.page_fields.map((field: any) => {
                 if (typeof field.field_data === 'undefined') {
                     // We do pass none as to map with the rust None enum type(basically it is null)
-                    field.field_data = "None"
+                    field.field_data =  { "none": "" }
                 }
             })
 

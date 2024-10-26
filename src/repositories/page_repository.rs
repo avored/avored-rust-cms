@@ -4,7 +4,7 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PutPageIdentifierModel};
+use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus, PutPageIdentifierModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -116,189 +116,6 @@ impl PageRepository {
         page_model
     }
 
-    // pub async fn create_page(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     creatable_page_model: CreatablePageModel,
-    //     logged_in_user: LoggedInUser,
-    // ) -> Result<PageModel> {
-    //     let mut components_content_sql = String::from("");
-    //
-    //     //@todo skip the last loop with comma think of how to make a comma and skip the last one.
-    //     for creatable_component_content_model in creatable_page_model.component_contents {
-    //         let mut elements_sql = String::from("");
-    //
-    //         for creatable_component_element_content in creatable_component_content_model.elements {
-    //             let mut element_data_sql = String::from("");
-    //
-    //             for element_data_value in creatable_component_element_content.element_data {
-    //                 element_data_sql.push_str(
-    //                     &format!("{open_brace} \
-    //                             label: '{label}', \
-    //                             value: '{value}' \
-    //                             {close_brace},",
-    //                              open_brace = String::from("{"),
-    //                              label = element_data_value.label,
-    //                              value = element_data_value.value,
-    //                              close_brace = String::from("},")
-    //                     ));
-    //             }
-    //
-    //             elements_sql.push_str(
-    //                 &format!("{open_brace} \
-    //                     name: '{name}', \
-    //                     identifier: '{identifier}', \
-    //                     element_type: '{element_type}', \
-    //                     element_data_type: '{element_data_type}', \
-    //                     element_content: '{element_content}', \
-    //                     element_data: [{element_data_sql}]  \
-    //                     {close_brace},",
-    //                          name = creatable_component_element_content.name,
-    //                          identifier = creatable_component_element_content.identifier,
-    //                          element_type = creatable_component_element_content.element_type,
-    //                          element_data_type = creatable_component_element_content.element_data_type,
-    //                          element_data_sql = element_data_sql,
-    //                          element_content = creatable_component_element_content.element_content,
-    //                          open_brace = String::from("{"),
-    //                          close_brace = String::from("}")
-    //                 ));
-    //         }
-    //
-    //         components_content_sql.push_str(
-    //             &format!("{open_brace} \
-    //                     name: '{name}', \
-    //                     identifier: '{identifier}', \
-    //                     elements: [{elements_sql}]  \
-    //                     {close_brace},",
-    //                      name = creatable_component_content_model.name,
-    //                      identifier = creatable_component_content_model.identifier,
-    //                      elements_sql = elements_sql,
-    //                      open_brace = String::from("{"),
-    //                      close_brace = String::from("}")
-    //             ));
-    //     }
-    //
-    //     let sql = format!("
-    //             CREATE pages CONTENT {open_brace}
-    //                 name: '{name}',
-    //                 identifier: '{identifier}',
-    //                 components_content: [{components_content_sql}],
-    //                 created_by: '{logged_in_user_email}',
-    //                 updated_by: '{logged_in_user_email}',
-    //                 created_at: time::now(),
-    //                 updated_at: time::now(),
-    //             {close_brace};
-    //         ",
-    //                       name = creatable_page_model.name,
-    //                       identifier = creatable_page_model.identifier,
-    //                       components_content_sql = components_content_sql,
-    //                       logged_in_user_email = logged_in_user.email,
-    //                       open_brace = String::from("{"),
-    //                       close_brace = String::from("}")
-    //     );
-    //     let responses = datastore.execute(&sql, database_session, None).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let page_model: Result<PageModel> = result_object?.try_into();
-    //
-    //     page_model
-    // }
-
-    // pub async fn update_page(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     updatable_admin_user: UpdatablePageModel,
-    //     logged_in_user: LoggedInUser,
-    // ) -> Result<PageModel> {
-    //     let mut components_content_sql = String::from("");
-    //
-    //     //@todo skip the last loop with comma think of how to make a comma and skip the last one.
-    //     for updatable_component_content_model in updatable_admin_user.component_contents {
-    //         let mut elements_sql = String::from("");
-    //
-    //         for updatable_component_element_content in updatable_component_content_model.elements {
-    //             let mut element_data_sql = String::from("");
-    //
-    //             for element_data_value in updatable_component_element_content.element_data {
-    //                 element_data_sql.push_str(
-    //                     &format!("{open_brace} \
-    //                             label: '{label}', \
-    //                             value: '{value}' \
-    //                             {close_brace},",
-    //                              open_brace = String::from("{"),
-    //                              label = element_data_value.label,
-    //                              value = element_data_value.value,
-    //                              close_brace = String::from("},")
-    //                     ));
-    //             }
-    //
-    //             elements_sql.push_str(&format!("{open_brace} \
-    //                     name: '{name}', \
-    //                     identifier: '{identifier}', \
-    //                     element_type: '{element_type}', \
-    //                     element_data_type: '{element_data_type}', \
-    //                     element_content: '{element_content}', \
-    //                     element_data: [{element_data_sql}\
-    //                ]  {close_brace},",
-    //                    name = updatable_component_element_content.name,
-    //                    identifier = updatable_component_element_content.identifier,
-    //                    element_type = updatable_component_element_content.element_type,
-    //                    element_content = updatable_component_element_content.element_content,
-    //                    element_data_type = updatable_component_element_content.element_data_type,
-    //                    element_data_sql = element_data_sql,
-    //                    open_brace = String::from("{"),
-    //                    close_brace = String::from("}")
-    //             ));
-    //         }
-    //
-    //         components_content_sql.push_str(&format!("{open_brace} \
-    //                 name: '{name}', \
-    //                 identifier: '{identifier}', \
-    //                 elements: [{elements_sql}]  \
-    //             {close_brace},",
-    //                  name = updatable_component_content_model.name,
-    //                  identifier = updatable_component_content_model.identifier,
-    //                  elements_sql = elements_sql,
-    //                  open_brace = String::from("{"),
-    //                  close_brace = String::from("}")
-    //         ));
-    //     }
-    //
-    //     let sql = format!("
-    //             UPDATE pages:{page_id} MERGE {open_brace}
-    //                 name: '{name}',
-    //                 components_content: [{components_content_sql}],
-    //                 updated_by: '{logged_in_user_email}',
-    //                 updated_at: time::now(),
-    //             {close_brace};
-    //         ",
-    //                       page_id = updatable_admin_user.id,
-    //                       name = updatable_admin_user.name,
-    //                       components_content_sql = components_content_sql,
-    //                       logged_in_user_email = logged_in_user.email,
-    //                       open_brace = String::from("{"),
-    //                       close_brace = String::from("}")
-    //     );
-    //
-    //     let responses = datastore.execute(&sql, database_session, None).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let page_model: Result<PageModel> = result_object?.try_into();
-    //
-    //     page_model
-    // }
-
-
     pub async fn count_of_identifier(
         &self,
         datastore: &Datastore,
@@ -382,20 +199,8 @@ impl PageRepository {
             let field_content_value: Value = match created_page_field.field_content {
                 PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
                 PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
-                PageFieldContentType::ArrayContentType { array_value } => {
-                    // let mut array_val: Vec<Value> = vec![];
-                    // for option in array_value {
-                    //     let val: Value = option.try_into()?;
-                    //     array_val.push(val);
-                    // }
-
-                    // array_val.into()
-
-                    array_value.try_into()?
-                },
+                PageFieldContentType::ArrayContentType { array_value } => array_value.try_into()?,
             };
-
-            println!("before create save data: {:?}", field_content_value);
 
             let field_data_value: Value = match created_page_field.field_data {
                 PageFieldData::SelectFieldData { select_field_options } =>  {
@@ -425,7 +230,7 @@ impl PageRepository {
 
                     options.into()
                 },
-                PageFieldData::None => "null".into(),
+                PageFieldData::NoneFieldData {none: _} => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -440,9 +245,15 @@ impl PageRepository {
             page_fields.push(page_field.into());
         }
 
+        let status: Value = match creatable_page_model.status {
+            PageStatus::Draft =>  "Draft".into(),
+            PageStatus::Published => "Published".into(),
+        };
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_page_model.name.into()),
             ("identifier".into(), creatable_page_model.identifier.into()),
+            ("status".into(), status.into()),
             ("created_by".into(), creatable_page_model.logged_in_username.clone().into()),
             ("updated_by".into(), creatable_page_model.logged_in_username.into()),
             ("page_fields".into(), page_fields.into()),
@@ -497,17 +308,7 @@ impl PageRepository {
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
                 PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
-                PageFieldContentType::ArrayContentType { array_value } => {
-                    // let mut array_val: Vec<Value> = vec![];
-                    // for option in array_value {
-                    //     let val: Value = option.try_into()?;
-                    //     array_val.push(val);
-                    // }
-
-                    // array_val.into()
-
-                    array_value.try_into()?
-                },
+                PageFieldContentType::ArrayContentType { array_value } => array_value.try_into()?,
             };
 
             let field_data_value: Value = match updatable_page_field.field_data {
@@ -538,7 +339,7 @@ impl PageRepository {
 
                     options.into()
                 },
-                PageFieldData::None => "".into(),
+                PageFieldData::NoneFieldData { none: _ } => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -553,9 +354,15 @@ impl PageRepository {
             page_fields.push(page_field.into());
         }
 
+        let status: Value = match updatable_page_model.status {
+            PageStatus::Draft =>  "Draft".into(),
+            PageStatus::Published => "Published".into(),
+        };
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_page_model.name.into()),
             ("identifier".into(), updatable_page_model.identifier.into()),
+            ("status".into(), status.into()),
             ("updated_by".into(), updatable_page_model.logged_in_username.clone().into()),
             ("created_by".into(), updatable_page_model.created_by.into()),
             ("page_fields".into(), page_fields.into()),

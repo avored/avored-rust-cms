@@ -4,6 +4,57 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use super::{BaseModel, Pagination};
 
+
+// region: Page model structs and enums
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct NewPageModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub status: PageStatus,
+    pub page_fields: Vec<PageFieldModel>,
+    pub created_at: Datetime,
+    pub updated_at: Datetime,
+    pub created_by: String,
+    pub updated_by: String,
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+pub enum PageStatus {
+    Draft,
+    Published
+}
+
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct PageFieldModel {
+    pub name: String,
+    pub identifier: String,
+    pub data_type: PageDataType,
+    pub field_type: PageFieldType,
+    pub field_content: PageFieldContentType,
+    pub field_data: PageFieldData
+}
+
+#[derive(Deserialize, Debug, Clone, Serialize)]
+#[serde(untagged)]
+pub enum PageDataType {
+    Text(String)
+}
+
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub enum PageFieldType {
+    #[default]
+    Text,
+    Textarea,
+    Select,
+    TextEditor,
+    Radio,
+    Checkbox
+}
+
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldContentType {
@@ -18,9 +69,16 @@ pub enum PageFieldContentType {
     },
 }
 
+
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct TextContentType {
     pub text_value: String
+}
+
+
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+pub struct IntegerContentType {
+    pub integer_value: i64
 }
 
 
@@ -30,30 +88,9 @@ pub struct ArrayContentType {
 }
 
 
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub struct IntegerContentType {
-    pub integer_value: i64
-}
-
-impl Default for PageFieldContentType {
-    fn default() -> PageFieldContentType {
-        PageFieldContentType::TextContentType { text_value: TextContentType::default() }
-    }
-}
-
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub enum PageFieldType {
-    #[default]
-    Text,
-    Textarea,
-    Select,
-    TextEditor,
-    Radio,
-    Checkbox
-}
 
 
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
+#[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum PageFieldData {
     SelectFieldData {
@@ -65,8 +102,9 @@ pub enum PageFieldData {
     CheckboxFieldData {
         checkbox_field_options: Vec<PageCheckboxFieldData>
     },
-    #[default]
-    None
+    NoneFieldData {
+        none: String
+    }
 }
 
 
@@ -90,10 +128,30 @@ pub struct PageCheckboxFieldData {
 }
 
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(untagged)]
-pub enum PageDataType {
-    Text(String)
+
+// endregion: Page model structs and enums
+
+
+// region: impl Default for page model enums
+
+impl Default for PageFieldContentType {
+    fn default() -> PageFieldContentType {
+        PageFieldContentType::TextContentType { text_value: TextContentType::default() }
+    }
+}
+
+
+impl Default for PageFieldData {
+    fn default() -> PageFieldData {
+        PageFieldData::NoneFieldData { none: String::from("") }
+    }
+}
+
+
+impl Default for PageStatus {
+    fn default() -> PageStatus {
+        PageStatus::Draft
+    }
 }
 
 impl Default for PageDataType {
@@ -102,28 +160,10 @@ impl Default for PageDataType {
     }
 }
 
+// endregion: impl Default for page model enums
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct NewPageModel {
-    pub id: String,
-    pub name: String,
-    pub identifier: String,
-    pub page_fields: Vec<PageFieldModel>,
-    pub created_at: Datetime,
-    pub updated_at: Datetime,
-    pub created_by: String,
-    pub updated_by: String,
-}
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct PageFieldModel {
-    pub name: String,
-    pub identifier: String,
-    pub data_type: PageDataType,
-    pub field_type: PageFieldType,
-    pub field_content: PageFieldContentType,
-    pub field_data: PageFieldData
-}
+// region: impl surreal Value for page model structs
 
 impl TryFrom<TextContentType> for Value {
     type Error = Error;
@@ -201,6 +241,10 @@ impl TryFrom<PageCheckboxFieldData> for Value {
     }
 }
 
+// endregion: impl surreal Value for page model structs
+
+
+// region: impl surreal Object for page model structs
 impl TryFrom<Object> for NewPageModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<NewPageModel> {
@@ -208,6 +252,15 @@ impl TryFrom<Object> for NewPageModel {
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
+        let status = match val.get("status").get_string()?.as_str() {
+            "Draft" => {
+                PageStatus::Draft
+            },
+            "Published" => {
+                PageStatus::Published
+            },
+            _ => PageStatus::default()
+        };
 
         let page_fields = match val.get("page_fields") {
             Some(val) => {
@@ -244,6 +297,7 @@ impl TryFrom<Object> for NewPageModel {
             id,
             name,
             identifier,
+            status,
             page_fields,
             created_at,
             updated_at,
@@ -396,14 +450,11 @@ impl TryFrom<Object> for PageFieldModel {
                                     select_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") }
                         }
                     }
                     None => {
-                        PageFieldData::None
+                        PageFieldData::NoneFieldData { none: String::from("") }
                     },
                 };
 
@@ -431,15 +482,10 @@ impl TryFrom<Object> for PageFieldModel {
                                     radio_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") },
                         }
                     }
-                    None => {
-                        PageFieldData::None
-                    },
+                    None => PageFieldData::NoneFieldData { none: String::from("") },
                 };
 
                 options
@@ -467,21 +513,16 @@ impl TryFrom<Object> for PageFieldModel {
                                     checkbox_field_options: arr
                                 }
                             }
-                            _ => {
-
-                                PageFieldData::None
-                            },
+                            _ => PageFieldData::NoneFieldData { none: String::from("") },
                         }
                     }
-                    None => {
-                        PageFieldData::None
-                    },
+                    None => PageFieldData::NoneFieldData { none: String::from("") },
                 };
 
                 options
             },
 
-            _ => PageFieldData::None
+            _ => PageFieldData::NoneFieldData { none: String::from("") }
         };
 
 
@@ -581,6 +622,11 @@ impl TryFrom<Object> for PageRadioFieldData {
     }
 }
 
+// endregion: impl surreal Value for page model structs
+
+
+// region: page model creatable and updatable structs
+
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct PagePagination {
     pub data: Vec<NewPageModel>,
@@ -591,6 +637,7 @@ pub struct PagePagination {
 pub struct NewCreatablePageModel {
     pub name: String,
     pub identifier: String,
+    pub status: PageStatus,
     pub logged_in_username: String,
     pub page_fields: Vec<CreatablePageField>
 }
@@ -605,12 +652,12 @@ pub struct CreatablePageField {
     pub field_data: PageFieldData
 }
 
-
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct NewUpdatablePageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
+    pub status: PageStatus,
     pub logged_in_username: String,
     pub created_at: Datetime,
     pub created_by: String,
@@ -627,10 +674,11 @@ pub struct UpdatablePageField {
     pub field_data: PageFieldData
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutPageIdentifierModel {
     pub id: String,
     pub identifier: String,
     pub logged_in_username: String
 }
+
+// endregion: page model creatable and updatable structs

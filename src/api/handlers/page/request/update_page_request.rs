@@ -1,12 +1,13 @@
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::page_model::{PageDataType, PageFieldContentType, PageFieldType, PageFieldData};
+use crate::models::page_model::{PageDataType, PageFieldContentType, PageFieldType, PageFieldData, PageStatus};
 use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct UpdatePageRequest {
     pub name: String,
     pub identifier: String,
+    pub status: PageStatus,
     pub page_fields: Vec<UpdatablePageField>,
 }
 

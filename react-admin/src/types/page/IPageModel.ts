@@ -16,6 +16,11 @@ export enum AvoRedPageDataType {
     Array_Text = "Array_Text"
 }
 
+export enum AvoRedPageStatus {
+    Draft = "Draft",
+    Published = "Published",
+}
+
 
 export enum AvoRedPageFieldType {
     TEXT = "Text",
