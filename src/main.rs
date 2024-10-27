@@ -26,7 +26,7 @@ mod avored_state;
 mod error;
 mod query;
 
-rust_i18n::i18n!("locales");
+rust_i18n::i18n!("resources/locales");
 
 #[tokio::main]
 async fn main() -> Result<()> {
