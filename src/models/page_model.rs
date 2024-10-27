@@ -20,8 +20,9 @@ pub struct NewPageModel {
     pub updated_by: String,
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum PageStatus {
+    #[default]
     Draft,
     Published
 }
@@ -147,12 +148,12 @@ impl Default for PageFieldData {
     }
 }
 
-
-impl Default for PageStatus {
-    fn default() -> PageStatus {
-        PageStatus::Draft
-    }
-}
+//
+// impl Default for PageStatus {
+//     fn default() -> PageStatus {
+//         PageStatus::Draft
+//     }
+// }
 
 impl Default for PageDataType {
     fn default() -> PageDataType {
