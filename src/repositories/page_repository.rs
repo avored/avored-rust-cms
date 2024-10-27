@@ -253,7 +253,7 @@ impl PageRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_page_model.name.into()),
             ("identifier".into(), creatable_page_model.identifier.into()),
-            ("status".into(), status.into()),
+            ("status".into(), status),
             ("created_by".into(), creatable_page_model.logged_in_username.clone().into()),
             ("updated_by".into(), creatable_page_model.logged_in_username.into()),
             ("page_fields".into(), page_fields.into()),
@@ -362,7 +362,7 @@ impl PageRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_page_model.name.into()),
             ("identifier".into(), updatable_page_model.identifier.into()),
-            ("status".into(), status.into()),
+            ("status".into(), status),
             ("updated_by".into(), updatable_page_model.logged_in_username.clone().into()),
             ("created_by".into(), updatable_page_model.created_by.into()),
             ("page_fields".into(), page_fields.into()),
