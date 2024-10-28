@@ -2,6 +2,7 @@ use std::sync::Arc;
 use axum::{middleware, routing::get, Extension, Router};
 use axum::routing::{delete, on, post, put, MethodFilter};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
+use axum::http::HeaderValue;
 use juniper::{EmptyMutation, EmptySubscription};
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
@@ -61,19 +62,11 @@ use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
+    let mut origins: Vec<HeaderValue> =  vec![];
 
-    let react_admin_url = &state.config.react_admin_app_url;
-    let react_front_url = &state.config.react_frontend_app_url;
-    let avored_url = &String::from("https://www.avored.com");
-
-    let origins = [
-        react_admin_url.parse().unwrap(),
-        react_front_url.parse().unwrap(),
-
-        // Ideally we need to think about how to handle multiple cors url for frontend.
-        // env file should handle multiple array style url list
-        avored_url.parse().unwrap()
-    ];
+    for origin in &state.config.cors_allowed_app_url {
+        origins.push(HeaderValue::from_str(origin).unwrap());
+    }
 
     let cors = CorsLayer::new()
         .allow_origin(origins)

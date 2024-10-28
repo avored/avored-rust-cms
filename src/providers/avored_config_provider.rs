@@ -11,6 +11,7 @@ pub struct AvoRedConfigProvider {
     pub react_admin_app_url: String,
     pub react_frontend_app_url: String,
     pub back_end_app_url: String,
+    pub cors_allowed_app_url: Vec<String>,
     pub password_salt: String,
     pub smtp_host: String,
     pub smtp_username: String,
@@ -40,6 +41,10 @@ impl AvoRedConfigProvider {
             _ => dotenvy::from_filename_override(".env")?,
         };
 
+        let env_str_allowed_cors = get_env("AVORED_CORS_ALLOWED_APP_URL")?;
+        let vec_cors_urls = env_str_allowed_cors.split(',').collect::<Vec<&str>>();
+        let cors_urls = vec_cors_urls.iter().map(|url| url.to_string()).collect();
+
         Ok(AvoRedConfigProvider {
             database_folder_name: get_env("AVORED_DATABASE_FOLDER_NAME")?,
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
@@ -48,6 +53,7 @@ impl AvoRedConfigProvider {
             react_admin_app_url: get_env("AVORED_REACT_ADMIN_APP_URL")?,
             react_frontend_app_url: get_env("AVORED_REACT_FRONTEND_APP_URL")?,
             back_end_app_url: get_env("AVORED_BACK_END_APP_URL")?,
+            cors_allowed_app_url: cors_urls,
             password_salt: get_env("AVORED_PASSWORD_SALT")?,
             smtp_host: get_env("SMTP_HOST")?,
             smtp_username: get_env("SMTP_USERNAME")?,
