@@ -62,24 +62,26 @@ use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
-    let mut origins: Vec<HeaderValue> =  vec![];
 
-    for origin in &state.config.cors_allowed_app_url {
-        origins.push(HeaderValue::from_str(origin).unwrap());
-    }
+    Router::new()
+        .merge(admin_api_routes(state.clone()))
+        .merge(cms_api_routes(state.clone()))
 
-    let cors = CorsLayer::new()
-        .allow_origin(origins)
-        .allow_headers([CONTENT_TYPE, AUTHORIZATION])
-        .allow_methods([
-            axum::http::Method::GET,
-            axum::http::Method::POST,
-            axum::http::Method::PUT,
-            axum::http::Method::PATCH,
-            axum::http::Method::DELETE,
-            axum::http::Method::OPTIONS,
-        ]);
+}
 
+
+// Ideally cms routes will have all the frontend api calls in future more api will end points will be added
+fn cms_api_routes(state: Arc<AvoRedState>) -> Router {
+    let cors = get_cors_urls(state.clone());
+    println!("cors: {:?}", cors);
+    Router::new()
+        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
+        .with_state(state)
+        .layer(cors)
+}
+
+fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
+    let cors = get_cors_urls(state.clone());
     let schema = AvoRedGraphqlSchema::new(
         AvoRedQuery,
         EmptyMutation::new(),
@@ -142,12 +144,29 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/testing", post(testing_api_handler))
         .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
-        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
         .layer(cors)
         .layer(Extension(Arc::new(schema)))
 }
 
+fn get_cors_urls(state: Arc<AvoRedState>) -> CorsLayer {
+    let mut origins: Vec<HeaderValue> =  vec![];
+    for origin in &state.config.cors_allowed_app_url {
+        origins.push(HeaderValue::from_str(origin).unwrap());
+    }
+
+    CorsLayer::new()
+        .allow_origin(origins)
+        .allow_headers([CONTENT_TYPE, AUTHORIZATION])
+        .allow_methods([
+            axum::http::Method::GET,
+            axum::http::Method::POST,
+            axum::http::Method::PUT,
+            axum::http::Method::PATCH,
+            axum::http::Method::DELETE,
+            axum::http::Method::OPTIONS,
+        ])
+}
 
 #[cfg(test)]
 pub mod tests {
