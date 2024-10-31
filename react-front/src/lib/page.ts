@@ -6,5 +6,5 @@ export const GetElementValue = ((fields: Array<PageFieldType>, element_identifie
     const field = fields.find((ele: any) => {
         return ele.identifier === element_identifier
     })
-    return _.get(field, 'field_content', '')
+    return _.get(field, 'field_content.text_value.text_value', '')
 })
