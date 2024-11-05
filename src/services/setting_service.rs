@@ -28,6 +28,16 @@ impl SettingService {
             .await
     }
 
+    pub async fn find_by_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String
+    ) -> Result<SettingModel> {
+        self.setting_repository
+            .find_by_identifier(datastore, database_session, identifier)
+            .await
+    }
+
     pub async fn update_setting(
         &self,
         (datastore, database_session): &DB,

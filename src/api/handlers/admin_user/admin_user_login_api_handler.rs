@@ -94,7 +94,6 @@ pub async fn admin_user_login_api_handler(
     Ok(Json(response_data))
 }
 
-
 #[derive(Serialize, ToSchema, Deserialize, Debug)]
 pub struct LoginResponseData {
     pub status: bool,
