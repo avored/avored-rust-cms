@@ -2,7 +2,6 @@ use std::sync::Arc;
 use axum::{middleware, routing::get, Extension, Router};
 use axum::routing::{delete, on, post, put, MethodFilter};
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
-use axum::http::HeaderValue;
 use juniper::{EmptyMutation, EmptySubscription};
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
@@ -58,6 +57,7 @@ use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
 use crate::api::handlers::misc::delete_demo_data_api_handler::delete_demo_data_api_handler;
 use crate::api::handlers::misc::install_demo_data_api_handler::install_demo_data_api_handler;
 use crate::api::handlers::misc::testing_api_handler::testing_api_handler;
+use crate::middleware::validate_cms_authentication::validate_cms_authentication;
 use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
 use crate::query::AvoRedQuery;
 
@@ -73,9 +73,12 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 // Ideally cms routes will have all the frontend api calls in future more api will end points will be added
 fn cms_api_routes(state: Arc<AvoRedState>) -> Router {
     let cors = get_cors_urls(state.clone());
-    println!("cors: {:?}", cors);
     Router::new()
         .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            validate_cms_authentication,
+        ))
         .with_state(state)
         .layer(cors)
 }
@@ -144,6 +147,7 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/testing", post(testing_api_handler))
         .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
+        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
         .layer(cors)
         .layer(Extension(Arc::new(schema)))

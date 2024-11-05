@@ -54,6 +54,15 @@ pub async fn post_setup_avored_handler(
             updated_at: time::now()
         };
 
+        CREATE settings CONTENT {
+            identifier: 'auth_cms_token',
+            value: '',
+            created_by: $email,
+            updated_by: $email,
+            created_at: time::now(),
+            updated_at: time::now()
+        };
+
 
         REMOVE TABLE admin_users;
         DEFINE TABLE admin_users;
