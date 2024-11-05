@@ -6,7 +6,6 @@ use axum::Json;
 use axum::middleware::Next;
 use axum::response::IntoResponse;
 use axum_extra::extract::CookieJar;
-use tracing::error;
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::ErrorResponse;
 use crate::models::setting_model::SettingModel;
