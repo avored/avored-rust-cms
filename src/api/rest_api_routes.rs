@@ -148,7 +148,6 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
         .route("/api/testing", post(testing_api_handler))
         .route("/api/reset-password", post(admin_user_reset_password_api_handler))
         .route("/api/forgot-password", post(admin_user_forgot_password_api_handler))
-        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
         .with_state(state)
         .layer(cors)
         .layer(Extension(Arc::new(schema)))
