@@ -1,4 +1,4 @@
-enum ButtonType {
+export enum ButtonType {
     submit = "submit",
     button = "button",
 }
@@ -21,7 +21,7 @@ const AvoRedButton = (({
     return (
         <>
             <button
-                onClick={onClick}
+                onClick={e => onClick(e)}
                 type={type}
                 className={`bg-gray-300 w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 ${className}`}
             >

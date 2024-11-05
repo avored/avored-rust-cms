@@ -8,6 +8,8 @@ import { SettingSaveSchema } from "./schemas/setting.save.schema";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { useForm } from "react-hook-form";
 import SaveSettingType from "../../types/settings/SaveSettingType";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
+import {randomString} from "../../lib/common";
 
 function SettingPage() {
     const setting_api_all_response = useSetting()
@@ -19,6 +21,7 @@ function SettingPage() {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: { errors }
     } = useForm<SaveSettingType>({
         resolver: joiResolver(SettingSaveSchema, { allowUnknown: true }),
@@ -30,6 +33,12 @@ function SettingPage() {
     })
     const submitHandler = ((data: SaveSettingType) => {
         mutate(data)
+    })
+
+    const generateTokenOnClick = ((e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        e.stopPropagation()
+        setValue(`settings.${getIdentifierIndex('auth_cms_token')}.value`, randomString(48))
     })
 
     return (
@@ -58,14 +67,38 @@ function SettingPage() {
                         <div className="col-span-10 px-5 rounded py-5">
                             <form onSubmit={handleSubmit(submitHandler)}>
                                 <div className="sm:items-center sm:justify-between">
-                                    <InputField
-                                        label={t("site_name")}
-                                        register={register(`settings.${getIdentifierIndex('general_site_name')}.value`)}
-                                        autoFocus
-                                    />
-                                </div>
+                                    <div className="mb-5">
+                                        <InputField
+                                            label={t("site_name")}
+                                            register={register(`settings.${getIdentifierIndex('general_site_name')}.value`)}
+                                            autoFocus
+                                        />
+                                    </div>
 
-                                <div className="flex">
+                                    <div className="flex items-end mb-5">
+
+                                        <div className="flex-1">
+                                            <InputField
+                                                label={t("cms_frontend_auth_token")}
+                                                register={register(`settings.${getIdentifierIndex('auth_cms_token')}.value`)}
+                                                autoFocus
+                                            />
+                                        </div>
+                                        <div className="ml-3 mr-auto">
+                                            <AvoRedButton
+                                                className="bg-primary-500"
+                                                onClick={generateTokenOnClick}
+                                                type={ButtonType.button}
+                                                label={t("generate_token")}
+                                            />
+                                        </div>
+
+
+                                        </div>
+                                    </div>
+
+                                    <div className="flex">
+
                                     <button
                                         type="submit"
                                         className="mt-5 rounded-lg bg-primary-600 px-4 py-2 text-white"
