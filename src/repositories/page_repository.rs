@@ -116,6 +116,31 @@ impl PageRepository {
         page_model
     }
 
+    pub async fn all(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<Vec<NewPageModel>> {
+        let sql =
+            "SELECT * FROM type::table($table);";
+        let vars: BTreeMap<String, Value> = [
+            ("table".into(), PAGE_TABLE.into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let mut page_list: Vec<NewPageModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let page_object = object?;
+
+            let page_model: Result<NewPageModel> = page_object.try_into();
+            page_list.push(page_model?);
+        }
+        Ok(page_list)
+    }
+
     pub async fn count_of_identifier(
         &self,
         datastore: &Datastore,
