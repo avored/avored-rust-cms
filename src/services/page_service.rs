@@ -76,6 +76,11 @@ impl PageService {
         Ok(true)
     }
 
+
+    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<NewPageModel>> {
+        self.page_repository.all(datastore,database_session).await
+    }
+
     pub async fn find_by_id(
         &self,
         (datastore, database_session): &DB,

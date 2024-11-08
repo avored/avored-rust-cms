@@ -54,6 +54,7 @@ use crate::api::handlers::{
     asset::rename_asset_api_handler::rename_asset_api_handler,
     asset::delete_asset_api_handler::delete_asset_api_handler,
 };
+use crate::api::handlers::cms::all_pages_cms_api_handler::all_pages_cms_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
 use crate::api::handlers::misc::delete_demo_data_api_handler::delete_demo_data_api_handler;
 use crate::api::handlers::misc::install_demo_data_api_handler::install_demo_data_api_handler;
@@ -76,6 +77,7 @@ fn cms_api_routes(state: Arc<AvoRedState>) -> Router {
     let cors = get_cors_urls(state.clone());
     Router::new()
         .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
+        .route("/cms/page", get(all_pages_cms_api_handler))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             validate_cms_authentication,
