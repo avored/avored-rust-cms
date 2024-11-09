@@ -5,3 +5,4 @@ pub mod role_service;
 pub mod asset_service;
 pub mod setting_service;
 pub mod model_service;
+pub mod cms_service;
