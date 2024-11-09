@@ -15,6 +15,7 @@ use crate::repositories::model_repository::ModelRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::setting_repository::SettingRepository;
 use crate::services::asset_service::AssetService;
+use crate::services::cms_service::CmsService;
 use crate::services::model_service::ModelService;
 use crate::services::setting_service::SettingService;
 
@@ -29,6 +30,7 @@ pub struct AvoRedState {
     pub asset_service: AssetService,
     pub setting_service: SettingService,
     pub model_service: ModelService,
+    pub cms_service: CmsService
 }
 
 impl juniper::Context for AvoRedState{}
@@ -59,6 +61,7 @@ impl AvoRedState {
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;
         let model_service = ModelService::new(model_repository)?;
+        let cms_service = CmsService::new()?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -71,6 +74,7 @@ impl AvoRedState {
             asset_service,
             setting_service,
             model_service,
+            cms_service
         })
     }
 }

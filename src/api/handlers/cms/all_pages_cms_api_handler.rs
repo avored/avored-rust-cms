@@ -7,7 +7,7 @@ use axum::{extract::State, Json, response::IntoResponse};
 pub async fn all_pages_cms_api_handler(
     state: State<Arc<AvoRedState>>
 ) -> Result<impl IntoResponse> {
-    println!("->> {:<12} - fetch_page_cms_api_handler", "HANDLER");
+    println!("->> {:<12} - all_pages_cms_api_handler", "HANDLER");
     let page_model = state
         .page_service
         .all(&state.db)
