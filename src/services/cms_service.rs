@@ -23,7 +23,7 @@ impl CmsService {
     ) -> Result<bool> {
         let from_address = String::from("info@avored.com");
         let to_address = String::from("ind.purvesh@gmail.com");
-        let email_subject = String::from("Contact us message");
+        let email_subject = String::from("Contact us message sent");
         let sent_contact_email_message_body = template.handlebars.render("contact-us-email", &payload)?;
 
         let email = Message::builder()
