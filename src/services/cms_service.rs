@@ -22,7 +22,7 @@ impl CmsService {
         payload: SentContactUsEmailRequest
     ) -> Result<bool> {
         let from_address = String::from("info@avored.com");
-        let to_address = payload.email.clone();
+        let to_address = String::from("ind.purvesh@gmail.com");
         let email_subject = String::from("Contact us message");
         let sent_contact_email_message_body = template.handlebars.render("contact-us-email", &payload)?;
 
