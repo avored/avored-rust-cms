@@ -6,7 +6,7 @@ export const useContactUsForm = () => {
     const client = useAxios();
     return useMutation({
         mutationFn: async (data: ContactUsType) => {
-            return await client.post("/sent-contact-us-email", data);
+            return await client.post("/cms/sent-contact-us-email", data);
         }
     });
 };
