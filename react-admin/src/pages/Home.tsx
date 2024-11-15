@@ -10,7 +10,10 @@ function Dashboard() {
           <div className="mt-16">
             <div className="flex justify-center">
                 <div className="text-gray-600">
-                    To Access demo admin please use the email: demo@avored.com and password: admin123
+                    To Access demo admin please use the
+                    email: <span className="text-red-500 font-semibold">demo@avored.com</span>
+                    and
+                    password: <span className="text-red-500 font-semibold">admin123</span>
                 </div>
             </div>
           </div>
