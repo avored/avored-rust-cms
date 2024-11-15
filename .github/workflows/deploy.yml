@@ -41,6 +41,6 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./react-admin/dist"
+        source: "dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
 
