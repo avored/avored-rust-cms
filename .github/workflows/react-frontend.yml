@@ -23,15 +23,9 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: npm run build
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      run: VITE_AVORED_FRONTEND_BASE_URL=${{secrets.VITE_AVORED_FRONTEND_BASE_URL}}
+        VITE_AVORED_BACKEND_BASE_URL=${{secrets.VITE_AVORED_BACKEND_BASE_URL}}
+        VITE_AVORED_CMS_TOKEN=${{secrets.VITE_AVORED_CMS_TOKEN}} npm run build
 
     - name: Copy files via ssh
       uses: appleboy/scp-action@master
@@ -41,4 +35,3 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         source: "./react-front/dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
-
