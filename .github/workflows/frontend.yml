@@ -23,8 +23,7 @@ jobs:
       run: npm ci
 
     - name: Build
-      run: VITE_AVORED_FRONTEND_BASE_URL=${{secrets.VITE_AVORED_FRONTEND_BASE_URL}}
-        VITE_AVORED_FRONTEND_BASE_URL=${{secrets.VITE_AVORED_BACKEND_BASE_URL}} npm run build
+      run: npm run build
 
   deploy:
     needs: build
