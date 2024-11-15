@@ -1,6 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
-
+use argon2::{Argon2, PasswordHasher};
+use argon2::password_hash::SaltString;
 use crate::{
     avored_state::AvoRedState,
     error::Result,
@@ -9,6 +10,8 @@ use axum::{extract::State, Json, response::IntoResponse, Extension};
 use serde::Serialize;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
+use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::role_model::CreatableRole;
 use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn install_demo_data_api_handler(
@@ -236,7 +239,7 @@ pub async fn install_demo_data_api_handler(
     ";
 
     let vars = BTreeMap::from([
-        ("email".into(), logged_in_user.email.into()),
+        ("email".into(), logged_in_user.email.clone().into()),
     ]);
 
     let (ds, ses) = &state.db;
@@ -248,6 +251,61 @@ pub async fn install_demo_data_api_handler(
 
     let mut file = File::create("public/install_demo").await?;
     file.write_all(b".gitkeep").await?;
+
+    // @todo create a demo role
+    // @todo create a demo visitor user
+
+    let demo_role = CreatableRole {
+        name: "Demo visitor role".to_string(),
+        identifier: "demo-visitor-role".to_string(),
+        logged_in_username: logged_in_user.email.clone(),
+        permissions: vec![
+            String::from("dashboard"),
+            String::from("get_setting"),
+            String::from("page_table"),
+            String::from("page_create"),
+            String::from("page_edit"),
+            String::from("get_page"),
+            String::from("page_delete"),
+            String::from("asset_table"),
+            String::from("asset_create"),
+            String::from("asset_edit"),
+            String::from("asset_delete"),
+
+        ],
+    };
+
+    let created_role_model = state
+        .role_service
+        .create_role(&state.db, demo_role)
+        .await?;
+
+    let password = "admin123".as_bytes();
+    let salt = SaltString::from_b64(&state.config.password_salt)?;
+
+    let argon2 = Argon2::default();
+    let password_hash = argon2
+        .hash_password(password, &salt)
+        .expect("Error occurred while encrypted password")
+        .to_string();
+
+    let creatable_admin_user = CreatableAdminUserModel {
+        full_name: "Demo admin user".to_string(),
+        email: "demo@avored.com".to_string(),
+        password: password_hash,
+        profile_image: "".to_string(),
+        is_super_admin: false,
+        logged_in_username: logged_in_user.email.clone(),
+        role_ids: vec![created_role_model.id],
+    };
+
+    let created_admin_user = state
+        .admin_user_service
+        .create_admin_user(&state.db, creatable_admin_user, logged_in_user)
+        .await?;
+
+
+    println!("Created admin user: {:?}", created_admin_user);
 
     let response = DemoDataViewModel {
         status: true
