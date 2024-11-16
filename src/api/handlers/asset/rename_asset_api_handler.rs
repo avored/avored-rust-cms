@@ -36,7 +36,7 @@ pub async fn rename_asset_api_handler(
 
         return Err(Error::BadRequest(error_response));
     }
-    
+
     let asset_model = state.asset_service
         .find_by_id(&state.db, &asset_id)
         .await?;
