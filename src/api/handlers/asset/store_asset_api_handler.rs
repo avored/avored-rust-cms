@@ -78,9 +78,9 @@ pub async fn store_asset_api_handler(
                             .await?;
 
                         creatable_asset_model.parent_id = query_parent_id;
-                        asset_file = format!("{}/{}", parent_asset.path, new_file_name.clone());
+                        asset_file = format!("/{}/{}", parent_asset.path, new_file_name.clone());
                     } else {
-                        asset_file = format!("public/upload/{}", new_file_name.clone());
+                        asset_file = format!("/public/upload/{}", new_file_name.clone());
                     }
 
                     creatable_asset_model.name = new_file_name.clone();

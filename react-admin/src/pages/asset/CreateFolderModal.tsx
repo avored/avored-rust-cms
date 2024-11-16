@@ -12,11 +12,13 @@ import {useCreateFolder} from "./hooks/useCreateFolder";
 type CreateFolderModalProps = {
     isOpen: any,
     onCloseModal: any,
+    parent_id?: string,
 }
 
 export const CreateFolderModal = (({
-                                      isOpen,
-                                      onCloseModal,
+                                       isOpen,
+                                       onCloseModal,
+                                       parent_id
                                   }: CreateFolderModalProps) => {
     const [t] = useTranslation("global");
     const { mutate } = useCreateFolder()
@@ -24,6 +26,7 @@ export const CreateFolderModal = (({
 
     const submitHandler: SubmitHandler<CreateFolderType>  = ((data: CreateFolderType) => {
         onCloseModal()
+        data.parent_id = parent_id
         mutate(data)
     })
 

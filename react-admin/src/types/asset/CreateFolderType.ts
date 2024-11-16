@@ -1,4 +1,5 @@
 export type CreateFolderType = {
-    name: String;
+    name: string;
+    parent_id?: string;
 }
 

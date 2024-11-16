@@ -16,8 +16,6 @@ impl AvoRedTemplateProvider {
         reg.register_template_file("forgot-password", "./resources/mail/forgot-password.hbs")?;
         reg.register_template_file("contact-us-email", "./resources/mail/contact-us-email.hbs")?;
 
-
-        println!("config {:?}", config);
         let creds = Credentials::new(config.smtp_username, config.smtp_password);
 
         let mailer: AsyncSmtpTransport<Tokio1Executor> =
