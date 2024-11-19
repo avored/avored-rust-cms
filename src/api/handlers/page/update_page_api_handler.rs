@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{NewPageModel, NewUpdatablePageModel, UpdatablePageField};
+use crate::models::page_model::{PageModel, UpdatablePageModel, UpdatablePageField};
 use crate::{
     api::handlers::page::request::update_page_request::UpdatePageRequest,
     avored_state::AvoRedState, error::Result
@@ -17,7 +17,7 @@ pub async fn update_page_api_handler(
     AxumPath(page_id): AxumPath<String>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<UpdatePageRequest>,
-) -> Result<Json<ApiResponse<NewPageModel>>> {
+) -> Result<Json<ApiResponse<PageModel>>> {
     println!("->> {:<12} - update_page_api_handler", "HANDLER");
 
     let has_permission_bool = state
@@ -44,7 +44,7 @@ pub async fn update_page_api_handler(
         .find_by_id(&state.db, page_id)
         .await?;
 
-    let mut updatable_page = NewUpdatablePageModel {
+    let mut updatable_page = UpdatablePageModel {
         id: page_model.id,
         name: payload.name,
         identifier: payload.identifier,
@@ -79,10 +79,3 @@ pub async fn update_page_api_handler(
 
     Ok(Json(response))
 }
-
-
-// #[derive(Serialize, Debug)]
-// pub struct UpdatablePageResponse {
-//     pub status: bool,
-//     pub page_model: NewPageModel
-// }

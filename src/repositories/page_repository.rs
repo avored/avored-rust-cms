@@ -4,7 +4,7 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus, PutPageIdentifierModel};
+use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus, PutPageIdentifierModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -26,7 +26,7 @@ impl PageRepository {
         start: i64,
         order_column: String,
         order_type: String,
-    ) -> Result<Vec<NewPageModel>> {
+    ) -> Result<Vec<PageModel>> {
         let sql = format!("\
             SELECT * \
             FROM type::table($table) \
@@ -41,12 +41,12 @@ impl PageRepository {
         ]);
         let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
 
-        let mut page_list: Vec<NewPageModel> = Vec::new();
+        let mut page_list: Vec<PageModel> = Vec::new();
 
         for object in into_iter_objects(responses)? {
             let page_object = object?;
 
-            let page_model: Result<NewPageModel> = page_object.try_into();
+            let page_model: Result<PageModel> = page_object.try_into();
             page_list.push(page_model?);
         }
         Ok(page_list)
@@ -94,7 +94,7 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         page_id: String,
-    ) -> Result<NewPageModel> {
+    ) -> Result<PageModel> {
         let sql =
             "SELECT * FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
@@ -111,7 +111,7 @@ impl PageRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        let page_model: Result<NewPageModel> = result_object?.try_into();
+        let page_model: Result<PageModel> = result_object?.try_into();
 
         page_model
     }
@@ -120,7 +120,7 @@ impl PageRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-    ) -> Result<Vec<NewPageModel>> {
+    ) -> Result<Vec<PageModel>> {
         let sql =
             "SELECT * FROM type::table($table);";
         let vars: BTreeMap<String, Value> = [
@@ -130,12 +130,12 @@ impl PageRepository {
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let mut page_list: Vec<NewPageModel> = Vec::new();
+        let mut page_list: Vec<PageModel> = Vec::new();
 
         for object in into_iter_objects(responses)? {
             let page_object = object?;
 
-            let page_model: Result<NewPageModel> = page_object.try_into();
+            let page_model: Result<PageModel> = page_object.try_into();
             page_list.push(page_model?);
         }
         Ok(page_list)
@@ -167,7 +167,7 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
         put_page_identifier_model: PutPageIdentifierModel,
-    ) -> Result<NewPageModel> {
+    ) -> Result<PageModel> {
         let sql = "UPDATE type::thing($table, $id)
                     SET
                         identifier = $identifier,
@@ -190,17 +190,17 @@ impl PageRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let updated_model: Result<NewPageModel> = result_object?.try_into();
+        let updated_model: Result<PageModel> = result_object?.try_into();
 
         updated_model
     }
 
-    pub async fn new_create_page (
+    pub async fn create_page (
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_page_model: NewCreatablePageModel
-    ) -> Result<NewPageModel> {
+        creatable_page_model: CreatablePageModel
+    ) -> Result<PageModel> {
         let sql = "CREATE type::table($table) CONTENT $data";
 
         let mut page_fields: Vec<Value> = vec![];
@@ -218,7 +218,8 @@ impl PageRepository {
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
                 PageFieldType::Radio => "Radio".into(),
-                PageFieldType::Checkbox => "Checkbox".into()
+                PageFieldType::Checkbox => "Checkbox".into(),
+                PageFieldType::SingleImage => "SingleImage".into()
             };
 
             let field_content_value: Value = match created_page_field.field_content {
@@ -301,17 +302,17 @@ impl PageRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        let model: Result<NewPageModel> = result_object?.try_into();
+        let model: Result<PageModel> = result_object?.try_into();
 
         model
     }
 
-    pub async fn new_update_page (
+    pub async fn update_page (
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_page_model: NewUpdatablePageModel
-    ) -> Result<NewPageModel> {
+        updatable_page_model: UpdatablePageModel
+    ) -> Result<PageModel> {
         let sql = "UPDATE type::thing($table, $id) CONTENT $data";
 
         let mut page_fields: Vec<Value> = vec![];
@@ -328,7 +329,8 @@ impl PageRepository {
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
                 PageFieldType::Radio => "Radio".into(),
-                PageFieldType::Checkbox => "Checkbox".into()
+                PageFieldType::Checkbox => "Checkbox".into(),
+                PageFieldType::SingleImage => "SingleImage".into()
             };
             let field_content_value: Value = match updatable_page_field.field_content {
                 PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
@@ -411,7 +413,7 @@ impl PageRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        let model: Result<NewPageModel> = result_object?.try_into();
+        let model: Result<PageModel> = result_object?.try_into();
 
         model
     }
