@@ -8,7 +8,7 @@ use super::{BaseModel, Pagination};
 // region: Page model structs and enums
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct NewPageModel {
+pub struct PageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
@@ -53,7 +53,8 @@ pub enum PageFieldType {
     Select,
     TextEditor,
     Radio,
-    Checkbox
+    Checkbox,
+    SingleImage
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -246,9 +247,9 @@ impl TryFrom<PageCheckboxFieldData> for Value {
 
 
 // region: impl surreal Object for page model structs
-impl TryFrom<Object> for NewPageModel {
+impl TryFrom<Object> for PageModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<NewPageModel> {
+    fn try_from(val: Object) -> Result<PageModel> {
 
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
@@ -294,7 +295,7 @@ impl TryFrom<Object> for NewPageModel {
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
 
-        Ok(NewPageModel {
+        Ok(PageModel {
             id,
             name,
             identifier,
@@ -345,6 +346,9 @@ impl TryFrom<Object> for PageFieldModel {
             },
             "Checkbox" => {
                 PageFieldType::Checkbox
+            },
+            "SingleImage" => {
+                PageFieldType::SingleImage
             },
 
             _ => PageFieldType::default()
@@ -429,6 +433,7 @@ impl TryFrom<Object> for PageFieldModel {
         };
 
         let field_data = match field_type_str.as_str() {
+
             "Select" => {
                 let options = match val.get("field_data") {
                     Some(val) => {
@@ -461,6 +466,7 @@ impl TryFrom<Object> for PageFieldModel {
 
                 options
             },
+
             "Radio" => {
                 let options = match val.get("field_data") {
                     Some(val) => {
@@ -630,12 +636,12 @@ impl TryFrom<Object> for PageRadioFieldData {
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct PagePagination {
-    pub data: Vec<NewPageModel>,
+    pub data: Vec<PageModel>,
     pub pagination: Pagination,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct NewCreatablePageModel {
+pub struct CreatablePageModel {
     pub name: String,
     pub identifier: String,
     pub status: PageStatus,
@@ -654,7 +660,7 @@ pub struct CreatablePageField {
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct NewUpdatablePageModel {
+pub struct UpdatablePageModel {
     pub id: String,
     pub name: String,
     pub identifier: String,

@@ -91,15 +91,16 @@ function AssetTable() {
 
           <div className="">
             <AssetUploadModal
-              onCloseModal={onCloseUploadModal}
-              isOpen={isUploadAssetModalOpen}
-              submitHandler={submitHandler}
-              handleSubmit={handleSubmit}
-              register={register}
+                onCloseModal={onCloseUploadModal}
+                isOpen={isUploadAssetModalOpen}
+                submitHandler={submitHandler}
+                handleSubmit={handleSubmit}
+                register={register}
             />
             <CreateFolderModal
-              onCloseModal={onCloseCreateFolderModal}
-              isOpen={isCreateFolderModalOpen}
+                parent_id={asset_id}
+                onCloseModal={onCloseCreateFolderModal}
+                isOpen={isCreateFolderModalOpen}
             />
           </div>
         </div>

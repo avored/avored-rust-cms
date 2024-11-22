@@ -37,14 +37,11 @@ pub async fn rename_asset_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-
     let asset_model = state.asset_service
         .find_by_id(&state.db, &asset_id)
         .await?;
     let old_asset_path = format!(".{}",asset_model.path);
     let new_asset_path = format!("/public/upload/{}", &payload.name);
-
-    println!("OLD: {old_asset_path}, new_asset: {new_asset_path}");
 
     if fs::try_exists(&old_asset_path).await? {
         fs::rename(&old_asset_path, &format!(".{}", new_asset_path)).await?;

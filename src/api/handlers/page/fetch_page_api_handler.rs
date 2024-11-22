@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use crate::models::page_model::NewPageModel;
+use crate::models::page_model::PageModel;
 use crate::{
     avored_state::AvoRedState, error::Result
 };
@@ -41,5 +41,5 @@ pub async fn fetch_page_api_handler(
 #[derive(Serialize, Debug)]
 pub struct FetchPageResponse {
     pub status: bool,
-    pub page_model: NewPageModel
+    pub page_model: PageModel
 }

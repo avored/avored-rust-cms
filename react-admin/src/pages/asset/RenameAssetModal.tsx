@@ -10,17 +10,17 @@ import IAssetModel from "../../types/asset/IAssetModel";
 import {RenameFolderType} from "../../types/asset/RenameFolderType";
 import {useRenameFolder} from "./hooks/useRenameFolder";
 
-type RenameFolderModalProps = {
+type RenameAssetModalProps = {
     isOpen: any,
     onCloseModal: any,
     asset: IAssetModel
 }
 
-export const RenameFolderModal = (({
+export const RenameAssetModal = (({
                                        isOpen,
                                        onCloseModal,
                                        asset
-                                  }: RenameFolderModalProps) => {
+                                  }: RenameAssetModalProps) => {
     const [t] = useTranslation("global");
     const { mutate } = useRenameFolder()
 
@@ -70,7 +70,7 @@ export const RenameFolderModal = (({
                                                     duration-150 ease-linear bg-primary-600 border border-primary-600 rounded-lg
                                                     hover:bg-red-500"
                                             >
-                                                {t("create")}
+                                                {t("rename")}
                                             </button>
                                             <button
                                                 type="button"

@@ -23,11 +23,16 @@ import {
 import _ from "lodash";
 import SimpleMdeReact from "react-simplemde-editor";
 import { PageFieldModal } from "./PageFieldModal";
+import {SingleImageModal} from "./SingleImageModal";
+import IAssetModel from "../../types/asset/IAssetModel";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 
 function PageCreate() {
     const [t] = useTranslation("global");
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
+    const [isSingleAssetModalOpen, setisSingleAssetModalOpen] = useState(false);
 
     const {
         control,
@@ -222,6 +227,43 @@ function PageCreate() {
                         />
                     </div>
                 );
+            case AvoRedPageFieldType.SingleImage:
+                return (
+                    <div className="mb-4">
+                        <label className="text-sm text-gray-600">
+                            {t!("field_content")}
+                        </label>
+                        <div className="mt-2">
+                            <div className="flex items-center">
+                                <input
+                                    type="hidden"
+                                    {...register(
+                                        `page_fields.${index}.field_content.text_value.text_value`,
+                                    )}
+                                />
+                                <img
+                                    src={`${backend_url}${getValues(`page_fields.${index}.field_content.text_value.text_value`)}`}
+                                    className="rounded w-48 h-48"
+                                    alt={`${getValues(`page_fields.${index}.name`)}`}
+                                />
+                                <div>
+                                    <SingleImageModal
+                                        isOpen={isSingleAssetModalOpen}
+                                        onCloseModal={closeSingleAssetModal}
+                                        selectedAsset={(asset: IAssetModel) => selectedAsset(index ,asset)}
+                                    />
+                                    <AvoRedButton
+                                        onClick={singleImageButtonOnClick}
+                                        type={ButtonType.button}
+                                        label={t!("select_asset")}
+                                        className="ml-3 bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+                                    ></AvoRedButton>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                );
             default:
                 return (
                     <div className="mb-4">
@@ -235,6 +277,23 @@ function PageCreate() {
         }
     };
 
+    const selectedAsset = (index: number, selectedAsset: IAssetModel) => {
+        setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.path);
+        closeSingleAssetModal();
+    }
+    const singleImageButtonOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openSingleAssetModal()
+        console.log("test")
+    }
+    const openSingleAssetModal = () => {
+        setisSingleAssetModalOpen(true);
+    };
+
+    const closeSingleAssetModal = () => {
+        setisSingleAssetModalOpen(false);
+    };
     const saveAsPublishedOnClick = ((e: React.MouseEvent) => {
         e.preventDefault()
         e.stopPropagation()

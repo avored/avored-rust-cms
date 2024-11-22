@@ -7,16 +7,9 @@
 # More details at https://github.com/rust-lang/rust-clippy
 # and https://rust-lang.github.io/rust-clippy/
 
-name: rust-clippy analyze
+name: Rust Clippy analyze
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    # The branches below must be a subset of the branches above
-    branches: [ "main" ]
-  schedule:
-    - cron: '15 3 * * 6'
+on: [push, pull_request]
 
 jobs:
   rust-clippy-analyze:

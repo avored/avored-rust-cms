@@ -72,7 +72,7 @@ pub async fn install_demo_data_api_handler(
                     identifier: 'rate-us-number',
                     data_type: 'TEXT',
                     field_type: 'Text',
-                    field_content: { text_value: '82' }
+                    field_content: { text_value: '85' }
                 },
                 {
                     name: 'rate us title',
@@ -93,7 +93,7 @@ pub async fn install_demo_data_api_handler(
                     identifier: 'commit-number',
                     data_type: 'TEXT',
                     field_type: 'Text',
-                    field_content: { text_value: '809' }
+                    field_content: { text_value: '856' }
                 },
                 {
                     name: 'commit title',

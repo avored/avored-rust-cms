@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::error::Error;
-use crate::models::page_model::{CreatablePageField, NewCreatablePageModel, NewPageModel};
+use crate::models::page_model::{CreatablePageField, CreatablePageModel, PageModel};
 use crate::models::validation_error::ErrorResponse;
 use crate::{
     avored_state::AvoRedState, error::Result
@@ -15,7 +15,7 @@ pub async fn store_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<StorePageRequest>,
-) -> Result<Json<ApiResponse<NewPageModel>>> {
+) -> Result<Json<ApiResponse<PageModel>>> {
     println!("->> {:<12} - store_page_api_handler", "HANDLER");
     let error_messages = payload.validate(&state).await?;
 
@@ -36,7 +36,7 @@ pub async fn store_page_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-    let mut creatable_page = NewCreatablePageModel {
+    let mut creatable_page = CreatablePageModel {
         name: payload.name,
         identifier: payload.identifier,
         status: payload.status,
@@ -58,10 +58,8 @@ pub async fn store_page_api_handler(
 
     let created_page_model = state
         .page_service
-        .new_create_page(&state.db, creatable_page)
+        .create_page(&state.db, creatable_page)
         .await?;
-    // println!("PAge payload: {:?}", payload);
-    // let created_page_model = NewPageModel::default();
 
     let response = ApiResponse {
         status: true,

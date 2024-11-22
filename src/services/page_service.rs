@@ -6,7 +6,7 @@ use crate::{
     PER_PAGE,
 };
 use crate::models::ModelCount;
-use crate::models::page_model::{NewCreatablePageModel, NewPageModel, NewUpdatablePageModel, PutPageIdentifierModel};
+use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel, PutPageIdentifierModel};
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -77,7 +77,7 @@ impl PageService {
     }
 
 
-    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<NewPageModel>> {
+    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<PageModel>> {
         self.page_repository.all(datastore,database_session).await
     }
 
@@ -85,29 +85,29 @@ impl PageService {
         &self,
         (datastore, database_session): &DB,
         id: String,
-    ) -> Result<NewPageModel> {
+    ) -> Result<PageModel> {
         self.page_repository
             .find_by_id(datastore, database_session, id)
             .await
     }
 
-    pub async fn new_create_page(
+    pub async fn create_page(
         &self,
         (datastore, database_session): &DB,
-        creatable_page_model: NewCreatablePageModel
-    ) -> Result<NewPageModel> {
+        creatable_page_model: CreatablePageModel
+    ) -> Result<PageModel> {
         self.page_repository
-            .new_create_page(datastore, database_session, creatable_page_model)
+            .create_page(datastore, database_session, creatable_page_model)
             .await
     }
 
     pub async fn update_page(
         &self,
         (datastore, database_session): &DB,
-        updatable_page_model: NewUpdatablePageModel
-    ) -> Result<NewPageModel> {
+        updatable_page_model: UpdatablePageModel
+    ) -> Result<PageModel> {
         self.page_repository
-            .new_update_page(datastore, database_session, updatable_page_model)
+            .update_page(datastore, database_session, updatable_page_model)
             .await
     }
 
@@ -125,7 +125,7 @@ impl PageService {
         &self,
         (datastore, database_session): &DB,
         put_page_identifier_model: PutPageIdentifierModel
-    ) -> Result<NewPageModel> {
+    ) -> Result<PageModel> {
         self.page_repository
             .update_page_identifier(datastore, database_session, put_page_identifier_model)
             .await
