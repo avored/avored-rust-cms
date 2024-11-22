@@ -13,7 +13,8 @@ import { PutPageIdentifierType } from "../../types/page/PutPageIdentifierType";
 import { usePutPageIdentifier } from "./hooks/usePutPageIdentifier";
 import {
   AvoRedPageDataType,
-  AvoRedPageFieldType, AvoRedPageStatus,
+  AvoRedPageFieldType,
+  AvoRedPageStatus,
 } from "../../types/page/IPageModel";
 import _ from "lodash";
 import {
@@ -26,11 +27,15 @@ import {
 } from "../../types/page/CreatablePageType";
 import SimpleMdeReact from "react-simplemde-editor";
 import { PageFieldModal } from "./PageFieldModal";
+import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
+import {SingleImageModal} from "./SingleImageModal";
+import IAssetModel from "../../types/asset/IAssetModel";
 
 function PageEdit() {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isSingleAssetModalOpen, setisSingleAssetModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
-
+  const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
   const params = useParams();
   const [t] = useTranslation("global");
   const [isEditableIdentifier, setIsEditableIdentifier] =
@@ -245,6 +250,43 @@ function PageEdit() {
             )}
           </div>
         );
+      case AvoRedPageFieldType.SingleImage:
+        return (
+          <div className="mb-4">
+            <label className="text-sm text-gray-600">
+              {t!("field_content")}
+            </label>
+            <div className="mt-2">
+              <div className="flex items-center">
+                <input
+                  type="hidden"
+                  {...register(
+                    `page_fields.${index}.field_content.text_value.text_value`,
+                  )}
+                />
+                <img
+                  src={`${backend_url}${getValues(`page_fields.${index}.field_content.text_value.text_value`)}`}
+                  className="rounded w-48 h-48"
+                  alt={`${getValues(`page_fields.${index}.name`)}`}
+                />
+                <div>
+                  <SingleImageModal
+                      isOpen={isSingleAssetModalOpen}
+                      onCloseModal={closeSingleAssetModal}
+                      selectedAsset={(asset: IAssetModel) => selectedAsset(index ,asset)}
+                  />
+                  <AvoRedButton
+                      onClick={singleImageButtonOnClick}
+                      type={ButtonType.button}
+                      label={t!("select_asset")}
+                      className="ml-3 bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
+                  ></AvoRedButton>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        );
       default:
         return (
           <div className="mb-4">
@@ -284,23 +326,41 @@ function PageEdit() {
     setIsOpen(true);
   };
 
+  const selectedAsset = (index: number, selectedAsset: IAssetModel) => {
+      setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.path);
+      closeSingleAssetModal();
+  }
+  const singleImageButtonOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openSingleAssetModal()
+      console.log("test")
+  }
+  const openSingleAssetModal = () => {
+    setisSingleAssetModalOpen(true);
+  };
+
+  const closeSingleAssetModal = () => {
+    setisSingleAssetModalOpen(false);
+  };
+
   const submitHandler = async (data: SavePageType) => {
-    data.status = AvoRedPageStatus.Draft
+    data.status = AvoRedPageStatus.Draft;
     mutate(data);
   };
 
-  const saveAsPublishedOnClick = ((e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const saveAsPublishedOnClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
     const data: SavePageType = {
       name: getValues("name"),
       identifier: getValues("identifier"),
       page_fields: getValues("page_fields"),
-      status: AvoRedPageStatus.Published
+      status: AvoRedPageStatus.Published,
     };
-    mutate(data)
-  })
+    mutate(data);
+  };
 
   return (
     <div className="flex-1 bg-white">
@@ -315,182 +375,177 @@ function PageEdit() {
               <div className="flex w-full">
                 <div className="w-5/6 pr-3">
                   {_.size(fields) > 0 ? (
-                      <>
-                        <PageFieldModal
-                            register={register}
-                            currentIndex={currentIndex}
-                            getValues={getValues}
-                            setValue={setValue}
-                            trigger={trigger}
-                            setIsOpen={setIsOpen}
-                            isOpen={isOpen}
-                        />
-                      </>
+                    <>
+                      <PageFieldModal
+                        register={register}
+                        currentIndex={currentIndex}
+                        getValues={getValues}
+                        setValue={setValue}
+                        trigger={trigger}
+                        setIsOpen={setIsOpen}
+                        isOpen={isOpen}
+                      />
+                    </>
                   ) : (
-                      <></>
+                    <></>
                   )}
-
 
                   <div className="mb-4">
                     <InputField
-                        placeholder={t("name")}
-                        label={t("name")}
-                        name="name"
-                        register={register("name")}
+                      placeholder={t("name")}
+                      label={t("name")}
+                      name="name"
+                      register={register("name")}
                     />
                   </div>
                   <div className="mb-4">
                     <InputField
-                        placeholder={t("identifier")}
-                        name="identifier"
-                        register={putPageRegister("identifier")}
-                        disabled={isEditableIdentifier}
+                      placeholder={t("identifier")}
+                      name="identifier"
+                      register={putPageRegister("identifier")}
+                      disabled={isEditableIdentifier}
                     />
                     <div className="mt-2">
                       {isEditableIdentifier ? (
-                          <>
-                      <span
-                          onClick={editableIdentifierOnClick}
-                          className="text-xs text-blue-600 cursor-pointer"
-                      >
-                        {t("edit_identifier")}
-                      </span>
-                          </>
+                        <>
+                          <span
+                            onClick={editableIdentifierOnClick}
+                            className="text-xs text-blue-600 cursor-pointer"
+                          >
+                            {t("edit_identifier")}
+                          </span>
+                        </>
                       ) : (
-                          <>
-                            <button
-                                type="button"
-                                onClick={saveIdentifierOnClick}
-                                className="text-xs text-blue-600 cursor-pointer"
-                            >
-                              {t("save")}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={cancelIdentifierOnClick}
-                                className="ml-3 text-xs text-blue-600 cursor-pointer"
-                            >
-                              {t("cancel")}
-                            </button>
-                          </>
+                        <>
+                          <button
+                            type="button"
+                            onClick={saveIdentifierOnClick}
+                            className="text-xs text-blue-600 cursor-pointer"
+                          >
+                            {t("save")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={cancelIdentifierOnClick}
+                            className="ml-3 text-xs text-blue-600 cursor-pointer"
+                          >
+                            {t("cancel")}
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
 
                   {fields.map((field, index) => {
                     return (
-                        <div
-                            key={field.id}
-                            className="relative hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
-                        >
-                          <Controller
-                              name={`page_fields.${index}`}
-                              render={({field: page_field}) => {
-                                return (
-                                    <>
-                                      <div className="flex mt-3 w-full justify-center">
-                                        <div className="flex-1 p-3">
-                                          <div className="p-3 bg-gray-200 rounded">
-                                            <div className="flex text-sm w-full border-gray-300 border-b py-2">
-                                              <div className="flex-1 overflow-hidden">
-                                                <span>{page_field.value.name}</span>
-                                                <span className="ml-1 text-xs text-gray-500">
-                                        ({page_field.value.identifier})
-                                      </span>
-                                              </div>
-                                              <div className="ml-auto flex items-center">
-                                                <div>
-                                                  <button
-                                                      type="button"
-                                                      className="outline-none"
-                                                      onClick={() => setIsOpen(true)}
-                                                  >
-                                                    <Cog8ToothIcon className="w-5 h-5"/>
-                                                  </button>
-                                                </div>
-                                                <div
-                                                    onClick={(e) =>
-                                                        deletePageFieldOnClick(e, index)
-                                                    }
-                                                    className="ml-3"
-                                                >
-                                                  <TrashIcon className="w-4 h-4"/>
-                                                </div>
-                                              </div>
-                                            </div>
-
-                                            <InputField
-                                                type="hidden"
-                                                placeholder={t("data_type")}
-                                                register={register(
-                                                    `page_fields.${index}.data_type`,
-                                                )}
-                                            />
-                                            <InputField
-                                                type="hidden"
-                                                placeholder={t("field_type")}
-                                                register={register(
-                                                    `page_fields.${index}.field_type`,
-                                                )}
-                                            />
-                                            {renderField(page_field.value, index)}
+                      <div
+                        key={field.id}
+                        className="relative hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                      >
+                        <Controller
+                          name={`page_fields.${index}`}
+                          render={({ field: page_field }) => {
+                            return (
+                              <>
+                                <div className="flex mt-3 w-full justify-center">
+                                  <div className="flex-1 p-3">
+                                    <div className="p-3 bg-gray-200 rounded">
+                                      <div className="flex text-sm w-full border-gray-300 border-b py-2">
+                                        <div className="flex-1 overflow-hidden">
+                                          <span>{page_field.value.name}</span>
+                                          <span className="ml-1 text-xs text-gray-500">
+                                            ({page_field.value.identifier})
+                                          </span>
+                                        </div>
+                                        <div className="ml-auto flex items-center">
+                                          <div>
+                                            <button
+                                              type="button"
+                                              className="outline-none"
+                                              onClick={() => setIsOpen(true)}
+                                            >
+                                              <Cog8ToothIcon className="w-5 h-5" />
+                                            </button>
+                                          </div>
+                                          <div
+                                            onClick={(e) =>
+                                              deletePageFieldOnClick(e, index)
+                                            }
+                                            className="ml-3"
+                                          >
+                                            <TrashIcon className="w-4 h-4" />
                                           </div>
                                         </div>
                                       </div>
-                                    </>
-                                );
-                              }}
-                              control={control}
-                          />
-                        </div>
+
+                                      <InputField
+                                        type="hidden"
+                                        placeholder={t("data_type")}
+                                        register={register(
+                                          `page_fields.${index}.data_type`,
+                                        )}
+                                      />
+                                      <InputField
+                                        type="hidden"
+                                        placeholder={t("field_type")}
+                                        register={register(
+                                          `page_fields.${index}.field_type`,
+                                        )}
+                                      />
+                                      {renderField(page_field.value, index)}
+                                    </div>
+                                  </div>
+                                </div>
+                              </>
+                            );
+                          }}
+                          control={control}
+                        />
+                      </div>
                     );
                   })}
 
                   <div className="mb-4 flex items-center justify-center ring-1 ring-gray-400 rounded p-5">
                     <button
-                        type="button"
-                        className="flex"
-                        onClick={(e) => addFieldOnClick(e, fields.length)}
+                      type="button"
+                      className="flex"
+                      onClick={(e) => addFieldOnClick(e, fields.length)}
                     >
-                      <PlusIcon className="text-primary-500 h-6 w-6"/>
+                      <PlusIcon className="text-primary-500 h-6 w-6" />
                       <span className="text-sm ml-1 text-primary-500">
-                    {t("add_field")}
-                  </span>
+                        {t("add_field")}
+                      </span>
                     </button>
                   </div>
-
-
                 </div>
                 <div className="w-1/6 pr-3">
                   <div className="mt-7">
                     <button
-                        type="submit"
-                        className="bg-gray-500 rounded px-4 py-2 text-white"
+                      type="submit"
+                      className="bg-gray-500 rounded px-4 py-2 text-white"
                     >
                       {t("save_as_draft")}
                     </button>
                   </div>
                   <div className="mt-5">
                     <button
-                        type="button"
-                        onClick={(e) => saveAsPublishedOnClick(e)}
-                        className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      type="button"
+                      onClick={(e) => saveAsPublishedOnClick(e)}
+                      className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                     >
                       {t("published")}
                     </button>
                   </div>
                   <div className="mt-5">
                     <Link
-                        to={`/admin/page`}
-                        className="mt-5 font-medium text-gray-600 hover:text-gray-500"
+                      to={`/admin/page`}
+                      className="mt-5 font-medium text-gray-600 hover:text-gray-500"
                     >
                       {t("cancel")}
                     </Link>
                   </div>
                 </div>
               </div>
-
-
             </div>
           </div>
         </div>

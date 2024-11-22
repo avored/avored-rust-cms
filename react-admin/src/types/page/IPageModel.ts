@@ -28,5 +28,6 @@ export enum AvoRedPageFieldType {
     SELECT = "Select",
     TextEditor = "TextEditor",
     Radio = "Radio",
-    Checkbox = "Checkbox"
+    Checkbox = "Checkbox",
+    SingleImage = "SingleImage"
  }
