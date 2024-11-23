@@ -73,3 +73,17 @@ How to call helper method in handlebar template
 
 How to start a surreal db
 surreal start --user root --pass root --bind 0.0.0.0:8000 file://test.db
+
+#### Introduction
+
+Avored headless CMS enables efficient content management for websites, mobile apps, and various digital platforms. 
+By decoupling the content from the presentation layer, it gives developers the flexibility to build frontends 
+using their preferred technologies. With an avored headless CMS, content is centralized, making it easy to 
+create, manage, and seamlessly deliver it to multiple applications.
+
+Discover more about Headless CMS concepts.
+
+###### Features
+ - **Comprehensive Asset Management**: Organize and manage images, media, files, and other assets with ease.
+ - **User-Friendly Content Management**: Simplify page content management for both technical and non-technical users.
+ - **Seamless Content Distribution**: Deliver your content anywhere instantly using REST APIs.
