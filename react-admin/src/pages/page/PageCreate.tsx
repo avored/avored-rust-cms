@@ -278,7 +278,7 @@ function PageCreate() {
     };
 
     const selectedAsset = (index: number, selectedAsset: IAssetModel) => {
-        setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.path);
+        setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.new_path);
         closeSingleAssetModal();
     }
     const singleImageButtonOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -30,7 +30,7 @@ pub async fn delete_folder_api_handler(
         .find_by_id(&state.db, &asset_id)
         .await?;
 
-    let folder_path = format!("./{path}", path = asset_model.path);
+    let folder_path = format!("./{path}", path = asset_model.new_path);
 
     // @todo return early
     if fs::try_exists(&folder_path).await? {

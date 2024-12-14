@@ -1,4 +1,4 @@
-use crate::error::{Error, Result};
+    use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use super::{BaseModel, Pagination};
@@ -8,7 +8,7 @@ pub struct NewAssetModel {
     pub id: String,
     pub parent_id: String,
     pub name: String,
-    pub path: String,
+    pub new_path: String,
     pub asset_type: String,
     pub metadata: MetaDataType,
     pub created_at: Datetime,
@@ -80,7 +80,6 @@ impl TryFrom<Object> for NewAssetModel {
         let id = val.get("id").get_id()?;
         let parent_id = val.get("parent_id").get_string()?;
         let name = val.get("name").get_string()?;
-        let path = val.get("path").get_string()?;
         let asset_type = val.get("asset_type").get_string()?;
         let created_at = val.get("created_at").get_datetime()?;
         let created_by = val.get("created_by").get_string()?;
@@ -119,11 +118,13 @@ impl TryFrom<Object> for NewAssetModel {
             _ => MetaDataType::FolderTypeMetaData {color: String::from("text-gray-400")}
         };
 
+        let new_path = String::from("");
+
         Ok(NewAssetModel {
             id,
             parent_id,
             name,
-            path,
+            new_path,
             asset_type,
             metadata,
             created_at,
@@ -143,7 +144,6 @@ impl TryFrom<Object> for  FileTypeMetaDataStruct {
         })
     }
 }
-
 
 impl TryFrom<Object> for  FolderTypeMetaDataStruct {
     type Error = Error;
@@ -167,7 +167,6 @@ pub struct CreatableAssetModelNew {
     pub logged_in_username: String,
     pub parent_id: String,
     pub name: String,
-    pub path: String,
     pub asset_type: String,
     pub metadata: MetaDataType,
 }

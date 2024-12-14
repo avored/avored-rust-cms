@@ -1,7 +1,7 @@
 type IAssetModel = {
     id: string;
     name: string;
-    path: string;
+    new_path: string;
     asset_type: string;
     metadata: string;
     created_at: string;

@@ -115,7 +115,7 @@ impl AssetService {
                 .find_by_id(db, &parent_id)
                 .await?;
 
-            full_path = format!("{}/{}",asset.path, name.clone());
+            full_path = format!("{}/{}",asset.new_path, name.clone());
         }
         tokio::fs::create_dir_all(&format!("./{}", full_path.clone())).await?;
 
@@ -126,7 +126,6 @@ impl AssetService {
             logged_in_username: logged_in_user.email,
             parent_id,
             name: name.clone(),
-            path: full_path,
             asset_type: "FOLDER".to_string(),
             metadata: MetaDataType::FolderTypeMetaData {color},
         };
@@ -140,12 +139,11 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         name: &str,
-        new_path: &str,
         asset_id: &str,
         logged_in_username: &str
     ) -> Result<NewAssetModel> {
         self.asset_repository
-            .update_asset_path(datastore, database_session, name, new_path, asset_id, logged_in_username)
+            .update_asset_path(datastore, database_session, name, asset_id, logged_in_username)
             .await
     }
 }
