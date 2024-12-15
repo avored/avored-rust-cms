@@ -26,10 +26,6 @@ impl AssetRepository {
         start: i64,
         parent_id: String
     ) -> Result<Vec<NewAssetModel>> {
-        
-        
-
-        // @todo fix this one
 
         let sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
         let vars = BTreeMap::from([
@@ -39,8 +35,6 @@ impl AssetRepository {
             ("parent_id".into(), parent_id.into()),
         ]);
 
-
-
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let mut asset_list: Vec<NewAssetModel> = Vec::new();
@@ -48,8 +42,22 @@ impl AssetRepository {
         for object in into_iter_objects(responses)? {
             let asset_object = object?;
 
-            let asset_model: Result<NewAssetModel> = asset_object.try_into();
-            asset_list.push(asset_model?);
+            let mut asset_model: NewAssetModel = asset_object.try_into()?;
+
+            let mut new_path = asset_model.name.clone();
+            let mut t = asset_model.clone();
+
+            // Not sure do we need to add some kind a loop limit to prevent infinite loop??
+            while !t.parent_id.is_empty() {
+                let parent_model = self.find_by_id(datastore, database_session, &t.parent_id).await?;
+                t = parent_model.clone();
+                new_path = format!("{}/{}", parent_model.name, new_path);
+            }
+
+            new_path = format!("/{}/{}", "public/upload", new_path);
+            asset_model.new_path = new_path;
+
+            asset_list.push(asset_model);
         }
         Ok(asset_list)
     }
@@ -91,7 +99,6 @@ impl AssetRepository {
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
-            ("path".into(), creatable_asset_model.path.into(),),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
             ("asset_type".into(), creatable_asset_model.asset_type.into()),
             ("metadata".into(), metadata.into()),
@@ -129,7 +136,6 @@ impl AssetRepository {
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
-            ("path".into(), creatable_asset_model.path.into(),),
             ("asset_type".into(), creatable_asset_model.asset_type.into(),),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
             ("metadata".into(), metadata.into()),
@@ -174,9 +180,27 @@ impl AssetRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
 
-        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+        let asset_object = result_object?;
 
-        asset_model
+        let mut asset_model: NewAssetModel = asset_object.try_into()?;
+
+        let mut new_path = asset_model.name.clone();
+        let mut t = asset_model.clone();
+
+        // Not sure do we need to add some kind a loop limit to prevent infinite loop??
+        while !t.parent_id.is_empty() {
+            let parent_model = Box::pin(self
+                .find_by_id(datastore, database_session, &t.parent_id)
+                ).await?;
+
+            t = parent_model.clone();
+            new_path = format!("{}/{}", parent_model.name, new_path);
+        }
+
+        new_path = format!("/{}/{}", "public/upload", new_path);
+        asset_model.new_path = new_path;
+
+        Ok(asset_model)
     }
 
     pub async fn delete_by_id(
@@ -212,7 +236,6 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         name: &str,
-        new_path: &str,
         asset_id: &str,
         logged_in_username: &str
     ) -> Result<NewAssetModel> {
@@ -225,7 +248,6 @@ impl AssetRepository {
             };";
 
         let vars = BTreeMap::from([
-            ("path".into(), new_path.into()),
             ("name".into(), name.into()),
             ("logged_in_user_name".into(), logged_in_username.into()),
             ("id".into(), asset_id.into()),

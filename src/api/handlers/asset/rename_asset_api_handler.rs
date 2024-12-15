@@ -40,7 +40,7 @@ pub async fn rename_asset_api_handler(
     let asset_model = state.asset_service
         .find_by_id(&state.db, &asset_id)
         .await?;
-    let old_asset_path = format!(".{}",asset_model.path);
+    let old_asset_path = format!(".{}",asset_model.new_path);
     let new_asset_path = format!("/public/upload/{}", &payload.name);
 
     if fs::try_exists(&old_asset_path).await? {
@@ -48,7 +48,7 @@ pub async fn rename_asset_api_handler(
     }
 
     let updated_asset_model = state.asset_service
-        .update_asset_path(&state.db, &payload.name, &new_asset_path, &asset_id, &logged_in_user.email)
+        .update_asset_path(&state.db, &payload.name, &asset_id, &logged_in_user.email)
         .await?;
 
     let response = ApiResponse {

@@ -29,7 +29,7 @@ pub async fn delete_asset_api_handler(
         .find_by_id(&state.db, &asset_id)
         .await?;
 
-    let asset_path = format!("./{path}", path = asset_model.path);
+    let asset_path = format!("./{path}", path = asset_model.new_path);
 
     // @todo return early
     if fs::try_exists(&asset_path).await? {
