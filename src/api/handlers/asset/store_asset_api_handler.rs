@@ -11,7 +11,7 @@ use rand::Rng;
 use serde::Serialize;
 use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
 use crate::error::Error;
-use crate::models::asset_model::{CreatableAssetModelNew, MetaDataType, AssetModel};
+use crate::models::asset_model::{CreatableAssetModel, MetaDataType, AssetModel};
 use crate::models::token_claim_model::LoggedInUser;
 
 const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
@@ -34,7 +34,7 @@ pub async fn store_asset_api_handler(
 
     //@todo we need to move this logic to service
     // we need to make the parent_id works as per it path will be changed too. if exist
-    let mut creatable_asset_model = CreatableAssetModelNew {
+    let mut creatable_asset_model = CreatableAssetModel {
         logged_in_username: logged_in_user.email,
         .. Default::default()
     };

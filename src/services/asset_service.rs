@@ -1,5 +1,5 @@
 use crate::{error::Result, PER_PAGE, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository};
-use crate::models::asset_model::{AssetPagination, CreatableAssetModelNew, MetaDataType, AssetModel};
+use crate::models::asset_model::{AssetPagination, CreatableAssetModel, MetaDataType, AssetModel};
 use crate::models::Pagination;
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -72,7 +72,7 @@ impl AssetService {
     pub async fn create_asset(
         &self,
         (datastore, database_session): &DB,
-        creatable_asset_model: CreatableAssetModelNew,
+        creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         self.asset_repository
             .create_asset(datastore, database_session, creatable_asset_model)
@@ -122,7 +122,7 @@ impl AssetService {
         // @todo fix this default color????
         let color= String::from("text-gray-400");
 
-        let creatable_asset_model = CreatableAssetModelNew {
+        let creatable_asset_model = CreatableAssetModel {
             logged_in_username: logged_in_user.email,
             parent_id,
             name: name.clone(),

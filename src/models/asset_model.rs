@@ -163,7 +163,7 @@ pub struct AssetPagination {
 
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct CreatableAssetModelNew {
+pub struct CreatableAssetModel {
     pub logged_in_username: String,
     pub parent_id: String,
     pub name: String,

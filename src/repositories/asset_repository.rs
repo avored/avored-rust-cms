@@ -4,7 +4,7 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::asset_model::{CreatableAssetModelNew, AssetModel};
+use crate::models::asset_model::{CreatableAssetModel, AssetModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -89,7 +89,7 @@ impl AssetRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_asset_model: CreatableAssetModelNew,
+        creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
         let meta = creatable_asset_model.metadata.get_file_metadata();
@@ -126,7 +126,7 @@ impl AssetRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_asset_model: CreatableAssetModelNew,
+        creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
         let meta = creatable_asset_model.metadata.get_folder_metadata();
