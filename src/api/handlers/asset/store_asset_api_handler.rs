@@ -11,7 +11,7 @@ use rand::Rng;
 use serde::Serialize;
 use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
 use crate::error::Error;
-use crate::models::asset_model::{CreatableAssetModelNew, MetaDataType, NewAssetModel};
+use crate::models::asset_model::{CreatableAssetModelNew, MetaDataType, AssetModel};
 use crate::models::token_claim_model::LoggedInUser;
 
 const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
@@ -98,7 +98,7 @@ pub async fn store_asset_api_handler(
     }
 
     if !is_allow_file_type {
-        let asset_model = NewAssetModel::default();
+        let asset_model = AssetModel::default();
         let creatable_asset_response = AssetResponseViewModel {
             asset_model,
             success: false
@@ -121,6 +121,6 @@ pub async fn store_asset_api_handler(
 
 #[derive(Serialize)]
 pub struct AssetResponseViewModel {
-    pub asset_model: NewAssetModel,
+    pub asset_model: AssetModel,
     pub success: bool
 }

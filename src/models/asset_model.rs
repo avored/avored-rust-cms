@@ -4,7 +4,7 @@ use surrealdb::sql::{Datetime, Object, Value};
 use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct NewAssetModel {
+pub struct AssetModel {
     pub id: String,
     pub parent_id: String,
     pub name: String,
@@ -74,9 +74,9 @@ impl Default for MetaDataType {
     }
 }
 
-impl TryFrom<Object> for NewAssetModel {
+impl TryFrom<Object> for AssetModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<NewAssetModel> {
+    fn try_from(val: Object) -> Result<AssetModel> {
         let id = val.get("id").get_id()?;
         let parent_id = val.get("parent_id").get_string()?;
         let name = val.get("name").get_string()?;
@@ -120,7 +120,7 @@ impl TryFrom<Object> for NewAssetModel {
 
         let new_path = String::from("");
 
-        Ok(NewAssetModel {
+        Ok(AssetModel {
             id,
             parent_id,
             name,
@@ -157,7 +157,7 @@ impl TryFrom<Object> for  FolderTypeMetaDataStruct {
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetPagination {
-    pub data: Vec<NewAssetModel>,
+    pub data: Vec<AssetModel>,
     pub pagination: Pagination,
 }
 

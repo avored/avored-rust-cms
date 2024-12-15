@@ -5,7 +5,7 @@ use crate::{
 use axum::{Extension, extract::State, Json};
 use crate::api::handlers::asset::request::create_folder_request::CreateFolderRequest;
 use crate::error::Error;
-use crate::models::asset_model::NewAssetModel;
+use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
@@ -14,7 +14,7 @@ pub async fn create_folder_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
     Json(payload): Json<CreateFolderRequest>,
-) -> Result<Json<ApiResponse<NewAssetModel>>> {
+) -> Result<Json<ApiResponse<AssetModel>>> {
     println!("->> {:<12} - store_asset_folder_api_handler", "HANDLER");
 
     let has_permission_bool = state

@@ -5,7 +5,7 @@ use tokio::fs;
 use crate::api::handlers::asset::request::rename_asset_request::RenameAssetRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
-use crate::models::asset_model::NewAssetModel;
+use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
@@ -15,7 +15,7 @@ pub async fn rename_asset_api_handler(
     state: State<Arc<AvoRedState>>,
     Extension(logged_in_user): Extension<LoggedInUser>,
     Json(payload): Json<RenameAssetRequest>,
-) -> Result<Json<ApiResponse<NewAssetModel>>> {
+) -> Result<Json<ApiResponse<AssetModel>>> {
     println!("->> {:<12} - rename_asset_api_handler", "HANDLER");
 
     let has_permission_bool = state

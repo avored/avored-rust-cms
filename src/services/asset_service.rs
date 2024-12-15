@@ -1,5 +1,5 @@
 use crate::{error::Result, PER_PAGE, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository};
-use crate::models::asset_model::{AssetPagination, CreatableAssetModelNew, MetaDataType, NewAssetModel};
+use crate::models::asset_model::{AssetPagination, CreatableAssetModelNew, MetaDataType, AssetModel};
 use crate::models::Pagination;
 use crate::models::token_claim_model::LoggedInUser;
 
@@ -73,7 +73,7 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         creatable_asset_model: CreatableAssetModelNew,
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         self.asset_repository
             .create_asset(datastore, database_session, creatable_asset_model)
             .await
@@ -83,7 +83,7 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         asset_id: &str
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         self.asset_repository
             .find_by_id(datastore, database_session, asset_id)
             .await
@@ -105,7 +105,7 @@ impl AssetService {
         name: String,
         parent_id: String,
         logged_in_user: LoggedInUser
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         let (datastore, database_session) = db;
 
         let mut full_path = format!("public/upload/{}", name.clone());
@@ -141,7 +141,7 @@ impl AssetService {
         name: &str,
         asset_id: &str,
         logged_in_username: &str
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         self.asset_repository
             .update_asset_path(datastore, database_session, name, asset_id, logged_in_username)
             .await

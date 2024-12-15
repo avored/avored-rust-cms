@@ -4,7 +4,7 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::asset_model::{CreatableAssetModelNew, NewAssetModel};
+use crate::models::asset_model::{CreatableAssetModelNew, AssetModel};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -25,7 +25,7 @@ impl AssetRepository {
         database_session: &Session,
         start: i64,
         parent_id: String
-    ) -> Result<Vec<NewAssetModel>> {
+    ) -> Result<Vec<AssetModel>> {
 
         let sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
         let vars = BTreeMap::from([
@@ -37,12 +37,12 @@ impl AssetRepository {
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let mut asset_list: Vec<NewAssetModel> = Vec::new();
+        let mut asset_list: Vec<AssetModel> = Vec::new();
 
         for object in into_iter_objects(responses)? {
             let asset_object = object?;
 
-            let mut asset_model: NewAssetModel = asset_object.try_into()?;
+            let mut asset_model: AssetModel = asset_object.try_into()?;
 
             let mut new_path = asset_model.name.clone();
             let mut t = asset_model.clone();
@@ -90,7 +90,7 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         creatable_asset_model: CreatableAssetModelNew,
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
         let meta = creatable_asset_model.metadata.get_file_metadata();
         let metadata: BTreeMap<String, Value> = [
@@ -117,7 +117,7 @@ impl AssetRepository {
             Some(object) => object,
             None => Err(Error::CreateModel("cannot create assets record".to_string())),
         };
-        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+        let asset_model: Result<AssetModel> = result_object?.try_into();
 
         asset_model
     }
@@ -127,7 +127,7 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         creatable_asset_model: CreatableAssetModelNew,
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
         let meta = creatable_asset_model.metadata.get_folder_metadata();
         let metadata: BTreeMap<String, Value> = [
@@ -154,7 +154,7 @@ impl AssetRepository {
             Some(object) => object,
             None => Err(Error::CreateModel("cannot create assets record".to_string())),
         };
-        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+        let asset_model: Result<AssetModel> = result_object?.try_into();
 
         asset_model
     }
@@ -164,7 +164,7 @@ impl AssetRepository {
         datastore: &Datastore,
         database_session: &Session,
         asset_id: &str,
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         let sql =
             "SELECT * FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
@@ -182,7 +182,7 @@ impl AssetRepository {
 
         let asset_object = result_object?;
 
-        let mut asset_model: NewAssetModel = asset_object.try_into()?;
+        let mut asset_model: AssetModel = asset_object.try_into()?;
 
         let mut new_path = asset_model.name.clone();
         let mut t = asset_model.clone();
@@ -238,7 +238,7 @@ impl AssetRepository {
         name: &str,
         asset_id: &str,
         logged_in_username: &str
-    ) -> Result<NewAssetModel> {
+    ) -> Result<AssetModel> {
         let sql = "
             UPDATE type::thing($table, $id) MERGE {
                 path: $path,
@@ -260,7 +260,7 @@ impl AssetRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let asset_model: Result<NewAssetModel> = result_object?.try_into();
+        let asset_model: Result<AssetModel> = result_object?.try_into();
 
         asset_model
     }
