@@ -327,7 +327,7 @@ function PageEdit() {
   };
 
   const selectedAsset = (index: number, selectedAsset: IAssetModel) => {
-      setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.path);
+      setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.new_path);
       closeSingleAssetModal();
   }
   const singleImageButtonOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -363,9 +363,9 @@ function PageEdit() {
   };
 
   return (
-    <div className="flex-1 bg-white">
+    <>
       <form onSubmit={handleSubmit(submitHandler)}>
-        <div className="px-5 pl-64 ">
+        <div className="px-5">
           <div className="w-full">
             <div className="block rounded-lg p-6">
               <h1 className="text-xl font-semibold mb-4 text-gray-900">
@@ -550,7 +550,7 @@ function PageEdit() {
           </div>
         </div>
       </form>
-    </div>
+    </>
   );
 }
 

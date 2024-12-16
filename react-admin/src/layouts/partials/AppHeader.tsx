@@ -2,7 +2,7 @@ import logo from "../../assets/logo_only.svg";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import _ from "lodash";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useContext, useEffect, useState} from "react";
 import { useTranslation } from "react-i18next";
 import IAdminUserModel from "../../types/admin-user/IAdminUserModel";
 import { changeLocale } from "../../lib/common";
@@ -10,6 +10,8 @@ import { useAxios } from "../../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 import {InstallDataConfirmationModal} from "./InstallDataConfirmationModal";
 import {DeleteDataConfirmationModal} from "./DeleteDataConfirmationModal";
+import {Bars4Icon} from "@heroicons/react/24/solid";
+import {ThemeContext} from "../../context/ThemeContext";
 
 function AppHeader() {
   const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
@@ -27,6 +29,10 @@ function AppHeader() {
       }
     },
   });
+
+
+  const theme = useContext(ThemeContext);
+
 
   const install_demo_data = _.get(data, "data.data.demo_data_status", false);
 
@@ -63,20 +69,25 @@ function AppHeader() {
     <header className="h-16 py-2 flex shadow-lg px-4 fixed inset-y-0 md:sticky bg-gray-800 z-40">
       <InstallDataConfirmationModal close={closeInstallDemoDataVisible} isOpen={isInstallDemoDataVisible} />
       <DeleteDataConfirmationModal close={closeDeleteDemoDataVisible} isOpen={isDeleteDemoDataVisible} />
-      <div className="flex w-full">
+      <div className="flex w-full items-center">
         <a
           href="/admin"
-          className="text-white flex items-center space-x-2 group hover:text-white"
+          className={`${theme.isSidebarOpen ? "w-16" : "w-64"} text-white  flex items-center space-x-2 group hover:text-white `}
         >
           <div>
             <img src={logo} alt="AvoRed Rust Cms Logo" className="h-12" />
           </div>
 
-          <div>
+          <div className={`${theme.isSidebarOpen ? "hidden" : ""} `}>
             <span className="text-2xl font-semibold">{t("avored")}</span>
             <span className="text-xs block">{t("rust_cms")}</span>
           </div>
         </a>
+        <div className="text-white">
+            <div className="cursor-pointer" onClick={() => theme.toggleSidebar()}>
+                <Bars4Icon className="w-6 h-6" />
+            </div>
+        </div>
         <div className="ml-auto flex items-center">
           <Menu as="div" className="ml-3 inline-block relative">
             <MenuButton className="flex items-center">

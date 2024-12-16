@@ -308,9 +308,9 @@ function PageCreate() {
     })
     // template start here
     return (
-        <div className="flex-1 bg-white">
+        <>
             <form onSubmit={handleSubmit(submitHandler)}>
-            <div className="px-5 pl-64 ">
+            <div className="px-5">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
                         <h1 className="text-xl font-semibold mb-4 text-gray-900">
@@ -480,7 +480,7 @@ function PageCreate() {
                 </div>
             </div>
             </form>
-        </div>
+        </>
     );
 }
 
