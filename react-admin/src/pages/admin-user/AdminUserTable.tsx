@@ -128,27 +128,30 @@ function AdminUserTable() {
 
     return (
         <>
-            <div className="flex items-center">
-                <div className="p-5 text-2xl font-semibold text-primary-500">
-                    {t("admin_users")}
-                </div>
-                <HasPermission displayDenied={false} identifier="admin_user_create">
-                    <Link
-                        className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                        to="/admin/admin-user-create"
-                    >
-                        {t("create")}
-                    </Link>
-                </HasPermission>
-            </div>
-            <div className="w-full block overflow-hidden">
-                <div className="overflow-x-scroll">
-                    <HasPermission identifier="admin_user_table">
-                        <AvoRedTable table={table}/>
+            <div className="p-5">
+                <div className="flex items-center">
+                    <div className="p-5 text-2xl font-semibold text-primary-500">
+                        {t("admin_users")}
+                    </div>
+                    <HasPermission displayDenied={false} identifier="admin_user_create">
+                        <Link
+                            className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                            to="/admin/admin-user-create"
+                        >
+                            {t("create")}
+                        </Link>
                     </HasPermission>
+                </div>
+                <div className="w-full block overflow-hidden">
+                    <div className="overflow-x-scroll">
+                        <HasPermission identifier="admin_user_table">
+                            <AvoRedTable table={table}/>
+                        </HasPermission>
+                    </div>
                 </div>
             </div>
         </>
+
     );
 }
 

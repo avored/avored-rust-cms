@@ -15,7 +15,7 @@ import {useUpdateModel} from "./hooks/useUpdateModel";
 export const ModelEditPage = (() => {
     const params = useParams();
     const model_id = params.model_id ?? ''
-    const { mutate } = useUpdateModel(model_id);
+    const {mutate} = useUpdateModel(model_id);
     const [t] = useTranslation("global")
     const {data} = useGetModel(model_id)
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true)
@@ -61,73 +61,71 @@ export const ModelEditPage = (() => {
     })
     return (
         <>
-            <div className="flex-1 bg-white">
-                <div className="px-5 pl-64 ">
-                    <div className="w-full">
-                        <div className="block rounded-lg p-6">
-                            <h1 className="text-xl font-semibold mb-4 text-gray-900">
-                                {t("model_information")}
-                            </h1>
+            <div className="px-5">
+                <div className="w-full">
+                    <div className="block rounded-lg p-6">
+                        <h1 className="text-xl font-semibold mb-4 text-gray-900">
+                            {t("model_information")}
+                        </h1>
 
-                            <form onSubmit={handleSubmit(submitHandler)}>
-                                <div className="mb-4">
-                                    <InputField
-                                        label={t("name")}
-                                        placeholder={t("name")}
-                                        name="name"
-                                        register={register("name")}
-                                        autoFocus={true}
-                                    />
-                                </div>
-                                <div className="mb-4">
-                                    <InputField
-                                        label={t("identifier")}
-                                        placeholder={t("identifier")}
-                                        name="identifier"
-                                        register={putModelRegister("identifier")}
-                                        disabled={isEditableIdentifier}
-                                    />
-                                    <div
-                                        className="mt-2"
-                                    >
-                                        {isEditableIdentifier ? (
-                                            <>
+                        <form onSubmit={handleSubmit(submitHandler)}>
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("name")}
+                                    placeholder={t("name")}
+                                    name="name"
+                                    register={register("name")}
+                                    autoFocus={true}
+                                />
+                            </div>
+                            <div className="mb-4">
+                                <InputField
+                                    label={t("identifier")}
+                                    placeholder={t("identifier")}
+                                    name="identifier"
+                                    register={putModelRegister("identifier")}
+                                    disabled={isEditableIdentifier}
+                                />
+                                <div
+                                    className="mt-2"
+                                >
+                                    {isEditableIdentifier ? (
+                                        <>
                                             <span onClick={editableIdentifierOnClick}
                                                   className="text-xs text-blue-600 cursor-pointer">
                                                 {t("edit_identifier")}
                                             </span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <button type="button" onClick={saveIdentifierOnClick}
-                                                        className="text-xs text-blue-600 cursor-pointer">
-                                                    {t('save')}
-                                                </button>
-                                                <button type="button" onClick={cancelIdentifierOnClick}
-                                                        className="ml-3 text-xs text-blue-600 cursor-pointer">
-                                                    {t('cancel')}
-                                                </button>
-                                            </>
-                                        )}
-                                    </div>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button type="button" onClick={saveIdentifierOnClick}
+                                                    className="text-xs text-blue-600 cursor-pointer">
+                                                {t('save')}
+                                            </button>
+                                            <button type="button" onClick={cancelIdentifierOnClick}
+                                                    className="ml-3 text-xs text-blue-600 cursor-pointer">
+                                                {t('cancel')}
+                                            </button>
+                                        </>
+                                    )}
                                 </div>
+                            </div>
 
-                                <div className="flex items-center">
-                                    <button
-                                        type="submit"
-                                        className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                    >
-                                        {t("save")}
-                                    </button>
-                                    <Link
-                                        to={`/admin/model`}
-                                        className="ml-auto font-medium text-gray-600 hover:text-gray-500"
-                                    >
-                                        {t("cancel")}
-                                    </Link>
-                                </div>
-                            </form>
-                        </div>
+                            <div className="flex items-center">
+                                <button
+                                    type="submit"
+                                    className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                >
+                                    {t("save")}
+                                </button>
+                                <Link
+                                    to={`/admin/model`}
+                                    className="ml-auto font-medium text-gray-600 hover:text-gray-500"
+                                >
+                                    {t("cancel")}
+                                </Link>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

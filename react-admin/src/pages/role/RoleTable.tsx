@@ -103,8 +103,7 @@ export default function RoleTable() {
     })
 
     return (
-        <div className="flex-1 bg-white">
-            <div className="px-5 ml-64">
+            <div className="px-5">
                 <div className="flex items-center">
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         {t("roles")}
@@ -127,6 +126,5 @@ export default function RoleTable() {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }

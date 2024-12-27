@@ -56,7 +56,6 @@ function AdminUserEdit() {
     };
 
     return (
-        <div className="flex-1 bg-white">
             <div className="px-5 pl-64">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
@@ -171,7 +170,6 @@ function AdminUserEdit() {
                     </div>
                 </div>
             </div>
-        </div>
     );
 }
 

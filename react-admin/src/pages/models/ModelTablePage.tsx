@@ -103,29 +103,27 @@ export const ModelTablePage = (() => {
 
     return (
         <>
-            <div className="flex-1 bg-white">
-                <div className="px-5 ml-64">
-                    <div className="flex items-center">
-                        <div className="p-5 text-2xl font-semibold text-primary-500">
-                            {t("model")}
-                        </div>
-                        <div className="ml-auto">
-                            <HasPermission displayDenied={false} identifier="model_create">
-                                <Link
-                                    className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                                    to="/admin/model-create"
-                                >
-                                    {t("create")}
-                                </Link>
-                            </HasPermission>
-                        </div>
+            <div className="px-5">
+                <div className="flex items-center">
+                    <div className="p-5 text-2xl font-semibold text-primary-500">
+                        {t("model")}
                     </div>
-
-                    <div className="overflow-x-auto">
-                        <HasPermission identifier="model_table">
-                            <AvoRedTable table={table}/>
+                    <div className="ml-auto">
+                        <HasPermission displayDenied={false} identifier="model_create">
+                            <Link
+                                className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                                to="/admin/model-create"
+                            >
+                                {t("create")}
+                            </Link>
                         </HasPermission>
                     </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                    <HasPermission identifier="model_table">
+                        <AvoRedTable table={table}/>
+                    </HasPermission>
                 </div>
             </div>
         </>

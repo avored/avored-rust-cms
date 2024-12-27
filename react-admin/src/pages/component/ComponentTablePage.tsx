@@ -104,27 +104,25 @@ export const ComponentTablePage = (() => {
     })
 
     return (
-        <div className="flex-1 bg-white">
-            <div className="px-5 ml-64">
-                <div className="flex items-center">
-                    <div className="p-5 text-2xl font-semibold text-primary-500">
-                        {t("components")}
-                    </div>
-                    <HasPermission displayDenied={false} identifier="component_create">
-                        <Link
-                            className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                            to="/admin/component-create"
-                        >
-                            {t("create")}
-                        </Link>
-                    </HasPermission>
+        <div className="px-5">
+            <div className="flex items-center">
+                <div className="p-5 text-2xl font-semibold text-primary-500">
+                    {t("components")}
                 </div>
+                <HasPermission displayDenied={false} identifier="component_create">
+                    <Link
+                        className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        to="/admin/component-create"
+                    >
+                        {t("create")}
+                    </Link>
+                </HasPermission>
+            </div>
 
-                <div className="overflow-x-hidden">
-                    <HasPermission identifier="component_table">
-                        <AvoRedTable table={table}/>
-                    </HasPermission>
-                </div>
+            <div className="overflow-x-hidden">
+                <HasPermission identifier="component_table">
+                    <AvoRedTable table={table}/>
+                </HasPermission>
             </div>
         </div>
     );
