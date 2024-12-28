@@ -1,7 +1,14 @@
 import {Link, Outlet} from "react-router-dom";
 import {Menu} from "@headlessui/react";
 import {useTranslation} from "react-i18next";
-import {ChevronDownIcon, FilmIcon, RocketLaunchIcon, CpuChipIcon, DeviceTabletIcon} from "@heroicons/react/24/solid";
+import {
+    ChevronDownIcon,
+    FilmIcon,
+    RocketLaunchIcon,
+    CpuChipIcon,
+    DeviceTabletIcon,
+    CircleStackIcon
+} from "@heroicons/react/24/solid";
 import {useContext} from "react";
 import {ThemeContext} from "../../context/ThemeContext";
 
@@ -40,6 +47,15 @@ function AppSidebar() {
                                     <RocketLaunchIcon className="h-6 w-6"/>
                                 </div>
                                 <div className="ml-2">{t("sidebar.page")}</div>
+                            </Link>
+                            <Link
+                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
+                                to={`/admin/collection`}
+                            >
+                                <div className="pr-2">
+                                    <CircleStackIcon className="h-6 w-6"/>
+                                </div>
+                                <div className="ml-2">{t("collection")}</div>
                             </Link>
 
                             <Link

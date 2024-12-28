@@ -15,7 +15,7 @@ impl UpdateModelRequest {
         if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string()
+                message: t!("validation_required", attribute = t!("name")).to_string(),
             };
 
             errors.push(error_message);

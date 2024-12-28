@@ -1,4 +1,9 @@
-use std::sync::Arc;
+use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
+use crate::avored_state::AvoRedState;
+use crate::error::{Error, Result};
+use crate::models::admin_user_model::AdminUserModel;
+use crate::models::token_claim_model::TokenClaims;
+use crate::models::validation_error::ErrorResponse;
 use axum::extract::State;
 use axum::http::{header, Response};
 use axum::Json;
@@ -6,14 +11,8 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
+use std::sync::Arc;
 use utoipa::ToSchema;
-use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
-use crate::avored_state::AvoRedState;
-use crate::error::{Error, Result};
-use crate::models::admin_user_model::AdminUserModel;
-use crate::models::token_claim_model::TokenClaims;
-use crate::models::validation_error::ErrorResponse;
-
 
 /// Login Admin User
 ///
@@ -37,7 +36,7 @@ pub async fn admin_user_login_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -48,12 +47,11 @@ pub async fn admin_user_login_api_handler(
         .find_by_email(&state.db, payload.email.to_owned())
         .await?;
 
+    println!("admin user model: {:#?}", admin_user_model);
+
     let is_password_match: bool = state
         .admin_user_service
-        .compare_password(
-            payload.password.clone(),
-            admin_user_model.password.clone()
-        )?;
+        .compare_password(payload.password.clone(), admin_user_model.password.clone())?;
 
     if !is_password_match {
         return Err(Error::Authentication);
@@ -65,7 +63,7 @@ pub async fn admin_user_login_api_handler(
     let claims: TokenClaims = TokenClaims {
         sub: admin_user_model.clone().id,
         name: admin_user_model.clone().full_name,
-        email:admin_user_model.clone().email,
+        email: admin_user_model.clone().email,
         admin_user_model: admin_user_model.clone(),
         exp,
         iat,
@@ -88,7 +86,7 @@ pub async fn admin_user_login_api_handler(
     let response_data = LoginResponseData {
         status: true,
         data: token,
-        admin_user: admin_user_model
+        admin_user: admin_user_model,
     };
 
     Ok(Json(response_data))
@@ -98,22 +96,19 @@ pub async fn admin_user_login_api_handler(
 pub struct LoginResponseData {
     pub status: bool,
     pub data: String,
-    pub admin_user: AdminUserModel
+    pub admin_user: AdminUserModel,
 }
-
 
 #[cfg(test)]
 mod tests {
+    use crate::api::rest_api_routes::tests::{get_axum_app, send_post_request};
+    use crate::error::Result;
     use axum::body::Body;
     use axum::http::StatusCode;
     use tower::ServiceExt;
-    use crate::api::rest_api_routes::tests::{ get_axum_app, send_post_request};
-    use crate::error::Result;
-
 
     #[tokio::test]
-    async fn test_admin_user_login_api_handler() -> Result<()>
-    {
+    async fn test_admin_user_login_api_handler() -> Result<()> {
         let (app, _state) = get_axum_app().await.unwrap();
         //@todo do a post request to a setup
         // then do a post request with username and password
@@ -125,7 +120,10 @@ mod tests {
                 }"#,
         );
 
-        let response = app.oneshot(send_post_request("/api/setup", payload)).await.unwrap();
+        let response = app
+            .oneshot(send_post_request("/api/setup", payload))
+            .await
+            .unwrap();
 
         assert_eq!(response.status(), StatusCode::OK);
         let res_b = response.into_body();

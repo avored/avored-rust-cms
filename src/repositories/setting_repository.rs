@@ -1,10 +1,10 @@
+use crate::error::Error;
+use crate::models::setting_model::{SettingModel, UpdatableSettingModel};
+use crate::repositories::into_iter_objects;
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
-use crate::error::Error;
-use crate::models::setting_model::{SettingModel, UpdatableSettingModel};
-use crate::repositories::into_iter_objects;
 
 #[derive(Clone)]
 pub struct SettingRepository {}
@@ -17,7 +17,7 @@ impl SettingRepository {
     pub async fn all(
         &self,
         datastore: &Datastore,
-        database_session: &Session
+        database_session: &Session,
     ) -> crate::error::Result<Vec<SettingModel>> {
         let sql = "SELECT * FROM settings";
 
@@ -38,7 +38,7 @@ impl SettingRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_setting: UpdatableSettingModel
+        updatable_setting: UpdatableSettingModel,
     ) -> crate::error::Result<bool> {
         let sql = "
             UPDATE type::thing($table, $id) MERGE {
@@ -51,7 +51,10 @@ impl SettingRepository {
             ("table".into(), "settings".into()),
             ("value".into(), updatable_setting.value.into()),
             ("id".into(), updatable_setting.id.into()),
-            ("logged_in_user_name".into(), updatable_setting.logged_in_username.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_setting.logged_in_username.into(),
+            ),
         ]);
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -61,7 +64,7 @@ impl SettingRepository {
             None => Err(Error::Generic("no record found".to_string())),
         };
         if result_object.is_ok() {
-            return Ok(true)
+            return Ok(true);
         }
 
         Ok(false)
@@ -71,9 +74,8 @@ impl SettingRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        identifier: String
+        identifier: String,
     ) -> crate::error::Result<SettingModel> {
-
         let sql = "SELECT * FROM settings WHERE identifier=$data;";
         let data: BTreeMap<String, Value> = [("data".into(), identifier.into())].into();
 
@@ -87,7 +89,5 @@ impl SettingRepository {
         let setting_model: crate::error::Result<SettingModel> = result_object?.try_into();
 
         setting_model
-
     }
-
 }

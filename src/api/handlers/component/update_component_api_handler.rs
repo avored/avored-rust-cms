@@ -1,16 +1,22 @@
 use std::sync::Arc;
 
-use crate::{
-    avored_state::AvoRedState,
-    error::Result,
+use crate::api::handlers::component::request::update_component_request::{
+    UpdatableComponentElementDataRequest, UpdateComponentRequest,
 };
-use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
-use serde::Serialize;
-use crate::api::handlers::component::request::update_component_request::{UpdatableComponentElementDataRequest, UpdateComponentRequest};
 use crate::error::Error;
-use crate::models::component_model::{ComponentElementDataModel, ComponentModel, UpdatableComponentElementModel, UpdatableComponentModel};
+use crate::models::component_model::{
+    ComponentElementDataModel, ComponentModel, UpdatableComponentElementModel,
+    UpdatableComponentModel,
+};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{
+    extract::{Path as AxumPath, State},
+    response::IntoResponse,
+    Extension, Json,
+};
+use serde::Serialize;
 
 pub async fn update_component_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -33,7 +39,7 @@ pub async fn update_component_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -41,15 +47,17 @@ pub async fn update_component_api_handler(
 
     let mut updatable_elements: Vec<UpdatableComponentElementModel> = vec![];
     for payload_element in payload.elements {
-
         let mut updatable_element_data: Vec<ComponentElementDataModel> = vec![];
 
-        let updatable_element_data_requests: Vec<UpdatableComponentElementDataRequest> = payload_element.element_data.unwrap_or_else(std::vec::Vec::new);
+        let updatable_element_data_requests: Vec<UpdatableComponentElementDataRequest> =
+            payload_element
+                .element_data
+                .unwrap_or_else(std::vec::Vec::new);
 
         for update_element_data_request in updatable_element_data_requests {
             let create_element_data_option = ComponentElementDataModel {
                 label: update_element_data_request.label,
-                value: update_element_data_request.value
+                value: update_element_data_request.value,
             };
             updatable_element_data.push(create_element_data_option);
         }
@@ -59,7 +67,7 @@ pub async fn update_component_api_handler(
             identifier: payload_element.identifier,
             element_type: payload_element.element_type,
             element_data_type: payload_element.element_data_type,
-            element_data: Some(updatable_element_data)
+            element_data: Some(updatable_element_data),
         };
         updatable_elements.push(updatable_component_element_model);
     }
@@ -68,7 +76,7 @@ pub async fn update_component_api_handler(
         id: component_id,
         name: payload.name,
         logged_in_username: logged_in_user.email.clone(),
-        elements: updatable_elements
+        elements: updatable_elements,
     };
     let updated_component_model = state
         .component_service
@@ -77,7 +85,7 @@ pub async fn update_component_api_handler(
 
     let response = UpdatedComponentResponse {
         status: true,
-        component_model: updated_component_model
+        component_model: updated_component_model,
     };
 
     Ok(Json(response))
@@ -86,5 +94,5 @@ pub async fn update_component_api_handler(
 #[derive(Serialize, Debug)]
 pub struct UpdatedComponentResponse {
     pub status: bool,
-    pub component_model: ComponentModel
+    pub component_model: ComponentModel,
 }

@@ -1,16 +1,13 @@
 use std::sync::Arc;
 
-use crate::error::Error;
-use crate::models::validation_error::ErrorResponse;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
-use axum::{Extension, extract::State, Json};
-use serde::Serialize;
 use crate::api::handlers::role::request::store_role_request::StoreRoleRequest;
+use crate::error::Error;
 use crate::models::role_model::{CreatableRole, RoleModel};
 use crate::models::token_claim_model::LoggedInUser;
-
+use crate::models::validation_error::ErrorResponse;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{extract::State, Extension, Json};
+use serde::Serialize;
 
 pub async fn store_role_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -32,7 +29,7 @@ pub async fn store_role_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -51,7 +48,7 @@ pub async fn store_role_api_handler(
         .await?;
     let response = CreatedRoleResponse {
         status: true,
-        role_model: created_role_model
+        role_model: created_role_model,
     };
 
     Ok(Json(response))
@@ -60,5 +57,5 @@ pub async fn store_role_api_handler(
 #[derive(Serialize, Debug)]
 pub struct CreatedRoleResponse {
     pub status: bool,
-    pub role_model: RoleModel
+    pub role_model: RoleModel,
 }

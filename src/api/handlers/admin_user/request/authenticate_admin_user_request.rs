@@ -1,7 +1,7 @@
+use crate::models::validation_error::{ErrorMessage, Validate};
 use rust_i18n::t;
 use serde::Deserialize;
 use utoipa::ToSchema;
-use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, ToSchema)]
 pub struct AuthenticateAdminUserRequest {
@@ -16,7 +16,7 @@ impl AuthenticateAdminUserRequest {
         if !self.email.required()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_required", attribute = t!("email")).to_string()
+                message: t!("validation_required", attribute = t!("email")).to_string(),
             };
 
             errors.push(error_message);
@@ -25,7 +25,7 @@ impl AuthenticateAdminUserRequest {
         if !self.email.validate_email()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("email_address_not_valid").to_string()
+                message: t!("email_address_not_valid").to_string(),
             };
 
             errors.push(error_message);
@@ -34,7 +34,7 @@ impl AuthenticateAdminUserRequest {
         if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: t!("validation_required", attribute = t!("password")).to_string()
+                message: t!("validation_required", attribute = t!("password")).to_string(),
             };
 
             errors.push(error_message);

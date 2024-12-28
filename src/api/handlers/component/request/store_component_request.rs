@@ -1,6 +1,6 @@
-use serde::Deserialize;
-use rust_i18n::t;
 use crate::models::validation_error::{ErrorMessage, Validate};
+use rust_i18n::t;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct StoreComponentRequest {
@@ -15,7 +15,7 @@ pub struct CreatableElementRequest {
     pub identifier: String,
     pub element_type: String,
     pub element_data_type: String,
-    pub element_data: Option<Vec<CreatableComponentElementDataRequest>>
+    pub element_data: Option<Vec<CreatableComponentElementDataRequest>>,
 }
 
 #[derive(Deserialize, Debug, Clone, Default)]
@@ -29,10 +29,9 @@ impl StoreComponentRequest {
         let mut errors: Vec<ErrorMessage> = vec![];
 
         if !self.name.required()? {
-
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string()
+                message: t!("validation_required", attribute = t!("name")).to_string(),
             };
 
             errors.push(error_message);
@@ -41,7 +40,7 @@ impl StoreComponentRequest {
         if !self.identifier.required()? {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_required", attribute = t!("identifier")).to_string()
+                message: t!("validation_required", attribute = t!("identifier")).to_string(),
             };
 
             errors.push(error_message);

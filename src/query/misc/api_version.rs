@@ -1,25 +1,15 @@
-use juniper::{
-    FieldResult,
-    graphql_object,
-    GraphQLObject,
-    GraphQLScalar,
-    InputValue,
-    ParseScalarResult,
-    ParseScalarValue,
-    ScalarToken,
-    ScalarValue,
-    Value
-};
-use surrealdb::sql::Datetime;
 use crate::avored_state::AvoRedState;
 use crate::query::AvoRedQuery;
+use juniper::{
+    graphql_object, FieldResult, GraphQLObject, GraphQLScalar, InputValue, ParseScalarResult,
+    ParseScalarValue, ScalarToken, ScalarValue, Value,
+};
+use surrealdb::sql::Datetime;
 
 #[graphql_object]
 #[graphql(context = AvoRedState)]
 impl AvoRedQuery {
-    pub async fn api_version(
-        context: &AvoRedState
-    ) -> FieldResult<TestRoleModel> {
+    pub async fn api_version(context: &AvoRedState) -> FieldResult<TestRoleModel> {
         let mut test = TestRoleModel::default();
         let user = UserId(Datetime::default());
         test.id = user;
@@ -37,14 +27,12 @@ impl AvoRedQuery {
     }
 }
 
-
 #[derive(Debug, Default, GraphQLObject)]
 pub struct TestRoleModel {
     pub id: UserId,
     pub name: String,
-    pub created: String
+    pub created: String,
 }
-
 
 #[derive(GraphQLScalar, Debug, Default)]
 #[graphql(
@@ -62,7 +50,6 @@ fn to_output<S: ScalarValue>(v: &UserId) -> Value<S> {
     Value::from(test.to_string())
 }
 
-
 fn parse_token<S: ScalarValue>(value: ScalarToken<'_>) -> ParseScalarResult<S> {
     <String as ParseScalarValue<S>>::from_str(value)
         .or_else(|_| <i32 as ParseScalarValue<S>>::from_str(value))
@@ -70,7 +57,7 @@ fn parse_token<S: ScalarValue>(value: ScalarToken<'_>) -> ParseScalarResult<S> {
 
 fn from_input<S>(_input: &InputValue<S>) -> Result<UserId, String>
 where
-    S: ScalarValue
+    S: ScalarValue,
 {
     // Datetime::default()
     // input.as_string_value()

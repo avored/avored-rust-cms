@@ -1,9 +1,11 @@
+use crate::avored_state::AvoRedState;
+use crate::error::Result;
+use crate::models::page_model::{
+    PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus,
+};
+use crate::models::validation_error::{ErrorMessage, Validate};
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::avored_state::AvoRedState;
-use crate::models::validation_error::{ErrorMessage, Validate};
-use crate::error::Result;
-use crate::models::page_model::{PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StorePageRequest {
@@ -30,7 +32,7 @@ impl StorePageRequest {
         if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string()
+                message: t!("validation_required", attribute = t!("name")).to_string(),
             };
 
             errors.push(error_message);
@@ -39,7 +41,7 @@ impl StorePageRequest {
         if !self.identifier.required()? {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_required", attribute = t!("identifier")).to_string()
+                message: t!("validation_required", attribute = t!("identifier")).to_string(),
             };
 
             errors.push(error_message);
@@ -53,7 +55,7 @@ impl StorePageRequest {
         if page_count.total > 0 {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_count", attribute = t!("identifier")).to_string()
+                message: t!("validation_count", attribute = t!("identifier")).to_string(),
             };
 
             errors.push(error_message);

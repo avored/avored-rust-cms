@@ -6,7 +6,7 @@ use crate::models::validation_error::{ErrorMessage, Validate};
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StoreModelRequest {
     pub name: String,
-    pub identifier: String
+    pub identifier: String,
 }
 
 impl StoreModelRequest {
@@ -16,7 +16,7 @@ impl StoreModelRequest {
         if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string()
+                message: t!("validation_required", attribute = t!("name")).to_string(),
             };
 
             errors.push(error_message);
@@ -25,7 +25,7 @@ impl StoreModelRequest {
         if !self.identifier.required()? {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: format!("Identifier is a required field {}", t!("identifier"))
+                message: format!("Identifier is a required field {}", t!("identifier")),
             };
 
             errors.push(error_message);

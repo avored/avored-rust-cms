@@ -67,6 +67,7 @@
   "table": "Table",
   "permissions": "Permissions",
   "page": "Page",
+  "collection": "Collection",
   "role": "Role",
   "general": "General",
   "is_super_admin": "Is super admin",

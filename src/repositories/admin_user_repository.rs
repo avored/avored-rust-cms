@@ -1,13 +1,15 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel};
+use crate::models::admin_user_model::{
+    AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel,
+};
+use crate::models::token_claim_model::LoggedInUser;
 use crate::models::ModelCount;
+use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use crate::models::token_claim_model::LoggedInUser;
-use crate::PER_PAGE;
 
 use super::into_iter_objects;
 
@@ -25,7 +27,8 @@ impl AdminUserRepository {
         database_session: &Session,
         email: String,
     ) -> Result<AdminUserModel> {
-        let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE email=$data;";
+        let sql =
+            "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE email=$data;";
         let data: BTreeMap<String, Value> = [("data".into(), email.into())].into();
 
         let responses = datastore.execute(sql, database_session, Some(data)).await?;
@@ -72,17 +75,35 @@ impl AdminUserRepository {
         let sql = "CREATE admin_users CONTENT $data";
 
         let data: BTreeMap<String, Value> = [
-            ("full_name".into(), creatable_admin_user_model.full_name.into(),),
+            (
+                "full_name".into(),
+                creatable_admin_user_model.full_name.into(),
+            ),
             ("email".into(), creatable_admin_user_model.email.into()),
-            ("password".into(), creatable_admin_user_model.password.into(),),
-            ("profile_image".into(), creatable_admin_user_model.profile_image.into(),),
-            ("is_super_admin".into(), creatable_admin_user_model.is_super_admin.into(),),
-            ("created_by".into(), creatable_admin_user_model.logged_in_username.clone().into(),),
-            ("updated_by".into(), creatable_admin_user_model.logged_in_username.into(),),
+            (
+                "password".into(),
+                creatable_admin_user_model.password.into(),
+            ),
+            (
+                "profile_image".into(),
+                creatable_admin_user_model.profile_image.into(),
+            ),
+            (
+                "is_super_admin".into(),
+                creatable_admin_user_model.is_super_admin.into(),
+            ),
+            (
+                "created_by".into(),
+                creatable_admin_user_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                creatable_admin_user_model.logged_in_username.into(),
+            ),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
-            .into();
+        .into();
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
         let ress = datastore.execute(sql, database_session, Some(vars)).await?;
@@ -96,7 +117,6 @@ impl AdminUserRepository {
 
         admin_user_model
     }
-
 
     pub async fn update_admin_user(
         &self,
@@ -143,13 +163,12 @@ impl AdminUserRepository {
         admin_user_model
     }
 
-
     pub async fn update_password_by_email(
         &self,
         datastore: &Datastore,
         database_session: &Session,
         new_password: String,
-        email: String
+        email: String,
     ) -> Result<bool> {
         let sql = "
             UPDATE type::table($table) SET password=$password WHERE email=$email";
@@ -172,7 +191,9 @@ impl AdminUserRepository {
             return Ok(true);
         }
 
-        Err(Error::Generic(format!("issue while updating password by email: {email}")))
+        Err(Error::Generic(format!(
+            "issue while updating password by email: {email}"
+        )))
     }
 
     // pub async fn delete_admin_user(
@@ -223,23 +244,28 @@ impl AdminUserRepository {
         database_session: &Session,
         start: i64,
         order_column: String,
-        order_type: String
+        order_type: String,
     ) -> Result<Vec<AdminUserModel>> {
-
-        let sql = format!("\
+        let sql = format!(
+            "\
             SELECT *, ->admin_user_role->roles.* as roles \
             FROM admin_users \
             ORDER {} {} \
             LIMIT $limit \
             START $start;\
-        ", order_column, order_type);
+        ",
+            order_column, order_type
+        );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
             ("order_type".into(), "id".into()),
         ]);
 
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await.unwrap();
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await
+            .unwrap();
         let mut admin_user_list: Vec<AdminUserModel> = Vec::new();
 
         for object in into_iter_objects(responses)? {
@@ -258,7 +284,7 @@ impl AdminUserRepository {
         database_session: &Session,
         admin_user_id: String,
         role_id: String,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<bool> {
         let sql = format!(
             "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
@@ -271,7 +297,7 @@ impl AdminUserRepository {
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
-            .into();
+        .into();
 
         let vars: BTreeMap<String, Value> = [("attached_data".into(), attached_data.into())].into();
 
@@ -293,7 +319,7 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
         admin_user_id: String,
-        role_id: String
+        role_id: String,
     ) -> Result<bool> {
         let sql = format!(
             "DELETE {}:{}->{} WHERE {}:{};",

@@ -1,18 +1,19 @@
 use std::sync::Arc;
 
 use crate::models::model_model::PutModelIdentifierModel;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
+use crate::{avored_state::AvoRedState, error::Result};
 
-use axum::{Extension, extract::{Path as AxumPath, State}, Json};
-use axum::response::IntoResponse;
 use crate::api::handlers::model::request::put_model_request::PutModelRequest;
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
-use crate::responses::ApiResponse;
 use crate::responses::model::PutModelIdentifierResponse;
+use crate::responses::ApiResponse;
+use axum::response::IntoResponse;
+use axum::{
+    extract::{Path as AxumPath, State},
+    Extension, Json,
+};
 
 pub async fn put_model_identifier_api_handler(
     AxumPath(model_id): AxumPath<String>,
@@ -35,17 +36,16 @@ pub async fn put_model_identifier_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
     }
 
-
     let put_model_identifier = PutModelIdentifierModel {
         id: model_id,
         identifier: payload.identifier,
-        logged_in_username: logged_in_user.email
+        logged_in_username: logged_in_user.email,
     };
     let updated_model_model = state
         .model_service
@@ -53,12 +53,12 @@ pub async fn put_model_identifier_api_handler(
         .await?;
 
     let updated_model_response = PutModelIdentifierResponse {
-        model: updated_model_model
+        model: updated_model_model,
     };
 
     let api_response = ApiResponse {
         status: true,
-        data: updated_model_response
+        data: updated_model_response,
     };
 
     Ok(Json(api_response))

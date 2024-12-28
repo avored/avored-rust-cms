@@ -1,19 +1,12 @@
 use std::{collections::BTreeMap, sync::Arc};
 
-use crate::{
-    avored_state::AvoRedState,
-    error::Result,
-};
-use argon2::{
-    password_hash::SaltString,
-    Argon2, PasswordHasher,
-};
-use axum::{extract::State, Json, response::IntoResponse};
-use email_address::EmailAddress;
-use serde::{Deserialize, Serialize};
 use crate::error::Error;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-
+use crate::{avored_state::AvoRedState, error::Result};
+use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
+use axum::{extract::State, response::IntoResponse, Json};
+use email_address::EmailAddress;
+use serde::{Deserialize, Serialize};
 
 pub async fn post_setup_avored_handler(
     state: State<Arc<AvoRedState>>,
@@ -26,12 +19,11 @@ pub async fn post_setup_avored_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
     }
-
 
     let sql = "
 
@@ -157,6 +149,27 @@ pub async fn post_setup_avored_handler(
 
         DEFINE TABLE fields;
 
+        REMOVE TABLE collections;
+        DEFINE TABLE collections;
+
+        DEFINE FIELD name ON TABLE collections TYPE string;
+        DEFINE FIELD identifier ON TABLE collections TYPE string;
+        DEFINE FIELD created_by ON TABLE collections TYPE string;
+        DEFINE FIELD updated_by ON TABLE collections TYPE string;
+        DEFINE FIELD created_at ON TABLE collections TYPE datetime;
+        DEFINE FIELD updated_at ON TABLE collections TYPE datetime;
+        DEFINE INDEX collections_identifier_index ON TABLE collections COLUMNS identifier UNIQUE;
+        DEFINE INDEX collections_identifier_index ON TABLE collections COLUMNS identifier UNIQUE;
+
+        CREATE collections CONTENT {
+            name: 'Pages',
+            identifier: 'pages',
+            created_by: $email,
+            updated_by: $email,
+            created_at: time::now(),
+            updated_at: time::now()
+        };
+
     ";
 
     let password = payload.password.as_bytes();
@@ -184,9 +197,7 @@ pub async fn post_setup_avored_handler(
     println!();
     println!("Migrate fresh done!");
 
-    let response = SetupViewModel {
-        status: true
-    };
+    let response = SetupViewModel { status: true };
 
     Ok(Json(response))
 }
@@ -196,8 +207,6 @@ pub async fn post_setup_avored_handler(
 pub struct SetupViewModel {
     pub status: bool,
 }
-
-
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct SetupAvoRedRequest {
@@ -214,16 +223,16 @@ impl SetupAvoRedRequest {
         if self.email.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: String::from("Email is a required field")
+                message: String::from("Email is a required field"),
             };
 
             errors.push(error_message);
         }
 
-        if ! EmailAddress::is_valid(&self.email) {
+        if !EmailAddress::is_valid(&self.email) {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: String::from("Invalid email address")
+                message: String::from("Invalid email address"),
             };
 
             errors.push(error_message);
@@ -232,7 +241,7 @@ impl SetupAvoRedRequest {
         if self.password.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: String::from("Password is a required field")
+                message: String::from("Password is a required field"),
             };
 
             errors.push(error_message);

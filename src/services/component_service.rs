@@ -1,3 +1,5 @@
+use crate::models::component_model::PutComponentIdentifierModel;
+use crate::models::ModelCount;
 use crate::{
     error::Result,
     models::{
@@ -10,8 +12,6 @@ use crate::{
     repositories::component_repository::ComponentRepository,
     PER_PAGE,
 };
-use crate::models::component_model::PutComponentIdentifierModel;
-use crate::models::ModelCount;
 
 pub struct ComponentService {
     component_repository: ComponentRepository,
@@ -29,7 +29,7 @@ impl ComponentService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-        order: String
+        order: String,
     ) -> Result<ComponentPagination> {
         let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
@@ -61,7 +61,7 @@ impl ComponentService {
         };
 
         let mut order_column = "id";
-        let mut order_type  = "ASC";
+        let mut order_type = "ASC";
         let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
@@ -70,7 +70,13 @@ impl ComponentService {
 
         let components = self
             .component_repository
-            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
 
         Ok(ComponentPagination {
@@ -78,10 +84,7 @@ impl ComponentService {
             pagination,
         })
     }
-    pub async fn all(
-        &self,
-        (datastore, database_session): &DB
-    ) -> Result<Vec<ComponentModel>> {
+    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<ComponentModel>> {
         self.component_repository
             .all(datastore, database_session)
             .await
@@ -129,10 +132,14 @@ impl ComponentService {
     pub async fn update_component_identifier(
         &self,
         (datastore, database_session): &DB,
-        put_component_identifier_model: PutComponentIdentifierModel
+        put_component_identifier_model: PutComponentIdentifierModel,
     ) -> Result<ComponentModel> {
         self.component_repository
-            .update_component_identifier(datastore, database_session, put_component_identifier_model)
+            .update_component_identifier(
+                datastore,
+                database_session,
+                put_component_identifier_model,
+            )
             .await
     }
 }

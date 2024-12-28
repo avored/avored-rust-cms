@@ -1,22 +1,22 @@
-use std::path::Path;
-use std::sync::Arc;
-use axum::extract::{Multipart,  State};
-use axum::{Extension, Json};
-use rand::distributions::Alphanumeric;
-use rand::Rng;
-use serde::Serialize;
-use urlencoding::decode_binary;
 use crate::api::handlers::admin_user::request::store_admin_user_request::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
+use axum::extract::{Multipart, State};
+use axum::{Extension, Json};
+use rand::distributions::Alphanumeric;
+use rand::Rng;
+use serde::Serialize;
+use std::path::Path;
+use std::sync::Arc;
+use urlencoding::decode_binary;
 
 pub async fn store_admin_user_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
-    mut multipart: Multipart
+    mut multipart: Multipart,
 ) -> Result<Json<CreateAdminUserResponse>> {
     println!("->> {:<12} - store_admin_user_api_handler", "HANDLER");
     let has_permission_bool = state
@@ -33,7 +33,7 @@ pub async fn store_admin_user_api_handler(
         password: String::from(""),
         is_super_admin: false,
         confirmation_password: String::from(""),
-        role_ids: vec![]
+        role_ids: vec![],
     };
     let mut profile_image = String::from("");
 
@@ -102,7 +102,7 @@ pub async fn store_admin_user_api_handler(
                 let confirmation_password = String::from_utf8_lossy(&decoded).into_owned();
 
                 payload.confirmation_password = confirmation_password;
-            },
+            }
             "role_ids[]" => {
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
@@ -119,16 +119,14 @@ pub async fn store_admin_user_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
         return Err(Error::BadRequest(error_response));
     }
 
     let password_hash = state
         .admin_user_service
-        .get_password_hash_from_raw_password(
-            payload.password, &state.config.password_salt
-        )?;
+        .get_password_hash_from_raw_password(payload.password, &state.config.password_salt)?;
 
     let creatable_admin_user = CreatableAdminUserModel {
         full_name: payload.full_name,
@@ -137,7 +135,7 @@ pub async fn store_admin_user_api_handler(
         profile_image,
         is_super_admin: payload.is_super_admin,
         logged_in_username: logged_in_user.email.clone(),
-        role_ids: payload.role_ids
+        role_ids: payload.role_ids,
     };
 
     let created_admin_user = state
@@ -147,16 +145,14 @@ pub async fn store_admin_user_api_handler(
 
     let create_admin_user_response = CreateAdminUserResponse {
         status: true,
-        admin_user_model: created_admin_user
+        admin_user_model: created_admin_user,
     };
 
     Ok(Json(create_admin_user_response))
 }
 
-
 #[derive(Serialize, Debug)]
 pub struct CreateAdminUserResponse {
     pub status: bool,
-    pub admin_user_model: AdminUserModel
+    pub admin_user_model: AdminUserModel,
 }
-

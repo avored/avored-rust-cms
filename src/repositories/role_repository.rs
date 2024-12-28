@@ -1,7 +1,9 @@
 use std::collections::BTreeMap;
 
 use crate::error::{Error, Result};
-use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, RoleModel, UpdatableRoleModel};
+use crate::models::role_model::{
+    CreatableRole, PutRoleIdentifierModel, RoleModel, UpdatableRoleModel,
+};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -24,20 +26,25 @@ impl RoleRepository {
         database_session: &Session,
         start: i64,
         order_column: String,
-        order_type: String
+        order_type: String,
     ) -> Result<Vec<RoleModel>> {
-        let sql = format!("\
+        let sql = format!(
+            "\
             SELECT * \
             FROM roles \
             ORDER {} {} \
             LIMIT $limit \
             START $start;\
-        ", order_column, order_type);
+        ",
+            order_column, order_type
+        );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
         ]);
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
 
         let mut role_list: Vec<RoleModel> = Vec::new();
 
@@ -54,7 +61,7 @@ impl RoleRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        identifier: String
+        identifier: String,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(identifier=$identifier) FROM roles GROUP ALL";
 
@@ -75,7 +82,7 @@ impl RoleRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        put_role_identifier_model: PutRoleIdentifierModel
+        put_role_identifier_model: PutRoleIdentifierModel,
     ) -> Result<RoleModel> {
         let sql = "UPDATE type::thing($table, $id)
                     SET
@@ -86,12 +93,19 @@ impl RoleRepository {
         ";
 
         let vars: BTreeMap<String, Value> = [
-            ("identifier".into(), put_role_identifier_model.identifier.into()),
+            (
+                "identifier".into(),
+                put_role_identifier_model.identifier.into(),
+            ),
             ("table".into(), "roles".into()),
             ("updated_at".into(), Datetime::default().into()),
-            ("updated_by".into(), put_role_identifier_model.logged_in_username.into()),
-            ("id".into(), put_role_identifier_model.id.into())
-        ].into();
+            (
+                "updated_by".into(),
+                put_role_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_role_identifier_model.id.into()),
+        ]
+        .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
@@ -107,7 +121,7 @@ impl RoleRepository {
     pub async fn all(
         &self,
         datastore: &Datastore,
-        database_session: &Session
+        database_session: &Session,
     ) -> Result<Vec<RoleModel>> {
         let sql = "SELECT * FROM roles";
 
@@ -135,9 +149,18 @@ impl RoleRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), createable_role_model.name.into()),
             ("identifier".into(), createable_role_model.identifier.into()),
-            ("permissions".into(), createable_role_model.permissions.into()),
-            ("created_by".into(), createable_role_model.logged_in_username.clone().into()),
-            ("updated_by".into(), createable_role_model.logged_in_username.into()),
+            (
+                "permissions".into(),
+                createable_role_model.permissions.into(),
+            ),
+            (
+                "created_by".into(),
+                createable_role_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                createable_role_model.logged_in_username.into(),
+            ),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -197,8 +220,14 @@ impl RoleRepository {
 
         let vars = BTreeMap::from([
             ("name".into(), updatable_admin_user.name.into()),
-            ("permissions".into(), updatable_admin_user.permissions.into()),
-            ("logged_in_user_name".into(), updatable_admin_user.logged_in_username.into()),
+            (
+                "permissions".into(),
+                updatable_admin_user.permissions.into(),
+            ),
+            (
+                "logged_in_user_name".into(),
+                updatable_admin_user.logged_in_username.into(),
+            ),
             ("id".into(), updatable_admin_user.id.into()),
             ("table".into(), "roles".into()),
         ]);

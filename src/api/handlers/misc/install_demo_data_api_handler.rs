@@ -1,18 +1,15 @@
-use std::collections::BTreeMap;
-use std::sync::Arc;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
-use crate::{
-    avored_state::AvoRedState,
-    error::Result,
-};
-use axum::{extract::State, Json, response::IntoResponse, Extension};
-use serde::Serialize;
-use tokio::fs::File;
-use tokio::io::AsyncWriteExt;
 use crate::models::admin_user_model::CreatableAdminUserModel;
 use crate::models::role_model::CreatableRole;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::{avored_state::AvoRedState, error::Result};
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHasher};
+use axum::{extract::State, response::IntoResponse, Extension, Json};
+use serde::Serialize;
+use std::collections::BTreeMap;
+use std::sync::Arc;
+use tokio::fs::File;
+use tokio::io::AsyncWriteExt;
 
 pub async fn install_demo_data_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -238,9 +235,7 @@ pub async fn install_demo_data_api_handler(
         };
     ";
 
-    let vars = BTreeMap::from([
-        ("email".into(), logged_in_user.email.clone().into()),
-    ]);
+    let vars = BTreeMap::from([("email".into(), logged_in_user.email.clone().into())]);
 
     let (ds, ses) = &state.db;
 
@@ -271,14 +266,10 @@ pub async fn install_demo_data_api_handler(
             String::from("asset_create"),
             String::from("asset_edit"),
             String::from("asset_delete"),
-
         ],
     };
 
-    let created_role_model = state
-        .role_service
-        .create_role(&state.db, demo_role)
-        .await?;
+    let created_role_model = state.role_service.create_role(&state.db, demo_role).await?;
 
     let password = "admin123".as_bytes();
     let salt = SaltString::from_b64(&state.config.password_salt)?;
@@ -304,12 +295,9 @@ pub async fn install_demo_data_api_handler(
         .create_admin_user(&state.db, creatable_admin_user, logged_in_user)
         .await?;
 
-
     println!("Created admin user: {:?}", created_admin_user);
 
-    let response = DemoDataViewModel {
-        status: true
-    };
+    let response = DemoDataViewModel { status: true };
 
     Ok(Json(response))
 }

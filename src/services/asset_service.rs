@@ -1,7 +1,10 @@
-use crate::{error::Result, PER_PAGE, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository};
-use crate::models::asset_model::{AssetPagination, CreatableAssetModel, MetaDataType, AssetModel};
-use crate::models::Pagination;
+use crate::models::asset_model::{AssetModel, AssetPagination, CreatableAssetModel, MetaDataType};
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::Pagination;
+use crate::{
+    error::Result, providers::avored_database_provider::DB,
+    repositories::asset_repository::AssetRepository, PER_PAGE,
+};
 
 pub struct AssetService {
     asset_repository: AssetRepository,
@@ -17,7 +20,7 @@ impl AssetService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-        parent_id: String
+        parent_id: String,
     ) -> Result<AssetPagination> {
         let start = (current_page - 1) * PER_PAGE;
         let to = start + PER_PAGE;
@@ -82,7 +85,7 @@ impl AssetService {
     pub async fn find_by_id(
         &self,
         (datastore, database_session): &DB,
-        asset_id: &str
+        asset_id: &str,
     ) -> Result<AssetModel> {
         self.asset_repository
             .find_by_id(datastore, database_session, asset_id)
@@ -104,30 +107,28 @@ impl AssetService {
         db: &DB,
         name: String,
         parent_id: String,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<AssetModel> {
         let (datastore, database_session) = db;
 
         let mut full_path = format!("public/upload/{}", name.clone());
 
         if !parent_id.is_empty() {
-            let asset = self
-                .find_by_id(db, &parent_id)
-                .await?;
+            let asset = self.find_by_id(db, &parent_id).await?;
 
-            full_path = format!("{}/{}",asset.new_path, name.clone());
+            full_path = format!("{}/{}", asset.new_path, name.clone());
         }
         tokio::fs::create_dir_all(&format!("./{}", full_path.clone())).await?;
 
         // @todo fix this default color????
-        let color= String::from("text-gray-400");
+        let color = String::from("text-gray-400");
 
         let creatable_asset_model = CreatableAssetModel {
             logged_in_username: logged_in_user.email,
             parent_id,
             name: name.clone(),
             asset_type: "FOLDER".to_string(),
-            metadata: MetaDataType::FolderTypeMetaData {color},
+            metadata: MetaDataType::FolderTypeMetaData { color },
         };
 
         self.asset_repository
@@ -140,10 +141,16 @@ impl AssetService {
         (datastore, database_session): &DB,
         name: &str,
         asset_id: &str,
-        logged_in_username: &str
+        logged_in_username: &str,
     ) -> Result<AssetModel> {
         self.asset_repository
-            .update_asset_path(datastore, database_session, name, asset_id, logged_in_username)
+            .update_asset_path(
+                datastore,
+                database_session,
+                name,
+                asset_id,
+                logged_in_username,
+            )
             .await
     }
 }

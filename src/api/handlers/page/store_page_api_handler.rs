@@ -1,15 +1,13 @@
 use std::sync::Arc;
 
+use crate::api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::error::Error;
 use crate::models::page_model::{CreatablePageField, CreatablePageModel, PageModel};
-use crate::models::validation_error::ErrorResponse;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
-use axum::{Extension, extract::State, Json};
-use crate::api::handlers::page::request::store_page_request::StorePageRequest;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{extract::State, Extension, Json};
 
 pub async fn store_page_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -30,7 +28,7 @@ pub async fn store_page_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -41,17 +39,17 @@ pub async fn store_page_api_handler(
         identifier: payload.identifier,
         status: payload.status,
         logged_in_username: logged_in_user.name.clone(),
-        page_fields: vec![]
+        page_fields: vec![],
     };
 
-    for  payload_page_field in  payload.page_fields {
+    for payload_page_field in payload.page_fields {
         let creatable_page_field_model = CreatablePageField {
             name: payload_page_field.name,
             identifier: payload_page_field.identifier,
             data_type: payload_page_field.data_type,
             field_type: payload_page_field.field_type,
             field_content: payload_page_field.field_content,
-            field_data: payload_page_field.field_data
+            field_data: payload_page_field.field_data,
         };
         creatable_page.page_fields.push(creatable_page_field_model);
     }
@@ -63,7 +61,7 @@ pub async fn store_page_api_handler(
 
     let response = ApiResponse {
         status: true,
-        data: created_page_model
+        data: created_page_model,
     };
 
     Ok(Json(response))

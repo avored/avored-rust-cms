@@ -1,18 +1,20 @@
+use crate::{avored_state::AvoRedState, error::Result};
 use std::sync::Arc;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
 
-use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
-use serde::Serialize;
 use crate::error::Error;
 use crate::models::admin_user_model::AdminUserModel;
 use crate::models::token_claim_model::LoggedInUser;
+use axum::{
+    extract::{Path as AxumPath, State},
+    response::IntoResponse,
+    Extension, Json,
+};
+use serde::Serialize;
 
 pub async fn fetch_admin_user_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     AxumPath(admin_user_id): AxumPath<String>,
-    state: State<Arc<AvoRedState>>
+    state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - fetch_admin_user_api_handler", "HANDLER");
 
@@ -30,15 +32,14 @@ pub async fn fetch_admin_user_api_handler(
         .await?;
     let response = FetchAdminUserResponse {
         status: true,
-        admin_user_model
+        admin_user_model,
     };
 
     Ok(Json(response))
 }
 
-
 #[derive(Serialize, Debug)]
 pub struct FetchAdminUserResponse {
     pub status: bool,
-    pub admin_user_model: AdminUserModel
+    pub admin_user_model: AdminUserModel,
 }

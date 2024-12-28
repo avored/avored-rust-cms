@@ -1,20 +1,21 @@
+use crate::{avored_state::AvoRedState, error::Result};
 use std::path::Path;
 use std::sync::Arc;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
 
-use axum::{Extension, extract::{Path as AxumPath, State}, Json};
-use axum::extract::Multipart;
-use rand::distributions::Alphanumeric;
-use rand::Rng;
-use serde::Serialize;
-use urlencoding::decode_binary;
 use crate::api::handlers::admin_user::request::update_admin_user_request::UpdateAdminUserRequest;
 use crate::error::Error;
 use crate::models::admin_user_model::{AdminUserModel, UpdatableAdminUserModel};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
+use axum::extract::Multipart;
+use axum::{
+    extract::{Path as AxumPath, State},
+    Extension, Json,
+};
+use rand::distributions::Alphanumeric;
+use rand::Rng;
+use serde::Serialize;
+use urlencoding::decode_binary;
 
 pub async fn update_admin_user_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -34,7 +35,7 @@ pub async fn update_admin_user_api_handler(
     let mut payload = UpdateAdminUserRequest {
         full_name: String::from(""),
         is_super_admin: false,
-        role_ids: vec![]
+        role_ids: vec![],
     };
     let mut profile_image = String::from("");
 
@@ -82,7 +83,7 @@ pub async fn update_admin_user_api_handler(
                 }
 
                 payload.is_super_admin = bool_super_admin;
-            },
+            }
             "role_ids[]" => {
                 let bytes = field.bytes().await.unwrap();
                 let decoded = decode_binary(&bytes).into_owned();
@@ -98,7 +99,7 @@ pub async fn update_admin_user_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
         return Err(Error::BadRequest(error_response));
     }
@@ -109,7 +110,7 @@ pub async fn update_admin_user_api_handler(
         profile_image,
         is_super_admin: payload.is_super_admin,
         logged_in_username: logged_in_user.email.clone(),
-        role_ids: payload.role_ids
+        role_ids: payload.role_ids,
     };
     let updated_admin_user_model = state
         .admin_user_service
@@ -117,15 +118,14 @@ pub async fn update_admin_user_api_handler(
         .await?;
     let response = UpdatableAdminUserResponse {
         status: true,
-        admin_user_model: updated_admin_user_model
+        admin_user_model: updated_admin_user_model,
     };
 
     Ok(Json(response))
 }
 
-
 #[derive(Serialize, Debug)]
 pub struct UpdatableAdminUserResponse {
     pub status: bool,
-    pub admin_user_model: AdminUserModel
+    pub admin_user_model: AdminUserModel,
 }

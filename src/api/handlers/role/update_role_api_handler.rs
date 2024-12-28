@@ -1,15 +1,19 @@
 use std::sync::Arc;
 
+use crate::api::handlers::role::request::update_role_request::UpdateRoleRequest;
+use crate::models::role_model::RoleModel;
+use crate::models::token_claim_model::LoggedInUser;
 use crate::{
     avored_state::AvoRedState,
     error::{Error, Result},
     models::{role_model::UpdatableRoleModel, validation_error::ErrorResponse},
 };
-use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
+use axum::{
+    extract::{Path as AxumPath, State},
+    response::IntoResponse,
+    Extension, Json,
+};
 use serde::Serialize;
-use crate::api::handlers::role::request::update_role_request::UpdateRoleRequest;
-use crate::models::role_model::RoleModel;
-use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn update_role_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -32,7 +36,7 @@ pub async fn update_role_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -51,7 +55,7 @@ pub async fn update_role_api_handler(
 
     let response = UpdatedRoleResponse {
         status: true,
-        role_model: updated_role_model
+        role_model: updated_role_model,
     };
 
     Ok(Json(response))
@@ -60,5 +64,5 @@ pub async fn update_role_api_handler(
 #[derive(Serialize, Debug)]
 pub struct UpdatedRoleResponse {
     pub status: bool,
-    pub role_model: RoleModel
+    pub role_model: RoleModel,
 }

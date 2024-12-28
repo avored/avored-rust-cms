@@ -1,14 +1,12 @@
-use std::sync::Arc;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
-use axum::{Extension, extract::State, Json};
 use crate::api::handlers::asset::request::create_folder_request::CreateFolderRequest;
 use crate::error::Error;
 use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{extract::State, Extension, Json};
+use std::sync::Arc;
 
 pub async fn create_folder_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -30,7 +28,7 @@ pub async fn create_folder_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -45,7 +43,7 @@ pub async fn create_folder_api_handler(
 
     let created_response = ApiResponse {
         status: true,
-        data: created_asset_folder
+        data: created_asset_folder,
     };
 
     Ok(Json(created_response))

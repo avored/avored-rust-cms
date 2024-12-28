@@ -1,16 +1,13 @@
 use std::sync::Arc;
 
-use crate::error::Error;
-use crate::models::validation_error::ErrorResponse;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
-use axum::{Extension, extract::State, Json};
-use serde::Serialize;
 use crate::api::handlers::model::request::store_model_request::StoreModelRequest;
+use crate::error::Error;
 use crate::models::model_model::{CreatableModel, ModelModel};
 use crate::models::token_claim_model::LoggedInUser;
-
+use crate::models::validation_error::ErrorResponse;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{extract::State, Extension, Json};
+use serde::Serialize;
 
 pub async fn store_model_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -32,7 +29,7 @@ pub async fn store_model_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -41,7 +38,7 @@ pub async fn store_model_api_handler(
     let creatable_model = CreatableModel {
         name: payload.name,
         identifier: payload.identifier,
-        logged_in_username: logged_in_user.email
+        logged_in_username: logged_in_user.email,
     };
 
     let created_model_model = state
@@ -50,7 +47,7 @@ pub async fn store_model_api_handler(
         .await?;
     let response = CreatedModelResponse {
         status: true,
-        model_model: created_model_model
+        model_model: created_model_model,
     };
 
     Ok(Json(response))
@@ -59,5 +56,5 @@ pub async fn store_model_api_handler(
 #[derive(Serialize, Debug)]
 pub struct CreatedModelResponse {
     pub status: bool,
-    pub model_model: ModelModel
+    pub model_model: ModelModel,
 }

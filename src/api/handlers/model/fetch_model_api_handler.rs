@@ -1,19 +1,21 @@
 use std::sync::Arc;
 
 use crate::models::model_model::ModelModel;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
+use crate::{avored_state::AvoRedState, error::Result};
 
-use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
-use serde::Serialize;
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
+use axum::{
+    extract::{Path as AxumPath, State},
+    response::IntoResponse,
+    Extension, Json,
+};
+use serde::Serialize;
 
 pub async fn fetch_model_api_handler(
     AxumPath(model_id): AxumPath<String>,
     Extension(logged_in_user): Extension<LoggedInUser>,
-    state: State<Arc<AvoRedState>>
+    state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - fetch_model_api_handler", "HANDLER");
 
@@ -25,21 +27,17 @@ pub async fn fetch_model_api_handler(
         return Err(Error::Forbidden);
     }
 
-    let model_model = state
-        .model_service
-        .find_by_id(&state.db, model_id)
-        .await?;
+    let model_model = state.model_service.find_by_id(&state.db, model_id).await?;
     let response = FetchModelResponse {
         status: true,
-        model_model
+        model_model,
     };
 
     Ok(Json(response))
 }
 
-
 #[derive(Serialize, Debug)]
 pub struct FetchModelResponse {
     pub status: bool,
-    pub model_model: ModelModel
+    pub model_model: ModelModel,
 }
