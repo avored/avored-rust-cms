@@ -63,6 +63,8 @@ use axum::{middleware, routing::get, Extension, Router};
 use juniper::{EmptyMutation, EmptySubscription};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
+use crate::api::handlers::collection::store_collection_api_handler::store_collection_api_handler;
+use crate::api::handlers::collection::update_collection_api_handler::update_collection_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
@@ -145,6 +147,8 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
             get(fetch_admin_user_api_handler),
         )
         .route("/api/collection", get(collection_table_api_handler))
+        .route("/api/collection", post(store_collection_api_handler))
+        .route("/api/collection/:collection_id", put(update_collection_api_handler))
         .route("/api/model", get(model_table_api_handler))
         .route("/api/model", post(store_model_api_handler))
         .route("/api/model/:model_id", put(update_model_api_handler))

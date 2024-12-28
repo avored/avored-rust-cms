@@ -1,5 +1,7 @@
 use crate::error::Result;
-use crate::models::collection_model::CollectionPagination;
+use crate::models::collection_model::{
+    CollectionModel, CollectionPagination, CreatableCollection, UpdatableCollection,
+};
 use crate::models::Pagination;
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::collection_repository::CollectionRepository;
@@ -17,15 +19,15 @@ impl CollectionService {
     }
 }
 impl CollectionService {
-    // pub async fn create_collection(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     creatable_collection_collection: CreatableCollection,
-    // ) -> Result<CollectionCollection> {
-    //     self.collection_repository
-    //         .create_collection(datastore, database_session, creatable_collection_collection)
-    //         .await
-    // }
+    pub async fn create_collection(
+        &self,
+        (datastore, database_session): &DB,
+        creatable_collection_collection: CreatableCollection,
+    ) -> Result<CollectionModel> {
+        self.collection_repository
+            .create_collection(datastore, database_session, creatable_collection_collection)
+            .await
+    }
 
     pub async fn paginate(
         &self,
@@ -117,13 +119,13 @@ impl CollectionService {
     //         .await
     // }
 
-    // pub async fn update_collection(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     updatable_collection_collection: UpdatableCollectionCollection,
-    // ) -> Result<CollectionCollection> {
-    //     self.collection_repository
-    //         .update_collection(datastore, database_session, updatable_collection_collection)
-    //         .await
-    // }
+    pub async fn update_collection(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_collection_collection: UpdatableCollection,
+    ) -> Result<CollectionModel> {
+        self.collection_repository
+            .update_collection(datastore, database_session, updatable_collection_collection)
+            .await
+    }
 }

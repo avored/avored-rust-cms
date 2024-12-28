@@ -2,11 +2,12 @@ use std::collections::BTreeMap;
 
 use super::into_iter_objects;
 use crate::error::{Error, Result};
-use crate::models::collection_model::CollectionModel;
+use crate::models::collection_model::{CollectionModel, CreatableCollection, UpdatableCollection};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
+use surrealdb::sql::{Datetime, Value};
 
 #[derive(Clone)]
 pub struct CollectionRepository {}
@@ -151,34 +152,74 @@ impl CollectionRepository {
     //     model_count
     // }
 
-    // pub async fn update_model(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     updatable_model: UpdatableCollectionCollection,
-    // ) -> Result<CollectionCollection> {
-    //     let sql = "
-    //         UPDATE type::thing($table, $id) MERGE {
-    //             name: $name,
-    //             updated_by: $logged_in_user_name,
-    //             updated_at: time::now()
-    //         };";
-    //
-    //     let vars = BTreeMap::from([
-    //         ("name".into(), updatable_model.name.into()),
-    //         ("logged_in_user_name".into(), updatable_model.logged_in_username.into()),
-    //         ("id".into(), updatable_model.id.into()),
-    //         ("table".into(), "models".into()),
-    //     ]);
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let model_model: Result<CollectionCollection> = result_object?.try_into();
-    //
-    //     model_model
-    // }
+    pub async fn update_collection(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_model: UpdatableCollection,
+    ) -> Result<CollectionModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                name: $name,
+                updated_by: $logged_in_user_name,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("name".into(), updatable_model.name.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_model.logged_in_username.into(),
+            ),
+            ("id".into(), updatable_model.id.into()),
+            ("table".into(), "collections".into()),
+        ]);
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_model: Result<CollectionModel> = result_object?.try_into();
+
+        model_model
+    }
+
+    pub async fn create_collection(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        creatable_model: CreatableCollection,
+    ) -> Result<CollectionModel> {
+        let sql = "CREATE collections CONTENT $data";
+
+        let data: BTreeMap<String, Value> = [
+            ("name".into(), creatable_model.name.into()),
+            ("identifier".into(), creatable_model.identifier.into()),
+            (
+                "created_by".into(),
+                creatable_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                creatable_model.logged_in_username.into(),
+            ),
+            ("created_at".into(), Datetime::default().into()),
+            ("updated_at".into(), Datetime::default().into()),
+        ]
+        .into();
+        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let created_model: Result<CollectionModel> = result_object?.try_into();
+
+        created_model
+    }
 }

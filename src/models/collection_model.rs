@@ -20,6 +20,22 @@ pub struct CollectionPagination {
     pub pagination: Pagination,
 }
 
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct CreatableCollection {
+    pub name: String,
+    pub identifier: String,
+    pub logged_in_username: String,
+}
+
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableCollection {
+    pub id: String,
+    pub name: String,
+    pub logged_in_username: String,
+}
+
+
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
     fn try_from(val: Object) -> crate::error::Result<CollectionModel> {
