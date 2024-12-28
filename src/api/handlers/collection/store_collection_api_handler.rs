@@ -1,6 +1,3 @@
-use std::sync::Arc;
-use axum::{Extension, Json};
-use axum::extract::State;
 use crate::api::handlers::collection::request::store_collection_request::StoreCollectionRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
@@ -8,8 +5,11 @@ use crate::models::collection_model::{CollectionModel, CreatableCollection};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
+use axum::extract::State;
+use axum::{Extension, Json};
+use std::sync::Arc;
 
-pub async fn store_collection_api_handler (
+pub async fn store_collection_api_handler(
     state: State<Arc<AvoRedState>>,
     Extension(logged_in_user): Extension<LoggedInUser>,
     Json(payload): Json<StoreCollectionRequest>,
