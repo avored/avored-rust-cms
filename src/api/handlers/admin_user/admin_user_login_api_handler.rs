@@ -47,8 +47,6 @@ pub async fn admin_user_login_api_handler(
         .find_by_email(&state.db, payload.email.to_owned())
         .await?;
 
-    println!("admin user model: {:#?}", admin_user_model);
-
     let is_password_match: bool = state
         .admin_user_service
         .compare_password(payload.password.clone(), admin_user_model.password.clone())?;
