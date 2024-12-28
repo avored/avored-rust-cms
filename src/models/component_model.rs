@@ -1,7 +1,7 @@
+use super::{BaseModel, Pagination};
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
-use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ComponentModel {
@@ -21,7 +21,7 @@ pub struct ComponentElementModel {
     pub identifier: String,
     pub element_type: String,
     pub element_data_type: String,
-    pub element_data: Option<Vec<ComponentElementDataModel>>
+    pub element_data: Option<Vec<ComponentElementDataModel>>,
 }
 
 impl TryFrom<Object> for ComponentModel {
@@ -36,27 +36,24 @@ impl TryFrom<Object> for ComponentModel {
         let updated_by = val.get("updated_by").get_string()?;
 
         let elements = match val.get("elements") {
-            Some(val) => {
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
 
-                match val.clone() {
-                    Value::Array(v) => {
-                        let mut arr = Vec::new();
+                    for array in v.into_iter() {
+                        let object = match array.clone() {
+                            Value::Object(v) => v,
+                            _ => surrealdb::sql::Object::default(),
+                        };
 
-                        for array in v.into_iter() {
-                            let object = match array.clone() {
-                                Value::Object(v) => v,
-                                _ => surrealdb::sql::Object::default(),
-                            };
+                        let component_element_model: ComponentElementModel = object.try_into()?;
 
-                            let component_element_model: ComponentElementModel = object.try_into()?;
-
-                            arr.push(component_element_model)
-                        }
-                        arr
+                        arr.push(component_element_model)
                     }
-                    _ => Vec::new(),
+                    arr
                 }
-            }
+                _ => Vec::new(),
+            },
             None => Vec::new(),
         };
 
@@ -73,37 +70,32 @@ impl TryFrom<Object> for ComponentModel {
     }
 }
 
-
 impl TryFrom<Object> for ComponentElementModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentElementModel> {
-
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
         let element_type = val.get("element_type").get_string()?;
         let element_data_type = val.get("element_data_type").get_string()?;
         let element_data = match val.get("element_data") {
-            Some(val) => {
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
 
-                match val.clone() {
-                    Value::Array(v) => {
-                        let mut arr = Vec::new();
+                    for array in v.into_iter() {
+                        let object = match array.clone() {
+                            Value::Object(v) => v,
+                            _ => surrealdb::sql::Object::default(),
+                        };
 
-                        for array in v.into_iter() {
-                            let object = match array.clone() {
-                                Value::Object(v) => v,
-                                _ => surrealdb::sql::Object::default(),
-                            };
+                        let field_data_model: ComponentElementDataModel = object.try_into()?;
 
-                            let field_data_model: ComponentElementDataModel = object.try_into()?;
-
-                            arr.push(field_data_model)
-                        }
-                        arr
+                        arr.push(field_data_model)
                     }
-                    _ => Vec::new(),
+                    arr
                 }
-            }
+                _ => Vec::new(),
+            },
             None => Vec::new(),
         };
 
@@ -112,42 +104,30 @@ impl TryFrom<Object> for ComponentElementModel {
             identifier,
             element_type,
             element_data_type,
-            element_data :Some(element_data)
+            element_data: Some(element_data),
         })
     }
 }
-
-
 
 impl TryFrom<Object> for ComponentElementDataModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ComponentElementDataModel> {
         let label = match val.get("label") {
-            Some(val) => {
-
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
+            Some(val) => match val.clone() {
+                Value::Strand(v) => v.as_string(),
+                _ => String::from(""),
+            },
             None => String::from(""),
         };
         let value = match val.get("value") {
-            Some(val) => {
-
-                match val.clone() {
-                    Value::Strand(v) => v.as_string(),
-                    _ => String::from(""),
-                }
-            }
+            Some(val) => match val.clone() {
+                Value::Strand(v) => v.as_string(),
+                _ => String::from(""),
+            },
             None => String::from(""),
         };
 
-
-        Ok(ComponentElementDataModel {
-            label,
-            value
-        })
+        Ok(ComponentElementDataModel { label, value })
     }
 }
 
@@ -156,9 +136,8 @@ pub struct CreatableComponent {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
-    pub elements: Vec<CreatableComponentElementModel>
+    pub elements: Vec<CreatableComponentElementModel>,
 }
-
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableComponentElementModel {
@@ -169,12 +148,11 @@ pub struct CreatableComponentElementModel {
     pub element_data: Option<Vec<ComponentElementDataModel>>,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutComponentIdentifierModel {
     pub id: String,
     pub identifier: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -182,9 +160,8 @@ pub struct UpdatableComponentModel {
     pub id: String,
     pub name: String,
     pub logged_in_username: String,
-    pub elements: Vec<UpdatableComponentElementModel>
+    pub elements: Vec<UpdatableComponentElementModel>,
 }
-
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableComponentElementModel {

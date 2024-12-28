@@ -1,8 +1,12 @@
-use crate::{error::Result, models::{
-    model_model::{CreatableModel, ModelModel},
-}, PER_PAGE, providers::avored_database_provider::DB, repositories::model_repository::ModelRepository};
 use crate::models::model_model::{ModelPagination, PutModelIdentifierModel, UpdatableModelModel};
 use crate::models::{ModelCount, Pagination};
+use crate::{
+    error::Result,
+    models::model_model::{CreatableModel, ModelModel},
+    providers::avored_database_provider::DB,
+    repositories::model_repository::ModelRepository,
+    PER_PAGE,
+};
 
 pub struct ModelService {
     model_repository: ModelRepository,
@@ -14,7 +18,6 @@ impl ModelService {
     }
 }
 impl ModelService {
-
     pub async fn create_model(
         &self,
         (datastore, database_session): &DB,
@@ -29,7 +32,7 @@ impl ModelService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-        order: String
+        order: String,
     ) -> Result<ModelPagination> {
         let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
@@ -61,7 +64,7 @@ impl ModelService {
         };
 
         let mut order_column = "id";
-        let mut order_type  = "ASC";
+        let mut order_type = "ASC";
         let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
@@ -70,7 +73,13 @@ impl ModelService {
 
         let paginated_models = self
             .model_repository
-            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
 
         Ok(ModelPagination {
@@ -89,11 +98,10 @@ impl ModelService {
             .await
     }
 
-
     pub async fn update_model_identifier(
         &self,
         (datastore, database_session): &DB,
-        put_model_identifier_model: PutModelIdentifierModel
+        put_model_identifier_model: PutModelIdentifierModel,
     ) -> Result<ModelModel> {
         self.model_repository
             .update_model_identifier(datastore, database_session, put_model_identifier_model)
@@ -109,7 +117,6 @@ impl ModelService {
             .count_of_identifier(datastore, database_session, identifier)
             .await
     }
-
 
     pub async fn update_model(
         &self,

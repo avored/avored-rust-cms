@@ -1,30 +1,27 @@
 extern crate core;
+use crate::api::rest_api_routes::rest_api_routes;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::extract::DefaultBodyLimit;
 use axum::Router;
 use std::{fs::File, path::Path, sync::Arc};
-use axum::extract::DefaultBodyLimit;
 use tokio::net::TcpListener;
 use tower_http::services::ServeDir;
 use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
-use crate::{
-    avored_state::AvoRedState,
-    error::Result
-};
-use crate::api::rest_api_routes::rest_api_routes;
 
 const PER_PAGE: i64 = 10;
-mod models;
 mod api;
-mod middleware;
-mod providers;
-mod repositories;
-mod services;
-pub mod responses;
 mod avored_state;
 mod error;
+mod middleware;
+mod models;
+mod providers;
 mod query;
+mod repositories;
+pub mod responses;
+mod services;
 
 rust_i18n::i18n!("resources/locales");
 
@@ -37,8 +34,7 @@ async fn main() -> Result<()> {
     let app = Router::new()
         .merge(rest_api_routes(state.clone()))
         .nest_service("/public", static_routing_service)
-        .layer(DefaultBodyLimit::max(104857600))
-    ;
+        .layer(DefaultBodyLimit::max(104857600));
 
     println!(r"     _             ____          _ ");
     println!(r"    / \__   _____ |  _ \ ___  __| |");
@@ -54,7 +50,7 @@ async fn main() -> Result<()> {
     // let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     let listener = TcpListener::bind("0.0.0.0:8081").await.unwrap();
     info!("{:<12} - on {:?}\n", "LISTENING", listener.local_addr());
-    axum::serve(listener , app.into_make_service())
+    axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
     // endregion: --- Start Server

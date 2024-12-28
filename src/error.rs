@@ -1,15 +1,15 @@
-use std::num::ParseIntError;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use axum::extract::multipart::MultipartError;
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
-use axum::extract::multipart::MultipartError;
 use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
 use rust_i18n::t;
 use serde::Serialize;
+use std::num::ParseIntError;
 use tracing::log::error;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -27,7 +27,7 @@ pub enum Error {
 
     NotFound(String),
 
-    Forbidden
+    Forbidden,
 }
 
 impl core::fmt::Display for Error {
@@ -51,7 +51,6 @@ impl From<jsonwebtoken::errors::Error> for Error {
         Error::Generic("Json web token error".to_string())
     }
 }
-
 
 impl From<MultipartError> for Error {
     fn from(val: MultipartError) -> Self {
@@ -94,7 +93,6 @@ impl From<RenderError> for Error {
     }
 }
 
-
 impl From<TemplateError> for Error {
     fn from(actual_error: TemplateError) -> Self {
         error!("there is an issue while registering the handlebar template with avored: {actual_error:?}");
@@ -109,14 +107,12 @@ impl From<ParseIntError> for Error {
     }
 }
 
-
 impl From<AddressError> for Error {
     fn from(actual_error: AddressError) -> Self {
         error!("there is an issue while parsing email address: {actual_error:?}");
         Error::Generic("parse lettre address parsing error".to_string())
     }
 }
-
 
 impl From<lettre::error::Error> for Error {
     fn from(actual_error: lettre::error::Error) -> Self {
@@ -127,8 +123,6 @@ impl From<lettre::error::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        
-
         // Create a placeholder Axum response.
         // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
         // let mut response = self {
@@ -138,50 +132,45 @@ impl IntoResponse for Error {
         // response.extensions_mut().insert(response);
 
         match self {
-            Error::BadRequest(str) => {
-                (StatusCode::BAD_REQUEST, str).into_response()
-            },
+            Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
             Error::Authentication => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),
-                    message: String::from(t!("email_password_not_matched"))
+                    message: String::from(t!("email_password_not_matched")),
                 };
 
                 errors.push(error_message);
                 let error_response = ErrorResponse {
                     status: false,
-                    errors
+                    errors,
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
-            },
+            }
             Error::Forbidden => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),
-                    message: String::from(t!("admin_user_forbidden"))
+                    message: String::from(t!("admin_user_forbidden")),
                 };
 
                 errors.push(error_message);
                 let error_response = ErrorResponse {
                     status: false,
-                    errors
+                    errors,
                 };
                 (StatusCode::FORBIDDEN, error_response).into_response()
-            },
-            Error::NotFound(msg) => {
-                (StatusCode::NOT_FOUND, msg).into_response()
-            },
-            _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response()
+            }
+            Error::NotFound(msg) => (StatusCode::NOT_FOUND, msg).into_response(),
+            _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),
         }
     }
 }
 impl IntoResponse for ErrorResponse {
     fn into_response(self) -> Response {
-
-        let  validation_errors = match serde_json::to_string(&self) {
+        let validation_errors = match serde_json::to_string(&self) {
             Ok(str) => str,
-            _ => "validation error 400.".to_string()
+            _ => "validation error 400.".to_string(),
         };
 
         (StatusCode::BAD_REQUEST, validation_errors).into_response()

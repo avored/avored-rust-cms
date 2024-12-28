@@ -1,46 +1,44 @@
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use argon2::password_hash::SaltString;
-use lettre::{AsyncTransport, Message};
-use lettre::message::{header, MultiPart, SinglePart};
-use rand::distributions::{Alphanumeric, DistString};
+use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
+use crate::error::Error;
+use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
+use crate::models::token_claim_model::LoggedInUser;
+use crate::models::ModelCount;
+use crate::providers::avored_template_provider::AvoRedTemplateProvider;
+use crate::repositories::password_reset_repository::PasswordResetRepository;
+use crate::repositories::role_repository::RoleRepository;
 use crate::{
     error::Result,
     models::{
-        admin_user_model::{
-            AdminUserModel, AdminUserPagination, UpdatableAdminUserModel,
-        },
+        admin_user_model::{AdminUserModel, AdminUserPagination, UpdatableAdminUserModel},
         Pagination,
     },
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
     PER_PAGE,
 };
-use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
-use crate::error::Error;
-use crate::models::admin_user_model::CreatableAdminUserModel;
-use crate::models::ModelCount;
-use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
-use crate::models::token_claim_model::LoggedInUser;
-use crate::providers::avored_template_provider::AvoRedTemplateProvider;
-use crate::repositories::password_reset_repository::PasswordResetRepository;
-use crate::repositories::role_repository::RoleRepository;
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use lettre::message::{header, MultiPart, SinglePart};
+use lettre::{AsyncTransport, Message};
+use rand::distributions::{Alphanumeric, DistString};
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
     role_repository: RoleRepository,
-    password_reset_repository: PasswordResetRepository
+    password_reset_repository: PasswordResetRepository,
 }
 
 impl AdminUserService {
     pub fn new(
         admin_user_repository: AdminUserRepository,
         role_repository: RoleRepository,
-        password_reset_repository: PasswordResetRepository
+        password_reset_repository: PasswordResetRepository,
     ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
             role_repository,
-            password_reset_repository
+            password_reset_repository,
         })
     }
 }
@@ -50,9 +48,8 @@ impl AdminUserService {
         (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,
         react_admin_url: &str,
-        to_address: String
-    ) -> Result<bool>
-    {
+        to_address: String,
+    ) -> Result<bool> {
         let from_address = String::from("info@avored.com");
         let email_subject = "Forgot your password?";
 
@@ -70,10 +67,11 @@ impl AdminUserService {
             .create_password_reset(datastore, database_session, creatable_password_reset_model)
             .await?;
 
-        let link = format!("{react_admin_url}/admin/reset-password/{}", password_reset_model.token);
-        let data = ForgotPasswordViewModel {
-            link
-        };
+        let link = format!(
+            "{react_admin_url}/admin/reset-password/{}",
+            password_reset_model.token
+        );
+        let data = ForgotPasswordViewModel { link };
 
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
 
@@ -102,22 +100,27 @@ impl AdminUserService {
         }
     }
 
-    pub fn compare_password(&self, plain_password: String, encrypted_password: String) -> Result<bool>
-    {
+    pub fn compare_password(
+        &self,
+        plain_password: String,
+        encrypted_password: String,
+    ) -> Result<bool> {
         let argon2 = Argon2::default();
 
         let parsed_hash = PasswordHash::new(&encrypted_password)?;
 
-        Ok(argon2.verify_password(plain_password.as_bytes(), &parsed_hash).is_ok())
+        Ok(argon2
+            .verify_password(plain_password.as_bytes(), &parsed_hash)
+            .is_ok())
     }
 
     pub async fn has_permission(
         &self,
         logged_in_user: LoggedInUser,
-        permission_identifier: String
+        permission_identifier: String,
     ) -> Result<bool> {
         if logged_in_user.admin_user_model.is_super_admin {
-            return Ok(true)
+            return Ok(true);
         }
         let mut has_permission = false;
         for role in logged_in_user.admin_user_model.roles {
@@ -155,7 +158,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         email: String,
-        token: String
+        token: String,
     ) -> Result<PasswordResetModel> {
         self.password_reset_repository
             .get_password_reset_by_email(datastore, database_session, email, token)
@@ -166,7 +169,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         new_password: String,
-        email: String
+        email: String,
     ) -> Result<bool> {
         self.admin_user_repository
             .update_password_by_email(datastore, database_session, new_password, email)
@@ -177,7 +180,7 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         email: String,
-        token: String
+        token: String,
     ) -> Result<bool> {
         self.password_reset_repository
             .expire_password_token_by_email_and_token(datastore, database_session, email, token)
@@ -188,22 +191,41 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         updatable_admin_user_model: UpdatableAdminUserModel,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<AdminUserModel> {
-        let mut admin_user_model = self.admin_user_repository
-            .update_admin_user(datastore, database_session, updatable_admin_user_model.clone())
+        let mut admin_user_model = self
+            .admin_user_repository
+            .update_admin_user(
+                datastore,
+                database_session,
+                updatable_admin_user_model.clone(),
+            )
             .await?;
 
         for role_id in updatable_admin_user_model.clone().role_ids {
             self.admin_user_repository
-                .detach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_id)
+                .detach_admin_user_with_role(
+                    datastore,
+                    database_session,
+                    admin_user_model.clone().id,
+                    role_id,
+                )
                 .await?;
         }
 
         for role_id in updatable_admin_user_model.role_ids {
-            let role_model = self.role_repository.find_by_id(datastore, database_session, role_id).await?;
+            let role_model = self
+                .role_repository
+                .find_by_id(datastore, database_session, role_id)
+                .await?;
             self.admin_user_repository
-                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id, logged_in_user.clone())
+                .attach_admin_user_with_role(
+                    datastore,
+                    database_session,
+                    admin_user_model.clone().id,
+                    role_model.clone().id,
+                    logged_in_user.clone(),
+                )
                 .await?;
 
             admin_user_model.roles.push(role_model);
@@ -248,7 +270,7 @@ impl AdminUserService {
         };
 
         let mut order_column = "id";
-        let mut order_type  = "ASC";
+        let mut order_type = "ASC";
         let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
@@ -257,7 +279,13 @@ impl AdminUserService {
 
         let admin_users = self
             .admin_user_repository
-            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
 
         Ok(AdminUserPagination {
@@ -280,15 +308,29 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
         creatable_admin_user_model: CreatableAdminUserModel,
-        logged_in_user: LoggedInUser
+        logged_in_user: LoggedInUser,
     ) -> Result<AdminUserModel> {
-        let mut admin_user_model = self.admin_user_repository
-            .create_admin_user(datastore, database_session, creatable_admin_user_model.clone())
+        let mut admin_user_model = self
+            .admin_user_repository
+            .create_admin_user(
+                datastore,
+                database_session,
+                creatable_admin_user_model.clone(),
+            )
             .await?;
         for role_id in creatable_admin_user_model.role_ids {
-            let role_model = self.role_repository.find_by_id(datastore, database_session, role_id).await?;
+            let role_model = self
+                .role_repository
+                .find_by_id(datastore, database_session, role_id)
+                .await?;
             self.admin_user_repository
-                .attach_admin_user_with_role(datastore, database_session, admin_user_model.clone().id, role_model.clone().id, logged_in_user.clone())
+                .attach_admin_user_with_role(
+                    datastore,
+                    database_session,
+                    admin_user_model.clone().id,
+                    role_model.clone().id,
+                    logged_in_user.clone(),
+                )
                 .await?;
 
             admin_user_model.roles.push(role_model);
@@ -300,15 +342,13 @@ impl AdminUserService {
     pub fn get_password_hash_from_raw_password(
         &self,
         raw_password: String,
-        password_salt: &String
-    ) -> Result<String>{
-
+        password_salt: &String,
+    ) -> Result<String> {
         let password = raw_password.as_bytes();
         let salt = SaltString::from_b64(password_salt)?;
 
         let argon2 = Argon2::default();
-        let password_hash = argon2
-            .hash_password(password, &salt)?.to_string();
+        let password_hash = argon2.hash_password(password, &salt)?.to_string();
 
         Ok(password_hash)
     }

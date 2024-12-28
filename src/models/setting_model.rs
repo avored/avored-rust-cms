@@ -1,7 +1,7 @@
 use crate::error::{Error, Result};
+use crate::models::BaseModel;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
-use crate::models::BaseModel;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SettingModel {
@@ -13,7 +13,6 @@ pub struct SettingModel {
     pub created_by: String,
     pub updated_by: String,
 }
-
 
 impl TryFrom<Object> for SettingModel {
     type Error = Error;
