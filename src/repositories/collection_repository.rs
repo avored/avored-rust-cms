@@ -71,31 +71,31 @@ impl CollectionRepository {
         }
         Ok(paginate_models)
     }
-    //
-    // pub async fn find_by_id(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     model_id: String,
-    // ) -> Result<CollectionCollection> {
-    //     let sql = "SELECT * FROM type::thing($table, $id);";
-    //     let vars: BTreeMap<String, Value> = [
-    //         ("id".into(), model_id.into()),
-    //         ("table".into(), "models".into()),
-    //     ]
-    //         .into();
-    //
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let model_model: Result<CollectionCollection> = result_object?.try_into();
-    //
-    //     model_model
-    // }
+
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        model_id: String,
+    ) -> Result<CollectionModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), model_id.into()),
+            ("table".into(), "collections".into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_model: Result<CollectionModel> = result_object?.try_into();
+
+        model_model
+    }
     //
     //
     // pub async fn update_model_identifier(

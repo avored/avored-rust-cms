@@ -11,6 +11,7 @@ pub struct CollectionService {
     collection_repository: CollectionRepository,
 }
 
+
 impl CollectionService {
     pub fn new(collection_repository: CollectionRepository) -> Result<Self> {
         Ok(CollectionService {
@@ -89,15 +90,15 @@ impl CollectionService {
         })
     }
 
-    // pub async fn find_by_id(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     id: String,
-    // ) -> Result<CollectionCollection> {
-    //     self.collection_repository
-    //         .find_by_id(datastore, database_session, id)
-    //         .await
-    // }
+    pub async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: String,
+    ) -> Result<CollectionModel> {
+        self.collection_repository
+            .find_by_id(datastore, database_session, id)
+            .await
+    }
 
     // pub async fn update_collection_identifier(
     //     &self,
