@@ -1,6 +1,6 @@
+use crate::models::validation_error::{ErrorMessage, Validate};
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone, Default)]
 pub struct StoreCollectionRequest {

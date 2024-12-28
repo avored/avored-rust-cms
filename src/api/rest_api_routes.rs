@@ -1,6 +1,7 @@
 use crate::api::handlers::cms::all_pages_cms_api_handler::all_pages_cms_api_handler;
 use crate::api::handlers::cms::sent_contact_us_email_handler::sent_contact_us_email_handler;
 use crate::api::handlers::collection::collection_table_api_handler::collection_table_api_handler;
+use crate::api::handlers::collection::fetch_collection_api_handler::fetch_collection_api_handler;
 use crate::api::handlers::collection::store_collection_api_handler::store_collection_api_handler;
 use crate::api::handlers::collection::update_collection_api_handler::update_collection_api_handler;
 use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
@@ -65,7 +66,6 @@ use axum::{middleware, routing::get, Extension, Router};
 use juniper::{EmptyMutation, EmptySubscription};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
-use crate::api::handlers::collection::fetch_collection_api_handler::fetch_collection_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()

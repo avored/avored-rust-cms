@@ -27,14 +27,12 @@ pub struct CreatableCollection {
     pub logged_in_username: String,
 }
 
-
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableCollection {
     pub id: String,
     pub name: String,
     pub logged_in_username: String,
 }
-
 
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;

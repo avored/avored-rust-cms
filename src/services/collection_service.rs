@@ -11,7 +11,6 @@ pub struct CollectionService {
     collection_repository: CollectionRepository,
 }
 
-
 impl CollectionService {
     pub fn new(collection_repository: CollectionRepository) -> Result<Self> {
         Ok(CollectionService {

@@ -83,7 +83,7 @@ impl CollectionRepository {
             ("id".into(), model_id.into()),
             ("table".into(), "collections".into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
