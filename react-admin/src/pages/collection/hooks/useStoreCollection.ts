@@ -9,11 +9,11 @@ export const useStoreCollection = () => {
     const redirect = useNavigate();
     return useMutation({
         mutationFn: async (data: CreatableModelType) => {
-            return await client.post('/model', JSON.stringify(data));
+            return await client.post('/collection', JSON.stringify(data));
         },
         onSuccess: (res) => {
             if (_.get(res, 'data.status') === true) {
-                redirect("/admin/model")
+                redirect("/admin/collection")
             }
         }
     })

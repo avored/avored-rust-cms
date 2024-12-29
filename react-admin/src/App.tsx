@@ -30,6 +30,7 @@ import { ModelEditPage } from "./pages/models/ModelEditPage";
 import {ComponentTablePage} from "./pages/component/ComponentTablePage";
 import {CollectionTable} from "./pages/collection/CollectionTable";
 import {CollectionEdit} from "./pages/collection/CollectionEdit";
+import {CollectionCreate} from "./pages/collection/CollectionCreate";
 
 function App() {
     return (
@@ -57,6 +58,7 @@ function App() {
                     <Route path="/admin/model-create"   element={<ModelCreatePage />} />
                     <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />
                     <Route path="/admin/collection"   element={<CollectionTable />} />
+                    <Route path="/admin/collection-create"   element={<CollectionCreate />} />
                     <Route path="/admin/collection-edit/:collection_id"   element={<CollectionEdit />} />
                     <Route path="/admin/page"   element={<PageTable />} />
                     <Route path="/admin/page-create"   element={<PageCreate />} />
