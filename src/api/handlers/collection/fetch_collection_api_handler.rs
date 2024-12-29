@@ -1,4 +1,3 @@
-use crate::api::handlers::model::fetch_model_api_handler::FetchModelResponse;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::collection_model::CollectionModel;

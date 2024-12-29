@@ -34,6 +34,14 @@ pub struct UpdatableCollection {
     pub logged_in_username: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutCollectionIdentifierModel {
+    pub id: String,
+    pub identifier: String,
+    pub logged_in_username: String,
+}
+
+
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
     fn try_from(val: Object) -> crate::error::Result<CollectionModel> {

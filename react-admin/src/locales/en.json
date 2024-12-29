@@ -93,6 +93,7 @@
   "page_information": "Page Information",
   "model": "Model",
   "model_information": "Model Information",
+  "collection_information": "Collection Information",
   "components": "Components",
   "field_type": "Field type",
   "upload_asset": "Upload asset",

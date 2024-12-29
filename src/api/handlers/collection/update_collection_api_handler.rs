@@ -36,7 +36,7 @@ pub async fn update_collection_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-    let creatable_model = UpdatableCollection {
+    let creatable_collection = UpdatableCollection {
         name: payload.name,
         id: collection_id,
         logged_in_username: logged_in_user.email,
@@ -44,7 +44,7 @@ pub async fn update_collection_api_handler(
 
     let updated_model = state
         .collection_service
-        .update_collection(&state.db, creatable_model)
+        .update_collection(&state.db, creatable_collection)
         .await?;
     let response = ApiResponse {
         status: true,

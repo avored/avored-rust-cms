@@ -1,8 +1,6 @@
 use crate::error::Result;
-use crate::models::collection_model::{
-    CollectionModel, CollectionPagination, CreatableCollection, UpdatableCollection,
-};
-use crate::models::Pagination;
+use crate::models::collection_model::{CollectionModel, CollectionPagination, CreatableCollection, PutCollectionIdentifierModel, UpdatableCollection};
+use crate::models::{ModelCount, Pagination};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::collection_repository::CollectionRepository;
 use crate::PER_PAGE;
@@ -10,6 +8,7 @@ use crate::PER_PAGE;
 pub struct CollectionService {
     collection_repository: CollectionRepository,
 }
+
 
 impl CollectionService {
     pub fn new(collection_repository: CollectionRepository) -> Result<Self> {
@@ -99,25 +98,25 @@ impl CollectionService {
             .await
     }
 
-    // pub async fn update_collection_identifier(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     put_collection_identifier_collection: PutCollectionIdentifierCollection
-    // ) -> Result<CollectionCollection> {
-    //     self.collection_repository
-    //         .update_collection_identifier(datastore, database_session, put_collection_identifier_collection)
-    //         .await
-    // }
+    pub async fn update_collection_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_collection_identifier_collection: PutCollectionIdentifierModel
+    ) -> Result<CollectionModel> {
+        self.collection_repository
+            .update_collection_identifier(datastore, database_session, put_collection_identifier_collection)
+            .await
+    }
 
-    // pub async fn count_of_identifier(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     identifier: String,
-    // ) -> Result<CollectionCount> {
-    //     self.collection_repository
-    //         .count_of_identifier(datastore, database_session, identifier)
-    //         .await
-    // }
+    pub async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: String,
+    ) -> Result<ModelCount> {
+        self.collection_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
 
     pub async fn update_collection(
         &self,
