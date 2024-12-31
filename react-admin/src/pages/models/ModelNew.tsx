@@ -1,9 +1,11 @@
 import {useTranslation} from "react-i18next";
 import {ModelSidebar} from "./ModelSidebar";
+import {useSearchParams} from "react-router-dom";
 
 export const ModelNew = (() => {
 
     const [t] = useTranslation("global")
+
 
     return (
             <div className="overflow-x-auto">
