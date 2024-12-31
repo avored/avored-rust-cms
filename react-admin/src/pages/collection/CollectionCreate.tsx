@@ -7,6 +7,8 @@ import ErrorMessage from "../../components/ErrorMessage";
 import {CreatableCollectionType} from "../../types/collection/CreatableCollectionType";
 import {useStoreCollection} from "./hooks/useStoreCollection";
 import {useCollectionCreateSchema} from "./schemas/CollectionCreateSchema";
+import React from "react";
+import slug from "slug";
 
 export const CollectionCreate = () => {
     const [t] = useTranslation("global")
@@ -14,6 +16,7 @@ export const CollectionCreate = () => {
     const {
         register,
         handleSubmit,
+        setValue,
         formState: {errors},
     } = useForm<CreatableCollectionType>({
         resolver: joiResolver(useCollectionCreateSchema(), {allowUnknown: true}),
@@ -22,6 +25,11 @@ export const CollectionCreate = () => {
     const submitHandler = ((data: CreatableCollectionType) => {
         mutate(data)
     })
+
+    const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        setValue('identifier', slug(e.currentTarget.value || ''))
+    }
+
     return (
         <>
             <div className="px-5">
@@ -38,6 +46,7 @@ export const CollectionCreate = () => {
                                     placeholder={t("name")}
                                     name="name"
                                     register={register("name")}
+                                    onKeyUp={e => onNameChange(e)}
                                     autoFocus={true}
                                 />
                                 <ErrorMessage

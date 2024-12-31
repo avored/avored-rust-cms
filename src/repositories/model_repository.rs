@@ -10,6 +10,7 @@ use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
+use crate::models::component_model::ComponentModel;
 
 #[derive(Clone)]
 pub struct ModelRepository {}
@@ -229,5 +230,25 @@ impl ModelRepository {
         let model_model: Result<ModelModel> = result_object?.try_into();
 
         model_model
+    }
+
+    pub async fn all_models(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<Vec<ModelModel>> {
+        let sql = "SELECT * FROM models";
+
+        let responses = datastore.execute(sql, database_session, None).await?;
+
+        let mut model_list: Vec<ModelModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let model_object = object?;
+
+            let model_model: Result<ModelModel> = model_object.try_into();
+            model_list.push(model_model?);
+        }
+        Ok(model_list)
     }
 }

@@ -79,12 +79,12 @@ function AppSidebar() {
 
                             <Link
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
-                                to={`/admin/model`}
+                                to={`/admin/models`}
                             >
                                 <div className="pr-2">
                                     <DeviceTabletIcon className="h-6 w-6"/>
                                 </div>
-                                <div className="ml-2">{t("model")}</div>
+                                <div className="ml-2">{t("models")}</div>
                             </Link>
 
                         </li>

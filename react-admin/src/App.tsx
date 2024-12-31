@@ -31,6 +31,7 @@ import {ComponentTablePage} from "./pages/component/ComponentTablePage";
 import {CollectionTable} from "./pages/collection/CollectionTable";
 import {CollectionEdit} from "./pages/collection/CollectionEdit";
 import {CollectionCreate} from "./pages/collection/CollectionCreate";
+import {ModelNew} from "./pages/models/ModelNew";
 
 function App() {
     return (
@@ -54,7 +55,7 @@ function App() {
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
-                    <Route path="/admin/model"   element={<ModelTablePage />} />
+                    <Route path="/admin/models"   element={<ModelNew />} />
                     <Route path="/admin/model-create"   element={<ModelCreatePage />} />
                     <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />
                     <Route path="/admin/collection"   element={<CollectionTable />} />
