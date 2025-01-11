@@ -9,6 +9,16 @@ pub struct CollectionService {
     collection_repository: CollectionRepository,
 }
 
+impl CollectionService {
+    pub(crate) async fn all_collections(
+        &self,
+        (datastore, database_session): &DB
+    ) -> Result<Vec<CollectionModel>> {
+        self.collection_repository
+        .all_collection(datastore, database_session)
+        .await
+    }
+}
 
 impl CollectionService {
     pub fn new(collection_repository: CollectionRepository) -> Result<Self> {

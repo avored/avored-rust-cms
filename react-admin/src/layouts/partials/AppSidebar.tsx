@@ -1,5 +1,5 @@
 import {Link, Outlet} from "react-router-dom";
-import {Menu} from "@headlessui/react";
+import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/react";
 import {useTranslation} from "react-i18next";
 import {
     ChevronDownIcon,
@@ -50,12 +50,12 @@ function AppSidebar() {
                             </Link>
                             <Link
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
-                                to={`/admin/collection`}
+                                to={`/admin/collections`}
                             >
                                 <div className="pr-2">
                                     <CircleStackIcon className="h-6 w-6"/>
                                 </div>
-                                <div className="ml-2">{t("collection")}</div>
+                                <div className="ml-2">{t("collections")}</div>
                             </Link>
 
                             <Link
@@ -79,12 +79,12 @@ function AppSidebar() {
 
                             <Link
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
-                                to={`/admin/models`}
+                                to={`/admin/content`}
                             >
                                 <div className="pr-2">
                                     <DeviceTabletIcon className="h-6 w-6"/>
                                 </div>
-                                <div className="ml-2">{t("models")}</div>
+                                <div className="ml-2">{t("content")}</div>
                             </Link>
 
                         </li>
@@ -95,7 +95,7 @@ function AppSidebar() {
                         </div>
 
                         <Menu as="li" className="text-sm text-gray-500">
-                            <Menu.Button
+                            <MenuButton
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700">
                                 <div className="pr-2">
                                     <RocketLaunchIcon className="h-6 w-6"/>
@@ -104,11 +104,11 @@ function AppSidebar() {
                                 <div className="absolute right-1.5 transition-transform duration-300">
                                     <ChevronDownIcon className="h-6 w-6"/>
                                 </div>
-                            </Menu.Button>
+                            </MenuButton>
 
-                            <Menu.Items className="flex flex-col mt-2 pl-2 ml-3 border-l border-gray-700 space-y-1">
-                                <Menu.Item as="li">
-                                    {({active}) => (
+                            <MenuItems as="ul" className="flex flex-col mt-2 pl-2 ml-3 border-l border-gray-700 space-y-1">
+                                <MenuItem as="li">
+                                    {() => (
                                         <Link
                                             to={`/admin/admin-user`}
                                             className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
@@ -116,9 +116,9 @@ function AppSidebar() {
                                             <div>{t("sidebar.admin_user")}</div>
                                         </Link>
                                     )}
-                                </Menu.Item>
-                                <Menu.Item as="li">
-                                    {({active}) => (
+                                </MenuItem>
+                                <MenuItem as="li">
+                                    {() => (
                                         <Link
                                             to={`/admin/role`}
                                             className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
@@ -126,9 +126,9 @@ function AppSidebar() {
                                             <div>{t("sidebar.role")}</div>
                                         </Link>
                                     )}
-                                </Menu.Item>
-                                <Menu.Item>
-                                    {({active}) => (
+                                </MenuItem>
+                                <MenuItem>
+                                    {() => (
                                         <Link
                                             to={`/admin/setting`}
                                             className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
@@ -136,8 +136,8 @@ function AppSidebar() {
                                             {t("sidebar.setting")}
                                         </Link>
                                     )}
-                                </Menu.Item>
-                            </Menu.Items>
+                                </MenuItem>
+                            </MenuItems>
                         </Menu>
                     </ul>
                 </nav>

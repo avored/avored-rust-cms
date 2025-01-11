@@ -6,10 +6,7 @@ import {Link, useSearchParams} from "react-router-dom";
 
 export const ModelSidebar = (() => {
     const [t] = useTranslation("global")
-
     const [searchParams] = useSearchParams()
-    console.log(searchParams.get("type"))
-
     const models_api_response = useModelAll()
 
     const models: Array<ModelType> = _.get(models_api_response, 'data.data.data', [])

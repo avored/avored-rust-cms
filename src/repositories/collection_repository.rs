@@ -13,6 +13,28 @@ use surrealdb::sql::{Datetime, Value};
 pub struct CollectionRepository {}
 
 impl CollectionRepository {
+    pub(crate) async fn all_collection(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session
+    )  -> Result<Vec<CollectionModel>> {
+        let sql = "SELECT * FROM collections";
+
+        let responses = datastore.execute(sql, database_session, None).await?;
+
+        let mut collection_list: Vec<CollectionModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let model_object = object?;
+
+            let model_model: Result<CollectionModel> = model_object.try_into();
+            collection_list.push(model_model?);
+        }
+        Ok(collection_list)
+    }
+}
+
+impl CollectionRepository {
     pub fn new() -> Self {
         CollectionRepository {}
     }

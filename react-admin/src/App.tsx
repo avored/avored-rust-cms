@@ -24,14 +24,13 @@ import AvoRedApiTesting from "./pages/setting/AvoRedApiTesting";
 import SettingPage from "./pages/setting/SettingPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import ChangePassword from './pages/admin-user/ChangePassword';
-import { ModelTablePage } from "./pages/models/ModelTablePage";
 import {ModelCreatePage} from "./pages/models/ModelCreatePage";
 import { ModelEditPage } from "./pages/models/ModelEditPage";
 import {ComponentTablePage} from "./pages/component/ComponentTablePage";
 import {CollectionTable} from "./pages/collection/CollectionTable";
 import {CollectionEdit} from "./pages/collection/CollectionEdit";
 import {CollectionCreate} from "./pages/collection/CollectionCreate";
-import {ModelNew} from "./pages/models/ModelNew";
+import {ContentTable} from "./pages/content/ContentTable";
 
 function App() {
     return (
@@ -55,10 +54,11 @@ function App() {
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
-                    <Route path="/admin/models"   element={<ModelNew />} />
+                    <Route path="/admin/content"   element={<ContentTable />} />
+
                     <Route path="/admin/model-create"   element={<ModelCreatePage />} />
                     <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />
-                    <Route path="/admin/collection"   element={<CollectionTable />} />
+                    <Route path="/admin/collections"   element={<CollectionTable />} />
                     <Route path="/admin/collection-create"   element={<CollectionCreate />} />
                     <Route path="/admin/collection-edit/:collection_id"   element={<CollectionEdit />} />
                     <Route path="/admin/page"   element={<PageTable />} />

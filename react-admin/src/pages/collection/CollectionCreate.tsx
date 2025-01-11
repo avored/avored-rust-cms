@@ -76,7 +76,7 @@ export const CollectionCreate = () => {
                                     {t("save")}
                                 </button>
                                 <Link
-                                    to="/admin/collection"
+                                    to="/admin/collections"
                                     className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                                 >
                                     {t("cancel")}

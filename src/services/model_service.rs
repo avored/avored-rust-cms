@@ -127,10 +127,4 @@ impl ModelService {
             .update_model(datastore, database_session, updatable_model_model)
             .await
     }
-
-    pub async fn all_models(&self, (datastore, database_session): &DB) -> Result<Vec<ModelModel>> {
-        self.model_repository
-            .all_models(datastore, database_session)
-            .await
-    }
 }
