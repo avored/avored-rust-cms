@@ -4,7 +4,6 @@ use crate::api::handlers::collection::collection_table_api_handler::collection_t
 use crate::api::handlers::collection::fetch_collection_api_handler::fetch_collection_api_handler;
 use crate::api::handlers::collection::store_collection_api_handler::store_collection_api_handler;
 use crate::api::handlers::collection::update_collection_api_handler::update_collection_api_handler;
-use crate::api::handlers::graphql::graphql_api_handler::graphql_api_handler;
 use crate::api::handlers::misc::delete_demo_data_api_handler::delete_demo_data_api_handler;
 use crate::api::handlers::misc::install_demo_data_api_handler::install_demo_data_api_handler;
 use crate::api::handlers::misc::testing_api_handler::testing_api_handler;
@@ -57,13 +56,10 @@ use crate::api::handlers::{
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 use crate::middleware::validate_cms_authentication::validate_cms_authentication;
-use crate::providers::avored_graphql_provider::AvoRedGraphqlSchema;
-use crate::query::AvoRedQuery;
 use axum::http::header::{AUTHORIZATION, CONTENT_TYPE};
 use axum::http::HeaderValue;
-use axum::routing::{delete, on, post, put, MethodFilter};
-use axum::{middleware, routing::get, Extension, Router};
-use juniper::{EmptyMutation, EmptySubscription};
+use axum::routing::{delete, post, put};
+use axum::{middleware, routing::get, Router};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use crate::api::handlers::collection::collection_all_api_handler::collection_all_api_handler;
@@ -79,7 +75,7 @@ pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
 fn cms_api_routes(state: Arc<AvoRedState>) -> Router {
     let cors = get_cors_urls(state.clone());
     Router::new()
-        .route("/cms/page/:page_id", get(fetch_page_cms_api_handler))
+        .route("/cms/page/{page_id}", get(fetch_page_cms_api_handler))
         .route("/cms/page", get(all_pages_cms_api_handler))
         .route(
             "/cms/sent-contact-us-email",
@@ -95,90 +91,88 @@ fn cms_api_routes(state: Arc<AvoRedState>) -> Router {
 
 fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
     let cors = get_cors_urls(state.clone());
-    let schema =
-        AvoRedGraphqlSchema::new(AvoRedQuery, EmptyMutation::new(), EmptySubscription::new());
 
     Router::new()
         .route("/api/component", get(component_table_api_handler))
         .route("/api/component", post(store_component_api_handler))
         .route(
-            "/api/component/:component_id",
+            "/api/component/{component_id}",
             get(fetch_component_api_handler),
         )
         .route(
-            "/api/component/:component_id",
+            "/api/component/{component_id}",
             put(update_component_api_handler),
         )
         .route(
-            "/api/put-component-identifier/:page_id",
+            "/api/put-component-identifier/{page_id}",
             put(put_component_identifier_api_handler),
         )
         .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
         .route(
-            "/api/rename-asset/:asset_id",
+            "/api/rename-asset/{asset_id}",
             post(rename_asset_api_handler),
         )
         .route("/api/create-folder", post(create_folder_api_handler))
         .route(
-            "/api/delete-folder/:asset_id",
+            "/api/delete-folder/{asset_id}",
             delete(delete_folder_api_handler),
         )
         .route(
-            "/api/delete-asset/:asset_id",
+            "/api/delete-asset/{asset_id}",
             delete(delete_asset_api_handler),
         )
         .route("/api/role-options", get(role_option_api_handler))
         .route("/api/role", get(role_table_api_handler))
         .route("/api/role", post(store_role_api_handler))
-        .route("/api/role/:role_id", get(fetch_role_api_handler))
+        .route("/api/role/{role_id}", get(fetch_role_api_handler))
         .route(
-            "/api/put-role-identifier/:role_id",
+            "/api/put-role-identifier/{role_id}",
             put(put_role_identifier_api_handler),
         )
-        .route("/api/role/:role_id", put(update_role_api_handler))
+        .route("/api/role/{role_id}", put(update_role_api_handler))
         .route("/api/admin-user", get(admin_user_table_api_handler))
         .route("/api/admin-user", post(store_admin_user_api_handler))
         .route("/api/change-password", post(change_password_api_handler))
         .route(
-            "/api/admin-user/:admin_user_id",
+            "/api/admin-user/{admin_user_id}",
             put(update_admin_user_api_handler),
         )
         .route("/api/logged-in-user", get(logged_in_user_api_handler))
         .route(
-            "/api/admin-user/:admin_user_id",
+            "/api/admin-user/{admin_user_id}",
             get(fetch_admin_user_api_handler),
         )
         .route("/api/collection", get(collection_table_api_handler))
         .route("/api/collection", post(store_collection_api_handler))
         .route(
-            "/api/collection/:collection_id",
+            "/api/collection/{collection_id}",
             get(fetch_collection_api_handler),
         )
         .route(
-            "/api/collection/:collection_id",
+            "/api/collection/{collection_id}",
             put(update_collection_api_handler),
         )
         .route(
-            "/api/put-collection-identifier/:collection_id",
+            "/api/put-collection-identifier/{collection_id}",
             put(put_collection_identifier_api_handler),
         )
         .route("/api/collection-all", get(collection_all_api_handler))
         .route("/api/model", get(model_table_api_handler))
         .route("/api/model", post(store_model_api_handler))
-        .route("/api/model/:model_id", put(update_model_api_handler))
-        .route("/api/model/:model_id", get(fetch_model_api_handler))
+        .route("/api/model/{model_id}", put(update_model_api_handler))
+        .route("/api/model/{model_id}", get(fetch_model_api_handler))
         .route(
-            "/api/put-model-identifier/:model_id",
+            "/api/put-model-identifier/{model_id}",
             put(put_model_identifier_api_handler),
         )
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
-        .route("/api/page/:page_id", put(update_page_api_handler))
-        .route("/api/page/:page_id", get(fetch_page_api_handler))
-        .route("/api/page/:page_id", delete(delete_page_handler))
+        .route("/api/page/{page_id}", put(update_page_api_handler))
+        .route("/api/page/{page_id}", get(fetch_page_api_handler))
+        .route("/api/page/{page_id}", delete(delete_page_handler))
         .route(
-            "/api/put-page-identifier/:page_id",
+            "/api/put-page-identifier/{page_id}",
             put(put_page_identifier_api_handler),
         )
         .route("/api/component-all", get(component_all_api_handler))
@@ -191,13 +185,13 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
         )
         .route("/api/delete-demo-data", post(delete_demo_data_api_handler))
         // .route("/test", get(test_handler))
-        .route(
-            "/graphql",
-            on(
-                MethodFilter::GET.or(MethodFilter::POST),
-                graphql_api_handler,
-            ),
-        )
+        // .route(
+        //     "/graphql",
+        //     on(
+        //         MethodFilter::GET.or(MethodFilter::POST),
+        //         graphql_api_handler,
+        //     ),
+        // )
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             require_jwt_authentication,
@@ -216,7 +210,6 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
         )
         .with_state(state)
         .layer(cors)
-        .layer(Extension(Arc::new(schema)))
 }
 
 fn get_cors_urls(state: Arc<AvoRedState>) -> CorsLayer {

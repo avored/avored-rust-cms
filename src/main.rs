@@ -18,7 +18,6 @@ mod error;
 mod middleware;
 mod models;
 mod providers;
-mod query;
 mod repositories;
 pub mod responses;
 mod services;

@@ -3,7 +3,6 @@ pub mod asset;
 pub mod cms;
 pub mod collection;
 pub mod component;
-pub mod graphql;
 pub mod misc;
 pub mod model;
 pub mod page;

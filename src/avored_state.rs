@@ -36,8 +36,6 @@ pub struct AvoRedState {
     pub collection_service: CollectionService,
 }
 
-impl juniper::Context for AvoRedState {}
-
 impl AvoRedState {
     pub async fn new() -> Result<AvoRedState> {
         let avored_config_provider = AvoRedConfigProvider::register()?;
