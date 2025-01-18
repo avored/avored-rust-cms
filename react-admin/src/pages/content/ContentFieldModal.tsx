@@ -13,6 +13,7 @@ import AvoredModal from "../../components/AvoredModal";
 import AvoRedButton from "../../components/AvoRedButton";
 import { useTranslation } from "react-i18next";
 import InputField from "../../components/InputField";
+import React from "react";
 
 type ContentFieldProps = {
   register: UseFormRegister<SaveContentType>;
@@ -49,8 +50,8 @@ export const ContentFieldModal = ({
 
   const contentFieldNameInputChange = ((e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
     e.stopPropagation();
-    
-    setValue(`content_fields.${index}.identifier`, e.target.value);
+
+    setValue(`content_fields.${index}.identifier`, e.currentTarget.value);
   })
 
   return (

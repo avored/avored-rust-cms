@@ -30,8 +30,7 @@ export const ContentCreate = (() => {
     const collectionType: string = searchParams.get("type") as string
 
     const submitHandler = (async (data: SaveContentType) => {
-        setValue("type", collectionType)
-        await trigger("content_fields");
+
         console.log(data)
         // mutate(data)
     })
@@ -120,7 +119,7 @@ export const ContentCreate = (() => {
                     )}
 
                     <div className="mb-4">
-                        <InputField type="hidden" register={register("type")}  />
+                        <InputField type="hidden" register={register("type")} value={collectionType}  />
                         <InputField
                             label={t("name")}
                             placeholder={t("name")}
