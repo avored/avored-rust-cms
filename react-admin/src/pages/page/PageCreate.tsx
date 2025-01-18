@@ -308,8 +308,8 @@ function PageCreate() {
     })
     // template start here
     return (
-        <>
-            <form onSubmit={handleSubmit(submitHandler)}>
+    <>
+        <form onSubmit={handleSubmit(submitHandler)}>
             <div className="px-5">
                 <div className="w-full">
                     <div className="block rounded-lg p-6">
@@ -479,8 +479,8 @@ function PageCreate() {
                     </div>
                 </div>
             </div>
-            </form>
-        </>
+        </form>
+    </>
     );
 }
 

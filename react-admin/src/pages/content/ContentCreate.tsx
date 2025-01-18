@@ -3,37 +3,70 @@ import {ContentSidebar} from "./ContentSidebar";
 import {Link, useSearchParams} from "react-router-dom";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
-import React from "react";
-import {CreatableContentType} from "../../types/content/ContentType";
+import React, { useState } from "react";
+import {AvoRedContentDataType, AvoRedContentFieldType, SaveContentType} from "../../types/content/ContentType";
 import slug from "slug";
-import {useForm} from "react-hook-form";
+import {useFieldArray, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {useContentCreateSchema} from "./schemas/useContentCreateSchema";
 import {useStoreContent} from "./hooks/useStoreContent";
+import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
+import _ from 'lodash';
+import { ContentFieldModal } from "./ContentFieldModal";
 
 export const ContentCreate = (() => {
-    const [t] = useTranslation("global");
+    const [t] = useTranslation("global")
+    const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [searchParams] = useSearchParams()
+
     const {mutate, error} = useStoreContent()
     const collectionType: string = searchParams.get("type") as string
 
-    const submitHandler = ((data: CreatableContentType) => {
+    const submitHandler = ((data: SaveContentType) => {
         setValue("type", collectionType)
-        mutate(data)
+        console.log(data)
+        // mutate(data)
     })
 
     const {
         register,
         handleSubmit,
         setValue,
+        getValues,
         formState: {errors},
-    } = useForm<CreatableContentType>({
+        control,
+        trigger
+    } = useForm<SaveContentType>({
         resolver: joiResolver(useContentCreateSchema(), {allowUnknown: true})
     })
+
+    const { fields, append, remove } = useFieldArray({
+            control,
+            name: "content_fields", //rename fields
+        });
 
     const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
         setValue('identifier', slug(e.currentTarget.value || ''))
     }
+
+    const addFieldButtonOnClick = (async (e: React.MouseEvent<HTMLButtonElement>, max_index: number) => {
+        e.preventDefault()
+        append({
+            name: '',
+            identifier: '',
+            data_type: AvoRedContentDataType.TEXT,
+            field_type: AvoRedContentFieldType.TEXT,
+            field_content: {
+                text_value: {
+                    text_value: ""
+                }
+            }
+        })
+        await trigger("content_fields");
+        setCurrentIndex(max_index);
+        setIsContentFieldModalOpen(true)
+    })
 
     return (
         <div className="flex w-full">
@@ -42,6 +75,21 @@ export const ContentCreate = (() => {
             </div>
             <div className="p-5 flex-1">
                 <form onSubmit={handleSubmit(submitHandler)}>
+                    {_.size(fields) > 0 ? (
+                        <ContentFieldModal
+                            register={register}
+                            currentIndex={currentIndex}
+                            getValues={getValues}
+                            setValue={setValue}
+                            trigger={trigger}
+                            setIsOpen={setIsContentFieldModalOpen}
+                            isOpen={isContentFieldModalOpen}
+                            collectionType={collectionType}
+                        />
+                    ) : (
+                        <></>
+                    )}
+
                     <div className="mb-4">
                         <InputField type="hidden" register={register("type")}  />
                         <InputField
@@ -71,6 +119,13 @@ export const ContentCreate = (() => {
                             identifier="identifier"
                         />
                     </div>
+                    
+                    <div className="mb-4">
+                        <AvoRedButton 
+                            label="Add" 
+                            onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
+                            type={ButtonType.button} />
+                    </div>
                     <div className="flex items-center">
                         <button
                             type="submit"
@@ -79,7 +134,7 @@ export const ContentCreate = (() => {
                             {t("save")}
                         </button>
                         <Link
-                            to="/admin/collections"
+                            to={`/admin/content?type=${collectionType}`}
                             className="ml-auto font-medium text-gray-600 hover:text-gray-500"
                         >
                             {t("cancel")}
