@@ -2,10 +2,10 @@ export type SaveContentType = {
     name: string;
     type: string;
     identifier: string;
-    content_fields: Array<CreatableContentFieldType>;
+    content_fields: Array<SaveContentFieldType>;
 }
 
-export type CreatableContentFieldType = {
+export type SaveContentFieldType = {
     name: string;
     identifier: string;
     data_type: AvoRedContentDataType;

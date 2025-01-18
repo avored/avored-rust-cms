@@ -4,15 +4,21 @@ import {Link, useSearchParams} from "react-router-dom";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import React, { useState } from "react";
-import {AvoRedContentDataType, AvoRedContentFieldType, SaveContentType} from "../../types/content/ContentType";
+import {
+    AvoRedContentDataType,
+    AvoRedContentFieldType,
+    SaveContentFieldType,
+    SaveContentType
+} from "../../types/content/ContentType";
 import slug from "slug";
-import {useFieldArray, useForm} from "react-hook-form";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {useContentCreateSchema} from "./schemas/useContentCreateSchema";
 import {useStoreContent} from "./hooks/useStoreContent";
 import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
 import _ from 'lodash';
 import { ContentFieldModal } from "./ContentFieldModal";
+import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid";
 
 export const ContentCreate = (() => {
     const [t] = useTranslation("global")
@@ -23,8 +29,9 @@ export const ContentCreate = (() => {
     const {mutate, error} = useStoreContent()
     const collectionType: string = searchParams.get("type") as string
 
-    const submitHandler = ((data: SaveContentType) => {
+    const submitHandler = (async (data: SaveContentType) => {
         setValue("type", collectionType)
+        await trigger("content_fields");
         console.log(data)
         // mutate(data)
     })
@@ -45,6 +52,12 @@ export const ContentCreate = (() => {
             control,
             name: "content_fields", //rename fields
         });
+
+    const deleteContentFieldOnClick = (e: any, index: number) => {
+        e.preventDefault();
+        remove(index);
+        setCurrentIndex(0);
+    };
 
     const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
         setValue('identifier', slug(e.currentTarget.value || ''))
@@ -67,6 +80,22 @@ export const ContentCreate = (() => {
         setCurrentIndex(max_index);
         setIsContentFieldModalOpen(true)
     })
+
+    const renderField = (field: SaveContentFieldType, index: number) => {
+        switch (field.field_type) {
+            case AvoRedContentFieldType.TEXT:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.text_value.text_value`)}
+                        />
+                    </div>
+                );
+        }
+
+    }
 
     return (
         <div className="flex w-full">
@@ -119,12 +148,86 @@ export const ContentCreate = (() => {
                             identifier="identifier"
                         />
                     </div>
-                    
+
+                    {fields.map((field, index) => {
+                        return (
+                            <div
+                                key={field.id}
+                                className="hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                            >
+                                <Controller
+                                    name={`content_fields.${index}`}
+                                    render={({field}) => {
+                                        return (
+                                            <>
+                                                <div className="flex mt-3 w-full justify-center">
+                                                    <div className="flex-1 p-3">
+                                                        <div className="p-3 bg-gray-200 rounded">
+                                                            <div
+                                                                className="flex text-sm w-full border-gray-300 border-b py-2">
+                                                                <div className="flex-1">
+                                                                                <span>
+                                                                                    {field.value.name}
+                                                                                </span>
+                                                                    <span
+                                                                        className="ml-1 text-xs text-gray-500">
+                                                                                    ({field.value.identifier})
+                                                                                </span>
+                                                                </div>
+                                                                <div className="ml-auto flex items-center">
+                                                                    <div>
+                                                                        <button
+                                                                            type="button"
+                                                                            className="outline-none"
+                                                                            onClick={() => setIsContentFieldModalOpen(true)}
+                                                                        >
+                                                                            <Cog8ToothIcon className="w-5 h-5"/>
+                                                                        </button>
+                                                                    </div>
+                                                                    <div
+                                                                        onClick={(e) =>
+                                                                            deleteContentFieldOnClick(e, index)
+                                                                        }
+                                                                        className="ml-3"
+                                                                    >
+                                                                        <TrashIcon className="w-4 h-4"/>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <InputField
+                                                                type="hidden"
+                                                                placeholder={t("data_type")}
+                                                                register={register(
+                                                                    `content_fields.${index}.data_type`,
+                                                                )}
+                                                            />
+                                                            <InputField
+                                                                type="hidden"
+                                                                placeholder={t("field_type")}
+                                                                register={register(
+                                                                    `content_fields.${index}.field_type`,
+                                                                )}
+                                                            />
+                                                            {renderField(field.value, index)}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        )
+                                    }}
+                                    control={control}
+                                />
+
+                            </div>
+                        )
+                    })}
+
                     <div className="mb-4">
-                        <AvoRedButton 
-                            label="Add" 
+                        <AvoRedButton
+                            label="Add"
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
-                            type={ButtonType.button} />
+                            type={ButtonType.button}/>
                     </div>
                     <div className="flex items-center">
                         <button

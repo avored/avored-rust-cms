@@ -119,6 +119,7 @@ function PageCreate() {
                         ></textarea>
                     </div>
                 );
+
             case AvoRedPageFieldType.TextEditor:
                 return (
                     <div className="mb-4">
@@ -137,6 +138,7 @@ function PageCreate() {
                         </div>
                     </div>
                 );
+
             case AvoRedPageFieldType.Radio:
                 return (
                     <div className="mb-4">
@@ -167,7 +169,7 @@ function PageCreate() {
                     </div>
                 );
 
-                case AvoRedPageFieldType.Checkbox:
+            case AvoRedPageFieldType.Checkbox:
                     return (
                         <div className="mb-4">
                             <label className="text-sm text-gray-600">
@@ -196,6 +198,7 @@ function PageCreate() {
                             )}
                         </div>
                     );
+
             case AvoRedPageFieldType.SELECT:
                 return (
                     <div className="mb-4">
@@ -217,6 +220,7 @@ function PageCreate() {
                         </select>
                     </div>
                 );
+
             case AvoRedPageFieldType.TEXT:
                 return (
                     <div className="mb-4">
@@ -227,6 +231,7 @@ function PageCreate() {
                         />
                     </div>
                 );
+
             case AvoRedPageFieldType.SingleImage:
                 return (
                     <div className="mb-4">
@@ -264,6 +269,7 @@ function PageCreate() {
                         </div>
                     </div>
                 );
+
             default:
                 return (
                     <div className="mb-4">
@@ -383,11 +389,13 @@ function PageCreate() {
                                                                         <div
                                                                             className="flex text-sm w-full border-gray-300 border-b py-2">
                                                                             <div className="flex-1">
-                                                                                <span>{page_field.value.name}</span>
+                                                                                <span>
+                                                                                    {page_field.value.name}
+                                                                                </span>
                                                                                 <span
                                                                                     className="ml-1 text-xs text-gray-500">
-                                            ({page_field.value.identifier})
-                                          </span>
+                                                                                    ({page_field.value.identifier})
+                                                                                </span>
                                                                             </div>
                                                                             <div className="ml-auto flex items-center">
                                                                                 <div>
