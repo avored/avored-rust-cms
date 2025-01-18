@@ -6,6 +6,7 @@ use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::asset_repository::AssetRepository;
 use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::component_repository::ComponentRepository;
+use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::model_repository::ModelRepository;
 use crate::repositories::page_repository::PageRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
@@ -16,6 +17,7 @@ use crate::services::asset_service::AssetService;
 use crate::services::cms_service::CmsService;
 use crate::services::collection_service::CollectionService;
 use crate::services::component_service::ComponentService;
+use crate::services::content_service::ContentService;
 use crate::services::model_service::ModelService;
 use crate::services::page_service::PageService;
 use crate::services::role_service::RoleService;
@@ -34,6 +36,7 @@ pub struct AvoRedState {
     pub model_service: ModelService,
     pub cms_service: CmsService,
     pub collection_service: CollectionService,
+    pub content_service: ContentService,
 }
 
 impl AvoRedState {
@@ -54,6 +57,7 @@ impl AvoRedState {
         let password_reset_repository = PasswordResetRepository::new();
         let setting_repository = SettingRepository::new();
         let collection_repository = CollectionRepository::new();
+        let content_repository = ContentRepository::new();
 
         let admin_user_service = AdminUserService::new(
             admin_user_repository,
@@ -68,6 +72,7 @@ impl AvoRedState {
         let model_service = ModelService::new(model_repository)?;
         let cms_service = CmsService::new()?;
         let collection_service = CollectionService::new(collection_repository)?;
+        let content_service = ContentService::new(content_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -82,6 +87,7 @@ impl AvoRedState {
             model_service,
             cms_service,
             collection_service,
+            content_service,
         })
     }
 }

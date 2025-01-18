@@ -7,3 +7,4 @@ pub mod model_service;
 pub mod page_service;
 pub mod role_service;
 pub mod setting_service;
+pub mod content_service;

@@ -9,3 +9,5 @@ pub mod page;
 pub mod role;
 pub mod setting;
 pub mod setup;
+
+pub mod content;
