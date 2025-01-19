@@ -2,10 +2,16 @@ use std::collections::BTreeMap;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use crate::error::{Error, Result};
-use crate::models::BaseModel;
+use crate::models::{BaseModel, Pagination};
 
 
 // region: Content model structs and enums
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ContentPagination {
+    pub data: Vec<ContentModel>,
+    pub pagination: Pagination,
+}
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentModel {
     pub id: String,

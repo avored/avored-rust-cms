@@ -6,9 +6,72 @@ use crate::error::Error;
 use crate::models::content_model::{ContentDataType, ContentFieldContentType, ContentFieldType, ContentModel, CreatableContentModel};
 use crate::repositories::into_iter_objects;
 use crate::error::Result;
+use crate::models::ModelCount;
+use crate::PER_PAGE;
 
 #[derive(Clone)]
 pub struct ContentRepository {}
+
+impl ContentRepository {
+
+    pub(crate) async fn paginate(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        content_type: &str,
+        start: i64,
+        order_column: std::string::String,
+        order_type: std::string::String,
+    ) -> Result<Vec<ContentModel>> {
+        let sql = format!(
+            "\
+            SELECT * \
+            FROM type::table($table) \
+            ORDER {} {}
+            LIMIT $limit \
+            START $start;\
+        ",
+            order_column, order_type
+        );
+        let vars = BTreeMap::from([
+            ("limit".into(), PER_PAGE.into()),
+            ("start".into(), start.into()),
+            ("table".into(), content_type.into()),
+        ]);
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
+
+        let mut content_list: Vec<ContentModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let content_object = object?;
+
+            let content_model: Result<ContentModel> = content_object.try_into();
+            content_list.push(content_model?);
+        }
+        Ok(content_list)
+    }
+    pub(crate) async fn get_total_count(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        content_type: &str
+    ) -> Result<ModelCount> {
+        let sql = format!("SELECT count() FROM {content_type} GROUP ALL;");
+        let responses = datastore.execute(&sql, database_session, None).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+
+        model_count
+    }
+
+}
 
 impl ContentRepository {
     pub(crate) async fn create_content(
