@@ -1,6 +1,6 @@
 export type SaveContentType = {
     name: string;
-    type: string;
+    content_type: string;
     identifier: string;
     content_fields: Array<SaveContentFieldType>;
 }

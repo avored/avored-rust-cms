@@ -64,6 +64,7 @@ use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use crate::api::handlers::collection::collection_all_api_handler::collection_all_api_handler;
 use crate::api::handlers::collection::put_collection_identifier_api_handler::put_collection_identifier_api_handler;
+use crate::api::handlers::content::store_content_api_handler::store_content_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
     Router::new()
@@ -166,6 +167,7 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
             "/api/put-model-identifier/{model_id}",
             put(put_model_identifier_api_handler),
         )
+        .route("/api/content", post(store_content_api_handler))
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
         .route("/api/page/{page_id}", put(update_page_api_handler))

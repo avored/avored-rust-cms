@@ -39,6 +39,7 @@ pub async fn store_content_api_handler(
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.name.clone(),
+        content_type: payload.content_type.clone(),
         content_fields: vec![],
     };
 

@@ -31,8 +31,8 @@ export const ContentCreate = (() => {
 
     const submitHandler = (async (data: SaveContentType) => {
 
-        console.log(data)
-        // mutate(data)
+        // console.log(data)
+        mutate(data)
     })
 
     const {
@@ -119,7 +119,7 @@ export const ContentCreate = (() => {
                     )}
 
                     <div className="mb-4">
-                        <InputField type="hidden" register={register("type")} value={collectionType}  />
+                        <InputField type="hidden" register={register("content_type")} value={collectionType}  />
                         <InputField
                             label={t("name")}
                             placeholder={t("name")}

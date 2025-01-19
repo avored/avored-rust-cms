@@ -8,10 +8,14 @@ pub struct ContentService {
 }
 
 impl ContentService {
-    pub(crate) async fn create_content(&self, _p0: &DB, _p1: CreatableContentModel) -> Result<ContentModel> {
-        let model = ContentModel::default();
-
-        Ok(model)
+    pub(crate) async fn create_content(
+        &self,
+        (datastore, database_session): &DB,
+        creatable_page_model: CreatableContentModel,
+    ) -> Result<ContentModel> {
+        self.content_repository
+            .create_content(datastore, database_session, creatable_page_model)
+            .await
     }
 }
 

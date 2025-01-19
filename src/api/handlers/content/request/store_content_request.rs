@@ -9,6 +9,7 @@ use crate::models::content_model::{ContentDataType, ContentFieldContentType, Con
 pub struct StoreContentRequest {
     pub name: String,
     pub identifier: String,
+    pub content_type: String,
     pub content_fields: Vec<CreatableContentFieldRequest>,
 }
 
