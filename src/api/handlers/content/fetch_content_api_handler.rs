@@ -1,16 +1,12 @@
 use std::sync::Arc;
-
-use crate::models::page_model::PageModel;
 use crate::{avored_state::AvoRedState, error::Result};
 
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
 use axum::{
     extract::{Path as AxumPath, State},
-    response::IntoResponse,
     Extension, Json,
 };
-use serde::Serialize;
 use crate::models::content_model::ContentModel;
 use crate::responses::ApiResponse;
 
