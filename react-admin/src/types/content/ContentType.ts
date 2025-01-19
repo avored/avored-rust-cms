@@ -1,3 +1,15 @@
+export type ContentModel = {
+    id: string;
+    name: string;
+    identifier: string;
+    created_at: string;
+    created_by: string;
+    updated_at: string;
+    updated_by: string;
+    action: string;
+}
+
+
 export type SaveContentType = {
     name: string;
     content_type: string;
