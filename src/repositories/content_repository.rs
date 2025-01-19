@@ -14,6 +14,33 @@ pub struct ContentRepository {}
 
 impl ContentRepository {
 
+    pub(crate) async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        content_type: String,
+        id: &str,
+    ) -> Result<ContentModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), id.into()),
+            ("table".into(), content_type.into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+
+        let model: Result<ContentModel> = result_object?.try_into();
+
+        model
+    }
+
     pub(crate) async fn paginate(
         &self,
         datastore: &Datastore,

@@ -11,6 +11,16 @@ pub struct ContentService {
 
 impl ContentService {
 
+    pub(crate) async fn find_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        content_type: String,
+        id: &str,
+    ) -> Result<ContentModel> {
+        self.content_repository
+            .find_by_id(datastore, database_session, content_type, id)
+            .await
+    }
     pub(crate) async fn paginate(
         &self,
         (datastore, database_session): &DB,

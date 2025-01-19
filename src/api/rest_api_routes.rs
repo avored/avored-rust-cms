@@ -65,6 +65,7 @@ use tower_http::cors::CorsLayer;
 use crate::api::handlers::collection::collection_all_api_handler::collection_all_api_handler;
 use crate::api::handlers::collection::put_collection_identifier_api_handler::put_collection_identifier_api_handler;
 use crate::api::handlers::content::content_table_api_handler::content_table_api_handler;
+use crate::api::handlers::content::fetch_content_api_handler::fetch_content_api_handler;
 use crate::api::handlers::content::store_content_api_handler::store_content_api_handler;
 
 pub fn rest_api_routes(state: Arc<AvoRedState>) -> Router {
@@ -169,6 +170,7 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
             put(put_model_identifier_api_handler),
         )
         .route("/api/content/{content_type}", get(content_table_api_handler))
+        .route("/api/content/{content_type}/{content_id}", get(fetch_content_api_handler))
         .route("/api/content", post(store_content_api_handler))
         .route("/api/page", get(page_table_api_handler))
         .route("/api/page", post(store_page_api_handler))
