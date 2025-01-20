@@ -32,6 +32,7 @@ import {CollectionEdit} from "./pages/collection/CollectionEdit";
 import {CollectionCreate} from "./pages/collection/CollectionCreate";
 import {ContentTable} from "./pages/content/ContentTable";
 import {ContentCreate} from "./pages/content/ContentCreate";
+import {ContentEdit} from "./pages/content/ContentEdit";
 
 function App() {
     return (
@@ -58,6 +59,7 @@ function App() {
 
                     <Route path="/admin/content"   element={<ContentTable />} />
                     <Route path="/admin/content-create"   element={<ContentCreate />} />
+                    <Route path="/admin/content-edit/:content_id"   element={<ContentEdit />} />
 
                     <Route path="/admin/model-create"   element={<ModelCreatePage />} />
                     <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />

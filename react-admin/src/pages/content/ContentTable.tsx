@@ -77,7 +77,7 @@ export const ContentTable = (() => {
                     <HasPermission displayDenied={false} identifier="content_edit">
                         <Link
                             className="font-medium text-primary-600 hover:text-primary-800"
-                            to={`/admin/content-edit/${info.row.original.id}`}
+                            to={`/admin/content-edit/${info.row.original.id}?type=${collectionType}`}
                         >
                             {t("edit")}
                         </Link>

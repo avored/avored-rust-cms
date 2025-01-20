@@ -1,35 +1,44 @@
-import {useTranslation} from "react-i18next";
-import {ContentSidebar} from "./ContentSidebar";
-import {Link, useSearchParams} from "react-router-dom";
-import InputField from "../../components/InputField";
-import ErrorMessage from "../../components/ErrorMessage";
-import React, { useState } from "react";
+import {useTranslation} from "react-i18next"
+import {ContentSidebar} from "./ContentSidebar"
+import {Link, useParams, useSearchParams} from "react-router-dom"
+import InputField from "../../components/InputField"
+import ErrorMessage from "../../components/ErrorMessage"
+import React, { useState } from "react"
 import {
     AvoRedContentDataType,
     AvoRedContentFieldType,
     SaveContentFieldType,
     SaveContentType
-} from "../../types/content/ContentType";
-import slug from "slug";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {joiResolver} from "@hookform/resolvers/joi";
-import {useContentCreateSchema} from "./schemas/useContentCreateSchema";
-import {useStoreContent} from "./hooks/useStoreContent";
-import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
-import _ from 'lodash';
-import { ContentFieldModal } from "./ContentFieldModal";
-import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid";
+} from "../../types/content/ContentType"
+import slug from "slug"
+import {Controller, useFieldArray, useForm} from "react-hook-form"
+import {joiResolver} from "@hookform/resolvers/joi"
+import {useStoreContent} from "./hooks/useStoreContent"
+import AvoRedButton, { ButtonType } from "../../components/AvoRedButton"
+import _ from 'lodash'
+import { ContentFieldModal } from "./ContentFieldModal"
+import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid"
+import {useContentEditSchema} from "./schemas/useContentEditSchema"
+import {useGetPage} from "../page/hooks/useGetPage";
+import {useGetContent} from "./hooks/useGetContent";
+import {useUpdateContent} from "./hooks/useUpdateContent";
 
-export const ContentCreate = (() => {
+export const ContentEdit = (() => {
     const [t] = useTranslation("global")
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [searchParams] = useSearchParams()
     const collectionType: string = searchParams.get("type") as string
-    const {mutate, error} = useStoreContent()
+    const params = useParams()
+
+    const {mutate, error} = useUpdateContent(params.content_id ?? "", collectionType)
+
+    const { data } = useGetContent(params.content_id ?? "", collectionType)
+    const values = data?.data.data
 
     const submitHandler = (async (data: SaveContentType) => {
-        mutate(data)
+        console.log(data)
+        // mutate(data)
     })
 
     const {
@@ -41,13 +50,14 @@ export const ContentCreate = (() => {
         control,
         trigger
     } = useForm<SaveContentType>({
-        resolver: joiResolver(useContentCreateSchema(), {allowUnknown: true})
+        resolver: joiResolver(useContentEditSchema(), {allowUnknown: true}),
+        values
     })
 
     const { fields, append, remove } = useFieldArray({
-            control,
-            name: "content_fields", //rename fields
-        });
+        control,
+        name: "content_fields", //rename fields
+    });
 
     const deleteContentFieldOnClick = (e: any, index: number) => {
         e.preventDefault();
