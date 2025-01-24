@@ -291,7 +291,6 @@ function PageCreate() {
         e.preventDefault();
         e.stopPropagation();
         openSingleAssetModal()
-        console.log("test")
     }
     const openSingleAssetModal = () => {
         setisSingleAssetModalOpen(true);

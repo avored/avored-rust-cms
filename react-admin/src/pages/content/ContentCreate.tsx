@@ -225,6 +225,8 @@ export const ContentCreate = (() => {
                             onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
                             type={ButtonType.button}/>
                     </div>
+
+
                     <div className="flex items-center">
                         <button
                             type="submit"
