@@ -1,15 +1,19 @@
 use std::sync::Arc;
 
+use crate::api::handlers::model::request::update_model_request::UpdateModelRequest;
+use crate::models::model_model::ModelModel;
+use crate::models::token_claim_model::LoggedInUser;
 use crate::{
     avored_state::AvoRedState,
     error::{Error, Result},
     models::{model_model::UpdatableModelModel, validation_error::ErrorResponse},
 };
-use axum::{Extension, extract::{Path as AxumPath, State}, Json, response::IntoResponse};
+use axum::{
+    extract::{Path as AxumPath, State},
+    response::IntoResponse,
+    Extension, Json,
+};
 use serde::Serialize;
-use crate::api::handlers::model::request::update_model_request::UpdateModelRequest;
-use crate::models::model_model::ModelModel;
-use crate::models::token_claim_model::LoggedInUser;
 
 pub async fn update_model_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -32,7 +36,7 @@ pub async fn update_model_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
@@ -50,7 +54,7 @@ pub async fn update_model_api_handler(
 
     let response = UpdatedModelResponse {
         status: true,
-        model_model: updated_model_model
+        model_model: updated_model_model,
     };
 
     Ok(Json(response))
@@ -59,5 +63,5 @@ pub async fn update_model_api_handler(
 #[derive(Serialize, Debug)]
 pub struct UpdatedModelResponse {
     pub status: bool,
-    pub model_model: ModelModel
+    pub model_model: ModelModel,
 }

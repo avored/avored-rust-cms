@@ -36,10 +36,9 @@ function PageEdit() {
   const [isSingleAssetModalOpen, setisSingleAssetModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const backend_url = import.meta.env.VITE_AVORED_BACKEND_BASE_URL;
-  const params = useParams();
-  const [t] = useTranslation("global");
-  const [isEditableIdentifier, setIsEditableIdentifier] =
-    useState<boolean>(true);
+  const params = useParams()
+  const [t] = useTranslation("global")
+  const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true);
 
   const { mutate } = useUpdatePage(params.page_id ?? "");
   const { data } = useGetPage(params.page_id ?? "");
@@ -330,12 +329,14 @@ function PageEdit() {
       setValue(`page_fields.${index}.field_content.text_value.text_value`, selectedAsset.new_path);
       closeSingleAssetModal();
   }
+
   const singleImageButtonOnClick = (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
       e.stopPropagation();
       openSingleAssetModal()
       console.log("test")
   }
+
   const openSingleAssetModal = () => {
     setisSingleAssetModalOpen(true);
   };

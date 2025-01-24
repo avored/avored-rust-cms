@@ -22,9 +22,8 @@ pub struct RoleModel {
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RoleOptionModel {
     pub label: String,
-    pub value: String
+    pub value: String,
 }
-
 
 impl TryFrom<Object> for RoleModel {
     type Error = Error;
@@ -37,20 +36,17 @@ impl TryFrom<Object> for RoleModel {
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
         let permissions = match val.get("permissions") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Array(v) => {
-                        let mut arr = Vec::new();
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
 
-                        for array in v.into_iter() {
-                            arr.push(array.as_string())
-                        }
-                        arr
+                    for array in v.into_iter() {
+                        arr.push(array.as_string())
                     }
-                    _ => Vec::new(),
+                    arr
                 }
-            }
+                _ => Vec::new(),
+            },
             None => Vec::new(),
         };
 
@@ -87,7 +83,7 @@ pub struct UpdatableRoleModel {
 pub struct PutRoleIdentifierModel {
     pub id: String,
     pub identifier: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

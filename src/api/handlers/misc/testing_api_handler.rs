@@ -1,23 +1,21 @@
+use crate::error::Result;
 use axum::Json;
 use serde::{Deserialize, Serialize};
-use crate::error::Result;
 
 pub async fn testing_api_handler(
     Json(payload): Json<TestingRequest>,
 ) -> Result<Json<ResponseData>> {
     println!("->> {:<12} - testing_api_handler", "HANDLER");
 
-
     println!("->> {:<12} - {:?}", "Payload", payload.name);
 
     let response = ResponseData {
         status: true,
-        data: String::from("ok")
+        data: String::from("ok"),
     };
 
     Ok(Json(response))
 }
-
 
 #[derive(Deserialize, Debug)]
 pub struct TestingRequest {
@@ -44,6 +42,5 @@ pub struct TestingRequest {
 #[derive(Serialize)]
 pub struct ResponseData {
     status: bool,
-    data: String
+    data: String,
 }
-

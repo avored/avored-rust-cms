@@ -1,18 +1,18 @@
-use std::sync::Arc;
-use serde::Serialize;
-use crate::{ error::Result };
-use axum::{Extension, extract::Path};
+use crate::avored_state::AvoRedState;
+use crate::error::Error;
+use crate::error::Result;
+use crate::models::token_claim_model::LoggedInUser;
 use axum::extract::State;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
-use crate::avored_state::AvoRedState;
-use crate::error::Error;
-use crate::models::token_claim_model::LoggedInUser;
+use axum::{extract::Path, Extension};
+use serde::Serialize;
+use std::sync::Arc;
 
 pub async fn delete_page_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     Path(page_id): Path<String>,
-    state: State<Arc<AvoRedState>>
+    state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     let has_permission_bool = state
         .admin_user_service

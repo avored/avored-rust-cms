@@ -1,7 +1,7 @@
-use serde::Serialize;
 use crate::models::role_model::RoleModel;
+use serde::Serialize;
 
 #[derive(Serialize)]
 pub struct PutRoleIdentifierResponse {
-    pub role: RoleModel
+    pub role: RoleModel,
 }

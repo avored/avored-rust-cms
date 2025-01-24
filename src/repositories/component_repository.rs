@@ -1,13 +1,16 @@
 use std::collections::BTreeMap;
 
+use super::into_iter_objects;
 use crate::error::{Error, Result};
-use crate::models::component_model::{ComponentElementDataModel, ComponentModel, CreatableComponent, PutComponentIdentifierModel, UpdatableComponentModel};
+use crate::models::component_model::{
+    ComponentElementDataModel, ComponentModel, CreatableComponent, PutComponentIdentifierModel,
+    UpdatableComponentModel,
+};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use super::into_iter_objects;
 
 #[derive(Clone)]
 pub struct ComponentRepository {}
@@ -23,20 +26,25 @@ impl ComponentRepository {
         database_session: &Session,
         start: i64,
         order_column: String,
-        order_type: String
+        order_type: String,
     ) -> Result<Vec<ComponentModel>> {
-        let sql = format!("\
+        let sql = format!(
+            "\
             SELECT * \
             FROM components \
             ORDER {} {} \
             LIMIT $limit \
             START $start;\
-        ", order_column, order_type);
+        ",
+            order_column, order_type
+        );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
         ]);
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
 
         let mut component_list: Vec<ComponentModel> = Vec::new();
 
@@ -52,7 +60,7 @@ impl ComponentRepository {
     pub async fn all(
         &self,
         datastore: &Datastore,
-        database_session: &Session
+        database_session: &Session,
     ) -> Result<Vec<ComponentModel>> {
         let sql = "SELECT *, ->component_field->fields.* as fields FROM components";
 
@@ -75,12 +83,12 @@ impl ComponentRepository {
         database_session: &Session,
         creatable_component_model: CreatableComponent,
     ) -> Result<ComponentModel> {
-
         let mut element_sql = String::from("");
 
         for element in creatable_component_model.elements {
             let mut element_data_sql = String::from("");
-            let update_element_data_model: Vec<ComponentElementDataModel> = element.element_data.unwrap_or_default();
+            let update_element_data_model: Vec<ComponentElementDataModel> =
+                element.element_data.unwrap_or_default();
 
             for create_element_data in update_element_data_model {
                 element_data_sql.push_str(&format!(
@@ -96,24 +104,25 @@ impl ComponentRepository {
                 ));
             }
 
-            element_sql.push_str(
-                &format!("{open_brace} \
+            element_sql.push_str(&format!(
+                "{open_brace} \
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
                                 element_data_type: '{element_data_type}', \
                                 element_data: [{element_data_sql}],
                                 {close_brace},",
-                    open_brace = String::from("{"),
-                    name =  element.name,
-                    identifier = element.identifier,
-                    element_type = element.element_type,
-                    element_data_type = element.element_data_type,
-                    close_brace = String::from("}")
-                ));
+                open_brace = String::from("{"),
+                name = element.name,
+                identifier = element.identifier,
+                element_type = element.element_type,
+                element_data_type = element.element_data_type,
+                close_brace = String::from("}")
+            ));
         }
 
-        let sql = format!("\
+        let sql = format!(
+            "\
             CREATE components \
                 CONTENT {open_brace} \
                     name: '{name}',
@@ -129,8 +138,8 @@ impl ComponentRepository {
             identifier = creatable_component_model.identifier,
             element_sql = element_sql,
             logged_in_user_email = creatable_component_model.logged_in_username,
-            close_brace = String::from("}"));
-
+            close_brace = String::from("}")
+        );
 
         println!("CREATE COMPONENT: SQL: {sql}");
 
@@ -152,8 +161,7 @@ impl ComponentRepository {
         database_session: &Session,
         component_id: String,
     ) -> Result<ComponentModel> {
-        let sql =
-            "SELECT *, ->component_field->fields.* as fields FROM type::thing($table, $id);";
+        let sql = "SELECT *, ->component_field->fields.* as fields FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
             ("id".into(), component_id.into()),
             ("table".into(), "components".into()),
@@ -179,13 +187,12 @@ impl ComponentRepository {
         database_session: &Session,
         updatable_component_model: UpdatableComponentModel,
     ) -> Result<ComponentModel> {
-
         let mut element_sql = String::from("");
 
         for element in updatable_component_model.elements {
-
             let mut element_data_sql = String::from("");
-            let create_element_data_model: Vec<ComponentElementDataModel> = element.element_data.unwrap_or_default();
+            let create_element_data_model: Vec<ComponentElementDataModel> =
+                element.element_data.unwrap_or_default();
 
             for creatable_element_data in create_element_data_model {
                 element_data_sql.push_str(&format!(
@@ -201,25 +208,26 @@ impl ComponentRepository {
                 ));
             }
 
-            element_sql.push_str(
-                &format!("{open_brace} \
+            element_sql.push_str(&format!(
+                "{open_brace} \
                                 name: '{name}', \
                                 identifier: '{identifier}', \
                                 element_type: '{element_type}', \
                                 element_data_type: '{element_data_type}', \
                                 element_data: [{element_data_sql}], \
                                 {close_brace},",
-                    open_brace = String::from("{"),
-                    name =  element.name,
-                    identifier = element.identifier,
-                    element_type = element.element_type,
-                    element_data_type = element.element_data_type,
-                    element_data_sql = element_data_sql,
-                    close_brace = String::from("}")
-                ));
+                open_brace = String::from("{"),
+                name = element.name,
+                identifier = element.identifier,
+                element_type = element.element_type,
+                element_data_type = element.element_data_type,
+                element_data_sql = element_data_sql,
+                close_brace = String::from("}")
+            ));
         }
 
-        let sql = format!("\
+        let sql = format!(
+            "\
             UPDATE components:{id} \
                 MERGE {open_brace} \
                     name: '{name}',
@@ -227,13 +235,13 @@ impl ComponentRepository {
                     updated_by: '{logged_in_user_email}',
                     updated_at: time::now(),
                 {close_brace}",
-                            id = updatable_component_model.id,
-                          open_brace = String::from("{"),
-                          name = updatable_component_model.name,
-                          element_sql = element_sql,
-                          logged_in_user_email = updatable_component_model.logged_in_username,
-                          close_brace = String::from("}"));
-
+            id = updatable_component_model.id,
+            open_brace = String::from("{"),
+            name = updatable_component_model.name,
+            element_sql = element_sql,
+            logged_in_user_email = updatable_component_model.logged_in_username,
+            close_brace = String::from("}")
+        );
 
         let responses = datastore.execute(&sql, database_session, None).await?;
 
@@ -271,7 +279,7 @@ impl ComponentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        identifier: String
+        identifier: String,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(identifier=$identifier) FROM components GROUP ALL";
 
@@ -292,7 +300,7 @@ impl ComponentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        put_component_identifier_model: PutComponentIdentifierModel
+        put_component_identifier_model: PutComponentIdentifierModel,
     ) -> Result<ComponentModel> {
         let sql = "UPDATE type::thing($table, $id)
                     SET
@@ -303,12 +311,19 @@ impl ComponentRepository {
         ";
 
         let vars: BTreeMap<String, Value> = [
-            ("identifier".into(), put_component_identifier_model.identifier.into()),
+            (
+                "identifier".into(),
+                put_component_identifier_model.identifier.into(),
+            ),
             ("table".into(), "components".into()),
             ("updated_at".into(), Datetime::default().into()),
-            ("updated_by".into(), put_component_identifier_model.logged_in_username.into()),
-            ("id".into(), put_component_identifier_model.id.into())
-        ].into();
+            (
+                "updated_by".into(),
+                put_component_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_component_identifier_model.id.into()),
+        ]
+        .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();

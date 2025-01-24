@@ -1,5 +1,5 @@
-use serde::{Deserialize, Serialize};
 use crate::models::admin_user_model::AdminUserModel;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TokenClaims {
@@ -17,5 +17,5 @@ pub struct LoggedInUser {
     pub name: String,
     pub email: String,
     pub demo_data_status: bool,
-    pub admin_user_model: AdminUserModel
+    pub admin_user_model: AdminUserModel,
 }

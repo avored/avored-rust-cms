@@ -1,14 +1,14 @@
-use std::sync::Arc;
-use axum::extract::State;
-use axum::Json;
-use utoipa::OpenApi;
-use utoipa::openapi::Server;
-use crate::error::Result;
 use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
-use crate::models::admin_user_model::AdminUserModel;
-use crate::models::role_model::RoleModel;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 use crate::avored_state::AvoRedState;
+use crate::error::Result;
+use crate::models::admin_user_model::AdminUserModel;
+use crate::models::role_model::RoleModel;
+use axum::extract::State;
+use axum::Json;
+use std::sync::Arc;
+use utoipa::openapi::Server;
+use utoipa::OpenApi;
 
 pub async fn openapi_api_handler(
     state: State<Arc<AvoRedState>>,
@@ -22,7 +22,6 @@ pub async fn openapi_api_handler(
 
     Ok(Json(json))
 }
-
 
 #[derive(OpenApi)]
 #[openapi(

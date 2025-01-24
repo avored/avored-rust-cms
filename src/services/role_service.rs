@@ -1,3 +1,5 @@
+use crate::models::role_model::{PutRoleIdentifierModel, RoleOptionModel};
+use crate::models::ModelCount;
 use crate::{
     error::Result,
     models::{
@@ -8,8 +10,6 @@ use crate::{
     repositories::role_repository::RoleRepository,
     PER_PAGE,
 };
-use crate::models::ModelCount;
-use crate::models::role_model::{PutRoleIdentifierModel, RoleOptionModel};
 
 pub struct RoleService {
     role_repository: RoleRepository,
@@ -21,17 +21,17 @@ impl RoleService {
     }
 }
 impl RoleService {
-    pub async fn all(
-        &self,
-        (datastore, database_session): &DB,
-    ) -> Result<Vec<RoleOptionModel>> {
-        let roles = self.role_repository.all(datastore, database_session).await?;
+    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<RoleOptionModel>> {
+        let roles = self
+            .role_repository
+            .all(datastore, database_session)
+            .await?;
         let mut role_options: Vec<RoleOptionModel> = vec![];
 
         for role in roles {
             let role_option_model = RoleOptionModel {
                 value: role.id,
-                label: role.name
+                label: role.name,
             };
             role_options.push(role_option_model);
         }
@@ -43,7 +43,7 @@ impl RoleService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-        order: String
+        order: String,
     ) -> Result<RolePagination> {
         let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
@@ -75,7 +75,7 @@ impl RoleService {
         };
 
         let mut order_column = "id";
-        let mut order_type  = "ASC";
+        let mut order_type = "ASC";
         let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
@@ -84,7 +84,13 @@ impl RoleService {
 
         let roles = self
             .role_repository
-            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
 
         Ok(RolePagination {
@@ -106,7 +112,7 @@ impl RoleService {
     pub async fn update_role_identifier(
         &self,
         (datastore, database_session): &DB,
-        put_role_identifier_model: PutRoleIdentifierModel
+        put_role_identifier_model: PutRoleIdentifierModel,
     ) -> Result<RoleModel> {
         self.role_repository
             .update_role_identifier(datastore, database_session, put_role_identifier_model)

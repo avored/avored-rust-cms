@@ -29,6 +29,8 @@ export const useModelTable = (query: PaginateType) => {
                     localStorage.removeItem('AUTH_TOKEN')
                     redirect("/admin/login")
                 }
+                
+                console.error(error)
             }
         })
     })

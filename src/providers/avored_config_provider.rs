@@ -1,6 +1,6 @@
-use std::env;
-use dotenvy::dotenv;
 use crate::error::{Error, Result};
+use dotenvy::dotenv;
+use std::env;
 
 #[derive(Debug, Clone)]
 pub struct AvoRedConfigProvider {

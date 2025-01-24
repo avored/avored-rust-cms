@@ -1,13 +1,10 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
-use crate::{
-    avored_state::AvoRedState,
-    error::Result,
-};
-use axum::{extract::State, Json, response::IntoResponse, Extension};
-use serde::Serialize;
 use crate::models::token_claim_model::LoggedInUser;
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::{extract::State, response::IntoResponse, Extension, Json};
+use serde::Serialize;
 
 pub async fn delete_demo_data_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -23,9 +20,7 @@ pub async fn delete_demo_data_api_handler(
         DELETE pages WHERE identifier='home-page';
     ";
 
-    let vars = BTreeMap::from([
-        ("email".into(), logged_in_user.email.into()),
-    ]);
+    let vars = BTreeMap::from([("email".into(), logged_in_user.email.into())]);
 
     let (ds, ses) = &state.db;
 
@@ -36,9 +31,7 @@ pub async fn delete_demo_data_api_handler(
 
     tokio::fs::remove_file("public/install_demo").await?;
 
-    let response = DemoDataViewModel {
-        status: true
-    };
+    let response = DemoDataViewModel { status: true };
 
     Ok(Json(response))
 }

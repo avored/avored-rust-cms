@@ -1,18 +1,15 @@
 use std::sync::Arc;
 
-use crate::{
-    avored_state::AvoRedState,
-    error::Result
-};
-use axum::{Extension, extract::State, Json, response::IntoResponse};
+use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
+use crate::error::Error;
+use crate::models::asset_model::{AssetModel, CreatableAssetModel, MetaDataType};
+use crate::models::token_claim_model::LoggedInUser;
+use crate::{avored_state::AvoRedState, error::Result};
 use axum::extract::{Multipart, Query};
+use axum::{extract::State, response::IntoResponse, Extension, Json};
 use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
-use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
-use crate::error::Error;
-use crate::models::asset_model::{CreatableAssetModel, MetaDataType, AssetModel};
-use crate::models::token_claim_model::LoggedInUser;
 
 const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 
@@ -36,7 +33,7 @@ pub async fn store_asset_api_handler(
     // we need to make the parent_id works as per it path will be changed too. if exist
     let mut creatable_asset_model = CreatableAssetModel {
         logged_in_username: logged_in_user.email,
-        .. Default::default()
+        ..Default::default()
     };
     let mut is_allow_file_type = true;
 
@@ -78,22 +75,22 @@ pub async fn store_asset_api_handler(
                             .await?;
 
                         creatable_asset_model.parent_id = query_parent_id;
-                        asset_file = format!("/{}/{}", parent_asset.new_path, new_file_name.clone());
+                        asset_file =
+                            format!("/{}/{}", parent_asset.new_path, new_file_name.clone());
                     } else {
                         asset_file = format!("/public/upload/{}", new_file_name.clone());
                     }
 
                     creatable_asset_model.name = new_file_name.clone();
                     creatable_asset_model.asset_type = String::from("FILE");
-                    creatable_asset_model.metadata = MetaDataType::FileTypeMetaData {file_type};
+                    creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
 
                     let full_path = format!("./{}", asset_file);
 
-
                     tokio::fs::write(full_path, data).await?;
                 }
-            },
-            &_ => continue
+            }
+            &_ => continue,
         }
     }
 
@@ -101,19 +98,20 @@ pub async fn store_asset_api_handler(
         let asset_model = AssetModel::default();
         let creatable_asset_response = AssetResponseViewModel {
             asset_model,
-            success: false
+            success: false,
         };
 
-        return Ok(Json(creatable_asset_response).into_response())
+        return Ok(Json(creatable_asset_response).into_response());
     }
 
-    let asset_model = state.asset_service
+    let asset_model = state
+        .asset_service
         .create_asset(&state.db, creatable_asset_model)
         .await?;
 
     let creatable_asset_response = AssetResponseViewModel {
         asset_model,
-        success: true
+        success: true,
     };
 
     Ok(Json(creatable_asset_response).into_response())
@@ -122,5 +120,5 @@ pub async fn store_asset_api_handler(
 #[derive(Serialize)]
 pub struct AssetResponseViewModel {
     pub asset_model: AssetModel,
-    pub success: bool
+    pub success: bool,
 }

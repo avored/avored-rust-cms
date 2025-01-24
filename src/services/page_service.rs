@@ -1,3 +1,7 @@
+use crate::models::page_model::{
+    CreatablePageModel, PageModel, PutPageIdentifierModel, UpdatablePageModel,
+};
+use crate::models::ModelCount;
 use crate::{
     error::Result,
     models::{page_model::PagePagination, Pagination},
@@ -5,8 +9,6 @@ use crate::{
     repositories::page_repository::PageRepository,
     PER_PAGE,
 };
-use crate::models::ModelCount;
-use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel, PutPageIdentifierModel};
 
 pub struct PageService {
     page_repository: PageRepository,
@@ -22,7 +24,7 @@ impl PageService {
         &self,
         (datastore, database_session): &DB,
         current_page: i64,
-        order: String
+        order: String,
     ) -> Result<PagePagination> {
         let start = current_page * PER_PAGE;
         let to = start + PER_PAGE;
@@ -54,7 +56,7 @@ impl PageService {
         };
 
         let mut order_column = "id";
-        let mut order_type  = "ASC";
+        let mut order_type = "ASC";
         let mut parts = order.split(':');
         if parts.clone().count() == 2 {
             order_column = parts.clone().nth(0).unwrap_or("");
@@ -62,7 +64,13 @@ impl PageService {
         }
         let pages = self
             .page_repository
-            .paginate(datastore, database_session, start, order_column.to_string(), order_type.to_string())
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
 
         Ok(PagePagination {
@@ -71,14 +79,19 @@ impl PageService {
         })
     }
 
-    pub async fn remove_by_id(&self, (datastore, database_session): &DB, id: &String) -> Result<bool> {
-        self.page_repository.remove_by_id(datastore,database_session, id).await?;
+    pub async fn remove_by_id(
+        &self,
+        (datastore, database_session): &DB,
+        id: &String,
+    ) -> Result<bool> {
+        self.page_repository
+            .remove_by_id(datastore, database_session, id)
+            .await?;
         Ok(true)
     }
 
-
     pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<PageModel>> {
-        self.page_repository.all(datastore,database_session).await
+        self.page_repository.all(datastore, database_session).await
     }
 
     pub async fn find_by_id(
@@ -94,7 +107,7 @@ impl PageService {
     pub async fn create_page(
         &self,
         (datastore, database_session): &DB,
-        creatable_page_model: CreatablePageModel
+        creatable_page_model: CreatablePageModel,
     ) -> Result<PageModel> {
         self.page_repository
             .create_page(datastore, database_session, creatable_page_model)
@@ -104,7 +117,7 @@ impl PageService {
     pub async fn update_page(
         &self,
         (datastore, database_session): &DB,
-        updatable_page_model: UpdatablePageModel
+        updatable_page_model: UpdatablePageModel,
     ) -> Result<PageModel> {
         self.page_repository
             .update_page(datastore, database_session, updatable_page_model)
@@ -124,7 +137,7 @@ impl PageService {
     pub async fn update_page_identifier(
         &self,
         (datastore, database_session): &DB,
-        put_page_identifier_model: PutPageIdentifierModel
+        put_page_identifier_model: PutPageIdentifierModel,
     ) -> Result<PageModel> {
         self.page_repository
             .update_page_identifier(datastore, database_session, put_page_identifier_model)

@@ -1,18 +1,20 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
 use surrealdb::sql::Value::{Bool, Number};
+use surrealdb::sql::{Datetime, Object, Value};
 
 pub mod admin_user_model;
-pub mod component_model;
-pub mod page_model;
-pub mod role_model;
 pub mod asset_model;
+pub mod collection_model;
+pub mod component_model;
+pub mod model_model;
+pub mod page_model;
+pub mod password_rest_model;
+pub mod role_model;
+pub mod setting_model;
 pub mod token_claim_model;
 pub mod validation_error;
-pub mod password_rest_model;
-pub mod setting_model;
-pub mod model_model;
+pub mod content_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {
@@ -32,7 +34,7 @@ pub struct ModelCount {
     pub total: i64,
 }
 
-pub trait  BaseModel {
+pub trait BaseModel {
     fn get_id(&self) -> Result<String>;
     fn get_string(&self) -> Result<String>;
     fn get_datetime(&self) -> Result<Datetime>;
@@ -42,7 +44,6 @@ pub trait  BaseModel {
     // fn get_array<T>(&self) -> Result<Vec<T>>;
 }
 impl BaseModel for Option<&Value> {
-
     fn get_id(&self) -> Result<String> {
         let value = match self.to_owned() {
             Some(val) => match val.clone() {
@@ -82,12 +83,10 @@ impl BaseModel for Option<&Value> {
 
     fn get_bool(&self) -> Result<bool> {
         let value = match self.to_owned() {
-            Some(val) => {
-                match val.clone() {
-                    Bool(v) => v,
-                    _ => false,
-                }
-            }
+            Some(val) => match val.clone() {
+                Bool(v) => v,
+                _ => false,
+            },
             None => false,
         };
 
@@ -136,13 +135,10 @@ impl TryFrom<Object> for ModelCount {
     type Error = Error;
     fn try_from(val: Object) -> Result<ModelCount> {
         let count = match val.get("count") {
-            Some(val) => {
-                
-                match val.clone() {
-                    Value::Number(v) => v,
-                    _ => surrealdb::sql::Number::Int(0),
-                }
-            }
+            Some(val) => match val.clone() {
+                Value::Number(v) => v,
+                _ => surrealdb::sql::Number::Int(0),
+            },
             None => surrealdb::sql::Number::Int(0),
         };
 

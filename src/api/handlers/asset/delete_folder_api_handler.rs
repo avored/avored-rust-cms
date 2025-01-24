@@ -1,20 +1,18 @@
-use std::sync::Arc;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
-use axum::{Extension, extract::State};
-use axum::extract::Path;
-use axum::http::StatusCode;
-use axum::response::IntoResponse;
-use tokio::fs;
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::{avored_state::AvoRedState, error::Result};
+use axum::extract::Path;
+use axum::http::StatusCode;
+use axum::response::IntoResponse;
+use axum::{extract::State, Extension};
+use std::sync::Arc;
+use tokio::fs;
 
 pub async fn delete_folder_api_handler(
     Path(asset_id): Path<String>,
     Extension(logged_in_user): Extension<LoggedInUser>,
-    state: State<Arc<AvoRedState>>
+    state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - delete_folder_api_handler", "HANDLER");
 
@@ -26,9 +24,7 @@ pub async fn delete_folder_api_handler(
         return Err(Error::Forbidden);
     }
 
-    let asset_model = state.asset_service
-        .find_by_id(&state.db, &asset_id)
-        .await?;
+    let asset_model = state.asset_service.find_by_id(&state.db, &asset_id).await?;
 
     let folder_path = format!("./{path}", path = asset_model.new_path);
 
@@ -44,11 +40,13 @@ pub async fn delete_folder_api_handler(
         if counter > 0 {
             let error_messages = vec![ErrorMessage {
                 key: String::from("folder_existed"),
-                message: String::from("folder is not empty. Please make sure folder is empty before deleting it.")
+                message: String::from(
+                    "folder is not empty. Please make sure folder is empty before deleting it.",
+                ),
             }];
             let error_response = ErrorResponse {
                 status: false,
-                errors: error_messages
+                errors: error_messages,
             };
 
             return Err(Error::BadRequest(error_response));
@@ -61,7 +59,9 @@ pub async fn delete_folder_api_handler(
         .delete_by_id(&state.db, &asset_id)
         .await?;
     if !result {
-        return Err(Error::Generic(String::from("there is an issue while deleting an folder")));
+        return Err(Error::Generic(String::from(
+            "there is an issue while deleting an folder",
+        )));
     }
 
     Ok(StatusCode::OK)

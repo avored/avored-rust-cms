@@ -1,10 +1,10 @@
+use crate::error::Error;
+use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
+use crate::repositories::into_iter_objects;
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use crate::error::Error;
-use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
-use crate::repositories::into_iter_objects;
 
 const PASSWORD_RESET_TABLE: &str = "password_reset";
 
@@ -29,7 +29,8 @@ impl PasswordResetRepository {
             ("token".into(), creatable_password_reset_model.token.into()),
             ("status".into(), "Active".into()),
             ("created_at".into(), Datetime::default().into()),
-        ].into();
+        ]
+        .into();
 
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
 
@@ -40,7 +41,8 @@ impl PasswordResetRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let password_reset_model: crate::error::Result<PasswordResetModel> = result_object?.try_into();
+        let password_reset_model: crate::error::Result<PasswordResetModel> =
+            result_object?.try_into();
 
         password_reset_model
     }
@@ -57,16 +59,21 @@ impl PasswordResetRepository {
             ("password_token".into(), token.clone().into()),
             ("email".into(), email.clone().into()),
             ("table".into(), PASSWORD_RESET_TABLE.into()),
-        ].into();
+        ]
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::NotFound(format!("no record found to reset password for email {}", email))),
+            None => Err(Error::NotFound(format!(
+                "no record found to reset password for email {}",
+                email
+            ))),
         };
-        let password_reset_model: crate::error::Result<PasswordResetModel> = result_object?.try_into();
+        let password_reset_model: crate::error::Result<PasswordResetModel> =
+            result_object?.try_into();
 
         password_reset_model
     }
@@ -76,7 +83,7 @@ impl PasswordResetRepository {
         datastore: &Datastore,
         database_session: &Session,
         email: String,
-        token: String
+        token: String,
     ) -> crate::error::Result<bool> {
         let sql = "
             UPDATE type::table($table) SET status=$status WHERE email=$email and token=$password_token";
@@ -100,6 +107,8 @@ impl PasswordResetRepository {
             return Ok(true);
         }
 
-        Err(Error::Generic(format!("issue while updating password by email: {email}")))
+        Err(Error::Generic(format!(
+            "issue while updating password by email: {email}"
+        )))
     }
 }

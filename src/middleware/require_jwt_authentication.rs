@@ -1,15 +1,15 @@
-use std::sync::Arc;
-use axum::{http::Request, Json, middleware::Next};
 use axum::body::Body;
 use axum::extract::State;
 use axum::http::{header, StatusCode};
 use axum::response::IntoResponse;
+use axum::{http::Request, middleware::Next, Json};
+use std::sync::Arc;
 
+use crate::avored_state::AvoRedState;
+use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 use axum_extra::extract::CookieJar;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
-use crate::avored_state::AvoRedState;
-use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 
 #[derive(Debug, Serialize, Default)]
 pub struct ErrorResponse {
@@ -17,7 +17,7 @@ pub struct ErrorResponse {
     pub message: String,
 }
 
-pub async fn require_jwt_authentication (
+pub async fn require_jwt_authentication(
     state: State<Arc<AvoRedState>>,
     // Extension(ctx): Extension<Arc<Context>>,
     cookie_jar: CookieJar,
@@ -35,7 +35,7 @@ pub async fn require_jwt_authentication (
                     if auth_value.starts_with("Bearer ") {
                         match auth_value.strip_prefix("Bearer ") {
                             Some(auth) => Some(auth.to_owned()),
-                            _ => None
+                            _ => None,
                         }
                     } else {
                         None
@@ -60,22 +60,24 @@ pub async fn require_jwt_authentication (
         &DecodingKey::from_secret(secret.as_ref()),
         &Validation::default(),
     )
-        .map_err(|_| {
-            let json_error = ErrorResponse {
-                status: false,
-                message: "Invalid token".to_string(),
-            };
-            (StatusCode::UNAUTHORIZED, Json(json_error))
-        })?
-        .claims;
-    let file_exist = tokio::fs::try_exists("public/install_demo").await.unwrap_or(false);
+    .map_err(|_| {
+        let json_error = ErrorResponse {
+            status: false,
+            message: "Invalid token".to_string(),
+        };
+        (StatusCode::UNAUTHORIZED, Json(json_error))
+    })?
+    .claims;
+    let file_exist = tokio::fs::try_exists("public/install_demo")
+        .await
+        .unwrap_or(false);
 
     let logged_in_user = LoggedInUser {
         id: claims.sub,
         name: claims.name,
         email: claims.email,
         demo_data_status: file_exist,
-        admin_user_model: claims.admin_user_model
+        admin_user_model: claims.admin_user_model,
     };
 
     req.extensions_mut().insert(logged_in_user);

@@ -1,18 +1,19 @@
 use std::sync::Arc;
 
 use crate::models::page_model::PutPageIdentifierModel;
-use crate::{
-    avored_state::AvoRedState, error::Result
-};
+use crate::{avored_state::AvoRedState, error::Result};
 
-use axum::{Extension, extract::{Path as AxumPath, State}, Json};
-use axum::response::IntoResponse;
 use crate::api::handlers::page::request::put_page_request::PutPageRequest;
 use crate::error::Error;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
-use crate::responses::ApiResponse;
 use crate::responses::page::PutPageIdentifierResponse;
+use crate::responses::ApiResponse;
+use axum::response::IntoResponse;
+use axum::{
+    extract::{Path as AxumPath, State},
+    Extension, Json,
+};
 
 pub async fn put_page_identifier_api_handler(
     AxumPath(page_id): AxumPath<String>,
@@ -35,17 +36,16 @@ pub async fn put_page_identifier_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
     }
 
-
     let put_page_identifier = PutPageIdentifierModel {
         id: page_id,
         identifier: payload.identifier,
-        logged_in_username: logged_in_user.email
+        logged_in_username: logged_in_user.email,
     };
     let updated_page_model = state
         .page_service
@@ -53,12 +53,12 @@ pub async fn put_page_identifier_api_handler(
         .await?;
 
     let updated_page_response = PutPageIdentifierResponse {
-        page: updated_page_model
+        page: updated_page_model,
     };
 
     let api_response = ApiResponse {
         status: true,
-        data: updated_page_response
+        data: updated_page_response,
     };
 
     Ok(Json(api_response))

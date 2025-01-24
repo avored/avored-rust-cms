@@ -1,12 +1,12 @@
+use crate::models::validation_error::{ErrorMessage, Validate};
 use rust_i18n::t;
 use serde::Deserialize;
-use crate::models::validation_error::{ErrorMessage, Validate};
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct UpdateAdminUserRequest {
     pub full_name: String,
     pub is_super_admin: bool,
-    pub role_ids: Vec<String>
+    pub role_ids: Vec<String>,
 }
 
 impl UpdateAdminUserRequest {
@@ -15,7 +15,7 @@ impl UpdateAdminUserRequest {
         if !self.full_name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("full_name"),
-                message: t!("validation_required", attribute = t!("full_name")).to_string()
+                message: t!("validation_required", attribute = t!("full_name")).to_string(),
             };
 
             errors.push(error_message);

@@ -4,7 +4,10 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
 use crate::error::{Error, Result};
-use crate::models::page_model::{CreatablePageModel, PageModel, UpdatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType, PageStatus, PutPageIdentifierModel};
+use crate::models::page_model::{
+    CreatablePageModel, PageDataType, PageFieldContentType, PageFieldData, PageFieldType,
+    PageModel, PageStatus, PutPageIdentifierModel, UpdatablePageModel,
+};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 
@@ -27,19 +30,24 @@ impl PageRepository {
         order_column: String,
         order_type: String,
     ) -> Result<Vec<PageModel>> {
-        let sql = format!("\
+        let sql = format!(
+            "\
             SELECT * \
             FROM type::table($table) \
             ORDER {} {}
             LIMIT $limit \
             START $start;\
-        ", order_column, order_type);
+        ",
+            order_column, order_type
+        );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
             ("table".into(), PAGE_TABLE.into()),
         ]);
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
 
         let mut page_list: Vec<PageModel> = Vec::new();
 
@@ -74,17 +82,14 @@ impl PageRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        page_id: &String) -> Result<bool>
-    {
+        page_id: &String,
+    ) -> Result<bool> {
         let sql = format!("DELETE pages:{page_id}");
         let responses = datastore.execute(&sql, database_session, None).await?;
-        let response = responses
-            .into_iter()
-            .next()
-            .map(|rp| rp.output());
+        let response = responses.into_iter().next().map(|rp| rp.output());
         let query_result = match response {
             Some(object) => object.is_ok(), // there is another method is_err() as well
-            None => false
+            None => false,
         };
         Ok(query_result)
     }
@@ -95,13 +100,12 @@ impl PageRepository {
         database_session: &Session,
         page_id: String,
     ) -> Result<PageModel> {
-        let sql =
-            "SELECT * FROM type::thing($table, $id);";
+        let sql = "SELECT * FROM type::thing($table, $id);";
         let vars: BTreeMap<String, Value> = [
             ("id".into(), page_id.into()),
             ("table".into(), "pages".into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -121,12 +125,8 @@ impl PageRepository {
         datastore: &Datastore,
         database_session: &Session,
     ) -> Result<Vec<PageModel>> {
-        let sql =
-            "SELECT * FROM type::table($table);";
-        let vars: BTreeMap<String, Value> = [
-            ("table".into(), PAGE_TABLE.into()),
-        ]
-            .into();
+        let sql = "SELECT * FROM type::table($table);";
+        let vars: BTreeMap<String, Value> = [("table".into(), PAGE_TABLE.into())].into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -177,12 +177,19 @@ impl PageRepository {
         ";
 
         let vars: BTreeMap<String, Value> = [
-            ("identifier".into(), put_page_identifier_model.identifier.into()),
+            (
+                "identifier".into(),
+                put_page_identifier_model.identifier.into(),
+            ),
             ("table".into(), "pages".into()),
             ("updated_at".into(), Datetime::default().into()),
-            ("updated_by".into(), put_page_identifier_model.logged_in_username.into()),
-            ("id".into(), put_page_identifier_model.id.into())
-        ].into();
+            (
+                "updated_by".into(),
+                put_page_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_page_identifier_model.id.into()),
+        ]
+        .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
@@ -195,41 +202,43 @@ impl PageRepository {
         updated_model
     }
 
-    pub async fn create_page (
+    pub async fn create_page(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        creatable_page_model: CreatablePageModel
+        creatable_page_model: CreatablePageModel,
     ) -> Result<PageModel> {
         let sql = "CREATE type::table($table) CONTENT $data";
 
         let mut page_fields: Vec<Value> = vec![];
 
         for created_page_field in creatable_page_model.page_fields {
-
-
             let data_type_value: Value = match created_page_field.data_type {
-                PageDataType::Text(v) =>  v.into(),
+                PageDataType::Text(v) => v.into(),
             };
 
             let field_type_value: Value = match created_page_field.field_type {
-                PageFieldType::Text =>  "Text".into(),
+                PageFieldType::Text => "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
                 PageFieldType::Radio => "Radio".into(),
                 PageFieldType::Checkbox => "Checkbox".into(),
-                PageFieldType::SingleImage => "SingleImage".into()
+                PageFieldType::SingleImage => "SingleImage".into(),
             };
 
             let field_content_value: Value = match created_page_field.field_content {
-                PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
-                PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
+                PageFieldContentType::TextContentType { text_value } => text_value.try_into()?,
+                PageFieldContentType::IntegerContentType { integer_value } => {
+                    integer_value.try_into()?
+                }
                 PageFieldContentType::ArrayContentType { array_value } => array_value.try_into()?,
             };
 
             let field_data_value: Value = match created_page_field.field_data {
-                PageFieldData::SelectFieldData { select_field_options } =>  {
+                PageFieldData::SelectFieldData {
+                    select_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in select_field_options {
                         let val: Value = option.try_into()?;
@@ -237,8 +246,10 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
-                PageFieldData::RadioFieldData { radio_field_options } =>  {
+                }
+                PageFieldData::RadioFieldData {
+                    radio_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in radio_field_options {
                         let val: Value = option.try_into()?;
@@ -246,8 +257,10 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
-                PageFieldData::CheckboxFieldData { checkbox_field_options } =>  {
+                }
+                PageFieldData::CheckboxFieldData {
+                    checkbox_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in checkbox_field_options {
                         let val: Value = option.try_into()?;
@@ -255,8 +268,8 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
-                PageFieldData::NoneFieldData {none: _} => "null".into(),
+                }
+                PageFieldData::NoneFieldData { none: _ } => "null".into(),
             };
 
             let page_field: BTreeMap<String, Value> = [
@@ -266,13 +279,14 @@ impl PageRepository {
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
                 ("field_data".into(), field_data_value),
-            ].into();
+            ]
+            .into();
 
             page_fields.push(page_field.into());
         }
 
         let status: Value = match creatable_page_model.status {
-            PageStatus::Draft =>  "Draft".into(),
+            PageStatus::Draft => "Draft".into(),
             PageStatus::Published => "Published".into(),
         };
 
@@ -280,19 +294,25 @@ impl PageRepository {
             ("name".into(), creatable_page_model.name.into()),
             ("identifier".into(), creatable_page_model.identifier.into()),
             ("status".into(), status),
-            ("created_by".into(), creatable_page_model.logged_in_username.clone().into()),
-            ("updated_by".into(), creatable_page_model.logged_in_username.into()),
+            (
+                "created_by".into(),
+                creatable_page_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                creatable_page_model.logged_in_username.into(),
+            ),
             ("page_fields".into(), page_fields.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
-            .into();
+        .into();
 
         let vars: BTreeMap<String, Value> = [
             ("data".into(), data.into()),
-            ("table".into(), PAGE_TABLE.into())
+            ("table".into(), PAGE_TABLE.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -307,39 +327,42 @@ impl PageRepository {
         model
     }
 
-    pub async fn update_page (
+    pub async fn update_page(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        updatable_page_model: UpdatablePageModel
+        updatable_page_model: UpdatablePageModel,
     ) -> Result<PageModel> {
         let sql = "UPDATE type::thing($table, $id) CONTENT $data";
 
         let mut page_fields: Vec<Value> = vec![];
 
         for updatable_page_field in updatable_page_model.page_fields {
-
             let data_type_value: Value = match updatable_page_field.data_type {
-                PageDataType::Text(v) =>  v.into(),
+                PageDataType::Text(v) => v.into(),
             };
 
             let field_type_value: Value = match updatable_page_field.field_type {
-                PageFieldType::Text =>  "Text".into(),
+                PageFieldType::Text => "Text".into(),
                 PageFieldType::Textarea => "Textarea".into(),
                 PageFieldType::Select => "Select".into(),
                 PageFieldType::TextEditor => "TextEditor".into(),
                 PageFieldType::Radio => "Radio".into(),
                 PageFieldType::Checkbox => "Checkbox".into(),
-                PageFieldType::SingleImage => "SingleImage".into()
+                PageFieldType::SingleImage => "SingleImage".into(),
             };
             let field_content_value: Value = match updatable_page_field.field_content {
-                PageFieldContentType::TextContentType { text_value } =>  text_value.try_into()?,
-                PageFieldContentType::IntegerContentType { integer_value } => integer_value.try_into()?,
+                PageFieldContentType::TextContentType { text_value } => text_value.try_into()?,
+                PageFieldContentType::IntegerContentType { integer_value } => {
+                    integer_value.try_into()?
+                }
                 PageFieldContentType::ArrayContentType { array_value } => array_value.try_into()?,
             };
 
             let field_data_value: Value = match updatable_page_field.field_data {
-                PageFieldData::SelectFieldData { select_field_options } =>  {
+                PageFieldData::SelectFieldData {
+                    select_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in select_field_options {
                         let val: Value = option.try_into()?;
@@ -347,8 +370,10 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
-                PageFieldData::RadioFieldData { radio_field_options } =>  {
+                }
+                PageFieldData::RadioFieldData {
+                    radio_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in radio_field_options {
                         let val: Value = option.try_into()?;
@@ -356,8 +381,10 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
-                PageFieldData::CheckboxFieldData { checkbox_field_options } =>  {
+                }
+                PageFieldData::CheckboxFieldData {
+                    checkbox_field_options,
+                } => {
                     let mut options: Vec<Value> = vec![];
                     for option in checkbox_field_options {
                         let val: Value = option.try_into()?;
@@ -365,7 +392,7 @@ impl PageRepository {
                     }
 
                     options.into()
-                },
+                }
                 PageFieldData::NoneFieldData { none: _ } => "null".into(),
             };
 
@@ -376,13 +403,14 @@ impl PageRepository {
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
                 ("field_data".into(), field_data_value),
-            ].into();
+            ]
+            .into();
 
             page_fields.push(page_field.into());
         }
 
         let status: Value = match updatable_page_model.status {
-            PageStatus::Draft =>  "Draft".into(),
+            PageStatus::Draft => "Draft".into(),
             PageStatus::Published => "Published".into(),
         };
 
@@ -390,20 +418,23 @@ impl PageRepository {
             ("name".into(), updatable_page_model.name.into()),
             ("identifier".into(), updatable_page_model.identifier.into()),
             ("status".into(), status),
-            ("updated_by".into(), updatable_page_model.logged_in_username.clone().into()),
+            (
+                "updated_by".into(),
+                updatable_page_model.logged_in_username.clone().into(),
+            ),
             ("created_by".into(), updatable_page_model.created_by.into()),
             ("page_fields".into(), page_fields.into()),
             ("updated_at".into(), Datetime::default().into()),
             ("created_at".into(), updatable_page_model.created_at.into()),
         ]
-            .into();
+        .into();
 
         let vars: BTreeMap<String, Value> = [
             ("data".into(), data.into()),
             ("table".into(), PAGE_TABLE.into()),
-            ("id".into(), updatable_page_model.id.into())
+            ("id".into(), updatable_page_model.id.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 

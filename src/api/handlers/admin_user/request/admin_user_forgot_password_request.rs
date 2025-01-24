@@ -1,8 +1,8 @@
-use rust_i18n::t;
-use serde::Deserialize;
 use crate::error::Result;
 use crate::models::validation_error::ErrorMessage;
 use crate::models::validation_error::Validate;
+use rust_i18n::t;
+use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct AdminUserForgotPasswordRequest {
@@ -16,7 +16,7 @@ impl AdminUserForgotPasswordRequest {
         if !self.email.required()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_required", attribute = t!("email")).to_string()
+                message: t!("validation_required", attribute = t!("email")).to_string(),
             };
 
             errors.push(error_message);
@@ -25,7 +25,7 @@ impl AdminUserForgotPasswordRequest {
         if !self.email.validate_email()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("email_address_not_valid").to_string()
+                message: t!("email_address_not_valid").to_string(),
             };
 
             errors.push(error_message);

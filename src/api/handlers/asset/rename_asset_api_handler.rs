@@ -1,7 +1,3 @@
-use std::sync::Arc;
-use axum::extract::{Path, State};
-use axum::{Extension, Json};
-use tokio::fs;
 use crate::api::handlers::asset::request::rename_asset_request::RenameAssetRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
@@ -9,6 +5,10 @@ use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
+use axum::extract::{Path, State};
+use axum::{Extension, Json};
+use std::sync::Arc;
+use tokio::fs;
 
 pub async fn rename_asset_api_handler(
     Path(asset_id): Path<String>,
@@ -31,29 +31,28 @@ pub async fn rename_asset_api_handler(
     if !error_messages.is_empty() {
         let error_response = ErrorResponse {
             status: false,
-            errors: error_messages
+            errors: error_messages,
         };
 
         return Err(Error::BadRequest(error_response));
     }
 
-    let asset_model = state.asset_service
-        .find_by_id(&state.db, &asset_id)
-        .await?;
-    let old_asset_path = format!(".{}",asset_model.new_path);
+    let asset_model = state.asset_service.find_by_id(&state.db, &asset_id).await?;
+    let old_asset_path = format!(".{}", asset_model.new_path);
     let new_asset_path = format!("/public/upload/{}", &payload.name);
 
     if fs::try_exists(&old_asset_path).await? {
         fs::rename(&old_asset_path, &format!(".{}", new_asset_path)).await?;
     }
 
-    let updated_asset_model = state.asset_service
+    let updated_asset_model = state
+        .asset_service
         .update_asset_path(&state.db, &payload.name, &asset_id, &logged_in_user.email)
         .await?;
 
     let response = ApiResponse {
         status: false,
-        data: updated_asset_model
+        data: updated_asset_model,
     };
 
     Ok(Json(response))

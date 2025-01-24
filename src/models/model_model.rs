@@ -1,7 +1,7 @@
+use super::{BaseModel, Pagination};
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
-use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ModelModel {
@@ -11,7 +11,7 @@ pub struct ModelModel {
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
-    pub updated_by: String
+    pub updated_by: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -20,20 +20,18 @@ pub struct ModelPagination {
     pub pagination: Pagination,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutModelIdentifierModel {
     pub id: String,
     pub identifier: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
-
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableModelModel {
     pub id: String,
     pub name: String,
-    pub logged_in_username: String
+    pub logged_in_username: String,
 }
 
 impl TryFrom<Object> for ModelModel {
@@ -54,7 +52,7 @@ impl TryFrom<Object> for ModelModel {
             created_at,
             updated_at,
             created_by,
-            updated_by
+            updated_by,
         })
     }
 }

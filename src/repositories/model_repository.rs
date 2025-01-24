@@ -1,13 +1,15 @@
 use std::collections::BTreeMap;
 
+use super::into_iter_objects;
 use crate::error::{Error, Result};
+use crate::models::model_model::{
+    CreatableModel, ModelModel, PutModelIdentifierModel, UpdatableModelModel,
+};
+use crate::models::ModelCount;
+use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use crate::models::model_model::{CreatableModel, ModelModel, PutModelIdentifierModel, UpdatableModelModel};
-use crate::models::ModelCount;
-use crate::PER_PAGE;
-use super::into_iter_objects;
 
 #[derive(Clone)]
 pub struct ModelRepository {}
@@ -16,7 +18,6 @@ impl ModelRepository {
     pub fn new() -> Self {
         ModelRepository {}
     }
-
 
     pub async fn create_model(
         &self,
@@ -29,8 +30,14 @@ impl ModelRepository {
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_model.name.into()),
             ("identifier".into(), creatable_model.identifier.into()),
-            ("created_by".into(), creatable_model.logged_in_username.clone().into()),
-            ("updated_by".into(), creatable_model.logged_in_username.into()),
+            (
+                "created_by".into(),
+                creatable_model.logged_in_username.clone().into(),
+            ),
+            (
+                "updated_by".into(),
+                creatable_model.logged_in_username.into(),
+            ),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -73,20 +80,25 @@ impl ModelRepository {
         database_session: &Session,
         start: i64,
         order_column: String,
-        order_type: String
+        order_type: String,
     ) -> Result<Vec<ModelModel>> {
-        let sql = format!("\
+        let sql = format!(
+            "\
             SELECT * \
             FROM models \
             ORDER {} {} \
             LIMIT $limit \
             START $start;\
-        ", order_column, order_type);
+        ",
+            order_column, order_type
+        );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
         ]);
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
 
         let mut paginate_models: Vec<ModelModel> = Vec::new();
 
@@ -110,7 +122,7 @@ impl ModelRepository {
             ("id".into(), model_id.into()),
             ("table".into(), "models".into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -124,12 +136,11 @@ impl ModelRepository {
         model_model
     }
 
-
     pub async fn update_model_identifier(
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        put_model_identifier_model: PutModelIdentifierModel
+        put_model_identifier_model: PutModelIdentifierModel,
     ) -> Result<ModelModel> {
         let sql = "UPDATE type::thing($table, $id)
                     SET
@@ -140,12 +151,19 @@ impl ModelRepository {
         ";
 
         let vars: BTreeMap<String, Value> = [
-            ("identifier".into(), put_model_identifier_model.identifier.into()),
+            (
+                "identifier".into(),
+                put_model_identifier_model.identifier.into(),
+            ),
             ("table".into(), "models".into()),
             ("updated_at".into(), Datetime::default().into()),
-            ("updated_by".into(), put_model_identifier_model.logged_in_username.into()),
-            ("id".into(), put_model_identifier_model.id.into())
-        ].into();
+            (
+                "updated_by".into(),
+                put_model_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_model_identifier_model.id.into()),
+        ]
+        .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
@@ -162,7 +180,7 @@ impl ModelRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        identifier: String
+        identifier: String,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(identifier=$identifier) FROM models GROUP ALL";
 
@@ -194,7 +212,10 @@ impl ModelRepository {
 
         let vars = BTreeMap::from([
             ("name".into(), updatable_model.name.into()),
-            ("logged_in_user_name".into(), updatable_model.logged_in_username.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_model.logged_in_username.into(),
+            ),
             ("id".into(), updatable_model.id.into()),
             ("table".into(), "models".into()),
         ]);
@@ -209,5 +230,4 @@ impl ModelRepository {
 
         model_model
     }
-
 }
