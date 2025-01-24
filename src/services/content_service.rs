@@ -1,8 +1,9 @@
-use crate::models::content_model::{ContentModel, ContentPagination, CreatableContentModel, UpdatableContentModel};
+use crate::models::content_model::{ContentModel, ContentPagination, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
-use crate::models::Pagination;
+use crate::models::{ModelCount, Pagination};
+use crate::models::page_model::{PageModel, PutPageIdentifierModel};
 use crate::PER_PAGE;
 
 pub struct ContentService {
@@ -20,6 +21,28 @@ impl ContentService {
             .update_content(datastore, database_session, updatable_page_model)
             .await
     }
+
+    pub(crate) async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: &str,
+        collection_type: &str
+    ) -> Result<ModelCount> {
+        self.content_repository
+            .count_of_identifier(datastore, database_session, collection_type, identifier)
+            .await
+    }
+
+    pub(crate) async fn update_content_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        put_content_identifier_model: PutContentIdentifierModel,
+    ) -> Result<ContentModel> {
+        self.content_repository
+            .update_content_identifier(datastore, database_session, put_content_identifier_model)
+            .await
+    }
+
 
     pub(crate) async fn find_by_id(
         &self,

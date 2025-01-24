@@ -4,17 +4,17 @@ import _ from 'lodash'
 import {useNavigate} from 'react-router-dom'
 import {PutRoleIdentifierType} from "../../../types/role/PutRoleIdentifierType";
 
-export const usePutContentIdentifier = (content_id: string) => {
+export const usePutContentIdentifier = (content_id: string, collectionType: string) => {
     const client = useAxios();
     const redirect = useNavigate();
     return useMutation({
         mutationFn: async (data: PutRoleIdentifierType) => {
-            const url = '/put-content-identifier/'  + content_id;
+            const url = `/put-content-identifier/${collectionType}/${content_id}`;
             return await client.put(url , JSON.stringify(data));
         },
         onSuccess: (res) => {
             if (_.get(res, 'data.status') === true) {
-                redirect("/admin/content-edit/" + content_id)
+                redirect("/admin/content-edit/" + content_id + "?type=" + collectionType)
             }
         }
     })

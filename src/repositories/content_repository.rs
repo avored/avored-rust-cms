@@ -3,7 +3,7 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 use crate::error::Error;
-use crate::models::content_model::{ContentDataType, ContentFieldContentType, ContentFieldType, ContentModel, CreatableContentModel, UpdatableContentModel};
+use crate::models::content_model::{ContentDataType, ContentFieldContentType, ContentFieldType, ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
 use crate::repositories::into_iter_objects;
 use crate::error::Result;
 use crate::models::ModelCount;
@@ -13,7 +13,6 @@ use crate::PER_PAGE;
 pub struct ContentRepository {}
 
 impl ContentRepository {
-
 
     pub(crate) async fn find_by_id(
         &self,
@@ -244,9 +243,69 @@ impl ContentRepository {
 
         model
     }
-}
 
-impl ContentRepository {
+    pub(crate) async fn count_of_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        collection_type: &str,
+        identifier: &str
+    ) -> Result<ModelCount> {
+        let sql = format!("SELECT count(identifier=$identifier) FROM {collection_type} GROUP ALL");
+
+        let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+
+        model_count
+    }
+
+    pub(crate) async fn update_content_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        put_content_identifier_model: PutContentIdentifierModel,
+    ) -> Result<ContentModel> {
+        let sql = "UPDATE type::thing($table, $id)
+                    SET
+                        identifier = $identifier,
+                        updated_at = $updated_at,
+                        updated_by = $updated_by
+                    ;
+        ";
+
+        let vars: BTreeMap<String, Value> = [
+            (
+                "identifier".into(),
+                put_content_identifier_model.identifier.into(),
+            ),
+            ("table".into(), put_content_identifier_model.collection_type.into()),
+            ("updated_at".into(), Datetime::default().into()),
+            (
+                "updated_by".into(),
+                put_content_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_content_identifier_model.id.into()),
+        ]
+            .into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let updated_model: Result<ContentModel> = result_object?.try_into();
+
+        updated_model
+    }
+
     pub fn new() -> Self {
         ContentRepository {}
     }

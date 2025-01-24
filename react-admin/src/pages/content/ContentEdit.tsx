@@ -10,22 +10,21 @@ import {
     SaveContentFieldType,
     SaveContentType
 } from "../../types/content/ContentType"
-import slug from "slug"
 import {Controller, useFieldArray, useForm} from "react-hook-form"
 import {joiResolver} from "@hookform/resolvers/joi"
-import {useStoreContent} from "./hooks/useStoreContent"
 import AvoRedButton, { ButtonType } from "../../components/AvoRedButton"
 import _ from 'lodash'
 import { ContentFieldModal } from "./ContentFieldModal"
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid"
 import {useContentEditSchema} from "./schemas/useContentEditSchema"
-import {useGetPage} from "../page/hooks/useGetPage";
 import {useGetContent} from "./hooks/useGetContent";
 import {useUpdateContent} from "./hooks/useUpdateContent";
+import {usePutContentIdentifier} from "./hooks/usePutContentIdentifier";
 
 export const ContentEdit = (() => {
     const [t] = useTranslation("global")
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
+    const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [searchParams] = useSearchParams()
     const collectionType: string = searchParams.get("type") as string
@@ -37,7 +36,6 @@ export const ContentEdit = (() => {
     const values = data?.data.data
 
     const submitHandler = (async (data: SaveContentType) => {
-        // console.log(data)
         mutate(data)
     })
 
@@ -59,15 +57,30 @@ export const ContentEdit = (() => {
         name: "content_fields", //rename fields
     });
 
+    const { mutate: putContentIdentifierMutate } = usePutContentIdentifier(
+        params.content_id ?? "", collectionType
+    );
+
+
+    const editableIdentifierOnClick = () => {
+        setIsEditableIdentifier(false);
+    };
+    const saveIdentifierOnClick = () => {
+        putContentIdentifierMutate({
+            identifier: getValues("identifier"),
+        });
+        setIsEditableIdentifier(true);
+    };
+
+    const cancelIdentifierOnClick = () => {
+        setIsEditableIdentifier(true);
+    };
+
     const deleteContentFieldOnClick = (e: any, index: number) => {
         e.preventDefault();
         remove(index);
         setCurrentIndex(0);
     };
-
-    const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        setValue('identifier', slug(e.currentTarget.value || ''))
-    }
 
     const addFieldButtonOnClick = (async (e: React.MouseEvent<HTMLButtonElement>, max_index: number) => {
         e.preventDefault()
@@ -125,34 +138,52 @@ export const ContentEdit = (() => {
                         <></>
                     )}
 
+
                     <div className="mb-4">
-                        <InputField type="hidden" register={register("content_type")} value={collectionType}  />
                         <InputField
-                            label={t("name")}
                             placeholder={t("name")}
+                            label={t("name")}
                             name="name"
                             register={register("name")}
-                            onKeyUp={e => onNameChange(e)}
-                            autoFocus={true}
-                        />
-                        <ErrorMessage
-                            frontendErrors={errors}
-                            backendErrors={error}
-                            identifier="name"
                         />
                     </div>
+
                     <div className="mb-4">
                         <InputField
-                            label={t("identifier")}
                             placeholder={t("identifier")}
                             name="identifier"
                             register={register("identifier")}
+                            disabled={isEditableIdentifier}
                         />
-                        <ErrorMessage
-                            frontendErrors={errors}
-                            backendErrors={error}
-                            identifier="identifier"
-                        />
+                        <div className="mt-2">
+                            {isEditableIdentifier ? (
+                                <>
+                          <span
+                              onClick={editableIdentifierOnClick}
+                              className="text-xs text-blue-600 cursor-pointer"
+                          >
+                            {t("edit_identifier")}
+                          </span>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={saveIdentifierOnClick}
+                                        className="text-xs text-blue-600 cursor-pointer"
+                                    >
+                                        {t("save")}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={cancelIdentifierOnClick}
+                                        className="ml-3 text-xs text-blue-600 cursor-pointer"
+                                    >
+                                        {t("cancel")}
+                                    </button>
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     {fields.map((field, index) => {

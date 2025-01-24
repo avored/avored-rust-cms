@@ -97,6 +97,14 @@ pub struct UpdatableContentField {
     pub field_content: ContentFieldContentType,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutContentIdentifierModel {
+    pub id: String,
+    pub identifier: String,
+    pub collection_type: String,
+    pub logged_in_username: String,
+}
+
 // endregion: Content model structs and enums
 
 
