@@ -41,8 +41,8 @@ export const CollectionCreate = () => {
     });
 
     const submitHandler = ((data: SavableCollectionType) => {
-        console.log(data)
-        // mutate(data)
+        // console.log(data)
+        mutate(data)
     })
 
     const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {

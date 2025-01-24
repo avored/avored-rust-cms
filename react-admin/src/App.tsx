@@ -50,9 +50,9 @@ function App() {
                     <Route path="/admin"   element={<Dashboard />} />
                     <Route path="/admin/logout"   element={<Logout />} />
                     <Route path="/admin/asset/:asset_id?"   element={<AssetTable />} />
-                    <Route path="/admin/component"   element={<ComponentTablePage />} />
-                    <Route path="/admin/component-create"   element={<ComponentCreatePage />} />
-                    <Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />
+                    {/*<Route path="/admin/component"   element={<ComponentTablePage />} />*/}
+                    {/*<Route path="/admin/component-create"   element={<ComponentCreatePage />} />*/}
+                    {/*<Route path="/admin/component-edit/:component_id"   element={<ComponentEditPage />} />*/}
                     <Route path="/admin/role"   element={<RoleTable />} />
                     <Route path="/admin/role-create"   element={<RoleCreate />} />
                     <Route path="/admin/role-edit/:role_id"   element={<RoleEdit />} />
@@ -61,14 +61,14 @@ function App() {
                     <Route path="/admin/content-create"   element={<ContentCreate />} />
                     <Route path="/admin/content-edit/:content_id"   element={<ContentEdit />} />
 
-                    <Route path="/admin/model-create"   element={<ModelCreatePage />} />
-                    <Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />
+                    {/*<Route path="/admin/model-create"   element={<ModelCreatePage />} />*/}
+                    {/*<Route path="/admin/model-edit/:model_id"   element={<ModelEditPage />} />*/}
                     <Route path="/admin/collections"   element={<CollectionTable />} />
                     <Route path="/admin/collection-create"   element={<CollectionCreate />} />
                     <Route path="/admin/collection-edit/:collection_id"   element={<CollectionEdit />} />
-                    <Route path="/admin/page"   element={<PageTable />} />
-                    <Route path="/admin/page-create"   element={<PageCreate />} />
-                    <Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />
+                    {/*<Route path="/admin/page"   element={<PageTable />} />*/}
+                    {/*<Route path="/admin/page-create"   element={<PageCreate />} />*/}
+                    {/*<Route path="/admin/page-edit/:page_id"   element={<PageEdit />} />*/}
                     <Route path="/admin/admin-user"   element={<AdminUserTable />} />
                     <Route path="/admin/admin-user-create"   element={<AdminUserCreate />} />
                     <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEdit />} />

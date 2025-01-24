@@ -89,7 +89,7 @@ export const SingleImageModal = (({
                                                                         ) : (
                                                                             <>
                                                                                 <img
-                                                                                    src={`${backend_url}${asset.path}`}
+                                                                                    src={`${backend_url}${asset.new_path}`}
                                                                                     className="h-40"
                                                                                     alt={asset.name}
                                                                                 />
