@@ -76,6 +76,27 @@ pub struct CreatableContentField {
 }
 
 
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableContentModel {
+    pub id: String,
+    pub name: String,
+    pub identifier: String,
+    pub content_type: String,
+    pub logged_in_username: String,
+    pub created_at: Datetime,
+    pub created_by: String,
+    pub content_fields: Vec<UpdatableContentField>,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableContentField {
+    pub name: String,
+    pub identifier: String,
+    pub data_type: ContentDataType,
+    pub field_type: ContentFieldType,
+    pub field_content: ContentFieldContentType,
+}
+
 // endregion: Content model structs and enums
 
 
@@ -95,7 +116,7 @@ impl Default for ContentFieldContentType {
     }
 }
 
-// endregion: impl Default for page model enums
+// endregion: impl Default for content model enums
 
 
 

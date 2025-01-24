@@ -1,4 +1,4 @@
-use crate::models::content_model::{ContentModel, ContentPagination, CreatableContentModel};
+use crate::models::content_model::{ContentModel, ContentPagination, CreatableContentModel, UpdatableContentModel};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
@@ -10,6 +10,16 @@ pub struct ContentService {
 }
 
 impl ContentService {
+
+    pub async fn update_content(
+        &self,
+        (datastore, database_session): &DB,
+        updatable_page_model: UpdatableContentModel,
+    ) -> Result<ContentModel> {
+        self.content_repository
+            .update_content(datastore, database_session, updatable_page_model)
+            .await
+    }
 
     pub(crate) async fn find_by_id(
         &self,

@@ -9,12 +9,12 @@ export const useUpdateContent = (content_id: string, collection_type: string) =>
     const redirect = useNavigate();
     return useMutation({
         mutationFn: async (data: SaveContentType) => {
-            const url = `/content/'${collection_type}/${content_id}`;
+            const url = `/content/${collection_type}/${content_id}`;
             return await client.put(url , JSON.stringify(data));
         },
         onSuccess: (res) => {
             if (_.get(res, 'data.status') === true) {
-                redirect("/admin/page")
+                redirect("/admin/content?type=" + collection_type)
             }
         }
     })

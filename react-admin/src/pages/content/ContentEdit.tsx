@@ -37,8 +37,8 @@ export const ContentEdit = (() => {
     const values = data?.data.data
 
     const submitHandler = (async (data: SaveContentType) => {
-        console.log(data)
-        // mutate(data)
+        // console.log(data)
+        mutate(data)
     })
 
     const {
