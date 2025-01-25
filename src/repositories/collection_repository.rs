@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 
 use super::into_iter_objects;
 use crate::error::{Error, Result};
-use crate::models::collection_model::{CollectionModel, CreatableCollection, PutCollectionIdentifierModel, UpdatableCollection};
+use crate::models::collection_model::{CollectionFieldDataType, CollectionFieldFieldType, CollectionModel, CreatableCollection, PutCollectionIdentifierModel, UpdatableCollection};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -214,7 +214,30 @@ impl CollectionRepository {
         database_session: &Session,
         creatable_model: CreatableCollection,
     ) -> Result<CollectionModel> {
-        let sql = "CREATE collections CONTENT $data";
+        let sql = "CREATE type::table($table) CONTENT $data";
+
+        let mut content_fields: Vec<Value> = vec![];
+
+        for creatable_field in creatable_model.collection_fields {
+            let data_type_value: Value = match creatable_field.data_type {
+                CollectionFieldDataType::Text(v) => v.into(),
+            };
+
+            let field_type_value: Value = match creatable_field.field_type {
+                CollectionFieldFieldType::Text => "Text".into(),
+            };
+
+            let content_field: BTreeMap<String, Value> = [
+                ("name".into(), creatable_field.name.into()),
+                ("identifier".into(), creatable_field.identifier.into()),
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+            ]
+                .into();
+
+            content_fields.push(content_field.into());
+        }
+
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_model.name.into()),
@@ -227,11 +250,17 @@ impl CollectionRepository {
                 "updated_by".into(),
                 creatable_model.logged_in_username.into(),
             ),
+            ("collection_fields".into(), content_fields.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
-        .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+            .into();
+
+        let vars: BTreeMap<String, Value> = [
+            ("data".into(), data.into()),
+            ("table".into(), "collections".into()),
+        ]
+            .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -240,8 +269,9 @@ impl CollectionRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let created_model: Result<CollectionModel> = result_object?.try_into();
 
-        created_model
+        let model: Result<CollectionModel> = result_object?.try_into();
+
+        model
     }
 }

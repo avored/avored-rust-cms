@@ -3,7 +3,6 @@ use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
 use crate::models::{ModelCount, Pagination};
-use crate::models::page_model::{PageModel, PutPageIdentifierModel};
 use crate::PER_PAGE;
 
 pub struct ContentService {

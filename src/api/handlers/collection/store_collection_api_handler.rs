@@ -1,7 +1,7 @@
 use crate::api::handlers::collection::request::store_collection_request::StoreCollectionRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
-use crate::models::collection_model::{CollectionModel, CreatableCollection};
+use crate::models::collection_model::{CollectionModel, CreatableCollection, CreatableCollectionField};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
@@ -35,11 +35,22 @@ pub async fn store_collection_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-    let creatable_model = CreatableCollection {
+    let mut creatable_model = CreatableCollection {
         name: payload.name,
         identifier: payload.identifier,
         logged_in_username: logged_in_user.email,
+        collection_fields: vec![]
     };
+
+    for payload_collection_field in payload.collection_fields {
+        let creatable_content_field_model = CreatableCollectionField {
+            name: payload_collection_field.name,
+            identifier: payload_collection_field.identifier,
+            data_type: payload_collection_field.data_type,
+            field_type: payload_collection_field.field_type,
+        };
+        creatable_model.collection_fields.push(creatable_content_field_model);
+    }
 
     let created_model = state
         .collection_service

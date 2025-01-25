@@ -41,8 +41,8 @@ export const CollectionCreate = () => {
     });
 
     const submitHandler = ((data: SavableCollectionType) => {
-        // console.log(data)
-        mutate(data)
+        console.log(data)
+        // mutate(data)
     })
 
     const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -195,14 +195,12 @@ export const CollectionCreate = () => {
                                 );
                             })}
 
-
-                            {/* todo uncomment below to enabled the add field button */}
-                            {/*<div className="mb-4">*/}
-                            {/*    <AvoRedButton*/}
-                            {/*        label="Add"*/}
-                            {/*        onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}*/}
-                            {/*        type={ButtonType.button}/>*/}
-                            {/*</div>*/}
+                            <div className="mb-4">
+                                <AvoRedButton
+                                    label="Add"
+                                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
+                                    type={ButtonType.button}/>
+                            </div>
 
                             <div className="flex items-center">
                                 <button
