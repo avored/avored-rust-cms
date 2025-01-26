@@ -50,7 +50,19 @@ pub struct CreatableCollectionField {
 pub struct UpdatableCollection {
     pub id: String,
     pub name: String,
+    pub identifier: String,
+    pub created_at: Datetime,
+    pub created_by: String,
     pub logged_in_username: String,
+    pub collection_fields: Vec<UpdatableCollectionField>,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone)]
+pub struct UpdatableCollectionField {
+    pub name: String,
+    pub identifier: String,
+    pub data_type: CollectionFieldDataType,
+    pub field_type: CollectionFieldFieldType,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

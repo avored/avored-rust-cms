@@ -180,22 +180,54 @@ impl CollectionRepository {
         database_session: &Session,
         updatable_model: UpdatableCollection,
     ) -> Result<CollectionModel> {
-        let sql = "
-            UPDATE type::thing($table, $id) MERGE {
-                name: $name,
-                updated_by: $logged_in_user_name,
-                updated_at: time::now()
-            };";
+        let sql = "UPDATE type::thing($table, $id) CONTENT $data";
 
-        let vars = BTreeMap::from([
+        let mut collection_fields: Vec<Value> = vec![];
+
+        for updatable_collection_field in updatable_model.collection_fields {
+            let data_type_value: Value = match updatable_collection_field.data_type {
+                CollectionFieldDataType::Text(v) => v.into(),
+            };
+
+            let field_type_value: Value = match updatable_collection_field.field_type {
+                CollectionFieldFieldType::Text => "Text".into(),
+
+            };
+
+
+            let content_field: BTreeMap<String, Value> = [
+                ("name".into(), updatable_collection_field.name.into()),
+                ("identifier".into(), updatable_collection_field.identifier.into()),
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+            ]
+                .into();
+
+            collection_fields.push(content_field.into());
+        }
+
+
+        let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),
+            ("identifier".into(), updatable_model.identifier.into()),
             (
-                "logged_in_user_name".into(),
-                updatable_model.logged_in_username.into(),
+                "updated_by".into(),
+                updatable_model.logged_in_username.clone().into(),
             ),
-            ("id".into(), updatable_model.id.into()),
+            ("created_by".into(), updatable_model.created_by.into()),
+            ("collection_fields".into(), collection_fields.into()),
+            ("updated_at".into(), Datetime::default().into()),
+            ("created_at".into(), updatable_model.created_at.into()),
+        ]
+            .into();
+
+        let vars: BTreeMap<String, Value> = [
+            ("data".into(), data.into()),
             ("table".into(), "collections".into()),
-        ]);
+            ("id".into(), updatable_model.id.into()),
+        ]
+            .into();
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
@@ -203,9 +235,10 @@ impl CollectionRepository {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-        let model_model: Result<CollectionModel> = result_object?.try_into();
 
-        model_model
+        let model: Result<CollectionModel> = result_object?.try_into();
+
+        model
     }
 
     pub async fn create_collection(
@@ -216,7 +249,7 @@ impl CollectionRepository {
     ) -> Result<CollectionModel> {
         let sql = "CREATE type::table($table) CONTENT $data";
 
-        let mut content_fields: Vec<Value> = vec![];
+        let mut collection_fields: Vec<Value> = vec![];
 
         for creatable_field in creatable_model.collection_fields {
             let data_type_value: Value = match creatable_field.data_type {
@@ -235,7 +268,7 @@ impl CollectionRepository {
             ]
                 .into();
 
-            content_fields.push(content_field.into());
+            collection_fields.push(content_field.into());
         }
 
 
@@ -250,7 +283,7 @@ impl CollectionRepository {
                 "updated_by".into(),
                 creatable_model.logged_in_username.into(),
             ),
-            ("collection_fields".into(), content_fields.into()),
+            ("collection_fields".into(), collection_fields.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
