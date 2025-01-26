@@ -1,23 +1,39 @@
 import InputField from "../../components/InputField";
 import {Link, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {useState} from "react";
-import {useForm} from "react-hook-form";
+import React, {useState} from "react";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {PutCollectionIdentifierType} from "../../types/collection/PutCollectionIdentifierType";
 import {joiResolver} from "@hookform/resolvers/joi";
-import EditableCollectionType from "../../types/collection/EditableCollectionType";
 import {useGetCollection} from "./hooks/useGetCollection";
 import {useCollectionPutSchema} from "./schemas/CollectionPutSchema";
 import {useCollectionEditSchema} from "./schemas/CollectionEditSchema";
 import {usePutCollectionIdentifier} from "./hooks/usePutCollectionIdentifier";
 import {useUpdateCollection} from "./hooks/useUpdateCollection";
+import {
+    CollectionFieldDataType,
+    CollectionFieldFieldType,
+    SavableCollectionType
+} from "../../types/collection/CreatableCollectionType";
+import _ from "lodash";
+import {CollectionFieldModal} from "./CollectionFieldModal";
+import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 
 export const CollectionEdit = (() => {
     const params = useParams();
-    const collection_id = params.collection_id ?? ''
-    const {mutate} = useUpdateCollection(collection_id);
     const [t] = useTranslation("global")
+    const collection_id = params.collection_id ?? ''
+    const [isCollectionFieldModalOpen, setIsCollectionFieldModalOpen] = useState<boolean>(false);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+    const {mutate} = useUpdateCollection(collection_id);
+
+
+
     const {data} = useGetCollection(collection_id)
+
+
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true)
     const values = data?.data.data
 
@@ -32,14 +48,25 @@ export const CollectionEdit = (() => {
         }
     });
 
+
+
     const {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<EditableCollectionType>({
+        setValue,
+        getValues,
+        control,
+        trigger
+    } = useForm<SavableCollectionType>({
         resolver: joiResolver(useCollectionEditSchema(), {allowUnknown: true}),
         values
     })
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "collection_fields", //rename fields
+    });
 
     const {mutate: putCollectionIdentifierMutate} = usePutCollectionIdentifier(collection_id)
 
@@ -57,7 +84,27 @@ export const CollectionEdit = (() => {
         setIsEditableIdentifier(true)
     })
 
-    const submitHandler = ((data: EditableCollectionType) => {
+    const addFieldButtonOnClick = (async (e: React.MouseEvent<HTMLButtonElement>, max_index: number) => {
+        e.preventDefault()
+        append({
+            name: '',
+            identifier: '',
+            data_type: CollectionFieldDataType.TEXT,
+            field_type: CollectionFieldFieldType.TEXT,
+        })
+        await trigger("collection_fields");
+        setCurrentIndex(max_index);
+        setIsCollectionFieldModalOpen(true)
+    })
+
+    const deleteCollectionFieldOnClick = (e: any, index: number) => {
+        e.preventDefault();
+        remove(index);
+        setCurrentIndex(0);
+    };
+
+
+    const submitHandler = ((data: SavableCollectionType) => {
         mutate(data)
     })
     return (
@@ -70,6 +117,19 @@ export const CollectionEdit = (() => {
                         </h1>
 
                         <form onSubmit={handleSubmit(submitHandler)}>
+
+                            {_.size(fields) > 0 ? (
+                                <CollectionFieldModal
+                                    register={register}
+                                    currentIndex={currentIndex}
+                                    getValues={getValues}
+                                    setValue={setValue}
+                                    trigger={trigger}
+                                    setIsOpen={setIsCollectionFieldModalOpen}
+                                    isOpen={isCollectionFieldModalOpen}                           />
+                            ) : (
+                                <></>
+                            )}
                             <div className="mb-4">
                                 <InputField
                                     label={t("name")}
@@ -110,6 +170,86 @@ export const CollectionEdit = (() => {
                                         </>
                                     )}
                                 </div>
+                            </div>
+
+                            {fields.map((field, index) => {
+                                return (
+                                    <div
+                                        key={field.id}
+                                        className="hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                                    >
+                                        <Controller
+                                            name={`collection_fields.${index}`}
+                                            render={({field: collection_field}) => {
+                                                return (
+                                                    <>
+                                                        <div className="flex mt-3 w-full justify-center">
+                                                            <div className="flex-1 p-3">
+                                                                <div className="p-3 bg-gray-200 rounded">
+                                                                    <div
+                                                                        className="flex text-sm w-full border-gray-300 border-b py-2">
+                                                                        <div className="flex-1">
+                                                                                <span>
+                                                                                    {collection_field.value.name}
+                                                                                </span>
+                                                                            <span
+                                                                                className="ml-1 text-xs text-gray-500">
+                                                                                    ({collection_field.value.identifier})
+                                                                                </span>
+                                                                        </div>
+                                                                        <div className="ml-auto flex items-center">
+                                                                            <div>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="outline-none"
+                                                                                    onClick={() => setIsCollectionFieldModalOpen(true)}
+                                                                                >
+                                                                                    <Cog8ToothIcon className="w-5 h-5"/>
+                                                                                </button>
+                                                                            </div>
+                                                                            <div
+                                                                                onClick={(e) =>
+                                                                                    deleteCollectionFieldOnClick(e, index)
+                                                                                }
+                                                                                className="ml-3"
+                                                                            >
+                                                                                <TrashIcon className="w-4 h-4"/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <InputField
+                                                                        type="hidden"
+                                                                        placeholder={t("data_type")}
+                                                                        register={register(
+                                                                            `collection_fields.${index}.data_type`,
+                                                                        )}
+                                                                    />
+                                                                    <InputField
+                                                                        type="hidden"
+                                                                        placeholder={t("field_type")}
+                                                                        register={register(
+                                                                            `collection_fields.${index}.field_type`,
+                                                                        )}
+                                                                    />
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                );
+                                            }}
+                                            control={control}
+                                        />
+                                    </div>
+                                );
+                            })}
+
+                            <div className="mb-4">
+                                <AvoRedButton
+                                    label="Add"
+                                    onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
+                                    type={ButtonType.button}/>
                             </div>
 
                             <div className="flex items-center">
