@@ -21,7 +21,7 @@ export type SaveContentFieldType = {
     name: string;
     identifier: string;
     data_type: ContentFieldDataType;
-    field_type: AvoRedContentFieldType;
+    field_type: ContentFieldFieldType;
     field_content: AvoRedContentFieldContent;
     // field_data?: AvoRedContentFieldData,
 }
@@ -41,7 +41,7 @@ export type ContentTextContent = {
     text_value: string;
 }
 
-export enum AvoRedContentFieldType {
+export enum ContentFieldFieldType {
     TEXT = "Text",
     // TEXTAREA = "Textarea",
     // SELECT = "Select",

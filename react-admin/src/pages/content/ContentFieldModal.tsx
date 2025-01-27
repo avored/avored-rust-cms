@@ -6,7 +6,7 @@ import {
 } from "react-hook-form";
 import {
   ContentFieldDataType,
-  AvoRedContentFieldType,
+  ContentFieldFieldType,
   SaveContentType,
 } from "../../types/content/ContentType";
 import AvoredModal from "../../components/AvoredModal";
@@ -41,7 +41,7 @@ export const ContentFieldModal = ({
 
   const onContentFieldChange = async (
     index: number,
-    field_type: AvoRedContentFieldType,
+    field_type: ContentFieldFieldType,
     data_type: ContentFieldDataType
   ) => {
     setValue(`content_fields.${index}.field_type`, field_type);
@@ -89,11 +89,11 @@ export const ContentFieldModal = ({
                   onClick={() =>
                     onContentFieldChange(
                       currentIndex,
-                      AvoRedContentFieldType.TEXT,
+                        ContentFieldFieldType.TEXT,
                         ContentFieldDataType.TEXT
                     )
                   }
-                  className={`${getValues(`content_fields.${currentIndex}.field_type`) === AvoRedContentFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
+                  className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
                         ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                 >
                   {t("text_field")}

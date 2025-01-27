@@ -6,7 +6,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import React, {useState} from "react";
 import {
     ContentFieldDataType,
-    AvoRedContentFieldType,
+    ContentFieldFieldType,
     SaveContentFieldType,
     SaveContentType
 } from "../../types/content/ContentType";
@@ -56,13 +56,13 @@ export const ContentCreate = (() => {
                     data_type = ContentFieldDataType.TEXT
             }
 
-            var field_type: AvoRedContentFieldType = AvoRedContentFieldType.TEXT;
+            var field_type: ContentFieldFieldType = ContentFieldFieldType.TEXT;
             switch (collection_field.field_type) {
                 case CollectionFieldFieldType.TEXT:
-                    field_type = AvoRedContentFieldType.TEXT
+                    field_type = ContentFieldFieldType.TEXT
                     break;
                 default:
-                    field_type = AvoRedContentFieldType.TEXT
+                    field_type = ContentFieldFieldType.TEXT
             }
 
 
@@ -123,7 +123,7 @@ export const ContentCreate = (() => {
             name: '',
             identifier: '',
             data_type: ContentFieldDataType.TEXT,
-            field_type: AvoRedContentFieldType.TEXT,
+            field_type: ContentFieldFieldType.TEXT,
             field_content: {
                 text_value: {
                     text_value: ""
@@ -137,7 +137,7 @@ export const ContentCreate = (() => {
 
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
-            case AvoRedContentFieldType.TEXT:
+            case ContentFieldFieldType.TEXT:
                 return (
                     <div className="mb-4">
                         <InputField
