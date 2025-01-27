@@ -63,6 +63,7 @@ use axum::{middleware, routing::get, Router};
 use std::sync::Arc;
 use tower_http::cors::CorsLayer;
 use crate::api::handlers::collection::collection_all_api_handler::collection_all_api_handler;
+use crate::api::handlers::collection::fetch_collection_by_identifier_api_handler::fetch_collection_by_identifier_api_handler;
 use crate::api::handlers::collection::put_collection_identifier_api_handler::put_collection_identifier_api_handler;
 use crate::api::handlers::content::content_table_api_handler::content_table_api_handler;
 use crate::api::handlers::content::fetch_content_api_handler::fetch_content_api_handler;
@@ -150,6 +151,10 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
         )
         .route("/api/collection", get(collection_table_api_handler))
         .route("/api/collection", post(store_collection_api_handler))
+        .route(
+            "/api/collection-identifier/{collection_identifier}",
+            get(fetch_collection_by_identifier_api_handler),
+        )
         .route(
             "/api/collection/{collection_id}",
             get(fetch_collection_api_handler),

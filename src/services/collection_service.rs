@@ -9,25 +9,22 @@ pub struct CollectionService {
     collection_repository: CollectionRepository,
 }
 
-impl CollectionService {
-    pub(crate) async fn all_collections(
-        &self,
-        (datastore, database_session): &DB
-    ) -> Result<Vec<CollectionModel>> {
-        self.collection_repository
-        .all_collection(datastore, database_session)
-        .await
-    }
-}
 
 impl CollectionService {
+
     pub fn new(collection_repository: CollectionRepository) -> Result<Self> {
         Ok(CollectionService {
             collection_repository,
         })
     }
-}
-impl CollectionService {
+    pub(crate) async fn all_collections(
+        &self,
+        (datastore, database_session): &DB
+    ) -> Result<Vec<CollectionModel>> {
+        self.collection_repository
+            .all_collection(datastore, database_session)
+            .await
+    }
     pub async fn create_collection(
         &self,
         (datastore, database_session): &DB,
@@ -96,6 +93,17 @@ impl CollectionService {
             data: paginated_collections,
             pagination,
         })
+    }
+
+
+    pub async fn find_by_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: &str,
+    ) -> Result<CollectionModel> {
+        self.collection_repository
+            .find_by_identifier(datastore, database_session, identifier)
+            .await
     }
 
     pub async fn find_by_id(

@@ -118,6 +118,32 @@ impl CollectionRepository {
 
         model_model
     }
+
+    pub async fn find_by_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: &str,
+    ) -> Result<CollectionModel> {
+        let sql = "SELECT * FROM type::table($table) WHERE identifier=$identifier;";
+        let vars: BTreeMap<String, Value> = [
+            ("identifier".into(), identifier.into()),
+            ("table".into(), "collections".into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_model: Result<CollectionModel> = result_object?.try_into();
+
+        model_model
+    }
+
     //
     //
     pub async fn update_collection_identifier(
