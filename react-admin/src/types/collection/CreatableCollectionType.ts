@@ -13,7 +13,7 @@ export type SaveCollectionFieldType = {
 }
 
 export enum CollectionFieldDataType {
-    TEXT = "TEXT",
+    TEXT = "Text",
 }
 
 export enum CollectionFieldFieldType {

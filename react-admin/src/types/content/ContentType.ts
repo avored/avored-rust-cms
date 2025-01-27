@@ -28,7 +28,7 @@ export type SaveContentFieldType = {
 
 
 export enum AvoRedContentDataType {
-    TEXT = "TEXT",
+    TEXT = "Text",
     // INT = "INT",
     // Array_Text = "Array_Text"
 }

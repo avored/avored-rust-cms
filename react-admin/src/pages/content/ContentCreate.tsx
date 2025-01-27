@@ -3,7 +3,7 @@ import {ContentSidebar} from "./ContentSidebar";
 import {Link, useSearchParams} from "react-router-dom";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
     AvoRedContentDataType,
     AvoRedContentFieldType,
@@ -15,10 +15,16 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {useContentCreateSchema} from "./schemas/useContentCreateSchema";
 import {useStoreContent} from "./hooks/useStoreContent";
-import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 import _ from 'lodash';
-import { ContentFieldModal } from "./ContentFieldModal";
+import {ContentFieldModal} from "./ContentFieldModal";
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/24/solid";
+import {useGetCollectionByIdentifier} from "./hooks/useGetCollectionByIdentifier";
+import {
+    CollectionFieldDataType,
+    CollectionFieldFieldType,
+    SaveCollectionFieldType
+} from "../../types/collection/CreatableCollectionType";
 
 export const ContentCreate = (() => {
     const [t] = useTranslation("global")
@@ -27,6 +33,57 @@ export const ContentCreate = (() => {
     const [searchParams] = useSearchParams()
     const collectionType: string = searchParams.get("type") as string
     const {mutate, error} = useStoreContent()
+
+
+    const api_response_get_collection_by_identifier = useGetCollectionByIdentifier(collectionType)
+
+    const convertToContentModal = (() => {
+        var contentModal: SaveContentType = {
+            name : '',
+            identifier: '',
+            content_type: collectionType,
+            content_fields: []
+        }
+
+        _.get(api_response_get_collection_by_identifier, 'data.data.data.collection_fields', []).forEach((collection_field: SaveCollectionFieldType) => {
+
+            var data_type: AvoRedContentDataType
+            switch (collection_field.data_type) {
+                case CollectionFieldDataType.TEXT:
+                    data_type = AvoRedContentDataType.TEXT
+                    break;
+                default:
+                    data_type = AvoRedContentDataType.TEXT
+            }
+
+            var field_type: AvoRedContentFieldType = AvoRedContentFieldType.TEXT;
+            switch (collection_field.field_type) {
+                case CollectionFieldFieldType.TEXT:
+                    field_type = AvoRedContentFieldType.TEXT
+                    break;
+                default:
+                    field_type = AvoRedContentFieldType.TEXT
+            }
+
+
+            let content_field: SaveContentFieldType = {
+                name: collection_field.name,
+                identifier: collection_field.identifier,
+                data_type,
+                field_type,
+                field_content: {
+                    text_value: {
+                        text_value: ""
+                    }
+                }
+            }
+            contentModal.content_fields.push(content_field)
+        })
+
+        return contentModal
+    })
+
+    const values = convertToContentModal()
 
     const submitHandler = (async (data: SaveContentType) => {
         mutate(data)
@@ -41,7 +98,8 @@ export const ContentCreate = (() => {
         control,
         trigger
     } = useForm<SaveContentType>({
-        resolver: joiResolver(useContentCreateSchema(), {allowUnknown: true})
+        resolver: joiResolver(useContentCreateSchema(), {allowUnknown: true}),
+        values
     })
 
     const { fields, append, remove } = useFieldArray({

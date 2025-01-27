@@ -1,7 +1,7 @@
 use crate::api::handlers::collection::request::update_collection_request::UpdateCollectionRequest;
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
-use crate::models::collection_model::{CollectionModel, UpdatableCollection};
+use crate::models::collection_model::{CollectionModel, UpdatableCollection, UpdatableCollectionField};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use crate::responses::ApiResponse;
@@ -36,15 +36,34 @@ pub async fn update_collection_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-    let creatable_collection = UpdatableCollection {
+    let existing_collection = state
+        .collection_service
+        .find_by_id(&state.db, collection_id)
+        .await?;
+
+    let mut updatable_collection = UpdatableCollection {
+        id: existing_collection.id,
         name: payload.name,
-        id: collection_id,
+        identifier: existing_collection.identifier,
+        created_at: existing_collection.created_at,
+        created_by: existing_collection.created_by,
         logged_in_username: logged_in_user.email,
+        collection_fields: vec![]
     };
+
+    for payload_collection_field in payload.collection_fields {
+        let creatable_content_field_model = UpdatableCollectionField {
+            name: payload_collection_field.name,
+            identifier: payload_collection_field.identifier,
+            data_type: payload_collection_field.data_type,
+            field_type: payload_collection_field.field_type,
+        };
+        updatable_collection.collection_fields.push(creatable_content_field_model);
+    }
 
     let updated_model = state
         .collection_service
-        .update_collection(&state.db, creatable_collection)
+        .update_collection(&state.db, updatable_collection)
         .await?;
     let response = ApiResponse {
         status: true,
