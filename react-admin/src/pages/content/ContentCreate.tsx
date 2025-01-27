@@ -5,7 +5,7 @@ import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import React, {useState} from "react";
 import {
-    AvoRedContentDataType,
+    ContentFieldDataType,
     AvoRedContentFieldType,
     SaveContentFieldType,
     SaveContentType
@@ -47,13 +47,13 @@ export const ContentCreate = (() => {
 
         _.get(api_response_get_collection_by_identifier, 'data.data.data.collection_fields', []).forEach((collection_field: SaveCollectionFieldType) => {
 
-            var data_type: AvoRedContentDataType
+            var data_type: ContentFieldDataType
             switch (collection_field.data_type) {
                 case CollectionFieldDataType.TEXT:
-                    data_type = AvoRedContentDataType.TEXT
+                    data_type = ContentFieldDataType.TEXT
                     break;
                 default:
-                    data_type = AvoRedContentDataType.TEXT
+                    data_type = ContentFieldDataType.TEXT
             }
 
             var field_type: AvoRedContentFieldType = AvoRedContentFieldType.TEXT;
@@ -122,7 +122,7 @@ export const ContentCreate = (() => {
         append({
             name: '',
             identifier: '',
-            data_type: AvoRedContentDataType.TEXT,
+            data_type: ContentFieldDataType.TEXT,
             field_type: AvoRedContentFieldType.TEXT,
             field_content: {
                 text_value: {

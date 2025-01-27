@@ -20,14 +20,14 @@ export type SaveContentType = {
 export type SaveContentFieldType = {
     name: string;
     identifier: string;
-    data_type: AvoRedContentDataType;
+    data_type: ContentFieldDataType;
     field_type: AvoRedContentFieldType;
     field_content: AvoRedContentFieldContent;
     // field_data?: AvoRedContentFieldData,
 }
 
 
-export enum AvoRedContentDataType {
+export enum ContentFieldDataType {
     TEXT = "Text",
     // INT = "INT",
     // Array_Text = "Array_Text"

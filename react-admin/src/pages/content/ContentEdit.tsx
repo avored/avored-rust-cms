@@ -5,7 +5,7 @@ import InputField from "../../components/InputField"
 import ErrorMessage from "../../components/ErrorMessage"
 import React, { useState } from "react"
 import {
-    AvoRedContentDataType,
+    ContentFieldDataType,
     AvoRedContentFieldType,
     SaveContentFieldType,
     SaveContentType
@@ -87,7 +87,7 @@ export const ContentEdit = (() => {
         append({
             name: '',
             identifier: '',
-            data_type: AvoRedContentDataType.TEXT,
+            data_type: ContentFieldDataType.TEXT,
             field_type: AvoRedContentFieldType.TEXT,
             field_content: {
                 text_value: {

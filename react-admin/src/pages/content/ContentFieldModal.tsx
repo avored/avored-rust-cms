@@ -5,7 +5,7 @@ import {
   UseFormTrigger,
 } from "react-hook-form";
 import {
-  AvoRedContentDataType,
+  ContentFieldDataType,
   AvoRedContentFieldType,
   SaveContentType,
 } from "../../types/content/ContentType";
@@ -42,7 +42,7 @@ export const ContentFieldModal = ({
   const onContentFieldChange = async (
     index: number,
     field_type: AvoRedContentFieldType,
-    data_type: AvoRedContentDataType
+    data_type: ContentFieldDataType
   ) => {
     setValue(`content_fields.${index}.field_type`, field_type);
     setValue(`content_fields.${index}.data_type`, data_type);
@@ -90,7 +90,7 @@ export const ContentFieldModal = ({
                     onContentFieldChange(
                       currentIndex,
                       AvoRedContentFieldType.TEXT,
-                      AvoRedContentDataType.TEXT
+                        ContentFieldDataType.TEXT
                     )
                   }
                   className={`${getValues(`content_fields.${currentIndex}.field_type`) === AvoRedContentFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
