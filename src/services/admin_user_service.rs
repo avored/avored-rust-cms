@@ -339,16 +339,6 @@ impl AdminUserService {
         })
     }
 
-    // pub async fn delete_admin_user(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     admin_user_id: String,
-    // ) -> Result<bool> {
-    //     self.admin_user_repository
-    //         .delete_admin_user(datastore, database_session, admin_user_id)
-    //         .await
-    // }
-
     pub async fn create_admin_user(
         &self,
         (datastore, database_session): &DB,
@@ -387,7 +377,7 @@ impl AdminUserService {
     pub fn get_password_hash_from_raw_password(
         &self,
         raw_password: String,
-        password_salt: &String,
+        password_salt: &str,
     ) -> Result<String> {
         let password = raw_password.as_bytes();
         let salt = SaltString::from_b64(password_salt)?;
