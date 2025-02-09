@@ -3,7 +3,7 @@ use crate::models::role_model::RoleModel;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use utoipa::ToSchema;
-
+use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
@@ -21,6 +21,26 @@ pub struct AdminUserModel {
     pub created_by: String,
     pub updated_by: String,
     pub roles: Vec<RoleModel>,
+}
+
+impl TryFrom<AdminUserModel> for TokenClaims {
+    type Error = Error;
+
+    fn try_from(val: AdminUserModel) -> Result<TokenClaims> {
+        let now = chrono::Utc::now();
+        let iat = now.timestamp() as usize;
+        let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
+        let claims: TokenClaims = TokenClaims {
+            sub: val.clone().id,
+            name: val.clone().full_name,
+            email: val.clone().email,
+            admin_user_model: val,
+            exp,
+            iat,
+        };
+
+        Ok(claims)
+    }
 }
 
 impl TryFrom<Object> for AdminUserModel {

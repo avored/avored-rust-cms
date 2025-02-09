@@ -1,4 +1,4 @@
-use crate::error::Error;
+use crate::error::{Error, Result};
 use crate::models::{BaseModel, Pagination};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
@@ -93,7 +93,7 @@ impl Default for CollectionFieldDataType {
 
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
-    fn try_from(val: Object) -> crate::error::Result<CollectionModel> {
+    fn try_from(val: Object) -> Result<CollectionModel> {
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
@@ -139,7 +139,7 @@ impl TryFrom<Object> for CollectionModel {
 
 impl TryFrom<Object> for CollectionFieldModel {
     type Error = Error;
-    fn try_from(val: Object) -> crate::error::Result<CollectionFieldModel> {
+    fn try_from(val: Object) -> Result<CollectionFieldModel> {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
         let data_type_str = val.get("data_type").get_string()?;

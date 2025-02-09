@@ -2,16 +2,12 @@ use crate::api::handlers::admin_user::request::authenticate_admin_user_request::
 use crate::avored_state::AvoRedState;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::AdminUserModel;
-use crate::models::token_claim_model::TokenClaims;
-use crate::models::validation_error::ErrorResponse;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use axum::extract::State;
-use axum::http::{header, Response};
 use axum::Json;
-use axum_extra::extract::cookie::{Cookie, SameSite};
-use jsonwebtoken::{encode, EncodingKey, Header};
 use serde::{Deserialize, Serialize};
-use serde_json::json;
 use std::sync::Arc;
+use rust_i18n::t;
 use utoipa::ToSchema;
 
 /// Login Admin User
@@ -42,52 +38,33 @@ pub async fn admin_user_login_api_handler(
         return Err(Error::BadRequest(error_response));
     }
 
-    let admin_user_model = state
-        .admin_user_service
-        .find_by_email(&state.db, payload.email.to_owned())
-        .await?;
+    match state.admin_user_service
+        .auth_admin_user(&state.db, payload, &state.config.jwt_secret_key)
+        .await {
+        // Success Response
+        Ok(login_response) => Ok(Json(login_response)),
 
-    let is_password_match: bool = state
-        .admin_user_service
-        .compare_password(payload.password.clone(), admin_user_model.password.clone())?;
+        // matching error and return response
+        Err(e) => match e {
+            Error::ModelNotFound(_e)  |
+            Error::Authentication(_e) => {
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("email"),
+                    message: t!("email_address_password_not_match").to_string(),
+                };
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors
+                };
 
-    if !is_password_match {
-        return Err(Error::Authentication);
+                Err(Error::BadRequest(error_response))
+            },
+
+            _ => Err(Error::Generic("500 Internal Server Error".to_string()))
+        }
     }
-
-    let now = chrono::Utc::now();
-    let iat = now.timestamp() as usize;
-    let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
-    let claims: TokenClaims = TokenClaims {
-        sub: admin_user_model.clone().id,
-        name: admin_user_model.clone().full_name,
-        email: admin_user_model.clone().email,
-        admin_user_model: admin_user_model.clone(),
-        exp,
-        iat,
-    };
-    let token = encode(
-        &Header::default(),
-        &claims,
-        &EncodingKey::from_secret(state.config.jwt_secret_key.as_ref()),
-    )?;
-    let cookie = Cookie::build("token")
-        .path("/")
-        // .max_age(Duration::h)
-        .same_site(SameSite::Lax)
-        .http_only(true);
-    let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
-
-    response
-        .headers_mut()
-        .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-    let response_data = LoginResponseData {
-        status: true,
-        data: token,
-        admin_user: admin_user_model,
-    };
-
-    Ok(Json(response_data))
 }
 
 #[derive(Serialize, ToSchema, Deserialize, Debug)]
