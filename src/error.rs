@@ -21,9 +21,11 @@ pub enum Error {
 
     CreateModel(String),
 
+    ModelNotFound(String),
+
     BadRequest(ErrorResponse),
 
-    Authentication,
+    Authentication(String),
 
     NotFound(String),
 
@@ -123,17 +125,10 @@ impl From<lettre::error::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        // Create a placeholder Axum response.
-        // let mut response = StatusCode::INTERNAL_SERVER_ERROR.into_response();
-        // let mut response = self {
-        //
-        // }
-        // Insert the Error into the response.
-        // response.extensions_mut().insert(response);
 
         match self {
             Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            Error::Authentication => {
+            Error::Authentication(_e) => {
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),

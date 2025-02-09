@@ -4,12 +4,12 @@ import InputField from "../../components/InputField"
 import {SubmitHandler, useForm} from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
 import { useLogin } from "./hooks/useLogin"
-import {useLoginSchema} from "./schemas/login.schema"
 import ErrorMessage from "../../components/ErrorMessage"
 import { useTranslation } from "react-i18next"
 import ILoginPost from "../../types/auth/ILoginPost"
 import {changeLocale} from "../../lib/common"
 import AvoRedButton from "../../components/AvoRedButton";
+import {useLoginSchema} from "../../hooks/auth/useLoginSchema";
 
 function Login() {
     const [t, i18n] = useTranslation("global")

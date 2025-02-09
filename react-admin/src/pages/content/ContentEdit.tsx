@@ -2,11 +2,10 @@ import {useTranslation} from "react-i18next"
 import {ContentSidebar} from "./ContentSidebar"
 import {Link, useParams, useSearchParams} from "react-router-dom"
 import InputField from "../../components/InputField"
-import ErrorMessage from "../../components/ErrorMessage"
 import React, { useState } from "react"
 import {
-    AvoRedContentDataType,
-    AvoRedContentFieldType,
+    ContentFieldDataType,
+    ContentFieldFieldType,
     SaveContentFieldType,
     SaveContentType
 } from "../../types/content/ContentType"
@@ -87,8 +86,8 @@ export const ContentEdit = (() => {
         append({
             name: '',
             identifier: '',
-            data_type: AvoRedContentDataType.TEXT,
-            field_type: AvoRedContentFieldType.TEXT,
+            data_type: ContentFieldDataType.TEXT,
+            field_type: ContentFieldFieldType.TEXT,
             field_content: {
                 text_value: {
                     text_value: ""
@@ -102,7 +101,7 @@ export const ContentEdit = (() => {
 
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
-            case AvoRedContentFieldType.TEXT:
+            case ContentFieldFieldType.TEXT:
                 return (
                     <div className="mb-4">
                         <InputField

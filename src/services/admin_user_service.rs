@@ -2,11 +2,12 @@ use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::Fo
 use crate::error::Error;
 use crate::models::admin_user_model::CreatableAdminUserModel;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
-use crate::models::token_claim_model::LoggedInUser;
+use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 use crate::models::ModelCount;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
+use axum::http::{header as AxumHeader, Response};
 use crate::{
     error::Result,
     models::{
@@ -19,9 +20,14 @@ use crate::{
 };
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use axum_extra::extract::cookie::{Cookie, SameSite};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::message::{header, MultiPart, SinglePart};
 use lettre::{AsyncTransport, Message};
 use rand::distributions::{Alphanumeric, DistString};
+use serde_json::json;
+use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
+use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
@@ -134,6 +140,48 @@ impl AdminUserService {
         Ok(has_permission)
     }
 
+    pub async fn auth_admin_user(
+        &self,
+        (datastore, database_session): &DB,
+        payload: AuthenticateAdminUserRequest,
+        jwt_secret_key: &str
+    ) -> Result<LoginResponseData> {
+
+        let admin_user_model = self.admin_user_repository
+            .find_by_email(datastore, database_session, payload.email)
+            .await?;
+
+        let is_password_match: bool = self
+            .compare_password(payload.password, admin_user_model.password.clone())?;
+
+        if !is_password_match {
+            return Err(Error::Authentication("Email and password did not match".to_string()));
+        }
+
+        let claims: TokenClaims = admin_user_model.clone().try_into()?;
+
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+        )?;
+        let cookie = Cookie::build("token")
+            .path("/")
+            .same_site(SameSite::Lax)
+            .http_only(true);
+        let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
+
+        response
+            .headers_mut()
+            .insert(AxumHeader::SET_COOKIE, cookie.to_string().parse().unwrap());
+        let response_data = LoginResponseData {
+            status: true,
+            data: token,
+            admin_user: admin_user_model,
+        };
+
+        Ok(response_data)
+    }
     pub async fn find_by_email(
         &self,
         (datastore, database_session): &DB,
