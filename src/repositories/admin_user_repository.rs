@@ -25,7 +25,7 @@ impl AdminUserRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        email: String,
+        email: &str,
     ) -> Result<AdminUserModel> {
         let sql =
             "SELECT *, ->admin_user_role->roles.* as roles FROM admin_users WHERE email=$data;";
