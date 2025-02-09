@@ -36,6 +36,7 @@ pub struct AdminUserService {
 }
 
 impl AdminUserService {
+
     pub fn new(
         admin_user_repository: AdminUserRepository,
         role_repository: RoleRepository,
@@ -47,22 +48,26 @@ impl AdminUserService {
             password_reset_repository,
         })
     }
-}
-impl AdminUserService {
+
     pub async fn sent_forgot_password_email(
         &self,
         (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,
         react_admin_url: &str,
-        to_address: String,
+        to_address: &str,
     ) -> Result<bool> {
+
+        let admin_user_model = self
+            .admin_user_repository
+            .find_by_email(datastore, database_session, to_address)
+            .await?;
+
         let from_address = String::from("info@avored.com");
         let email_subject = "Forgot your password?";
-
         let token = Alphanumeric.sample_string(&mut rand::thread_rng(), 22);
 
         let creatable_password_reset_model = CreatablePasswordResetModel {
-            email: to_address.clone(),
+            email: admin_user_model.email,
             token,
         };
 
@@ -147,8 +152,9 @@ impl AdminUserService {
         jwt_secret_key: &str
     ) -> Result<LoginResponseData> {
 
-        let admin_user_model = self.admin_user_repository
-            .find_by_email(datastore, database_session, payload.email)
+        let admin_user_model = self
+            .admin_user_repository
+            .find_by_email(datastore, database_session, &payload.email)
             .await?;
 
         let is_password_match: bool = self
@@ -181,15 +187,6 @@ impl AdminUserService {
         };
 
         Ok(response_data)
-    }
-    pub async fn find_by_email(
-        &self,
-        (datastore, database_session): &DB,
-        email: String,
-    ) -> Result<AdminUserModel> {
-        self.admin_user_repository
-            .find_by_email(datastore, database_session, email)
-            .await
     }
 
     pub async fn find_by_id(
