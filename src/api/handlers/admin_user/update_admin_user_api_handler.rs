@@ -12,7 +12,7 @@ use axum::{
     extract::{Path as AxumPath, State},
     Extension, Json,
 };
-use rand::distributions::Alphanumeric;
+use rand::distr::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use urlencoding::decode_binary;
@@ -44,7 +44,7 @@ pub async fn update_admin_user_api_handler(
 
         match name {
             "image" => {
-                let s: String = rand::thread_rng()
+                let s: String = rand::rng()
                     .sample_iter(&Alphanumeric)
                     .take(32)
                     .map(char::from)

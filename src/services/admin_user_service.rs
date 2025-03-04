@@ -24,7 +24,8 @@ use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::message::{header, MultiPart, SinglePart};
 use lettre::{AsyncTransport, Message};
-use rand::distributions::{Alphanumeric, DistString};
+use rand::distr::Alphanumeric;
+use rand::Rng;
 use serde_json::json;
 use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
 use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
@@ -64,7 +65,11 @@ impl AdminUserService {
 
         let from_address = String::from("info@avored.com");
         let email_subject = "Forgot your password?";
-        let token = Alphanumeric.sample_string(&mut rand::thread_rng(), 22);
+        let token = rand::rng()
+            .sample_iter(&Alphanumeric)
+            .take(22)
+            .map(char::from)
+            .collect();
 
         let creatable_password_reset_model = CreatablePasswordResetModel {
             email: admin_user_model.email,
@@ -376,7 +381,7 @@ impl AdminUserService {
 
     pub fn get_password_hash_from_raw_password(
         &self,
-        raw_password: String,
+        raw_password: &str,
         password_salt: &str,
     ) -> Result<String> {
         let password = raw_password.as_bytes();
@@ -396,5 +401,17 @@ impl AdminUserService {
         self.admin_user_repository
             .count_of_email(datastore, database_session, email)
             .await
+    }
+
+    pub async fn reset_password(
+        &self,
+        password: &str,
+        password_salt: &str,
+    ) -> Result<()> {
+
+        let password_hash =
+            self.get_password_hash_from_raw_password(password, password_salt)?;
+
+        Ok(())
     }
 }
