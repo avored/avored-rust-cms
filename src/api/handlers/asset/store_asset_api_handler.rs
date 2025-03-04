@@ -7,7 +7,7 @@ use crate::models::token_claim_model::LoggedInUser;
 use crate::{avored_state::AvoRedState, error::Result};
 use axum::extract::{Multipart, Query};
 use axum::{extract::State, response::IntoResponse, Extension, Json};
-use rand::distributions::Alphanumeric;
+use rand::distr::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 
@@ -41,7 +41,7 @@ pub async fn store_asset_api_handler(
         let name = field.name().unwrap().to_string();
         match name.as_ref() {
             "file" => {
-                let s: String = rand::thread_rng()
+                let s: String = rand::rng()
                     .sample_iter(&Alphanumeric)
                     .take(16)
                     .map(char::from)

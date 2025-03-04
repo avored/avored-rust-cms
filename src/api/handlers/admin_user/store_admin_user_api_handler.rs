@@ -6,11 +6,11 @@ use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
 use axum::extract::{Multipart, State};
 use axum::{Extension, Json};
-use rand::distributions::Alphanumeric;
 use rand::Rng;
 use serde::Serialize;
 use std::path::Path;
 use std::sync::Arc;
+use rand::distr::Alphanumeric;
 use urlencoding::decode_binary;
 
 pub async fn store_admin_user_api_handler(
@@ -42,7 +42,7 @@ pub async fn store_admin_user_api_handler(
 
         match name {
             "image" => {
-                let s: String = rand::thread_rng()
+                let s: String = rand::rng()
                     .sample_iter(&Alphanumeric)
                     .take(32)
                     .map(char::from)
@@ -126,7 +126,7 @@ pub async fn store_admin_user_api_handler(
 
     let password_hash = state
         .admin_user_service
-        .get_password_hash_from_raw_password(payload.password, &state.config.password_salt)?;
+        .get_password_hash_from_raw_password(&payload.password, &state.config.password_salt)?;
 
     let creatable_admin_user = CreatableAdminUserModel {
         full_name: payload.full_name,
