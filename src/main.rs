@@ -1,39 +1,46 @@
-extern crate core;
-use crate::api::rest_api_routes::rest_api_routes;
-use crate::{avored_state::AvoRedState, error::Result};
-use axum::extract::DefaultBodyLimit;
-use axum::Router;
-use std::{fs::File, path::Path, sync::Arc};
-use tokio::net::TcpListener;
-use tower_http::services::ServeDir;
+use std::env;
+use std::fs::File;
+use std::path::Path;
+use std::sync::Arc;
+use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
+use crate::api::misc_api::MiscApi;
+use crate::avored_state::AvoRedState;
+use crate::error::Error;
+use crate::grpc_misc::misc_server::MiscServer;
 
-const PER_PAGE: i64 = 10;
-mod api;
 mod avored_state;
-mod error;
-mod middleware;
-mod models;
 mod providers;
-mod repositories;
-pub mod responses;
+mod requests;
+mod models;
+mod api;
+mod error;
 mod services;
+
+pub mod grpc_misc {
+    tonic::include_proto!("misc");
+}
 
 rust_i18n::i18n!("resources/locales");
 
-#[tokio::main]
-async fn main() -> Result<()> {
-    init_log();
-    let state = Arc::new(AvoRedState::new().await?);
-    let static_routing_service = ServeDir::new("public");
 
-    let app = Router::new()
-        .merge(rest_api_routes(state.clone()))
-        .nest_service("/public", static_routing_service)
-        .layer(DefaultBodyLimit::max(104857600));
+#[tokio::main]
+async fn main() -> Result<(), Error> {
+    init_log();
+    run_server().await?;
+    // let port = env::var("PORT").unwrap_or("50051".to_string());
+    // let addr = format!("0.0.0.0:{}", port).parse()?;
+    //
+    // let state = Arc::new(AvoRedState::new().await?);
+    //
+    // // region: Grpc Service region
+    // let misc_service = MiscService {state: state.clone()};
+    // let misc_server = MiscServer::new(misc_service);
+    // let misc_grpc = tonic_web::enable(misc_server);
+    // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
     println!(r"    / \__   _____ |  _ \ ___  __| |");
@@ -43,16 +50,34 @@ async fn main() -> Result<()> {
 
     println!();
     println!();
-    println!("Server started: http://0.0.0.0:8081");
+    // println!("Server started: http://0.0.0.0:{}", port);
+    // Server::builder()
+    //     .accept_http1(true)
+    //     .add_service(misc_grpc)
+    //     .serve(addr)
+    //     .await?;
 
-    // region:    --- Start Server
-    // let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
-    let listener = TcpListener::bind("0.0.0.0:8081").await.unwrap();
-    info!("{:<12} - on {:?}\n", "LISTENING", listener.local_addr());
-    axum::serve(listener, app.into_make_service())
+    Ok(())
+}
+
+async fn run_server() -> Result<(), Error> {
+    let port = env::var("PORT").unwrap_or("50051".to_string());
+    let addr = "127.0.0.1:50051".parse().map_err(|_e| Error::Generic(String::from("address parse error")))?;
+    let state = Arc::new(AvoRedState::new().await?);
+
+    // region: Grpc Service region
+    let misc_api = MiscApi {state: state.clone()};
+    let misc_server = MiscServer::new(misc_api);
+    let misc_grpc = tonic_web::enable(misc_server);
+    // endregion: Grpc Service region
+
+    Server::builder()
+        .add_service(misc_grpc)
+        .serve(addr)
         .await
-        .unwrap();
-    // endregion: --- Start Server
+        .map_err(|e| Error::Generic(e.to_string()))?;
+
+    println!("Server started: http://0.0.0.0:{}", port);
 
     Ok(())
 }
@@ -94,5 +119,90 @@ fn init_log() {
         )
         .init();
 
-    tracing::info!(target: "metrics::cool_stuff_count", value = 42);
+    info!(target: "metrics::cool_stuff_count", value = 42);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// use std::fmt;
+// use tonic::{Status};
+//
+// // Define your custom error type
+// #[derive(Debug)]
+// pub enum MyError {
+//     NotFound,
+//     InternalError(String),
+//     TonicError(Status),
+// }
+//
+// // Implement `fmt::Display` for your custom error type
+// impl fmt::Display for MyError {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         match self {
+//             MyError::NotFound => write!(f, "Resource not found"),
+//             MyError::InternalError(msg) => write!(f, "Internal error: {}", msg),
+//             MyError::TonicError(status) => write!(f, "Tonic error: {}", status.message()),
+//         }
+//     }
+// }
+//
+// // Implement `std::error::Error` for your custom error type
+// impl std::error::Error for MyError {}
+//
+// // Implement `From` for converting `tonic::Status` to `MyError`
+// impl From<Status> for MyError {
+//     fn from(status: Status) -> Self {
+//         MyError::TonicError(status)
+//     }
+// }
+//
+// // Implement `From` for converting `String` to `MyError`
+// impl From<String> for MyError {
+//     fn from(s: String) -> Self {
+//         MyError::InternalError(s)
+//     }
+// }
+//
+// // Example function that returns a `Result` and uses the `?` operator
+// async fn example_function() -> Result<(), MyError> {
+//     let some_condition = true;
+//
+//     if some_condition {
+//         // Using the `?` operator with your custom error type
+//         Err(MyError::NotFound)?; // This will return the error early
+//     }
+//
+//     // Simulate a Tonic call that might return an error
+//     let tonic_result: Result<(), Status> = Err(Status::internal("Something went wrong"));
+//
+//     // The `?` operator will use `From<Status>` to convert the error
+//     tonic_result.map_err(|e| e.into())?; // This will convert the tonic error to your custom error
+//
+//     Ok(())
+// }
+//
+// #[tokio::main]
+// async fn main() {
+//     match example_function().await {
+//         Ok(_) => println!("Success!"),
+//         Err(e) => println!("Error: {}", e),
+//     }
+// }

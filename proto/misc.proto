@@ -1,0 +1,15 @@
+syntax = "proto3";
+package misc;
+
+message SetupRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message SetupResponse {
+  bool status = 1;
+}
+
+service Misc {
+  rpc Setup(SetupRequest) returns (SetupResponse);
+}
