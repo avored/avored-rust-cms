@@ -50,8 +50,7 @@ use crate::api::handlers::{
     role::store_role_api_handler::store_role_api_handler,
     role::update_role_api_handler::update_role_api_handler,
     setting::setting_all_api_handler::setting_all_api_handler,
-    setting::update_setting_all_api_handler::update_setting_all_api_handler,
-    setup::post_setup_avored_handler::post_setup_avored_handler,
+    setting::update_setting_all_api_handler::update_setting_all_api_handler
 };
 use crate::avored_state::AvoRedState;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
@@ -215,7 +214,6 @@ fn admin_api_routes(state: Arc<AvoRedState>) -> Router {
             require_jwt_authentication,
         ))
         .route("/api/health-check", get(health_check_api_handler))
-        .route("/api/setup", post(post_setup_avored_handler))
         .route("/api/login", post(admin_user_login_api_handler))
         .route("/api/testing", post(testing_api_handler))
         .route(
@@ -252,7 +250,6 @@ fn get_cors_urls(state: Arc<AvoRedState>) -> CorsLayer {
 #[cfg(test)]
 pub mod tests {
     use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
-    use crate::api::handlers::setup::post_setup_avored_handler::SetupViewModel;
     use crate::avored_state::AvoRedState;
     use crate::error::Result;
     use crate::models::admin_user_model::AdminUserModel;
@@ -284,30 +281,6 @@ pub mod tests {
             .method("POST")
             .body(body)
             .unwrap()
-    }
-
-    pub async fn setup_avored_db(app: Router) {
-        let payload = Body::from(
-            r#"{
-                    "email": "admin@admin.com",
-                    "password": "admin123"
-                }"#,
-        );
-        let expected_response = SetupViewModel { status: true };
-        let response = app
-            .oneshot(send_post_request("/api/setup", payload))
-            .await
-            .unwrap();
-
-        assert_eq!(response.status(), StatusCode::OK);
-
-        let res_b = response.into_body();
-        let body = axum::body::to_bytes(res_b, usize::MAX).await.unwrap();
-
-        let body_str = String::from_utf8(body.to_vec()).expect("Failed to convert body to string");
-
-        let body: SetupViewModel = serde_json::from_str(&body_str).expect("Failed to parse JSON");
-        assert_eq!(body, expected_response);
     }
 
     pub async fn get_login_response(app: Router) -> Result<LoginResponseData> {
