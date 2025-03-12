@@ -2,6 +2,7 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
+use serde::de::Unexpected::Str;
 use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::{
@@ -30,16 +31,15 @@ rust_i18n::i18n!("resources/locales");
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     init_log();
-    run_server().await?;
-    // let port = env::var("PORT").unwrap_or("50051".to_string());
-    // let addr = format!("0.0.0.0:{}", port).parse()?;
-    //
-    // let state = Arc::new(AvoRedState::new().await?);
-    //
-    // // region: Grpc Service region
-    // let misc_service = MiscService {state: state.clone()};
-    // let misc_server = MiscServer::new(misc_service);
-    // let misc_grpc = tonic_web::enable(misc_server);
+
+    let port = env::var("PORT").unwrap_or("50051".to_string());
+    let addr = format!("127.0.0.1:{}", port).parse().map_err(|_e| Error::Generic(String::from("address parse error")))?;
+    let state = Arc::new(AvoRedState::new().await?);
+
+    // region: Grpc Service region
+    let misc_api = MiscApi {state: state.clone()};
+    let misc_server = MiscServer::new(misc_api);
+    let misc_grpc = tonic_web::enable(misc_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -50,34 +50,14 @@ async fn main() -> Result<(), Error> {
 
     println!();
     println!();
-    // println!("Server started: http://0.0.0.0:{}", port);
-    // Server::builder()
-    //     .accept_http1(true)
-    //     .add_service(misc_grpc)
-    //     .serve(addr)
-    //     .await?;
-
-    Ok(())
-}
-
-async fn run_server() -> Result<(), Error> {
-    let port = env::var("PORT").unwrap_or("50051".to_string());
-    let addr = "127.0.0.1:50051".parse().map_err(|_e| Error::Generic(String::from("address parse error")))?;
-    let state = Arc::new(AvoRedState::new().await?);
-
-    // region: Grpc Service region
-    let misc_api = MiscApi {state: state.clone()};
-    let misc_server = MiscServer::new(misc_api);
-    let misc_grpc = tonic_web::enable(misc_server);
-    // endregion: Grpc Service region
-
-    Server::builder()
-        .add_service(misc_grpc)
-        .serve(addr)
-        .await
-        .map_err(|e| Error::Generic(e.to_string()))?;
 
     println!("Server started: http://0.0.0.0:{}", port);
+
+    Server::builder()
+        .accept_http1(true)
+        .add_service(misc_grpc)
+        .serve(addr)
+        .await?;
 
     Ok(())
 }

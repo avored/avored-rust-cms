@@ -1,15 +1,26 @@
 syntax = "proto3";
 package misc;
 
+// Setup API
 message SetupRequest {
   string email = 1;
   string password = 2;
 }
-
 message SetupResponse {
   bool status = 1;
 }
 
+
+// Health Check API
+message HealthCheckRequest {}
+message HealthCheckResponse {
+  bool status = 1;
+}
+
+
+
 service Misc {
   rpc Setup(SetupRequest) returns (SetupResponse);
+
+  rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
 }
