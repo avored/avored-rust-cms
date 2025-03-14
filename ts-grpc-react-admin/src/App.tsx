@@ -1,20 +1,18 @@
 import React from 'react';
-import {useHealthCheckHook} from "./hooks/useHealthCheckHook";
-import {HealthCheckRequest} from "./grpc_generated/misc_pb";
+import {BrowserRouter, Route, Routes} from "react-router-dom";
+import {HomePage} from "./pages/HomePage";
+import {SetupPage} from "./pages/misc/SetupPage";
 
 function App() {
-    const request = new HealthCheckRequest();
-    const {data} = useHealthCheckHook(request);
-
-    console.log('status', data?.getStatus());
 
     return (
-        <h1 className="flex items-center justify-center h-screen w-full">
-            <div className="text-3xl font-semibold text-red-600">
-                Avored rust grpc  cms
-            </div>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<HomePage/>}/>
+                <Route path="/setup" element={<SetupPage/>}/>
+            </Routes>
+        </BrowserRouter>
 
-        </h1>
     );
 }
 
