@@ -15,6 +15,7 @@
     "@hookform/resolvers": "^3.9.0",
     "@tanstack/react-query": "^5.50.1",
     "axios": "^1.7.2",
+    "grpc-web": "^1.5.0",
     "joi": "^17.13.3",
     "lodash": "^4.17.21",
     "preline": "^2.3.0",

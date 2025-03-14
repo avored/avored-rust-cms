@@ -2,7 +2,6 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use serde::de::Unexpected::Str;
 use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::{
