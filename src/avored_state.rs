@@ -1,12 +1,15 @@
 use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
+use crate::repositories::admin_user_repository::AdminUserRepository;
+use crate::services::auth_service::AuthService;
 use crate::services::misc_service::MiscService;
 
 pub struct AvoRedState {
     pub db: DB,
     pub config: AvoRedConfigProvider,
-    pub misc_service: MiscService
+    pub misc_service: MiscService,
+    pub auth_service: AuthService,
 }
 
 impl AvoRedState {
@@ -15,12 +18,16 @@ impl AvoRedState {
         let avored_database_provider =
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
 
+        let admin_user_repository = AdminUserRepository::new();
+
         let misc_service = MiscService::new().await?;
+        let auth_service = AuthService::new(admin_user_repository).await?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
             db: avored_database_provider.db,
-            misc_service
+            misc_service,
+            auth_service
         })
     }
 }

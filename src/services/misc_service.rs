@@ -5,9 +5,7 @@ use crate::error::Result;
 use crate::grpc_misc::{SetupRequest, SetupResponse};
 use crate::providers::avored_database_provider::DB;
 
-pub struct MiscService {
-
-}
+pub struct MiscService {}
 
 impl MiscService {
     pub(crate) async fn setup(

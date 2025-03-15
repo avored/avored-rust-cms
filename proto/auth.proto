@@ -8,6 +8,7 @@ message LoginRequest {
 }
 message LoginResponse {
   bool status = 1;
+  string data = 2;
 }
 
 service Auth {

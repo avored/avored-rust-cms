@@ -82,3 +82,24 @@ impl From<tonic::transport::Error> for Error {
         Error::Generic("500 internal".to_string())
     }
 }
+
+impl From<surrealdb::error::Db> for Error {
+    fn from(actual_error: surrealdb::error::Db) -> Self {
+        error!("Surreal DB error: {actual_error:?}");
+        Error::Generic("500 internal".to_string())
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for Error {
+    fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
+        error!("Json web token error: {actual_error:?}");
+        Error::Generic("500 internal".to_string())
+    }
+}
+
+impl From<argon2::password_hash::Error> for Error {
+    fn from(actual_error: argon2::password_hash::Error) -> Self {
+        error!("argon2 password hash error: {actual_error:?}");
+        Error::Generic("500 internal".to_string())
+    }
+}
