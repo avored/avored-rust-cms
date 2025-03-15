@@ -7,11 +7,12 @@ use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
+use crate::api::auth_api::{AuthApi};
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
+use crate::grpc_auth::auth_server::AuthServer;
 use crate::grpc_misc::misc_server::MiscServer;
-
 mod avored_state;
 mod providers;
 mod requests;
@@ -22,6 +23,10 @@ mod services;
 
 pub mod grpc_misc {
     tonic::include_proto!("misc");
+}
+
+pub mod grpc_auth {
+    tonic::include_proto!("auth");
 }
 
 rust_i18n::i18n!("resources/locales");
@@ -39,6 +44,10 @@ async fn main() -> Result<(), Error> {
     let misc_api = MiscApi {state: state.clone()};
     let misc_server = MiscServer::new(misc_api);
     let misc_grpc = tonic_web::enable(misc_server);
+
+    let auth_api = AuthApi {state: state.clone()};
+    let auth_server = AuthServer::new(auth_api);
+    let auth_grpc = tonic_web::enable(auth_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -55,6 +64,7 @@ async fn main() -> Result<(), Error> {
     Server::builder()
         .accept_http1(true)
         .add_service(misc_grpc)
+        .add_service(auth_grpc)
         .serve(addr)
         .await?;
 
