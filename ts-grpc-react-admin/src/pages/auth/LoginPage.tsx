@@ -9,6 +9,7 @@ import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import {Link} from "react-router-dom";
 import AvoRedButton from "../../components/AvoRedButton";
+import {LoginRequest} from "../../grpc_generated/auth_pb";
 
 export const LoginPage = (() => {
     const [t, i18n] = useTranslation("global")
@@ -29,8 +30,11 @@ export const LoginPage = (() => {
         console.log("changeLocale", target, i18n)
     })
     const submitHandler: SubmitHandler<LoginPostType> = (data) => {
+        var request = new LoginRequest();
+        request.setEmail(data.email)
+        request.setPassword(data.password)
 
-        // mutate(data);
+        mutate(request);
     }
     return(
         <>
@@ -81,6 +85,7 @@ export const LoginPage = (() => {
 
                             <div>
                                 <AvoRedButton
+                                    onClick={handleSubmit}
                                     label={t("sign_in")}
                                     isPending={isPending}
                                     className="bg-red-600 hover:bg-red-500 focus:ring-red-500"

@@ -5,6 +5,10 @@ use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::models::token_claim_model::TokenClaims;
 use jsonwebtoken::{encode, EncodingKey, Header};
+use rust_i18n::t;
+use tonic::Status;
+use crate::error::Error::TonicError;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
@@ -27,7 +31,20 @@ impl AuthService {
             .compare_password(request.password, admin_user_model.password.clone())?;
 
         if !is_password_match {
-            return Err(Error::Generic("Email and password did not match".to_string()));
+            let mut errors: Vec<ErrorMessage> = vec![];
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: t!("email_address_password_not_match").to_string(),
+            };
+
+            errors.push(error_message);
+            let error_response = ErrorResponse {
+                status: false,
+                errors,
+            };
+            let error_string = serde_json::to_string(&error_response)?;
+
+            return Err(TonicError(Status::invalid_argument(error_string)));
         }
 
         let claims: TokenClaims = admin_user_model.clone().try_into()?;

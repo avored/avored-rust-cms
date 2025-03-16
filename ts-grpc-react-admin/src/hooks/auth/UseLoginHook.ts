@@ -1,18 +1,20 @@
-import {MiscClient} from "../../grpc_generated/MiscServiceClientPb";
 import {useMutation} from "@tanstack/react-query";
-import {SetupRequest} from "../../grpc_generated/misc_pb";
 import {useNavigate} from "react-router-dom";
+import {AuthClient} from "../../grpc_generated/AuthServiceClientPb";
+import {LoginRequest} from "../../grpc_generated/auth_pb";
 
 export const UseLoginHook = () => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
-    const client = new MiscClient(backend_url);
+    const client = new AuthClient(backend_url);
     const redirect = useNavigate();
 
     return useMutation({
-        mutationFn: (request: SetupRequest) => client.setup(request),
+        mutationFn: (request: LoginRequest) => client.login(request),
         onSuccess: (res) => {
             if (res.getStatus()) {
-                redirect("/admin/login")
+                let token = res.getData();
+                localStorage.setItem("token", token);
+                redirect("/admin/dashboard");
             }
         }
     })

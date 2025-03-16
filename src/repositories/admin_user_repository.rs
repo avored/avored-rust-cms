@@ -1,5 +1,5 @@
 use std::collections::BTreeMap;
-
+use rust_i18n::t;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{
     AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel,
@@ -10,7 +10,9 @@ use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-
+use tonic::Status;
+use crate::error::Error::TonicError;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use super::into_iter_objects;
 
 #[derive(Clone)]
@@ -36,7 +38,24 @@ impl AdminUserRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic("no record found admin_users".to_string())),
+            None => {
+
+                // Somehow we need to log the user not found error too.
+                // maybe we create a MODEL_NOT_FOUND then handle the error in error.rs
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("email"),
+                    message: t!("email_address_password_not_match").to_string(),
+                };
+
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors,
+                };
+                let error_string = serde_json::to_string(&error_response)?;
+                return Err(TonicError(Status::invalid_argument(error_string)));
+            },
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
