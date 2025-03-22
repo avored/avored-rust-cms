@@ -4,6 +4,7 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::grpc_auth::{LoginRequest, LoginResponse};
 use crate::grpc_auth::auth_server::Auth;
+use crate::models::token_claim_model::TokenClaims;
 
 pub struct AuthApi {
     pub state: Arc<AvoRedState>,
@@ -14,6 +15,8 @@ impl Auth for AuthApi {
     async fn login(&self, request: Request<LoginRequest>) -> Result<Response<LoginResponse>, Status> {
 
         let req = request.into_inner();
+
+
         let (valid, error_messages) = req.validate()?;
 
         if !valid {

@@ -1,5 +1,5 @@
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
-use crate::error::{Result, Error};
+use crate::error::Result;
 use crate::grpc_auth::{LoginRequest, LoginResponse};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;

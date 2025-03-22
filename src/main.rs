@@ -2,6 +2,9 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
+use jsonwebtoken::{decode, DecodingKey, Validation};
+use tonic::{Request, Status};
+use tonic::metadata::MetadataValue;
 use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::{
@@ -13,6 +16,9 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::grpc_auth::auth_server::AuthServer;
 use crate::grpc_misc::misc_server::MiscServer;
+use crate::models::token_claim_model::TokenClaims;
+use crate::models::validation_error::ErrorResponse;
+
 mod avored_state;
 mod providers;
 mod requests;
@@ -114,14 +120,36 @@ fn init_log() {
     info!(target: "metrics::cool_stuff_count", value = 42);
 }
 
+fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
 
+    match req.metadata().get("authorization") {
+        Some(authorization) => {
 
+            let secret = env::var("AVORED_JWT_SECRET").unwrap();
+            let auth_token = authorization.to_str().unwrap();
+            let token = match auth_token.strip_prefix("Bearer ") {
+                Some(auth) => Some(auth.to_owned()),
+                _ => None,
+            }.unwrap_or_default();
 
+            let claims = decode::<TokenClaims>(
+                &token,
+                &DecodingKey::from_secret(secret.as_ref()),
+                &Validation::default(),
+            ).map_err(|_| {
+                Error::Generic(String::from("Token decode error"))
+            })?
+            .claims;
 
+            let current_timestamp = chrono::Utc::now().timestamp() as usize;
+            println!("check auth current: {:?}: token timestamp: {}, condition: {}", current_timestamp, claims.exp, current_timestamp <= claims.exp);
 
-
-
-
+            req.extensions_mut().insert(claims);
+            Ok(req)
+        },
+        _ => Ok(req)
+    }
+}
 
 
 
