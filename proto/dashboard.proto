@@ -1,0 +1,13 @@
+syntax = "proto3";
+package dashboard;
+
+// Dashboard API
+message DashboardRequest {
+}
+message DashboardResponse {
+  bool status = 1;
+}
+
+service Dashboard {
+  rpc Dashboard(DashboardRequest) returns (DashboardResponse);
+}

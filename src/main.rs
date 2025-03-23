@@ -11,18 +11,22 @@ use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
 use crate::api::auth_api::{AuthApi};
+use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::grpc_auth::auth_server::AuthServer;
+use crate::grpc_dashboard::dashboard_server::DashboardServer;
 use crate::grpc_misc::misc_server::MiscServer;
-use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::ErrorResponse;
+use crate::middleware::grpc_auth_middleware::check_auth;
+use crate::models::token_claim_model::TokenClaims;
 
 mod avored_state;
 mod providers;
 mod requests;
 mod models;
+mod middleware;
 mod repositories;
 mod api;
 mod error;
@@ -36,6 +40,10 @@ pub mod grpc_misc {
 
 pub mod grpc_auth {
     tonic::include_proto!("auth");
+}
+
+pub mod grpc_dashboard {
+    tonic::include_proto!("dashboard");
 }
 
 rust_i18n::i18n!("resources/locales");
@@ -57,6 +65,11 @@ async fn main() -> Result<(), Error> {
     let auth_api = AuthApi {state: state.clone()};
     let auth_server = AuthServer::new(auth_api);
     let auth_grpc = tonic_web::enable(auth_server);
+
+
+    let dashboard_api = DashboardApi {state: state.clone()};
+    let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
+    let dashboard_grpc = tonic_web::enable(dashboard_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -74,11 +87,14 @@ async fn main() -> Result<(), Error> {
         .accept_http1(true)
         .add_service(misc_grpc)
         .add_service(auth_grpc)
+        .add_service(dashboard_grpc)
         .serve(addr)
         .await?;
 
     Ok(())
 }
+
+
 
 fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();
@@ -118,37 +134,6 @@ fn init_log() {
         .init();
 
     info!(target: "metrics::cool_stuff_count", value = 42);
-}
-
-fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
-
-    match req.metadata().get("authorization") {
-        Some(authorization) => {
-
-            let secret = env::var("AVORED_JWT_SECRET").unwrap();
-            let auth_token = authorization.to_str().unwrap();
-            let token = match auth_token.strip_prefix("Bearer ") {
-                Some(auth) => Some(auth.to_owned()),
-                _ => None,
-            }.unwrap_or_default();
-
-            let claims = decode::<TokenClaims>(
-                &token,
-                &DecodingKey::from_secret(secret.as_ref()),
-                &Validation::default(),
-            ).map_err(|_| {
-                Error::Generic(String::from("Token decode error"))
-            })?
-            .claims;
-
-            let current_timestamp = chrono::Utc::now().timestamp() as usize;
-            println!("check auth current: {:?}: token timestamp: {}, condition: {}", current_timestamp, claims.exp, current_timestamp <= claims.exp);
-
-            req.extensions_mut().insert(claims);
-            Ok(req)
-        },
-        _ => Ok(req)
-    }
 }
 
 
