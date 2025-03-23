@@ -4,6 +4,7 @@ import {HomePage} from "./pages/HomePage";
 import {SetupPage} from "./pages/misc/SetupPage";
 import {LoginPage} from "./pages/auth/LoginPage";
 import {DashboardPage} from "./pages/DashboardPage";
+import AppLayout from "./layouts/AppLayout";
 
 function App() {
 
@@ -15,7 +16,9 @@ function App() {
                 <Route path="/admin/login" element={<LoginPage />} />
 
 
-                <Route path="/admin/dashboard" element={<DashboardPage />} />
+                <Route element={<AppLayout />}>
+                    <Route path="/admin/dashboard" element={<DashboardPage />} />
+                </Route>
             </Routes>
         </BrowserRouter>
     );
