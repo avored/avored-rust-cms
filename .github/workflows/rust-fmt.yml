@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2.4.0
+      - uses: arduino/setup-protoc@v3
       - uses: actions-rs/toolchain@v1
         with:
           profile: minimal
