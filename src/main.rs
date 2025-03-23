@@ -2,21 +2,30 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
+use jsonwebtoken::{decode, DecodingKey, Validation};
+use tonic::{Request, Status};
+use tonic::metadata::MetadataValue;
 use tonic::transport::Server;
 use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
 use crate::api::auth_api::{AuthApi};
+use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::grpc_auth::auth_server::AuthServer;
+use crate::grpc_dashboard::dashboard_server::DashboardServer;
 use crate::grpc_misc::misc_server::MiscServer;
+use crate::middleware::grpc_auth_middleware::check_auth;
+use crate::models::token_claim_model::TokenClaims;
+
 mod avored_state;
 mod providers;
 mod requests;
 mod models;
+mod middleware;
 mod repositories;
 mod api;
 mod error;
@@ -30,6 +39,10 @@ pub mod grpc_misc {
 
 pub mod grpc_auth {
     tonic::include_proto!("auth");
+}
+
+pub mod grpc_dashboard {
+    tonic::include_proto!("dashboard");
 }
 
 rust_i18n::i18n!("resources/locales");
@@ -51,6 +64,11 @@ async fn main() -> Result<(), Error> {
     let auth_api = AuthApi {state: state.clone()};
     let auth_server = AuthServer::new(auth_api);
     let auth_grpc = tonic_web::enable(auth_server);
+
+
+    let dashboard_api = DashboardApi {state: state.clone()};
+    let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
+    let dashboard_grpc = tonic_web::enable(dashboard_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -68,11 +86,14 @@ async fn main() -> Result<(), Error> {
         .accept_http1(true)
         .add_service(misc_grpc)
         .add_service(auth_grpc)
+        .add_service(dashboard_grpc)
         .serve(addr)
         .await?;
 
     Ok(())
 }
+
+
 
 fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();
