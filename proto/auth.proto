@@ -13,5 +13,4 @@ message LoginResponse {
 
 service Auth {
   rpc Login(LoginRequest) returns (LoginResponse);
-
 }

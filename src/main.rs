@@ -10,11 +10,13 @@ use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
+use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::{AuthApi};
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
+use crate::grpc_admin_user::admin_user_server::AdminUserServer;
 use crate::grpc_auth::auth_server::AuthServer;
 use crate::grpc_dashboard::dashboard_server::DashboardServer;
 use crate::grpc_misc::misc_server::MiscServer;
@@ -46,6 +48,11 @@ pub mod grpc_dashboard {
     tonic::include_proto!("dashboard");
 }
 
+pub mod grpc_admin_user {
+    tonic::include_proto!("admin_user");
+}
+
+
 rust_i18n::i18n!("resources/locales");
 
 
@@ -70,6 +77,10 @@ async fn main() -> Result<(), Error> {
     let dashboard_api = DashboardApi {state: state.clone()};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
     let dashboard_grpc = tonic_web::enable(dashboard_server);
+
+    let admin_user_api = AdminUserApi {state: state.clone()};
+    let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
+    let admin_user_grpc = tonic_web::enable(admin_user_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -88,6 +99,7 @@ async fn main() -> Result<(), Error> {
         .add_service(misc_grpc)
         .add_service(auth_grpc)
         .add_service(dashboard_grpc)
+        .add_service(admin_user_grpc)
         .serve(addr)
         .await?;
 

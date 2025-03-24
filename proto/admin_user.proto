@@ -1,0 +1,14 @@
+syntax = "proto3";
+package admin_user;
+
+// Admin user API
+message AdminUserPaginateRequest {
+}
+message AdminUserPaginateResponse {
+  bool status = 1;
+  string data = 2;
+}
+
+service AdminUser {
+  rpc Paginate(AdminUserPaginateRequest) returns (AdminUserPaginateResponse);
+}
