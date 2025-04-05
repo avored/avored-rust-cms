@@ -11,7 +11,6 @@ pub struct MiscApi {
 #[async_trait]
 impl Misc for MiscApi {
     async fn setup(&self, request: Request<SetupRequest>) -> Result<Response<SetupResponse>, Status> {
-
         let req = request.into_inner();
         let (valid, error_messages) = req.validate()?;
 
@@ -34,10 +33,12 @@ impl Misc for MiscApi {
     }
 
     async fn health_check(&self, _request: Request<HealthCheckRequest>) -> Result<Response<HealthCheckResponse>, Status> {
+        println!("request: {:?}", _request);
         let reply = HealthCheckResponse {
             status: true
         };
 
+        println!("response: {:?}", reply);
         Ok(Response::new(reply))
     }
 }

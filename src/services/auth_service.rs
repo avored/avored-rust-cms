@@ -22,6 +22,7 @@ impl AuthService {
         jwt_secret_key: &str
     ) -> Result<LoginResponse> {
 
+        println!("request: {:?}", request);
     let admin_user_model = self
         .admin_user_repository
         .find_by_email(datastore, database_session, &request.email)
@@ -60,6 +61,7 @@ impl AuthService {
             data: token,
         };
 
+        println!("login response: {:?}", login_response);
         Ok(login_response)
     }
 

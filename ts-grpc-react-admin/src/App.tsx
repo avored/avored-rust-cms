@@ -5,6 +5,7 @@ import {SetupPage} from "./pages/misc/SetupPage";
 import {LoginPage} from "./pages/auth/LoginPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import AppLayout from "./layouts/AppLayout";
+import {AdminUserTablePage} from "./pages/admin_user/AdminUserTablePage";
 
 function App() {
 
@@ -18,6 +19,7 @@ function App() {
 
                 <Route element={<AppLayout />}>
                     <Route path="/admin/dashboard" element={<DashboardPage />} />
+                    <Route path="/admin/admin-user" element={<AdminUserTablePage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

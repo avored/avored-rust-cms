@@ -50,7 +50,7 @@ impl AdminUserService {
         })
     }
 
-    pub async fn sent_forgot_password_email(
+    pub async fn sent_forgot_password_email (
         &self,
         (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,

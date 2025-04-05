@@ -4,8 +4,12 @@ use std::path::Path;
 use std::sync::Arc;
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use tonic::{Request, Status};
-use tonic::metadata::MetadataValue;
+use tonic::codegen::http::header::AUTHORIZATION;
+use tonic::codegen::http::HeaderValue;
+use tonic::metadata::{MetadataValue, GRPC_CONTENT_TYPE};
+use tonic::service::LayerExt;
 use tonic::transport::Server;
+use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
@@ -13,6 +17,7 @@ use tracing_subscriber::{
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::{AuthApi};
 use crate::api::dashboard_api::DashboardApi;
+use crate::api::misc_api;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
@@ -64,23 +69,39 @@ async fn main() -> Result<(), Error> {
     let addr = format!("127.0.0.1:{}", port).parse().map_err(|_e| Error::Generic(String::from("address parse error")))?;
     let state = Arc::new(AvoRedState::new().await?);
 
+    let mut origins: Vec<HeaderValue> = vec![];
+    for origin in &state.config.cors_allowed_app_url {
+        origins.push(HeaderValue::from_str(origin).unwrap());
+    }
+
+    let cors = CorsLayer::new()
+        .allow_origin(origins)
+        .allow_headers(Any)
+        .allow_methods(Any);
+
+
     // region: Grpc Service region
     let misc_api = MiscApi {state: state.clone()};
+    // let misc_server = tower::ServiceBuilder::new()
+    //     .layer(tower_http::cors::CorsLayer::new())
+    //     .layer(tonic_web::GrpcWebLayer::new())
+    //     .into_inner()
+    //     .named_layer(misc_api);
     let misc_server = MiscServer::new(misc_api);
-    let misc_grpc = tonic_web::enable(misc_server);
+    // let misc_grpc = tonic_web::enable(misc_server);
 
     let auth_api = AuthApi {state: state.clone()};
     let auth_server = AuthServer::new(auth_api);
-    let auth_grpc = tonic_web::enable(auth_server);
+    // let auth_grpc = tonic_web::enable(auth_server);
 
 
     let dashboard_api = DashboardApi {state: state.clone()};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
-    let dashboard_grpc = tonic_web::enable(dashboard_server);
+    // let dashboard_grpc = tonic_web::enable(dashboard_server);
 
     let admin_user_api = AdminUserApi {state: state.clone()};
     let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
-    let admin_user_grpc = tonic_web::enable(admin_user_server);
+    // let admin_user_grpc = tonic_web::(admin_user_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -96,10 +117,11 @@ async fn main() -> Result<(), Error> {
 
     Server::builder()
         .accept_http1(true)
-        .add_service(misc_grpc)
-        .add_service(auth_grpc)
-        .add_service(dashboard_grpc)
-        .add_service(admin_user_grpc)
+        .layer(cors)
+        .add_service(misc_server)
+        .add_service(auth_server)
+        .add_service(dashboard_server)
+        .add_service(admin_user_server)
         .serve(addr)
         .await?;
 

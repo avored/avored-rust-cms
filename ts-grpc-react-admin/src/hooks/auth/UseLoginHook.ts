@@ -9,7 +9,9 @@ export const UseLoginHook = () => {
     const redirect = useNavigate();
 
     return useMutation({
-        mutationFn: (request: LoginRequest) => client.login(request),
+        mutationFn: (request: LoginRequest) => {
+            return client.login(request)
+        },
         onSuccess: (res) => {
             if (res.getStatus()) {
                 let token = res.getData();

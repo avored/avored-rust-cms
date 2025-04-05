@@ -14,6 +14,7 @@ pub struct AuthApi {
 impl Auth for AuthApi {
     async fn login(&self, request: Request<LoginRequest>) -> Result<Response<LoginResponse>, Status> {
 
+        println!("request: {:?}", request);
         let req = request.into_inner();
 
 
@@ -31,7 +32,15 @@ impl Auth for AuthApi {
                 &self.state.db,
                 &self.state.config.jwt_secret_key
             ).await {
-                Ok(reply) => Ok(Response::new(reply)),
+                Ok(reply) => {
+                    let res = Response::new(reply);
+
+                    let meta_data = res.metadata();
+                    // meta_data.get_all()
+                    // res.metadata.into_headers()
+
+                    Ok(res)
+                },
                 Err(e) => match e {
                     TonicError(status) => Err(status),
                     _ => Err(Status::internal(e.to_string()))

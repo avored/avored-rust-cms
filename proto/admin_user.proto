@@ -1,12 +1,35 @@
 syntax = "proto3";
 package admin_user;
 
-// Admin user API
+
+
+
+
+
+// Admin user paginate API
 message AdminUserPaginateRequest {
+
 }
+
+
 message AdminUserPaginateResponse {
   bool status = 1;
-  string data = 2;
+
+  message AdminUserPagination {
+    int64 total = 1;
+  }
+
+  message AdminUserModel {
+    string id = 1;
+  }
+
+  message AdminUserPaginateData {
+    AdminUserPagination pagination = 1;
+    repeated AdminUserModel data = 2;
+  }
+
+
+  AdminUserPaginateData data = 2;
 }
 
 service AdminUser {
