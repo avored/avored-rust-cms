@@ -4,30 +4,20 @@ import {useQueryClient} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
 import AvoRedTable from "../../components/AvoRedTable";
 import {UseLAdminUserPaginateHook} from "../../hooks/admin_user/UseLAdminUserPaginateHook";
-import {AdminUserPaginateRequest, AdminUserPaginateResponse} from "../../grpc_generated/admin_user_pb";
-import AdminUserModel = AdminUserPaginateResponse.AdminUserModel;
+import {AdminUserPaginateRequest} from "../../grpc_generated/admin_user_pb";
 import {AdminUserType} from "../../types/admin_user/AdminUserType";
 
 export const AdminUserTablePage = (() => {
-    const queryClient = useQueryClient()
     const [pagination, setPagination] = useState({
         pageIndex: 0, //initial page index
         pageSize: 10, //default page size
     });
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    let request =  new AdminUserPaginateRequest();
+    let request = new AdminUserPaginateRequest();
 
     const admin_user_res = UseLAdminUserPaginateHook(request);
-
-    const adin_users: Array<AdminUserType> = admin_user_res.data?.data?.dataList ?? [];
-    // const admin_users_data: Array<any> =  admin_user_res.data?.data
-    console.log(adin_users)
-
-    // const adminUserTableResponse = useAdminUserTable({
-    //     order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
-    //     page: pagination.pageIndex
-    // })
+    const admin_users: Array<AdminUserType> = admin_user_res.data?.data?.dataList as Array<AdminUserType> ?? [];
 
     const customSorting = (async (sorting: any) => {
         setSorting(sorting)
@@ -35,16 +25,14 @@ export const AdminUserTablePage = (() => {
     const customPagination = (async (pagination: any) => {
         setPagination(pagination)
     })
-    // const adminUsers: any[] = [{
-    //     id: "test"
-    // }]
+
     const [t] = useTranslation("global");
 
     const columnHelper = createColumnHelper<AdminUserType>()
 
     const columns = [
         columnHelper.accessor('id', {
-            cell: info => info.getValue(),
+            cell: info =>  info.getValue(),
             header: t("id")
         }),
         // columnHelper.accessor('full_name', {
@@ -102,7 +90,7 @@ export const AdminUserTablePage = (() => {
     // const adminUserTableResponse = { data : {}};
 
     const table = useReactTable({
-        data: adin_users,
+        data: admin_users,
         columns,
         getCoreRowModel: getCoreRowModel(),
         manualSorting: true,
