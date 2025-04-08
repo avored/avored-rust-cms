@@ -5,6 +5,7 @@ use surrealdb::sql::{Datetime, Object, Value};
 use utoipa::ToSchema;
 use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
+use crate::grpc_admin_user::admin_user_paginate_response::AdminUserModel as GrpcAdminUserModel;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
 pub struct AdminUserModel {
@@ -40,6 +41,22 @@ impl TryFrom<AdminUserModel> for TokenClaims {
         };
 
         Ok(claims)
+    }
+}
+
+impl TryFrom<AdminUserModel> for  GrpcAdminUserModel{
+    type Error = Error;
+
+    fn try_from(val: AdminUserModel) -> Result<GrpcAdminUserModel> {
+        let model: GrpcAdminUserModel = GrpcAdminUserModel {
+            id: val.id,
+            full_name: val.full_name,
+            email: val.email,
+            profile_image: val.profile_image,
+            is_super_admin: val.is_super_admin
+        };
+
+        Ok(model)
     }
 }
 

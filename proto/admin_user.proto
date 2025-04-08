@@ -21,6 +21,10 @@ message AdminUserPaginateResponse {
 
   message AdminUserModel {
     string id = 1;
+    string full_name = 2;
+    string email = 3;
+    string profile_image = 4;
+    bool is_super_admin = 5;
   }
 
   message AdminUserPaginateData {

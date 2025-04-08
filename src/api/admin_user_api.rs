@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 use crate::avored_state::AvoRedState;
+use crate::error::Error::TonicError;
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserModel, AdminUserPaginateData, AdminUserPagination};
 use crate::grpc_admin_user::admin_user_server::AdminUser;
 use crate::grpc_admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse};
@@ -15,31 +16,25 @@ impl AdminUser for AdminUserApi {
         request: Request<AdminUserPaginateRequest>
     ) -> Result<Response<AdminUserPaginateResponse>, Status>
     {
-        let _req = request.into_inner();
+        let req = request.into_inner();
 
-        // let page_data = self
-        //     .state
-        //     .
-        
-        let a_pag = AdminUserPagination {
-            total: 123
-        };
-        let data = vec![AdminUserModel {
-            id: String::from("test from backend change")
-        }];
+        match self.
+            state.
+            admin_user_service.
+            paginate(
+                req,
+                &self.state.db
+            ).await {
+            Ok(reply) => {
+                let res = Response::new(reply);
 
-        let test = AdminUserPaginateData {
-            pagination: Option::from(a_pag),
-            data
-        };
 
-        let reply = AdminUserPaginateResponse {
-            status: true,
-            data: Option::from(test)
-        };
-
-        println!("Admin user paginate: {:?}", &reply);
-
-        Ok(Response::new(reply))
+                Ok(res)
+            },
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string()))
+            }
+        }
     }
 }

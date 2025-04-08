@@ -62,6 +62,18 @@ export namespace AdminUserPaginateResponse {
     getId(): string;
     setId(value: string): AdminUserModel;
 
+    getFullName(): string;
+    setFullName(value: string): AdminUserModel;
+
+    getEmail(): string;
+    setEmail(value: string): AdminUserModel;
+
+    getProfileImage(): string;
+    setProfileImage(value: string): AdminUserModel;
+
+    getIsSuperAdmin(): boolean;
+    setIsSuperAdmin(value: boolean): AdminUserModel;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): AdminUserModel.AsObject;
     static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
@@ -73,6 +85,10 @@ export namespace AdminUserPaginateResponse {
   export namespace AdminUserModel {
     export type AsObject = {
       id: string,
+      fullName: string,
+      email: string,
+      profileImage: string,
+      isSuperAdmin: boolean,
     }
   }
 

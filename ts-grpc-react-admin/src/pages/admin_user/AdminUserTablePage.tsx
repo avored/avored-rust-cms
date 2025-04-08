@@ -17,7 +17,9 @@ export const AdminUserTablePage = (() => {
     let request = new AdminUserPaginateRequest();
 
     const admin_user_res = UseLAdminUserPaginateHook(request);
-    const admin_users: Array<AdminUserType> = admin_user_res.data?.data?.dataList as Array<AdminUserType> ?? [];
+    console.log(admin_user_res.data);
+    const data_list = admin_user_res.data?.data?.dataList ?? [];
+    const admin_users: Array<AdminUserType> = data_list as Array<unknown> as AdminUserType[];
 
     const customSorting = (async (sorting: any) => {
         setSorting(sorting)
@@ -35,19 +37,19 @@ export const AdminUserTablePage = (() => {
             cell: info =>  info.getValue(),
             header: t("id")
         }),
-        // columnHelper.accessor('full_name', {
-        //     cell: info => info.getValue(),
-        //     header: t("full_name")
-        // }),
-        // columnHelper.accessor('email', {
-        //     cell: info => info.getValue(),
-        //     header: t("email"),
-        // }),
-        // columnHelper.accessor('is_super_admin', {
-        //     cell: info => info.getValue(),
-        //     header: t("is_super_admin"),
-        //     enableSorting: false
-        // }),
+        columnHelper.accessor('fullName', {
+            cell: info => info.getValue(),
+            header: t("full_name")
+        }),
+        columnHelper.accessor('email', {
+            cell: info => info.getValue(),
+            header: t("email"),
+        }),
+        columnHelper.accessor('isSuperAdmin', {
+            cell: info => info.getValue() ? t("yes") : t("no"),
+            header: t("is_super_admin"),
+            enableSorting: false
+        }),
         // columnHelper.accessor('roles', {
         //     cell: info => getRoleNames(info.getValue() ?? []),
         //     header: t("role"),

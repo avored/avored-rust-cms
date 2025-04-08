@@ -520,7 +520,11 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.toObject = f
  */
 proto.admin_user.AdminUserPaginateResponse.AdminUserModel.toObject = function(includeInstance, msg) {
   var f, obj = {
-id: jspb.Message.getFieldWithDefault(msg, 1, "")
+id: jspb.Message.getFieldWithDefault(msg, 1, ""),
+fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
+email: jspb.Message.getFieldWithDefault(msg, 3, ""),
+profileImage: jspb.Message.getFieldWithDefault(msg, 4, ""),
+isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
   };
 
   if (includeInstance) {
@@ -561,6 +565,22 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.deserializeBinaryFromR
       var value = /** @type {string} */ (reader.readString());
       msg.setId(value);
       break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setFullName(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setEmail(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setProfileImage(value);
+      break;
+    case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsSuperAdmin(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -597,6 +617,34 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.serializeBinaryToWrite
       f
     );
   }
+  f = message.getFullName();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getEmail();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getProfileImage();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
+  f = message.getIsSuperAdmin();
+  if (f) {
+    writer.writeBool(
+      5,
+      f
+    );
+  }
 };
 
 
@@ -615,6 +663,78 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getId = func
  */
 proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setId = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional string full_name = 2;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getFullName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setFullName = function(value) {
+  return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string email = 3;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getEmail = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setEmail = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string profile_image = 4;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getProfileImage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setProfileImage = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * optional bool is_super_admin = 5;
+ * @return {boolean}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getIsSuperAdmin = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setIsSuperAdmin = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 5, value);
 };
 
 

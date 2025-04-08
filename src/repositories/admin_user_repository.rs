@@ -85,135 +85,135 @@ impl AdminUserRepository {
         admin_user_model
     }
 
-    pub async fn create_admin_user(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        creatable_admin_user_model: CreatableAdminUserModel,
-    ) -> Result<AdminUserModel> {
-        let sql = "CREATE admin_users CONTENT $data";
+    // pub async fn create_admin_user(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     creatable_admin_user_model: CreatableAdminUserModel,
+    // ) -> Result<AdminUserModel> {
+    //     let sql = "CREATE admin_users CONTENT $data";
+    //
+    //     let data: BTreeMap<String, Value> = [
+    //         (
+    //             "full_name".into(),
+    //             creatable_admin_user_model.full_name.into(),
+    //         ),
+    //         ("email".into(), creatable_admin_user_model.email.into()),
+    //         (
+    //             "password".into(),
+    //             creatable_admin_user_model.password.into(),
+    //         ),
+    //         (
+    //             "profile_image".into(),
+    //             creatable_admin_user_model.profile_image.into(),
+    //         ),
+    //         (
+    //             "is_super_admin".into(),
+    //             creatable_admin_user_model.is_super_admin.into(),
+    //         ),
+    //         (
+    //             "created_by".into(),
+    //             creatable_admin_user_model.logged_in_username.clone().into(),
+    //         ),
+    //         (
+    //             "updated_by".into(),
+    //             creatable_admin_user_model.logged_in_username.into(),
+    //         ),
+    //         ("created_at".into(), Datetime::default().into()),
+    //         ("updated_at".into(), Datetime::default().into()),
+    //     ]
+    //     .into();
+    //     let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+    //
+    //     let ress = datastore.execute(sql, database_session, Some(vars)).await?;
+    //
+    //     let result_object_option = into_iter_objects(ress)?.next();
+    //     let result_object = match result_object_option {
+    //         Some(object) => object,
+    //         None => Err(Error::Generic("no record found".to_string())),
+    //     };
+    //     let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
+    //
+    //     admin_user_model
+    // }
 
-        let data: BTreeMap<String, Value> = [
-            (
-                "full_name".into(),
-                creatable_admin_user_model.full_name.into(),
-            ),
-            ("email".into(), creatable_admin_user_model.email.into()),
-            (
-                "password".into(),
-                creatable_admin_user_model.password.into(),
-            ),
-            (
-                "profile_image".into(),
-                creatable_admin_user_model.profile_image.into(),
-            ),
-            (
-                "is_super_admin".into(),
-                creatable_admin_user_model.is_super_admin.into(),
-            ),
-            (
-                "created_by".into(),
-                creatable_admin_user_model.logged_in_username.clone().into(),
-            ),
-            (
-                "updated_by".into(),
-                creatable_admin_user_model.logged_in_username.into(),
-            ),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-        .into();
-        let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
+    // pub async fn update_admin_user(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     updatable_admin_user: UpdatableAdminUserModel,
+    // ) -> Result<AdminUserModel> {
+    //     let sql = "
+    //         UPDATE type::thing($table, $id) MERGE {
+    //             full_name: $full_name,
+    //             profile_image: $profile_image,
+    //             is_super_admin: $is_super_admin,
+    //             updated_by: $logged_in_user_name,
+    //             updated_at: time::now()
+    //         };";
+    //
+    //     let vars = BTreeMap::from([
+    //         ("full_name".into(), updatable_admin_user.full_name.into()),
+    //         (
+    //             "logged_in_user_name".into(),
+    //             updatable_admin_user.logged_in_username.into(),
+    //         ),
+    //         (
+    //             "profile_image".into(),
+    //             updatable_admin_user.profile_image.into(),
+    //         ),
+    //         (
+    //             "is_super_admin".into(),
+    //             updatable_admin_user.is_super_admin.into(),
+    //         ),
+    //         ("id".into(), updatable_admin_user.id.into()),
+    //         ("table".into(), "admin_users".into()),
+    //     ]);
+    //
+    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    //
+    //     let result_object_option = into_iter_objects(responses)?.next();
+    //     let result_object = match result_object_option {
+    //         Some(object) => object,
+    //         None => Err(Error::Generic("no record found".to_string())),
+    //     };
+    //     let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
+    //
+    //     admin_user_model
+    // }
 
-        let ress = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        let result_object_option = into_iter_objects(ress)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => Err(Error::Generic("no record found".to_string())),
-        };
-        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
-
-        admin_user_model
-    }
-
-    pub async fn update_admin_user(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        updatable_admin_user: UpdatableAdminUserModel,
-    ) -> Result<AdminUserModel> {
-        let sql = "
-            UPDATE type::thing($table, $id) MERGE {
-                full_name: $full_name,
-                profile_image: $profile_image,
-                is_super_admin: $is_super_admin,
-                updated_by: $logged_in_user_name,
-                updated_at: time::now()
-            };";
-
-        let vars = BTreeMap::from([
-            ("full_name".into(), updatable_admin_user.full_name.into()),
-            (
-                "logged_in_user_name".into(),
-                updatable_admin_user.logged_in_username.into(),
-            ),
-            (
-                "profile_image".into(),
-                updatable_admin_user.profile_image.into(),
-            ),
-            (
-                "is_super_admin".into(),
-                updatable_admin_user.is_super_admin.into(),
-            ),
-            ("id".into(), updatable_admin_user.id.into()),
-            ("table".into(), "admin_users".into()),
-        ]);
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        let result_object_option = into_iter_objects(responses)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => Err(Error::Generic("no record found".to_string())),
-        };
-        let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
-
-        admin_user_model
-    }
-
-    pub async fn update_password_by_email(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        new_password: String,
-        email: String,
-    ) -> Result<bool> {
-        let sql = "
-            UPDATE type::table($table) SET password=$password WHERE email=$email";
-
-        let vars = BTreeMap::from([
-            ("password".into(), new_password.into()),
-            ("email".into(), email.clone().into()),
-            ("table".into(), "admin_users".into()),
-        ]);
-
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        let result_object_option = into_iter_objects(responses)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => Err(Error::Generic("no record found".to_string())),
-        };
-
-        if result_object.is_ok() {
-            return Ok(true);
-        }
-
-        Err(Error::Generic(format!(
-            "issue while updating password by email: {email}"
-        )))
-    }
+    // pub async fn update_password_by_email(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     new_password: String,
+    //     email: String,
+    // ) -> Result<bool> {
+    //     let sql = "
+    //         UPDATE type::table($table) SET password=$password WHERE email=$email";
+    //
+    //     let vars = BTreeMap::from([
+    //         ("password".into(), new_password.into()),
+    //         ("email".into(), email.clone().into()),
+    //         ("table".into(), "admin_users".into()),
+    //     ]);
+    //
+    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    //
+    //     let result_object_option = into_iter_objects(responses)?.next();
+    //     let result_object = match result_object_option {
+    //         Some(object) => object,
+    //         None => Err(Error::Generic("no record found".to_string())),
+    //     };
+    //
+    //     if result_object.is_ok() {
+    //         return Ok(true);
+    //     }
+    //
+    //     Err(Error::Generic(format!(
+    //         "issue while updating password by email: {email}"
+    //     )))
+    // }
 
     // pub async fn delete_admin_user(
     //     &self,
