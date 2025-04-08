@@ -28,7 +28,6 @@ impl AdminUser for AdminUserApi {
             Ok(reply) => {
                 let res = Response::new(reply);
 
-
                 Ok(res)
             },
             Err(e) => match e {

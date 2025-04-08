@@ -21,6 +21,8 @@ var global =
     (function () { return this; }).call(null) ||
     Function('return this')();
 
+var google_protobuf_timestamp_pb = require('google-protobuf/google/protobuf/timestamp_pb.js');
+goog.object.extend(proto, google_protobuf_timestamp_pb);
 goog.exportSymbol('proto.admin_user.AdminUserPaginateRequest', null, global);
 goog.exportSymbol('proto.admin_user.AdminUserPaginateResponse', null, global);
 goog.exportSymbol('proto.admin_user.AdminUserPaginateResponse.AdminUserModel', null, global);
@@ -524,7 +526,11 @@ id: jspb.Message.getFieldWithDefault(msg, 1, ""),
 fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
 email: jspb.Message.getFieldWithDefault(msg, 3, ""),
 profileImage: jspb.Message.getFieldWithDefault(msg, 4, ""),
-isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+createdAt: (f = msg.getCreatedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+updatedAt: (f = msg.getUpdatedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
+createdBy: jspb.Message.getFieldWithDefault(msg, 8, ""),
+updatedBy: jspb.Message.getFieldWithDefault(msg, 9, "")
   };
 
   if (includeInstance) {
@@ -580,6 +586,24 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.deserializeBinaryFromR
     case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsSuperAdmin(value);
+      break;
+    case 6:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setCreatedAt(value);
+      break;
+    case 7:
+      var value = new google_protobuf_timestamp_pb.Timestamp;
+      reader.readMessage(value,google_protobuf_timestamp_pb.Timestamp.deserializeBinaryFromReader);
+      msg.setUpdatedAt(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setCreatedBy(value);
+      break;
+    case 9:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setUpdatedBy(value);
       break;
     default:
       reader.skipField();
@@ -642,6 +666,36 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.serializeBinaryToWrite
   if (f) {
     writer.writeBool(
       5,
+      f
+    );
+  }
+  f = message.getCreatedAt();
+  if (f != null) {
+    writer.writeMessage(
+      6,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getUpdatedAt();
+  if (f != null) {
+    writer.writeMessage(
+      7,
+      f,
+      google_protobuf_timestamp_pb.Timestamp.serializeBinaryToWriter
+    );
+  }
+  f = message.getCreatedBy();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
+      f
+    );
+  }
+  f = message.getUpdatedBy();
+  if (f.length > 0) {
+    writer.writeString(
+      9,
       f
     );
   }
@@ -735,6 +789,116 @@ proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getIsSuperAd
  */
 proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setIsSuperAdmin = function(value) {
   return jspb.Message.setProto3BooleanField(this, 5, value);
+};
+
+
+/**
+ * optional google.protobuf.Timestamp created_at = 6;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getCreatedAt = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 6));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+*/
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setCreatedAt = function(value) {
+  return jspb.Message.setWrapperField(this, 6, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.clearCreatedAt = function() {
+  return this.setCreatedAt(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.hasCreatedAt = function() {
+  return jspb.Message.getField(this, 6) != null;
+};
+
+
+/**
+ * optional google.protobuf.Timestamp updated_at = 7;
+ * @return {?proto.google.protobuf.Timestamp}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getUpdatedAt = function() {
+  return /** @type{?proto.google.protobuf.Timestamp} */ (
+    jspb.Message.getWrapperField(this, google_protobuf_timestamp_pb.Timestamp, 7));
+};
+
+
+/**
+ * @param {?proto.google.protobuf.Timestamp|undefined} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+*/
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setUpdatedAt = function(value) {
+  return jspb.Message.setWrapperField(this, 7, value);
+};
+
+
+/**
+ * Clears the message field making it undefined.
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.clearUpdatedAt = function() {
+  return this.setUpdatedAt(undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.hasUpdatedAt = function() {
+  return jspb.Message.getField(this, 7) != null;
+};
+
+
+/**
+ * optional string created_by = 8;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getCreatedBy = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setCreatedBy = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
+};
+
+
+/**
+ * optional string updated_by = 9;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.getUpdatedBy = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 9, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateResponse.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserPaginateResponse.AdminUserModel.prototype.setUpdatedBy = function(value) {
+  return jspb.Message.setProto3StringField(this, 9, value);
 };
 
 

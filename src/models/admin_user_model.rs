@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use crate::models::role_model::RoleModel;
 use serde::{Deserialize, Serialize};
@@ -48,12 +50,24 @@ impl TryFrom<AdminUserModel> for  GrpcAdminUserModel{
     type Error = Error;
 
     fn try_from(val: AdminUserModel) -> Result<GrpcAdminUserModel> {
+        let chrono_utc_created_at= val.created_at.to_utc();
+        let system_time_created_at = SystemTime::from(chrono_utc_created_at);
+        let created_at = Timestamp::from(system_time_created_at);
+
+        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
+        let updated_at = Timestamp::from(system_time_updated_at);
+
         let model: GrpcAdminUserModel = GrpcAdminUserModel {
             id: val.id,
             full_name: val.full_name,
             email: val.email,
             profile_image: val.profile_image,
-            is_super_admin: val.is_super_admin
+            is_super_admin: val.is_super_admin,
+            created_at: Option::from(created_at),
+            updated_at: Option::from(updated_at),
+            created_by: val.created_by,
+            updated_by: val.updated_by,
         };
 
         Ok(model)

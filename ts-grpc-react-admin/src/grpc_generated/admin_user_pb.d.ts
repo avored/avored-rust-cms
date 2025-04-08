@@ -1,5 +1,6 @@
 import * as jspb from 'google-protobuf'
 
+import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb'; // proto import: "google/protobuf/timestamp.proto"
 
 
 export class AdminUserPaginateRequest extends jspb.Message {
@@ -74,6 +75,22 @@ export namespace AdminUserPaginateResponse {
     getIsSuperAdmin(): boolean;
     setIsSuperAdmin(value: boolean): AdminUserModel;
 
+    getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+    setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
+    hasCreatedAt(): boolean;
+    clearCreatedAt(): AdminUserModel;
+
+    getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+    setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
+    hasUpdatedAt(): boolean;
+    clearUpdatedAt(): AdminUserModel;
+
+    getCreatedBy(): string;
+    setCreatedBy(value: string): AdminUserModel;
+
+    getUpdatedBy(): string;
+    setUpdatedBy(value: string): AdminUserModel;
+
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): AdminUserModel.AsObject;
     static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
@@ -89,6 +106,10 @@ export namespace AdminUserPaginateResponse {
       email: string,
       profileImage: string,
       isSuperAdmin: boolean,
+      createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+      updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+      createdBy: string,
+      updatedBy: string,
     }
   }
 

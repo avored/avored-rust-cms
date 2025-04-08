@@ -2,7 +2,7 @@ syntax = "proto3";
 package admin_user;
 
 
-
+import "google/protobuf/timestamp.proto";
 
 
 
@@ -25,6 +25,10 @@ message AdminUserPaginateResponse {
     string email = 3;
     string profile_image = 4;
     bool is_super_admin = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+    string created_by = 8;
+    string updated_by = 9;
   }
 
   message AdminUserPaginateData {
