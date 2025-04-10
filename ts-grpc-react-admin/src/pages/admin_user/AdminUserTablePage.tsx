@@ -1,11 +1,13 @@
 import {useState} from "react";
 import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
-import {useQueryClient} from "@tanstack/react-query";
 import {useTranslation} from "react-i18next";
 import AvoRedTable from "../../components/AvoRedTable";
 import {UseLAdminUserPaginateHook} from "../../hooks/admin_user/UseLAdminUserPaginateHook";
 import {AdminUserPaginateRequest} from "../../grpc_generated/admin_user_pb";
 import {AdminUserType} from "../../types/admin_user/AdminUserType";
+import {GrpcTimeStamp} from "../../types/common/common";
+import { DateTime } from 'luxon'
+import {Link} from "react-router-dom";
 
 export const AdminUserTablePage = (() => {
     const [pagination, setPagination] = useState({
@@ -29,6 +31,11 @@ export const AdminUserTablePage = (() => {
     })
 
     const [t] = useTranslation("global");
+
+    const getFormattedDate = (date: GrpcTimeStamp) => {
+        const date_object = DateTime.fromSeconds(date.seconds);
+        return date_object.toFormat("dd-MM-yyyy HH:mm:ss")
+    }
 
     const columnHelper = createColumnHelper<AdminUserType>()
 
@@ -55,38 +62,38 @@ export const AdminUserTablePage = (() => {
         //     header: t("role"),
         //     enableSorting: false,
         // }),
-        // columnHelper.accessor('created_at', {
-        //     id: "created_at",
-        //     cell: info => getFormattedDate(info.getValue()),
-        //     header: t("created_at")
-        // }),
-        // columnHelper.accessor('created_by', {
-        //     cell: info => info.getValue(),
-        //     header: t("created_by")
-        // }),
-        // columnHelper.accessor('updated_at', {
-        //     cell: info => getFormattedDate(info.getValue()),
-        //     header: t("updated_at")
-        // }),
-        // columnHelper.accessor('updated_by', {
-        //     cell: info => info.getValue(),
-        //     header: t("updated_by")
-        // }),
-        // columnHelper.accessor('action', {
-        //     cell: info => {
-        //         return (
-        //             <Link
-        //                 className="font-medium text-primary-600 hover:text-primary-800"
-        //                 to={`/admin/admin-user-edit/${info.row.original.id}`}
-        //             >
-        //                 {t("edit")}
-        //             </Link>
-        //         )
-        //     },
-        //     header: t("action"),
-        //     enableHiding: false,
-        //     enableSorting: false
-        // }),
+        columnHelper.accessor('createdAt', {
+            id: "createdAt",
+            cell: info => getFormattedDate(info.getValue()),
+            header: t("created_at")
+        }),
+        columnHelper.accessor('createdBy', {
+            cell: info => info.getValue(),
+            header: t("created_by")
+        }),
+        columnHelper.accessor('updatedAt', {
+            cell: info => getFormattedDate(info.getValue()),
+            header: t("updated_at")
+        }),
+        columnHelper.accessor('updatedBy', {
+            cell: info => info.getValue(),
+            header: t("updated_by")
+        }),
+        columnHelper.accessor('action', {
+            cell: info => {
+                return (
+                    <Link
+                        className="font-medium text-primary-600 hover:text-primary-800"
+                        to={`/admin/admin-user-edit/${info.row.original.id}`}
+                    >
+                        {t("edit")}
+                    </Link>
+                )
+            },
+            header: t("action"),
+            enableHiding: false,
+            enableSorting: false
+        }),
     ];
 
     // const adminUserTableResponse = { data : {}};
@@ -106,9 +113,10 @@ export const AdminUserTablePage = (() => {
         rowCount: 1,
         initialState: {
             columnVisibility: {
-                created_at: false,
-                created_by: false,
-                is_super_admin: false
+                createdAt: false,
+                createdBy: false,
+                updatedAt: false,
+                updatedBy: false,
             },
             pagination
         }
