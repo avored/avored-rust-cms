@@ -82,5 +82,48 @@ export class AdminUserClient {
     this.methodDescriptorPaginate);
   }
 
+  methodDescriptorStoreAdminUser = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/StoreAdminUser',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.StoreAdminUserRequest,
+    admin_user_pb.StoreAdminUserResponse,
+    (request: admin_user_pb.StoreAdminUserRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.StoreAdminUserResponse.deserializeBinary
+  );
+
+  storeAdminUser(
+    request: admin_user_pb.StoreAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.StoreAdminUserResponse>;
+
+  storeAdminUser(
+    request: admin_user_pb.StoreAdminUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.StoreAdminUserResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.StoreAdminUserResponse>;
+
+  storeAdminUser(
+    request: admin_user_pb.StoreAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.StoreAdminUserResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/StoreAdminUser',
+        request,
+        metadata || {},
+        this.methodDescriptorStoreAdminUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/StoreAdminUser',
+    request,
+    metadata || {},
+    this.methodDescriptorStoreAdminUser);
+  }
+
 }
 

@@ -5,12 +5,23 @@ package admin_user;
 import "google/protobuf/timestamp.proto";
 
 
+message AdminUserModel {
+  string id = 1;
+  string full_name = 2;
+  string email = 3;
+  string profile_image = 4;
+  bool is_super_admin = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  string created_by = 8;
+  string updated_by = 9;
+}
+
 
 // Admin user paginate API
 message AdminUserPaginateRequest {
 
 }
-
 
 message AdminUserPaginateResponse {
   bool status = 1;
@@ -19,17 +30,7 @@ message AdminUserPaginateResponse {
     int64 total = 1;
   }
 
-  message AdminUserModel {
-    string id = 1;
-    string full_name = 2;
-    string email = 3;
-    string profile_image = 4;
-    bool is_super_admin = 5;
-    google.protobuf.Timestamp created_at = 6;
-    google.protobuf.Timestamp updated_at = 7;
-    string created_by = 8;
-    string updated_by = 9;
-  }
+
 
   message AdminUserPaginateData {
     AdminUserPagination pagination = 1;
@@ -40,6 +41,20 @@ message AdminUserPaginateResponse {
   AdminUserPaginateData data = 2;
 }
 
+message StoreAdminUserRequest {
+    string full_name = 1;
+    string email = 2;
+    string password = 3;
+    string confirm_password = 4;
+    bool is_super_admin = 5;
+}
+
+message StoreAdminUserResponse {
+  bool status = 1;
+  AdminUserModel data = 2;
+}
+
 service AdminUser {
   rpc Paginate(AdminUserPaginateRequest) returns (AdminUserPaginateResponse);
+  rpc StoreAdminUser(StoreAdminUserRequest) returns(StoreAdminUserResponse);
 }

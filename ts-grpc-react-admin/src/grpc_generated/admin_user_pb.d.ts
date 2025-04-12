@@ -3,6 +3,60 @@ import * as jspb from 'google-protobuf'
 import * as google_protobuf_timestamp_pb from 'google-protobuf/google/protobuf/timestamp_pb'; // proto import: "google/protobuf/timestamp.proto"
 
 
+export class AdminUserModel extends jspb.Message {
+  getId(): string;
+  setId(value: string): AdminUserModel;
+
+  getFullName(): string;
+  setFullName(value: string): AdminUserModel;
+
+  getEmail(): string;
+  setEmail(value: string): AdminUserModel;
+
+  getProfileImage(): string;
+  setProfileImage(value: string): AdminUserModel;
+
+  getIsSuperAdmin(): boolean;
+  setIsSuperAdmin(value: boolean): AdminUserModel;
+
+  getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): AdminUserModel;
+
+  getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): AdminUserModel;
+
+  getCreatedBy(): string;
+  setCreatedBy(value: string): AdminUserModel;
+
+  getUpdatedBy(): string;
+  setUpdatedBy(value: string): AdminUserModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): AdminUserModel.AsObject;
+  static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
+  static serializeBinaryToWriter(message: AdminUserModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): AdminUserModel;
+  static deserializeBinaryFromReader(message: AdminUserModel, reader: jspb.BinaryReader): AdminUserModel;
+}
+
+export namespace AdminUserModel {
+  export type AsObject = {
+    id: string,
+    fullName: string,
+    email: string,
+    profileImage: string,
+    isSuperAdmin: boolean,
+    createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    createdBy: string,
+    updatedBy: string,
+  }
+}
+
 export class AdminUserPaginateRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserPaginateRequest.AsObject;
@@ -59,71 +113,16 @@ export namespace AdminUserPaginateResponse {
   }
 
 
-  export class AdminUserModel extends jspb.Message {
-    getId(): string;
-    setId(value: string): AdminUserModel;
-
-    getFullName(): string;
-    setFullName(value: string): AdminUserModel;
-
-    getEmail(): string;
-    setEmail(value: string): AdminUserModel;
-
-    getProfileImage(): string;
-    setProfileImage(value: string): AdminUserModel;
-
-    getIsSuperAdmin(): boolean;
-    setIsSuperAdmin(value: boolean): AdminUserModel;
-
-    getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
-    setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
-    hasCreatedAt(): boolean;
-    clearCreatedAt(): AdminUserModel;
-
-    getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
-    setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): AdminUserModel;
-    hasUpdatedAt(): boolean;
-    clearUpdatedAt(): AdminUserModel;
-
-    getCreatedBy(): string;
-    setCreatedBy(value: string): AdminUserModel;
-
-    getUpdatedBy(): string;
-    setUpdatedBy(value: string): AdminUserModel;
-
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): AdminUserModel.AsObject;
-    static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
-    static serializeBinaryToWriter(message: AdminUserModel, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): AdminUserModel;
-    static deserializeBinaryFromReader(message: AdminUserModel, reader: jspb.BinaryReader): AdminUserModel;
-  }
-
-  export namespace AdminUserModel {
-    export type AsObject = {
-      id: string,
-      fullName: string,
-      email: string,
-      profileImage: string,
-      isSuperAdmin: boolean,
-      createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-      updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
-      createdBy: string,
-      updatedBy: string,
-    }
-  }
-
-
   export class AdminUserPaginateData extends jspb.Message {
     getPagination(): AdminUserPaginateResponse.AdminUserPagination | undefined;
     setPagination(value?: AdminUserPaginateResponse.AdminUserPagination): AdminUserPaginateData;
     hasPagination(): boolean;
     clearPagination(): AdminUserPaginateData;
 
-    getDataList(): Array<AdminUserPaginateResponse.AdminUserModel>;
-    setDataList(value: Array<AdminUserPaginateResponse.AdminUserModel>): AdminUserPaginateData;
+    getDataList(): Array<AdminUserModel>;
+    setDataList(value: Array<AdminUserModel>): AdminUserPaginateData;
     clearDataList(): AdminUserPaginateData;
-    addData(value?: AdminUserPaginateResponse.AdminUserModel, index?: number): AdminUserPaginateResponse.AdminUserModel;
+    addData(value?: AdminUserModel, index?: number): AdminUserModel;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): AdminUserPaginateData.AsObject;
@@ -136,9 +135,67 @@ export namespace AdminUserPaginateResponse {
   export namespace AdminUserPaginateData {
     export type AsObject = {
       pagination?: AdminUserPaginateResponse.AdminUserPagination.AsObject,
-      dataList: Array<AdminUserPaginateResponse.AdminUserModel.AsObject>,
+      dataList: Array<AdminUserModel.AsObject>,
     }
   }
 
+}
+
+export class StoreAdminUserRequest extends jspb.Message {
+  getFullName(): string;
+  setFullName(value: string): StoreAdminUserRequest;
+
+  getEmail(): string;
+  setEmail(value: string): StoreAdminUserRequest;
+
+  getPassword(): string;
+  setPassword(value: string): StoreAdminUserRequest;
+
+  getConfirmPassword(): string;
+  setConfirmPassword(value: string): StoreAdminUserRequest;
+
+  getIsSuperAdmin(): boolean;
+  setIsSuperAdmin(value: boolean): StoreAdminUserRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreAdminUserRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreAdminUserRequest): StoreAdminUserRequest.AsObject;
+  static serializeBinaryToWriter(message: StoreAdminUserRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreAdminUserRequest;
+  static deserializeBinaryFromReader(message: StoreAdminUserRequest, reader: jspb.BinaryReader): StoreAdminUserRequest;
+}
+
+export namespace StoreAdminUserRequest {
+  export type AsObject = {
+    fullName: string,
+    email: string,
+    password: string,
+    confirmPassword: string,
+    isSuperAdmin: boolean,
+  }
+}
+
+export class StoreAdminUserResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): StoreAdminUserResponse;
+
+  getData(): AdminUserModel | undefined;
+  setData(value?: AdminUserModel): StoreAdminUserResponse;
+  hasData(): boolean;
+  clearData(): StoreAdminUserResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreAdminUserResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreAdminUserResponse): StoreAdminUserResponse.AsObject;
+  static serializeBinaryToWriter(message: StoreAdminUserResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreAdminUserResponse;
+  static deserializeBinaryFromReader(message: StoreAdminUserResponse, reader: jspb.BinaryReader): StoreAdminUserResponse;
+}
+
+export namespace StoreAdminUserResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: AdminUserModel.AsObject,
+  }
 }
 

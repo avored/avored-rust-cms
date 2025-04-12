@@ -7,7 +7,7 @@ use surrealdb::sql::{Datetime, Object, Value};
 use utoipa::ToSchema;
 use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
-use crate::grpc_admin_user::admin_user_paginate_response::AdminUserModel as GrpcAdminUserModel;
+use crate::grpc_admin_user::{AdminUserModel as GrpcAdminUserModel};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
 pub struct AdminUserModel {
@@ -26,6 +26,7 @@ pub struct AdminUserModel {
     pub roles: Vec<RoleModel>,
 }
 
+// region: impl try_from AdminUserModel
 impl TryFrom<AdminUserModel> for TokenClaims {
     type Error = Error;
 
@@ -46,7 +47,7 @@ impl TryFrom<AdminUserModel> for TokenClaims {
     }
 }
 
-impl TryFrom<AdminUserModel> for  GrpcAdminUserModel{
+impl TryFrom<AdminUserModel> for  GrpcAdminUserModel {
     type Error = Error;
 
     fn try_from(val: AdminUserModel) -> Result<GrpcAdminUserModel> {
@@ -134,6 +135,8 @@ impl TryFrom<Object> for AdminUserModel {
     }
 }
 
+// endregion: impl try_from AdminUserModel
+
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableAdminUserModel {
     pub full_name: String,
@@ -142,7 +145,7 @@ pub struct CreatableAdminUserModel {
     pub profile_image: String,
     pub is_super_admin: bool,
     pub logged_in_username: String,
-    pub role_ids: Vec<String>,
+    // pub role_ids: Vec<String>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]

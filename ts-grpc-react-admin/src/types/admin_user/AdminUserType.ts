@@ -13,4 +13,10 @@ export type AdminUserType = {
     action: string;
 }
 
-
+export type CreateAdminUserType = {
+    full_name: string;
+    email: string;
+    password: string;
+    confirmation_password: string;
+    profile_image: string;
+}

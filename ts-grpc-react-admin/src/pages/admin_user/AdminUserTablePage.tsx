@@ -2,12 +2,13 @@ import {useState} from "react";
 import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
 import {useTranslation} from "react-i18next";
 import AvoRedTable from "../../components/AvoRedTable";
-import {UseLAdminUserPaginateHook} from "../../hooks/admin_user/UseLAdminUserPaginateHook";
+import {UseAdminUserPaginateHook} from "../../hooks/admin_user/UseAdminUserPaginateHook";
 import {AdminUserPaginateRequest} from "../../grpc_generated/admin_user_pb";
 import {AdminUserType} from "../../types/admin_user/AdminUserType";
 import {GrpcTimeStamp} from "../../types/common/common";
 import { DateTime } from 'luxon'
 import {Link} from "react-router-dom";
+import HasPermission from "../../components/HasPermission";
 
 export const AdminUserTablePage = (() => {
     const [pagination, setPagination] = useState({
@@ -18,7 +19,7 @@ export const AdminUserTablePage = (() => {
 
     let request = new AdminUserPaginateRequest();
 
-    const admin_user_res = UseLAdminUserPaginateHook(request);
+    const admin_user_res = UseAdminUserPaginateHook(request);
     console.log(admin_user_res.data);
     const data_list = admin_user_res.data?.data?.dataList ?? [];
     const admin_users: Array<AdminUserType> = data_list as Array<unknown> as AdminUserType[];
@@ -143,20 +144,20 @@ export const AdminUserTablePage = (() => {
                     <div className="p-5 text-2xl font-semibold text-primary-500">
                         {t("admin_users")}
                     </div>
-                    {/*<HasPermission displayDenied={false} identifier="admin_user_create">*/}
-                    {/*    <Link*/}
-                    {/*        className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"*/}
-                    {/*        to="/admin/admin-user-create"*/}
-                    {/*    >*/}
-                    {/*        {t("create")}*/}
-                    {/*    </Link>*/}
-                    {/*</HasPermission>*/}
+                    <HasPermission displayDenied={false} identifier="admin_user_create">
+                        <Link
+                            className="ml-auto bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                            to="/admin/admin-user-create"
+                        >
+                            {t("create")}
+                        </Link>
+                    </HasPermission>
                 </div>
                 <div className="w-full block overflow-hidden">
                     <div className="overflow-x-scroll">
-                        {/*<HasPermission identifier="admin_user_table">*/}
+                        <HasPermission identifier="admin_user_table">
                             <AvoRedTable table={table}/>
-                        {/*</HasPermission>*/}
+                        </HasPermission>
                     </div>
                 </div>
             </div>

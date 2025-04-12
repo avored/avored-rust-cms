@@ -39,7 +39,7 @@ mod api;
 mod error;
 mod services;
 
-const PER_PAGE: u64 = 10;
+const PER_PAGE: u64 = 100;
 
 pub mod grpc_misc {
     tonic::include_proto!("misc");
@@ -82,26 +82,17 @@ async fn main() -> Result<(), Error> {
 
     // region: Grpc Service region
     let misc_api = MiscApi {state: state.clone()};
-    // let misc_server = tower::ServiceBuilder::new()
-    //     .layer(tower_http::cors::CorsLayer::new())
-    //     .layer(tonic_web::GrpcWebLayer::new())
-    //     .into_inner()
-    //     .named_layer(misc_api);
     let misc_server = MiscServer::new(misc_api);
-    // let misc_grpc = tonic_web::enable(misc_server);
 
     let auth_api = AuthApi {state: state.clone()};
     let auth_server = AuthServer::new(auth_api);
-    // let auth_grpc = tonic_web::enable(auth_server);
 
 
     let dashboard_api = DashboardApi {state: state.clone()};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
-    // let dashboard_grpc = tonic_web::enable(dashboard_server);
 
     let admin_user_api = AdminUserApi {state: state.clone()};
     let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
-    // let admin_user_grpc = tonic_web::(admin_user_server);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");

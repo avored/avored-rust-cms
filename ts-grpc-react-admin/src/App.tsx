@@ -6,6 +6,7 @@ import {LoginPage} from "./pages/auth/LoginPage";
 import {DashboardPage} from "./pages/DashboardPage";
 import AppLayout from "./layouts/AppLayout";
 import {AdminUserTablePage} from "./pages/admin_user/AdminUserTablePage";
+import {AdminUserCreatePage} from "./pages/admin_user/AdminUserCreatePage";
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
                 <Route element={<AppLayout />}>
                     <Route path="/admin/dashboard" element={<DashboardPage />} />
                     <Route path="/admin/admin-user" element={<AdminUserTablePage />} />
+                    <Route path="/admin/admin-user-create" element={<AdminUserCreatePage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

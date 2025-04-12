@@ -1,33 +1,13 @@
-// use crate::api::handlers::admin_user::admin_user_forgot_password_api_handler::ForgotPasswordViewModel;
-use crate::error::Error;
-use crate::models::admin_user_model::CreatableAdminUserModel;
-// use crate::models::password_rest_model::{CreatablePasswordResetModel, PasswordResetModel};
-use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
-use crate::models::ModelCount;
-// use crate::providers::avored_template_provider::AvoRedTemplateProvider;
-// use crate::repositories::password_reset_repository::PasswordResetRepository;
-// use crate::repositories::role_repository::RoleRepository;
-use axum::http::{header as AxumHeader, Response};
+use argon2::{Argon2, PasswordHasher};
+use argon2::password_hash::SaltString;
 use crate::{
     error::Result,
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
-    PER_PAGE,
 };
-use argon2::password_hash::SaltString;
-use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
-use axum_extra::extract::cookie::{Cookie, SameSite};
-use jsonwebtoken::{encode, EncodingKey, Header};
-use lettre::message::{header, MultiPart, SinglePart};
-use lettre::{AsyncTransport, Message};
-use rand::distr::Alphanumeric;
-use rand::Rng;
-use serde_json::json;
-use crate::grpc_admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse};
-use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserModel, AdminUserPaginateData, AdminUserPagination};
-use crate::grpc_auth::LoginRequest;
-// use crate::api::handlers::admin_user::admin_user_login_api_handler::LoginResponseData;
-// use crate::api::handlers::admin_user::request::authenticate_admin_user_request::AuthenticateAdminUserRequest;
+use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse};
+use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
+use crate::models::admin_user_model::CreatableAdminUserModel;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
@@ -94,6 +74,45 @@ impl AdminUserService {
             data: Option::from(paginate_data),
         };
         
+        Ok(res)
+    }
+
+    pub async fn store (
+        &self,
+        req: StoreAdminUserRequest,
+        logged_in_username: String,
+        password_salt: &str,
+        (datastore, database_session): &DB,
+    ) -> Result<StoreAdminUserResponse> {
+
+        let password_hash = self
+            .get_password_hash_from_raw_password(&req.password, &password_salt)?;
+
+        let created_admin_user_request = CreatableAdminUserModel {
+            full_name: req.full_name,
+            email: req.email,
+            password: password_hash,
+            profile_image: String::from(""),
+            is_super_admin: req.is_super_admin,
+            logged_in_username,
+        };
+
+        let admin_user_model = self
+            .admin_user_repository
+            .create_admin_user(
+                datastore,
+                database_session,
+                created_admin_user_request,
+            )
+            .await?;
+
+        let model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+
+
+        let res = StoreAdminUserResponse {
+            status: true,
+            data: Option::from(model)
+        };
         Ok(res)
     }
 
@@ -426,19 +445,19 @@ impl AdminUserService {
     //     Ok(admin_user_model)
     // }
     //
-    // pub fn get_password_hash_from_raw_password(
-    //     &self,
-    //     raw_password: &str,
-    //     password_salt: &str,
-    // ) -> Result<String> {
-    //     let password = raw_password.as_bytes();
-    //     let salt = SaltString::from_b64(password_salt)?;
-    //
-    //     let argon2 = Argon2::default();
-    //     let password_hash = argon2.hash_password(password, &salt)?.to_string();
-    //
-    //     Ok(password_hash)
-    // }
+    pub fn get_password_hash_from_raw_password(
+        &self,
+        raw_password: &str,
+        password_salt: &str,
+    ) -> Result<String> {
+        let password = raw_password.as_bytes();
+        let salt = SaltString::from_b64(password_salt)?;
+
+        let argon2 = Argon2::default();
+        let password_hash = argon2.hash_password(password, &salt)?.to_string();
+
+        Ok(password_hash)
+    }
     //
     // pub async fn count_of_email(
     //     &self,
