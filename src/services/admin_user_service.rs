@@ -5,7 +5,7 @@ use crate::{
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
 };
-use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse};
+use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, StoreAdminUserRequest, StoreAdminUserResponse};
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::models::admin_user_model::CreatableAdminUserModel;
 
@@ -115,6 +115,33 @@ impl AdminUserService {
         };
         Ok(res)
     }
+
+    pub async fn find_admin_user_by_id (
+        &self,
+        req: GetAdminUserRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<GetAdminUserResponse> {
+
+        let admin_user_model = self
+            .admin_user_repository
+            .find_by_id(
+                datastore,
+                database_session,
+                req.admin_user_id,
+            )
+            .await?;
+
+        let model: AdminUserModel = admin_user_model.try_into().unwrap();
+
+
+        let res = GetAdminUserResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        Ok(res)
+    }
+
+
 
     // pub async fn sent_forgot_password_email (
     //     &self,

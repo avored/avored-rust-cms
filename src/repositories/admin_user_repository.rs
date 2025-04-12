@@ -67,7 +67,8 @@ impl AdminUserRepository {
         database_session: &Session,
         id: String,
     ) -> Result<AdminUserModel> {
-        let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM type::thing($table, $id);";
+        // let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM type::thing($table, $id);";
+        let sql = "SELECT * FROM type::thing($table, $id);";
         let vars = BTreeMap::from([
             ("table".into(), "admin_users".into()),
             ("id".into(), id.into()),
