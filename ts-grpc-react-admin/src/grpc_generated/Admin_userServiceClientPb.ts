@@ -211,5 +211,48 @@ export class AdminUserClient {
     this.methodDescriptorUpdateAdminUser);
   }
 
+  methodDescriptorRolePaginate = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/RolePaginate',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.RolePaginateRequest,
+    admin_user_pb.RolePaginateResponse,
+    (request: admin_user_pb.RolePaginateRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.RolePaginateResponse.deserializeBinary
+  );
+
+  rolePaginate(
+    request: admin_user_pb.RolePaginateRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.RolePaginateResponse>;
+
+  rolePaginate(
+    request: admin_user_pb.RolePaginateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.RolePaginateResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.RolePaginateResponse>;
+
+  rolePaginate(
+    request: admin_user_pb.RolePaginateRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.RolePaginateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/RolePaginate',
+        request,
+        metadata || {},
+        this.methodDescriptorRolePaginate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/RolePaginate',
+    request,
+    metadata || {},
+    this.methodDescriptorRolePaginate);
+  }
+
 }
 

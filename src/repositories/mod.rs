@@ -6,7 +6,7 @@ pub mod admin_user_repository;
 // pub mod component_repository;
 // pub mod page_repository;
 // pub mod password_reset_repository;
-// pub mod role_repository;
+pub mod role_repository;
 //
 // pub mod asset_repository;
 // pub mod collection_repository;

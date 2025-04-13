@@ -28,3 +28,14 @@ export type EditAdminUserType = {
     email: string;
     profile_image: FileList;
 }
+
+export type RoleType = {
+    id: string;
+    name: string;
+    identifier: string;
+    createdAt: GrpcTimeStamp;
+    updatedAt: GrpcTimeStamp;
+    createdBy: string;
+    updatedBy: string;
+    action: string;
+}

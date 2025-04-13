@@ -4,12 +4,11 @@ use crate::error::{Error, Result};
 use crate::models::role_model::RoleModel;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
-use utoipa::ToSchema;
 use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
 use crate::grpc_admin_user::{AdminUserModel as GrpcAdminUserModel};
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default, ToSchema)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {
     pub id: String,
     pub full_name: String,
@@ -17,13 +16,11 @@ pub struct AdminUserModel {
     pub password: String,
     pub profile_image: String,
     pub is_super_admin: bool,
-    #[schema(value_type=String)]
     pub created_at: Datetime,
-    #[schema(value_type=String)]
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
-    pub roles: Vec<RoleModel>,
+    // pub roles: Vec<RoleModel>,
 }
 
 // region: impl try_from AdminUserModel
@@ -92,27 +89,27 @@ impl TryFrom<Object> for AdminUserModel {
 
         let is_super_admin = val.get("is_super_admin").get_bool()?;
 
-        let roles = match val.get("roles") {
-            Some(val) => match val.clone() {
-                Value::Array(v) => {
-                    let mut arr = Vec::new();
-
-                    for array in v.into_iter() {
-                        let object = match array.clone() {
-                            Value::Object(v) => v,
-                            _ => surrealdb::sql::Object::default(),
-                        };
-
-                        let role_model: RoleModel = object.try_into()?;
-
-                        arr.push(role_model)
-                    }
-                    arr
-                }
-                _ => Vec::new(),
-            },
-            None => Vec::new(),
-        };
+        // let roles = match val.get("roles") {
+        //     Some(val) => match val.clone() {
+        //         Value::Array(v) => {
+        //             let mut arr = Vec::new();
+        //
+        //             for array in v.into_iter() {
+        //                 let object = match array.clone() {
+        //                     Value::Object(v) => v,
+        //                     _ => surrealdb::sql::Object::default(),
+        //                 };
+        //
+        //                 let role_model: RoleModel = object.try_into()?;
+        //
+        //                 arr.push(role_model)
+        //             }
+        //             arr
+        //         }
+        //         _ => Vec::new(),
+        //     },
+        //     None => Vec::new(),
+        // };
 
         let created_at = val.get("created_at").get_datetime()?;
         let updated_at = val.get("updated_at").get_datetime()?;
@@ -130,7 +127,7 @@ impl TryFrom<Object> for AdminUserModel {
             updated_at,
             created_by,
             updated_by,
-            roles,
+            // roles,
         })
     }
 }

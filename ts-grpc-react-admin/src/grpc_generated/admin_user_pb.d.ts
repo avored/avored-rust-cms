@@ -57,6 +57,52 @@ export namespace AdminUserModel {
   }
 }
 
+export class RoleModel extends jspb.Message {
+  getId(): string;
+  setId(value: string): RoleModel;
+
+  getName(): string;
+  setName(value: string): RoleModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): RoleModel;
+
+  getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): RoleModel;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): RoleModel;
+
+  getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): RoleModel;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): RoleModel;
+
+  getCreatedBy(): string;
+  setCreatedBy(value: string): RoleModel;
+
+  getUpdatedBy(): string;
+  setUpdatedBy(value: string): RoleModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleModel.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleModel): RoleModel.AsObject;
+  static serializeBinaryToWriter(message: RoleModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleModel;
+  static deserializeBinaryFromReader(message: RoleModel, reader: jspb.BinaryReader): RoleModel;
+}
+
+export namespace RoleModel {
+  export type AsObject = {
+    id: string,
+    name: string,
+    identifier: string,
+    createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    createdBy: string,
+    updatedBy: string,
+  }
+}
+
 export class AdminUserPaginateRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserPaginateRequest.AsObject;
@@ -305,5 +351,89 @@ export namespace UpdateAdminUserResponse {
     status: boolean,
     data?: AdminUserModel.AsObject,
   }
+}
+
+export class RolePaginateRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RolePaginateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: RolePaginateRequest): RolePaginateRequest.AsObject;
+  static serializeBinaryToWriter(message: RolePaginateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RolePaginateRequest;
+  static deserializeBinaryFromReader(message: RolePaginateRequest, reader: jspb.BinaryReader): RolePaginateRequest;
+}
+
+export namespace RolePaginateRequest {
+  export type AsObject = {
+  }
+}
+
+export class RolePaginateResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): RolePaginateResponse;
+
+  getData(): RolePaginateResponse.RolePaginateData | undefined;
+  setData(value?: RolePaginateResponse.RolePaginateData): RolePaginateResponse;
+  hasData(): boolean;
+  clearData(): RolePaginateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RolePaginateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RolePaginateResponse): RolePaginateResponse.AsObject;
+  static serializeBinaryToWriter(message: RolePaginateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RolePaginateResponse;
+  static deserializeBinaryFromReader(message: RolePaginateResponse, reader: jspb.BinaryReader): RolePaginateResponse;
+}
+
+export namespace RolePaginateResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: RolePaginateResponse.RolePaginateData.AsObject,
+  }
+
+  export class RolePagination extends jspb.Message {
+    getTotal(): number;
+    setTotal(value: number): RolePagination;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): RolePagination.AsObject;
+    static toObject(includeInstance: boolean, msg: RolePagination): RolePagination.AsObject;
+    static serializeBinaryToWriter(message: RolePagination, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): RolePagination;
+    static deserializeBinaryFromReader(message: RolePagination, reader: jspb.BinaryReader): RolePagination;
+  }
+
+  export namespace RolePagination {
+    export type AsObject = {
+      total: number,
+    }
+  }
+
+
+  export class RolePaginateData extends jspb.Message {
+    getPagination(): RolePaginateResponse.RolePagination | undefined;
+    setPagination(value?: RolePaginateResponse.RolePagination): RolePaginateData;
+    hasPagination(): boolean;
+    clearPagination(): RolePaginateData;
+
+    getDataList(): Array<RoleModel>;
+    setDataList(value: Array<RoleModel>): RolePaginateData;
+    clearDataList(): RolePaginateData;
+    addData(value?: RoleModel, index?: number): RoleModel;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): RolePaginateData.AsObject;
+    static toObject(includeInstance: boolean, msg: RolePaginateData): RolePaginateData.AsObject;
+    static serializeBinaryToWriter(message: RolePaginateData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): RolePaginateData;
+    static deserializeBinaryFromReader(message: RolePaginateData, reader: jspb.BinaryReader): RolePaginateData;
+  }
+
+  export namespace RolePaginateData {
+    export type AsObject = {
+      pagination?: RolePaginateResponse.RolePagination.AsObject,
+      dataList: Array<RoleModel.AsObject>,
+    }
+  }
+
 }
 

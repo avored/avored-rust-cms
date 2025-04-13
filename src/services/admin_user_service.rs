@@ -7,13 +7,15 @@ use crate::{
 };
 use std::path::Path;
 use serde::de::Unexpected::Str;
-use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
+use crate::grpc_admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
+use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
-    // role_repository: RoleRepository,
+    role_repository: RoleRepository,
     // password_reset_repository: PasswordResetRepository,
 }
 
@@ -21,12 +23,12 @@ impl AdminUserService {
 
     pub fn new(
         admin_user_repository: AdminUserRepository,
-        // role_repository: RoleRepository,
+        role_repository: RoleRepository,
         // password_reset_repository: PasswordResetRepository,
     ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
-            // role_repository,
+            role_repository,
             // password_reset_repository,
         })
     }
@@ -193,6 +195,54 @@ impl AdminUserService {
             status: true,
             data: Option::from(model)
         };
+        Ok(res)
+    }
+
+    pub async fn role_paginate(
+        &self,
+        req: RolePaginateRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<RolePaginateResponse> {
+        let role_model_count   = self
+            .role_repository
+            .get_total_count(datastore, database_session)
+            .await?;
+
+        let start = 0;
+        let order_column = "id";
+        let order_type = "desc";
+
+        let roles = self
+            .role_repository
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
+            .await?;
+
+        let mut grpc_roles = vec![];
+        roles.iter().for_each(|role| {
+            let model: RoleModel = role.clone().try_into().unwrap();
+            grpc_roles.push(model);
+        });
+
+
+        let pagination = RolePagination {
+            total: role_model_count.total,
+        };
+        let paginate_data = RolePaginateData {
+            pagination: Option::from(pagination),
+            data: grpc_roles,
+        };
+
+        let res = RolePaginateResponse {
+            status: true,
+            data: Option::from(paginate_data),
+        };
+
         Ok(res)
     }
 

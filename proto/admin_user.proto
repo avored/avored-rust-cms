@@ -18,6 +18,18 @@ message AdminUserModel {
 }
 
 
+
+message RoleModel {
+  string id = 1;
+  string name = 2;
+  string identifier = 3;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+  string created_by = 8;
+  string updated_by = 9;
+}
+
+
 // Admin user paginate API
 message AdminUserPaginateRequest {
 
@@ -81,9 +93,32 @@ message UpdateAdminUserResponse {
 }
 
 
+message RolePaginateRequest {}
+
+message RolePaginateResponse {
+  bool status = 1;
+
+  message RolePagination {
+    int64 total = 1;
+  }
+
+
+
+  message RolePaginateData {
+    RolePagination pagination = 1;
+    repeated RoleModel data = 2;
+  }
+
+
+  RolePaginateData data = 2;
+}
+
+
+
 service AdminUser {
   rpc Paginate(AdminUserPaginateRequest) returns (AdminUserPaginateResponse);
   rpc StoreAdminUser(StoreAdminUserRequest) returns(StoreAdminUserResponse);
   rpc GetAdminUser(GetAdminUserRequest) returns(GetAdminUserResponse);
   rpc UpdateAdminUser(UpdateAdminUserRequest) returns (UpdateAdminUserResponse);
+  rpc RolePaginate(RolePaginateRequest) returns (RolePaginateResponse);
 }

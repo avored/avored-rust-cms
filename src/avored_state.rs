@@ -2,6 +2,7 @@ use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
 use crate::repositories::admin_user_repository::AdminUserRepository;
+use crate::repositories::role_repository::RoleRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::auth_service::AuthService;
 use crate::services::misc_service::MiscService;
@@ -21,11 +22,12 @@ impl AvoRedState {
             AvoRedDatabaseProvider::register(avored_config_provider.clone()).await?;
 
         let admin_user_repository = AdminUserRepository::new();
+        let role_repository = RoleRepository::new();
 
 
         let misc_service = MiscService::new().await?;
         let auth_service = AuthService::new(admin_user_repository.clone()).await?;
-        let admin_user_service = AdminUserService::new(admin_user_repository)?;
+        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
