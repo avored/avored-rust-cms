@@ -125,5 +125,91 @@ export class AdminUserClient {
     this.methodDescriptorStoreAdminUser);
   }
 
+  methodDescriptorGetAdminUser = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/GetAdminUser',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.GetAdminUserRequest,
+    admin_user_pb.GetAdminUserResponse,
+    (request: admin_user_pb.GetAdminUserRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.GetAdminUserResponse.deserializeBinary
+  );
+
+  getAdminUser(
+    request: admin_user_pb.GetAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.GetAdminUserResponse>;
+
+  getAdminUser(
+    request: admin_user_pb.GetAdminUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.GetAdminUserResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.GetAdminUserResponse>;
+
+  getAdminUser(
+    request: admin_user_pb.GetAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.GetAdminUserResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/GetAdminUser',
+        request,
+        metadata || {},
+        this.methodDescriptorGetAdminUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/GetAdminUser',
+    request,
+    metadata || {},
+    this.methodDescriptorGetAdminUser);
+  }
+
+  methodDescriptorUpdateAdminUser = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/UpdateAdminUser',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.UpdateAdminUserRequest,
+    admin_user_pb.UpdateAdminUserResponse,
+    (request: admin_user_pb.UpdateAdminUserRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.UpdateAdminUserResponse.deserializeBinary
+  );
+
+  updateAdminUser(
+    request: admin_user_pb.UpdateAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.UpdateAdminUserResponse>;
+
+  updateAdminUser(
+    request: admin_user_pb.UpdateAdminUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.UpdateAdminUserResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.UpdateAdminUserResponse>;
+
+  updateAdminUser(
+    request: admin_user_pb.UpdateAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.UpdateAdminUserResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/UpdateAdminUser',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateAdminUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/UpdateAdminUser',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateAdminUser);
+  }
+
 }
 

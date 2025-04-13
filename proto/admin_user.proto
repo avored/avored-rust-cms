@@ -65,8 +65,21 @@ message GetAdminUserResponse {
   AdminUserModel data = 2;
 }
 
+
+message UpdateAdminUserRequest {
+  string admin_user_id = 1;
+  string full_name = 2;
+}
+
+message UpdateAdminUserResponse {
+  bool status = 1;
+  AdminUserModel data = 2;
+}
+
+
 service AdminUser {
   rpc Paginate(AdminUserPaginateRequest) returns (AdminUserPaginateResponse);
   rpc StoreAdminUser(StoreAdminUserRequest) returns(StoreAdminUserResponse);
   rpc GetAdminUser(GetAdminUserRequest) returns(GetAdminUserResponse);
+  rpc UpdateAdminUser(UpdateAdminUserRequest) returns (UpdateAdminUserResponse);
 }

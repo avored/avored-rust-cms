@@ -155,7 +155,7 @@ pub struct UpdatableAdminUserModel {
     pub profile_image: String,
     pub is_super_admin: bool,
     pub logged_in_username: String,
-    pub role_ids: Vec<String>,
+    // pub role_ids: Vec<String>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

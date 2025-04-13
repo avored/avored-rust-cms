@@ -199,3 +199,91 @@ export namespace StoreAdminUserResponse {
   }
 }
 
+export class GetAdminUserRequest extends jspb.Message {
+  getAdminUserId(): string;
+  setAdminUserId(value: string): GetAdminUserRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAdminUserRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAdminUserRequest): GetAdminUserRequest.AsObject;
+  static serializeBinaryToWriter(message: GetAdminUserRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAdminUserRequest;
+  static deserializeBinaryFromReader(message: GetAdminUserRequest, reader: jspb.BinaryReader): GetAdminUserRequest;
+}
+
+export namespace GetAdminUserRequest {
+  export type AsObject = {
+    adminUserId: string,
+  }
+}
+
+export class GetAdminUserResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): GetAdminUserResponse;
+
+  getData(): AdminUserModel | undefined;
+  setData(value?: AdminUserModel): GetAdminUserResponse;
+  hasData(): boolean;
+  clearData(): GetAdminUserResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetAdminUserResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetAdminUserResponse): GetAdminUserResponse.AsObject;
+  static serializeBinaryToWriter(message: GetAdminUserResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetAdminUserResponse;
+  static deserializeBinaryFromReader(message: GetAdminUserResponse, reader: jspb.BinaryReader): GetAdminUserResponse;
+}
+
+export namespace GetAdminUserResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: AdminUserModel.AsObject,
+  }
+}
+
+export class UpdateAdminUserRequest extends jspb.Message {
+  getAdminUserId(): string;
+  setAdminUserId(value: string): UpdateAdminUserRequest;
+
+  getFullName(): string;
+  setFullName(value: string): UpdateAdminUserRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateAdminUserRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateAdminUserRequest): UpdateAdminUserRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateAdminUserRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateAdminUserRequest;
+  static deserializeBinaryFromReader(message: UpdateAdminUserRequest, reader: jspb.BinaryReader): UpdateAdminUserRequest;
+}
+
+export namespace UpdateAdminUserRequest {
+  export type AsObject = {
+    adminUserId: string,
+    fullName: string,
+  }
+}
+
+export class UpdateAdminUserResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): UpdateAdminUserResponse;
+
+  getData(): AdminUserModel | undefined;
+  setData(value?: AdminUserModel): UpdateAdminUserResponse;
+  hasData(): boolean;
+  clearData(): UpdateAdminUserResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateAdminUserResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateAdminUserResponse): UpdateAdminUserResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateAdminUserResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateAdminUserResponse;
+  static deserializeBinaryFromReader(message: UpdateAdminUserResponse, reader: jspb.BinaryReader): UpdateAdminUserResponse;
+}
+
+export namespace UpdateAdminUserResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: AdminUserModel.AsObject,
+  }
+}
+

@@ -5,9 +5,9 @@ use crate::{
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
 };
-use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, StoreAdminUserRequest, StoreAdminUserResponse};
+use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
-use crate::models::admin_user_model::CreatableAdminUserModel;
+use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
@@ -141,7 +141,37 @@ impl AdminUserService {
         Ok(res)
     }
 
+    pub  async fn update_admin_user(
+        &self,
+        req: UpdateAdminUserRequest,
+        logged_in_username: String,
+        (datastore, database_session): &DB,
+    ) -> Result<UpdateAdminUserResponse> {
+        let updatable_admin_user_model = UpdatableAdminUserModel {
+            id: req.admin_user_id,
+            full_name: req.full_name,
+            profile_image: String::from(""),
+            is_super_admin: false,
+            logged_in_username
+        };
 
+        let admin_user_model = self
+            .admin_user_repository
+            .update_admin_user(
+                datastore,
+                database_session,
+                updatable_admin_user_model
+            )
+            .await?;
+
+        let model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+
+        let res = UpdateAdminUserResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        Ok(res)
+    }
 
     // pub async fn sent_forgot_password_email (
     //     &self,

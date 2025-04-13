@@ -20,3 +20,8 @@ export type CreateAdminUserType = {
     confirmation_password: string;
     profile_image: string;
 }
+
+export type EditAdminUserType = {
+    full_name: string;
+    profile_image: string;
+}

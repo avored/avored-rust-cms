@@ -7,6 +7,7 @@ import {DashboardPage} from "./pages/DashboardPage";
 import AppLayout from "./layouts/AppLayout";
 import {AdminUserTablePage} from "./pages/admin_user/AdminUserTablePage";
 import {AdminUserCreatePage} from "./pages/admin_user/AdminUserCreatePage";
+import {AdminUserEditPage} from "./pages/admin_user/AdminUserEditPage";
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
                     <Route path="/admin/dashboard" element={<DashboardPage />} />
                     <Route path="/admin/admin-user" element={<AdminUserTablePage />} />
                     <Route path="/admin/admin-user-create" element={<AdminUserCreatePage />} />
+                    <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEditPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
