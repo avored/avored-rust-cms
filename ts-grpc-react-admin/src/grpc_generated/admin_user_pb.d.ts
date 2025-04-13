@@ -157,6 +157,14 @@ export class StoreAdminUserRequest extends jspb.Message {
   getIsSuperAdmin(): boolean;
   setIsSuperAdmin(value: boolean): StoreAdminUserRequest;
 
+  getProfileImageContent(): Uint8Array | string;
+  getProfileImageContent_asU8(): Uint8Array;
+  getProfileImageContent_asB64(): string;
+  setProfileImageContent(value: Uint8Array | string): StoreAdminUserRequest;
+
+  getProfileImageFileName(): string;
+  setProfileImageFileName(value: string): StoreAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StoreAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: StoreAdminUserRequest): StoreAdminUserRequest.AsObject;
@@ -172,6 +180,8 @@ export namespace StoreAdminUserRequest {
     password: string,
     confirmPassword: string,
     isSuperAdmin: boolean,
+    profileImageContent: Uint8Array | string,
+    profileImageFileName: string,
   }
 }
 
@@ -248,6 +258,14 @@ export class UpdateAdminUserRequest extends jspb.Message {
   getFullName(): string;
   setFullName(value: string): UpdateAdminUserRequest;
 
+  getProfileImageContent(): Uint8Array | string;
+  getProfileImageContent_asU8(): Uint8Array;
+  getProfileImageContent_asB64(): string;
+  setProfileImageContent(value: Uint8Array | string): UpdateAdminUserRequest;
+
+  getProfileImageFileName(): string;
+  setProfileImageFileName(value: string): UpdateAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateAdminUserRequest): UpdateAdminUserRequest.AsObject;
@@ -260,6 +278,8 @@ export namespace UpdateAdminUserRequest {
   export type AsObject = {
     adminUserId: string,
     fullName: string,
+    profileImageContent: Uint8Array | string,
+    profileImageFileName: string,
   }
 }
 

@@ -9,6 +9,7 @@ import {useForm} from "react-hook-form";
 import {GetAdminUserRequest, StoreAdminUserRequest, UpdateAdminUserRequest} from "../../grpc_generated/admin_user_pb";
 import ErrorMessage from "../../components/ErrorMessage";
 import {UseUpdateAdminUserHook} from "../../hooks/admin_user/UseUpdateAdminUserHook";
+import _ from "lodash";
 
 export const AdminUserEditPage = () => {
     // const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
@@ -17,12 +18,12 @@ export const AdminUserEditPage = () => {
     const req = new GetAdminUserRequest();
     req.setAdminUserId(params.admin_user_id ?? '');
     const {data} = UseGetAdminUserHook(req);
-    const values: AdminUserType = data?.data as AdminUserType;
+    const values: EditAdminUserType = data?.data as unknown as EditAdminUserType;
     const {
         register,
         handleSubmit,
         formState: {errors},
-    } = useForm<AdminUserType>({
+    } = useForm<EditAdminUserType>({
         resolver: joiResolver(UseAdminUserEditSchema(), {allowUnknown: true}),
         values
     })
@@ -38,12 +39,34 @@ export const AdminUserEditPage = () => {
         // trigger('is_super_admin')
     })
 
-    const submitHandler = async (data: AdminUserType) => {
+    const submitHandler = async (data: EditAdminUserType) => {
         const update_admin_user = new UpdateAdminUserRequest();
         update_admin_user.setFullName(data.fullName);
         update_admin_user.setAdminUserId(params.admin_user_id ?? '');
 
-        mutate(update_admin_user);
+        var profile_image_file_name = ""
+        const file: File = data.profile_image[0];
+
+        if (file) {
+            profile_image_file_name = _.get(data, "profile_image.0.name", "user_profile_image_name.jpg");
+
+            const reader = new FileReader()
+
+            reader.onloadend = () => {
+                const content = reader.result as ArrayBuffer;
+
+                const bytesData = new Uint8Array(content)
+                update_admin_user.setProfileImageContent(bytesData)
+                update_admin_user.setProfileImageFileName(profile_image_file_name)
+
+                mutate(update_admin_user)
+            }
+            reader.readAsArrayBuffer(file)
+        } else {
+
+            mutate(update_admin_user)
+        }
+
     };
 
     return (
@@ -93,7 +116,7 @@ export const AdminUserEditPage = () => {
                                             label={t("new_profile_photo")}
                                             type="file"
                                             name="profile_image"
-                                            register={register("profileImage")}
+                                            register={register("profile_image")}
                                         />
                                     </div>
                                 </div>

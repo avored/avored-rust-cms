@@ -5,6 +5,8 @@ use crate::{
     providers::avored_database_provider::DB,
     repositories::admin_user_repository::AdminUserRepository,
 };
+use std::path::Path;
+use serde::de::Unexpected::Str;
 use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
@@ -88,7 +90,7 @@ impl AdminUserService {
         let password_hash = self
             .get_password_hash_from_raw_password(&req.password, &password_salt)?;
 
-        let created_admin_user_request = CreatableAdminUserModel {
+        let mut created_admin_user_request = CreatableAdminUserModel {
             full_name: req.full_name,
             email: req.email,
             password: password_hash,
@@ -96,6 +98,15 @@ impl AdminUserService {
             is_super_admin: req.is_super_admin,
             logged_in_username,
         };
+
+        if (!req.profile_image_file_name.is_empty()) {
+            let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
+            let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
+
+            tokio::fs::write(full_path, &req.profile_image_content).await?;
+
+            created_admin_user_request.profile_image = profile_image;
+        }
 
         let admin_user_model = self
             .admin_user_repository
@@ -147,13 +158,25 @@ impl AdminUserService {
         logged_in_username: String,
         (datastore, database_session): &DB,
     ) -> Result<UpdateAdminUserResponse> {
-        let updatable_admin_user_model = UpdatableAdminUserModel {
+
+        let mut updatable_admin_user_model = UpdatableAdminUserModel {
             id: req.admin_user_id,
             full_name: req.full_name,
             profile_image: String::from(""),
             is_super_admin: false,
             logged_in_username
         };
+
+        // needs to handle the existing image scenario
+
+        if (!req.profile_image_file_name.is_empty()) {
+            let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
+            let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
+
+            tokio::fs::write(full_path, &req.profile_image_content).await?;
+
+            updatable_admin_user_model.profile_image = profile_image;
+        }
 
         let admin_user_model = self
             .admin_user_repository

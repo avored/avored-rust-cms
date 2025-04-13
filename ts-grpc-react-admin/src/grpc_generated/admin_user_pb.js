@@ -1336,7 +1336,9 @@ fullName: jspb.Message.getFieldWithDefault(msg, 1, ""),
 email: jspb.Message.getFieldWithDefault(msg, 2, ""),
 password: jspb.Message.getFieldWithDefault(msg, 3, ""),
 confirmPassword: jspb.Message.getFieldWithDefault(msg, 4, ""),
-isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false)
+isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+profileImageContent: msg.getProfileImageContent_asB64(),
+profileImageFileName: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -1392,6 +1394,14 @@ proto.admin_user.StoreAdminUserRequest.deserializeBinaryFromReader = function(ms
     case 5:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsSuperAdmin(value);
+      break;
+    case 6:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setProfileImageContent(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setProfileImageFileName(value);
       break;
     default:
       reader.skipField();
@@ -1454,6 +1464,20 @@ proto.admin_user.StoreAdminUserRequest.serializeBinaryToWriter = function(messag
   if (f) {
     writer.writeBool(
       5,
+      f
+    );
+  }
+  f = message.getProfileImageContent_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      6,
+      f
+    );
+  }
+  f = message.getProfileImageFileName();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
       f
     );
   }
@@ -1547,6 +1571,66 @@ proto.admin_user.StoreAdminUserRequest.prototype.getIsSuperAdmin = function() {
  */
 proto.admin_user.StoreAdminUserRequest.prototype.setIsSuperAdmin = function(value) {
   return jspb.Message.setProto3BooleanField(this, 5, value);
+};
+
+
+/**
+ * optional bytes profile_image_content = 6;
+ * @return {!(string|Uint8Array)}
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.getProfileImageContent = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
+};
+
+
+/**
+ * optional bytes profile_image_content = 6;
+ * This is a type-conversion wrapper around `getProfileImageContent()`
+ * @return {string}
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.getProfileImageContent_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getProfileImageContent()));
+};
+
+
+/**
+ * optional bytes profile_image_content = 6;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getProfileImageContent()`
+ * @return {!Uint8Array}
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.getProfileImageContent_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getProfileImageContent()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.admin_user.StoreAdminUserRequest} returns this
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.setProfileImageContent = function(value) {
+  return jspb.Message.setProto3BytesField(this, 6, value);
+};
+
+
+/**
+ * optional string profile_image_file_name = 7;
+ * @return {string}
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.getProfileImageFileName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.StoreAdminUserRequest} returns this
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.setProfileImageFileName = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 
@@ -2075,7 +2159,9 @@ proto.admin_user.UpdateAdminUserRequest.prototype.toObject = function(opt_includ
 proto.admin_user.UpdateAdminUserRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
 adminUserId: jspb.Message.getFieldWithDefault(msg, 1, ""),
-fullName: jspb.Message.getFieldWithDefault(msg, 2, "")
+fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
+profileImageContent: msg.getProfileImageContent_asB64(),
+profileImageFileName: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -2120,6 +2206,14 @@ proto.admin_user.UpdateAdminUserRequest.deserializeBinaryFromReader = function(m
       var value = /** @type {string} */ (reader.readString());
       msg.setFullName(value);
       break;
+    case 3:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.setProfileImageContent(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setProfileImageFileName(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2163,6 +2257,20 @@ proto.admin_user.UpdateAdminUserRequest.serializeBinaryToWriter = function(messa
       f
     );
   }
+  f = message.getProfileImageContent_asU8();
+  if (f.length > 0) {
+    writer.writeBytes(
+      3,
+      f
+    );
+  }
+  f = message.getProfileImageFileName();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
+      f
+    );
+  }
 };
 
 
@@ -2199,6 +2307,66 @@ proto.admin_user.UpdateAdminUserRequest.prototype.getFullName = function() {
  */
 proto.admin_user.UpdateAdminUserRequest.prototype.setFullName = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional bytes profile_image_content = 3;
+ * @return {!(string|Uint8Array)}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getProfileImageContent = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * optional bytes profile_image_content = 3;
+ * This is a type-conversion wrapper around `getProfileImageContent()`
+ * @return {string}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getProfileImageContent_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getProfileImageContent()));
+};
+
+
+/**
+ * optional bytes profile_image_content = 3;
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getProfileImageContent()`
+ * @return {!Uint8Array}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getProfileImageContent_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getProfileImageContent()));
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.setProfileImageContent = function(value) {
+  return jspb.Message.setProto3BytesField(this, 3, value);
+};
+
+
+/**
+ * optional string profile_image_file_name = 4;
+ * @return {string}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getProfileImageFileName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.setProfileImageFileName = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 

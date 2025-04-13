@@ -18,10 +18,13 @@ export type CreateAdminUserType = {
     email: string;
     password: string;
     confirmation_password: string;
-    profile_image: string;
+    profile_image: FileList;
 }
 
 export type EditAdminUserType = {
-    full_name: string;
-    profile_image: string;
+    id: string;
+    fullName: string;
+    profileImage: string;
+    email: string;
+    profile_image: FileList;
 }

@@ -47,6 +47,8 @@ message StoreAdminUserRequest {
     string password = 3;
     string confirm_password = 4;
     bool is_super_admin = 5;
+    bytes profile_image_content = 6;
+    string profile_image_file_name = 7;
 }
 
 message StoreAdminUserResponse {
@@ -69,6 +71,8 @@ message GetAdminUserResponse {
 message UpdateAdminUserRequest {
   string admin_user_id = 1;
   string full_name = 2;
+  bytes profile_image_content = 3;
+  string profile_image_file_name = 4;
 }
 
 message UpdateAdminUserResponse {

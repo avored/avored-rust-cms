@@ -8,6 +8,7 @@ import {useAdminUserCreateSchema} from "../../schemas/admin_user/UseAdminUserCre
 import {UseStoreAdminUserHook} from "../../hooks/admin_user/UseStoreAdminUserHook";
 import {CreateAdminUserType} from "../../types/admin_user/AdminUserType";
 import {StoreAdminUserRequest} from "../../grpc_generated/admin_user_pb";
+import _ from "lodash";
 
 export const AdminUserCreatePage = () => {
 
@@ -23,13 +24,45 @@ export const AdminUserCreatePage = () => {
     })
 
     const submitHandler = async (data: CreateAdminUserType) => {
+
         const store_admin_user = new StoreAdminUserRequest();
-        store_admin_user.setFullName(data.full_name);
-        store_admin_user.setEmail(data.email);
-        store_admin_user.setPassword(data.password);
-        store_admin_user.setConfirmPassword(data.confirmation_password)
-        store_admin_user.setIsSuperAdmin(false)
-        mutate(store_admin_user)
+
+        var profile_image_file_name = ""
+        const file: File = data.profile_image[0];
+
+        if (file) {
+            profile_image_file_name = _.get(data, "profile_image.0.name", "user_profile_image_name.jpg");
+
+            const reader = new FileReader()
+
+            reader.onloadend = () => {
+                const content = reader.result as ArrayBuffer;
+
+                const bytesData = new Uint8Array(content)
+                store_admin_user.setProfileImageContent(bytesData)
+
+
+                store_admin_user.setFullName(data.full_name);
+                store_admin_user.setEmail(data.email);
+                store_admin_user.setPassword(data.password);
+                store_admin_user.setConfirmPassword(data.confirmation_password)
+                store_admin_user.setIsSuperAdmin(false)
+
+                store_admin_user.setProfileImageFileName(profile_image_file_name)
+
+                mutate(store_admin_user)
+            }
+            reader.readAsArrayBuffer(file)
+        } else {
+            store_admin_user.setFullName(data.full_name);
+            store_admin_user.setEmail(data.email);
+            store_admin_user.setPassword(data.password);
+            store_admin_user.setConfirmPassword(data.confirmation_password)
+            store_admin_user.setIsSuperAdmin(false)
+
+            mutate(store_admin_user)
+        }
+
     }
 
     return (
