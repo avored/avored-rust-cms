@@ -12,11 +12,11 @@ pub struct MiscApi {
 impl Misc for MiscApi {
     async fn setup(&self, request: Request<SetupRequest>) -> Result<Response<SetupResponse>, Status> {
         let req = request.into_inner();
-        let (valid, error_messages) = req.validate()?;
+        // let (valid, error_messages) = req.validate()?;
 
-        if !valid {
-            return Err(Status::invalid_argument(error_messages))
-        }
+        // if !valid {
+        //     return Err(Status::invalid_argument(error_messages))
+        // }
 
         match self.
             state.

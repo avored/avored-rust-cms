@@ -9,23 +9,23 @@ use tracing::info;
 use tracing_subscriber::{
     filter, prelude::__tracing_subscriber_SubscriberExt, util::SubscriberInitExt, Layer,
 };
-use crate::api::admin_user_api::AdminUserApi;
-use crate::api::auth_api::{AuthApi};
-use crate::api::dashboard_api::DashboardApi;
+// use crate::api::admin_user_api::AdminUserApi;
+// use crate::api::auth_api::{AuthApi};
+// use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
-use crate::grpc_admin_user::admin_user_server::AdminUserServer;
-use crate::grpc_auth::auth_server::AuthServer;
-use crate::grpc_dashboard::dashboard_server::DashboardServer;
+// use crate::grpc_admin_user::admin_user_server::AdminUserServer;
+// use crate::grpc_auth::auth_server::AuthServer;
+// use crate::grpc_dashboard::dashboard_server::DashboardServer;
 use crate::grpc_misc::misc_server::MiscServer;
-use crate::middleware::grpc_auth_middleware::check_auth;
+// use crate::middleware::grpc_auth_middleware::check_auth;
 
 mod avored_state;
 mod providers;
-mod requests;
+// mod requests;
 mod models;
-mod middleware;
+// mod middleware;
 mod repositories;
 mod api;
 mod error;
@@ -37,17 +37,17 @@ pub mod grpc_misc {
     tonic::include_proto!("misc");
 }
 
-pub mod grpc_auth {
-    tonic::include_proto!("auth");
-}
-
-pub mod grpc_dashboard {
-    tonic::include_proto!("dashboard");
-}
-
-pub mod grpc_admin_user {
-    tonic::include_proto!("admin_user");
-}
+// pub mod grpc_auth {
+//     tonic::include_proto!("auth");
+// }
+//
+// pub mod grpc_dashboard {
+//     tonic::include_proto!("dashboard");
+// }
+//
+// pub mod grpc_admin_user {
+//     tonic::include_proto!("admin_user");
+// }
 
 
 rust_i18n::i18n!("resources/locales");
@@ -72,19 +72,25 @@ async fn main() -> Result<(), Error> {
         .allow_methods(Any);
 
 
+    let axum_make_service = axum::Router::new()
+        .route("/", axum::routing::get(|| async { "Hello world!" }))
+        .route("/test", axum::routing::get(|| async { "Hello test!" }))
+        .into_make_service();
+
+
     // region: Grpc Service region
     let misc_api = MiscApi {state: state.clone()};
     let misc_server = MiscServer::new(misc_api);
 
-    let auth_api = AuthApi {state: state.clone()};
-    let auth_server = AuthServer::new(auth_api);
-
-
-    let dashboard_api = DashboardApi {};
-    let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
-
-    let admin_user_api = AdminUserApi {state: state.clone()};
-    let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
+    // let auth_api = AuthApi {state: state.clone()};
+    // let auth_server = AuthServer::new(auth_api);
+    //
+    //
+    // let dashboard_api = DashboardApi {};
+    // let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
+    //
+    // let admin_user_api = AdminUserApi {state: state.clone()};
+    // let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
     // endregion: Grpc Service region
 
     println!(r"     _             ____          _ ");
@@ -102,9 +108,9 @@ async fn main() -> Result<(), Error> {
         .accept_http1(true)
         .layer(cors)
         .add_service(misc_server)
-        .add_service(auth_server)
-        .add_service(dashboard_server)
-        .add_service(admin_user_server)
+        // .add_service(auth_server)
+        // .add_service(dashboard_server)
+        // .add_service(admin_user_server)
         .serve(addr)
         .await?;
 
