@@ -3,7 +3,7 @@ use tonic::{async_trait, Request, Response, Status};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::grpc_admin_user::admin_user_server::AdminUser;
-use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::grpc_admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::models::token_claim_model::TokenClaims;
 
 pub struct AdminUserApi {
@@ -70,7 +70,7 @@ impl AdminUser for AdminUserApi {
         request: Request<GetAdminUserRequest>
     ) -> Result<Response<GetAdminUserResponse>, Status>
     {
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        // let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
         match self.
             state.

@@ -2,12 +2,7 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use jsonwebtoken::{decode, DecodingKey, Validation};
-use tonic::{Request, Status};
-use tonic::codegen::http::header::AUTHORIZATION;
 use tonic::codegen::http::HeaderValue;
-use tonic::metadata::{MetadataValue, GRPC_CONTENT_TYPE};
-use tonic::service::LayerExt;
 use tonic::transport::Server;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::info;
@@ -17,7 +12,6 @@ use tracing_subscriber::{
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::{AuthApi};
 use crate::api::dashboard_api::DashboardApi;
-use crate::api::misc_api;
 use crate::api::misc_api::MiscApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
@@ -25,9 +19,7 @@ use crate::grpc_admin_user::admin_user_server::AdminUserServer;
 use crate::grpc_auth::auth_server::AuthServer;
 use crate::grpc_dashboard::dashboard_server::DashboardServer;
 use crate::grpc_misc::misc_server::MiscServer;
-use crate::models::validation_error::ErrorResponse;
 use crate::middleware::grpc_auth_middleware::check_auth;
-use crate::models::token_claim_model::TokenClaims;
 
 mod avored_state;
 mod providers;
@@ -88,7 +80,7 @@ async fn main() -> Result<(), Error> {
     let auth_server = AuthServer::new(auth_api);
 
 
-    let dashboard_api = DashboardApi {state: state.clone()};
+    let dashboard_api = DashboardApi {};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
 
     let admin_user_api = AdminUserApi {state: state.clone()};

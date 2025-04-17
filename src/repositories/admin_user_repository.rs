@@ -4,7 +4,6 @@ use crate::error::{Error, Result};
 use crate::models::admin_user_model::{
     AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel,
 };
-use crate::models::token_claim_model::LoggedInUser;
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
@@ -298,85 +297,85 @@ impl AdminUserRepository {
         Ok(admin_user_list)
     }
 
-    pub async fn attach_admin_user_with_role(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        admin_user_id: String,
-        role_id: String,
-        logged_in_user: LoggedInUser,
-    ) -> Result<bool> {
-        let sql = format!(
-            "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
-            "admin_users", admin_user_id, "admin_user_role", "roles", role_id
-        );
+    // pub async fn attach_admin_user_with_role(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     admin_user_id: String,
+    //     role_id: String,
+    //     logged_in_user: LoggedInUser,
+    // ) -> Result<bool> {
+    //     let sql = format!(
+    //         "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
+    //         "admin_users", admin_user_id, "admin_user_role", "roles", role_id
+    //     );
+    //
+    //     let attached_data: BTreeMap<String, Value> = [
+    //         ("created_by".into(), logged_in_user.email.clone().into()),
+    //         ("updated_by".into(), logged_in_user.email.into()),
+    //         ("created_at".into(), Datetime::default().into()),
+    //         ("updated_at".into(), Datetime::default().into()),
+    //     ]
+    //     .into();
+    //
+    //     let vars: BTreeMap<String, Value> = [("attached_data".into(), attached_data.into())].into();
+    //
+    //     let responses = datastore
+    //         .execute(sql.as_str(), database_session, Some(vars))
+    //         .await?;
+    //     println!("RESPONSE ATTACHED: {responses:?}");
+    //
+    //     let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+    //     if response.is_ok() {
+    //         return Ok(true);
+    //     }
+    //
+    //     Ok(true)
+    // }
 
-        let attached_data: BTreeMap<String, Value> = [
-            ("created_by".into(), logged_in_user.email.clone().into()),
-            ("updated_by".into(), logged_in_user.email.into()),
-            ("created_at".into(), Datetime::default().into()),
-            ("updated_at".into(), Datetime::default().into()),
-        ]
-        .into();
+    // pub async fn detach_admin_user_with_role(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     admin_user_id: String,
+    //     role_id: String,
+    // ) -> Result<bool> {
+    //     let sql = format!(
+    //         "DELETE {}:{}->{} WHERE {}:{};",
+    //         "admin_users", admin_user_id, "admin_user_role", "roles", role_id
+    //     );
+    //
+    //     let responses = datastore
+    //         .execute(sql.as_str(), database_session, None)
+    //         .await?;
+    //     println!("RESPONSE DETACHED: {responses:?}");
+    //
+    //     let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+    //     if response.is_ok() {
+    //         return Ok(true);
+    //     }
+    //
+    //     Ok(true)
+    // }
 
-        let vars: BTreeMap<String, Value> = [("attached_data".into(), attached_data.into())].into();
-
-        let responses = datastore
-            .execute(sql.as_str(), database_session, Some(vars))
-            .await?;
-        println!("RESPONSE ATTACHED: {responses:?}");
-
-        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        if response.is_ok() {
-            return Ok(true);
-        }
-
-        Ok(true)
-    }
-
-    pub async fn detach_admin_user_with_role(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        admin_user_id: String,
-        role_id: String,
-    ) -> Result<bool> {
-        let sql = format!(
-            "DELETE {}:{}->{} WHERE {}:{};",
-            "admin_users", admin_user_id, "admin_user_role", "roles", role_id
-        );
-
-        let responses = datastore
-            .execute(sql.as_str(), database_session, None)
-            .await?;
-        println!("RESPONSE DETACHED: {responses:?}");
-
-        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
-        if response.is_ok() {
-            return Ok(true);
-        }
-
-        Ok(true)
-    }
-
-    pub async fn count_of_email(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        email: String,
-    ) -> Result<ModelCount> {
-        let sql = "SELECT count(email=$email) FROM admin_users GROUP ALL";
-
-        let vars: BTreeMap<String, Value> = [("email".into(), email.into())].into();
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-
-        let result_object_option = into_iter_objects(responses)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => Err(Error::Generic("no record found".to_string())),
-        };
-        let model_count: Result<ModelCount> = result_object?.try_into();
-
-        model_count
-    }
+    // pub async fn count_of_email(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     email: String,
+    // ) -> Result<ModelCount> {
+    //     let sql = "SELECT count(email=$email) FROM admin_users GROUP ALL";
+    //
+    //     let vars: BTreeMap<String, Value> = [("email".into(), email.into())].into();
+    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    //
+    //     let result_object_option = into_iter_objects(responses)?.next();
+    //     let result_object = match result_object_option {
+    //         Some(object) => object,
+    //         None => Err(Error::Generic("no record found".to_string())),
+    //     };
+    //     let model_count: Result<ModelCount> = result_object?.try_into();
+    //
+    //     model_count
+    // }
 }

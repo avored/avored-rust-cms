@@ -13,10 +13,7 @@ pub fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
 
             let jwt_token = &env::var("AVORED_JWT_SECRET")
                     .map_err(|_| Error::ConfigMissing("AVORED_JWT_SECRET".to_string()))?;
-            let token = match auth_value.strip_prefix("Bearer ") {
-                Some(auth) => Some(auth.to_owned()),
-                _ => None,
-            };
+            let token = auth_value.strip_prefix("Bearer ").map(|auth| auth.to_owned());
             let claims = decode::<TokenClaims>(
                 &token.unwrap_or_default(),
                 &DecodingKey::from_secret(jwt_token.as_ref()),

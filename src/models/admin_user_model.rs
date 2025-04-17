@@ -1,9 +1,8 @@
 use std::time::SystemTime;
 use prost_types::Timestamp;
 use crate::error::{Error, Result};
-use crate::models::role_model::RoleModel;
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use surrealdb::sql::{Datetime, Object};
 use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
 use crate::grpc_admin_user::{AdminUserModel as GrpcAdminUserModel};

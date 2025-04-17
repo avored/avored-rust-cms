@@ -6,7 +6,6 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
 };
 use std::path::Path;
-use serde::de::Unexpected::Str;
 use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::grpc_admin_user::role_paginate_response::{RolePaginateData, RolePagination};
@@ -35,7 +34,7 @@ impl AdminUserService {
 
     pub async fn paginate(
         &self,
-        req: AdminUserPaginateRequest,
+        _req: AdminUserPaginateRequest,
         (datastore, database_session): &DB,
     ) -> Result<AdminUserPaginateResponse> {
         let admin_user_model_count   = self
@@ -90,7 +89,7 @@ impl AdminUserService {
     ) -> Result<StoreAdminUserResponse> {
 
         let password_hash = self
-            .get_password_hash_from_raw_password(&req.password, &password_salt)?;
+            .get_password_hash_from_raw_password(&req.password, password_salt)?;
 
         let mut created_admin_user_request = CreatableAdminUserModel {
             full_name: req.full_name,
@@ -101,7 +100,7 @@ impl AdminUserService {
             logged_in_username,
         };
 
-        if (!req.profile_image_file_name.is_empty()) {
+        if !req.profile_image_file_name.is_empty() {
             let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
             let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
 
@@ -171,7 +170,7 @@ impl AdminUserService {
 
         // needs to handle the existing image scenario
 
-        if (!req.profile_image_file_name.is_empty()) {
+        if !req.profile_image_file_name.is_empty() {
             let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
             let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
 
@@ -200,7 +199,7 @@ impl AdminUserService {
 
     pub async fn role_paginate(
         &self,
-        req: RolePaginateRequest,
+        _req: RolePaginateRequest,
         (datastore, database_session): &DB,
     ) -> Result<RolePaginateResponse> {
         let role_model_count   = self

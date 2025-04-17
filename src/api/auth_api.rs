@@ -4,7 +4,6 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::grpc_auth::{LoginRequest, LoginResponse};
 use crate::grpc_auth::auth_server::Auth;
-use crate::models::token_claim_model::TokenClaims;
 
 pub struct AuthApi {
     pub state: Arc<AvoRedState>,
@@ -35,7 +34,7 @@ impl Auth for AuthApi {
                 Ok(reply) => {
                     let res = Response::new(reply);
 
-                    let meta_data = res.metadata();
+                    // let meta_data = res.metadata();
                     // meta_data.get_all()
                     // res.metadata.into_headers()
 
