@@ -9,7 +9,7 @@ use axum::routing::get;
 use axum_tonic::{NestTonic, RestGrpcService};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{filter, Layer};
-use tracing_subscriber::fmt::layer;
+use tower_http::services::ServeDir;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use crate::api::admin_user_api::AdminUserApi;
@@ -86,8 +86,11 @@ async fn main() -> Result<(), Error>{
         .layer(cors.clone());
 
 
+    let static_routing_service = ServeDir::new("public");
+
     let rest_router = Router::new()
         .route("/", get(handler))
+        .nest_service("/public", static_routing_service)
         .with_state(state)
         .layer(cors);
 
