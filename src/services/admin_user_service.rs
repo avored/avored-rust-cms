@@ -6,7 +6,7 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
 };
 use std::path::Path;
-use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RoleOptionModel, RoleOptionRequest, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
@@ -240,6 +240,38 @@ impl AdminUserService {
         let res = RolePaginateResponse {
             status: true,
             data: Option::from(paginate_data),
+        };
+
+        Ok(res)
+    }
+
+    pub async fn role_option(
+        &self,
+        (datastore, database_session): &DB,
+    ) -> Result<RoleOptionResponse> {
+
+
+        let roles = self
+            .role_repository
+            .all(
+                datastore,
+                database_session
+            )
+            .await?;
+
+        let mut grpc_role_options = vec![];
+        roles.iter().for_each(|role| {
+            let model = RoleOptionModel {
+                value: role.id.clone(),
+                label: role.name.clone()
+            };
+            grpc_role_options.push(model);
+        });
+
+
+        let res = RoleOptionResponse {
+            status: true,
+            data: grpc_role_options,
         };
 
         Ok(res)

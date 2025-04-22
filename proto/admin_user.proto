@@ -29,6 +29,10 @@ message RoleModel {
   string updated_by = 9;
 }
 
+message RoleOptionModel {
+  string label = 1;
+  string value = 2;
+}
 
 // Admin user paginate API
 message AdminUserPaginateRequest {
@@ -113,7 +117,12 @@ message RolePaginateResponse {
   RolePaginateData data = 2;
 }
 
+message RoleOptionResponse {
+  bool status = 1;
+  repeated RoleOptionModel data = 2;
+}
 
+message RoleOptionRequest {}
 
 service AdminUser {
   rpc Paginate(AdminUserPaginateRequest) returns (AdminUserPaginateResponse);
@@ -121,4 +130,5 @@ service AdminUser {
   rpc GetAdminUser(GetAdminUserRequest) returns(GetAdminUserResponse);
   rpc UpdateAdminUser(UpdateAdminUserRequest) returns (UpdateAdminUserResponse);
   rpc RolePaginate(RolePaginateRequest) returns (RolePaginateResponse);
+  rpc RoleOption(RoleOptionRequest) returns (RoleOptionResponse);
 }

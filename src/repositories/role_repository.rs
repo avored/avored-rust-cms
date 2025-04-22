@@ -117,25 +117,25 @@ impl RoleRepository {
     //     updated_model
     // }
 
-    // pub async fn all(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    // ) -> Result<Vec<RoleModel>> {
-    //     let sql = "SELECT * FROM roles";
-    //
-    //     let responses = datastore.execute(sql, database_session, None).await?;
-    //
-    //     let mut role_list: Vec<RoleModel> = Vec::new();
-    //
-    //     for object in into_iter_objects(responses)? {
-    //         let role_object = object?;
-    //
-    //         let role_model: Result<RoleModel> = role_object.try_into();
-    //         role_list.push(role_model?);
-    //     }
-    //     Ok(role_list)
-    // }
+    pub async fn all(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+    ) -> Result<Vec<RoleModel>> {
+        let sql = "SELECT * FROM roles";
+
+        let responses = datastore.execute(sql, database_session, None).await?;
+
+        let mut role_list: Vec<RoleModel> = Vec::new();
+
+        for object in into_iter_objects(responses)? {
+            let role_object = object?;
+
+            let role_model: Result<RoleModel> = role_object.try_into();
+            role_list.push(role_model?);
+        }
+        Ok(role_list)
+    }
     //
     // pub async fn create_role(
     //     &self,

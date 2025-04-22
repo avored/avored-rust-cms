@@ -37,6 +37,13 @@ pub struct RoleModel {
     #[prost(string, tag = "9")]
     pub updated_by: ::prost::alloc::string::String,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RoleOptionModel {
+    #[prost(string, tag = "1")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub value: ::prost::alloc::string::String,
+}
 /// Admin user paginate API
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct AdminUserPaginateRequest {}
@@ -142,6 +149,15 @@ pub mod role_paginate_response {
         pub data: ::prost::alloc::vec::Vec<super::RoleModel>,
     }
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RoleOptionResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, repeated, tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<RoleOptionModel>,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct RoleOptionRequest {}
 /// Generated client implementations.
 pub mod admin_user_client {
     #![allow(
@@ -353,6 +369,30 @@ pub mod admin_user_client {
                 .insert(GrpcMethod::new("admin_user.AdminUser", "RolePaginate"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn role_option(
+            &mut self,
+            request: impl tonic::IntoRequest<super::RoleOptionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RoleOptionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/RoleOption",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "RoleOption"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -401,6 +441,13 @@ pub mod admin_user_server {
             request: tonic::Request<super::RolePaginateRequest>,
         ) -> std::result::Result<
             tonic::Response<super::RolePaginateResponse>,
+            tonic::Status,
+        >;
+        async fn role_option(
+            &self,
+            request: tonic::Request<super::RoleOptionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::RoleOptionResponse>,
             tonic::Status,
         >;
     }
@@ -690,6 +737,51 @@ pub mod admin_user_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = RolePaginateSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/RoleOption" => {
+                    #[allow(non_camel_case_types)]
+                    struct RoleOptionSvc<T: AdminUser>(pub Arc<T>);
+                    impl<
+                        T: AdminUser,
+                    > tonic::server::UnaryService<super::RoleOptionRequest>
+                    for RoleOptionSvc<T> {
+                        type Response = super::RoleOptionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::RoleOptionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::role_option(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = RoleOptionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -254,5 +254,48 @@ export class AdminUserClient {
     this.methodDescriptorRolePaginate);
   }
 
+  methodDescriptorRoleOption = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/RoleOption',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.RoleOptionRequest,
+    admin_user_pb.RoleOptionResponse,
+    (request: admin_user_pb.RoleOptionRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.RoleOptionResponse.deserializeBinary
+  );
+
+  roleOption(
+    request: admin_user_pb.RoleOptionRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.RoleOptionResponse>;
+
+  roleOption(
+    request: admin_user_pb.RoleOptionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.RoleOptionResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.RoleOptionResponse>;
+
+  roleOption(
+    request: admin_user_pb.RoleOptionRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.RoleOptionResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/RoleOption',
+        request,
+        metadata || {},
+        this.methodDescriptorRoleOption,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/RoleOption',
+    request,
+    metadata || {},
+    this.methodDescriptorRoleOption);
+  }
+
 }
 

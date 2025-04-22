@@ -103,6 +103,28 @@ export namespace RoleModel {
   }
 }
 
+export class RoleOptionModel extends jspb.Message {
+  getLabel(): string;
+  setLabel(value: string): RoleOptionModel;
+
+  getValue(): string;
+  setValue(value: string): RoleOptionModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleOptionModel.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleOptionModel): RoleOptionModel.AsObject;
+  static serializeBinaryToWriter(message: RoleOptionModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleOptionModel;
+  static deserializeBinaryFromReader(message: RoleOptionModel, reader: jspb.BinaryReader): RoleOptionModel;
+}
+
+export namespace RoleOptionModel {
+  export type AsObject = {
+    label: string,
+    value: string,
+  }
+}
+
 export class AdminUserPaginateRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserPaginateRequest.AsObject;
@@ -435,5 +457,43 @@ export namespace RolePaginateResponse {
     }
   }
 
+}
+
+export class RoleOptionResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): RoleOptionResponse;
+
+  getDataList(): Array<RoleOptionModel>;
+  setDataList(value: Array<RoleOptionModel>): RoleOptionResponse;
+  clearDataList(): RoleOptionResponse;
+  addData(value?: RoleOptionModel, index?: number): RoleOptionModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleOptionResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleOptionResponse): RoleOptionResponse.AsObject;
+  static serializeBinaryToWriter(message: RoleOptionResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleOptionResponse;
+  static deserializeBinaryFromReader(message: RoleOptionResponse, reader: jspb.BinaryReader): RoleOptionResponse;
+}
+
+export namespace RoleOptionResponse {
+  export type AsObject = {
+    status: boolean,
+    dataList: Array<RoleOptionModel.AsObject>,
+  }
+}
+
+export class RoleOptionRequest extends jspb.Message {
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): RoleOptionRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: RoleOptionRequest): RoleOptionRequest.AsObject;
+  static serializeBinaryToWriter(message: RoleOptionRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): RoleOptionRequest;
+  static deserializeBinaryFromReader(message: RoleOptionRequest, reader: jspb.BinaryReader): RoleOptionRequest;
+}
+
+export namespace RoleOptionRequest {
+  export type AsObject = {
+  }
 }
 

@@ -1,28 +1,41 @@
 import {Link, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {UseGetAdminUserHook} from "../../hooks/admin_user/UseGetAdminUserHook";
-import {AdminUserType, EditAdminUserType} from "../../types/admin_user/AdminUserType";
+import {AdminUserType, EditAdminUserType, RoleOptionType} from "../../types/admin_user/AdminUserType";
 import InputField from "../../components/InputField";
 import {UseAdminUserEditSchema} from "../../schemas/admin_user/UseAdminUserEditSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useForm} from "react-hook-form";
-import {GetAdminUserRequest, StoreAdminUserRequest, UpdateAdminUserRequest} from "../../grpc_generated/admin_user_pb";
+import {Controller, useForm} from "react-hook-form";
+import {GetAdminUserRequest, RoleOptionRequest, UpdateAdminUserRequest} from "../../grpc_generated/admin_user_pb";
 import ErrorMessage from "../../components/ErrorMessage";
 import {UseUpdateAdminUserHook} from "../../hooks/admin_user/UseUpdateAdminUserHook";
 import _ from "lodash";
+import {Switch} from "@headlessui/react";
+import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
+import {useState} from "react";
+import {UseGetRoleOptionHook} from "../../hooks/admin_user/UseGetRoleOption";
 
 export const AdminUserEditPage = () => {
-    // const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
+    const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
     const params = useParams();
     const [t] = useTranslation("global")
     const req = new GetAdminUserRequest();
     req.setAdminUserId(params.admin_user_id ?? '');
+
+    const role_option_request = new RoleOptionRequest();
+    const role_option_response = UseGetRoleOptionHook(role_option_request);
+    const role_option_data_list = role_option_response?.data?.dataList ?? [];
+    const roles: Array<RoleOptionType> = role_option_data_list as Array<unknown> as RoleOptionType[];
+
     const {data} = UseGetAdminUserHook(req);
     const values: EditAdminUserType = data?.data as unknown as EditAdminUserType;
     const {
         register,
+        control,
+        trigger,
         handleSubmit,
         formState: {errors},
+        setValue
     } = useForm<EditAdminUserType>({
         resolver: joiResolver(UseAdminUserEditSchema(), {allowUnknown: true}),
         values
@@ -31,12 +44,12 @@ export const AdminUserEditPage = () => {
 
 
     const isSuperAdminSwitchOnChange = ((is_checked: boolean) => {
-        // if (is_checked) {
-        //     setSelectedOption([])
-        // }
+        if (is_checked) {
+            setSelectedOption([])
+        }
 
-        // setValue("is_super_admin", is_checked)
-        // trigger('is_super_admin')
+        setValue("is_super_admin", is_checked)
+        trigger('is_super_admin')
     })
 
     const submitHandler = async (data: EditAdminUserType) => {
@@ -96,6 +109,55 @@ export const AdminUserEditPage = () => {
                                     register={register("email")}
                                 />
                             </div>
+
+                            <Controller
+                                control={control}
+                                name="is_super_admin"
+                                render={({field}) => {
+                                    return (
+                                        <>
+                                            <div className="mb-4 flex items-center">
+                                                <label
+                                                    htmlFor="is_super_admin_switch"
+                                                    className="text-sm text-gray-600"
+                                                >
+                                                    {t("is_super_admin")}
+                                                </label>
+
+                                                <Switch
+                                                    onChange={e => isSuperAdminSwitchOnChange(e)}
+                                                    checked={field.value}
+                                                    id="is_super_admin_switch"
+                                                    className={`${
+                                                        field.value ? "bg-primary-500" : "bg-gray-200"
+                                                    } relative ml-5 inline-flex h-6 w-11 items-center rounded-full`}
+                                                >
+                                                    <span className="sr-only">Enable notifications</span>
+                                                    <span
+                                                        className={`${
+                                                            field.value ? "translate-x-6" : "translate-x-1"
+                                                        } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+                                                    />
+                                                </Switch>
+                                            </div>
+                                            {(!field.value) ?
+                                                <div className="mb-4">
+                                                    <div className="relative z-10">
+                                                        <AvoRedMultiSelectField
+                                                            label={t("roles")}
+                                                            options={roles}
+                                                            selectedOption={selectedOption}
+                                                            onChangeSelectedOption={setSelectedOption}
+                                                        ></AvoRedMultiSelectField>
+                                                    </div>
+                                                </div>
+                                                : <></>}
+
+                                        </>
+                                    )
+                                }}
+                            />
+
 
 
 
