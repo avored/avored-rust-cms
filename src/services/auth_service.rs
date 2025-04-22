@@ -1,12 +1,12 @@
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use crate::error::Result;
-use crate::grpc_auth::{LoginRequest, LoginResponse};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::models::token_claim_model::TokenClaims;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use rust_i18n::t;
 use tonic::Status;
+use crate::api::proto::auth::{LoginRequest, LoginResponse};
 use crate::error::Error::TonicError;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 

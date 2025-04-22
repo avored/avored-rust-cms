@@ -1,41 +1,79 @@
 use std::env;
+use std::fs::File;
+use std::path::Path;
+use std::sync::Arc;
+use axum::http::HeaderValue;
 use axum::response::Html;
 use axum::Router;
 use axum::routing::get;
 use axum_tonic::{NestTonic, RestGrpcService};
-use tonic::{async_trait, Status};
-use crate::test2_server::{Test2, Test2Server};
+use tower_http::cors::{Any, CorsLayer};
+use tracing_subscriber::{filter, Layer};
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+use crate::api::auth_api::AuthApi;
+use crate::api::misc_api::MiscApi;
+use crate::api::proto::auth::auth_server::AuthServer;
+use crate::api::proto::echo::test2_server::Test2Server;
+use crate::api::proto::misc::misc_server::MiscServer;
+use crate::api::test_api::Test2Api;
+use crate::avored_state::AvoRedState;
+use crate::error::Error;
 
-tonic::include_proto!("echo");
+mod api;
+mod avored_state;
+mod error;
+mod models;
+mod providers;
+mod services;
+mod requests;
+mod repositories;
 
-pub struct MyEcho;
+const PER_PAGE: u64 = 100;
 
-#[async_trait]
-impl Test2 for MyEcho {
-    async fn test2(&self, _request: tonic::Request<Test2Request>) -> Result<tonic::Response<Test2Reply>, Status> {
-        Ok(tonic::Response::new(Test2Reply {
-            message: "Hello, back!".to_string(),
-        }))
-    }
-}
+rust_i18n::i18n!("resources/locales");
 
 async fn handler() -> Html<&'static str> {
     Html("<h1>Hello, World!</h1>")
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<(), Error>{
+    init_log();
 
-    let auth_api = MyEcho {};
-    let auth_server = Test2Server::new(auth_api);
+    let state = Arc::new(AvoRedState::new().await?);
+
+    let mut origins: Vec<HeaderValue> = vec![];
+    for origin in &state.config.cors_allowed_app_url {
+        origins.push(HeaderValue::from_str(origin).unwrap());
+    }
+
+
+    let cors = CorsLayer::new()
+        .allow_origin(origins)
+        .allow_headers(Any)
+        .allow_methods(Any);
+
+
+    let test_api = Test2Api {};
+    let test_server = Test2Server::new(test_api);
+
+    let misc_api = MiscApi {state: state.clone()};
+    let misc_server = MiscServer::new(misc_api);
+
+    let auth_api = AuthApi {state: state.clone()};
+    let auth_server = AuthServer::new(auth_api);
 
     let grpc_router = Router::new()
+        .nest_tonic(test_server)
+        .nest_tonic(misc_server)
         .nest_tonic(auth_server);
 
 
     let rest_router = Router::new()
-        .route("/", get(handler));
-
+        .route("/", get(handler))
+        .with_state(state)
+        .layer(cors);
 
     let service = RestGrpcService::new(rest_router, grpc_router);
 
@@ -60,221 +98,45 @@ async fn main() {
         .await
         .unwrap();
 
-    // let axum_make_service = axum::Router::new()
-    //     .route("/", axum::routing::get(|| async { "Hello PP!" }))
-    //     .into_make_service();
-    //
-    // let grpc_service = tonic::transport::Server::builder()
-    //     .add_service(EchoServer::new(MyEcho))
-    //     .into_service();
-    //
-    //
-    // let hybrid_make_service = hybrid(axum_make_service, grpc_service);
-    //
-    //
-    //
-    // let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    // println!("listening on {}", addr);
-    // let listener = TcpListener::bind(addr).await.unwrap();
-    //
-    // loop {
-    //     let (stream, _) = listener.accept().await.unwrap();
-    //     let io = TokioIo::new(stream);
-    //     let svc_clone = hybrid_make_service.clone();
-    //     tokio::task::spawn(async move {
-    //         if let Err(err) = http1::Builder::new().serve_connection(io, svc_clone).await {
-    //             println!("Failed to serve connection: {:?}", err);
-    //         }
-    //     });
-    // }
+    Ok(())
+
 }
 
 
+fn init_log() {
+    let stdout_log = tracing_subscriber::fmt::layer().pretty();
 
+    // A layer that logs events to a file.
+    let file = File::create(Path::new("public").join("log").join("avored.log"));
+    let file = match file {
+        Ok(file) => file,
+        Err(error) => panic!("Error: {:?}", error),
+    };
+    let debug_log = tracing_subscriber::fmt::layer().with_writer(Arc::new(file));
 
-// fn hybrid<MakeWeb, Grpc>(make_web: MakeWeb, grpc: Grpc) -> HybridMakeService<MakeWeb, Grpc> {
-//     HybridMakeService { make_web, grpc }
-// }
-//
-// struct HybridMakeService<MakeWeb, Grpc> {
-//     make_web: MakeWeb,
-//     grpc: Grpc,
-// }
-//
-// impl<ConnInfo, MakeWeb, Grpc> Service<ConnInfo> for HybridMakeService<MakeWeb, Grpc>
-// where
-//     MakeWeb: Service<ConnInfo>,
-//     Grpc: Clone,
-// {
-//     type Response = HybridService<MakeWeb::Response, Grpc>;
-//     type Error = MakeWeb::Error;
-//     type Future = HybridMakeServiceFuture<MakeWeb::Future, Grpc>;
-//
-//     fn poll_ready(
-//         &mut self,
-//         cx: &mut std::task::Context,
-//     ) -> std::task::Poll<Result<(), Self::Error>> {
-//         self.make_web.poll_ready(cx)
-//     }
-//
-//     fn call(&mut self, conn_info: ConnInfo) -> Self::Future {
-//         HybridMakeServiceFuture {
-//             web_future: self.make_web.call(conn_info),
-//             grpc: Some(self.grpc.clone()),
-//         }
-//     }
-// }
-//
-// #[pin_project]
-// struct HybridMakeServiceFuture<WebFuture, Grpc> {
-//     #[pin]
-//     web_future: WebFuture,
-//     grpc: Option<Grpc>,
-// }
-//
-// impl<WebFuture, Web, WebError, Grpc> Future for HybridMakeServiceFuture<WebFuture, Grpc>
-// where
-//     WebFuture: Future<Output = Result<Web, WebError>>,
-// {
-//     type Output = Result<HybridService<Web, Grpc>, WebError>;
-//
-//     fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context) -> Poll<Self::Output> {
-//         let this = self.project();
-//         match this.web_future.poll(cx) {
-//             Poll::Pending => Poll::Pending,
-//             Poll::Ready(Err(e)) => Poll::Ready(Err(e)),
-//             Poll::Ready(Ok(web)) => Poll::Ready(Ok(HybridService {
-//                 web,
-//                 grpc: this.grpc.take().expect("Cannot poll twice!"),
-//             })),
-//         }
-//     }
-// }
-//
-// struct HybridService<Web, Grpc> {
-//     web: Web,
-//     grpc: Grpc,
-// }
-//
-// impl<Web, Grpc, WebBody, GrpcBody> Service<Request<Incoming>> for HybridService<Web, Grpc>
-// where
-//     Web: Service<Request<Incoming>, Response = Response<WebBody>>,
-//     Grpc: Service<Request<Incoming>, Response = Response<GrpcBody>>,
-//     Web::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-//     Grpc::Error: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-// {
-//     type Response = Response<HybridBody<WebBody, GrpcBody>>;
-//     type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
-//     type Future = HybridFuture<Web::Future, Grpc::Future>;
-//
-//     fn poll_ready(
-//         &mut self,
-//         cx: &mut std::task::Context<'_>,
-//     ) -> std::task::Poll<Result<(), Self::Error>> {
-//         match self.web.poll_ready(cx) {
-//             Poll::Ready(Ok(())) => match self.grpc.poll_ready(cx) {
-//                 Poll::Ready(Ok(())) => Poll::Ready(Ok(())),
-//                 Poll::Ready(Err(e)) => Poll::Ready(Err(e.into())),
-//                 Poll::Pending => Poll::Pending,
-//             },
-//             Poll::Ready(Err(e)) => Poll::Ready(Err(e.into())),
-//             Poll::Pending => Poll::Pending,
-//         }
-//     }
-//
-//     fn call(&mut self, req: Request<Incoming>) -> Self::Future {
-//         if req.headers().get("content-type").map(|x| x.as_bytes()) == Some(b"application/grpc") {
-//             HybridFuture::Grpc(self.grpc.call(req))
-//         } else {
-//             HybridFuture::Web(self.web.call(req))
-//         }
-//     }
-// }
-//
-// #[pin_project(project = HybridBodyProj)]
-// enum HybridBody<WebBody, GrpcBody> {
-//     Web(#[pin] WebBody),
-//     Grpc(#[pin] GrpcBody),
-// }
-//
-// impl<WebBody, GrpcBody> HttpBody for HybridBody<WebBody, GrpcBody>
-// where
-//     WebBody: HttpBody + Send + Unpin,
-//     GrpcBody: HttpBody<Data = WebBody::Data> + Send + Unpin,
-//     WebBody::Error: std::error::Error + Send + Sync + 'static,
-//     GrpcBody::Error: std::error::Error + Send + Sync + 'static,
-// {
-//     type Data = WebBody::Data;
-//     type Error = Box<dyn std::error::Error + Send + Sync + 'static>;
-//
-//     fn is_end_stream(&self) -> bool {
-//         match self {
-//             HybridBody::Web(b) => b.is_end_stream(),
-//             HybridBody::Grpc(b) => b.is_end_stream(),
-//         }
-//     }
-//
-//     // fn poll_data(
-//     //     self: Pin<&mut Self>,
-//     //     cx: &mut std::task::Context,
-//     // ) -> Poll<Option<Result<Self::Data, Self::Error>>> {
-//     //     match self.project() {
-//     //         HybridBodyProj::Web(b) => b.poll_data(cx).map_err(|e| e.into()),
-//     //         HybridBodyProj::Grpc(b) => b.poll_data(cx).map_err(|e| e.into()),
-//     //     }
-//     // }
-//
-//     // fn poll_trailers(
-//     //     self: Pin<&mut Self>,
-//     //     cx: &mut std::task::Context,
-//     // ) -> Poll<Result<Option<HeaderMap>, Self::Error>> {
-//     //     match self.project() {
-//     //         HybridBodyProj::Web(b) => b.poll_trailers(cx).map_err(|e| e.into()),
-//     //         HybridBodyProj::Grpc(b) => b.poll_trailers(cx).map_err(|e| e.into()),
-//     //     }
-//     // }
-//
-//     fn poll_frame(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<Option<Result<Frame<Self::Data>, Self::Error>>> {
-//         match self.project() {
-//             HybridBodyProj::Web(b) => b.poll_frame(cx).map_err(|e| e.into()),
-//             HybridBodyProj::Grpc(b) => b.poll_frame(cx).map_err(|e| e.into()),
-//         }
-//     }
-// }
-//
-// #[pin_project(project = HybridFutureProj)]
-// enum HybridFuture<WebFuture, GrpcFuture> {
-//     Web(#[pin] WebFuture),
-//     Grpc(#[pin] GrpcFuture),
-// }
-//
-// impl<WebFuture, GrpcFuture, WebBody, GrpcBody, WebError, GrpcError> Future
-// for HybridFuture<WebFuture, GrpcFuture>
-// where
-//     WebFuture: Future<Output = Result<Response<WebBody>, WebError>>,
-//     GrpcFuture: Future<Output = Result<Response<GrpcBody>, GrpcError>>,
-//     WebError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-//     GrpcError: Into<Box<dyn std::error::Error + Send + Sync + 'static>>,
-// {
-//     type Output = Result<
-//         Response<HybridBody<WebBody, GrpcBody>>,
-//         Box<dyn std::error::Error + Send + Sync + 'static>,
-//     >;
-//
-//     fn poll(self: Pin<&mut Self>, cx: &mut std::task::Context) -> Poll<Self::Output> {
-//         match self.project() {
-//             HybridFutureProj::Web(a) => match a.poll(cx) {
-//                 Poll::Ready(Ok(res)) => Poll::Ready(Ok(res.map(HybridBody::Web))),
-//                 Poll::Ready(Err(e)) => Poll::Ready(Err(e.into())),
-//                 Poll::Pending => Poll::Pending,
-//             },
-//             HybridFutureProj::Grpc(b) => match b.poll(cx) {
-//                 Poll::Ready(Ok(res)) => Poll::Ready(Ok(res.map(HybridBody::Grpc))),
-//                 Poll::Ready(Err(e)) => Poll::Ready(Err(e.into())),
-//                 Poll::Pending => Poll::Pending,
-//             },
-//         }
-//     }
-// }
-//
-//
+    // A layer that collects metrics using specific events.
+    let metrics_layer = /* ... */ filter::LevelFilter::INFO;
+
+    tracing_subscriber::registry()
+        .with(
+            stdout_log
+                // Add an `INFO` filter to the stdout logging layer
+                .with_filter(filter::LevelFilter::INFO)
+                // Combine the filtered `stdout_log` layer with the
+                // `debug_log` layer, producing a new `Layered` layer.
+                .and_then(debug_log)
+                // Add a filter to *both* layers that rejects spans and
+                // events whose targets start with `metrics`.
+                .with_filter(filter::filter_fn(|metadata| {
+                    !metadata.target().starts_with("metrics")
+                })),
+        )
+        .with(
+            // Add a filter to the metrics label that *only* enables
+            // events whose targets start with `metrics`.
+            metrics_layer.with_filter(filter::filter_fn(|metadata| {
+                metadata.target().starts_with("metrics")
+            })),
+        )
+        .init();
+}

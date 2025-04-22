@@ -1,8 +1,8 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
+use crate::api::proto::misc::{HealthCheckRequest, HealthCheckResponse, SetupRequest, SetupResponse};
+use crate::api::proto::misc::misc_server::Misc;
 use crate::avored_state::AvoRedState;
-use crate::grpc_misc::misc_server::Misc;
-use crate::grpc_misc::{SetupRequest, SetupResponse, HealthCheckResponse, HealthCheckRequest};
 
 pub struct MiscApi {
     pub state: Arc<AvoRedState>,

@@ -1,7 +1,7 @@
 use email_address::EmailAddress;
 use rust_i18n::t;
-use crate::grpc_auth::LoginRequest;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::api::proto::auth::LoginRequest;
 
 impl LoginRequest {
     pub fn validate(&self) -> crate::error::Result<(bool, String)> {

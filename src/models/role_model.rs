@@ -24,10 +24,10 @@ pub struct RoleOptionModel {
 }
 
 
-impl TryFrom<RoleModel> for crate::grpc_admin_user::RoleModel {
+impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
     type Error = Error;
 
-    fn try_from(val: RoleModel) -> Result<crate::grpc_admin_user::RoleModel> {
+    fn try_from(val: RoleModel) -> Result<crate::api::proto::admin_user::RoleModel> {
         let chrono_utc_created_at= val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -36,7 +36,7 @@ impl TryFrom<RoleModel> for crate::grpc_admin_user::RoleModel {
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
-        let model: crate::grpc_admin_user::RoleModel = crate::grpc_admin_user::RoleModel {
+        let model: crate::api::proto::admin_user::RoleModel = crate::api::proto::admin_user::RoleModel {
             id: val.id,
             name: val.name,
             identifier: val.identifier,

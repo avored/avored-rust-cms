@@ -1,6 +1,6 @@
 use email_address::EmailAddress;
 use rust_i18n::t;
-use crate::grpc_misc::SetupRequest;
+use crate::api::proto::misc::SetupRequest;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use crate::error::Result;
 

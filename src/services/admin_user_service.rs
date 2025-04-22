@@ -6,9 +6,9 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
 };
 use std::path::Path;
-use crate::grpc_admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
-use crate::grpc_admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
-use crate::grpc_admin_user::role_paginate_response::{RolePaginateData, RolePagination};
+use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
+use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 use crate::repositories::role_repository::RoleRepository;
 

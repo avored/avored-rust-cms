@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
 use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
-use crate::grpc_admin_user::{AdminUserModel as GrpcAdminUserModel};
+use crate::api::proto::admin_user::{AdminUserModel as GrpcAdminUserModel};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {

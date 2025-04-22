@@ -1,8 +1,8 @@
 use std::collections::BTreeMap;
 use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
+use crate::api::proto::misc::{SetupRequest, SetupResponse};
 use crate::error::Result;
-use crate::grpc_misc::{SetupRequest, SetupResponse};
 use crate::providers::avored_database_provider::DB;
 
 pub struct MiscService {}

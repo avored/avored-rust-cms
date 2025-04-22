@@ -1,9 +1,10 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
+use crate::api::proto::auth::{LoginRequest, LoginResponse};
+use crate::api::proto::auth::auth_server::Auth;
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-use crate::grpc_auth::{LoginRequest, LoginResponse};
-use crate::grpc_auth::auth_server::Auth;
+
 
 pub struct AuthApi {
     pub state: Arc<AvoRedState>,
