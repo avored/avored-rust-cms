@@ -1,6 +1,6 @@
 use tonic::{async_trait, Request, Response, Status};
-use crate::grpc_dashboard::dashboard_server::Dashboard;
-use crate::grpc_dashboard::{DashboardRequest, DashboardResponse};
+use crate::api::proto::dashboard::dashboard_server::Dashboard;
+use crate::api::proto::dashboard::{DashboardRequest, DashboardResponse};
 use crate::models::token_claim_model::TokenClaims;
 
 pub struct DashboardApi {

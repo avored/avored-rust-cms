@@ -9,16 +9,22 @@ use axum::routing::get;
 use axum_tonic::{NestTonic, RestGrpcService};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{filter, Layer};
+use tracing_subscriber::fmt::layer;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
+use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::AuthApi;
+use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
+use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
 use crate::api::proto::auth::auth_server::AuthServer;
+use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::echo::test2_server::Test2Server;
 use crate::api::proto::misc::misc_server::MiscServer;
 use crate::api::test_api::Test2Api;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
+use crate::middleware::grpc_auth_middleware::check_auth;
 
 mod api;
 mod avored_state;
@@ -28,6 +34,7 @@ mod providers;
 mod services;
 mod requests;
 mod repositories;
+mod middleware;
 
 const PER_PAGE: u64 = 100;
 
@@ -61,13 +68,22 @@ async fn main() -> Result<(), Error>{
     let misc_api = MiscApi {state: state.clone()};
     let misc_server = MiscServer::new(misc_api);
 
+    let dashboard_api = DashboardApi {};
+    let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
+
     let auth_api = AuthApi {state: state.clone()};
     let auth_server = AuthServer::new(auth_api);
+
+    let admin_user_api = AdminUserApi {state: state.clone()};
+    let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
 
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)
-        .nest_tonic(auth_server);
+        .nest_tonic(auth_server)
+        .nest_tonic(dashboard_server)
+        .nest_tonic(admin_user_server)
+        .layer(cors.clone());
 
 
     let rest_router = Router::new()

@@ -1,9 +1,9 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
+use crate::api::proto::admin_user::admin_user_server::AdminUser;
+use crate::api::proto::admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-use crate::grpc_admin_user::admin_user_server::AdminUser;
-use crate::grpc_admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::models::token_claim_model::TokenClaims;
 
 pub struct AdminUserApi {

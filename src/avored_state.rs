@@ -5,9 +5,6 @@ use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::auth_service::AuthService;
-// use crate::repositories::admin_user_repository::AdminUserRepository;
-// use crate::repositories::role_repository::RoleRepository;
-// use crate::services::admin_user_service::AdminUserService;
 use crate::services::misc_service::MiscService;
 
 pub struct AvoRedState {
@@ -15,7 +12,7 @@ pub struct AvoRedState {
     pub config: AvoRedConfigProvider,
     pub misc_service: MiscService,
     pub auth_service: AuthService,
-    // pub admin_user_service: AdminUserService,
+    pub admin_user_service: AdminUserService,
 }
 
 impl AvoRedState {
@@ -37,6 +34,7 @@ impl AvoRedState {
             db: avored_database_provider.db,
             misc_service,
             auth_service,
+            admin_user_service
         })
     }
 }
