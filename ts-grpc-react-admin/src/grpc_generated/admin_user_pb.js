@@ -53,7 +53,7 @@ goog.exportSymbol('proto.admin_user.UpdateAdminUserResponse', null, global);
  * @constructor
  */
 proto.admin_user.AdminUserModel = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.admin_user.AdminUserModel.repeatedFields_, null);
 };
 goog.inherits(proto.admin_user.AdminUserModel, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -284,7 +284,7 @@ if (goog.DEBUG && !COMPILED) {
  * @constructor
  */
 proto.admin_user.UpdateAdminUserRequest = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.admin_user.UpdateAdminUserRequest.repeatedFields_, null);
 };
 goog.inherits(proto.admin_user.UpdateAdminUserRequest, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
@@ -442,6 +442,13 @@ if (goog.DEBUG && !COMPILED) {
   proto.admin_user.RoleOptionRequest.displayName = 'proto.admin_user.RoleOptionRequest';
 }
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.admin_user.AdminUserModel.repeatedFields_ = [10];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -481,7 +488,9 @@ isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
 createdAt: (f = msg.getCreatedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
 updatedAt: (f = msg.getUpdatedAt()) && google_protobuf_timestamp_pb.Timestamp.toObject(includeInstance, f),
 createdBy: jspb.Message.getFieldWithDefault(msg, 8, ""),
-updatedBy: jspb.Message.getFieldWithDefault(msg, 9, "")
+updatedBy: jspb.Message.getFieldWithDefault(msg, 9, ""),
+rolesList: jspb.Message.toObjectList(msg.getRolesList(),
+    proto.admin_user.RoleModel.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -555,6 +564,11 @@ proto.admin_user.AdminUserModel.deserializeBinaryFromReader = function(msg, read
     case 9:
       var value = /** @type {string} */ (reader.readString());
       msg.setUpdatedBy(value);
+      break;
+    case 10:
+      var value = new proto.admin_user.RoleModel;
+      reader.readMessage(value,proto.admin_user.RoleModel.deserializeBinaryFromReader);
+      msg.addRoles(value);
       break;
     default:
       reader.skipField();
@@ -648,6 +662,14 @@ proto.admin_user.AdminUserModel.serializeBinaryToWriter = function(message, writ
     writer.writeString(
       9,
       f
+    );
+  }
+  f = message.getRolesList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      10,
+      f,
+      proto.admin_user.RoleModel.serializeBinaryToWriter
     );
   }
 };
@@ -850,6 +872,44 @@ proto.admin_user.AdminUserModel.prototype.getUpdatedBy = function() {
  */
 proto.admin_user.AdminUserModel.prototype.setUpdatedBy = function(value) {
   return jspb.Message.setProto3StringField(this, 9, value);
+};
+
+
+/**
+ * repeated RoleModel roles = 10;
+ * @return {!Array<!proto.admin_user.RoleModel>}
+ */
+proto.admin_user.AdminUserModel.prototype.getRolesList = function() {
+  return /** @type{!Array<!proto.admin_user.RoleModel>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.admin_user.RoleModel, 10));
+};
+
+
+/**
+ * @param {!Array<!proto.admin_user.RoleModel>} value
+ * @return {!proto.admin_user.AdminUserModel} returns this
+*/
+proto.admin_user.AdminUserModel.prototype.setRolesList = function(value) {
+  return jspb.Message.setRepeatedWrapperField(this, 10, value);
+};
+
+
+/**
+ * @param {!proto.admin_user.RoleModel=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.admin_user.RoleModel}
+ */
+proto.admin_user.AdminUserModel.prototype.addRoles = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 10, opt_value, proto.admin_user.RoleModel, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.admin_user.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserModel.prototype.clearRolesList = function() {
+  return this.setRolesList([]);
 };
 
 
@@ -2815,6 +2875,13 @@ proto.admin_user.GetAdminUserResponse.prototype.hasData = function() {
 
 
 
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.admin_user.UpdateAdminUserRequest.repeatedFields_ = [5];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -2849,7 +2916,8 @@ proto.admin_user.UpdateAdminUserRequest.toObject = function(includeInstance, msg
 adminUserId: jspb.Message.getFieldWithDefault(msg, 1, ""),
 fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
 profileImageContent: msg.getProfileImageContent_asB64(),
-profileImageFileName: jspb.Message.getFieldWithDefault(msg, 4, "")
+profileImageFileName: jspb.Message.getFieldWithDefault(msg, 4, ""),
+roleIdsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2901,6 +2969,10 @@ proto.admin_user.UpdateAdminUserRequest.deserializeBinaryFromReader = function(m
     case 4:
       var value = /** @type {string} */ (reader.readString());
       msg.setProfileImageFileName(value);
+      break;
+    case 5:
+      var value = /** @type {string} */ (reader.readString());
+      msg.addRoleIds(value);
       break;
     default:
       reader.skipField();
@@ -2956,6 +3028,13 @@ proto.admin_user.UpdateAdminUserRequest.serializeBinaryToWriter = function(messa
   if (f.length > 0) {
     writer.writeString(
       4,
+      f
+    );
+  }
+  f = message.getRoleIdsList();
+  if (f.length > 0) {
+    writer.writeRepeatedString(
+      5,
       f
     );
   }
@@ -3055,6 +3134,43 @@ proto.admin_user.UpdateAdminUserRequest.prototype.getProfileImageFileName = func
  */
 proto.admin_user.UpdateAdminUserRequest.prototype.setProfileImageFileName = function(value) {
   return jspb.Message.setProto3StringField(this, 4, value);
+};
+
+
+/**
+ * repeated string role_ids = 5;
+ * @return {!Array<string>}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getRoleIdsList = function() {
+  return /** @type {!Array<string>} */ (jspb.Message.getRepeatedField(this, 5));
+};
+
+
+/**
+ * @param {!Array<string>} value
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.setRoleIdsList = function(value) {
+  return jspb.Message.setField(this, 5, value || []);
+};
+
+
+/**
+ * @param {string} value
+ * @param {number=} opt_index
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.addRoleIds = function(value, opt_index) {
+  return jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+};
+
+
+/**
+ * Clears the list making it empty but non-null.
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.clearRoleIdsList = function() {
+  return this.setRoleIdsList([]);
 };
 
 

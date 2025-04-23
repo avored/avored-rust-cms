@@ -6,7 +6,7 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
 };
 use std::path::Path;
-use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RoleOptionModel, RoleOptionRequest, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
 use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
@@ -165,8 +165,11 @@ impl AdminUserService {
             full_name: req.full_name,
             profile_image: String::from(""),
             is_super_admin: false,
-            logged_in_username
+            logged_in_username: logged_in_username.clone(),
+            role_ids: req.role_ids,
         };
+        
+        println!("UPDATE ADMIN USER SERVICE {:?}", updatable_admin_user_model);
 
         // needs to handle the existing image scenario
 
@@ -184,11 +187,46 @@ impl AdminUserService {
             .update_admin_user(
                 datastore,
                 database_session,
-                updatable_admin_user_model
+                updatable_admin_user_model.clone()
             )
             .await?;
 
-        let model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+        let mut model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+
+        for role_id in updatable_admin_user_model.clone().role_ids {
+            self.admin_user_repository
+                .detach_admin_user_with_role(
+                    datastore,
+                    database_session,
+                    admin_user_model.clone().id,
+                    role_id,
+                )
+                .await?;
+        }
+        
+        for role_id in &updatable_admin_user_model.role_ids {
+            let role_model = self
+                .role_repository
+                .find_by_id(datastore, database_session, role_id.to_string())
+                .await?;
+            
+            let grpc_role_model: RoleModel = role_model.clone().try_into().unwrap();
+            let logged_in_user = logged_in_username.clone();
+            self.admin_user_repository
+                .attach_admin_user_with_role(
+                    datastore,
+                    database_session,
+                    admin_user_model.clone().id,
+                    role_model.clone().id,
+                    &logged_in_user,
+                )
+                .await?;
+        
+            model.roles.push(grpc_role_model);
+        }
+        
+        
+        
 
         let res = UpdateAdminUserResponse {
             status: true,

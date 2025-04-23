@@ -15,6 +15,7 @@ message AdminUserModel {
   google.protobuf.Timestamp updated_at = 7;
   string created_by = 8;
   string updated_by = 9;
+  repeated RoleModel roles = 10;
 }
 
 
@@ -89,6 +90,7 @@ message UpdateAdminUserRequest {
   string full_name = 2;
   bytes profile_image_content = 3;
   string profile_image_file_name = 4;
+  repeated string role_ids = 5;
 }
 
 message UpdateAdminUserResponse {

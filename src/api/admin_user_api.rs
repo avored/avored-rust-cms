@@ -81,7 +81,6 @@ impl AdminUser for AdminUserApi {
             ).await {
             Ok(reply) => {
                 let res = Response::new(reply);
-
                 Ok(res)
             },
             Err(e) => match e {

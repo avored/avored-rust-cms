@@ -1,5 +1,5 @@
 import React, {Fragment} from "react";
-import {Listbox, Transition} from "@headlessui/react";
+import {Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition} from "@headlessui/react";
 import {CheckIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
 
 type AvoRedMultiSelectFieldProps = {
@@ -23,10 +23,10 @@ const AvoRedMultiSelectField = ({
     return (
         <Listbox value={selectedOption} onChange={onChangeSelectedOption} multiple>
             <div className="relative mt-1">
-                <Listbox.Label className="text-gray-600 text-sm">
+                <Label className="text-gray-600 text-sm">
                     {label}
-                </Listbox.Label>
-                <Listbox.Button
+                </Label>
+                <ListboxButton
                     className="w-full cursor-default h-8 rounded py-2 pl-3 pr-10 text-left text-sm shadow ring-1 ring-gray-400 focus:ring-primary-500 active:ring-primary-500 focus:outline-none"
                 >
                     <span className="block min-h:[5]">
@@ -38,7 +38,7 @@ const AvoRedMultiSelectField = ({
                             aria-hidden="true"
                         />
                     </span>
-                </Listbox.Button>
+                </ListboxButton>
 
                 <Transition
                     as={Fragment}
@@ -46,10 +46,10 @@ const AvoRedMultiSelectField = ({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <Listbox.Options
+                    <ListboxOptions
                         className="absolute mt-1 max-h-60 w-full overflow-auto rounded bg-white py-1 text-base shadow ring-1 ring-black/5 focus:outline-none sm:text-sm">
                         {options.map((option) => (
-                            <Listbox.Option
+                            <ListboxOption
                                 key={option.value}
                                 className={(({active}) => {
                                     return `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? 'bg-primary-100 text-primary-900' : 'text-gray-900'}`
@@ -73,9 +73,9 @@ const AvoRedMultiSelectField = ({
                                         ) : null}
                                     </>
                                 )}
-                            </Listbox.Option>
+                            </ListboxOption>
                         ))}
-                    </Listbox.Options>
+                    </ListboxOptions>
                 </Transition>
             </div>
         </Listbox>

@@ -35,6 +35,11 @@ export class AdminUserModel extends jspb.Message {
   getUpdatedBy(): string;
   setUpdatedBy(value: string): AdminUserModel;
 
+  getRolesList(): Array<RoleModel>;
+  setRolesList(value: Array<RoleModel>): AdminUserModel;
+  clearRolesList(): AdminUserModel;
+  addRoles(value?: RoleModel, index?: number): RoleModel;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserModel.AsObject;
   static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
@@ -54,6 +59,7 @@ export namespace AdminUserModel {
     updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     createdBy: string,
     updatedBy: string,
+    rolesList: Array<RoleModel.AsObject>,
   }
 }
 
@@ -334,6 +340,11 @@ export class UpdateAdminUserRequest extends jspb.Message {
   getProfileImageFileName(): string;
   setProfileImageFileName(value: string): UpdateAdminUserRequest;
 
+  getRoleIdsList(): Array<string>;
+  setRoleIdsList(value: Array<string>): UpdateAdminUserRequest;
+  clearRoleIdsList(): UpdateAdminUserRequest;
+  addRoleIds(value: string, index?: number): UpdateAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateAdminUserRequest): UpdateAdminUserRequest.AsObject;
@@ -348,6 +359,7 @@ export namespace UpdateAdminUserRequest {
     fullName: string,
     profileImageContent: Uint8Array | string,
     profileImageFileName: string,
+    roleIdsList: Array<string>,
   }
 }
 

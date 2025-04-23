@@ -27,8 +27,8 @@ export type EditAdminUserType = {
     profileImage: string;
     email: string;
     profile_image: FileList;
-    role_ids: Array<string>;
-    is_super_admin: boolean;
+    roles: Array<RoleType>;
+    isSuperAdmin: boolean;
 }
 
 export type RoleOptionType = {

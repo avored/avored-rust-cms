@@ -1,7 +1,7 @@
 import {Link, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {UseGetAdminUserHook} from "../../hooks/admin_user/UseGetAdminUserHook";
-import {AdminUserType, EditAdminUserType, RoleOptionType} from "../../types/admin_user/AdminUserType";
+import {AdminUserType, EditAdminUserType, RoleOptionType, RoleType} from "../../types/admin_user/AdminUserType";
 import InputField from "../../components/InputField";
 import {UseAdminUserEditSchema} from "../../schemas/admin_user/UseAdminUserEditSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
@@ -27,8 +27,22 @@ export const AdminUserEditPage = () => {
     const role_option_data_list = role_option_response?.data?.dataList ?? [];
     const roles: Array<RoleOptionType> = role_option_data_list as Array<unknown> as RoleOptionType[];
 
+
     const {data} = UseGetAdminUserHook(req);
+
     const values: EditAdminUserType = data?.data as unknown as EditAdminUserType;
+    const admin_user_role_list = data?.data?.rolesList ?? [];
+    if (values) {
+        values.roles = admin_user_role_list as Array<unknown> as RoleType[];
+        values.roles = _.uniqBy(values.roles, 'id')
+
+        values.roles.map((role) => {
+            if (!_.includes(selectedOption, role.id)) {
+                selectedOption.push(role.id)
+            }
+        })
+    }
+
     const {
         register,
         control,
@@ -48,14 +62,15 @@ export const AdminUserEditPage = () => {
             setSelectedOption([])
         }
 
-        setValue("is_super_admin", is_checked)
-        trigger('is_super_admin')
+        setValue("isSuperAdmin", is_checked)
+        trigger('isSuperAdmin')
     })
 
     const submitHandler = async (data: EditAdminUserType) => {
         const update_admin_user = new UpdateAdminUserRequest();
         update_admin_user.setFullName(data.fullName);
         update_admin_user.setAdminUserId(params.admin_user_id ?? '');
+        update_admin_user.setRoleIdsList(selectedOption);
 
         var profile_image_file_name = ""
         const file: File = data.profile_image[0];
@@ -112,7 +127,7 @@ export const AdminUserEditPage = () => {
 
                             <Controller
                                 control={control}
-                                name="is_super_admin"
+                                name="isSuperAdmin"
                                 render={({field}) => {
                                     return (
                                         <>

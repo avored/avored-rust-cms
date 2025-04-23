@@ -8,7 +8,7 @@ use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
-
+use surrealdb::sql::Value;
 use super::into_iter_objects;
 
 #[derive(Clone)]
@@ -178,30 +178,30 @@ impl RoleRepository {
     //     role_model
     // }
     //
-    // pub async fn find_by_id(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     role_id: String,
-    // ) -> Result<RoleModel> {
-    //     let sql = "SELECT * FROM type::thing($table, $id);";
-    //     let vars: BTreeMap<String, Value> = [
-    //         ("id".into(), role_id.into()),
-    //         ("table".into(), "roles".into()),
-    //     ]
-    //     .into();
-    //
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let role_model: Result<RoleModel> = result_object?.try_into();
-    //
-    //     role_model
-    // }
+    pub async fn find_by_id(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: String,
+    ) -> Result<RoleModel> {
+        let sql = "SELECT * FROM type::thing($table, $id);";
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), "roles".into()),
+        ]
+        .into();
+    
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let role_model: Result<RoleModel> = result_object?.try_into();
+    
+        role_model
+    }
     //
     // pub async fn update_role(
     //     &self,
