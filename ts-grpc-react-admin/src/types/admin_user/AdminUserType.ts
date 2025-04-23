@@ -43,7 +43,26 @@ export type RoleType = {
     identifier: string;
     createdAt: GrpcTimeStamp;
     updatedAt: GrpcTimeStamp;
+    permissions: Array<string>;
     createdBy: string;
     updatedBy: string;
     action: string;
+}
+
+export type CreatableRoleType = {
+    name: string;
+    identifier: string;
+    permissions: Array<string>;
+}
+
+
+export type EditRoleType = {
+    id: string;
+    name: string;
+    identifier: string;
+    permissions: Array<string>;
+}
+
+export type PutRoleIdentifierType = {
+    identifier: String;
 }

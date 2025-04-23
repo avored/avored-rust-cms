@@ -9,6 +9,8 @@ import {AdminUserTablePage} from "./pages/admin_user/AdminUserTablePage";
 import {AdminUserCreatePage} from "./pages/admin_user/AdminUserCreatePage";
 import {AdminUserEditPage} from "./pages/admin_user/AdminUserEditPage";
 import {RoleTablePage} from "./pages/admin_user/RoleTablePage";
+import {RoleCreatePage} from "./pages/admin_user/RoleCreatePage";
+import {RoleEditPage} from "./pages/admin_user/RoleEditPage";
 
 function App() {
 
@@ -27,6 +29,8 @@ function App() {
                     <Route path="/admin/admin-user-edit/:admin_user_id"   element={<AdminUserEditPage />} />
 
                     <Route path="/admin/role" element={<RoleTablePage />} />
+                    <Route path="/admin/role-create" element={<RoleCreatePage />} />
+                    <Route path="/admin/role-edit/:role_id" element={<RoleEditPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

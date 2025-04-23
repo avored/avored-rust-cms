@@ -30,6 +30,8 @@ pub struct RoleModel {
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
     pub identifier: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "10")]
+    pub permissions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(message, optional, tag = "6")]
     pub created_at: ::core::option::Option<::prost_types::Timestamp>,
     #[prost(message, optional, tag = "7")]
@@ -159,6 +161,64 @@ pub struct RoleOptionResponse {
     pub status: bool,
     #[prost(message, repeated, tag = "2")]
     pub data: ::prost::alloc::vec::Vec<RoleOptionModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreRoleRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "3")]
+    pub permissions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreRoleResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<RoleModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetRoleRequest {
+    #[prost(string, tag = "1")]
+    pub role_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetRoleResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<RoleModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateRoleRequest {
+    #[prost(string, tag = "1")]
+    pub role_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, repeated, tag = "3")]
+    pub permissions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateRoleResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<RoleModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PutRoleIdentifierRequest {
+    #[prost(string, tag = "1")]
+    pub role_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PutRoleIdentifierResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<RoleModel>,
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct RoleOptionRequest {}
@@ -397,6 +457,102 @@ pub mod admin_user_client {
                 .insert(GrpcMethod::new("admin_user.AdminUser", "RoleOption"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn store_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StoreRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/StoreRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "StoreRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/GetRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "GetRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn update_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/UpdateRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "UpdateRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn put_role_identifier(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PutRoleIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutRoleIdentifierResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/PutRoleIdentifier",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "PutRoleIdentifier"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -452,6 +608,31 @@ pub mod admin_user_server {
             request: tonic::Request<super::RoleOptionRequest>,
         ) -> std::result::Result<
             tonic::Response<super::RoleOptionResponse>,
+            tonic::Status,
+        >;
+        async fn store_role(
+            &self,
+            request: tonic::Request<super::StoreRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreRoleResponse>,
+            tonic::Status,
+        >;
+        async fn get_role(
+            &self,
+            request: tonic::Request<super::GetRoleRequest>,
+        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
+        async fn update_role(
+            &self,
+            request: tonic::Request<super::UpdateRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateRoleResponse>,
+            tonic::Status,
+        >;
+        async fn put_role_identifier(
+            &self,
+            request: tonic::Request<super::PutRoleIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutRoleIdentifierResponse>,
             tonic::Status,
         >;
     }
@@ -786,6 +967,184 @@ pub mod admin_user_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = RoleOptionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/StoreRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct StoreRoleSvc<T: AdminUser>(pub Arc<T>);
+                    impl<
+                        T: AdminUser,
+                    > tonic::server::UnaryService<super::StoreRoleRequest>
+                    for StoreRoleSvc<T> {
+                        type Response = super::StoreRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StoreRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::store_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = StoreRoleSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/GetRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetRoleSvc<T: AdminUser>(pub Arc<T>);
+                    impl<T: AdminUser> tonic::server::UnaryService<super::GetRoleRequest>
+                    for GetRoleSvc<T> {
+                        type Response = super::GetRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::get_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetRoleSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/UpdateRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateRoleSvc<T: AdminUser>(pub Arc<T>);
+                    impl<
+                        T: AdminUser,
+                    > tonic::server::UnaryService<super::UpdateRoleRequest>
+                    for UpdateRoleSvc<T> {
+                        type Response = super::UpdateRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::update_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateRoleSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/PutRoleIdentifier" => {
+                    #[allow(non_camel_case_types)]
+                    struct PutRoleIdentifierSvc<T: AdminUser>(pub Arc<T>);
+                    impl<
+                        T: AdminUser,
+                    > tonic::server::UnaryService<super::PutRoleIdentifierRequest>
+                    for PutRoleIdentifierSvc<T> {
+                        type Response = super::PutRoleIdentifierResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PutRoleIdentifierRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::put_role_identifier(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = PutRoleIdentifierSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

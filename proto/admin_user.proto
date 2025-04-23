@@ -24,6 +24,7 @@ message RoleModel {
   string id = 1;
   string name = 2;
   string identifier = 3;
+  repeated string permissions = 10;
   google.protobuf.Timestamp created_at = 6;
   google.protobuf.Timestamp updated_at = 7;
   string created_by = 8;
@@ -124,6 +125,50 @@ message RoleOptionResponse {
   repeated RoleOptionModel data = 2;
 }
 
+message StoreRoleRequest {
+  string name = 1;
+  string identifier = 2;
+   repeated string permissions = 3;
+}
+
+message StoreRoleResponse {
+  bool status = 1;
+  RoleModel data = 2;
+}
+
+message GetRoleRequest {
+  string role_id = 1;
+}
+
+
+message GetRoleResponse {
+  bool status = 1;
+  RoleModel data = 2;
+}
+
+
+message UpdateRoleRequest {
+  string role_id = 1;
+  string name = 2;
+  repeated string permissions = 3;
+}
+
+message UpdateRoleResponse {
+  bool status = 1;
+  RoleModel data = 2;
+}
+
+message PutRoleIdentifierRequest {
+  string role_id = 1;
+  string identifier = 2;
+}
+
+message PutRoleIdentifierResponse {
+  bool status = 1;
+  RoleModel data = 2;
+}
+
+
 message RoleOptionRequest {}
 
 service AdminUser {
@@ -133,4 +178,8 @@ service AdminUser {
   rpc UpdateAdminUser(UpdateAdminUserRequest) returns (UpdateAdminUserResponse);
   rpc RolePaginate(RolePaginateRequest) returns (RolePaginateResponse);
   rpc RoleOption(RoleOptionRequest) returns (RoleOptionResponse);
+  rpc StoreRole(StoreRoleRequest) returns (StoreRoleResponse);
+  rpc GetRole(GetRoleRequest) returns(GetRoleResponse);
+  rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
+  rpc PutRoleIdentifier(PutRoleIdentifierRequest) returns (PutRoleIdentifierResponse);
 }

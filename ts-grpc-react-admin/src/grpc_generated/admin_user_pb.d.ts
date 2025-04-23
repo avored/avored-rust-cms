@@ -73,6 +73,11 @@ export class RoleModel extends jspb.Message {
   getIdentifier(): string;
   setIdentifier(value: string): RoleModel;
 
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): RoleModel;
+  clearPermissionsList(): RoleModel;
+  addPermissions(value: string, index?: number): RoleModel;
+
   getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
   setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): RoleModel;
   hasCreatedAt(): boolean;
@@ -102,6 +107,7 @@ export namespace RoleModel {
     id: string,
     name: string,
     identifier: string,
+    permissionsList: Array<string>,
     createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     createdBy: string,
@@ -492,6 +498,198 @@ export namespace RoleOptionResponse {
   export type AsObject = {
     status: boolean,
     dataList: Array<RoleOptionModel.AsObject>,
+  }
+}
+
+export class StoreRoleRequest extends jspb.Message {
+  getName(): string;
+  setName(value: string): StoreRoleRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): StoreRoleRequest;
+
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): StoreRoleRequest;
+  clearPermissionsList(): StoreRoleRequest;
+  addPermissions(value: string, index?: number): StoreRoleRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreRoleRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreRoleRequest): StoreRoleRequest.AsObject;
+  static serializeBinaryToWriter(message: StoreRoleRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreRoleRequest;
+  static deserializeBinaryFromReader(message: StoreRoleRequest, reader: jspb.BinaryReader): StoreRoleRequest;
+}
+
+export namespace StoreRoleRequest {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+    permissionsList: Array<string>,
+  }
+}
+
+export class StoreRoleResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): StoreRoleResponse;
+
+  getData(): RoleModel | undefined;
+  setData(value?: RoleModel): StoreRoleResponse;
+  hasData(): boolean;
+  clearData(): StoreRoleResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreRoleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreRoleResponse): StoreRoleResponse.AsObject;
+  static serializeBinaryToWriter(message: StoreRoleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreRoleResponse;
+  static deserializeBinaryFromReader(message: StoreRoleResponse, reader: jspb.BinaryReader): StoreRoleResponse;
+}
+
+export namespace StoreRoleResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: RoleModel.AsObject,
+  }
+}
+
+export class GetRoleRequest extends jspb.Message {
+  getRoleId(): string;
+  setRoleId(value: string): GetRoleRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetRoleRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetRoleRequest): GetRoleRequest.AsObject;
+  static serializeBinaryToWriter(message: GetRoleRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetRoleRequest;
+  static deserializeBinaryFromReader(message: GetRoleRequest, reader: jspb.BinaryReader): GetRoleRequest;
+}
+
+export namespace GetRoleRequest {
+  export type AsObject = {
+    roleId: string,
+  }
+}
+
+export class GetRoleResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): GetRoleResponse;
+
+  getData(): RoleModel | undefined;
+  setData(value?: RoleModel): GetRoleResponse;
+  hasData(): boolean;
+  clearData(): GetRoleResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetRoleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetRoleResponse): GetRoleResponse.AsObject;
+  static serializeBinaryToWriter(message: GetRoleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetRoleResponse;
+  static deserializeBinaryFromReader(message: GetRoleResponse, reader: jspb.BinaryReader): GetRoleResponse;
+}
+
+export namespace GetRoleResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: RoleModel.AsObject,
+  }
+}
+
+export class UpdateRoleRequest extends jspb.Message {
+  getRoleId(): string;
+  setRoleId(value: string): UpdateRoleRequest;
+
+  getName(): string;
+  setName(value: string): UpdateRoleRequest;
+
+  getPermissionsList(): Array<string>;
+  setPermissionsList(value: Array<string>): UpdateRoleRequest;
+  clearPermissionsList(): UpdateRoleRequest;
+  addPermissions(value: string, index?: number): UpdateRoleRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateRoleRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateRoleRequest): UpdateRoleRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateRoleRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateRoleRequest;
+  static deserializeBinaryFromReader(message: UpdateRoleRequest, reader: jspb.BinaryReader): UpdateRoleRequest;
+}
+
+export namespace UpdateRoleRequest {
+  export type AsObject = {
+    roleId: string,
+    name: string,
+    permissionsList: Array<string>,
+  }
+}
+
+export class UpdateRoleResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): UpdateRoleResponse;
+
+  getData(): RoleModel | undefined;
+  setData(value?: RoleModel): UpdateRoleResponse;
+  hasData(): boolean;
+  clearData(): UpdateRoleResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateRoleResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateRoleResponse): UpdateRoleResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateRoleResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateRoleResponse;
+  static deserializeBinaryFromReader(message: UpdateRoleResponse, reader: jspb.BinaryReader): UpdateRoleResponse;
+}
+
+export namespace UpdateRoleResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: RoleModel.AsObject,
+  }
+}
+
+export class PutRoleIdentifierRequest extends jspb.Message {
+  getRoleId(): string;
+  setRoleId(value: string): PutRoleIdentifierRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): PutRoleIdentifierRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutRoleIdentifierRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: PutRoleIdentifierRequest): PutRoleIdentifierRequest.AsObject;
+  static serializeBinaryToWriter(message: PutRoleIdentifierRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutRoleIdentifierRequest;
+  static deserializeBinaryFromReader(message: PutRoleIdentifierRequest, reader: jspb.BinaryReader): PutRoleIdentifierRequest;
+}
+
+export namespace PutRoleIdentifierRequest {
+  export type AsObject = {
+    roleId: string,
+    identifier: string,
+  }
+}
+
+export class PutRoleIdentifierResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): PutRoleIdentifierResponse;
+
+  getData(): RoleModel | undefined;
+  setData(value?: RoleModel): PutRoleIdentifierResponse;
+  hasData(): boolean;
+  clearData(): PutRoleIdentifierResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutRoleIdentifierResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: PutRoleIdentifierResponse): PutRoleIdentifierResponse.AsObject;
+  static serializeBinaryToWriter(message: PutRoleIdentifierResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutRoleIdentifierResponse;
+  static deserializeBinaryFromReader(message: PutRoleIdentifierResponse, reader: jspb.BinaryReader): PutRoleIdentifierResponse;
+}
+
+export namespace PutRoleIdentifierResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: RoleModel.AsObject,
   }
 }
 

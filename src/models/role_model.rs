@@ -3,6 +3,7 @@ use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
+use surrealdb::sql::Value;
 use super::{BaseModel, Pagination};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -14,7 +15,7 @@ pub struct RoleModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
-    // pub permissions: Vec<String>,
+    pub permissions: Vec<String>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -44,6 +45,7 @@ impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
             updated_at: Option::from(updated_at),
             created_by: val.created_by,
             updated_by: val.updated_by,
+            permissions: val.permissions,
         };
 
         Ok(model)
@@ -59,20 +61,20 @@ impl TryFrom<Object> for RoleModel {
         let updated_at = val.get("updated_at").get_datetime()?;
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
-        // let permissions = match val.get("permissions") {
-        //     Some(val) => match val.clone() {
-        //         Value::Array(v) => {
-        //             let mut arr = Vec::new();
-        //
-        //             for array in v.into_iter() {
-        //                 arr.push(array.as_string())
-        //             }
-        //             arr
-        //         }
-        //         _ => Vec::new(),
-        //     },
-        //     None => Vec::new(),
-        // };
+        let permissions = match val.get("permissions") {
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
+
+                    for array in v.into_iter() {
+                        arr.push(array.as_string())
+                    }
+                    arr
+                }
+                _ => Vec::new(),
+            },
+            None => Vec::new(),
+        };
 
         Ok(RoleModel {
             id,
@@ -82,7 +84,7 @@ impl TryFrom<Object> for RoleModel {
             updated_at,
             created_by,
             updated_by,
-            // permissions,
+            permissions,
         })
     }
 }

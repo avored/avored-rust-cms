@@ -6,10 +6,11 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository,
 };
 use std::path::Path;
-use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, UpdateAdminUserRequest, UpdateAdminUserResponse};
+use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
 use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
+use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
 use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
@@ -169,7 +170,6 @@ impl AdminUserService {
             role_ids: req.role_ids,
         };
         
-        println!("UPDATE ADMIN USER SERVICE {:?}", updatable_admin_user_model);
 
         // needs to handle the existing image scenario
 
@@ -314,6 +314,131 @@ impl AdminUserService {
 
         Ok(res)
     }
+
+    pub async fn store_role (
+        &self,
+        req: StoreRoleRequest,
+        logged_in_username: String,
+        (datastore, database_session): &DB,
+    ) -> Result<StoreRoleResponse> {
+        
+        let created_role_request = CreatableRole {
+            name: req.name,
+            identifier: req.identifier,
+            logged_in_username,
+            permissions: req.permissions,
+        };
+
+       
+        let admin_user_model = self
+            .role_repository
+            .create_role(
+                datastore,
+                database_session,
+                created_role_request,
+            )
+            .await?;
+
+        let model: RoleModel = admin_user_model.clone().try_into().unwrap();
+
+
+        let res = StoreRoleResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        Ok(res)
+    }
+
+    pub async fn find_role_by_id (
+        &self,
+        req: GetRoleRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<GetRoleResponse> {
+
+        let admin_user_model = self
+            .role_repository
+            .find_by_id(
+                datastore,
+                database_session,
+                req.role_id,
+            )
+            .await?;
+
+        let model: RoleModel = admin_user_model.try_into().unwrap();
+
+        let res = GetRoleResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        
+        Ok(res)
+    }
+
+    pub  async fn update_role(
+        &self,
+        req: UpdateRoleRequest,
+        logged_in_username: String,
+        (datastore, database_session): &DB,
+    ) -> Result<UpdateRoleResponse> {
+
+        let mut updatable_role_model = UpdatableRoleModel {
+            id: req.role_id,
+            name: req.name,
+            permissions: req.permissions,
+            logged_in_username: logged_in_username.clone(),
+        };
+        
+
+        let role_model = self
+            .role_repository
+            .update_role(
+                datastore,
+                database_session,
+                updatable_role_model.clone()
+            )
+            .await?;
+
+        let model: RoleModel = role_model.clone().try_into().unwrap();
+        
+        let res = UpdateRoleResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        Ok(res)
+    }
+
+    pub  async fn put_role_identifier(
+        &self,
+        req: PutRoleIdentifierRequest,
+        logged_in_username: String,
+        (datastore, database_session): &DB,
+    ) -> Result<PutRoleIdentifierResponse> {
+
+        let mut updatable_role_model = PutRoleIdentifierModel {
+            id: req.role_id,
+            identifier: req.identifier,
+            logged_in_username: logged_in_username.clone(),
+        };
+
+
+        let role_model = self
+            .role_repository
+            .update_role_identifier(
+                datastore,
+                database_session,
+                updatable_role_model.clone()
+            )
+            .await?;
+
+        let model: RoleModel = role_model.clone().try_into().unwrap();
+
+        let res = PutRoleIdentifierResponse {
+            status: true,
+            data: Option::from(model)
+        };
+        Ok(res)
+    }
+
 
     // pub async fn sent_forgot_password_email (
     //     &self,

@@ -1,8 +1,7 @@
 import {useState} from "react";
 import {createColumnHelper, getCoreRowModel, SortingState, useReactTable} from "@tanstack/react-table";
-import {AdminUserPaginateRequest, RolePaginateRequest} from "../../grpc_generated/admin_user_pb";
-import {UseAdminUserPaginateHook} from "../../hooks/admin_user/UseAdminUserPaginateHook";
-import {AdminUserType, RoleType} from "../../types/admin_user/AdminUserType";
+import {RolePaginateRequest} from "../../grpc_generated/admin_user_pb";
+import {RoleType} from "../../types/admin_user/AdminUserType";
 import {useTranslation} from "react-i18next";
 import {GrpcTimeStamp} from "../../types/common/common";
 import {DateTime} from "luxon";
@@ -23,6 +22,8 @@ export const RoleTablePage = () => {
     const role_res = UseRolePaginateHook(request);
     const data_list = role_res.data?.data?.dataList ?? [];
     const roles: Array<RoleType> = data_list as Array<unknown> as RoleType[];
+
+    console.log(roles);
 
     const customSorting = (async (sorting: any) => {
         setSorting(sorting)

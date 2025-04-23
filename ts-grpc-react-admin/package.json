@@ -38,6 +38,7 @@
     "react-query-grpc-gateway": "^1.4.0",
     "react-router-dom": "^7.3.0",
     "react-scripts": "5.0.1",
+    "slug": "^9.1.0",
     "stream": "^0.0.3",
     "stream-browser": "^1.2.0",
     "tailwindcss": "^4.0.13",
@@ -71,7 +72,8 @@
     ]
   },
   "devDependencies": {
-    "@protobuf-ts/plugin": "^2.9.6"
+    "@protobuf-ts/plugin": "^2.9.6",
+    "@types/slug": "^5.0.9"
   },
   "browser": {
     "fs": false,

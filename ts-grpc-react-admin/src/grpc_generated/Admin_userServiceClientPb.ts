@@ -297,5 +297,177 @@ export class AdminUserClient {
     this.methodDescriptorRoleOption);
   }
 
+  methodDescriptorStoreRole = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/StoreRole',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.StoreRoleRequest,
+    admin_user_pb.StoreRoleResponse,
+    (request: admin_user_pb.StoreRoleRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.StoreRoleResponse.deserializeBinary
+  );
+
+  storeRole(
+    request: admin_user_pb.StoreRoleRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.StoreRoleResponse>;
+
+  storeRole(
+    request: admin_user_pb.StoreRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.StoreRoleResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.StoreRoleResponse>;
+
+  storeRole(
+    request: admin_user_pb.StoreRoleRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.StoreRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/StoreRole',
+        request,
+        metadata || {},
+        this.methodDescriptorStoreRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/StoreRole',
+    request,
+    metadata || {},
+    this.methodDescriptorStoreRole);
+  }
+
+  methodDescriptorGetRole = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/GetRole',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.GetRoleRequest,
+    admin_user_pb.GetRoleResponse,
+    (request: admin_user_pb.GetRoleRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.GetRoleResponse.deserializeBinary
+  );
+
+  getRole(
+    request: admin_user_pb.GetRoleRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.GetRoleResponse>;
+
+  getRole(
+    request: admin_user_pb.GetRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.GetRoleResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.GetRoleResponse>;
+
+  getRole(
+    request: admin_user_pb.GetRoleRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.GetRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/GetRole',
+        request,
+        metadata || {},
+        this.methodDescriptorGetRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/GetRole',
+    request,
+    metadata || {},
+    this.methodDescriptorGetRole);
+  }
+
+  methodDescriptorUpdateRole = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/UpdateRole',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.UpdateRoleRequest,
+    admin_user_pb.UpdateRoleResponse,
+    (request: admin_user_pb.UpdateRoleRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.UpdateRoleResponse.deserializeBinary
+  );
+
+  updateRole(
+    request: admin_user_pb.UpdateRoleRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.UpdateRoleResponse>;
+
+  updateRole(
+    request: admin_user_pb.UpdateRoleRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.UpdateRoleResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.UpdateRoleResponse>;
+
+  updateRole(
+    request: admin_user_pb.UpdateRoleRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.UpdateRoleResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/UpdateRole',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateRole,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/UpdateRole',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateRole);
+  }
+
+  methodDescriptorPutRoleIdentifier = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/PutRoleIdentifier',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.PutRoleIdentifierRequest,
+    admin_user_pb.PutRoleIdentifierResponse,
+    (request: admin_user_pb.PutRoleIdentifierRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.PutRoleIdentifierResponse.deserializeBinary
+  );
+
+  putRoleIdentifier(
+    request: admin_user_pb.PutRoleIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.PutRoleIdentifierResponse>;
+
+  putRoleIdentifier(
+    request: admin_user_pb.PutRoleIdentifierRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.PutRoleIdentifierResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.PutRoleIdentifierResponse>;
+
+  putRoleIdentifier(
+    request: admin_user_pb.PutRoleIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.PutRoleIdentifierResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/PutRoleIdentifier',
+        request,
+        metadata || {},
+        this.methodDescriptorPutRoleIdentifier,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/PutRoleIdentifier',
+    request,
+    metadata || {},
+    this.methodDescriptorPutRoleIdentifier);
+  }
+
 }
 
