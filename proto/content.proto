@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package content;
+
+import "google/protobuf/timestamp.proto";
+
+message CollectionModel {
+  string id = 1;
+  string name = 2;
+  string identifier = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  string created_by = 6;
+  string updated_by = 7;
+}
+
+message CollectionAllRequest {}
+message CollectionAllResponse {
+  bool status = 1;
+  repeated CollectionModel data = 2;
+}
+
+service content {
+  rpc CollectionAll(CollectionAllRequest) returns (CollectionAllResponse);
+}

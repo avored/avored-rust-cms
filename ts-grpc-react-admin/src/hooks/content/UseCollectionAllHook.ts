@@ -1,15 +1,15 @@
 import {useQuery} from "@tanstack/react-query";
-import {AdminUserClient} from "../../grpc_generated/Admin_userServiceClientPb";
-import {GetRoleRequest} from "../../grpc_generated/admin_user_pb";
+import {CollectionAllRequest} from "../../grpc_generated/content_pb";
+import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
 
-export const UseGetRoleHook = (request: GetRoleRequest) => {
+export const UseCollectionAllHook = (request: CollectionAllRequest) => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
-    const client = new AdminUserClient(backend_url);
+    const client = new contentClient(backend_url);
 
     return useQuery({
-        queryKey: ['role-id', request.getRoleId()],
+        queryKey: ['role-option'],
         queryFn: async () => {
-            let response = await client.getRole(request, {
+            let response = await client.collectionAll(request, {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             })
             if (response.getStatus()) {

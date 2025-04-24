@@ -14,10 +14,12 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::AuthApi;
+use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::misc_api::MiscApi;
 use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
 use crate::api::proto::auth::auth_server::AuthServer;
+use crate::api::proto::content::content_server::ContentServer;
 use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::echo::test2_server::Test2Server;
 use crate::api::proto::misc::misc_server::MiscServer;
@@ -55,7 +57,6 @@ async fn main() -> Result<(), Error>{
         origins.push(HeaderValue::from_str(origin).unwrap());
     }
 
-
     let cors = CorsLayer::new()
         .allow_origin(origins)
         .allow_headers(Any)
@@ -77,12 +78,16 @@ async fn main() -> Result<(), Error>{
     let admin_user_api = AdminUserApi {state: state.clone()};
     let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
 
+    let content_api = ContentApi {state: state.clone()};
+    let content_server = ContentServer::with_interceptor(content_api, check_auth);
+    
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)
         .nest_tonic(auth_server)
         .nest_tonic(dashboard_server)
         .nest_tonic(admin_user_server)
+        .nest_tonic(content_server)
         .layer(cors.clone());
 
 

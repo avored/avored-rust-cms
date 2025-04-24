@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use crate::models::{BaseModel, Pagination};
 use serde::{Deserialize, Serialize};
@@ -12,17 +14,17 @@ pub struct CollectionModel {
     pub updated_at: Datetime,
     pub created_by: String,
     pub updated_by: String,
-    pub collection_fields: Vec<CollectionFieldModel>,
+    // pub collection_fields: Vec<CollectionFieldModel>,
 }
 
 
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct CollectionFieldModel {
-    pub name: String,
-    pub identifier: String,
-    pub data_type: CollectionFieldDataType,
-    pub field_type: CollectionFieldFieldType,
-}
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct CollectionFieldModel {
+//     pub name: String,
+//     pub identifier: String,
+//     pub data_type: CollectionFieldDataType,
+//     pub field_type: CollectionFieldFieldType,
+// }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CollectionPagination {
@@ -91,6 +93,33 @@ impl Default for CollectionFieldDataType {
 }
 
 
+impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
+    type Error = Error;
+
+    fn try_from(val: CollectionModel) -> Result<crate::api::proto::content::CollectionModel> {
+        let chrono_utc_created_at= val.created_at.to_utc();
+        let system_time_created_at = SystemTime::from(chrono_utc_created_at);
+        let created_at = Timestamp::from(system_time_created_at);
+
+        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
+        let updated_at = Timestamp::from(system_time_updated_at);
+        
+        let model = crate::api::proto::content::CollectionModel {
+            id: val.id,
+            name: val.name,
+            identifier: val.identifier,
+            created_at: Option::from(created_at),
+            updated_at: Option::from(updated_at),
+            created_by: val.created_by,
+            updated_by: val.updated_by,
+        };
+
+        Ok(model)
+    }
+}
+
+
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<CollectionModel> {
@@ -102,27 +131,27 @@ impl TryFrom<Object> for CollectionModel {
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
 
-        let collection_fields = match val.get("collection_fields") {
-            Some(val) => match val.clone() {
-                Value::Array(v) => {
-                    let mut arr = Vec::new();
-
-                    for array in v.into_iter() {
-                        let object = match array.clone() {
-                            Value::Object(v) => v,
-                            _ => Object::default(),
-                        };
-
-                        let content_field: CollectionFieldModel = object.try_into()?;
-
-                        arr.push(content_field)
-                    }
-                    arr
-                }
-                _ => Vec::new(),
-            },
-            None => Vec::new(),
-        };
+        // let collection_fields = match val.get("collection_fields") {
+        //     Some(val) => match val.clone() {
+        //         Value::Array(v) => {
+        //             let mut arr = Vec::new();
+        // 
+        //             for array in v.into_iter() {
+        //                 let object = match array.clone() {
+        //                     Value::Object(v) => v,
+        //                     _ => Object::default(),
+        //                 };
+        // 
+        //                 let content_field: CollectionFieldModel = object.try_into()?;
+        // 
+        //                 arr.push(content_field)
+        //             }
+        //             arr
+        //         }
+        //         _ => Vec::new(),
+        //     },
+        //     None => Vec::new(),
+        // };
 
         Ok(CollectionModel {
             id,
@@ -132,37 +161,37 @@ impl TryFrom<Object> for CollectionModel {
             updated_at,
             created_by,
             updated_by,
-            collection_fields,
+            // collection_fields,
         })
     }
 }
 
-impl TryFrom<Object> for CollectionFieldModel {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<CollectionFieldModel> {
-        let name = val.get("name").get_string()?;
-        let identifier = val.get("identifier").get_string()?;
-        let data_type_str = val.get("data_type").get_string()?;
-
-        let data_type = match data_type_str.as_str() {
-            "TEXT" => CollectionFieldDataType::Text("TEXT".to_string()),
-            _ => CollectionFieldDataType::default(),
-        };
-
-        let field_type_str = val.get("field_type").get_string()?;
-        let field_type = match field_type_str.as_str() {
-            "Text" => CollectionFieldFieldType::Text,
-
-            _ => CollectionFieldFieldType::default(),
-        };
-
-
-        Ok(CollectionFieldModel {
-            name,
-            identifier,
-            data_type,
-            field_type,
-        })
-    }
-}
+// impl TryFrom<Object> for CollectionFieldModel {
+//     type Error = Error;
+//     fn try_from(val: Object) -> Result<CollectionFieldModel> {
+//         let name = val.get("name").get_string()?;
+//         let identifier = val.get("identifier").get_string()?;
+//         let data_type_str = val.get("data_type").get_string()?;
+// 
+//         let data_type = match data_type_str.as_str() {
+//             "TEXT" => CollectionFieldDataType::Text("TEXT".to_string()),
+//             _ => CollectionFieldDataType::default(),
+//         };
+// 
+//         let field_type_str = val.get("field_type").get_string()?;
+//         let field_type = match field_type_str.as_str() {
+//             "Text" => CollectionFieldFieldType::Text,
+// 
+//             _ => CollectionFieldFieldType::default(),
+//         };
+// 
+// 
+//         Ok(CollectionFieldModel {
+//             name,
+//             identifier,
+//             data_type,
+//             field_type,
+//         })
+//     }
+// }
 

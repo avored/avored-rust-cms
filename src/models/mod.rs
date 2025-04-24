@@ -5,7 +5,7 @@ use surrealdb::sql::{Datetime, Object, Value};
 
 pub mod admin_user_model;
 // pub mod asset_model;
-// pub mod collection_model;
+pub mod collection_model;
 // pub mod component_model;
 // pub mod model_model;
 // pub mod page_model;
@@ -14,7 +14,7 @@ pub mod role_model;
 // pub mod setting_model;
 pub mod token_claim_model;
 pub mod validation_error;
-// pub mod content_model;
+pub mod content_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {

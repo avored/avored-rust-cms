@@ -48,15 +48,15 @@ function AppSidebar() {
                             {/*    </div>*/}
                             {/*    <div className="ml-2">{t("sidebar.page")}</div>*/}
                             {/*</Link>*/}
-                            <Link
-                                className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
-                                to={`/admin/collections`}
-                            >
-                                <div className="pr-2">
-                                    <CircleStackIcon className="h-6 w-6"/>
-                                </div>
-                                <div className="ml-2">{t("collections")}</div>
-                            </Link>
+                            {/*<Link*/}
+                            {/*    className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"*/}
+                            {/*    to={`/admin/collections`}*/}
+                            {/*>*/}
+                            {/*    <div className="pr-2">*/}
+                            {/*        <CircleStackIcon className="h-6 w-6"/>*/}
+                            {/*    </div>*/}
+                            {/*    <div className="ml-2">{t("collections")}</div>*/}
+                            {/*</Link>*/}
 
                             {/*<Link*/}
                             {/*    to={`admin/component`}*/}

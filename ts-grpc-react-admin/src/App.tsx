@@ -11,6 +11,7 @@ import {AdminUserEditPage} from "./pages/admin_user/AdminUserEditPage";
 import {RoleTablePage} from "./pages/admin_user/RoleTablePage";
 import {RoleCreatePage} from "./pages/admin_user/RoleCreatePage";
 import {RoleEditPage} from "./pages/admin_user/RoleEditPage";
+import {ContentTablePage} from "./pages/content/ContentTablePage";
 
 function App() {
 
@@ -31,6 +32,8 @@ function App() {
                     <Route path="/admin/role" element={<RoleTablePage />} />
                     <Route path="/admin/role-create" element={<RoleCreatePage />} />
                     <Route path="/admin/role-edit/:role_id" element={<RoleEditPage />} />
+
+                    <Route path="/admin/content" element={<ContentTablePage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
