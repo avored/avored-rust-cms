@@ -414,7 +414,7 @@ impl AdminUserService {
         (datastore, database_session): &DB,
     ) -> Result<PutRoleIdentifierResponse> {
 
-        let mut updatable_role_model = PutRoleIdentifierModel {
+        let updatable_role_model = PutRoleIdentifierModel {
             id: req.role_id,
             identifier: req.identifier,
             logged_in_username: logged_in_username.clone(),

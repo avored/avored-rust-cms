@@ -48,13 +48,10 @@ message AdminUserPaginateResponse {
     int64 total = 1;
   }
 
-
-
   message AdminUserPaginateData {
     AdminUserPagination pagination = 1;
     repeated AdminUserModel data = 2;
   }
-
 
   AdminUserPaginateData data = 2;
 }

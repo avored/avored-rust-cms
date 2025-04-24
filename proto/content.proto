@@ -14,12 +14,45 @@ message CollectionModel {
   string updated_by = 7;
 }
 
+
+message ContentModel {
+  string id = 1;
+  string name = 2;
+  string identifier = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  string created_by = 6;
+  string updated_by = 7;
+}
+
+
 message CollectionAllRequest {}
 message CollectionAllResponse {
   bool status = 1;
   repeated CollectionModel data = 2;
 }
 
+// Content paginate API
+message ContentPaginateRequest {
+  string content_type = 1;
+}
+
+message ContentPaginateResponse {
+  bool status = 1;
+
+  message ContentPagination {
+    int64 total = 1;
+  }
+
+  message ContentPaginateData {
+    ContentPagination pagination = 1;
+    repeated ContentModel data = 2;
+  }
+
+  ContentPaginateData data = 2;
+}
+
 service content {
   rpc CollectionAll(CollectionAllRequest) returns (CollectionAllResponse);
+  rpc ContentPaginate(ContentPaginateRequest) returns (ContentPaginateResponse);
 }

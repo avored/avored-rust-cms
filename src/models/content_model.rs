@@ -1,8 +1,11 @@
 use std::collections::BTreeMap;
+use std::time::SystemTime;
+use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use crate::error::{Error, Result};
 use crate::models::{BaseModel, Pagination};
+
 
 
 // region: Content model structs and enums
@@ -17,7 +20,7 @@ pub struct ContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub content_fields: Vec<ContentFieldModel>,
+    // pub content_fields: Vec<ContentFieldModel>,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -149,6 +152,33 @@ impl TryFrom<ContentTextType> for Value {
 // region: impl surreal Object for content model structs
 
 
+impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
+    type Error = Error;
+
+    fn try_from(val: ContentModel) -> Result<crate::api::proto::content::ContentModel> {
+        let chrono_utc_created_at= val.created_at.to_utc();
+        let system_time_created_at = SystemTime::from(chrono_utc_created_at);
+        let created_at = Timestamp::from(system_time_created_at);
+
+        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
+        let updated_at = Timestamp::from(system_time_updated_at);
+
+        let model = crate::api::proto::content::ContentModel {
+            id: val.id,
+            name: val.name,
+            identifier: val.identifier,
+            created_at: Option::from(created_at),
+            updated_at: Option::from(updated_at),
+            created_by: val.created_by,
+            updated_by: val.updated_by,
+        };
+
+        Ok(model)
+    }
+}
+
+
 impl TryFrom<Object> for ContentModel {
     type Error = Error;
     fn try_from(val: Object) -> Result<ContentModel> {
@@ -157,27 +187,27 @@ impl TryFrom<Object> for ContentModel {
         let identifier = val.get("identifier").get_string()?;
 
 
-        let content_fields = match val.get("content_fields") {
-            Some(val) => match val.clone() {
-                Value::Array(v) => {
-                    let mut arr = Vec::new();
-
-                    for array in v.into_iter() {
-                        let object = match array.clone() {
-                            Value::Object(v) => v,
-                            _ => Object::default(),
-                        };
-
-                        let content_field: ContentFieldModel = object.try_into()?;
-
-                        arr.push(content_field)
-                    }
-                    arr
-                }
-                _ => Vec::new(),
-            },
-            None => Vec::new(),
-        };
+        // let content_fields = match val.get("content_fields") {
+        //     Some(val) => match val.clone() {
+        //         Value::Array(v) => {
+        //             let mut arr = Vec::new();
+        // 
+        //             for array in v.into_iter() {
+        //                 let object = match array.clone() {
+        //                     Value::Object(v) => v,
+        //                     _ => Object::default(),
+        //                 };
+        // 
+        //                 let content_field: ContentFieldModel = object.try_into()?;
+        // 
+        //                 arr.push(content_field)
+        //             }
+        //             arr
+        //         }
+        //         _ => Vec::new(),
+        //     },
+        //     None => Vec::new(),
+        // };
 
         let created_at = val.get("created_at").get_datetime()?;
         let updated_at = val.get("updated_at").get_datetime()?;
@@ -188,7 +218,7 @@ impl TryFrom<Object> for ContentModel {
             id,
             name,
             identifier,
-            content_fields,
+            // content_fields,
             created_at,
             updated_at,
             created_by,

@@ -16,6 +16,23 @@ pub struct CollectionModel {
     #[prost(string, tag = "7")]
     pub updated_by: ::prost::alloc::string::String,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentModel {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub identifier: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "4")]
+    pub created_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(message, optional, tag = "5")]
+    pub updated_at: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(string, tag = "6")]
+    pub created_by: ::prost::alloc::string::String,
+    #[prost(string, tag = "7")]
+    pub updated_by: ::prost::alloc::string::String,
+}
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct CollectionAllRequest {}
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -24,6 +41,34 @@ pub struct CollectionAllResponse {
     pub status: bool,
     #[prost(message, repeated, tag = "2")]
     pub data: ::prost::alloc::vec::Vec<CollectionModel>,
+}
+/// Content paginate API
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentPaginateRequest {
+    #[prost(string, tag = "1")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentPaginateResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<content_paginate_response::ContentPaginateData>,
+}
+/// Nested message and enum types in `ContentPaginateResponse`.
+pub mod content_paginate_response {
+    #[derive(Clone, Copy, PartialEq, ::prost::Message)]
+    pub struct ContentPagination {
+        #[prost(int64, tag = "1")]
+        pub total: i64,
+    }
+    #[derive(Clone, PartialEq, ::prost::Message)]
+    pub struct ContentPaginateData {
+        #[prost(message, optional, tag = "1")]
+        pub pagination: ::core::option::Option<ContentPagination>,
+        #[prost(message, repeated, tag = "2")]
+        pub data: ::prost::alloc::vec::Vec<super::ContentModel>,
+    }
 }
 /// Generated client implementations.
 pub mod content_client {
@@ -140,6 +185,30 @@ pub mod content_client {
                 .insert(GrpcMethod::new("content.content", "CollectionAll"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn content_paginate(
+            &mut self,
+            request: impl tonic::IntoRequest<super::ContentPaginateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ContentPaginateResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/ContentPaginate",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "ContentPaginate"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -160,6 +229,13 @@ pub mod content_server {
             request: tonic::Request<super::CollectionAllRequest>,
         ) -> std::result::Result<
             tonic::Response<super::CollectionAllResponse>,
+            tonic::Status,
+        >;
+        async fn content_paginate(
+            &self,
+            request: tonic::Request<super::ContentPaginateRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::ContentPaginateResponse>,
             tonic::Status,
         >;
     }
@@ -269,6 +345,51 @@ pub mod content_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = CollectionAllSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/ContentPaginate" => {
+                    #[allow(non_camel_case_types)]
+                    struct ContentPaginateSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::ContentPaginateRequest>
+                    for ContentPaginateSvc<T> {
+                        type Response = super::ContentPaginateResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::ContentPaginateRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::content_paginate(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = ContentPaginateSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -1,12 +1,8 @@
-use tonic::codegen::tokio_stream::StreamExt;
-use crate::api::proto::admin_user::{PutRoleIdentifierRequest, PutRoleIdentifierResponse};
-use crate::api::proto::content::{CollectionAllRequest, CollectionAllResponse, CollectionModel};
-use crate::models::content_model::{ContentModel, ContentPagination, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
+use crate::api::proto::content::{ CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse};
+use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
-use crate::models::{ModelCount, Pagination};
-use crate::PER_PAGE;
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {
@@ -39,6 +35,62 @@ impl ContentService {
         
         Ok(collection_all_response)
     }
+
+    pub  async fn content_paginate(
+        &self,
+        request: ContentPaginateRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<ContentPaginateResponse> {
+        
+        let total_count = self
+            .content_repository
+            .get_total_count(
+                datastore,
+                database_session,
+                &request.content_type
+            ).await?;
+        
+        let start = 0;
+        let order_column = "id";
+        let order_type = "desc";
+
+        let content_db_models = self
+            .content_repository
+            .paginate(
+                datastore,
+                database_session,
+                &request.content_type,
+                start,
+                order_column.to_string(),
+                order_type.to_string(),
+            )
+            .await?;
+
+        let mut content_grpc_models: Vec<ContentModelGrpc> = vec![];
+        
+        for content_db_model in content_db_models {
+            let content_grpc_model: ContentModelGrpc = content_db_model.try_into().unwrap();
+            
+            content_grpc_models.push(content_grpc_model);
+        }
+        
+        
+        let content_pagination = ContentPaginationGrpc {
+            total: total_count.total,
+        };
+        let content_paginate_data = ContentPaginateData {
+            pagination: Some(content_pagination),
+            data: content_grpc_models,
+        };
+        let content_paginate_response = ContentPaginateResponse {
+            status: true,
+            data: Option::from(content_paginate_data)
+        };
+
+        Ok(content_paginate_response)
+    }
+
+    
     // pub async fn update_content(
     //     &self,
     //     (datastore, database_session): &DB,
