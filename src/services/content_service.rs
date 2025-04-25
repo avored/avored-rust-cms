@@ -1,9 +1,10 @@
-use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetContentRequest, GetContentResponse, StoreContentRequest, StoreContentResponse, UpdateContentRequest, UpdateContentResponse};
+use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreContentRequest, StoreContentResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
-use crate::models::content_model::{CreatableContentModel, UpdatableContentModel};
+use crate::models::content_model::{CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
+use crate::models::role_model::PutRoleIdentifierModel;
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {
@@ -158,6 +159,31 @@ impl ContentService {
         let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;
 
         let response = UpdateContentResponse {
+            status: true,
+            data: Some(content_grpc_model)
+        };
+
+        Ok(response)
+    }
+
+    pub async fn put_content_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        request: PutContentIdentifierRequest,
+        logged_in_username: String,
+    ) -> Result<PutContentIdentifierResponse> {
+        let updatable_content_model = PutContentIdentifierModel {
+            id: request.content_id,
+            logged_in_username: logged_in_username.to_string(),
+            identifier: request.identifier,
+            content_type: request.content_type,
+        };
+        let content_db_model = self.content_repository
+            .update_content_identifier(datastore, database_session, updatable_content_model)
+            .await?;
+        let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;
+
+        let response = PutContentIdentifierResponse {
             status: true,
             data: Some(content_grpc_model)
         };

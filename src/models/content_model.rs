@@ -102,7 +102,7 @@ pub struct UpdatableContentField {
 pub struct PutContentIdentifierModel {
     pub id: String,
     pub identifier: String,
-    pub collection_type: String,
+    pub content_type: String,
     pub logged_in_username: String,
 }
 

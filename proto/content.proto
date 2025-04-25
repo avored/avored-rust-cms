@@ -86,6 +86,17 @@ message UpdateContentResponse {
   ContentModel data = 2;
 }
 
+message PutContentIdentifierRequest {
+  string content_id = 1;
+  string identifier = 2;
+  string content_type = 3;
+}
+
+message PutContentIdentifierResponse {
+  bool status = 1;
+  ContentModel data = 2;
+}
+
 
 
 service content {
@@ -93,5 +104,6 @@ service content {
   rpc ContentPaginate(ContentPaginateRequest) returns (ContentPaginateResponse);
   rpc StoreContent(StoreContentRequest) returns (StoreContentResponse);
   rpc GetContent(GetContentRequest) returns (GetContentResponse);
-  rpc updateContent(UpdateContentRequest) returns (UpdateContentResponse);
+  rpc UpdateContent(UpdateContentRequest) returns (UpdateContentResponse);
+  rpc PutContentIdentifier(PutContentIdentifierRequest) returns (PutContentIdentifierResponse);
 }

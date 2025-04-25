@@ -3,7 +3,7 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 use crate::error::Error;
-use crate::models::content_model::{ContentDataType, ContentFieldContentType, ContentFieldType, ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
+use crate::models::content_model::{ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
 use crate::repositories::into_iter_objects;
 use crate::error::Result;
 use crate::models::ModelCount;
@@ -115,16 +115,16 @@ impl ContentRepository {
         //     let data_type_value: Value = match created_content_field.data_type {
         //         ContentDataType::Text(v) => v.into(),
         //     };
-        // 
+        //
         //     let field_type_value: Value = match created_content_field.field_type {
         //         ContentFieldType::Text => "Text".into(),
         //     };
-        // 
+        //
         //     let field_content_value: Value = match created_content_field.field_content {
         //         ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
         //     };
-        // 
-        // 
+        //
+        //
         //     let content_field: BTreeMap<String, Value> = [
         //         ("name".into(), created_content_field.name.into()),
         //         ("identifier".into(), created_content_field.identifier.into()),
@@ -133,7 +133,7 @@ impl ContentRepository {
         //         ("field_content".into(), field_content_value),
         //     ]
         //         .into();
-        // 
+        //
         //     content_fields.push(content_field.into());
         // }
 
@@ -188,15 +188,15 @@ impl ContentRepository {
         //     let data_type_value: Value = match updatable_content_field.data_type {
         //         ContentDataType::Text(v) => v.into(),
         //     };
-        // 
+        //
         //     let field_type_value: Value = match updatable_content_field.field_type {
         //         ContentFieldType::Text => "Text".into(),
-        // 
+        //
         //     };
         //     let field_content_value: Value = match updatable_content_field.field_content {
         //         ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
         //     };
-        // 
+        //
         //     let content_field: BTreeMap<String, Value> = [
         //         ("name".into(), updatable_content_field.name.into()),
         //         ("identifier".into(), updatable_content_field.identifier.into()),
@@ -205,7 +205,7 @@ impl ContentRepository {
         //         ("field_content".into(), field_content_value),
         //     ]
         //         .into();
-        // 
+        //
         //     content_fields.push(content_field.into());
         // }
 
@@ -277,7 +277,7 @@ impl ContentRepository {
                 "identifier".into(),
                 put_content_identifier_model.identifier.into(),
             ),
-            ("table".into(), put_content_identifier_model.collection_type.into()),
+            ("table".into(), put_content_identifier_model.content_type.into()),
             ("updated_at".into(), Datetime::default().into()),
             (
                 "updated_by".into(),

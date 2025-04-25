@@ -116,6 +116,22 @@ pub struct UpdateContentResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<ContentModel>,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PutContentIdentifierRequest {
+    #[prost(string, tag = "1")]
+    pub content_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct PutContentIdentifierResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<ContentModel>,
+}
 /// Generated client implementations.
 pub mod content_client {
     #![allow(
@@ -320,11 +336,35 @@ pub mod content_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/content.content/updateContent",
+                "/content.content/UpdateContent",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("content.content", "updateContent"));
+                .insert(GrpcMethod::new("content.content", "UpdateContent"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn put_content_identifier(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PutContentIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutContentIdentifierResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/PutContentIdentifier",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "PutContentIdentifier"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -375,6 +415,13 @@ pub mod content_server {
             request: tonic::Request<super::UpdateContentRequest>,
         ) -> std::result::Result<
             tonic::Response<super::UpdateContentResponse>,
+            tonic::Status,
+        >;
+        async fn put_content_identifier(
+            &self,
+            request: tonic::Request<super::PutContentIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutContentIdentifierResponse>,
             tonic::Status,
         >;
     }
@@ -634,13 +681,13 @@ pub mod content_server {
                     };
                     Box::pin(fut)
                 }
-                "/content.content/updateContent" => {
+                "/content.content/UpdateContent" => {
                     #[allow(non_camel_case_types)]
-                    struct updateContentSvc<T: Content>(pub Arc<T>);
+                    struct UpdateContentSvc<T: Content>(pub Arc<T>);
                     impl<
                         T: Content,
                     > tonic::server::UnaryService<super::UpdateContentRequest>
-                    for updateContentSvc<T> {
+                    for UpdateContentSvc<T> {
                         type Response = super::UpdateContentResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
@@ -663,7 +710,53 @@ pub mod content_server {
                     let max_encoding_message_size = self.max_encoding_message_size;
                     let inner = self.inner.clone();
                     let fut = async move {
-                        let method = updateContentSvc(inner);
+                        let method = UpdateContentSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/PutContentIdentifier" => {
+                    #[allow(non_camel_case_types)]
+                    struct PutContentIdentifierSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::PutContentIdentifierRequest>
+                    for PutContentIdentifierSvc<T> {
+                        type Response = super::PutContentIdentifierResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PutContentIdentifierRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::put_content_identifier(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = PutContentIdentifierSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
