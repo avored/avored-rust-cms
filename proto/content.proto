@@ -52,7 +52,46 @@ message ContentPaginateResponse {
   ContentPaginateData data = 2;
 }
 
+message StoreContentRequest {
+  string name = 1;
+  string identifier = 2;
+  string content_type = 3;
+}
+
+message StoreContentResponse {
+  bool status = 1;
+  ContentModel data = 2;
+}
+
+
+message GetContentRequest {
+  string content_id = 1;
+  string content_type = 2;
+}
+
+
+message GetContentResponse {
+  bool status = 1;
+  ContentModel data = 2;
+}
+
+message UpdateContentRequest {
+  string content_id = 1;
+  string name = 2;
+  string content_type = 3;
+}
+
+message UpdateContentResponse {
+  bool status = 1;
+  ContentModel data = 2;
+}
+
+
+
 service content {
   rpc CollectionAll(CollectionAllRequest) returns (CollectionAllResponse);
   rpc ContentPaginate(ContentPaginateRequest) returns (ContentPaginateResponse);
+  rpc StoreContent(StoreContentRequest) returns (StoreContentResponse);
+  rpc GetContent(GetContentRequest) returns (GetContentResponse);
+  rpc updateContent(UpdateContentRequest) returns (UpdateContentResponse);
 }

@@ -125,7 +125,7 @@ message RoleOptionResponse {
 message StoreRoleRequest {
   string name = 1;
   string identifier = 2;
-   repeated string permissions = 3;
+  repeated string permissions = 3;
 }
 
 message StoreRoleResponse {

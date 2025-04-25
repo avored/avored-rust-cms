@@ -1,8 +1,9 @@
-use crate::api::proto::content::{ CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse};
+use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetContentRequest, GetContentResponse, StoreContentRequest, StoreContentResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
+use crate::models::content_model::{CreatableContentModel, UpdatableContentModel};
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {
@@ -36,7 +37,7 @@ impl ContentService {
         Ok(collection_all_response)
     }
 
-    pub  async fn content_paginate(
+    pub async fn content_paginate(
         &self,
         request: ContentPaginateRequest,
         (datastore, database_session): &DB,
@@ -90,16 +91,79 @@ impl ContentService {
         Ok(content_paginate_response)
     }
 
+    pub async fn store_content(
+        &self,
+        request: StoreContentRequest,
+        logged_in_username: String,
+        (datastore, database_session): &DB
+    ) -> Result<StoreContentResponse> {
+
+        let creatable_page_model = CreatableContentModel {
+            name: request.name,
+            identifier: request.identifier,
+            logged_in_username: logged_in_username.to_string(),
+            content_type: request.content_type,
+        };
+        let content_db_model = self.content_repository
+            .create_content(datastore, database_session, creatable_page_model)
+            .await?;
+        let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;
+        
+        let response = StoreContentResponse {
+            status: true,
+            data: Some(content_grpc_model)
+        };
+        
+        Ok(response)
+    }
+
+    pub async fn get_content(
+        &self,
+        request: GetContentRequest,
+        (datastore, database_session): &DB
+    ) -> Result<GetContentResponse> {
+
+       
+        let content_db_model = self
+            .content_repository
+            .find_by_id(datastore, database_session, &request.content_type, &request.content_id)
+            .await?;
+        let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;
+
+        let response = GetContentResponse {
+            status: true,
+            data: Some(content_grpc_model)
+        };
+
+        Ok(response)
+    }
     
-    // pub async fn update_content(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     updatable_page_model: UpdatableContentModel,
-    // ) -> Result<ContentModel> {
-    //     self.content_repository
-    //         .update_content(datastore, database_session, updatable_page_model)
-    //         .await
-    // }
+    pub async fn update_content(
+        &self,
+        (datastore, database_session): &DB,
+        request: UpdateContentRequest,
+        logged_in_username: String,
+    ) -> Result<UpdateContentResponse> {
+        let updatable_content_model = UpdatableContentModel {
+            id: request.content_id,
+            name: request.name,
+            logged_in_username: logged_in_username.to_string(),
+            updated_at: Default::default(),
+            content_type: request.content_type,
+            updated_by: "".to_string(),
+        };
+        let content_db_model = self.content_repository
+            .update_content(datastore, database_session, updatable_content_model)
+            .await?;
+        let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;
+
+        let response = UpdateContentResponse {
+            status: true,
+            data: Some(content_grpc_model)
+        };
+
+        Ok(response)
+    }
     // 
     // pub(crate) async fn count_of_identifier(
     //     &self,
@@ -193,16 +257,6 @@ impl ContentService {
     //             pagination,
     //         })
     //     }
-    // 
-    // pub(crate) async fn create_content(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     creatable_page_model: CreatableContentModel,
-    // ) -> Result<ContentModel> {
-    //     self.content_repository
-    //         .create_content(datastore, database_session, creatable_page_model)
-    //         .await
-    // }
 
     pub fn new(content_repository: ContentRepository, collection_repository: CollectionRepository) -> Result<Self> {
         Ok(ContentService { content_repository, collection_repository })

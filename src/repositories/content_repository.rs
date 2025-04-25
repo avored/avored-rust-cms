@@ -18,7 +18,7 @@ impl ContentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        content_type: String,
+        content_type: &str,
         id: &str,
     ) -> Result<ContentModel> {
         let sql = "SELECT * FROM type::thing($table, $id);";
@@ -109,33 +109,33 @@ impl ContentRepository {
     ) -> Result<ContentModel>{
         let sql = "CREATE type::table($table) CONTENT $data";
 
-        let mut content_fields: Vec<Value> = vec![];
+        // let mut content_fields: Vec<Value> = vec![];
 
-        for created_content_field in creatable_content_model.content_fields {
-            let data_type_value: Value = match created_content_field.data_type {
-                ContentDataType::Text(v) => v.into(),
-            };
-
-            let field_type_value: Value = match created_content_field.field_type {
-                ContentFieldType::Text => "Text".into(),
-            };
-
-            let field_content_value: Value = match created_content_field.field_content {
-                ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
-            };
-
-
-            let content_field: BTreeMap<String, Value> = [
-                ("name".into(), created_content_field.name.into()),
-                ("identifier".into(), created_content_field.identifier.into()),
-                ("data_type".into(), data_type_value),
-                ("field_type".into(), field_type_value),
-                ("field_content".into(), field_content_value),
-            ]
-                .into();
-
-            content_fields.push(content_field.into());
-        }
+        // for created_content_field in creatable_content_model.content_fields {
+        //     let data_type_value: Value = match created_content_field.data_type {
+        //         ContentDataType::Text(v) => v.into(),
+        //     };
+        // 
+        //     let field_type_value: Value = match created_content_field.field_type {
+        //         ContentFieldType::Text => "Text".into(),
+        //     };
+        // 
+        //     let field_content_value: Value = match created_content_field.field_content {
+        //         ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
+        //     };
+        // 
+        // 
+        //     let content_field: BTreeMap<String, Value> = [
+        //         ("name".into(), created_content_field.name.into()),
+        //         ("identifier".into(), created_content_field.identifier.into()),
+        //         ("data_type".into(), data_type_value),
+        //         ("field_type".into(), field_type_value),
+        //         ("field_content".into(), field_content_value),
+        //     ]
+        //         .into();
+        // 
+        //     content_fields.push(content_field.into());
+        // }
 
 
         let data: BTreeMap<String, Value> = [
@@ -149,7 +149,7 @@ impl ContentRepository {
                 "updated_by".into(),
                 creatable_content_model.logged_in_username.into(),
             ),
-            ("content_fields".into(), content_fields.into()),
+            // ("content_fields".into(), content_fields.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
@@ -180,49 +180,41 @@ impl ContentRepository {
         database_session: &Session,
         updatable_model: UpdatableContentModel,
     ) -> Result<ContentModel> {
-        let sql = "UPDATE type::thing($table, $id) CONTENT $data";
+        let sql = "UPDATE type::thing($table, $id) MERGE $data";
 
-        let mut content_fields: Vec<Value> = vec![];
+        // let mut content_fields: Vec<Value> = vec![];
 
-        for updatable_content_field in updatable_model.content_fields {
-            let data_type_value: Value = match updatable_content_field.data_type {
-                ContentDataType::Text(v) => v.into(),
-            };
-
-            let field_type_value: Value = match updatable_content_field.field_type {
-                ContentFieldType::Text => "Text".into(),
-
-            };
-            let field_content_value: Value = match updatable_content_field.field_content {
-                ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
-            };
-
-            let content_field: BTreeMap<String, Value> = [
-                ("name".into(), updatable_content_field.name.into()),
-                ("identifier".into(), updatable_content_field.identifier.into()),
-                ("data_type".into(), data_type_value),
-                ("field_type".into(), field_type_value),
-                ("field_content".into(), field_content_value),
-            ]
-                .into();
-
-            content_fields.push(content_field.into());
-        }
+        // for updatable_content_field in updatable_model.content_fields {
+        //     let data_type_value: Value = match updatable_content_field.data_type {
+        //         ContentDataType::Text(v) => v.into(),
+        //     };
+        // 
+        //     let field_type_value: Value = match updatable_content_field.field_type {
+        //         ContentFieldType::Text => "Text".into(),
+        // 
+        //     };
+        //     let field_content_value: Value = match updatable_content_field.field_content {
+        //         ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
+        //     };
+        // 
+        //     let content_field: BTreeMap<String, Value> = [
+        //         ("name".into(), updatable_content_field.name.into()),
+        //         ("identifier".into(), updatable_content_field.identifier.into()),
+        //         ("data_type".into(), data_type_value),
+        //         ("field_type".into(), field_type_value),
+        //         ("field_content".into(), field_content_value),
+        //     ]
+        //         .into();
+        // 
+        //     content_fields.push(content_field.into());
+        // }
 
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),
-            ("identifier".into(), updatable_model.identifier.into()),
-            (
-                "updated_by".into(),
-                updatable_model.logged_in_username.clone().into(),
-            ),
-            ("created_by".into(), updatable_model.created_by.into()),
-            ("content_fields".into(), content_fields.into()),
+            ("updated_by".into(), updatable_model.logged_in_username.clone().into()),
             ("updated_at".into(), Datetime::default().into()),
-            ("created_at".into(), updatable_model.created_at.into()),
-        ]
-            .into();
+        ].into();
 
         let vars: BTreeMap<String, Value> = [
             ("data".into(), data.into()),

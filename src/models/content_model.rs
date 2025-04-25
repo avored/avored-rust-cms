@@ -66,7 +66,7 @@ pub struct CreatableContentModel {
     pub identifier: String,
     pub logged_in_username: String,
     pub content_type: String,
-    pub content_fields: Vec<CreatableContentField>,
+    // pub content_fields: Vec<CreatableContentField>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
@@ -83,12 +83,10 @@ pub struct CreatableContentField {
 pub struct UpdatableContentModel {
     pub id: String,
     pub name: String,
-    pub identifier: String,
     pub content_type: String,
     pub logged_in_username: String,
-    pub created_at: Datetime,
-    pub created_by: String,
-    pub content_fields: Vec<UpdatableContentField>,
+    pub updated_at: Datetime,
+    pub updated_by: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]

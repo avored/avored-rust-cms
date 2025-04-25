@@ -70,6 +70,52 @@ pub mod content_paginate_response {
         pub data: ::prost::alloc::vec::Vec<super::ContentModel>,
     }
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreContentRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreContentResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<ContentModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetContentRequest {
+    #[prost(string, tag = "1")]
+    pub content_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetContentResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<ContentModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateContentRequest {
+    #[prost(string, tag = "1")]
+    pub content_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateContentResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<ContentModel>,
+}
 /// Generated client implementations.
 pub mod content_client {
     #![allow(
@@ -209,6 +255,78 @@ pub mod content_client {
                 .insert(GrpcMethod::new("content.content", "ContentPaginate"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn store_content(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StoreContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreContentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/StoreContent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "StoreContent"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_content(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetContentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/GetContent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "GetContent"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn update_content(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateContentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/updateContent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "updateContent"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -236,6 +354,27 @@ pub mod content_server {
             request: tonic::Request<super::ContentPaginateRequest>,
         ) -> std::result::Result<
             tonic::Response<super::ContentPaginateResponse>,
+            tonic::Status,
+        >;
+        async fn store_content(
+            &self,
+            request: tonic::Request<super::StoreContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreContentResponse>,
+            tonic::Status,
+        >;
+        async fn get_content(
+            &self,
+            request: tonic::Request<super::GetContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetContentResponse>,
+            tonic::Status,
+        >;
+        async fn update_content(
+            &self,
+            request: tonic::Request<super::UpdateContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateContentResponse>,
             tonic::Status,
         >;
     }
@@ -390,6 +529,141 @@ pub mod content_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = ContentPaginateSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/StoreContent" => {
+                    #[allow(non_camel_case_types)]
+                    struct StoreContentSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::StoreContentRequest>
+                    for StoreContentSvc<T> {
+                        type Response = super::StoreContentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StoreContentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::store_content(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = StoreContentSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/GetContent" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetContentSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::GetContentRequest>
+                    for GetContentSvc<T> {
+                        type Response = super::GetContentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetContentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::get_content(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetContentSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/updateContent" => {
+                    #[allow(non_camel_case_types)]
+                    struct updateContentSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::UpdateContentRequest>
+                    for updateContentSvc<T> {
+                        type Response = super::UpdateContentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateContentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::update_content(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = updateContentSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
