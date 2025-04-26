@@ -22,6 +22,7 @@ export type ContentType = {
 }
 
 export type SaveContentType = {
+    id: String;
     name: string;
     content_type: string;
     identifier: string;
