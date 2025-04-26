@@ -1,10 +1,23 @@
+import {GrpcTimeStamp} from "../common/common";
+
 export type CollectionType = {
     id: string;
     name: string;
     identifier: string;
-    created_at: string;
-    updated_at: string;
-    created_by: string;
-    updated_by: string;
+    createdAt: string;
+    updatedAt: string;
+    createdBy: string;
+    updatedBy: string;
     action?: string;
 }
+export type ContentType = {
+    id: string;
+    name: string;
+    identifier: string;
+    createdAt: GrpcTimeStamp;
+    createdBy: string;
+    updatedAt: GrpcTimeStamp;
+    updatedBy: string;
+    action: string;
+}
+

@@ -20,7 +20,7 @@ export const AdminUserTablePage = (() => {
     let request = new AdminUserPaginateRequest();
 
     const admin_user_res = UseAdminUserPaginateHook(request);
-    console.log(admin_user_res.data);
+
     const data_list = admin_user_res.data?.data?.dataList ?? [];
     const admin_users: Array<AdminUserType> = data_list as Array<unknown> as AdminUserType[];
 

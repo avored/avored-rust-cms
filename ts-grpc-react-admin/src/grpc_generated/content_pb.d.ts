@@ -49,6 +49,52 @@ export namespace CollectionModel {
   }
 }
 
+export class ContentModel extends jspb.Message {
+  getId(): string;
+  setId(value: string): ContentModel;
+
+  getName(): string;
+  setName(value: string): ContentModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): ContentModel;
+
+  getCreatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setCreatedAt(value?: google_protobuf_timestamp_pb.Timestamp): ContentModel;
+  hasCreatedAt(): boolean;
+  clearCreatedAt(): ContentModel;
+
+  getUpdatedAt(): google_protobuf_timestamp_pb.Timestamp | undefined;
+  setUpdatedAt(value?: google_protobuf_timestamp_pb.Timestamp): ContentModel;
+  hasUpdatedAt(): boolean;
+  clearUpdatedAt(): ContentModel;
+
+  getCreatedBy(): string;
+  setCreatedBy(value: string): ContentModel;
+
+  getUpdatedBy(): string;
+  setUpdatedBy(value: string): ContentModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentModel.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentModel): ContentModel.AsObject;
+  static serializeBinaryToWriter(message: ContentModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentModel;
+  static deserializeBinaryFromReader(message: ContentModel, reader: jspb.BinaryReader): ContentModel;
+}
+
+export namespace ContentModel {
+  export type AsObject = {
+    id: string,
+    name: string,
+    identifier: string,
+    createdAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
+    createdBy: string,
+    updatedBy: string,
+  }
+}
+
 export class CollectionAllRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): CollectionAllRequest.AsObject;
@@ -84,6 +130,290 @@ export namespace CollectionAllResponse {
   export type AsObject = {
     status: boolean,
     dataList: Array<CollectionModel.AsObject>,
+  }
+}
+
+export class ContentPaginateRequest extends jspb.Message {
+  getContentType(): string;
+  setContentType(value: string): ContentPaginateRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentPaginateRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentPaginateRequest): ContentPaginateRequest.AsObject;
+  static serializeBinaryToWriter(message: ContentPaginateRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentPaginateRequest;
+  static deserializeBinaryFromReader(message: ContentPaginateRequest, reader: jspb.BinaryReader): ContentPaginateRequest;
+}
+
+export namespace ContentPaginateRequest {
+  export type AsObject = {
+    contentType: string,
+  }
+}
+
+export class ContentPaginateResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): ContentPaginateResponse;
+
+  getData(): ContentPaginateResponse.ContentPaginateData | undefined;
+  setData(value?: ContentPaginateResponse.ContentPaginateData): ContentPaginateResponse;
+  hasData(): boolean;
+  clearData(): ContentPaginateResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentPaginateResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentPaginateResponse): ContentPaginateResponse.AsObject;
+  static serializeBinaryToWriter(message: ContentPaginateResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentPaginateResponse;
+  static deserializeBinaryFromReader(message: ContentPaginateResponse, reader: jspb.BinaryReader): ContentPaginateResponse;
+}
+
+export namespace ContentPaginateResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: ContentPaginateResponse.ContentPaginateData.AsObject,
+  }
+
+  export class ContentPagination extends jspb.Message {
+    getTotal(): number;
+    setTotal(value: number): ContentPagination;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ContentPagination.AsObject;
+    static toObject(includeInstance: boolean, msg: ContentPagination): ContentPagination.AsObject;
+    static serializeBinaryToWriter(message: ContentPagination, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ContentPagination;
+    static deserializeBinaryFromReader(message: ContentPagination, reader: jspb.BinaryReader): ContentPagination;
+  }
+
+  export namespace ContentPagination {
+    export type AsObject = {
+      total: number,
+    }
+  }
+
+
+  export class ContentPaginateData extends jspb.Message {
+    getPagination(): ContentPaginateResponse.ContentPagination | undefined;
+    setPagination(value?: ContentPaginateResponse.ContentPagination): ContentPaginateData;
+    hasPagination(): boolean;
+    clearPagination(): ContentPaginateData;
+
+    getDataList(): Array<ContentModel>;
+    setDataList(value: Array<ContentModel>): ContentPaginateData;
+    clearDataList(): ContentPaginateData;
+    addData(value?: ContentModel, index?: number): ContentModel;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ContentPaginateData.AsObject;
+    static toObject(includeInstance: boolean, msg: ContentPaginateData): ContentPaginateData.AsObject;
+    static serializeBinaryToWriter(message: ContentPaginateData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ContentPaginateData;
+    static deserializeBinaryFromReader(message: ContentPaginateData, reader: jspb.BinaryReader): ContentPaginateData;
+  }
+
+  export namespace ContentPaginateData {
+    export type AsObject = {
+      pagination?: ContentPaginateResponse.ContentPagination.AsObject,
+      dataList: Array<ContentModel.AsObject>,
+    }
+  }
+
+}
+
+export class StoreContentRequest extends jspb.Message {
+  getName(): string;
+  setName(value: string): StoreContentRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): StoreContentRequest;
+
+  getContentType(): string;
+  setContentType(value: string): StoreContentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreContentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreContentRequest): StoreContentRequest.AsObject;
+  static serializeBinaryToWriter(message: StoreContentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreContentRequest;
+  static deserializeBinaryFromReader(message: StoreContentRequest, reader: jspb.BinaryReader): StoreContentRequest;
+}
+
+export namespace StoreContentRequest {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+    contentType: string,
+  }
+}
+
+export class StoreContentResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): StoreContentResponse;
+
+  getData(): ContentModel | undefined;
+  setData(value?: ContentModel): StoreContentResponse;
+  hasData(): boolean;
+  clearData(): StoreContentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreContentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreContentResponse): StoreContentResponse.AsObject;
+  static serializeBinaryToWriter(message: StoreContentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreContentResponse;
+  static deserializeBinaryFromReader(message: StoreContentResponse, reader: jspb.BinaryReader): StoreContentResponse;
+}
+
+export namespace StoreContentResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: ContentModel.AsObject,
+  }
+}
+
+export class GetContentRequest extends jspb.Message {
+  getContentId(): string;
+  setContentId(value: string): GetContentRequest;
+
+  getContentType(): string;
+  setContentType(value: string): GetContentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetContentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetContentRequest): GetContentRequest.AsObject;
+  static serializeBinaryToWriter(message: GetContentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetContentRequest;
+  static deserializeBinaryFromReader(message: GetContentRequest, reader: jspb.BinaryReader): GetContentRequest;
+}
+
+export namespace GetContentRequest {
+  export type AsObject = {
+    contentId: string,
+    contentType: string,
+  }
+}
+
+export class GetContentResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): GetContentResponse;
+
+  getData(): ContentModel | undefined;
+  setData(value?: ContentModel): GetContentResponse;
+  hasData(): boolean;
+  clearData(): GetContentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetContentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetContentResponse): GetContentResponse.AsObject;
+  static serializeBinaryToWriter(message: GetContentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetContentResponse;
+  static deserializeBinaryFromReader(message: GetContentResponse, reader: jspb.BinaryReader): GetContentResponse;
+}
+
+export namespace GetContentResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: ContentModel.AsObject,
+  }
+}
+
+export class UpdateContentRequest extends jspb.Message {
+  getContentId(): string;
+  setContentId(value: string): UpdateContentRequest;
+
+  getName(): string;
+  setName(value: string): UpdateContentRequest;
+
+  getContentType(): string;
+  setContentType(value: string): UpdateContentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateContentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateContentRequest): UpdateContentRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateContentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateContentRequest;
+  static deserializeBinaryFromReader(message: UpdateContentRequest, reader: jspb.BinaryReader): UpdateContentRequest;
+}
+
+export namespace UpdateContentRequest {
+  export type AsObject = {
+    contentId: string,
+    name: string,
+    contentType: string,
+  }
+}
+
+export class UpdateContentResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): UpdateContentResponse;
+
+  getData(): ContentModel | undefined;
+  setData(value?: ContentModel): UpdateContentResponse;
+  hasData(): boolean;
+  clearData(): UpdateContentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateContentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateContentResponse): UpdateContentResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateContentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateContentResponse;
+  static deserializeBinaryFromReader(message: UpdateContentResponse, reader: jspb.BinaryReader): UpdateContentResponse;
+}
+
+export namespace UpdateContentResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: ContentModel.AsObject,
+  }
+}
+
+export class PutContentIdentifierRequest extends jspb.Message {
+  getContentId(): string;
+  setContentId(value: string): PutContentIdentifierRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): PutContentIdentifierRequest;
+
+  getContentType(): string;
+  setContentType(value: string): PutContentIdentifierRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutContentIdentifierRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: PutContentIdentifierRequest): PutContentIdentifierRequest.AsObject;
+  static serializeBinaryToWriter(message: PutContentIdentifierRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutContentIdentifierRequest;
+  static deserializeBinaryFromReader(message: PutContentIdentifierRequest, reader: jspb.BinaryReader): PutContentIdentifierRequest;
+}
+
+export namespace PutContentIdentifierRequest {
+  export type AsObject = {
+    contentId: string,
+    identifier: string,
+    contentType: string,
+  }
+}
+
+export class PutContentIdentifierResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): PutContentIdentifierResponse;
+
+  getData(): ContentModel | undefined;
+  setData(value?: ContentModel): PutContentIdentifierResponse;
+  hasData(): boolean;
+  clearData(): PutContentIdentifierResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutContentIdentifierResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: PutContentIdentifierResponse): PutContentIdentifierResponse.AsObject;
+  static serializeBinaryToWriter(message: PutContentIdentifierResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutContentIdentifierResponse;
+  static deserializeBinaryFromReader(message: PutContentIdentifierResponse, reader: jspb.BinaryReader): PutContentIdentifierResponse;
+}
+
+export namespace PutContentIdentifierResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: ContentModel.AsObject,
   }
 }
 

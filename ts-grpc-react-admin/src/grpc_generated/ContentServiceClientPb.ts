@@ -82,5 +82,220 @@ export class contentClient {
     this.methodDescriptorCollectionAll);
   }
 
+  methodDescriptorContentPaginate = new grpcWeb.MethodDescriptor(
+    '/content.content/ContentPaginate',
+    grpcWeb.MethodType.UNARY,
+    content_pb.ContentPaginateRequest,
+    content_pb.ContentPaginateResponse,
+    (request: content_pb.ContentPaginateRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.ContentPaginateResponse.deserializeBinary
+  );
+
+  contentPaginate(
+    request: content_pb.ContentPaginateRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.ContentPaginateResponse>;
+
+  contentPaginate(
+    request: content_pb.ContentPaginateRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.ContentPaginateResponse) => void): grpcWeb.ClientReadableStream<content_pb.ContentPaginateResponse>;
+
+  contentPaginate(
+    request: content_pb.ContentPaginateRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.ContentPaginateResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/ContentPaginate',
+        request,
+        metadata || {},
+        this.methodDescriptorContentPaginate,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/ContentPaginate',
+    request,
+    metadata || {},
+    this.methodDescriptorContentPaginate);
+  }
+
+  methodDescriptorStoreContent = new grpcWeb.MethodDescriptor(
+    '/content.content/StoreContent',
+    grpcWeb.MethodType.UNARY,
+    content_pb.StoreContentRequest,
+    content_pb.StoreContentResponse,
+    (request: content_pb.StoreContentRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.StoreContentResponse.deserializeBinary
+  );
+
+  storeContent(
+    request: content_pb.StoreContentRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.StoreContentResponse>;
+
+  storeContent(
+    request: content_pb.StoreContentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.StoreContentResponse) => void): grpcWeb.ClientReadableStream<content_pb.StoreContentResponse>;
+
+  storeContent(
+    request: content_pb.StoreContentRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.StoreContentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/StoreContent',
+        request,
+        metadata || {},
+        this.methodDescriptorStoreContent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/StoreContent',
+    request,
+    metadata || {},
+    this.methodDescriptorStoreContent);
+  }
+
+  methodDescriptorGetContent = new grpcWeb.MethodDescriptor(
+    '/content.content/GetContent',
+    grpcWeb.MethodType.UNARY,
+    content_pb.GetContentRequest,
+    content_pb.GetContentResponse,
+    (request: content_pb.GetContentRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.GetContentResponse.deserializeBinary
+  );
+
+  getContent(
+    request: content_pb.GetContentRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.GetContentResponse>;
+
+  getContent(
+    request: content_pb.GetContentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.GetContentResponse) => void): grpcWeb.ClientReadableStream<content_pb.GetContentResponse>;
+
+  getContent(
+    request: content_pb.GetContentRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.GetContentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/GetContent',
+        request,
+        metadata || {},
+        this.methodDescriptorGetContent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/GetContent',
+    request,
+    metadata || {},
+    this.methodDescriptorGetContent);
+  }
+
+  methodDescriptorUpdateContent = new grpcWeb.MethodDescriptor(
+    '/content.content/UpdateContent',
+    grpcWeb.MethodType.UNARY,
+    content_pb.UpdateContentRequest,
+    content_pb.UpdateContentResponse,
+    (request: content_pb.UpdateContentRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.UpdateContentResponse.deserializeBinary
+  );
+
+  updateContent(
+    request: content_pb.UpdateContentRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.UpdateContentResponse>;
+
+  updateContent(
+    request: content_pb.UpdateContentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.UpdateContentResponse) => void): grpcWeb.ClientReadableStream<content_pb.UpdateContentResponse>;
+
+  updateContent(
+    request: content_pb.UpdateContentRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.UpdateContentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/UpdateContent',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateContent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/UpdateContent',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateContent);
+  }
+
+  methodDescriptorPutContentIdentifier = new grpcWeb.MethodDescriptor(
+    '/content.content/PutContentIdentifier',
+    grpcWeb.MethodType.UNARY,
+    content_pb.PutContentIdentifierRequest,
+    content_pb.PutContentIdentifierResponse,
+    (request: content_pb.PutContentIdentifierRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.PutContentIdentifierResponse.deserializeBinary
+  );
+
+  putContentIdentifier(
+    request: content_pb.PutContentIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.PutContentIdentifierResponse>;
+
+  putContentIdentifier(
+    request: content_pb.PutContentIdentifierRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.PutContentIdentifierResponse) => void): grpcWeb.ClientReadableStream<content_pb.PutContentIdentifierResponse>;
+
+  putContentIdentifier(
+    request: content_pb.PutContentIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.PutContentIdentifierResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/PutContentIdentifier',
+        request,
+        metadata || {},
+        this.methodDescriptorPutContentIdentifier,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/PutContentIdentifier',
+    request,
+    metadata || {},
+    this.methodDescriptorPutContentIdentifier);
+  }
+
 }
 
