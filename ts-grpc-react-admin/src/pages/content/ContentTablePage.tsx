@@ -23,19 +23,14 @@ export const ContentTablePage = () => {
 
     const contentType = searchParams.get("type") ?? ''
 
-    var contents = [] as ContentType[];
-    var total_no_of_record = 0;
 
-    if (!_.isEmpty(contentType)) {
-        const request = new ContentPaginateRequest()
-        request.setContentType(contentType)
+    const request = new ContentPaginateRequest()
+    request.setContentType(contentType)
 
-        const content_paginate_response = UseContentPaginateHook(request)
-        const data_list = content_paginate_response.data?.data?.dataList ?? [];
-        contents = data_list as Array<unknown> as ContentType[];
-        total_no_of_record = content_paginate_response.data?.data?.pagination?.total ?? 0;
-    }
-
+    const content_paginate_response = UseContentPaginateHook(request)
+    const data_list = content_paginate_response.data?.data?.dataList ?? [];
+    const contents = data_list as Array<unknown> as ContentType[];
+    const total_no_of_record = content_paginate_response.data?.data?.pagination?.total ?? 0;
 
 
 

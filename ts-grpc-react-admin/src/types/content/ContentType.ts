@@ -21,3 +21,9 @@ export type ContentType = {
     action: string;
 }
 
+export type SaveContentType = {
+    name: string;
+    content_type: string;
+    identifier: string;
+    // content_fields: Array<SaveContentFieldType>;
+}
