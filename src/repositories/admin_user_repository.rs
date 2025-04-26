@@ -311,7 +311,7 @@ impl AdminUserRepository {
         );
     
         let attached_data: BTreeMap<String, Value> = [
-            ("created_by".into(), logged_in_user_email.clone().into()),
+            ("created_by".into(), logged_in_user_email.into()),
             ("updated_by".into(), logged_in_user_email.into()),
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),

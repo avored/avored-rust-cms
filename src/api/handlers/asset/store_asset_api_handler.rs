@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use crate::api::handlers::asset::request::store_asset_request::StoreAssetRequest;
-use crate::error::Error;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel, MetaDataType};
 use crate::models::token_claim_model::LoggedInUser;
 use crate::{avored_state::AvoRedState, error::Result};

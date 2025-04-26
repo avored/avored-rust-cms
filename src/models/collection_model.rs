@@ -3,7 +3,7 @@ use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use crate::models::{BaseModel, Pagination};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use surrealdb::sql::{Datetime, Object};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CollectionModel {

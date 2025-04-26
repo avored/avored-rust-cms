@@ -3,7 +3,7 @@ use crate::models::token_claim_model::LoggedInUser;
 use crate::models::Pagination;
 use crate::{
     error::Result, providers::avored_database_provider::DB,
-    repositories::asset_repository::AssetRepository, PER_PAGE,
+    repositories::asset_repository::AssetRepository,
 };
 
 pub struct AssetService {

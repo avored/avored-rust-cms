@@ -4,7 +4,6 @@ use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
 use crate::models::content_model::{CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
-use crate::models::role_model::PutRoleIdentifierModel;
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {

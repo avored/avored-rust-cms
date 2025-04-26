@@ -1,5 +1,5 @@
 use crate::avored_state::AvoRedState;
-use crate::error::{Error, Result};
+use crate::error::Result;
 use crate::models::asset_model::AssetPagination;
 use crate::models::token_claim_model::LoggedInUser;
 use axum::extract::{Query, State};

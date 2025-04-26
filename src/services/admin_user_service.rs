@@ -381,7 +381,7 @@ impl AdminUserService {
         (datastore, database_session): &DB,
     ) -> Result<UpdateRoleResponse> {
 
-        let mut updatable_role_model = UpdatableRoleModel {
+        let updatable_role_model = UpdatableRoleModel {
             id: req.role_id,
             name: req.name,
             permissions: req.permissions,
