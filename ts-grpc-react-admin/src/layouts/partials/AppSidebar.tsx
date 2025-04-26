@@ -6,8 +6,7 @@ import {
     FilmIcon,
     RocketLaunchIcon,
     CpuChipIcon,
-    DeviceTabletIcon,
-    CircleStackIcon
+    DeviceTabletIcon
 } from "@heroicons/react/24/solid";
 import {useContext} from "react";
 import {ThemeContext} from "../../context/ThemeContext";

@@ -23,6 +23,7 @@
     "@types/node": "^16.18.126",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "axios": "^1.9.0",
     "concurrently": "^9.1.2",
     "grpc-web": "^1.5.0",
     "grpc-web-client": "^0.7.0",

@@ -14,6 +14,7 @@ import {RoleEditPage} from "./pages/admin_user/RoleEditPage";
 import {ContentTablePage} from "./pages/content/ContentTablePage";
 import {ContentCreatePage} from "./pages/content/ContentCreatePage";
 import {ContentEditPage} from "./pages/content/ContentEditPage";
+import {AssetTablePage} from "./pages/asset/AssetTablePage";
 
 function App() {
 
@@ -38,6 +39,8 @@ function App() {
                     <Route path="/admin/content" element={<ContentTablePage />} />
                     <Route path="/admin/content-create"   element={<ContentCreatePage />} />
                     <Route path="/admin/content-edit/:content_id"   element={<ContentEditPage />} />
+
+                    <Route path="/admin/asset/:asset_id?" element={<AssetTablePage />} />
                 </Route>
             </Routes>
         </BrowserRouter>
