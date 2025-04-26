@@ -4,10 +4,10 @@ use crate::error::{Error, Result};
 use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
-use crate::responses::ApiResponse;
 use axum::extract::{Path, State};
 use axum::{Extension, Json};
 use std::sync::Arc;
+use serde::Serialize;
 use tokio::fs;
 
 pub async fn rename_asset_api_handler(
@@ -18,13 +18,13 @@ pub async fn rename_asset_api_handler(
 ) -> Result<Json<ApiResponse<AssetModel>>> {
     println!("->> {:<12} - rename_asset_api_handler", "HANDLER");
 
-    let has_permission_bool = state
-        .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("rename_asset"))
-        .await?;
-    if !has_permission_bool {
-        return Err(Error::Forbidden);
-    }
+    // let has_permission_bool = state
+    //     .admin_user_service
+    //     .has_permission(logged_in_user.clone(), String::from("rename_asset"))
+    //     .await?;
+    // if !has_permission_bool {
+    //     return Err(Error::Forbidden);
+    // }
 
     let error_messages = payload.validate()?;
 
@@ -56,4 +56,10 @@ pub async fn rename_asset_api_handler(
     };
 
     Ok(Json(response))
+}
+
+#[derive(Serialize)]
+pub struct ApiResponse<R> {
+    pub status: bool,
+    pub data: R,
 }

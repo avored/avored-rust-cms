@@ -13,7 +13,7 @@ export const UseStoreAssetHook = (parent_id: string) => {
             return await client.post(assetUrl, data, {
                 headers: {
                     "Content-Type": "multipart/form-data; boundary=----",
-                    Authorization: "Bearer " + localStorage.getItem("AUTH_TOKEN"),
+                    Authorization: "Bearer " + localStorage.getItem("token"),
                 },
             });
         },

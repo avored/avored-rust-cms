@@ -3,10 +3,10 @@ use crate::error::Error;
 use crate::models::asset_model::AssetModel;
 use crate::models::token_claim_model::LoggedInUser;
 use crate::models::validation_error::ErrorResponse;
-use crate::responses::ApiResponse;
 use crate::{avored_state::AvoRedState, error::Result};
 use axum::{extract::State, Extension, Json};
 use std::sync::Arc;
+use serde::Serialize;
 
 pub async fn create_folder_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
@@ -15,13 +15,13 @@ pub async fn create_folder_api_handler(
 ) -> Result<Json<ApiResponse<AssetModel>>> {
     println!("->> {:<12} - store_asset_folder_api_handler", "HANDLER");
 
-    let has_permission_bool = state
-        .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("create_folder"))
-        .await?;
-    if !has_permission_bool {
-        return Err(Error::Forbidden);
-    }
+    // let has_permission_bool = state
+    //     .admin_user_service
+    //     .has_permission(logged_in_user.clone(), String::from("create_folder"))
+    //     .await?;
+    // if !has_permission_bool {
+    //     return Err(Error::Forbidden);
+    // }
 
     let error_messages = payload.validate()?;
 
@@ -48,3 +48,10 @@ pub async fn create_folder_api_handler(
 
     Ok(Json(created_response))
 }
+
+#[derive(Serialize)]
+pub struct ApiResponse<R> {
+    pub status: bool,
+    pub data: R,
+}
+

@@ -5,7 +5,7 @@ use std::sync::Arc;
 use axum::http::HeaderValue;
 use axum::response::Html;
 use axum::Router;
-use axum::routing::get;
+use axum::routing::{delete, get, post};
 use axum_tonic::{NestTonic, RestGrpcService};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{filter, Layer};
@@ -16,6 +16,12 @@ use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::AuthApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
+use crate::api::handlers::asset::asset_table_api_handler::asset_table_api_handler;
+use crate::api::handlers::asset::create_folder_api_handler::create_folder_api_handler;
+use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
+use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
+use crate::api::handlers::asset::rename_asset_api_handler::rename_asset_api_handler;
+use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handler;
 use crate::api::misc_api::MiscApi;
 use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
 use crate::api::proto::auth::auth_server::AuthServer;
@@ -27,6 +33,7 @@ use crate::api::test_api::Test2Api;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
+use crate::middleware::require_jwt_authentication::require_jwt_authentication;
 
 mod api;
 mod avored_state;
@@ -95,6 +102,25 @@ async fn main() -> Result<(), Error>{
 
     let rest_router = Router::new()
         .route("/", get(handler))
+        .route("/api/asset", get(asset_table_api_handler))
+        .route("/api/asset", post(store_asset_api_handler))
+        .route(
+            "/api/rename-asset/{asset_id}",
+            post(rename_asset_api_handler),
+        )
+        .route("/api/create-folder", post(create_folder_api_handler))
+        .route(
+            "/api/delete-folder/{asset_id}",
+            delete(delete_folder_api_handler),
+        )
+        .route(
+            "/api/delete-asset/{asset_id}",
+            delete(delete_asset_api_handler),
+        )
+        .route_layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            require_jwt_authentication,
+        ))
         .nest_service("/public", static_routing_service)
         .with_state(state)
         .layer(cors);

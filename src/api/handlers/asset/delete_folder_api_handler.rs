@@ -15,14 +15,14 @@ pub async fn delete_folder_api_handler(
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - delete_folder_api_handler", "HANDLER");
-
-    let has_permission_bool = state
-        .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("delete_folder"))
-        .await?;
-    if !has_permission_bool {
-        return Err(Error::Forbidden);
-    }
+    
+    // let has_permission_bool = state
+    //     .admin_user_service
+    //     .has_permission(logged_in_user.clone(), String::from("delete_folder"))
+    //     .await?;
+    // if !has_permission_bool {
+    //     return Err(Error::Forbidden);
+    // }
 
     let asset_model = state.asset_service.find_by_id(&state.db, &asset_id).await?;
 

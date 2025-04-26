@@ -124,7 +124,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::CreateModel(
+            None => Err(Error::Generic (
                 "cannot create assets record".to_string(),
             )),
         };
@@ -167,7 +167,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::CreateModel(
+            None => Err(Error::Generic(
                 "cannot create assets record".to_string(),
             )),
         };

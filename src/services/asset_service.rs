@@ -22,8 +22,8 @@ impl AssetService {
         current_page: i64,
         parent_id: String,
     ) -> Result<AssetPagination> {
-        let start = (current_page - 1) * PER_PAGE;
-        let to = start + PER_PAGE;
+        let start = (current_page - 1) * 10;
+        let to = start + 10;
 
         let asset_model_count = self
             .asset_repository
@@ -41,7 +41,7 @@ impl AssetService {
 
         let pagination = Pagination {
             total: asset_model_count.total,
-            per_page: PER_PAGE,
+            per_page: 10,
             current_page,
             from: (start + 1),
             to,

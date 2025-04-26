@@ -59,9 +59,12 @@ export const AssetTablePage = () => {
     };
 
     const submitHandler: SubmitHandler<AssetSaveType> = (data: AssetSaveType) => {
-        data.file = data.file_list ? data.file_list[0] : undefined;
+        const upload_file: AssetSaveType = {
+            file: data.file_list ? data.file_list[0] : undefined,
+        }
+        // data.file = data.file_list ? data.file_list[0] : undefined;
         onCloseUploadModal();
-        mutate(data);
+        mutate(upload_file);
     };
 
     return(

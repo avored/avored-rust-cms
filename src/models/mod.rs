@@ -4,7 +4,7 @@ use surrealdb::sql::Value::Bool;
 use surrealdb::sql::{Datetime, Object, Value};
 
 pub mod admin_user_model;
-// pub mod asset_model;
+pub mod asset_model;
 pub mod collection_model;
 // pub mod component_model;
 // pub mod model_model;

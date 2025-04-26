@@ -21,13 +21,13 @@ pub async fn store_asset_api_handler(
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - store_asset_api_handler", "HANDLER");
 
-    let has_permission_bool = state
-        .admin_user_service
-        .has_permission(logged_in_user.clone(), String::from("asset_create"))
-        .await?;
-    if !has_permission_bool {
-        return Err(Error::Forbidden);
-    }
+    // let has_permission_bool = state
+    //     .admin_user_service
+    //     .has_permission(logged_in_user.clone(), String::from("asset_create"))
+    //     .await?;
+    // if !has_permission_bool {
+    //     return Err(Error::Forbidden);
+    // }
 
     //@todo we need to move this logic to service
     // we need to make the parent_id works as per it path will be changed too. if exist

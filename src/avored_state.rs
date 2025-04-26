@@ -2,10 +2,12 @@ use crate::error::Result;
 use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::{AvoRedDatabaseProvider, DB};
 use crate::repositories::admin_user_repository::AdminUserRepository;
+use crate::repositories::asset_repository::AssetRepository;
 use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::services::admin_user_service::AdminUserService;
+use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
 use crate::services::content_service::ContentService;
 use crate::services::misc_service::MiscService;
@@ -17,6 +19,7 @@ pub struct AvoRedState {
     pub auth_service: AuthService,
     pub admin_user_service: AdminUserService,
     pub content_service: ContentService,
+    pub asset_service: AssetService,
 }
 
 impl AvoRedState {
@@ -29,12 +32,14 @@ impl AvoRedState {
         let role_repository = RoleRepository::new();
         let collection_repository = CollectionRepository::new();
         let content_repository = ContentRepository::new();
+        let asset_repository = AssetRepository::new();
 
 
         let misc_service = MiscService::new().await?;
         let auth_service = AuthService::new(admin_user_repository.clone()).await?;
         let admin_user_service = AdminUserService::new(admin_user_repository, role_repository)?;
         let content_service = ContentService::new(content_repository, collection_repository)?;
+        let asset_service = AssetService::new(asset_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -43,6 +48,7 @@ impl AvoRedState {
             auth_service,
             admin_user_service,
             content_service,
+            asset_service,
         })
     }
 }

@@ -1,7 +1,10 @@
 use std::net::AddrParseError;
 use std::num::ParseIntError;
+use axum::http::StatusCode;
+use axum::response::{IntoResponse, Response};
 use tonic::Status;
 use tracing::error;
+use crate::models::validation_error::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -10,7 +13,7 @@ pub enum Error {
     Generic(String),
     ConfigMissing(String),
     TonicError(Status),
-
+    BadRequest(ErrorResponse),
     Argon2Error(argon2::password_hash::Error),
 }
 
@@ -101,5 +104,25 @@ impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
         Error::Generic("500 internal".to_string())
+    }
+}
+impl IntoResponse for Error {
+    fn into_response(self) -> Response {
+
+        match self {
+            Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
+            
+            _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),
+        }
+    }
+}
+impl IntoResponse for ErrorResponse {
+    fn into_response(self) -> Response {
+        let validation_errors = match serde_json::to_string(&self) {
+            Ok(str) => str,
+            _ => "validation error 400.".to_string(),
+        };
+
+        (StatusCode::BAD_REQUEST, validation_errors).into_response()
     }
 }

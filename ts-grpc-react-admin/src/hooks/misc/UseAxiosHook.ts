@@ -21,9 +21,8 @@ export const UseAxiosHook = () => {
     useEffect(() => {
         const reqInterceptor = client.interceptors.request.use(
             config => {
-                const token = localStorage.getItem("AUTH_TOKEN");
+                const token = localStorage.getItem("token");
                 if (!_.isEmpty(token) && !config.headers['Authorization']) {
-
                     config.headers['Authorization'] = `Bearer ${token}` 
                 }
 
