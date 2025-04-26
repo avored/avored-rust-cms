@@ -37,7 +37,7 @@ export const ContentTablePage = () => {
     }
 
 
-   
+
 
     const customSorting = (sorting: any) => {
         setSorting(sorting);
@@ -114,8 +114,9 @@ export const ContentTablePage = () => {
         manualPagination: true,
         initialState: {
             columnVisibility: {
-                created_at: false,
-                created_by: false,
+                createdAt: false,
+                createdBy: false,
+                updatedBy: false,
             },
             pagination
         },
@@ -129,43 +130,47 @@ export const ContentTablePage = () => {
 
     return(
         <>
-            <div className="flex w-full">
-                <div className="p-5 w-48 bg-gray-50 min-h-screen">
-                    <ContentSidebar />
-                </div>
-                <div className="p-5 flex-1">
-                    {contentType ?
-                        <>
-                            <div className="flex items-center w-full">
-                                <div className="p-5 text-2xl font-semibold text-primary-500">
-                                    {t("collection type table title")}
-                                </div>
-                                <div className="ml-auto">
-                                    {/*<HasPermission displayDenied={false} identifier="collection_create">*/}
+            <div className="p-5">
+                <div className="flex w-full">
+                    <div className="w-48 bg-gray-50">
+                        <ContentSidebar />
+                    </div>
+                    <div className="flex-1">
+                        {contentType ?
+                            <>
+                                <div className="flex items-center">
+                                    <div className="p-5 text-2xl font-semibold text-primary-500">
+                                        {t("collection type table title")}
+                                    </div>
+                                    <div className="ml-auto">
+                                        {/*<HasPermission displayDenied={false} identifier="collection_create">*/}
                                         <Link
                                             className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                                             to={encodeURI(`/admin/content-create?type=${contentType}`)}
                                         >
                                             {t("create")}
                                         </Link>
+                                        {/*</HasPermission>*/}
+                                    </div>
+                                </div>
+                                <div className="block overflow-x-auto">
+                                    {/*<HasPermission identifier="content_table">*/}
+                                    <AvoRedTable table={table} />
                                     {/*</HasPermission>*/}
                                 </div>
-                            </div>
-                            <div className="overflow-x-auto">
-                                {/*<HasPermission identifier="content_table">*/}
-                                    <AvoRedTable table={table} />
-                                {/*</HasPermission>*/}
-                            </div>
-                        </>
+                            </>
 
-                        :
-                        <>
-                            <div>
-                                {t("please select the type on left hand side")}
-                            </div>
-                        </>
-                    }
+                            :
+                            <>
+                                <div>
+                                    {t("please select the type on left hand side")}
+                                </div>
+                            </>
+                        }
+                    </div>
+
                 </div>
+
             </div>
         </>
     )
