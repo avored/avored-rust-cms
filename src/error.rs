@@ -2,6 +2,8 @@ use std::net::AddrParseError;
 use std::num::ParseIntError;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
+use handlebars::{RenderError, TemplateError};
+use lettre::address::AddressError;
 use tonic::Status;
 use tracing::error;
 use crate::models::validation_error::ErrorResponse;
@@ -106,6 +108,35 @@ impl From<argon2::password_hash::Error> for Error {
         Error::Generic("500 internal".to_string())
     }
 }
+
+impl From<lettre::error::Error> for Error {
+    fn from(actual_error: lettre::error::Error) -> Self {
+        error!("there is an issue lettre error: {actual_error:?}");
+        Error::Generic("lettre error".to_string())
+    }
+}
+
+impl From<TemplateError> for Error {
+    fn from(actual_error: TemplateError) -> Self {
+        error!("there is an issue while registering the handlebar template with avored: {actual_error:?}");
+        Error::Generic("handlebar template error".to_string())
+    }
+}
+
+impl From<RenderError> for Error {
+    fn from(actual_error: RenderError) -> Self {
+        error!("there is an issue while rendering the handlebar template: {actual_error:?}");
+        Error::Generic("handlebar error".to_string())
+    }
+}
+
+impl From<AddressError> for Error {
+    fn from(actual_error: AddressError) -> Self {
+        error!("there is an issue while parsing email address: {actual_error:?}");
+        Error::Generic("parse lettre address parsing error".to_string())
+    }
+}
+
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
 

@@ -67,7 +67,7 @@ impl PasswordResetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::NotFound(format!(
+            None => Err(Error::Generic(format!(
                 "no record found to reset password for email {}",
                 email
             ))),

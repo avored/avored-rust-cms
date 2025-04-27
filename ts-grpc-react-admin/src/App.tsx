@@ -15,6 +15,8 @@ import {ContentTablePage} from "./pages/content/ContentTablePage";
 import {ContentCreatePage} from "./pages/content/ContentCreatePage";
 import {ContentEditPage} from "./pages/content/ContentEditPage";
 import {AssetTablePage} from "./pages/asset/AssetTablePage";
+import {ForgotPasswordPage} from "./pages/auth/ForgotPasswordPage";
+import {ResetPasswordPage} from "./pages/auth/ResetPasswordPage";
 
 function App() {
 
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/" element={<HomePage/>}/>
                 <Route path="/setup" element={<SetupPage/>}/>
                 <Route path="/admin/login" element={<LoginPage />} />
+                <Route path="/admin/forgot-password" element={<ForgotPasswordPage />} />
+                <Route path="/admin/reset-password/:token" element={<ResetPasswordPage />} />
 
 
                 <Route element={<AppLayout />}>

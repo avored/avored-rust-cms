@@ -12,6 +12,11 @@ pub struct PasswordResetModel {
     pub created_at: Datetime,
 }
 
+#[derive(Serialize, Default)]
+pub struct ForgotPasswordViewModel {
+    pub link: String,
+}
+
 #[derive(Serialize, Debug, Deserialize, Clone, PartialEq, Default)]
 pub enum PasswordResetTokenStatus {
     Active,

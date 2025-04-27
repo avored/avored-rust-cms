@@ -1,7 +1,7 @@
 syntax = "proto3";
 package auth;
 
-// Setup API
+// Login Service
 message LoginRequest {
   string email = 1;
   string password = 2;
@@ -11,6 +11,16 @@ message LoginResponse {
   string data = 2;
 }
 
+
+message ForgotPasswordRequest {
+  string email = 1;
+}
+
+message ForgotPasswordResponse {
+  bool  status = 1;
+}
+
 service Auth {
   rpc Login(LoginRequest) returns (LoginResponse);
+  rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 }

@@ -9,7 +9,7 @@ pub mod collection_model;
 // pub mod component_model;
 // pub mod model_model;
 // pub mod page_model;
-// pub mod password_rest_model;
+pub mod password_rest_model;
 pub mod role_model;
 // pub mod setting_model;
 pub mod token_claim_model;

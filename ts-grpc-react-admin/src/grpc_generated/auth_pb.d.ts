@@ -46,3 +46,39 @@ export namespace LoginResponse {
   }
 }
 
+export class ForgotPasswordRequest extends jspb.Message {
+  getEmail(): string;
+  setEmail(value: string): ForgotPasswordRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ForgotPasswordRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ForgotPasswordRequest): ForgotPasswordRequest.AsObject;
+  static serializeBinaryToWriter(message: ForgotPasswordRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ForgotPasswordRequest;
+  static deserializeBinaryFromReader(message: ForgotPasswordRequest, reader: jspb.BinaryReader): ForgotPasswordRequest;
+}
+
+export namespace ForgotPasswordRequest {
+  export type AsObject = {
+    email: string,
+  }
+}
+
+export class ForgotPasswordResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): ForgotPasswordResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ForgotPasswordResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ForgotPasswordResponse): ForgotPasswordResponse.AsObject;
+  static serializeBinaryToWriter(message: ForgotPasswordResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ForgotPasswordResponse;
+  static deserializeBinaryFromReader(message: ForgotPasswordResponse, reader: jspb.BinaryReader): ForgotPasswordResponse;
+}
+
+export namespace ForgotPasswordResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+

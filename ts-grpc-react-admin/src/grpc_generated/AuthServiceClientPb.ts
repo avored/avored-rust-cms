@@ -82,5 +82,48 @@ export class AuthClient {
     this.methodDescriptorLogin);
   }
 
+  methodDescriptorForgotPassword = new grpcWeb.MethodDescriptor(
+    '/auth.Auth/ForgotPassword',
+    grpcWeb.MethodType.UNARY,
+    auth_pb.ForgotPasswordRequest,
+    auth_pb.ForgotPasswordResponse,
+    (request: auth_pb.ForgotPasswordRequest) => {
+      return request.serializeBinary();
+    },
+    auth_pb.ForgotPasswordResponse.deserializeBinary
+  );
+
+  forgotPassword(
+    request: auth_pb.ForgotPasswordRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<auth_pb.ForgotPasswordResponse>;
+
+  forgotPassword(
+    request: auth_pb.ForgotPasswordRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: auth_pb.ForgotPasswordResponse) => void): grpcWeb.ClientReadableStream<auth_pb.ForgotPasswordResponse>;
+
+  forgotPassword(
+    request: auth_pb.ForgotPasswordRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: auth_pb.ForgotPasswordResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/auth.Auth/ForgotPassword',
+        request,
+        metadata || {},
+        this.methodDescriptorForgotPassword,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/auth.Auth/ForgotPassword',
+    request,
+    metadata || {},
+    this.methodDescriptorForgotPassword);
+  }
+
 }
 

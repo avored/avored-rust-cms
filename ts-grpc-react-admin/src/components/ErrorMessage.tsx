@@ -15,7 +15,6 @@ function ErrorMessage(props: ErrorMessageProps) {
             return 1;
         }
 
-        console.log(props.backendErrors?.message, "compo");
         const backendErrorMessages = JSON.parse(props.backendErrors?.message ?? '{"errors": []}');
 
         return _.findIndex(_.get(backendErrorMessages, 'errors', []), ((err: ErrorMessageType) => err.key === key))
