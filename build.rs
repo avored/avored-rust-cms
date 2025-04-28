@@ -7,7 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "auth.proto",
         "dashboard.proto",
         "admin_user.proto",
-        "content.proto"
+        "content.proto",
+        "setting.proto"
     ];
 
     tonic_build::configure()

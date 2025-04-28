@@ -11,7 +11,7 @@ pub mod role_repository;
 pub mod asset_repository;
 pub mod collection_repository;
 // pub mod model_repository;
-// pub mod setting_repository;
+pub mod setting_repository;
 pub mod content_repository;
 
 pub fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {

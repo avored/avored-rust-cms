@@ -17,6 +17,7 @@ import {ContentEditPage} from "./pages/content/ContentEditPage";
 import {AssetTablePage} from "./pages/asset/AssetTablePage";
 import {ForgotPasswordPage} from "./pages/auth/ForgotPasswordPage";
 import {ResetPasswordPage} from "./pages/auth/ResetPasswordPage";
+import {SettingPage} from "./pages/setting/SettingPage";
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
                     <Route path="/admin/content-edit/:content_id"   element={<ContentEditPage />} />
 
                     <Route path="/admin/asset/:asset_id?" element={<AssetTablePage />} />
+                    <Route path="/admin/setting"   element={<SettingPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

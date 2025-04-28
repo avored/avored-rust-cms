@@ -29,6 +29,8 @@ use crate::api::proto::content::content_server::ContentServer;
 use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::echo::test2_server::Test2Server;
 use crate::api::proto::misc::misc_server::MiscServer;
+use crate::api::proto::setting::setting_server::SettingServer;
+use crate::api::setting_api::SettingApi;
 use crate::api::test_api::Test2Api;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
@@ -88,6 +90,9 @@ async fn main() -> Result<(), Error>{
     let content_api = ContentApi {state: state.clone()};
     let content_server = ContentServer::with_interceptor(content_api, check_auth);
     
+    let setting_api = SettingApi {state: state.clone()};
+    let setting_server = SettingServer::with_interceptor(setting_api, check_auth);
+    
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)
@@ -95,6 +100,7 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(dashboard_server)
         .nest_tonic(admin_user_server)
         .nest_tonic(content_server)
+        .nest_tonic(setting_server)
         .layer(cors.clone());
 
 

@@ -1,3 +1,5 @@
+use std::time::SystemTime;
+use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use crate::models::BaseModel;
 use serde::{Deserialize, Serialize};
@@ -36,7 +38,37 @@ impl TryFrom<Object> for SettingModel {
         })
     }
 }
+
+impl TryFrom<SettingModel> for crate::api::proto::setting::SettingModel {
+    type Error = Error;
+
+    fn try_from(val: SettingModel) -> Result<crate::api::proto::setting::SettingModel> {
+        let chrono_utc_created_at= val.created_at.to_utc();
+        let system_time_created_at = SystemTime::from(chrono_utc_created_at);
+        let created_at = Timestamp::from(system_time_created_at);
+
+        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
+        let updated_at = Timestamp::from(system_time_updated_at);
+
+        let model = crate::api::proto::setting::SettingModel {
+            id: val.id,
+            value: val.value,
+            identifier: val.identifier,
+            created_at: Option::from(created_at),
+            updated_at: Option::from(updated_at),
+            created_by: val.created_by,
+            updated_by: val.updated_by,
+        };
+
+        Ok(model)
+    }
+}
+
+
 //
+
+
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct UpdatableSettingModel {
     pub id: String,

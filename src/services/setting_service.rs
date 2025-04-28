@@ -1,6 +1,8 @@
 use crate::models::setting_model::{SettingModel, UpdatableSettingModel};
+use crate::api::proto::setting::SettingModel as SettingModelGrpc;
 use crate::providers::avored_database_provider::DB;
 use crate::{error::Result, repositories::setting_repository::SettingRepository};
+use crate::api::proto::setting::GetSettingResponse;
 
 pub struct SettingService {
     setting_repository: SettingRepository,
@@ -11,10 +13,23 @@ impl SettingService {
         Ok(SettingService { setting_repository })
     }
 
-    pub async fn all(&self, (datastore, database_session): &DB) -> Result<Vec<SettingModel>> {
-        self.setting_repository
+    pub async fn get_setting(&self, (datastore, database_session): &DB) -> Result<GetSettingResponse> {
+        let models = self.setting_repository
             .all(datastore, database_session)
-            .await
+            .await?;
+        
+        let mut setting_grpc_models = vec![];
+        for model in models {
+            let setting_grpc_model: SettingModelGrpc = model.try_into()?;
+            setting_grpc_models.push(setting_grpc_model);
+        }
+        
+        let res = GetSettingResponse {
+            status: true,
+            data: setting_grpc_models,
+        };
+        
+        Ok(res)
     }
 
     pub async fn find_by_identifier(

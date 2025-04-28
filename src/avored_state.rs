@@ -8,11 +8,13 @@ use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
+use crate::repositories::setting_repository::SettingRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
 use crate::services::content_service::ContentService;
 use crate::services::misc_service::MiscService;
+use crate::services::setting_service::SettingService;
 
 pub struct AvoRedState {
     pub db: DB,
@@ -23,6 +25,7 @@ pub struct AvoRedState {
     pub admin_user_service: AdminUserService,
     pub content_service: ContentService,
     pub asset_service: AssetService,
+    pub setting_service: SettingService,
 }
 
 impl AvoRedState {
@@ -39,6 +42,7 @@ impl AvoRedState {
         let content_repository = ContentRepository::new();
         let asset_repository = AssetRepository::new();
         let password_reset_repository = PasswordResetRepository::new();
+        let setting_repository = SettingRepository::new();
 
 
         let misc_service = MiscService::new().await?;
@@ -46,6 +50,7 @@ impl AvoRedState {
         let admin_user_service = AdminUserService::new(admin_user_repository, role_repository, password_reset_repository)?;
         let content_service = ContentService::new(content_repository, collection_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
+        let setting_service = SettingService::new(setting_repository)?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -56,6 +61,7 @@ impl AvoRedState {
             admin_user_service,
             content_service,
             asset_service,
+            setting_service
         })
     }
 }
