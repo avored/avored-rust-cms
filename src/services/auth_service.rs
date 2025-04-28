@@ -10,7 +10,7 @@ use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
 use tonic::Status;
-use crate::api::proto::auth::{ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse};
+use crate::api::proto::auth::{ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordRequest, ResetPasswordResponse};
 use crate::error::Error::TonicError;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
@@ -105,7 +105,7 @@ impl AuthService {
     ) -> Result<LoginResponse> {
 
         println!("request: {:?}", request);
-    let admin_user_model = self
+        let admin_user_model = self
         .admin_user_repository
         .find_by_email(datastore, database_session, &request.email)
         .await?;
@@ -159,6 +159,28 @@ impl AuthService {
         Ok(argon2
             .verify_password(plain_password.as_bytes(), &parsed_hash)
             .is_ok())
+    }
+
+    pub(crate) async fn reset_password(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+        password_hash: String,
+    ) -> Result<ResetPasswordResponse> {
+        let status = self.
+            admin_user_repository.
+            update_password_by_email(
+                datastore, 
+                database_session,
+                email,
+                password_hash
+            ).await?;
+        
+        let res = ResetPasswordResponse {
+            status
+        };
+        
+        Ok(res)
     }
 
 }

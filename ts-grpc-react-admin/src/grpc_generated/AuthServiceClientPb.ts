@@ -125,5 +125,48 @@ export class AuthClient {
     this.methodDescriptorForgotPassword);
   }
 
+  methodDescriptorResetPassword = new grpcWeb.MethodDescriptor(
+    '/auth.Auth/ResetPassword',
+    grpcWeb.MethodType.UNARY,
+    auth_pb.ResetPasswordRequest,
+    auth_pb.ResetPasswordResponse,
+    (request: auth_pb.ResetPasswordRequest) => {
+      return request.serializeBinary();
+    },
+    auth_pb.ResetPasswordResponse.deserializeBinary
+  );
+
+  resetPassword(
+    request: auth_pb.ResetPasswordRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<auth_pb.ResetPasswordResponse>;
+
+  resetPassword(
+    request: auth_pb.ResetPasswordRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: auth_pb.ResetPasswordResponse) => void): grpcWeb.ClientReadableStream<auth_pb.ResetPasswordResponse>;
+
+  resetPassword(
+    request: auth_pb.ResetPasswordRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: auth_pb.ResetPasswordResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/auth.Auth/ResetPassword',
+        request,
+        metadata || {},
+        this.methodDescriptorResetPassword,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/auth.Auth/ResetPassword',
+    request,
+    metadata || {},
+    this.methodDescriptorResetPassword);
+  }
+
 }
 

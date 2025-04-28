@@ -2,13 +2,14 @@ import logo from "../../assets/logo_only.svg"
 import {useTranslation} from "react-i18next";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
-import AvoRedButton from "../../components/AvoRedButton";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 import {useParams} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {ResetPasswordPostType} from "../../types/auth/LoginPostType";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {UseResetPasswordSchema} from "../../schemas/auth/UseResetPasswordSchema";
 import {UseResetPasswordHook} from "../../hooks/auth/UseResetPasswordHook";
+import {ResetPasswordRequest} from "../../grpc_generated/auth_pb";
 
 export const ResetPasswordPage = () => {
     const [t, i18n] = useTranslation("global")
@@ -19,13 +20,18 @@ export const ResetPasswordPage = () => {
         handleSubmit,
         formState: { errors }
     } = useForm<ResetPasswordPostType>({
-        resolver: joiResolver(UseResetPasswordSchema()),
+        resolver: joiResolver(UseResetPasswordSchema(), {allowUnknown: true}),
     });
 
     const { mutate, isPending, error } = UseResetPasswordHook();
 
     const submitHandler = (data: ResetPasswordPostType) => {
-        // mutate(data);
+        const request = new ResetPasswordRequest();
+        request.setEmail(data.email)
+        request.setPassword(data.password)
+        request.setConfirmPassword(data.confirm_password)
+        request.setToken(data.token)
+        mutate(request)
     };
 
     return (
@@ -85,6 +91,8 @@ export const ResetPasswordPage = () => {
                         <div>
                             <AvoRedButton
                                 label={t("reset_password")}
+                                type={ButtonType.submit}
+                                onClick={handleSubmit(submitHandler)}
                                 isPending={isPending}
                                 className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"
                             />

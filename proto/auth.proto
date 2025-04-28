@@ -20,7 +20,18 @@ message ForgotPasswordResponse {
   bool  status = 1;
 }
 
+message ResetPasswordRequest {
+  string email = 1;
+  string password = 2;
+  string confirm_password = 3;
+  string token = 4;
+}
+message ResetPasswordResponse {
+  bool status = 1;
+}
+
 service Auth {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
+  rpc ResetPassword(ResetPasswordRequest) returns (ResetPasswordResponse);
 }

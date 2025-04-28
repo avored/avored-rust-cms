@@ -82,3 +82,51 @@ export namespace ForgotPasswordResponse {
   }
 }
 
+export class ResetPasswordRequest extends jspb.Message {
+  getEmail(): string;
+  setEmail(value: string): ResetPasswordRequest;
+
+  getPassword(): string;
+  setPassword(value: string): ResetPasswordRequest;
+
+  getConfirmPassword(): string;
+  setConfirmPassword(value: string): ResetPasswordRequest;
+
+  getToken(): string;
+  setToken(value: string): ResetPasswordRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ResetPasswordRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ResetPasswordRequest): ResetPasswordRequest.AsObject;
+  static serializeBinaryToWriter(message: ResetPasswordRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ResetPasswordRequest;
+  static deserializeBinaryFromReader(message: ResetPasswordRequest, reader: jspb.BinaryReader): ResetPasswordRequest;
+}
+
+export namespace ResetPasswordRequest {
+  export type AsObject = {
+    email: string,
+    password: string,
+    confirmPassword: string,
+    token: string,
+  }
+}
+
+export class ResetPasswordResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): ResetPasswordResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ResetPasswordResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ResetPasswordResponse): ResetPasswordResponse.AsObject;
+  static serializeBinaryToWriter(message: ResetPasswordResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ResetPasswordResponse;
+  static deserializeBinaryFromReader(message: ResetPasswordResponse, reader: jspb.BinaryReader): ResetPasswordResponse;
+}
+
+export namespace ResetPasswordResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+

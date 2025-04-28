@@ -182,38 +182,38 @@ impl AdminUserRepository {
         admin_user_model
     }
 
-    // pub async fn update_password_by_email(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     new_password: String,
-    //     email: String,
-    // ) -> Result<bool> {
-    //     let sql = "
-    //         UPDATE type::table($table) SET password=$password WHERE email=$email";
-    //
-    //     let vars = BTreeMap::from([
-    //         ("password".into(), new_password.into()),
-    //         ("email".into(), email.clone().into()),
-    //         ("table".into(), "admin_users".into()),
-    //     ]);
-    //
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //
-    //     if result_object.is_ok() {
-    //         return Ok(true);
-    //     }
-    //
-    //     Err(Error::Generic(format!(
-    //         "issue while updating password by email: {email}"
-    //     )))
-    // }
+    pub async fn update_password_by_email(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        email: String,
+        new_password: String
+    ) -> Result<bool> {
+        let sql = "
+            UPDATE type::table($table) SET password=$password WHERE email=$email";
+    
+        let vars = BTreeMap::from([
+            ("password".into(), new_password.into()),
+            ("email".into(), email.clone().into()),
+            ("table".into(), "admin_users".into()),
+        ]);
+    
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+    
+        if result_object.is_ok() {
+            return Ok(true);
+        }
+    
+        Err(Error::Generic(format!(
+            "issue while updating password by email: {email}"
+        )))
+    }
 
     // pub async fn delete_admin_user(
     //     &self,
