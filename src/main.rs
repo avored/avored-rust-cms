@@ -2,7 +2,8 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use axum::http::HeaderValue;
+use std::time::Duration;
+use axum::http::{HeaderName, HeaderValue};
 use axum::response::Html;
 use axum::Router;
 use axum::routing::{delete, get, post};
@@ -66,9 +67,29 @@ async fn main() -> Result<(), Error>{
         origins.push(HeaderValue::from_str(origin).unwrap());
     }
 
+    const DEFAULT_MAX_AGE: Duration = Duration::from_secs(24 * 60 * 60);
+    const DEFAULT_EXPOSED_HEADERS: [&str; 3] =
+        ["grpc-status", "grpc-message", "grpc-status-details-bin"];
+    const DEFAULT_ALLOW_HEADERS: [&str; 4] =
+        ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout"];
+
+
     let cors = CorsLayer::new()
         .allow_origin(origins)
-        .allow_headers(Any)
+        .expose_headers(
+            DEFAULT_EXPOSED_HEADERS
+                .iter()
+                .cloned()
+                .map(HeaderName::from_static)
+                .collect::<Vec<HeaderName>>(),
+        )
+        .allow_headers(
+            DEFAULT_ALLOW_HEADERS
+                .iter()
+                .cloned()
+                .map(HeaderName::from_static)
+                .collect::<Vec<HeaderName>>(),
+        )
         .allow_methods(Any);
 
 
