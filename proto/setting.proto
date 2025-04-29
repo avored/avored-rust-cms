@@ -13,6 +13,14 @@ message SettingModel {
   string updated_by = 7;
 }
 
+
+message SettingSaveModel {
+  string id = 1;
+  string identifier = 2;
+  string value = 3;
+}
+
+
 // Setting services
 message GetSettingRequest {}
 message GetSettingResponse {
@@ -20,8 +28,15 @@ message GetSettingResponse {
   repeated SettingModel data = 2;
 }
 
+message StoreSettingRequest {
+  repeated SettingSaveModel data = 1;
+}
+message StoreSettingResponse {
+  bool status = 1;
+}
 
 
 service Setting {
   rpc GetSetting(GetSettingRequest) returns (GetSettingResponse);
+  rpc StoreSetting(StoreSettingRequest) returns (StoreSettingResponse);
 }

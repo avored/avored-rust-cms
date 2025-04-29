@@ -82,5 +82,48 @@ export class SettingClient {
     this.methodDescriptorGetSetting);
   }
 
+  methodDescriptorStoreSetting = new grpcWeb.MethodDescriptor(
+    '/setting.Setting/StoreSetting',
+    grpcWeb.MethodType.UNARY,
+    setting_pb.StoreSettingRequest,
+    setting_pb.StoreSettingResponse,
+    (request: setting_pb.StoreSettingRequest) => {
+      return request.serializeBinary();
+    },
+    setting_pb.StoreSettingResponse.deserializeBinary
+  );
+
+  storeSetting(
+    request: setting_pb.StoreSettingRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<setting_pb.StoreSettingResponse>;
+
+  storeSetting(
+    request: setting_pb.StoreSettingRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: setting_pb.StoreSettingResponse) => void): grpcWeb.ClientReadableStream<setting_pb.StoreSettingResponse>;
+
+  storeSetting(
+    request: setting_pb.StoreSettingRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: setting_pb.StoreSettingResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/setting.Setting/StoreSetting',
+        request,
+        metadata || {},
+        this.methodDescriptorStoreSetting,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/setting.Setting/StoreSetting',
+    request,
+    metadata || {},
+    this.methodDescriptorStoreSetting);
+  }
+
 }
 

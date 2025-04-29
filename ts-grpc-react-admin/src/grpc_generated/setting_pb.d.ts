@@ -49,6 +49,32 @@ export namespace SettingModel {
   }
 }
 
+export class SettingSaveModel extends jspb.Message {
+  getId(): string;
+  setId(value: string): SettingSaveModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): SettingSaveModel;
+
+  getValue(): string;
+  setValue(value: string): SettingSaveModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SettingSaveModel.AsObject;
+  static toObject(includeInstance: boolean, msg: SettingSaveModel): SettingSaveModel.AsObject;
+  static serializeBinaryToWriter(message: SettingSaveModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SettingSaveModel;
+  static deserializeBinaryFromReader(message: SettingSaveModel, reader: jspb.BinaryReader): SettingSaveModel;
+}
+
+export namespace SettingSaveModel {
+  export type AsObject = {
+    id: string,
+    identifier: string,
+    value: string,
+  }
+}
+
 export class GetSettingRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): GetSettingRequest.AsObject;
@@ -84,6 +110,44 @@ export namespace GetSettingResponse {
   export type AsObject = {
     status: boolean,
     dataList: Array<SettingModel.AsObject>,
+  }
+}
+
+export class StoreSettingRequest extends jspb.Message {
+  getDataList(): Array<SettingSaveModel>;
+  setDataList(value: Array<SettingSaveModel>): StoreSettingRequest;
+  clearDataList(): StoreSettingRequest;
+  addData(value?: SettingSaveModel, index?: number): SettingSaveModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreSettingRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreSettingRequest): StoreSettingRequest.AsObject;
+  static serializeBinaryToWriter(message: StoreSettingRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreSettingRequest;
+  static deserializeBinaryFromReader(message: StoreSettingRequest, reader: jspb.BinaryReader): StoreSettingRequest;
+}
+
+export namespace StoreSettingRequest {
+  export type AsObject = {
+    dataList: Array<SettingSaveModel.AsObject>,
+  }
+}
+
+export class StoreSettingResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): StoreSettingResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreSettingResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreSettingResponse): StoreSettingResponse.AsObject;
+  static serializeBinaryToWriter(message: StoreSettingResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreSettingResponse;
+  static deserializeBinaryFromReader(message: StoreSettingResponse, reader: jspb.BinaryReader): StoreSettingResponse;
+}
+
+export namespace StoreSettingResponse {
+  export type AsObject = {
+    status: boolean,
   }
 }
 

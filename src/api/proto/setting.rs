@@ -16,6 +16,15 @@ pub struct SettingModel {
     #[prost(string, tag = "7")]
     pub updated_by: ::prost::alloc::string::String,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SettingSaveModel {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub value: ::prost::alloc::string::String,
+}
 /// Setting services
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct GetSettingRequest {}
@@ -25,6 +34,16 @@ pub struct GetSettingResponse {
     pub status: bool,
     #[prost(message, repeated, tag = "2")]
     pub data: ::prost::alloc::vec::Vec<SettingModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreSettingRequest {
+    #[prost(message, repeated, tag = "1")]
+    pub data: ::prost::alloc::vec::Vec<SettingSaveModel>,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct StoreSettingResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
 }
 /// Generated client implementations.
 pub mod setting_client {
@@ -141,6 +160,30 @@ pub mod setting_client {
                 .insert(GrpcMethod::new("setting.Setting", "GetSetting"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn store_setting(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StoreSettingRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreSettingResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/setting.Setting/StoreSetting",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("setting.Setting", "StoreSetting"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -161,6 +204,13 @@ pub mod setting_server {
             request: tonic::Request<super::GetSettingRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetSettingResponse>,
+            tonic::Status,
+        >;
+        async fn store_setting(
+            &self,
+            request: tonic::Request<super::StoreSettingRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreSettingResponse>,
             tonic::Status,
         >;
     }
@@ -270,6 +320,51 @@ pub mod setting_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetSettingSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/setting.Setting/StoreSetting" => {
+                    #[allow(non_camel_case_types)]
+                    struct StoreSettingSvc<T: Setting>(pub Arc<T>);
+                    impl<
+                        T: Setting,
+                    > tonic::server::UnaryService<super::StoreSettingRequest>
+                    for StoreSettingSvc<T> {
+                        type Response = super::StoreSettingResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StoreSettingRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Setting>::store_setting(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = StoreSettingSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

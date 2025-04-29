@@ -1,5 +1,5 @@
-use crate::models::setting_model::{SettingModel, UpdatableSettingModel};
-use crate::api::proto::setting::SettingModel as SettingModelGrpc;
+use crate::models::setting_model::{UpdatableSettingModel};
+use crate::api::proto::setting::{SettingModel as SettingModelGrpc, StoreSettingRequest, StoreSettingResponse};
 use crate::providers::avored_database_provider::DB;
 use crate::{error::Result, repositories::setting_repository::SettingRepository};
 use crate::api::proto::setting::GetSettingResponse;
@@ -31,25 +31,31 @@ impl SettingService {
         
         Ok(res)
     }
-
-    pub async fn find_by_identifier(
+    
+    pub async fn store_setting(
         &self,
         (datastore, database_session): &DB,
-        identifier: String,
-    ) -> Result<SettingModel> {
-        self.setting_repository
-            .find_by_identifier(datastore, database_session, identifier)
-            .await
-    }
-
-    pub async fn update_setting(
-        &self,
-        (datastore, database_session): &DB,
-        updatable_setting: UpdatableSettingModel,
-    ) -> Result<bool> {
-        self.setting_repository
-            .update_setting(datastore, database_session, updatable_setting)
-            .await
+        request: StoreSettingRequest,
+        email: String,
+    ) -> Result<StoreSettingResponse> {
+        
+        for setting in request.data {
+            let updatable_setting_model = UpdatableSettingModel {
+                id: setting.id,
+                value: setting.value,
+                logged_in_username: email.clone(),
+            };
+            let updated_model = self
+                    .setting_repository
+                    .update_setting(datastore, database_session, updatable_setting_model)
+                    .await?;
+        }
+        
+        let res = StoreSettingResponse {
+            status: true
+        };
+        
+        Ok(res)
     }
 }
 impl SettingService {}

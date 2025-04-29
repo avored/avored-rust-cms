@@ -1,5 +1,4 @@
 import InputField from "../../components/InputField";
-import _ from 'lodash'
 import {useTranslation} from "react-i18next";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {useForm} from "react-hook-form";
@@ -8,15 +7,16 @@ import {SaveSettingType, SettingType} from "../../types/setting/SettingType";
 import {SettingSaveSchema} from "../../schemas/setting/SettingSaveSchema";
 import {UseSettingHook} from "../../hooks/setting/UseSettingHook";
 import {UseStoreSettingHook} from "../../hooks/setting/UseStoreSettingHook";
-import {GetSettingRequest} from "../../grpc_generated/setting_pb";
-import {RoleOptionType} from "../../types/admin_user/AdminUserType";
+import {GetSettingRequest, SettingSaveModel, StoreSettingRequest} from "../../grpc_generated/setting_pb";
 
 export const SettingPage = () => {
     const request = new GetSettingRequest();
     const setting_api_all_response = UseSettingHook(request)
 
-    const role_option_data_list = setting_api_all_response?.data?.dataList ?? [];
-    const existing_settings: Array<SettingType> = role_option_data_list as Array<unknown> as SettingType[];
+    const settin_data_list = setting_api_all_response?.data?.dataList ?? [];
+    const existing_settings: Array<SettingType> = settin_data_list as Array<unknown> as SettingType[];
+
+    // console.log(existing_settings)
 
     const {mutate} = UseStoreSettingHook()
     const [t] = useTranslation("global")
@@ -37,7 +37,20 @@ export const SettingPage = () => {
         return existing_settings.findIndex((setting) => setting.identifier === identifier);
     })
     const submitHandler = ((data: SaveSettingType) => {
-        // mutate(data)
+        const request = new StoreSettingRequest();
+        const setting_models: Array<SettingSaveModel> = [];
+        for (const setting of data.settings) {
+            const setting_model = new SettingSaveModel();
+
+            setting_model.setIdentifier(setting.identifier);
+            setting_model.setValue(setting.value);
+            setting_model.setId(setting.id);
+
+            setting_models.push(setting_model);
+        }
+        // console.log(setting_models)
+        request.setDataList(setting_models)
+        mutate(request)
     })
 
     const generateTokenOnClick = ((e: React.MouseEvent<HTMLButtonElement>) => {
