@@ -10,7 +10,7 @@ use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
 use tonic::Status;
-use crate::api::proto::auth::{ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordRequest, ResetPasswordResponse};
+use crate::api::proto::auth::{ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordResponse};
 use crate::error::Error::TonicError;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};

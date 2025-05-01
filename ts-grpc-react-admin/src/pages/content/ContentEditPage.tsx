@@ -2,20 +2,33 @@ import {useTranslation} from "react-i18next";
 import {ContentSidebar} from "./ContentSidebar";
 import InputField from "../../components/InputField";
 import { joiResolver } from "@hookform/resolvers/joi";
-import {SaveContentType} from "../../types/content/ContentType";
-import {useForm} from "react-hook-form";
+import {ContentFieldType, SaveContentType} from "../../types/content/ContentType";
+import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
 import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
-import {GetContentRequest, PutContentIdentifierRequest, UpdateContentRequest} from "../../grpc_generated/content_pb";
+import {
+    GetContentRequest,
+    PutContentIdentifierRequest,
+    StoreContentFieldModel, UpdateContentFieldModel,
+    UpdateContentRequest
+} from "../../grpc_generated/content_pb";
 import {Link, useParams, useSearchParams} from "react-router-dom";
 import {UseGetContentHook} from "../../hooks/content/UseGetContentHook";
 import {useState} from "react";
 import {UsePutContentIdentifierHook} from "../../hooks/content/UsePutContentIdentifierHook";
+import {ContentFieldModal} from "./ContentFieldModal";
+import _ from "lodash";
+import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
+import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
+import {RoleType} from "../../types/admin_user/AdminUserType";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
     const [searchParams] = useSearchParams()
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true);
+    const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
+
     const params = useParams()
     const content_id = params.content_id as string;
     const contentType: string = searchParams.get("type") as string
@@ -28,7 +41,14 @@ export const ContentEditPage = () => {
     request.setContentId(content_id)
     const get_content_api_response = UseGetContentHook(request)
     const get_content_model = get_content_api_response?.data?.data ?? [];
+
+
     const values: SaveContentType = get_content_model as unknown as SaveContentType;
+
+    const content_content_field_list = get_content_api_response?.data?.data?.contentFieldsList ?? [];
+    if (values) {
+        values.content_fields = content_content_field_list as Array<unknown> as Array<ContentFieldType>;
+    }
 
 
     const {
@@ -36,10 +56,18 @@ export const ContentEditPage = () => {
         handleSubmit,
         getValues,
         formState: {errors},
+        control,
+        setValue,
+        trigger,
     } = useForm<SaveContentType>({
         resolver: joiResolver(UseContentEditSchema(), {allowUnknown: true}),
         values
     })
+
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "content_fields", //rename fields
+    });
 
     const editableIdentifierOnClick = () => {
         setIsEditableIdentifier(false);
@@ -58,11 +86,40 @@ export const ContentEditPage = () => {
         setIsEditableIdentifier(true);
     };
 
+    const deleteContentFieldOnClick = (e: any, index: number) => {
+        e.preventDefault();
+        remove(index);
+        setCurrentIndex(0);
+    };
+
+    const addFieldButtonOnClick = (async (e: React.MouseEvent<HTMLButtonElement>, max_index: number) => {
+        e.preventDefault()
+        append({
+            name: '',
+            identifier: '',
+        })
+        await trigger("content_fields");
+        setCurrentIndex(max_index);
+        setIsContentFieldModalOpen(true)
+    })
+
+
     const submitHandler = (async (data: SaveContentType) => {
         const request = new UpdateContentRequest();
         request.setContentId(content_id)
         request.setContentType(contentType)
         request.setName(data.name)
+
+        const content_field_data_list: Array<UpdateContentFieldModel> = [];
+        data.content_fields.forEach(content_field => {
+            const update_content_field_request = new UpdateContentFieldModel();
+            update_content_field_request.setName(content_field.name);
+            update_content_field_request.setIdentifier(content_field.identifier);
+
+            content_field_data_list.push(update_content_field_request)
+        })
+
+        request.setContentFieldsList(content_field_data_list)
 
         mutate(request)
     })
@@ -76,6 +133,21 @@ export const ContentEditPage = () => {
                 </div>
                 <div className="p-5 flex-1">
                     <form onSubmit={handleSubmit(submitHandler)}>
+
+                        {_.size(fields) > 0 ? (
+                            <ContentFieldModal
+                                register={register}
+                                currentIndex={currentIndex}
+                                getValues={getValues}
+                                setValue={setValue}
+                                trigger={trigger}
+                                setIsOpen={setIsContentFieldModalOpen}
+                                isOpen={isContentFieldModalOpen}
+                                collectionType={contentType}
+                            />
+                        ) : (
+                            <></>
+                        )}
 
                         <div className="mb-4">
                             <InputField
@@ -124,6 +196,74 @@ export const ContentEditPage = () => {
                             </div>
                         </div>
 
+
+                        {fields.map((field, index) => {
+                            return (
+                                <div
+                                    key={field.id}
+                                    className="hover:ring-1 ring-primary-300 rounded mb-5 flex mt-5 py-3 w-full"
+                                >
+                                    <Controller
+                                        name={`content_fields.${index}`}
+                                        render={({field}) => {
+                                            return (
+                                                <>
+                                                    <div className="flex mt-3 w-full justify-center">
+                                                        <div className="flex-1 p-3">
+                                                            <div className="p-3 bg-gray-200 rounded">
+                                                                <div
+                                                                    className="flex text-sm w-full border-gray-300 border-b py-2">
+                                                                    <div className="flex-1">
+                                                                                <span>
+                                                                                    {field.value.name}
+                                                                                </span>
+                                                                        <span
+                                                                            className="ml-1 text-xs text-gray-500">
+                                                                                    ({field.value.identifier})
+                                                                                </span>
+                                                                    </div>
+                                                                    <div className="ml-auto flex items-center">
+                                                                        <div>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="outline-none"
+                                                                                onClick={() => setIsContentFieldModalOpen(true)}
+                                                                            >
+                                                                                <Cog8ToothIcon className="w-5 h-5"/>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div
+                                                                            onClick={(e) =>
+                                                                                deleteContentFieldOnClick(e, index)
+                                                                            }
+                                                                            className="ml-3"
+                                                                        >
+                                                                            <TrashIcon className="w-4 h-4"/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            )
+                                        }}
+                                        control={control}
+                                    />
+
+                                </div>
+                            )
+                        })}
+
+                        <div className="mb-4">
+                            <AvoRedButton
+                                label="Add"
+                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
+                                type={ButtonType.button}/>
+                        </div>
 
                         <div className="flex items-center">
                             <button

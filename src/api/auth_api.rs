@@ -1,6 +1,4 @@
 use std::sync::Arc;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
 use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::auth::{ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordRequest, ResetPasswordResponse};
 use crate::api::proto::auth::auth_server::Auth;

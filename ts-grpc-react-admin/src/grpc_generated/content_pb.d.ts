@@ -49,6 +49,28 @@ export namespace CollectionModel {
   }
 }
 
+export class ContentFieldModel extends jspb.Message {
+  getName(): string;
+  setName(value: string): ContentFieldModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): ContentFieldModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentFieldModel.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentFieldModel): ContentFieldModel.AsObject;
+  static serializeBinaryToWriter(message: ContentFieldModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentFieldModel;
+  static deserializeBinaryFromReader(message: ContentFieldModel, reader: jspb.BinaryReader): ContentFieldModel;
+}
+
+export namespace ContentFieldModel {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+  }
+}
+
 export class ContentModel extends jspb.Message {
   getId(): string;
   setId(value: string): ContentModel;
@@ -75,6 +97,11 @@ export class ContentModel extends jspb.Message {
   getUpdatedBy(): string;
   setUpdatedBy(value: string): ContentModel;
 
+  getContentFieldsList(): Array<ContentFieldModel>;
+  setContentFieldsList(value: Array<ContentFieldModel>): ContentModel;
+  clearContentFieldsList(): ContentModel;
+  addContentFields(value?: ContentFieldModel, index?: number): ContentFieldModel;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentModel.AsObject;
   static toObject(includeInstance: boolean, msg: ContentModel): ContentModel.AsObject;
@@ -92,6 +119,7 @@ export namespace ContentModel {
     updatedAt?: google_protobuf_timestamp_pb.Timestamp.AsObject,
     createdBy: string,
     updatedBy: string,
+    contentFieldsList: Array<ContentFieldModel.AsObject>,
   }
 }
 
@@ -221,6 +249,28 @@ export namespace ContentPaginateResponse {
 
 }
 
+export class StoreContentFieldModel extends jspb.Message {
+  getName(): string;
+  setName(value: string): StoreContentFieldModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): StoreContentFieldModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreContentFieldModel.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreContentFieldModel): StoreContentFieldModel.AsObject;
+  static serializeBinaryToWriter(message: StoreContentFieldModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreContentFieldModel;
+  static deserializeBinaryFromReader(message: StoreContentFieldModel, reader: jspb.BinaryReader): StoreContentFieldModel;
+}
+
+export namespace StoreContentFieldModel {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+  }
+}
+
 export class StoreContentRequest extends jspb.Message {
   getName(): string;
   setName(value: string): StoreContentRequest;
@@ -230,6 +280,11 @@ export class StoreContentRequest extends jspb.Message {
 
   getContentType(): string;
   setContentType(value: string): StoreContentRequest;
+
+  getContentFieldsList(): Array<StoreContentFieldModel>;
+  setContentFieldsList(value: Array<StoreContentFieldModel>): StoreContentRequest;
+  clearContentFieldsList(): StoreContentRequest;
+  addContentFields(value?: StoreContentFieldModel, index?: number): StoreContentFieldModel;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StoreContentRequest.AsObject;
@@ -244,6 +299,7 @@ export namespace StoreContentRequest {
     name: string,
     identifier: string,
     contentType: string,
+    contentFieldsList: Array<StoreContentFieldModel.AsObject>,
   }
 }
 
@@ -317,6 +373,28 @@ export namespace GetContentResponse {
   }
 }
 
+export class UpdateContentFieldModel extends jspb.Message {
+  getName(): string;
+  setName(value: string): UpdateContentFieldModel;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): UpdateContentFieldModel;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateContentFieldModel.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateContentFieldModel): UpdateContentFieldModel.AsObject;
+  static serializeBinaryToWriter(message: UpdateContentFieldModel, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateContentFieldModel;
+  static deserializeBinaryFromReader(message: UpdateContentFieldModel, reader: jspb.BinaryReader): UpdateContentFieldModel;
+}
+
+export namespace UpdateContentFieldModel {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+  }
+}
+
 export class UpdateContentRequest extends jspb.Message {
   getContentId(): string;
   setContentId(value: string): UpdateContentRequest;
@@ -326,6 +404,11 @@ export class UpdateContentRequest extends jspb.Message {
 
   getContentType(): string;
   setContentType(value: string): UpdateContentRequest;
+
+  getContentFieldsList(): Array<UpdateContentFieldModel>;
+  setContentFieldsList(value: Array<UpdateContentFieldModel>): UpdateContentRequest;
+  clearContentFieldsList(): UpdateContentRequest;
+  addContentFields(value?: UpdateContentFieldModel, index?: number): UpdateContentFieldModel;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateContentRequest.AsObject;
@@ -340,6 +423,7 @@ export namespace UpdateContentRequest {
     contentId: string,
     name: string,
     contentType: string,
+    contentFieldsList: Array<UpdateContentFieldModel.AsObject>,
   }
 }
 

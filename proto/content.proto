@@ -15,6 +15,11 @@ message CollectionModel {
 }
 
 
+message ContentFieldModel {
+  string name = 1;
+  string identifier = 2;
+}
+
 message ContentModel {
   string id = 1;
   string name = 2;
@@ -23,6 +28,7 @@ message ContentModel {
   google.protobuf.Timestamp updated_at = 5;
   string created_by = 6;
   string updated_by = 7;
+  repeated ContentFieldModel content_fields = 8;
 }
 
 
@@ -52,10 +58,18 @@ message ContentPaginateResponse {
   ContentPaginateData data = 2;
 }
 
+
+message StoreContentFieldModel {
+  string name = 1;
+  string identifier = 2;
+}
+
+
 message StoreContentRequest {
   string name = 1;
   string identifier = 2;
   string content_type = 3;
+  repeated StoreContentFieldModel content_fields = 4;
 }
 
 message StoreContentResponse {
@@ -75,10 +89,16 @@ message GetContentResponse {
   ContentModel data = 2;
 }
 
+message UpdateContentFieldModel {
+  string name = 1;
+  string identifier = 2;
+}
+
 message UpdateContentRequest {
   string content_id = 1;
   string name = 2;
   string content_type = 3;
+  repeated UpdateContentFieldModel content_fields = 4;
 }
 
 message UpdateContentResponse {

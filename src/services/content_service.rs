@@ -3,7 +3,7 @@ use crate::api::proto::content::content_paginate_response::{ContentPaginateData,
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
-use crate::models::content_model::{CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
+use crate::models::content_model::{CreatableContentField, CreatableContentModel, PutContentIdentifierModel, UpdatableContentField, UpdatableContentModel};
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {
@@ -98,11 +98,21 @@ impl ContentService {
         (datastore, database_session): &DB
     ) -> Result<StoreContentResponse> {
 
+        let mut content_field_model: Vec<CreatableContentField> = vec![];
+        
+        for req_content_field in request.content_fields {
+            content_field_model.push(CreatableContentField {
+                name: req_content_field.name,
+                identifier: req_content_field.identifier,
+            });
+        }
+        
         let creatable_page_model = CreatableContentModel {
             name: request.name,
             identifier: request.identifier,
             logged_in_username: logged_in_username.to_string(),
             content_type: request.content_type,
+            content_fields: content_field_model,
         };
         let content_db_model = self.content_repository
             .create_content(datastore, database_session, creatable_page_model)
@@ -144,6 +154,17 @@ impl ContentService {
         request: UpdateContentRequest,
         logged_in_username: String,
     ) -> Result<UpdateContentResponse> {
+        
+
+        let mut content_field_models: Vec<UpdatableContentField> = vec![];
+
+        for req_content_field in request.content_fields {
+            content_field_models.push(UpdatableContentField {
+                name: req_content_field.name,
+                identifier: req_content_field.identifier,
+            });
+        }
+
         let updatable_content_model = UpdatableContentModel {
             id: request.content_id,
             name: request.name,
@@ -151,7 +172,9 @@ impl ContentService {
             updated_at: Default::default(),
             content_type: request.content_type,
             updated_by: "".to_string(),
+            content_fields: content_field_models,
         };
+        
         let content_db_model = self.content_repository
             .update_content(datastore, database_session, updatable_content_model)
             .await?;

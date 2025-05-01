@@ -10,6 +10,12 @@ export type CollectionType = {
     updatedBy: string;
     action?: string;
 }
+
+export type ContentFieldType = {
+    name: string;
+    identifier: string;
+}
+
 export type ContentType = {
     id: string;
     name: string;
@@ -18,13 +24,23 @@ export type ContentType = {
     createdBy: string;
     updatedAt: GrpcTimeStamp;
     updatedBy: string;
+    content_fields: Array<ContentFieldType>;
     action: string;
 }
 
 export type SaveContentType = {
-    id: String;
+    id?: String;
     name: string;
     content_type: string;
     identifier: string;
-    // content_fields: Array<SaveContentFieldType>;
+    content_fields: Array<SaveContentFieldType>;
+}
+
+export type SaveContentFieldType = {
+    name: string;
+    identifier: string;
+    // data_type: ContentFieldDataType;
+    // field_type: ContentFieldFieldType;
+    // field_content: AvoRedContentFieldContent;
+    // field_data?: AvoRedContentFieldData,
 }

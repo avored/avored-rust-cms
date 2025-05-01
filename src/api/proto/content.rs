@@ -17,6 +17,13 @@ pub struct CollectionModel {
     pub updated_by: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentFieldModel {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentModel {
     #[prost(string, tag = "1")]
     pub id: ::prost::alloc::string::String,
@@ -32,6 +39,8 @@ pub struct ContentModel {
     pub created_by: ::prost::alloc::string::String,
     #[prost(string, tag = "7")]
     pub updated_by: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "8")]
+    pub content_fields: ::prost::alloc::vec::Vec<ContentFieldModel>,
 }
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct CollectionAllRequest {}
@@ -71,6 +80,13 @@ pub mod content_paginate_response {
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreContentFieldModel {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StoreContentRequest {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
@@ -78,6 +94,8 @@ pub struct StoreContentRequest {
     pub identifier: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
     pub content_type: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "4")]
+    pub content_fields: ::prost::alloc::vec::Vec<StoreContentFieldModel>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StoreContentResponse {
@@ -101,6 +119,13 @@ pub struct GetContentResponse {
     pub data: ::core::option::Option<ContentModel>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateContentFieldModel {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContentRequest {
     #[prost(string, tag = "1")]
     pub content_id: ::prost::alloc::string::String,
@@ -108,6 +133,8 @@ pub struct UpdateContentRequest {
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
     pub content_type: ::prost::alloc::string::String,
+    #[prost(message, repeated, tag = "4")]
+    pub content_fields: ::prost::alloc::vec::Vec<UpdateContentFieldModel>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContentResponse {

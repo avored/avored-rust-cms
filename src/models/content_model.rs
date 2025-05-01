@@ -20,7 +20,7 @@ pub struct ContentModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    // pub content_fields: Vec<ContentFieldModel>,
+    pub content_fields: Vec<ContentFieldModel>,
     pub created_at: Datetime,
     pub updated_at: Datetime,
     pub created_by: String,
@@ -31,9 +31,9 @@ pub struct ContentModel {
 pub struct ContentFieldModel {
     pub name: String,
     pub identifier: String,
-    pub data_type: ContentDataType,
-    pub field_type: ContentFieldType,
-    pub field_content: ContentFieldContentType,
+    // pub data_type: ContentDataType,
+    // pub field_type: ContentFieldType,
+    // pub field_content: ContentFieldContentType,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -66,16 +66,16 @@ pub struct CreatableContentModel {
     pub identifier: String,
     pub logged_in_username: String,
     pub content_type: String,
-    // pub content_fields: Vec<CreatableContentField>,
+    pub content_fields: Vec<CreatableContentField>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableContentField {
     pub name: String,
     pub identifier: String,
-    pub data_type: ContentDataType,
-    pub field_type: ContentFieldType,
-    pub field_content: ContentFieldContentType,
+    // pub data_type: ContentDataType,
+    // pub field_type: ContentFieldType,
+    // pub field_content: ContentFieldContentType,
 }
 
 
@@ -87,15 +87,16 @@ pub struct UpdatableContentModel {
     pub logged_in_username: String,
     pub updated_at: Datetime,
     pub updated_by: String,
+    pub content_fields: Vec<UpdatableContentField>,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableContentField {
     pub name: String,
     pub identifier: String,
-    pub data_type: ContentDataType,
-    pub field_type: ContentFieldType,
-    pub field_content: ContentFieldContentType,
+    // pub data_type: ContentDataType,
+    // pub field_type: ContentFieldType,
+    // pub field_content: ContentFieldContentType,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -161,6 +162,13 @@ impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
         let chrono_utc_updated_at= val.updated_at.to_utc();
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
+        
+        let mut content_fields: Vec<crate::api::proto::content::ContentFieldModel> = vec![];
+        
+        for content_field in val.content_fields {
+            let content_field_model: crate::api::proto::content::ContentFieldModel = content_field.try_into().unwrap();
+            content_fields.push(content_field_model);
+        }
 
         let model = crate::api::proto::content::ContentModel {
             id: val.id,
@@ -170,6 +178,21 @@ impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
             updated_at: Option::from(updated_at),
             created_by: val.created_by,
             updated_by: val.updated_by,
+            content_fields,
+        };
+
+        Ok(model)
+    }
+}
+
+impl TryFrom<ContentFieldModel> for crate::api::proto::content::ContentFieldModel {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldModel) -> Result<crate::api::proto::content::ContentFieldModel > {
+        
+        let model = crate::api::proto::content::ContentFieldModel {
+            name: val.name,
+            identifier: val.identifier,
         };
 
         Ok(model)
@@ -185,27 +208,27 @@ impl TryFrom<Object> for ContentModel {
         let identifier = val.get("identifier").get_string()?;
 
 
-        // let content_fields = match val.get("content_fields") {
-        //     Some(val) => match val.clone() {
-        //         Value::Array(v) => {
-        //             let mut arr = Vec::new();
-        // 
-        //             for array in v.into_iter() {
-        //                 let object = match array.clone() {
-        //                     Value::Object(v) => v,
-        //                     _ => Object::default(),
-        //                 };
-        // 
-        //                 let content_field: ContentFieldModel = object.try_into()?;
-        // 
-        //                 arr.push(content_field)
-        //             }
-        //             arr
-        //         }
-        //         _ => Vec::new(),
-        //     },
-        //     None => Vec::new(),
-        // };
+        let content_fields = match val.get("content_fields") {
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
+        
+                    for array in v.into_iter() {
+                        let object = match array.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+        
+                        let content_field: ContentFieldModel = object.try_into()?;
+        
+                        arr.push(content_field)
+                    }
+                    arr
+                }
+                _ => Vec::new(),
+            },
+            None => Vec::new(),
+        };
 
         let created_at = val.get("created_at").get_datetime()?;
         let updated_at = val.get("updated_at").get_datetime()?;
@@ -216,7 +239,7 @@ impl TryFrom<Object> for ContentModel {
             id,
             name,
             identifier,
-            // content_fields,
+            content_fields,
             created_at,
             updated_at,
             created_by,
@@ -230,53 +253,53 @@ impl TryFrom<Object> for ContentFieldModel {
     fn try_from(val: Object) -> Result<ContentFieldModel> {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
-        let data_type_str = val.get("data_type").get_string()?;
+        // let data_type_str = val.get("data_type").get_string()?;
 
-        let data_type = match data_type_str.as_str() {
-            "TEXT" => ContentDataType::Text("TEXT".to_string()),
-            _ => ContentDataType::default(),
-        };
+        // let data_type = match data_type_str.as_str() {
+        //     "TEXT" => ContentDataType::Text("TEXT".to_string()),
+        //     _ => ContentDataType::default(),
+        // };
 
-        let field_type_str = val.get("field_type").get_string()?;
-        let field_type = match field_type_str.as_str() {
-            "Text" => ContentFieldType::Text,
+        // let field_type_str = val.get("field_type").get_string()?;
+        // let field_type = match field_type_str.as_str() {
+        //     "Text" => ContentFieldType::Text,
+        // 
+        //     _ => ContentFieldType::default(),
+        // };
 
-            _ => ContentFieldType::default(),
-        };
-
-        let field_content = match data_type_str.as_str() {
-            "TEXT" => {
-                let options = match val.get("field_content") {
-                    Some(val) => {
-                        let object = match val.clone() {
-                            Value::Object(v) => v,
-                            _ => Object::default(),
-                        };
-
-                        // println!("before test {:?}", object);
-                        let option: ContentTextType = object.try_into()?;
-                        // println!("test {:?}", option);
-
-                        option
-                    }
-                    None => ContentTextType::default(),
-                };
-
-                ContentFieldContentType::ContentTextType {
-                    text_value: options,
-                }
-            }
-
-            _ => ContentFieldContentType::default(),
-        };
+        // let field_content = match data_type_str.as_str() {
+        //     "TEXT" => {
+        //         let options = match val.get("field_content") {
+        //             Some(val) => {
+        //                 let object = match val.clone() {
+        //                     Value::Object(v) => v,
+        //                     _ => Object::default(),
+        //                 };
+        // 
+        //                 // println!("before test {:?}", object);
+        //                 let option: ContentTextType = object.try_into()?;
+        //                 // println!("test {:?}", option);
+        // 
+        //                 option
+        //             }
+        //             None => ContentTextType::default(),
+        //         };
+        // 
+        //         ContentFieldContentType::ContentTextType {
+        //             text_value: options,
+        //         }
+        //     }
+        // 
+        //     _ => ContentFieldContentType::default(),
+        // };
 
 
         Ok(ContentFieldModel {
             name,
             identifier,
-            data_type,
-            field_type,
-            field_content,
+            // data_type,
+            // field_type,
+            // field_content,
         })
     }
 }
