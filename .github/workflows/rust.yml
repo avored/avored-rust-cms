@@ -13,10 +13,12 @@ jobs:
       steps:
       - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2.4.0
+      - uses: arduino/setup-protoc@v3
+      
 #      - name: Build
 #        run: cargo build --verbose
       - name: Run releases
-        run: apt-get install protobuf-compiler && cargo build --release
+        run: cargo build --release
       - name: Deploy release
         uses: appleboy/scp-action@master
 
