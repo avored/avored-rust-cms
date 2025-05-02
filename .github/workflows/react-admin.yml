@@ -33,5 +33,5 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./ts-grpc-react-admin/dist"
+        source: "./ts-grpc-react-admin/build"
         target: ${{ secrets.REACT_TARGET_PATH }}
