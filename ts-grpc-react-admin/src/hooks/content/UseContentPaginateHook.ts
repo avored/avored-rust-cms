@@ -1,6 +1,4 @@
 import {useQuery} from "@tanstack/react-query";
-import {AdminUserClient} from "../../grpc_generated/Admin_userServiceClientPb";
-import {AdminUserPaginateRequest} from "../../grpc_generated/admin_user_pb";
 import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
 import {ContentPaginateRequest} from "../../grpc_generated/content_pb";
 

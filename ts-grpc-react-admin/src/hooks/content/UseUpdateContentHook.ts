@@ -1,7 +1,7 @@
 import {useMutation} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
-import {StoreContentRequest, UpdateContentRequest} from "../../grpc_generated/content_pb";
+import {UpdateContentRequest} from "../../grpc_generated/content_pb";
 
 export const UseUpdateContentHook = () => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";

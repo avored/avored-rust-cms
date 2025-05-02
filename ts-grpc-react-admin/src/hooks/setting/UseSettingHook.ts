@@ -1,5 +1,4 @@
 import {useQuery} from "@tanstack/react-query";
-import {SettingType} from "../../types/setting/SettingType";
 import {SettingClient} from "../../grpc_generated/SettingServiceClientPb";
 import {GetSettingRequest} from "../../grpc_generated/setting_pb";
 

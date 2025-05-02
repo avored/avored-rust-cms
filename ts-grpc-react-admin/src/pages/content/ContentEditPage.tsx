@@ -12,7 +12,6 @@ import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
 import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
 import {
-    ContentFieldFieldContent,
     ContentFieldFieldContent as GrpcContentFieldFieldContent,
     GetContentRequest,
     PutContentIdentifierRequest, StoreContentFieldModel,
@@ -39,7 +38,7 @@ export const ContentEditPage = () => {
     const content_id = params.content_id as string;
     const contentType: string = searchParams.get("type") as string
 
-    const {mutate, error} = UseUpdateContentHook()
+    const {mutate} = UseUpdateContentHook()
     const { mutate: putContentIdentifierMutate } = UsePutContentIdentifierHook();
 
     const request = new GetContentRequest()
@@ -66,17 +65,17 @@ export const ContentEditPage = () => {
             }
 
             values.content_fields.push(grpc_content_field)
+
+            return grpc_content_field
         })
     }
-
-    console.log(values)
 
 
     const {
         register,
         handleSubmit,
         getValues,
-        formState: {errors},
+        // formState: {},
         control,
         setValue,
         trigger,

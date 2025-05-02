@@ -27,7 +27,7 @@ export const SettingPage = () => {
         register,
         handleSubmit,
         setValue,
-        formState: {errors}
+        // formState: {}
     } = useForm<SaveSettingType>({
         resolver: joiResolver(SettingSaveSchema, {allowUnknown: true}),
         values

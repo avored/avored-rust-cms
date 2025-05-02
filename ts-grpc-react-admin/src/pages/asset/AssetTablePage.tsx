@@ -32,7 +32,7 @@ export const AssetTablePage = () => {
     const {
         register,
         handleSubmit,
-        formState: {errors},
+        // formState: {errors},
     } = useForm({
         resolver: joiResolver(AssetSaveSchema, {allowUnknown: true}),
     });

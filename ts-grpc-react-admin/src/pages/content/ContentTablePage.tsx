@@ -9,8 +9,6 @@ import {GrpcTimeStamp} from "../../types/common/common";
 import {DateTime} from "luxon";
 import {ContentPaginateRequest} from "../../grpc_generated/content_pb";
 import {UseContentPaginateHook} from "../../hooks/content/UseContentPaginateHook";
-import {AdminUserType} from "../../types/admin_user/AdminUserType";
-import _ from "lodash";
 
 export const ContentTablePage = () => {
     const [t] = useTranslation("global");

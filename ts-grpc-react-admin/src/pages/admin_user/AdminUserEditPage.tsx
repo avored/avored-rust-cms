@@ -1,7 +1,7 @@
 import {Link, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {UseGetAdminUserHook} from "../../hooks/admin_user/UseGetAdminUserHook";
-import {AdminUserType, EditAdminUserType, RoleOptionType, RoleType} from "../../types/admin_user/AdminUserType";
+import {EditAdminUserType, RoleOptionType, RoleType} from "../../types/admin_user/AdminUserType";
 import InputField from "../../components/InputField";
 import {UseAdminUserEditSchema} from "../../schemas/admin_user/UseAdminUserEditSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
@@ -40,6 +40,8 @@ export const AdminUserEditPage = () => {
             if (!_.includes(selectedOption, role.id)) {
                 selectedOption.push(role.id)
             }
+
+            return role;
         })
     }
 

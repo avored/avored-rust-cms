@@ -48,7 +48,7 @@ export const RoleEditPage = () => {
         control,
         register,
         handleSubmit,
-        formState: {errors},
+        // formState: {},
         setValue,
         getValues
     } = useForm<EditRoleType>({

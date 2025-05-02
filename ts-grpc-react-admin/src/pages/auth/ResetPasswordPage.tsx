@@ -12,7 +12,7 @@ import {UseResetPasswordHook} from "../../hooks/auth/UseResetPasswordHook";
 import {ResetPasswordRequest} from "../../grpc_generated/auth_pb";
 
 export const ResetPasswordPage = () => {
-    const [t, i18n] = useTranslation("global")
+    const [t] = useTranslation("global")
     const token = useParams().token ?? "";
 
     const {

@@ -15,7 +15,7 @@ export const UseAssetTableHook = (asset_id: string) => {
             } catch (error) {
                 if (_.get(error, 'response.status') === 401) {
                     // localStorage.removeItem('AUTH_TOKEN')
-                    // redirect("/admin/login")
+                    redirect("/admin/login")
                 }
             }
         })

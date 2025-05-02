@@ -1,7 +1,7 @@
 import {useMutation} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
-import {PutContentIdentifierRequest, StoreContentRequest, UpdateContentRequest} from "../../grpc_generated/content_pb";
+import {PutContentIdentifierRequest} from "../../grpc_generated/content_pb";
 
 export const UsePutContentIdentifierHook = () => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
@@ -17,7 +17,7 @@ export const UsePutContentIdentifierHook = () => {
         onSuccess: (res) => {
             if (res.getStatus()) {
                 // localStorage.setItem("token", token);
-                // redirect("/admin/content");
+                redirect("/admin/content");
             }
         }
     })

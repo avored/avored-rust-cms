@@ -11,7 +11,7 @@ import {UseForgotPasswordHook} from "../../hooks/auth/useForgotPasswordHook";
 import {ForgotPasswordRequest} from "../../grpc_generated/auth_pb";
 
 export const ForgotPasswordPage = () => {
-    const [t, i18n] = useTranslation("global")
+    const [t] = useTranslation("global")
 
     const {
         register,

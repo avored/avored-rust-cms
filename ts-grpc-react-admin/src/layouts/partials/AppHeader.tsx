@@ -1,6 +1,6 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import _ from "lodash";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {useContext, useState} from "react";
 import logo from "../../assets/logo_only.svg"
 import enLangLogo from "../../assets/images/locales/en.svg";
@@ -11,9 +11,9 @@ import {Bars4Icon} from "@heroicons/react/24/solid";
 import {ThemeContext} from "../../context/ThemeContext";
 
 function AppHeader() {
-  const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
+  // const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
   // const adminUser: IAdminUserModel = JSON.parse(auth_user_model);
-  const redirect = useNavigate();
+  // const redirect = useNavigate();
   // const client = useAxios();
   // const { data } = useQuery({
   //   queryKey: ["logged-in-user"],
@@ -37,7 +37,7 @@ function AppHeader() {
 
   // const install_demo_data = _.get(data, "data.data.demo_data_status", false);
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [t, i18n] = useTranslation("global");
   let [isInstallDemoDataVisible, setIsInstallDemoDataVisible] = useState(false);
   let [isDeleteDemoDataVisible, setIsDeleteDemoDataVisible] = useState(false);
