@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-22.04
     defaults:
           run:
-            working-directory: 'react-admin'
+            working-directory: 'ts-grpc-react-admin'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -33,5 +33,5 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./react-admin/dist"
+        source: "./ts-grpc-react-admin/dist"
         target: ${{ secrets.REACT_TARGET_PATH }}
