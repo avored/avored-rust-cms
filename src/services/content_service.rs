@@ -101,9 +101,13 @@ impl ContentService {
         let mut content_field_model: Vec<CreatableContentField> = vec![];
         
         for req_content_field in request.content_fields {
+            
             content_field_model.push(CreatableContentField {
                 name: req_content_field.name,
                 identifier: req_content_field.identifier,
+                data_type: req_content_field.data_type.try_into()?,
+                field_type: req_content_field.field_type.try_into()?,
+                field_content: req_content_field.field_content.try_into()?
             });
         }
         
@@ -162,6 +166,9 @@ impl ContentService {
             content_field_models.push(UpdatableContentField {
                 name: req_content_field.name,
                 identifier: req_content_field.identifier,
+                data_type: req_content_field.data_type.try_into()?,
+                field_type: req_content_field.field_type.try_into()?,
+                field_content: req_content_field.field_content.try_into()?
             });
         }
 

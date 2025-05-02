@@ -1,4 +1,3 @@
-use std::collections::BTreeMap;
 use std::time::SystemTime;
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -31,32 +30,26 @@ pub struct ContentModel {
 pub struct ContentFieldModel {
     pub name: String,
     pub identifier: String,
-    // pub data_type: ContentDataType,
-    // pub field_type: ContentFieldType,
-    // pub field_content: ContentFieldContentType,
+    pub data_type: ContentFieldDataType,
+    pub field_type: ContentFieldFieldType,
+    pub field_content: ContentFieldFieldContent,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
-pub enum ContentDataType {
+pub enum ContentFieldDataType {
     Text(String),
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub enum ContentFieldType {
+pub enum ContentFieldFieldType {
     #[default]
     Text
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(untagged)]
-pub enum ContentFieldContentType {
-    ContentTextType { text_value: ContentTextType },
-}
-
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub struct ContentTextType {
-    pub text_value: String,
+pub struct ContentFieldFieldContent {
+    pub text_value: Option<String>,
 }
 
 
@@ -73,9 +66,9 @@ pub struct CreatableContentModel {
 pub struct CreatableContentField {
     pub name: String,
     pub identifier: String,
-    // pub data_type: ContentDataType,
-    // pub field_type: ContentFieldType,
-    // pub field_content: ContentFieldContentType,
+    pub data_type: ContentFieldDataType,
+    pub field_type: ContentFieldFieldType,
+    pub field_content: ContentFieldFieldContent,
 }
 
 
@@ -94,9 +87,9 @@ pub struct UpdatableContentModel {
 pub struct UpdatableContentField {
     pub name: String,
     pub identifier: String,
-    // pub data_type: ContentDataType,
-    // pub field_type: ContentFieldType,
-    // pub field_content: ContentFieldContentType,
+    pub data_type: ContentFieldDataType,
+    pub field_type: ContentFieldFieldType,
+    pub field_content: ContentFieldFieldContent,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -112,19 +105,13 @@ pub struct PutContentIdentifierModel {
 
 // region: impl Default for content model enums
 
-impl Default for ContentDataType {
-    fn default() -> ContentDataType {
-        ContentDataType::Text("TEXT".to_string())
+impl Default for ContentFieldDataType {
+    fn default() -> ContentFieldDataType {
+        ContentFieldDataType::Text("TEXT".to_string())
     }
 }
 
-impl Default for ContentFieldContentType {
-    fn default() -> ContentFieldContentType {
-        ContentFieldContentType::ContentTextType {
-            text_value: ContentTextType::default(),
-        }
-    }
-}
+
 
 // endregion: impl Default for content model enums
 
@@ -132,35 +119,23 @@ impl Default for ContentFieldContentType {
 
 // region: impl surreal Value for content model structs
 
-impl TryFrom<ContentTextType> for Value {
-    type Error = Error;
-    fn try_from(val: ContentTextType) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> =
-            [("text_value".into(), val.text_value.into())].into();
-
-        Ok(val_val.into())
-    }
-}
-
 
 
 // endregion: impl surreal Value for content model structs
 
 
-
 // region: impl surreal Object for content model structs
-
 
 impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
     type Error = Error;
 
     fn try_from(val: ContentModel) -> Result<crate::api::proto::content::ContentModel> {
-        let chrono_utc_created_at= val.created_at.to_utc();
-        let system_time_created_at = SystemTime::from(chrono_utc_created_at);
+        let utc_created_at = val.created_at.to_utc();
+        let system_time_created_at = SystemTime::from(utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
 
-        let chrono_utc_updated_at= val.updated_at.to_utc();
-        let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
+        let utc_updated_at = val.updated_at.to_utc();
+        let system_time_updated_at = SystemTime::from(utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
         
         let mut content_fields: Vec<crate::api::proto::content::ContentFieldModel> = vec![];
@@ -185,19 +160,144 @@ impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
     }
 }
 
-impl TryFrom<ContentFieldModel> for crate::api::proto::content::ContentFieldModel {
+
+impl TryFrom<String> for ContentFieldDataType {
+    type Error = Error; 
+    
+    fn try_from(val: String) -> Result<ContentFieldDataType> {
+        let data_type = match val.as_str() {
+            "TEXT" => ContentFieldDataType::Text(val),
+            _ => ContentFieldDataType::default(),
+        };
+        
+        Ok(data_type)
+    }
+}
+
+
+impl TryFrom<String> for ContentFieldFieldType {
     type Error = Error;
 
-    fn try_from(val: ContentFieldModel) -> Result<crate::api::proto::content::ContentFieldModel > {
+    fn try_from(val: String) -> Result<ContentFieldFieldType> {
+        let field_type = match val.as_str() {
+            "TEXT" => ContentFieldFieldType::Text,
+            _ => ContentFieldFieldType::default(),
+        };
+
+        Ok(field_type)
+    }
+}
+
+
+impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for ContentFieldFieldContent {
+    type Error = Error;
+
+    fn try_from(val: Option<crate::api::proto::content::ContentFieldFieldContent>) -> Result<ContentFieldFieldContent> {
+        let option_val = match val {
+            Some(val) => val.text_value.unwrap(),
+            None => "".to_string(),       
+        };
         
-        let model = crate::api::proto::content::ContentFieldModel {
-            name: val.name,
-            identifier: val.identifier,
+        let content_field_field_content = ContentFieldFieldContent {
+            text_value: Some(option_val),
+        };
+
+        Ok(content_field_field_content)
+    }
+}
+
+
+
+impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFieldFieldContent {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldFieldContent) -> Result<crate::api::proto::content::ContentFieldFieldContent > {
+    
+        // @todo think of a better way to do this
+        // If string is empty then we should return None
+        let model = crate::api::proto::content::ContentFieldFieldContent {
+            text_value: Some(val.text_value.unwrap_or_default()),       
         };
 
         Ok(model)
     }
 }
+
+impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::ContentFieldFieldContent {
+    type Error = Error;
+
+    fn try_from(val: Option<ContentFieldFieldContent>) -> Result<crate::api::proto::content::ContentFieldFieldContent > {
+
+        let field_content_content_type = match val {
+            Some(val) => {
+                let model = crate::api::proto::content::ContentFieldFieldContent {
+                    text_value: Some(val.text_value.unwrap()),
+                };
+                
+                model
+            },
+            None => {
+                let model = crate::api::proto::content::ContentFieldFieldContent {
+                    text_value: None,
+                };
+                
+                model
+            }
+        };
+        
+        Ok(field_content_content_type)
+    }
+}
+
+
+impl TryFrom<ContentFieldModel> for crate::api::proto::content::ContentFieldModel {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldModel) -> Result<crate::api::proto::content::ContentFieldModel > {
+        
+        let field_content: crate::api::proto::content::ContentFieldFieldContent  = val.field_content.try_into()?;
+        
+        let model = crate::api::proto::content::ContentFieldModel {
+            name: val.name,
+            identifier: val.identifier,
+            data_type: val.data_type.try_into()?,
+            field_type: val.field_type.try_into()?,
+            field_content: Some(field_content),
+        };
+
+        Ok(model)
+    }
+}
+
+impl TryFrom<ContentFieldDataType> for String {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldDataType) -> Result<String> {
+
+        let string_val = match val {
+            ContentFieldDataType::Text(val) => val,
+        };
+
+        Ok(string_val)
+    }
+}
+
+
+
+impl TryFrom<ContentFieldFieldType> for String {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldFieldType) -> Result<String> {
+
+        let string_val = match val {
+            ContentFieldFieldType::Text => String::from("TEXT"),
+        };
+
+        Ok(string_val)
+    }
+}
+
+
 
 
 impl TryFrom<Object> for ContentModel {
@@ -253,64 +353,40 @@ impl TryFrom<Object> for ContentFieldModel {
     fn try_from(val: Object) -> Result<ContentFieldModel> {
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
-        // let data_type_str = val.get("data_type").get_string()?;
+        let data_type_str = val.get("data_type").get_string()?;
 
-        // let data_type = match data_type_str.as_str() {
-        //     "TEXT" => ContentDataType::Text("TEXT".to_string()),
-        //     _ => ContentDataType::default(),
-        // };
+        let data_type = match data_type_str.as_str() {
+            "TEXT" => ContentFieldDataType::Text("TEXT".to_string()),
+            _ => ContentFieldDataType::default(),
+        };
 
-        // let field_type_str = val.get("field_type").get_string()?;
-        // let field_type = match field_type_str.as_str() {
-        //     "Text" => ContentFieldType::Text,
-        // 
-        //     _ => ContentFieldType::default(),
-        // };
+        let field_type_str = val.get("field_type").get_string()?;
+        let field_type = match field_type_str.as_str() {
+            "Text" => ContentFieldFieldType::Text,
 
-        // let field_content = match data_type_str.as_str() {
-        //     "TEXT" => {
-        //         let options = match val.get("field_content") {
-        //             Some(val) => {
-        //                 let object = match val.clone() {
-        //                     Value::Object(v) => v,
-        //                     _ => Object::default(),
-        //                 };
-        // 
-        //                 // println!("before test {:?}", object);
-        //                 let option: ContentTextType = object.try_into()?;
-        //                 // println!("test {:?}", option);
-        // 
-        //                 option
-        //             }
-        //             None => ContentTextType::default(),
-        //         };
-        // 
-        //         ContentFieldContentType::ContentTextType {
-        //             text_value: options,
-        //         }
-        //     }
-        // 
-        //     _ => ContentFieldContentType::default(),
-        // };
+            _ => ContentFieldFieldType::default(),
+        };
 
+        let field_content = match data_type_str.as_str() {
+            "TEXT" => {
+                let string_value = val.get("field_content").get_string()?;
+
+                ContentFieldFieldContent { text_value: Some(string_value) }
+            }
+
+            _ => ContentFieldFieldContent::default(),
+        };
 
         Ok(ContentFieldModel {
             name,
             identifier,
-            // data_type,
-            // field_type,
-            // field_content,
+            data_type,
+            field_type,
+            field_content,
         })
     }
 }
 
-impl TryFrom<Object> for ContentTextType {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<ContentTextType> {
-        let value = val.get("text_value").get_string()?;
-        Ok(ContentTextType { text_value: value })
-    }
-}
 
 
 // endregion: impl surreal Object for content model structs

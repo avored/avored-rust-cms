@@ -3,7 +3,7 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 use crate::error::Error;
-use crate::models::content_model::{ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
+use crate::models::content_model::{ContentFieldDataType, ContentFieldFieldContent, ContentFieldFieldType, ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
 use crate::repositories::into_iter_objects;
 use crate::error::Result;
 use crate::models::ModelCount;
@@ -111,27 +111,28 @@ impl ContentRepository {
         let mut content_fields: Vec<Value> = vec![];
 
         for created_content_field in creatable_content_model.content_fields {
-            // let data_type_value: Value = match created_content_field.data_type {
-            //     ContentDataType::Text(v) => v.into(),
-            // };
+            let data_type_value: Value = match created_content_field.data_type {
+                ContentFieldDataType::Text(v) => v.into(),
+            };
             // 
-            // let field_type_value: Value = match created_content_field.field_type {
-            //     ContentFieldType::Text => "Text".into(),
-            // };
+            let field_type_value: Value = match created_content_field.field_type {
+                ContentFieldFieldType::Text => "TEXT".into(),
+            };
             // 
-            // let field_content_value: Value = match created_content_field.field_content {
-            //     ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
-            // };
+            let field_content_value: Value = match created_content_field.field_content {
+                ContentFieldFieldContent { text_value } => text_value.unwrap_or_default().into(),
+            };
         
         
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
                 ("identifier".into(), created_content_field.identifier.into()),
-                // ("data_type".into(), data_type_value),
-                // ("field_type".into(), field_type_value),
-                // ("field_content".into(), field_content_value),
-            ]
-                .into();
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+                ("field_content".into(), field_content_value),
+            ].into();
+            
+            println!("TEST CONTENT FIELD DATA {:?}", content_field);
         
             content_fields.push(content_field.into());
         }
@@ -184,24 +185,24 @@ impl ContentRepository {
         let mut content_fields: Vec<Value> = vec![];
 
         for updatable_content_field in updatable_model.content_fields {
-            // let data_type_value: Value = match updatable_content_field.data_type {
-            //     ContentDataType::Text(v) => v.into(),
-            // };
-            // 
-            // let field_type_value: Value = match updatable_content_field.field_type {
-            //     ContentFieldType::Text => "Text".into(),
-            // 
-            // };
-            // let field_content_value: Value = match updatable_content_field.field_content {
-            //     ContentFieldContentType::ContentTextType { text_value } => text_value.try_into()?,
-            // };
+            let data_type_value: Value = match updatable_content_field.data_type {
+                ContentFieldDataType::Text(v) => v.into(),
+            };
+            
+            let field_type_value: Value = match updatable_content_field.field_type {
+                ContentFieldFieldType::Text => "Text".into(),
+            
+            };
+            let field_content_value: Value = match updatable_content_field.field_content {
+                ContentFieldFieldContent{ text_value } => text_value.unwrap_or_default().into(),
+            };
         
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_content_field.name.into()),
                 ("identifier".into(), updatable_content_field.identifier.into()),
-                // ("data_type".into(), data_type_value),
-                // ("field_type".into(), field_type_value),
-                // ("field_content".into(), field_content_value),
+                ("data_type".into(), data_type_value),
+                ("field_type".into(), field_type_value),
+                ("field_content".into(), field_content_value),
             ]
                 .into();
         

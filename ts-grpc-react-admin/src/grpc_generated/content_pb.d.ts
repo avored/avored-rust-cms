@@ -49,12 +49,48 @@ export namespace CollectionModel {
   }
 }
 
+export class ContentFieldFieldContent extends jspb.Message {
+  getTextValue(): string;
+  setTextValue(value: string): ContentFieldFieldContent;
+  hasTextValue(): boolean;
+  clearTextValue(): ContentFieldFieldContent;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentFieldFieldContent.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentFieldFieldContent): ContentFieldFieldContent.AsObject;
+  static serializeBinaryToWriter(message: ContentFieldFieldContent, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentFieldFieldContent;
+  static deserializeBinaryFromReader(message: ContentFieldFieldContent, reader: jspb.BinaryReader): ContentFieldFieldContent;
+}
+
+export namespace ContentFieldFieldContent {
+  export type AsObject = {
+    textValue?: string,
+  }
+
+  export enum TextValueCase { 
+    _TEXT_VALUE_NOT_SET = 0,
+    TEXT_VALUE = 1,
+  }
+}
+
 export class ContentFieldModel extends jspb.Message {
   getName(): string;
   setName(value: string): ContentFieldModel;
 
   getIdentifier(): string;
   setIdentifier(value: string): ContentFieldModel;
+
+  getDataType(): string;
+  setDataType(value: string): ContentFieldModel;
+
+  getFieldType(): string;
+  setFieldType(value: string): ContentFieldModel;
+
+  getFieldContent(): ContentFieldFieldContent | undefined;
+  setFieldContent(value?: ContentFieldFieldContent): ContentFieldModel;
+  hasFieldContent(): boolean;
+  clearFieldContent(): ContentFieldModel;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentFieldModel.AsObject;
@@ -68,6 +104,9 @@ export namespace ContentFieldModel {
   export type AsObject = {
     name: string,
     identifier: string,
+    dataType: string,
+    fieldType: string,
+    fieldContent?: ContentFieldFieldContent.AsObject,
   }
 }
 
@@ -256,6 +295,17 @@ export class StoreContentFieldModel extends jspb.Message {
   getIdentifier(): string;
   setIdentifier(value: string): StoreContentFieldModel;
 
+  getDataType(): string;
+  setDataType(value: string): StoreContentFieldModel;
+
+  getFieldType(): string;
+  setFieldType(value: string): StoreContentFieldModel;
+
+  getFieldContent(): ContentFieldFieldContent | undefined;
+  setFieldContent(value?: ContentFieldFieldContent): StoreContentFieldModel;
+  hasFieldContent(): boolean;
+  clearFieldContent(): StoreContentFieldModel;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StoreContentFieldModel.AsObject;
   static toObject(includeInstance: boolean, msg: StoreContentFieldModel): StoreContentFieldModel.AsObject;
@@ -268,6 +318,9 @@ export namespace StoreContentFieldModel {
   export type AsObject = {
     name: string,
     identifier: string,
+    dataType: string,
+    fieldType: string,
+    fieldContent?: ContentFieldFieldContent.AsObject,
   }
 }
 
@@ -380,6 +433,17 @@ export class UpdateContentFieldModel extends jspb.Message {
   getIdentifier(): string;
   setIdentifier(value: string): UpdateContentFieldModel;
 
+  getDataType(): string;
+  setDataType(value: string): UpdateContentFieldModel;
+
+  getFieldType(): string;
+  setFieldType(value: string): UpdateContentFieldModel;
+
+  getFieldContent(): ContentFieldFieldContent | undefined;
+  setFieldContent(value?: ContentFieldFieldContent): UpdateContentFieldModel;
+  hasFieldContent(): boolean;
+  clearFieldContent(): UpdateContentFieldModel;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateContentFieldModel.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateContentFieldModel): UpdateContentFieldModel.AsObject;
@@ -392,6 +456,9 @@ export namespace UpdateContentFieldModel {
   export type AsObject = {
     name: string,
     identifier: string,
+    dataType: string,
+    fieldType: string,
+    fieldContent?: ContentFieldFieldContent.AsObject,
   }
 }
 

@@ -15,9 +15,16 @@ message CollectionModel {
 }
 
 
+message ContentFieldFieldContent {
+  optional string text_value = 1;
+}
+
 message ContentFieldModel {
   string name = 1;
   string identifier = 2;
+  string data_type = 3;
+  string field_type = 4;
+  ContentFieldFieldContent field_content = 5;
 }
 
 message ContentModel {
@@ -62,6 +69,9 @@ message ContentPaginateResponse {
 message StoreContentFieldModel {
   string name = 1;
   string identifier = 2;
+  string data_type = 3;
+  string field_type = 4;
+  ContentFieldFieldContent field_content = 5;
 }
 
 
@@ -92,6 +102,9 @@ message GetContentResponse {
 message UpdateContentFieldModel {
   string name = 1;
   string identifier = 2;
+  string data_type = 3;
+  string field_type = 4;
+  ContentFieldFieldContent field_content = 5;
 }
 
 message UpdateContentRequest {

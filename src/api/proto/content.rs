@@ -17,11 +17,22 @@ pub struct CollectionModel {
     pub updated_by: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentFieldFieldContent {
+    #[prost(string, optional, tag = "1")]
+    pub text_value: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldModel {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
     pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub data_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub field_type: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "5")]
+    pub field_content: ::core::option::Option<ContentFieldFieldContent>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentModel {
@@ -85,6 +96,12 @@ pub struct StoreContentFieldModel {
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
     pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub data_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub field_type: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "5")]
+    pub field_content: ::core::option::Option<ContentFieldFieldContent>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StoreContentRequest {
@@ -124,6 +141,12 @@ pub struct UpdateContentFieldModel {
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
     pub identifier: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub data_type: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub field_type: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "5")]
+    pub field_content: ::core::option::Option<ContentFieldFieldContent>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContentRequest {

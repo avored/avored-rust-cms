@@ -1,15 +1,22 @@
 import {useTranslation} from "react-i18next";
 import {ContentSidebar} from "./ContentSidebar";
 import InputField from "../../components/InputField";
-import { joiResolver } from "@hookform/resolvers/joi";
-import {ContentFieldType, SaveContentType} from "../../types/content/ContentType";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {
+    ContentFieldDataType,
+    ContentFieldFieldType,
+    ContentFieldType, SaveContentFieldType,
+    SaveContentType
+} from "../../types/content/ContentType";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
 import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
 import {
+    ContentFieldFieldContent,
+    ContentFieldFieldContent as GrpcContentFieldFieldContent,
     GetContentRequest,
-    PutContentIdentifierRequest,
-    StoreContentFieldModel, UpdateContentFieldModel,
+    PutContentIdentifierRequest, StoreContentFieldModel,
+    UpdateContentFieldModel,
     UpdateContentRequest
 } from "../../grpc_generated/content_pb";
 import {Link, useParams, useSearchParams} from "react-router-dom";
@@ -20,7 +27,6 @@ import {ContentFieldModal} from "./ContentFieldModal";
 import _ from "lodash";
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
 import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
-import {RoleType} from "../../types/admin_user/AdminUserType";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -47,8 +53,23 @@ export const ContentEditPage = () => {
 
     const content_content_field_list = get_content_api_response?.data?.data?.contentFieldsList ?? [];
     if (values) {
-        values.content_fields = content_content_field_list as Array<unknown> as Array<ContentFieldType>;
+        content_content_field_list.map(content_field => {
+            values.content_fields = [];
+            const grpc_content_field: ContentFieldType =  {
+                name: content_field.name,
+                identifier: content_field.identifier,
+                data_type: content_field.dataType as ContentFieldDataType,
+                field_type: content_field.fieldType as ContentFieldFieldType,
+                field_content: {
+                    text_value: content_field.fieldContent?.textValue ?? '',
+                }
+            }
+
+            values.content_fields.push(grpc_content_field)
+        })
     }
+
+    console.log(values)
 
 
     const {
@@ -97,12 +118,31 @@ export const ContentEditPage = () => {
         append({
             name: '',
             identifier: '',
+            data_type: ContentFieldDataType.TEXT,
+            field_type: ContentFieldFieldType.TEXT,
+            field_content: {
+                text_value: ""
+            }
         })
         await trigger("content_fields");
         setCurrentIndex(max_index);
         setIsContentFieldModalOpen(true)
     })
 
+    const renderField = (field: SaveContentFieldType, index: number) => {
+        switch (field.field_type) {
+            case ContentFieldFieldType.TEXT:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.text_value`)}
+                        />
+                    </div>
+                );
+        }
+    }
 
     const submitHandler = (async (data: SaveContentType) => {
         const request = new UpdateContentRequest();
@@ -112,9 +152,15 @@ export const ContentEditPage = () => {
 
         const content_field_data_list: Array<UpdateContentFieldModel> = [];
         data.content_fields.forEach(content_field => {
-            const update_content_field_request = new UpdateContentFieldModel();
+            const update_content_field_request = new StoreContentFieldModel();
+            const content_field_field_content =  new GrpcContentFieldFieldContent();
+            content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
+
             update_content_field_request.setName(content_field.name);
             update_content_field_request.setIdentifier(content_field.identifier);
+            update_content_field_request.setDataType(content_field.data_type as string);
+            update_content_field_request.setFieldType(content_field.field_type as string);
+            update_content_field_request.setFieldContent(content_field_field_content)
 
             content_field_data_list.push(update_content_field_request)
         })
@@ -243,6 +289,21 @@ export const ContentEditPage = () => {
                                                                     </div>
                                                                 </div>
 
+                                                                <InputField
+                                                                    type="hidden"
+                                                                    placeholder={t("data_type")}
+                                                                    register={register(
+                                                                        `content_fields.${index}.data_type`,
+                                                                    )}
+                                                                />
+                                                                <InputField
+                                                                    type="hidden"
+                                                                    placeholder={t("field_type")}
+                                                                    register={register(
+                                                                        `content_fields.${index}.field_type`,
+                                                                    )}
+                                                                />
+                                                                {renderField(field.value, index)}
 
 
                                                             </div>

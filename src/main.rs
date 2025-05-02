@@ -73,7 +73,6 @@ async fn main() -> Result<(), Error>{
     const DEFAULT_ALLOW_HEADERS: [&str; 5] =
         ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout", "authorization"];
 
-
     let cors = CorsLayer::new()
         .allow_origin(origins)
         .expose_headers(

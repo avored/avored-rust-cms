@@ -7,13 +7,19 @@ import InputField from "../../components/InputField";
 import {UseContentCreateSchema} from "../../schemas/content/UseContentCreateSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {SaveContentType} from "../../types/content/ContentType";
+import {
+    ContentFieldDataType,
+    ContentFieldFieldType,
+    SaveContentFieldType,
+    SaveContentType
+} from "../../types/content/ContentType";
 import slug from "slug";
-import {StoreContentFieldModel, StoreContentRequest} from "../../grpc_generated/content_pb";
+import {StoreContentFieldModel, StoreContentRequest, ContentFieldFieldContent as GrpcContentFieldFieldContent} from "../../grpc_generated/content_pb";
 import {ContentFieldModal} from "./ContentFieldModal";
 import {useState} from "react";
 import _ from "lodash";
 import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
+import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
 
 export const ContentCreatePage = () => {
     const [t] = useTranslation("global")
@@ -55,6 +61,12 @@ export const ContentCreatePage = () => {
         name: "content_fields", //rename fields
     });
 
+    const deleteContentFieldOnClick = (e: any, index: number) => {
+        e.preventDefault();
+        remove(index);
+        setCurrentIndex(0);
+    };
+
     const onNameChange = (e: React.KeyboardEvent<HTMLInputElement>) => {
         setValue('identifier', slug(e.currentTarget.value || ''))
     }
@@ -64,6 +76,11 @@ export const ContentCreatePage = () => {
         append({
             name: '',
             identifier: '',
+            data_type: ContentFieldDataType.TEXT,
+            field_type: ContentFieldFieldType.TEXT,
+            field_content: {
+                text_value: ""
+            }
         })
         await trigger("content_fields");
         setCurrentIndex(max_index);
@@ -71,23 +88,46 @@ export const ContentCreatePage = () => {
     })
 
 
+    const renderField = (field: SaveContentFieldType, index: number) => {
+        switch (field.field_type) {
+            case ContentFieldFieldType.TEXT:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.text_value`)}
+                        />
+                    </div>
+                );
+        }
+    }
+
     const submitHandler = (async (data: SaveContentType) => {
         const request  = new StoreContentRequest();
         request.setName(data.name)
         request.setIdentifier(data.identifier)
         request.setContentType(contentType)
         const content_field_data_list: Array<StoreContentFieldModel> = [];
+
+        // console.log(data.content_fields)
+
         data.content_fields.forEach(content_field => {
             const store_content_field_request = new StoreContentFieldModel();
+            const content_field_field_content =  new GrpcContentFieldFieldContent();
+            content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
+
             store_content_field_request.setName(content_field.name);
             store_content_field_request.setIdentifier(content_field.identifier);
+            store_content_field_request.setDataType(content_field.data_type as string);
+            store_content_field_request.setFieldType(content_field.field_type as string);
+            store_content_field_request.setFieldContent(content_field_field_content)
 
             content_field_data_list.push(store_content_field_request)
         })
 
         request.setContentFieldsList(content_field_data_list)
 
-        // console.log(request)
         mutate(request)
     })
 
@@ -161,16 +201,49 @@ export const ContentCreatePage = () => {
                                                                 <div
                                                                     className="flex text-sm w-full border-gray-300 border-b py-2">
                                                                     <div className="flex-1">
-                                                                                <span>
-                                                                                    {field.value.name}
-                                                                                </span>
-                                                                        <span
-                                                                            className="ml-1 text-xs text-gray-500">
-                                                                                    ({field.value.identifier})
-                                                                                </span>
+                                                                        <span>
+                                                                            {field.value.name}
+                                                                        </span>
+                                                                        <span className="ml-1 text-xs text-gray-500">
+                                                                            ({field.value.identifier})
+                                                                        </span>
                                                                     </div>
-
+                                                                    <div className="ml-auto flex items-center">
+                                                                        <div>
+                                                                            <button
+                                                                                type="button"
+                                                                                className="outline-none"
+                                                                                onClick={() => setIsContentFieldModalOpen(true)}
+                                                                            >
+                                                                                <Cog8ToothIcon className="w-5 h-5"/>
+                                                                            </button>
+                                                                        </div>
+                                                                        <div
+                                                                            onClick={(e) =>
+                                                                                deleteContentFieldOnClick(e, index)
+                                                                            }
+                                                                            className="ml-3"
+                                                                        >
+                                                                            <TrashIcon className="w-4 h-4"/>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
+
+                                                                <InputField
+                                                                    type="hidden"
+                                                                    placeholder={t("data_type")}
+                                                                    register={register(
+                                                                        `content_fields.${index}.data_type`,
+                                                                    )}
+                                                                />
+                                                                <InputField
+                                                                    type="hidden"
+                                                                    placeholder={t("field_type")}
+                                                                    register={register(
+                                                                        `content_fields.${index}.field_type`,
+                                                                    )}
+                                                                />
+                                                                {renderField(field.value, index)}
 
                                                             </div>
                                                         </div>

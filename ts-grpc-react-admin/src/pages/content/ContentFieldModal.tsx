@@ -5,6 +5,8 @@ import {
   UseFormTrigger,
 } from "react-hook-form";
 import {
+  ContentFieldDataType,
+  ContentFieldFieldType,
   SaveContentType,
 } from "../../types/content/ContentType";
 import AvoredModal from "../../components/AvoredModal";
@@ -39,11 +41,11 @@ export const ContentFieldModal = ({
 
   const onContentFieldChange = async (
     index: number,
-    // field_type: ContentFieldFieldType,
-    // data_type: ContentFieldDataType
+    field_type: ContentFieldFieldType,
+    data_type: ContentFieldDataType
   ) => {
-    // setValue(`content_fields.${index}.field_type`, field_type);
-    // setValue(`content_fields.${index}.data_type`, data_type);
+    setValue(`content_fields.${index}.field_type`, field_type);
+    setValue(`content_fields.${index}.data_type`, data_type);
     await trigger(`content_fields.${index}`);
   };
 
@@ -78,24 +80,24 @@ export const ContentFieldModal = ({
                 />
               </div>
 
-              {/* <div className="w-full">{renderFieldData(currentIndex)}</div> */}
+               {/*<div className="w-full">{renderFieldData(currentIndex)}</div> */}
             </div>
 
             <div className="ml-auto">
               <div className="w-64 border-l p-3 mr-auto">
-                {/*<div*/}
-                {/*  onClick={() =>*/}
-                {/*    onContentFieldChange(*/}
-                {/*      currentIndex,*/}
-                {/*        ContentFieldFieldType.TEXT,*/}
-                {/*        ContentFieldDataType.TEXT*/}
-                {/*    )*/}
-                {/*  }*/}
-                {/*  className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} */}
-                {/*        ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}*/}
-                {/*>*/}
-                {/*  {t("text_field")}*/}
-                {/*</div>*/}
+                <div
+                  onClick={() =>
+                    onContentFieldChange(
+                      currentIndex,
+                        ContentFieldFieldType.TEXT,
+                        ContentFieldDataType.TEXT
+                    )
+                  }
+                  className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
+                        ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                >
+                  {t("text_field")}
+                </div>
               </div>
             </div>
           </div>
