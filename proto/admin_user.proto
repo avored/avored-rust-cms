@@ -38,7 +38,8 @@ message RoleOptionModel {
 
 // Admin user paginate API
 message AdminUserPaginateRequest {
-
+  optional int64 page = 1;
+  optional string order = 2;
 }
 
 message AdminUserPaginateResponse {
@@ -97,7 +98,10 @@ message UpdateAdminUserResponse {
 }
 
 
-message RolePaginateRequest {}
+message RolePaginateRequest {
+  optional int64 page = 1;
+  optional string order = 2;
+}
 
 message RolePaginateResponse {
   bool status = 1;

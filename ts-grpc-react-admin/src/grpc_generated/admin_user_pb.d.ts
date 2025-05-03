@@ -138,6 +138,16 @@ export namespace RoleOptionModel {
 }
 
 export class AdminUserPaginateRequest extends jspb.Message {
+  getPage(): number;
+  setPage(value: number): AdminUserPaginateRequest;
+  hasPage(): boolean;
+  clearPage(): AdminUserPaginateRequest;
+
+  getOrder(): string;
+  setOrder(value: string): AdminUserPaginateRequest;
+  hasOrder(): boolean;
+  clearOrder(): AdminUserPaginateRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserPaginateRequest.AsObject;
   static toObject(includeInstance: boolean, msg: AdminUserPaginateRequest): AdminUserPaginateRequest.AsObject;
@@ -148,6 +158,18 @@ export class AdminUserPaginateRequest extends jspb.Message {
 
 export namespace AdminUserPaginateRequest {
   export type AsObject = {
+    page?: number,
+    order?: string,
+  }
+
+  export enum PageCase { 
+    _PAGE_NOT_SET = 0,
+    PAGE = 1,
+  }
+
+  export enum OrderCase { 
+    _ORDER_NOT_SET = 0,
+    ORDER = 2,
   }
 }
 
@@ -394,6 +416,16 @@ export namespace UpdateAdminUserResponse {
 }
 
 export class RolePaginateRequest extends jspb.Message {
+  getPage(): number;
+  setPage(value: number): RolePaginateRequest;
+  hasPage(): boolean;
+  clearPage(): RolePaginateRequest;
+
+  getOrder(): string;
+  setOrder(value: string): RolePaginateRequest;
+  hasOrder(): boolean;
+  clearOrder(): RolePaginateRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RolePaginateRequest.AsObject;
   static toObject(includeInstance: boolean, msg: RolePaginateRequest): RolePaginateRequest.AsObject;
@@ -404,6 +436,18 @@ export class RolePaginateRequest extends jspb.Message {
 
 export namespace RolePaginateRequest {
   export type AsObject = {
+    page?: number,
+    order?: string,
+  }
+
+  export enum PageCase { 
+    _PAGE_NOT_SET = 0,
+    PAGE = 1,
+  }
+
+  export enum OrderCase { 
+    _ORDER_NOT_SET = 0,
+    ORDER = 2,
   }
 }
 

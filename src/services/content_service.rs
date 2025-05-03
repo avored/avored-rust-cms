@@ -4,6 +4,7 @@ use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
 use crate::models::content_model::{CreatableContentField, CreatableContentModel, PutContentIdentifierModel, UpdatableContentField, UpdatableContentModel};
+use crate::PER_PAGE;
 use crate::repositories::collection_repository::CollectionRepository;
 
 pub struct ContentService {
@@ -50,11 +51,22 @@ impl ContentService {
                 database_session,
                 &request.content_type
             ).await?;
-        
-        let start = 0;
-        let order_column = "id";
-        let order_type = "desc";
 
+        let per_page: i64 = PER_PAGE as i64;
+        let current_page = request.page.unwrap_or(0);
+        let order = request.order.unwrap_or_default();
+
+        let start = current_page * per_page;
+        let mut order_column = "id";
+        let mut order_type = "desc";
+        if !order.is_empty() {
+            let mut parts = order.split(':');
+            if parts.clone().count() == 2 {
+                order_column = parts.clone().nth(0).unwrap_or("");
+                order_type = parts.nth(1).unwrap_or("");
+            }
+        }
+        
         let content_db_models = self
             .content_repository
             .paginate(

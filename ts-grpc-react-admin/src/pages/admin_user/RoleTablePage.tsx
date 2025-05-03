@@ -19,11 +19,12 @@ export const RoleTablePage = () => {
 
     let request = new RolePaginateRequest();
 
-    const role_res = UseRolePaginateHook(request);
+    const role_res = UseRolePaginateHook(request, {
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
+    });
     const data_list = role_res.data?.data?.dataList ?? [];
     const roles: Array<RoleType> = data_list as Array<unknown> as RoleType[];
-
-    console.log(roles);
 
     const customSorting = (async (sorting: any) => {
         setSorting(sorting)
@@ -103,7 +104,7 @@ export const RoleTablePage = () => {
             sorting,
             pagination
         },
-        rowCount: 1,
+        rowCount: role_res.data?.data?.pagination?.total ?? 1,
         initialState: {
             columnVisibility: {
                 createdAt: false,

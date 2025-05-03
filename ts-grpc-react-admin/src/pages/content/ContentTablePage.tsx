@@ -25,7 +25,10 @@ export const ContentTablePage = () => {
     const request = new ContentPaginateRequest()
     request.setContentType(contentType)
 
-    const content_paginate_response = UseContentPaginateHook(request)
+    const content_paginate_response = UseContentPaginateHook(request, {
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
+    })
     const data_list = content_paginate_response.data?.data?.dataList ?? [];
     const contents = data_list as Array<unknown> as ContentType[];
     const total_no_of_record = content_paginate_response.data?.data?.pagination?.total ?? 0;

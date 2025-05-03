@@ -1,10 +1,6 @@
 use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
-use crate::{
-    error::Result,
-    providers::avored_database_provider::DB,
-    repositories::admin_user_repository::AdminUserRepository,
-};
+use crate::{error::Result, providers::avored_database_provider::DB, repositories::admin_user_repository::AdminUserRepository, PER_PAGE};
 use lettre::message::{header, MultiPart, SinglePart};
 use lettre::{AsyncTransport, Message};
 use std::path::Path;
@@ -43,7 +39,7 @@ impl AdminUserService {
 
     pub async fn paginate(
         &self,
-        _req: AdminUserPaginateRequest,
+        req: AdminUserPaginateRequest,
         (datastore, database_session): &DB,
     ) -> Result<AdminUserPaginateResponse> {
         let admin_user_model_count   = self
@@ -51,9 +47,20 @@ impl AdminUserService {
             .get_total_count(datastore, database_session)
             .await?;
 
-        let start = 0;
-        let order_column = "id";
-        let order_type = "desc";
+        let per_page: i64 = PER_PAGE as i64;
+        let current_page = req.page.unwrap_or(0);
+        let order = req.order.unwrap_or_default();
+        
+        let start = current_page * per_page;
+        let mut order_column = "id";
+        let mut order_type = "desc";
+        if !order.is_empty() {
+            let mut parts = order.split(':');
+            if parts.clone().count() == 2 {
+                order_column = parts.clone().nth(0).unwrap_or("");
+                order_type = parts.nth(1).unwrap_or("");
+            }
+        }
 
         let admin_users = self
             .admin_user_repository
@@ -245,7 +252,7 @@ impl AdminUserService {
 
     pub async fn role_paginate(
         &self,
-        _req: RolePaginateRequest,
+        req: RolePaginateRequest,
         (datastore, database_session): &DB,
     ) -> Result<RolePaginateResponse> {
         let role_model_count   = self
@@ -253,9 +260,21 @@ impl AdminUserService {
             .get_total_count(datastore, database_session)
             .await?;
 
-        let start = 0;
-        let order_column = "id";
-        let order_type = "desc";
+        let per_page: i64 = PER_PAGE as i64;
+        let current_page = req.page.unwrap_or(0);
+        let order = req.order.unwrap_or_default();
+
+        let start = current_page * per_page;
+        let mut order_column = "id";
+        let mut order_type = "desc";
+        if !order.is_empty() {
+            let mut parts = order.split(':');
+            if parts.clone().count() == 2 {
+                order_column = parts.clone().nth(0).unwrap_or("");
+                order_type = parts.nth(1).unwrap_or("");
+            }
+        }
+        
 
         let roles = self
             .role_repository

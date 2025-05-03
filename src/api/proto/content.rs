@@ -67,6 +67,10 @@ pub struct CollectionAllResponse {
 pub struct ContentPaginateRequest {
     #[prost(string, tag = "1")]
     pub content_type: ::prost::alloc::string::String,
+    #[prost(int64, optional, tag = "2")]
+    pub page: ::core::option::Option<i64>,
+    #[prost(string, optional, tag = "3")]
+    pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentPaginateResponse {

@@ -49,8 +49,13 @@ pub struct RoleOptionModel {
     pub value: ::prost::alloc::string::String,
 }
 /// Admin user paginate API
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct AdminUserPaginateRequest {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct AdminUserPaginateRequest {
+    #[prost(int64, optional, tag = "1")]
+    pub page: ::core::option::Option<i64>,
+    #[prost(string, optional, tag = "2")]
+    pub order: ::core::option::Option<::prost::alloc::string::String>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AdminUserPaginateResponse {
     #[prost(bool, tag = "1")]
@@ -131,8 +136,13 @@ pub struct UpdateAdminUserResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<AdminUserModel>,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
-pub struct RolePaginateRequest {}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct RolePaginateRequest {
+    #[prost(int64, optional, tag = "1")]
+    pub page: ::core::option::Option<i64>,
+    #[prost(string, optional, tag = "2")]
+    pub order: ::core::option::Option<::prost::alloc::string::String>,
+}
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct RolePaginateResponse {
     #[prost(bool, tag = "1")]

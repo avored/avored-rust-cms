@@ -204,6 +204,16 @@ export class ContentPaginateRequest extends jspb.Message {
   getContentType(): string;
   setContentType(value: string): ContentPaginateRequest;
 
+  getPage(): number;
+  setPage(value: number): ContentPaginateRequest;
+  hasPage(): boolean;
+  clearPage(): ContentPaginateRequest;
+
+  getOrder(): string;
+  setOrder(value: string): ContentPaginateRequest;
+  hasOrder(): boolean;
+  clearOrder(): ContentPaginateRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentPaginateRequest.AsObject;
   static toObject(includeInstance: boolean, msg: ContentPaginateRequest): ContentPaginateRequest.AsObject;
@@ -215,6 +225,18 @@ export class ContentPaginateRequest extends jspb.Message {
 export namespace ContentPaginateRequest {
   export type AsObject = {
     contentType: string,
+    page?: number,
+    order?: string,
+  }
+
+  export enum PageCase { 
+    _PAGE_NOT_SET = 0,
+    PAGE = 2,
+  }
+
+  export enum OrderCase { 
+    _ORDER_NOT_SET = 0,
+    ORDER = 3,
   }
 }
 

@@ -1,14 +1,18 @@
 import {useQuery} from "@tanstack/react-query";
 import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
 import {ContentPaginateRequest} from "../../grpc_generated/content_pb";
+import {PaginateType} from "../../types/misc/PaginateType";
 
-export const UseContentPaginateHook = (request: ContentPaginateRequest) => {
+export const UseContentPaginateHook = (request: ContentPaginateRequest, query: PaginateType) => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
     const client = new contentClient(backend_url);
 
     return useQuery({
-        queryKey: ['content-paginate'],
+        queryKey: ['content-table-paginate', query],
         queryFn: async () => {
+            request.setPage(query.page ?? 0);
+            request.setOrder(query.order as string)
+
             let response = await client.contentPaginate(request, {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             })

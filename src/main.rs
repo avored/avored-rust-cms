@@ -48,7 +48,7 @@ mod requests;
 mod repositories;
 mod middleware;
 
-const PER_PAGE: u64 = 100;
+const PER_PAGE: u64 = 10;
 
 rust_i18n::i18n!("resources/locales");
 

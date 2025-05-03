@@ -1689,7 +1689,8 @@ proto.admin_user.AdminUserPaginateRequest.prototype.toObject = function(opt_incl
  */
 proto.admin_user.AdminUserPaginateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+page: (f = jspb.Message.getField(msg, 1)) == null ? undefined : f,
+order: (f = jspb.Message.getField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -1726,6 +1727,14 @@ proto.admin_user.AdminUserPaginateRequest.deserializeBinaryFromReader = function
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPage(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setOrder(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -1755,6 +1764,92 @@ proto.admin_user.AdminUserPaginateRequest.prototype.serializeBinary = function()
  */
 proto.admin_user.AdminUserPaginateRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = /** @type {number} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional int64 page = 1;
+ * @return {number}
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.getPage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.admin_user.AdminUserPaginateRequest} returns this
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.setPage = function(value) {
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.admin_user.AdminUserPaginateRequest} returns this
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.clearPage = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.hasPage = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional string order = 2;
+ * @return {string}
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.getOrder = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserPaginateRequest} returns this
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.setOrder = function(value) {
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.admin_user.AdminUserPaginateRequest} returns this
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.clearOrder = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.AdminUserPaginateRequest.prototype.hasOrder = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 
@@ -3619,7 +3714,8 @@ proto.admin_user.RolePaginateRequest.prototype.toObject = function(opt_includeIn
  */
 proto.admin_user.RolePaginateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-
+page: (f = jspb.Message.getField(msg, 1)) == null ? undefined : f,
+order: (f = jspb.Message.getField(msg, 2)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -3656,6 +3752,14 @@ proto.admin_user.RolePaginateRequest.deserializeBinaryFromReader = function(msg,
     }
     var field = reader.getFieldNumber();
     switch (field) {
+    case 1:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPage(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setOrder(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -3685,6 +3789,92 @@ proto.admin_user.RolePaginateRequest.prototype.serializeBinary = function() {
  */
 proto.admin_user.RolePaginateRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
+  f = /** @type {number} */ (jspb.Message.getField(message, 1));
+  if (f != null) {
+    writer.writeInt64(
+      1,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional int64 page = 1;
+ * @return {number}
+ */
+proto.admin_user.RolePaginateRequest.prototype.getPage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 1, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.admin_user.RolePaginateRequest} returns this
+ */
+proto.admin_user.RolePaginateRequest.prototype.setPage = function(value) {
+  return jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.admin_user.RolePaginateRequest} returns this
+ */
+proto.admin_user.RolePaginateRequest.prototype.clearPage = function() {
+  return jspb.Message.setField(this, 1, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.RolePaginateRequest.prototype.hasPage = function() {
+  return jspb.Message.getField(this, 1) != null;
+};
+
+
+/**
+ * optional string order = 2;
+ * @return {string}
+ */
+proto.admin_user.RolePaginateRequest.prototype.getOrder = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.RolePaginateRequest} returns this
+ */
+proto.admin_user.RolePaginateRequest.prototype.setOrder = function(value) {
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.admin_user.RolePaginateRequest} returns this
+ */
+proto.admin_user.RolePaginateRequest.prototype.clearOrder = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.admin_user.RolePaginateRequest.prototype.hasOrder = function() {
+  return jspb.Message.getField(this, 2) != null;
 };
 
 

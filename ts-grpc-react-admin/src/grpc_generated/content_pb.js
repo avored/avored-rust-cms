@@ -1969,7 +1969,9 @@ proto.content.ContentPaginateRequest.prototype.toObject = function(opt_includeIn
  */
 proto.content.ContentPaginateRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-contentType: jspb.Message.getFieldWithDefault(msg, 1, "")
+contentType: jspb.Message.getFieldWithDefault(msg, 1, ""),
+page: (f = jspb.Message.getField(msg, 2)) == null ? undefined : f,
+order: (f = jspb.Message.getField(msg, 3)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2010,6 +2012,14 @@ proto.content.ContentPaginateRequest.deserializeBinaryFromReader = function(msg,
       var value = /** @type {string} */ (reader.readString());
       msg.setContentType(value);
       break;
+    case 2:
+      var value = /** @type {number} */ (reader.readInt64());
+      msg.setPage(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setOrder(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -2046,6 +2056,20 @@ proto.content.ContentPaginateRequest.serializeBinaryToWriter = function(message,
       f
     );
   }
+  f = /** @type {number} */ (jspb.Message.getField(message, 2));
+  if (f != null) {
+    writer.writeInt64(
+      2,
+      f
+    );
+  }
+  f = /** @type {string} */ (jspb.Message.getField(message, 3));
+  if (f != null) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
 };
 
 
@@ -2064,6 +2088,78 @@ proto.content.ContentPaginateRequest.prototype.getContentType = function() {
  */
 proto.content.ContentPaginateRequest.prototype.setContentType = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
+};
+
+
+/**
+ * optional int64 page = 2;
+ * @return {number}
+ */
+proto.content.ContentPaginateRequest.prototype.getPage = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
+};
+
+
+/**
+ * @param {number} value
+ * @return {!proto.content.ContentPaginateRequest} returns this
+ */
+proto.content.ContentPaginateRequest.prototype.setPage = function(value) {
+  return jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.content.ContentPaginateRequest} returns this
+ */
+proto.content.ContentPaginateRequest.prototype.clearPage = function() {
+  return jspb.Message.setField(this, 2, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.content.ContentPaginateRequest.prototype.hasPage = function() {
+  return jspb.Message.getField(this, 2) != null;
+};
+
+
+/**
+ * optional string order = 3;
+ * @return {string}
+ */
+proto.content.ContentPaginateRequest.prototype.getOrder = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.content.ContentPaginateRequest} returns this
+ */
+proto.content.ContentPaginateRequest.prototype.setOrder = function(value) {
+  return jspb.Message.setField(this, 3, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.content.ContentPaginateRequest} returns this
+ */
+proto.content.ContentPaginateRequest.prototype.clearOrder = function() {
+  return jspb.Message.setField(this, 3, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.content.ContentPaginateRequest.prototype.hasOrder = function() {
+  return jspb.Message.getField(this, 3) != null;
 };
 
 

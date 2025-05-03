@@ -17,9 +17,12 @@ export const AdminUserTablePage = (() => {
     });
     const [sorting, setSorting] = useState<SortingState>([]);
 
-    let request = new AdminUserPaginateRequest();
 
-    const admin_user_res = UseAdminUserPaginateHook(request);
+    const request = new AdminUserPaginateRequest()
+    const admin_user_res = UseAdminUserPaginateHook(request, {
+        order: sorting.map((s) => `${s.id}:${s.desc ? 'DESC' : 'ASC'}`).join(','),
+        page: pagination.pageIndex
+    });
 
     const data_list = admin_user_res.data?.data?.dataList ?? [];
     const admin_users: Array<AdminUserType> = data_list as Array<unknown> as AdminUserType[];
@@ -27,8 +30,8 @@ export const AdminUserTablePage = (() => {
     const customSorting = (async (sorting: any) => {
         setSorting(sorting)
     })
-    const customPagination = (async (pagination: any) => {
-        setPagination(pagination)
+    const customPagination = (async (page: any) => {
+        setPagination(page)
     })
 
     const [t] = useTranslation("global");
@@ -111,7 +114,7 @@ export const AdminUserTablePage = (() => {
             sorting,
             pagination
         },
-        rowCount: 1,
+        rowCount: admin_user_res.data?.data?.pagination?.total ?? 0,
         initialState: {
             columnVisibility: {
                 createdAt: false,

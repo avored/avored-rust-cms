@@ -48,6 +48,8 @@ message CollectionAllResponse {
 // Content paginate API
 message ContentPaginateRequest {
   string content_type = 1;
+  optional int64 page = 2;
+  optional string order = 3;
 }
 
 message ContentPaginateResponse {
