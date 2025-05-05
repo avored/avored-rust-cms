@@ -234,6 +234,9 @@
   .relative {
     position: relative;
   }
+  .static {
+    position: static;
+  }
   .inset-y-0 {
     inset-block: calc(var(--spacing) * 0);
   }
@@ -287,9 +290,6 @@
   }
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
-  }
-  .mr-3 {
-    margin-right: calc(var(--spacing) * 3);
   }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
@@ -376,9 +376,6 @@
   }
   .transform {
     transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
-  }
-  .cursor-pointer {
-    cursor: pointer;
   }
   .appearance-none {
     appearance: none;

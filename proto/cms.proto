@@ -2,10 +2,7 @@ syntax = "proto3";
 
 package cms;
 
-import "google/protobuf/timestamp.proto";
 import "content.proto";
-
-
 
 message GetCmsContentRequest {
   string content_id = 1;

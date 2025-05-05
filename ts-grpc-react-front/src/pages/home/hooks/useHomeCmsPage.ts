@@ -1,19 +1,23 @@
-import { useQuery, UseQueryResult } from "@tanstack/react-query";
-import { useAxios } from "../../../hooks/useAxios";
-import { AxiosResponse } from "axios";
-import {CmsPageType} from "../../../types/CmsPageType";
+import {useQuery} from "@tanstack/react-query";
+import {GetCmsContentRequest} from "../../../grpc_generated/cms_pb";
+import {CmsClient} from "../../../grpc_generated/CmsServiceClientPb";
 
-export const useHomeCmsPage = (): UseQueryResult<AxiosResponse<CmsPageType>> => {
-    const client = useAxios();
+export const useHomeCmsPage = (request: GetCmsContentRequest) => {
+    const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
+    const client = new CmsClient(backend_url);
+
     return useQuery({
         queryKey: ['home-cms-page'],
-        queryFn: (async () => {
-            try {
-                // return await client.get<CmsPageType>("/cms/page/wvb4100904eaf3ykz64c")
-                return new Promise((resolve) => {return {}})
-            } catch (error) {
-                //@todo display error
+        queryFn: async () => {
+            let response = await client.getCmsContent(request, {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            })
+            if (response.getStatus()) {
+                // may be map a type and return a proper type
+                return response.toObject();
             }
-        })
+            console.log('feel like error thrown... ')
+        },
     })
 }
+
