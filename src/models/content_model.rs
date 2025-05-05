@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::time::SystemTime;
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -117,11 +118,13 @@ impl Default for ContentFieldDataType {
 
 
 
-// region: impl surreal Value for content model structs
+// region:
+// impl surreal Value for content model structs
 
 
 
 // endregion: impl surreal Value for content model structs
+
 
 
 // region: impl surreal Object for content model structs
@@ -206,6 +209,24 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
     }
 }
 
+
+impl TryFrom<ContentFieldFieldContent> for Value {
+    type Error = Error;
+    fn try_from(val: ContentFieldFieldContent) -> Result<Value> {
+        let val_val: BTreeMap<String, Value> =
+            [("text_value".into(), val.text_value.into())].into();
+
+        Ok(val_val.into())
+    }
+}
+
+impl TryFrom<Object> for ContentFieldFieldContent {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ContentFieldFieldContent> {
+        let value = val.get("text_value").get_string()?;
+        Ok(ContentFieldFieldContent { text_value: Some(value) })
+    }
+}
 
 
 impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFieldFieldContent {
@@ -363,15 +384,26 @@ impl TryFrom<Object> for ContentFieldModel {
         let field_type_str = val.get("field_type").get_string()?;
         let field_type = match field_type_str.as_str() {
             "Text" => ContentFieldFieldType::Text,
-
             _ => ContentFieldFieldType::default(),
         };
 
         let field_content = match data_type_str.as_str() {
             "TEXT" => {
-                let string_value = val.get("field_content").get_string()?;
+                let text_content_field_content = match val.get("field_content") {
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
 
-                ContentFieldFieldContent { text_value: Some(string_value) }
+                        let option: ContentFieldFieldContent = object.try_into()?;
+
+                        option
+                    }
+                    None => ContentFieldFieldContent::default(),
+                };
+
+                text_content_field_content
             }
 
             _ => ContentFieldFieldContent::default(),

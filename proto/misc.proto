@@ -16,11 +16,16 @@ message HealthCheckRequest {}
 message HealthCheckResponse {
   bool status = 1;
 }
-
+message InstallDemoDataRequest{}
+message InstallDemoDataResponse{}
+message DeleteDemoDataRequest{}
+message DeleteDemoDataResponse{}
 
 
 service Misc {
   rpc Setup(SetupRequest) returns (SetupResponse);
 
   rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+  rpc InstallDemoData(InstallDemoDataRequest) returns (InstallDemoDataResponse);
+  rpc DeleteDemoData(DeleteDemoDataRequest) returns (DeleteDemoDataResponse);
 }

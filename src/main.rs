@@ -15,6 +15,7 @@ use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::auth_api::AuthApi;
+use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::handlers::asset::asset_table_api_handler::asset_table_api_handler;
@@ -26,6 +27,7 @@ use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handle
 use crate::api::misc_api::MiscApi;
 use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
 use crate::api::proto::auth::auth_server::AuthServer;
+use crate::api::proto::cms::cms_server::CmsServer;
 use crate::api::proto::content::content_server::ContentServer;
 use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::echo::test2_server::Test2Server;
@@ -98,6 +100,9 @@ async fn main() -> Result<(), Error>{
     let misc_api = MiscApi {state: state.clone()};
     let misc_server = MiscServer::new(misc_api);
 
+    let cms_api = CmsApi {state: state.clone()};
+    let cms_server = CmsServer::new(cms_api);
+
     let dashboard_api = DashboardApi {};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
 
@@ -121,6 +126,7 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(admin_user_server)
         .nest_tonic(content_server)
         .nest_tonic(setting_server)
+        .nest_tonic(cms_server)
         .layer(cors.clone());
 
 

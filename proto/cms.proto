@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package cms;
+
+import "google/protobuf/timestamp.proto";
+import "content.proto";
+
+
+
+message GetCmsContentRequest {
+  string content_id = 1;
+  string content_type = 2;
+}
+
+message GetCmsContentResponse {
+  bool status = 1;
+  content.ContentModel data = 2;
+}
+
+
+service Cms {
+  rpc GetCmsContent(GetCmsContentRequest) returns (GetCmsContentResponse);
+}

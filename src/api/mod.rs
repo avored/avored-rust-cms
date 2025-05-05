@@ -8,3 +8,5 @@ pub mod dashboard_api;
 pub mod admin_user_api;
 pub mod content_api;
 pub mod setting_api;
+
+pub mod cms_api;

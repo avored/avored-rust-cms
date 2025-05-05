@@ -20,6 +20,14 @@ pub struct HealthCheckResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct InstallDemoDataRequest {}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct InstallDemoDataResponse {}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DeleteDemoDataRequest {}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DeleteDemoDataResponse {}
 /// Generated client implementations.
 pub mod misc_client {
     #![allow(
@@ -150,6 +158,50 @@ pub mod misc_client {
             req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "HealthCheck"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn install_demo_data(
+            &mut self,
+            request: impl tonic::IntoRequest<super::InstallDemoDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::InstallDemoDataResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/misc.Misc/InstallDemoData",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "InstallDemoData"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn delete_demo_data(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteDemoDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteDemoDataResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/misc.Misc/DeleteDemoData");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "DeleteDemoData"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -174,6 +226,20 @@ pub mod misc_server {
             request: tonic::Request<super::HealthCheckRequest>,
         ) -> std::result::Result<
             tonic::Response<super::HealthCheckResponse>,
+            tonic::Status,
+        >;
+        async fn install_demo_data(
+            &self,
+            request: tonic::Request<super::InstallDemoDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::InstallDemoDataResponse>,
+            tonic::Status,
+        >;
+        async fn delete_demo_data(
+            &self,
+            request: tonic::Request<super::DeleteDemoDataRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteDemoDataResponse>,
             tonic::Status,
         >;
     }
@@ -324,6 +390,96 @@ pub mod misc_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = HealthCheckSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/misc.Misc/InstallDemoData" => {
+                    #[allow(non_camel_case_types)]
+                    struct InstallDemoDataSvc<T: Misc>(pub Arc<T>);
+                    impl<
+                        T: Misc,
+                    > tonic::server::UnaryService<super::InstallDemoDataRequest>
+                    for InstallDemoDataSvc<T> {
+                        type Response = super::InstallDemoDataResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::InstallDemoDataRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Misc>::install_demo_data(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = InstallDemoDataSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/misc.Misc/DeleteDemoData" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteDemoDataSvc<T: Misc>(pub Arc<T>);
+                    impl<
+                        T: Misc,
+                    > tonic::server::UnaryService<super::DeleteDemoDataRequest>
+                    for DeleteDemoDataSvc<T> {
+                        type Response = super::DeleteDemoDataResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteDemoDataRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Misc>::delete_demo_data(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteDemoDataSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

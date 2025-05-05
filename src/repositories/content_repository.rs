@@ -114,16 +114,11 @@ impl ContentRepository {
             let data_type_value: Value = match created_content_field.data_type {
                 ContentFieldDataType::Text(v) => v.into(),
             };
-            // 
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
             };
-            // 
-            let field_content_value: Value = match created_content_field.field_content {
-                ContentFieldFieldContent { text_value } => text_value.unwrap_or_default().into(),
-            };
-        
-        
+            let field_content_value: Value = created_content_field.field_content.try_into()?;
+            
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
                 ("identifier".into(), created_content_field.identifier.into()),
@@ -132,8 +127,6 @@ impl ContentRepository {
                 ("field_content".into(), field_content_value),
             ].into();
             
-            println!("TEST CONTENT FIELD DATA {:?}", content_field);
-        
             content_fields.push(content_field.into());
         }
 
@@ -193,9 +186,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Text => "Text".into(),
             
             };
-            let field_content_value: Value = match updatable_content_field.field_content {
-                ContentFieldFieldContent{ text_value } => text_value.unwrap_or_default().into(),
-            };
+            let field_content_value: Value = updatable_content_field.field_content.try_into()?;
         
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_content_field.name.into()),
@@ -266,24 +257,18 @@ impl ContentRepository {
         put_content_identifier_model: PutContentIdentifierModel,
     ) -> Result<ContentModel> {
         let sql = "UPDATE type::thing($table, $id)
-                    SET
-                        identifier = $identifier,
-                        updated_at = $updated_at,
-                        updated_by = $updated_by
-                    ;
+            SET
+                identifier = $identifier,
+                updated_at = $updated_at,
+                updated_by = $updated_by
+            ;
         ";
 
         let vars: BTreeMap<String, Value> = [
-            (
-                "identifier".into(),
-                put_content_identifier_model.identifier.into(),
-            ),
+            ("identifier".into(), put_content_identifier_model.identifier.into()),
             ("table".into(), put_content_identifier_model.content_type.into()),
             ("updated_at".into(), Datetime::default().into()),
-            (
-                "updated_by".into(),
-                put_content_identifier_model.logged_in_username.into(),
-            ),
+            ("updated_by".into(), put_content_identifier_model.logged_in_username.into()),
             ("id".into(), put_content_identifier_model.id.into()),
         ]
             .into();

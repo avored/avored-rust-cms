@@ -4,6 +4,7 @@ use crate::api::proto::admin_user::admin_user_server::AdminUser;
 use crate::api::proto::admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleOptionRequest, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
+use crate::models::role_model::CreatableRole;
 use crate::models::token_claim_model::TokenClaims;
 
 pub struct AdminUserApi {
@@ -173,12 +174,19 @@ impl AdminUser for AdminUserApi {
     {
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
+
+        let created_role_request = CreatableRole {
+            name: req.name,
+            identifier: req.identifier,
+            logged_in_username: claims.email,
+            permissions: req.permissions,
+        };
+        
         match self.
             state.
             admin_user_service.
             store_role(
-                req,
-                claims.email,
+                created_role_request,
                 &self.state.db
             ).await {
             Ok(reply) => {

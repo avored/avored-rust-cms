@@ -107,7 +107,7 @@ impl AdminUserService {
         let password_hash = self
             .get_password_hash_from_raw_password(&req.password, password_salt)?;
 
-        let mut created_admin_user_request = CreatableAdminUserModel {
+        let mut created_admin_user_model = CreatableAdminUserModel {
             full_name: req.full_name,
             email: req.email,
             password: password_hash,
@@ -122,7 +122,7 @@ impl AdminUserService {
 
             tokio::fs::write(full_path, &req.profile_image_content).await?;
 
-            created_admin_user_request.profile_image = profile_image;
+            created_admin_user_model.profile_image = profile_image;
         }
 
         let admin_user_model = self
@@ -130,7 +130,7 @@ impl AdminUserService {
             .create_admin_user(
                 datastore,
                 database_session,
-                created_admin_user_request,
+                created_admin_user_model,
             )
             .await?;
 
@@ -344,17 +344,9 @@ impl AdminUserService {
 
     pub async fn store_role (
         &self,
-        req: StoreRoleRequest,
-        logged_in_username: String,
+        created_role_request: CreatableRole,
         (datastore, database_session): &DB,
     ) -> Result<StoreRoleResponse> {
-        
-        let created_role_request = CreatableRole {
-            name: req.name,
-            identifier: req.identifier,
-            logged_in_username,
-            permissions: req.permissions,
-        };
 
        
         let admin_user_model = self

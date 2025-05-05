@@ -1,10 +1,9 @@
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useContactUsForm} from "./hooks/useContactUsForm";
 import {useForm} from "react-hook-form";
 import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema";
 import {ContactUsType} from "../../types/ContactUsType";
-import {PageFieldType} from "../../types/CmsPageType";
 import {GetElementValue} from "../../lib/page";
+import {PageFieldType} from "../../types/CmsPageType";
 
 type ContactUsComponentProps = {
     page_fields: PageFieldType[]
@@ -13,20 +12,23 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
     const {
         register,
         handleSubmit,
-        // formState: {}
+        formState: {}
     } = useForm<ContactUsType>({
         resolver: joiResolver(useContactUsFormSchema()),
     })
-    const {mutate, data: ContactUsMutateResponse, isPending} = useContactUsForm();
+    // const {mutate, data: ContactUsMutateResponse, isPending} = useContactUsForm();
+    const ContactUsMutateResponse: any = {}
+    const isPending = false
+
     const submitHandler = async (data:  ContactUsType) => {
-       mutate(data)
+       // mutate(data)
     }
 
     return (
         <div className="mt-10 px-5">
             <hr/>
             <div>
-                {(ContactUsMutateResponse?.data.status === true) ? (
+                {(ContactUsMutateResponse?.data?.status === true) ? (
                     <div
                         className="mt-5 bg-primary-100 border border-primary-200 text-sm text-primary-800 rounded-lg p-4"
                         role="alert">
