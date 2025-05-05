@@ -109,7 +109,7 @@ impl Misc for MiscApi {
                     identifier: 'rate-us-number',
                     data_type: 'TEXT',
                     field_type: 'TEXT',
-                    field_content: { text_value: '85' }
+                    field_content: { text_value: '104' }
                 },
                 {
                     name: 'rate us title',
@@ -130,7 +130,7 @@ impl Misc for MiscApi {
                     identifier: 'commit-number',
                     data_type: 'TEXT',
                     field_type: 'TEXT',
-                    field_content: { text_value: '856' }
+                    field_content: { text_value: '991' }
                 },
                 {
                     name: 'commit title',
