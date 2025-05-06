@@ -12,7 +12,7 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
     const {
         register,
         handleSubmit,
-        formState: {}
+        // formState: {}
     } = useForm<ContactUsType>({
         resolver: joiResolver(useContactUsFormSchema()),
     })
