@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-22.04
     defaults:
           run:
-            working-directory: 'react-front'
+            working-directory: 'ts-grpc-react-front'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
