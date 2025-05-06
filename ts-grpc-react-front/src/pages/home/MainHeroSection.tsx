@@ -24,6 +24,7 @@ const MainHeroSection = ((props: PageFieldsProps) => {
                     <a
                       href={GetElementValue(props.content_fields, 'get-started-button-url')}
                       target="_blank"
+                      rel="noreferrer"
                       className="w-full flex items-center justify-center bg-gradient-to-b from-primary-700 via-primary-600 to-primary-700 hover:bg-gradient-to-t hover:from-primary-800 hover:via-primary-700 hober:to-primary-700 px-8 py-3 border border-transparent text-base leading-6 font-medium rounded-md text-white bg-primary-600 hover:bg-primary-500 hover:text-white focus:outline-none focus:shadow-outline transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                     >
                         {GetElementValue(props.content_fields, 'get-started-button-title')}
@@ -33,6 +34,7 @@ const MainHeroSection = ((props: PageFieldsProps) => {
                     <a
                       href={`${GetElementValue(props.content_fields, "demo-button-url")}`}
                       target="_blank"
+                      rel="noreferrer"
                       className="w-full flex items-center justify-center px-8 py-3 border bg-gradient-to-b from-gray-400 via-gray-300 to-gray-400 hover:bg-gradient-to-t hover:from-gray-300 hover:via-gray-400 hober:to-gray-300 border-transparent text-base leading-6 font-medium rounded-md text-white-700 bg-primary-100 hover:text-gray-700 hover:bg-primary-50 focus:outline-none focus:shadow-outline focus:border-primary-300 transition duration-150 ease-in-out md:py-4 md:text-lg md:px-10"
                     >
                         {GetElementValue(props.content_fields, 'demo-button-title')}
