@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::cms::cms_server::Cms;
-use crate::api::proto::cms::{GetCmsContentRequest, GetCmsContentResponse};
+use crate::api::proto::cms::{GetCmsContentRequest, GetCmsContentResponse, SentContactFormRequest, SentContactFormResponse};
 use crate::avored_state::AvoRedState;
 
 pub struct CmsApi {
@@ -27,6 +27,23 @@ impl Cms for CmsApi {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => Err(Status::internal(e.to_string()))
         }
+    }
+    
+    async fn sent_contact_form(
+        &self,
+        request: Request<SentContactFormRequest>
+    ) -> Result<Response<SentContactFormResponse>, Status> {
+        let req = request.into_inner();
 
+        match self.
+            state.
+            cms_service.
+            sent_contact_form(
+                &self.state.template,
+                req
+            ).await {
+            Ok(reply) => Ok(Response::new(reply)),
+            Err(e) => Err(Status::internal(e.to_string()))
+        }   
     }
 }

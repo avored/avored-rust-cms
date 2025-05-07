@@ -4,6 +4,8 @@ import {useContactUsFormSchema} from "./schemas/useContactUsFormSchema";
 import {ContactUsType} from "../../types/ContactUsType";
 import {GetElementValue} from "../../lib/page";
 import {ContentFieldType} from "../../types/CmsPageType";
+import {useContactUsForm} from "./hooks/useContactUsForm";
+import {SentContactFormRequest} from "../../grpc_generated/cms_pb";
 
 type ContactUsComponentProps = {
     content_fields: ContentFieldType[]
@@ -16,25 +18,32 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
     } = useForm<ContactUsType>({
         resolver: joiResolver(useContactUsFormSchema()),
     })
-    // const {mutate, data: ContactUsMutateResponse, isPending} = useContactUsForm();
-    const ContactUsMutateResponse: any = {}
-    const isPending = false
+    const {mutate, data: ContactUsMutateResponse, isPending} = useContactUsForm();
 
-    const submitHandler = async (data:  ContactUsType) => {
-       // mutate(data)
+
+    const submitHandler = async (data: ContactUsType) => {
+        const request = new SentContactFormRequest();
+
+        request.setFirstName(data.first_name)
+        request.setLastName(data.last_name)
+        request.setEmail(data.email)
+        request.setPhone(data.phone)
+        request.setMessage(data.message)
+
+        mutate(request)
     }
 
     return (
         <div className="mt-10 px-5">
             <hr/>
             <div>
-                {(ContactUsMutateResponse?.data?.status === true) ? (
+                {(ContactUsMutateResponse?.getStatus() === true) ? (
                     <div
                         className="mt-5 bg-primary-100 border border-primary-200 text-sm text-primary-800 rounded-lg p-4"
                         role="alert">
                         <span className="font-bold">Success</span>
                         <span className="ml-3">
-                            {ContactUsMutateResponse?.data.data.message}
+                            Contact form submitted successfully. We will get back to you soon.
                         </span>
                     </div>
                 ) : ''}
@@ -45,7 +54,7 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
                     Contact us
                 </div>
                 <div className="md:flex flex-row pt-10">
-                <div className="md:w-1/2 w-full pr-5">
+                    <div className="md:w-1/2 w-full pr-5">
                         <div className="text-xl mb-3">
                             {GetElementValue(props.content_fields, 'contact-us-title')}
                         </div>
@@ -61,66 +70,65 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
                         </div>
                         <form method="post" onSubmit={handleSubmit(submitHandler)}>
                             <div className="contact-form">
-                                <div className="rounded-md shadow-sm">
-                                    <div className="flex mt-3">
-                                        <div className="w-1/2 pr-3">
+
+                                    <div className="md:flex block mt-3">
+                                        <div className="md:w-1/2 w-full md:pr-3">
                                             <input
                                                 aria-label="First Name"
                                                 {...register('first_name')}
                                                 type="text"
                                                 required
-                                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
+                                                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
                                                 placeholder="First Name"
                                             />
                                         </div>
-                                        <div className="w-1/2 pl-3">
+                                        <div className="md:w-1/2 mt-3 md:mt-0 w-full md:pl-3">
                                             <input
                                                 aria-label="Last Name"
                                                 {...register('last_name')}
                                                 type="text"
-                                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
+                                                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
                                                 placeholder="Last Name"
                                             />
                                         </div>
                                     </div>
-                                    <div className="flex mt-3">
-                                        <div className="w-1/2 pr-3">
+                                    <div className="md:flex block mt-3">
+                                        <div className="md:w-1/2 w-full mt-3 md:pr-3">
                                             <input
                                                 aria-label="Email address"
                                                 {...register('email')}
                                                 type="email"
                                                 required
-                                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
+                                                className="appearance-none  relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
                                                 placeholder="Email address"
                                             />
                                         </div>
-                                        <div className="w-1/2 pl-3">
+                                        <div className="md:w-1/2 w-full mt-3 md:pl-3">
                                             <input
                                                 aria-label="Phone"
                                                 {...register('phone')}
                                                 name="phone"
                                                 type="text"
-                                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
+                                                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
                                                 placeholder="Phone"
                                             />
                                         </div>
                                     </div>
                                     <div className="mt-3">
-                  <textarea
-                      {...register('message')}
-                      placeholder="Your Message"
-                      className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
-                  ></textarea>
+                                      <textarea
+                                          {...register('message')}
+                                          placeholder="Your Message"
+                                          className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded focus:outline-none focus:shadow-outline-primary focus:border-primary-300 focus:z-10 sm:text-sm sm:leading-5"
+                                      ></textarea>
                                     </div>
                                     <div className="mt-6">
                                         <button
                                             type="submit"
-                                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:border-primary-700 focus:shadow-outline-primary active:bg-primary-700"
+                                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded text-white bg-primary-600 hover:bg-primary-500 focus:outline-none focus:border-primary-700 focus:shadow-outline-primary active:bg-primary-700"
                                         >
                                             {isPending ? 'Sending' : 'SENT'}
                                         </button>
                                     </div>
-                                </div>
                             </div>
                         </form>
                     </div>

@@ -82,5 +82,48 @@ export class CmsClient {
     this.methodDescriptorGetCmsContent);
   }
 
+  methodDescriptorSentContactForm = new grpcWeb.MethodDescriptor(
+    '/cms.Cms/SentContactForm',
+    grpcWeb.MethodType.UNARY,
+    cms_pb.SentContactFormRequest,
+    cms_pb.SentContactFormResponse,
+    (request: cms_pb.SentContactFormRequest) => {
+      return request.serializeBinary();
+    },
+    cms_pb.SentContactFormResponse.deserializeBinary
+  );
+
+  sentContactForm(
+    request: cms_pb.SentContactFormRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<cms_pb.SentContactFormResponse>;
+
+  sentContactForm(
+    request: cms_pb.SentContactFormRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: cms_pb.SentContactFormResponse) => void): grpcWeb.ClientReadableStream<cms_pb.SentContactFormResponse>;
+
+  sentContactForm(
+    request: cms_pb.SentContactFormRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: cms_pb.SentContactFormResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/cms.Cms/SentContactForm',
+        request,
+        metadata || {},
+        this.methodDescriptorSentContactForm,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/cms.Cms/SentContactForm',
+    request,
+    metadata || {},
+    this.methodDescriptorSentContactForm);
+  }
+
 }
 

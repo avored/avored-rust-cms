@@ -14,7 +14,19 @@ message GetCmsContentResponse {
   content.ContentModel data = 2;
 }
 
+message SentContactFormRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+  string phone = 4;
+  string message = 5;
+}
+
+message SentContactFormResponse {
+  bool status = 1;
+}
 
 service Cms {
   rpc GetCmsContent(GetCmsContentRequest) returns (GetCmsContentResponse);
+  rpc SentContactForm(SentContactFormRequest) returns (SentContactFormResponse);
 }

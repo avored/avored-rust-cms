@@ -13,6 +13,24 @@ pub struct GetCmsContentResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<super::content::ContentModel>,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct SentContactFormRequest {
+    #[prost(string, tag = "1")]
+    pub first_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub last_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub email: ::prost::alloc::string::String,
+    #[prost(string, tag = "4")]
+    pub phone: ::prost::alloc::string::String,
+    #[prost(string, tag = "5")]
+    pub message: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct SentContactFormResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+}
 /// Generated client implementations.
 pub mod cms_client {
     #![allow(
@@ -125,6 +143,27 @@ pub mod cms_client {
             req.extensions_mut().insert(GrpcMethod::new("cms.Cms", "GetCmsContent"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn sent_contact_form(
+            &mut self,
+            request: impl tonic::IntoRequest<super::SentContactFormRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SentContactFormResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/cms.Cms/SentContactForm");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("cms.Cms", "SentContactForm"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -145,6 +184,13 @@ pub mod cms_server {
             request: tonic::Request<super::GetCmsContentRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetCmsContentResponse>,
+            tonic::Status,
+        >;
+        async fn sent_contact_form(
+            &self,
+            request: tonic::Request<super::SentContactFormRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::SentContactFormResponse>,
             tonic::Status,
         >;
     }
@@ -252,6 +298,51 @@ pub mod cms_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetCmsContentSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/cms.Cms/SentContactForm" => {
+                    #[allow(non_camel_case_types)]
+                    struct SentContactFormSvc<T: Cms>(pub Arc<T>);
+                    impl<
+                        T: Cms,
+                    > tonic::server::UnaryService<super::SentContactFormRequest>
+                    for SentContactFormSvc<T> {
+                        type Response = super::SentContactFormResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::SentContactFormRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Cms>::sent_contact_form(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = SentContactFormSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

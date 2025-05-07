@@ -49,3 +49,55 @@ export namespace GetCmsContentResponse {
   }
 }
 
+export class SentContactFormRequest extends jspb.Message {
+  getFirstName(): string;
+  setFirstName(value: string): SentContactFormRequest;
+
+  getLastName(): string;
+  setLastName(value: string): SentContactFormRequest;
+
+  getEmail(): string;
+  setEmail(value: string): SentContactFormRequest;
+
+  getPhone(): string;
+  setPhone(value: string): SentContactFormRequest;
+
+  getMessage(): string;
+  setMessage(value: string): SentContactFormRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SentContactFormRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: SentContactFormRequest): SentContactFormRequest.AsObject;
+  static serializeBinaryToWriter(message: SentContactFormRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SentContactFormRequest;
+  static deserializeBinaryFromReader(message: SentContactFormRequest, reader: jspb.BinaryReader): SentContactFormRequest;
+}
+
+export namespace SentContactFormRequest {
+  export type AsObject = {
+    firstName: string,
+    lastName: string,
+    email: string,
+    phone: string,
+    message: string,
+  }
+}
+
+export class SentContactFormResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): SentContactFormResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): SentContactFormResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: SentContactFormResponse): SentContactFormResponse.AsObject;
+  static serializeBinaryToWriter(message: SentContactFormResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): SentContactFormResponse;
+  static deserializeBinaryFromReader(message: SentContactFormResponse, reader: jspb.BinaryReader): SentContactFormResponse;
+}
+
+export namespace SentContactFormResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+
