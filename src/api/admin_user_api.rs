@@ -45,6 +45,16 @@ impl AdminUser for AdminUserApi {
     {
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
+
+        println!("->> {:<12} - store_admin_user", "gRPC_Admin_User_Api_Service");
+        
+
+        let (valid, error_messages) = req.validate(&self.state).await?;
+
+        if !valid {
+            return Err(Status::invalid_argument(error_messages))
+        }
+        
         match self.
             state.
             admin_user_service.

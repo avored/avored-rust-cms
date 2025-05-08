@@ -11,6 +11,7 @@ use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPagin
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::error::Error;
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
+use crate::models::ModelCount;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
@@ -802,15 +803,15 @@ impl AdminUserService {
         Ok(password_hash)
     }
     //
-    // pub async fn count_of_email(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     email: String,
-    // ) -> Result<ModelCount> {
-    //     self.admin_user_repository
-    //         .count_of_email(datastore, database_session, email)
-    //         .await
-    // }
+    pub async fn count_of_email(
+        &self,
+        (datastore, database_session): &DB,
+        email: String,
+    ) -> Result<ModelCount> {
+        self.admin_user_repository
+            .count_of_email(datastore, database_session, email)
+            .await
+    }
     //
     // pub async fn reset_password(
     //     &self,

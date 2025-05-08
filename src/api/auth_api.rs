@@ -14,7 +14,7 @@ pub struct AuthApi {
 impl Auth for AuthApi {
     async fn login(&self, request: Request<LoginRequest>) -> Result<Response<LoginResponse>, Status> {
 
-        println!("request: {:?}", request);
+        println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
         let req = request.into_inner();
 
 
