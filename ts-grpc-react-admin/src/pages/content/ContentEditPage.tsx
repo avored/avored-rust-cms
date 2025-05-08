@@ -52,8 +52,8 @@ export const ContentEditPage = () => {
 
     const content_content_field_list = get_content_api_response?.data?.data?.contentFieldsList ?? [];
     if (values) {
+        values.content_fields = [];
         content_content_field_list.map(content_field => {
-            values.content_fields = [];
             const grpc_content_field: ContentFieldType =  {
                 name: content_field.name,
                 identifier: content_field.identifier,
@@ -69,6 +69,8 @@ export const ContentEditPage = () => {
             return grpc_content_field
         })
     }
+
+    console.log(values)
 
 
     const {
