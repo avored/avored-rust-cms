@@ -1,10 +1,10 @@
 use email_address::EmailAddress;
 use rust_i18n::t;
-use crate::api::proto::admin_user::StoreAdminUserRequest;
+use crate::api::proto::auth::ResetPasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
-impl StoreAdminUserRequest {
+impl ResetPasswordRequest {
     pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<(bool, String)> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
@@ -28,22 +28,6 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        let admin_user_model = state
-            .admin_user_service
-            .count_of_email(&state.db, self.email.clone())
-            .await?;
-
-        if admin_user_model.total > 0 {
-            let error_message = ErrorMessage {
-                key: String::from("email"),
-                message: t!("validation_count", attribute = t!("email")).to_string(),
-            };
-        
-            errors.push(error_message);
-        }
-
-        // if profile photo exist then certain type of photo is only allowed
-
         if self.password.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("password"),
@@ -63,9 +47,27 @@ impl StoreAdminUserRequest {
             valid = false;
             errors.push(error_message);
         }
+        
+        let validated_token_result = state
+            .auth_service
+            .validate_token(
+                &self.token,
+                &self.email,
+                &state.db,
+            ).await?;
+
+        if !validated_token_result {
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: t!("not_valid_password_reset_token").to_string(),
+            };
+
+            valid = false;
+            errors.push(error_message);
+        }
 
         let error_response = ErrorResponse {
-            status: valid,
+            status: false,
             errors,
         };
 

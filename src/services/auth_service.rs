@@ -183,6 +183,43 @@ impl AuthService {
         Ok(res)
     }
 
+    pub(crate) async fn expire_token(
+        &self,
+        token: &str,
+        email: &str,
+        (datastore, database_session): &DB,
+    ) -> Result<bool>{
+        match self
+            .password_reset_repository
+            .expire_password_token_by_email_and_token(
+                datastore,
+                database_session,
+                email,
+                token,
+            ).await {
+            Ok(_model) => Ok(true),
+            Err(_) => Ok(false)
+        }
+    }
+    pub(crate) async fn validate_token(
+        &self,
+        token: &str,
+        email: &str,
+        (datastore, database_session): &DB,
+    ) -> Result<bool>{
+        match self
+            .password_reset_repository
+            .get_password_reset_by_email_and_token(
+                datastore,
+                database_session,
+                email,
+                token,
+            ).await {
+            Ok(_model) => Ok(true),
+            Err(_) => Ok(false)
+        }
+    }
+
 }
 
 impl AuthService {

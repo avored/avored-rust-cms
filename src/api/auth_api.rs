@@ -53,9 +53,16 @@ impl Auth for AuthApi {
         &self, 
         request: Request<ForgotPasswordRequest>
     ) -> Result<Response<ForgotPasswordResponse>, Status> {
+        println!("->> {:<12} - forgot_password", "GRPC_Auth_API_SERVICE");
+        
         let req = request.into_inner();
         
-        
+        let (valid, error_messages) = req.validate(&self.state).await?;
+
+        if !valid {
+            return Err(Status::invalid_argument(error_messages))
+        }
+
         match self.
             state.
             auth_service.
@@ -65,14 +72,7 @@ impl Auth for AuthApi {
                 &self.state.config.react_admin_app_url,
                 &req.email,
             ).await {
-            Ok(reply) => {
-                let res = Response::new(reply);
-                // let meta_data = res.metadata();
-                // meta_data.get_all()
-                // res.metadata.into_headers()
-
-                Ok(res)
-            },
+            Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
                 TonicError(status) => Err(status),
                 _ => Err(Status::internal(e.to_string()))
@@ -84,7 +84,15 @@ impl Auth for AuthApi {
         &self,
         request: Request<ResetPasswordRequest>
     ) -> Result<Response<ResetPasswordResponse>, Status> {
+        println!("->> {:<12} - reset_password", "GRPC_Auth_API_SERVICE");
+
         let req = request.into_inner();
+
+        let (valid, error_messages) = req.validate(&self.state).await?;
+
+        if !valid {
+            return Err(Status::invalid_argument(error_messages))
+        }
         
         let password_hash = 
             self.
@@ -100,13 +108,25 @@ impl Auth for AuthApi {
             auth_service.
             reset_password(
                 &self.state.db,
-                req.email,
+                req.email.clone(),
                 password_hash
             ).await {
             Ok(reply) => {
-                let res = Response::new(reply);
+                // Improve this service call
                 
-                Ok(res)
+                let expire_token = self
+                    .state
+                    .auth_service
+                    .expire_token(&req.token, &req.email, &self.state.db)
+                    .await?;
+                if expire_token {
+                    let res = Response::new(reply);
+
+                    return Ok(res)   
+                }
+
+                Err(Status::internal("there is an issue with token".to_string()))
+                
             },
             Err(e) => match e {
                 TonicError(status) => Err(status),
