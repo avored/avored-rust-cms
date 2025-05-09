@@ -48,8 +48,8 @@ impl AvoRedState {
 
 
         let misc_service = MiscService::new().await?;
-        let auth_service = AuthService::new(admin_user_repository.clone(), password_reset_repository.clone()).await?;
-        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository, password_reset_repository)?;
+        let auth_service = AuthService::new(admin_user_repository.clone(), password_reset_repository).await?;
+        let admin_user_service = AdminUserService::new(admin_user_repository, role_repository)?;
         let content_service = ContentService::new(content_repository.clone(), collection_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;

@@ -9,7 +9,7 @@ use crate::api::handlers::asset::request::asset_table_request::AssetTableRequest
 
 pub async fn asset_table_api_handler(
     state: State<Arc<AvoRedState>>,
-    Extension(logged_in_user): Extension<LoggedInUser>,
+    Extension(_logged_in_user): Extension<LoggedInUser>,
     Query(query_param): Query<AssetTableRequest>,
 ) -> Result<Json<AssetPagination>> {
     println!("->> {:<12} - asset_table_api_handler", "HANDLER");

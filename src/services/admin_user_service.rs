@@ -1,27 +1,19 @@
 use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::admin_user_repository::AdminUserRepository, PER_PAGE};
-use lettre::message::{header, MultiPart, SinglePart};
-use lettre::{AsyncTransport, Message};
 use std::path::Path;
-use rand::distr::Alphanumeric;
-use rand::Rng;
-use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
+use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
 use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
-use crate::error::Error;
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 use crate::models::ModelCount;
-use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
-use crate::providers::avored_template_provider::AvoRedTemplateProvider;
-use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
     role_repository: RoleRepository,
-    password_reset_repository: PasswordResetRepository,
+    // password_reset_repository: PasswordResetRepository,
 }
 
 impl AdminUserService {
@@ -29,12 +21,12 @@ impl AdminUserService {
     pub fn new(
         admin_user_repository: AdminUserRepository,
         role_repository: RoleRepository,
-        password_reset_repository: PasswordResetRepository,
+        // password_reset_repository: PasswordResetRepository,
     ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
             role_repository,
-            password_reset_repository,
+            // password_reset_repository,
         })
     }
 
@@ -460,71 +452,71 @@ impl AdminUserService {
     }
 
 
-    pub async fn sent_forgot_password_email (
-        &self,
-        (datastore, database_session): &DB,
-        template: &AvoRedTemplateProvider,
-        react_admin_url: &str,
-        to_address: &str,
-    ) -> Result<bool> {
-    
-        let admin_user_model = self
-            .admin_user_repository
-            .find_by_email(datastore, database_session, to_address)
-            .await?;
-    
-        let from_address = String::from("info@avored.com");
-        let email_subject = "Forgot your password?";
-        let token = rand::rng()
-            .sample_iter(&Alphanumeric)
-            .take(22)
-            .map(char::from)
-            .collect();
-    
-        let creatable_password_reset_model = CreatablePasswordResetModel {
-            email: admin_user_model.email,
-            token,
-        };
-    
-        //@todo before creating a token make sure expire any past token that could have been generated?
-    
-        let password_reset_model = self
-            .password_reset_repository
-            .create_password_reset(datastore, database_session, creatable_password_reset_model)
-            .await?;
-    
-        let link = format!(
-            "{react_admin_url}/admin/reset-password/{}",
-            password_reset_model.token
-        );
-        let data = ForgotPasswordViewModel { link };
-    
-        let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
-    
-        let email = Message::builder()
-            .from(from_address.parse()?)
-            .to(to_address.parse()?)
-            .subject(email_subject)
-            .multipart(
-                MultiPart::alternative()
-                    // .singlepart(
-                    //     SinglePart::builder()
-                    //         .header(header::ContentType::TEXT_PLAIN)
-                    //         .body(String::from("Hello from Lettre! A mailer library for Rust")), // Every message should have a plain text fallback.
-                    // )
-                    .singlepart(
-                        SinglePart::builder()
-                            .header(header::ContentType::TEXT_HTML)
-                            .body(forgot_password_email_content),
-                    ),
-            )?;
-    
-        // Send the email
-        match template.mailer.send(email).await {
-            Ok(_) => Ok(true),
-            Err(_) => Err(Error::Generic(String::from("error while sending an email"))),
-        }
-    }
+    // pub async fn sent_forgot_password_email (
+    //     &self,
+    //     (datastore, database_session): &DB,
+    //     template: &AvoRedTemplateProvider,
+    //     react_admin_url: &str,
+    //     to_address: &str,
+    // ) -> Result<bool> {
+    //
+    //     let admin_user_model = self
+    //         .admin_user_repository
+    //         .find_by_email(datastore, database_session, to_address)
+    //         .await?;
+    //
+    //     let from_address = String::from("info@avored.com");
+    //     let email_subject = "Forgot your password?";
+    //     let token = rand::rng()
+    //         .sample_iter(&Alphanumeric)
+    //         .take(22)
+    //         .map(char::from)
+    //         .collect();
+    //
+    //     let creatable_password_reset_model = CreatablePasswordResetModel {
+    //         email: admin_user_model.email,
+    //         token,
+    //     };
+    //
+    //     //@todo before creating a token make sure expire any past token that could have been generated?
+    //
+    //     let password_reset_model = self
+    //         .password_reset_repository
+    //         .create_password_reset(datastore, database_session, creatable_password_reset_model)
+    //         .await?;
+    //
+    //     let link = format!(
+    //         "{react_admin_url}/admin/reset-password/{}",
+    //         password_reset_model.token
+    //     );
+    //     let data = ForgotPasswordViewModel { link };
+    //
+    //     let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
+    //
+    //     let email = Message::builder()
+    //         .from(from_address.parse()?)
+    //         .to(to_address.parse()?)
+    //         .subject(email_subject)
+    //         .multipart(
+    //             MultiPart::alternative()
+    //                 // .singlepart(
+    //                 //     SinglePart::builder()
+    //                 //         .header(header::ContentType::TEXT_PLAIN)
+    //                 //         .body(String::from("Hello from Lettre! A mailer library for Rust")), // Every message should have a plain text fallback.
+    //                 // )
+    //                 .singlepart(
+    //                     SinglePart::builder()
+    //                         .header(header::ContentType::TEXT_HTML)
+    //                         .body(forgot_password_email_content),
+    //                 ),
+    //         )?;
+    //
+    //     // Send the email
+    //     match template.mailer.send(email).await {
+    //         Ok(_) => Ok(true),
+    //         Err(_) => Err(Error::Generic(String::from("error while sending an email"))),
+    //     }
+    // }
     //
     // pub fn compare_password(
     //     &self,
@@ -812,6 +804,19 @@ impl AdminUserService {
             .count_of_email(datastore, database_session, email)
             .await
     }
+
+    pub async fn count_of_role_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: &str,
+    ) -> Result<ModelCount> {
+        self.role_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+    //count_of_identifier
+
     //
     // pub async fn reset_password(
     //     &self,

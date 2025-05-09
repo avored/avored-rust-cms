@@ -185,6 +185,15 @@ impl AdminUser for AdminUserApi {
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
 
+        println!("->> {:<12} - store_role", "gRPC_Admin_User_Api_Service");
+
+
+        let (valid, error_messages) = req.validate(&self.state).await?;
+
+        if !valid {
+            return Err(Status::invalid_argument(error_messages))
+        }
+
         let created_role_request = CreatableRole {
             name: req.name,
             identifier: req.identifier,
@@ -235,13 +244,23 @@ impl AdminUser for AdminUserApi {
         }
     }
 
-    async fn update_role (
+    async fn update_role(
         &self,
         request: Request<UpdateRoleRequest>
     ) -> Result<Response<UpdateRoleResponse>, Status>
     {
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
+
+        println!("->> {:<12} - update_role", "gRPC_Admin_User_Api_Service");
+
+
+        let (valid, error_messages) = req.validate()?;
+
+        if !valid {
+            return Err(Status::invalid_argument(error_messages))
+        }
+        
         match self.
             state.
             admin_user_service.

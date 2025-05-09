@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use email_address::EmailAddress;
 use rust_i18n::t;
 use crate::api::proto::admin_user::StoreAdminUserRequest;
@@ -66,7 +65,7 @@ impl StoreAdminUserRequest {
         }
 
         let error_response = ErrorResponse {
-            status: false,
+            status: valid,
             errors,
         };
 

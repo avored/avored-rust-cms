@@ -2,7 +2,6 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use std::time::Duration;
 use axum::http::{HeaderName, HeaderValue};
 use axum::response::Html;
 use axum::Router;
@@ -69,7 +68,7 @@ async fn main() -> Result<(), Error>{
         origins.push(HeaderValue::from_str(origin).unwrap());
     }
 
-    const DEFAULT_MAX_AGE: Duration = Duration::from_secs(24 * 60 * 60);
+    // const DEFAULT_MAX_AGE: Duration = Duration::from_secs(24 * 60 * 60);
     const DEFAULT_EXPOSED_HEADERS: [&str; 3] =
         ["grpc-status", "grpc-message", "grpc-status-details-bin"];
     const DEFAULT_ALLOW_HEADERS: [&str; 5] =

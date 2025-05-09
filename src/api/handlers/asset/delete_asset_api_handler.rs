@@ -10,7 +10,7 @@ use tokio::fs;
 
 pub async fn delete_asset_api_handler(
     Path(asset_id): Path<String>,
-    Extension(logged_in_user): Extension<LoggedInUser>,
+    Extension(_logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
 ) -> Result<impl IntoResponse> {
     println!("->> {:<12} - delete_asset_api_handler", "HANDLER");

@@ -54,26 +54,26 @@ impl RoleRepository {
         Ok(role_list)
     }
 
-    // pub async fn count_of_identifier(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     identifier: String,
-    // ) -> Result<ModelCount> {
-    //     let sql = "SELECT count(identifier=$identifier) FROM roles GROUP ALL";
-    //
-    //     let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    //
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let model_count: Result<ModelCount> = result_object?.try_into();
-    //
-    //     model_count
-    // }
+    pub async fn count_of_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: &str,
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count(identifier=$identifier) FROM roles GROUP ALL";
+    
+        let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+    
+        model_count
+    }
 
     pub async fn update_role_identifier(
         &self,
