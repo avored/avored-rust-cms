@@ -17,8 +17,20 @@ impl AdminUser for AdminUserApi {
         request: Request<AdminUserPaginateRequest>
     ) -> Result<Response<AdminUserPaginateResponse>, Status>
     {
+        println!("->> {:<12} - paginate_admin_user", "gRPC_Admin_User_Api_Service");
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
         let req = request.into_inner();
-
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("admin_user_table"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
+       
         match self.
             state.
             admin_user_service.

@@ -12,6 +12,7 @@ import {EditRoleType, PutRoleIdentifierType} from "../../types/admin_user/AdminU
 import {UseRolePutSchema} from "../../schemas/admin_user/UsePutRoleSchema";
 import {UseUpdateRoleHook} from "../../hooks/admin_user/UseUpdateRoleHook";
 import {UsePutRoleIdentifierHook} from "../../hooks/admin_user/UsePutRoleIdentifierHook";
+import ErrorMessage from "../../components/ErrorMessage";
 
 export const RoleEditPage = () => {
     const params = useParams();
@@ -23,7 +24,7 @@ export const RoleEditPage = () => {
     const req = new GetRoleRequest();
     req.setRoleId(params.role_id ?? '');
 
-    const {data} = UseGetRoleHook(req)
+    const {data, error} = UseGetRoleHook(req)
 
 
     const values: EditRoleType = data?.data as unknown as EditRoleType;
@@ -48,7 +49,7 @@ export const RoleEditPage = () => {
         control,
         register,
         handleSubmit,
-        // formState: {},
+        formState: {errors},
         setValue,
         getValues
     } = useForm<EditRoleType>({
@@ -122,7 +123,7 @@ export const RoleEditPage = () => {
                                 <Switch
                                     checked={permissionAllowed('setting')}
                                     onChange={(e) => switchOnChange(switchKey)}
-                                    id="dashboard_permission"
+                                    id={switchKey}
                                     className={`${
                                         permissionAllowed(switchKey)
                                             ? "bg-primary-500"
@@ -164,6 +165,7 @@ export const RoleEditPage = () => {
                                     register={register("name")}
                                     autoFocus={true}
                                 />
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
                             </div>
                             <div className="mb-4">
                                 <InputField

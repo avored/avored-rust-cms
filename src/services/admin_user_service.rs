@@ -532,26 +532,26 @@ impl AdminUserService {
     //         .is_ok())
     // }
     //
-    // pub async fn has_permission(
-    //     &self,
-    //     logged_in_user: LoggedInUser,
-    //     permission_identifier: String,
-    // ) -> Result<bool> {
-    //     if logged_in_user.admin_user_model.is_super_admin {
-    //         return Ok(true);
-    //     }
-    //     let mut has_permission = false;
-    //     for role in logged_in_user.admin_user_model.roles {
-    //         for permission in role.permissions {
-    //             if permission == permission_identifier {
-    //                 has_permission = true;
-    //             }
-    //         }
-    //     }
-    //
-    //     Ok(has_permission)
-    // }
-    //
+    pub async fn has_permission(
+        &self,
+        logged_in_user: crate::models::admin_user_model::AdminUserModel,
+        permission_identifier: String,
+    ) -> Result<bool> {
+        if logged_in_user.is_super_admin {
+            return Ok(true);
+        }
+        let mut has_permission = false;
+        for role in logged_in_user.roles {
+            for permission in role.permissions {
+                if permission == permission_identifier {
+                    has_permission = true;
+                }
+            }
+        }
+    
+        Ok(has_permission)
+    }
+    
     // pub async fn auth_admin_user(
     //     &self,
     //     (datastore, database_session): &DB,

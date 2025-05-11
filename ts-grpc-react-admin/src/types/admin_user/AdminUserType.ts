@@ -6,6 +6,7 @@ export type AdminUserType = {
     fullName: string;
     isSuperAdmin: boolean;
     profileImage: string;
+    rolesList: Array<RoleType>;
     createdAt: GrpcTimeStamp;
     updatedAt: GrpcTimeStamp;
     createdBy: string;
@@ -44,6 +45,7 @@ export type RoleType = {
     createdAt: GrpcTimeStamp;
     updatedAt: GrpcTimeStamp;
     permissions: Array<string>;
+    permissionsList: Array<string>;
     createdBy: string;
     updatedBy: string;
     action: string;

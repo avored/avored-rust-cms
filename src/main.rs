@@ -17,6 +17,7 @@ use crate::api::auth_api::AuthApi;
 use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
+use crate::api::general_api::GeneralApi;
 use crate::api::handlers::asset::asset_table_api_handler::asset_table_api_handler;
 use crate::api::handlers::asset::create_folder_api_handler::create_folder_api_handler;
 use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
@@ -30,6 +31,7 @@ use crate::api::proto::cms::cms_server::CmsServer;
 use crate::api::proto::content::content_server::ContentServer;
 use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::echo::test2_server::Test2Server;
+use crate::api::proto::general::general_service_server::GeneralServiceServer;
 use crate::api::proto::misc::misc_server::MiscServer;
 use crate::api::proto::setting::setting_server::SettingServer;
 use crate::api::setting_api::SettingApi;
@@ -117,6 +119,9 @@ async fn main() -> Result<(), Error>{
     let setting_api = SettingApi {state: state.clone()};
     let setting_server = SettingServer::with_interceptor(setting_api, check_auth);
     
+    let general_api = GeneralApi {state: state.clone()};
+    let general_server = GeneralServiceServer::with_interceptor(general_api, check_auth);
+    
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)
@@ -125,6 +130,7 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(admin_user_server)
         .nest_tonic(content_server)
         .nest_tonic(setting_server)
+        .nest_tonic(general_server)
         .nest_tonic(cms_server)
         .layer(cors.clone());
 

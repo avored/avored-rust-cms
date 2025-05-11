@@ -14,6 +14,7 @@ use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
 use crate::services::cms_service::CmsService;
 use crate::services::content_service::ContentService;
+use crate::services::general_service::GeneralService;
 use crate::services::misc_service::MiscService;
 use crate::services::setting_service::SettingService;
 
@@ -27,7 +28,8 @@ pub struct AvoRedState {
     pub content_service: ContentService,
     pub asset_service: AssetService,
     pub setting_service: SettingService,
-    pub cms_service: CmsService
+    pub cms_service: CmsService,
+    pub general_service: GeneralService
 }
 
 impl AvoRedState {
@@ -54,6 +56,7 @@ impl AvoRedState {
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;
         let cms_service = CmsService::new(content_repository)?;
+        let general_service = GeneralService::new()?;
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -66,6 +69,7 @@ impl AvoRedState {
             asset_service,
             setting_service,
             cms_service,
+            general_service,
         })
     }
 }

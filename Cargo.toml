@@ -17,15 +17,15 @@ argon2 = "0.5.3"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 jsonwebtoken = "9.3.1"
-chrono = { version = "0.4.39", features = [] }
+chrono = { version = "0.4.41", features = [] }
 email_address = "0.2.9"
-rust-i18n = "3.1.3"
-surrealdb = { version = "2.2.1", features = ["kv-rocksdb", "kv-mem"] }
-rand = "0.9.0"
+rust-i18n = "3.1.4"
+surrealdb = { version = "2.2.2", features = ["kv-rocksdb", "kv-mem"] }
+rand = "0.9.1"
 dotenvy = "0.15.7"
 tower-http = { version = "0.6.2", features = ["fs", "cors"] }
-lettre = { version = "0.11.11", features = ["tokio1-native-tls"] }
-handlebars = "6.3.1"
+lettre = { version = "0.11.15", features = ["tokio1-native-tls"] }
+handlebars = "6.3.2"
 
 
 [build-dependencies]
