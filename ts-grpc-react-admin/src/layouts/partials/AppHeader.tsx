@@ -11,7 +11,6 @@ import {Bars4Icon} from "@heroicons/react/24/solid";
 import {ThemeContext} from "../../context/ThemeContext";
 import {UseLoggedInUserHook} from "../../hooks/general/UseLoggedInUserHook";
 import {LoggedInUserRequest} from "../../grpc_generated/general_pb";
-import {AdminUserModel} from "../../grpc_generated/admin_user_pb";
 import {AdminUserType} from "../../types/admin_user/AdminUserType";
 
 function AppHeader() {

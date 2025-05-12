@@ -17,20 +17,20 @@ const HasPermission = (props: HasPermissionProps) => {
 
         const logged_in_user: AdminUserType = auth_user_model?.data?.data as unknown as AdminUserType;
 
-        console.log(logged_in_user)
+        // console.log(logged_in_user)
 
         if (logged_in_user?.isSuperAdmin) {
             return true
         }
         let has_permission: boolean = false
-        logged_in_user?.rolesList.map((role: RoleType) => {
-            role.permissionsList.map((permission: string) => {
+        logged_in_user?.rolesList.forEach((role: RoleType) => {
+            return role.permissionsList.forEach((permission: string) => {
                 if(permission === identifier) {
                     has_permission = true
                 }
             })
         })
-        console.log(has_permission, identifier)
+        // console.log(has_permission, identifier)
         return has_permission
     }
 
