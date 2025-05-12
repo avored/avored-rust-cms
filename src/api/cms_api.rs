@@ -14,6 +14,20 @@ impl Cms for CmsApi {
         &self, 
         request: Request<GetCmsContentRequest>
     ) -> Result<Response<GetCmsContentResponse>, Status> {
+
+        println!("->> {:<12} - get_cms_content", "gRPC_Cms_Api_Service");
+
+        // let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        // let logged_in_user = claims.admin_user_model;
+        // 
+        // let has_permission_bool = self.state
+        //     .admin_user_service
+        //     .has_permission(logged_in_user, String::from("get_cms_content"))
+        //     .await?;
+        // if !has_permission_bool {
+        //     let status = Status::permission_denied("You don't have permission to access this resource");
+        //     return Err(status);
+        // }
         
         let req = request.into_inner();
       

@@ -14,9 +14,23 @@ pub struct ContentApi {
 impl Content for ContentApi {
     async fn collection_all(
         &self, 
-        _request: Request<CollectionAllRequest>
+        request: Request<CollectionAllRequest>
     ) -> Result<Response<CollectionAllResponse>, Status> {
-      
+
+        println!("->> {:<12} - collection_all", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("content_paginate"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         match self.
             state.
             content_service.
@@ -37,6 +51,21 @@ impl Content for ContentApi {
         &self, 
         request: Request<ContentPaginateRequest>
     ) -> Result<Response<ContentPaginateResponse>, Status> {
+        
+        println!("->> {:<12} - content_paginate", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("content_paginate"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         let req = request.into_inner();
         match self.
             state.
@@ -59,14 +88,27 @@ impl Content for ContentApi {
         request: Request<StoreContentRequest>,
     ) -> Result<Response<StoreContentResponse>, Status> {
 
-        let claim = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        println!("->> {:<12} - store_content", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("store_content"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         let req = request.into_inner();
         match self.
             state.
             content_service.
             store_content(
                 req,
-                claim.email,
+                claims.email,
                 &self.state.db
             ).await {
             Ok(reply) => {
@@ -86,7 +128,20 @@ impl Content for ContentApi {
         request: Request<GetContentRequest>,
     ) -> Result<Response<GetContentResponse>, Status> {
 
-        // let claim = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        println!("->> {:<12} - get_content", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("get_content"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         let req = request.into_inner();
         match self.
             state.
@@ -112,7 +167,20 @@ impl Content for ContentApi {
         &self,
         request: Request<UpdateContentRequest>,
     ) -> Result<Response<UpdateContentResponse>, Status> {
-        let claim = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        println!("->> {:<12} - update_content", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("update_content"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         let req = request.into_inner();
         match self.
             state.
@@ -120,7 +188,7 @@ impl Content for ContentApi {
             update_content(
                 &self.state.db,
                 req,
-                claim.email,
+                claims.email,
             ).await {
 
             Ok(reply) => {
@@ -139,7 +207,20 @@ impl Content for ContentApi {
         &self,
         request: Request<PutContentIdentifierRequest>,
     ) -> Result<Response<PutContentIdentifierResponse>, Status> {
-        let claim = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        println!("->> {:<12} - put_content_identifier", "gRPC_Content_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("put_content_identifier"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         let req = request.into_inner();
         match self.
             state.
@@ -147,7 +228,7 @@ impl Content for ContentApi {
             put_content_identifier(
                 &self.state.db,
                 req,
-                claim.email,
+                claims.email,
             ).await {
 
             Ok(reply) => {

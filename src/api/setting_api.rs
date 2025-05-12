@@ -13,9 +13,22 @@ pub struct SettingApi {
 impl Setting for SettingApi {
     async fn get_setting(
         &self, 
-        _request: tonic::Request<GetSettingRequest>
+        request: tonic::Request<GetSettingRequest>
     ) -> Result<Response<GetSettingResponse>, tonic::Status> {
-        println!("->> {:<12} - get_setting", "GRPC_SERVICE");
+        println!("->> {:<12} - get_setting", "gRPC_Setting_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("get_setting"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
+        
         match self.
             state.
             setting_service.
@@ -31,7 +44,19 @@ impl Setting for SettingApi {
         &self,
         request: tonic::Request<StoreSettingRequest>
     ) -> Result<Response<StoreSettingResponse>, tonic::Status> {
-        println!("->> {:<12} - store_setting", "GRPC_SERVICE");
+        println!("->> {:<12} - store_setting", "gRPC_Setting_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let has_permission_bool = self.state
+            .admin_user_service
+            .has_permission(logged_in_user, String::from("store_setting"))
+            .await?;
+        if !has_permission_bool {
+            let status = Status::permission_denied("You don't have permission to access this resource");
+            return Err(status);
+        }
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let req = request.into_inner();
         match self.
