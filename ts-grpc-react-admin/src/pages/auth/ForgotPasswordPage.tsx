@@ -60,6 +60,7 @@ export const ForgotPasswordPage = () => {
 
                         <div>
                             <AvoRedButton
+                                onClick={handleSubmit}
                                 label={t("forgot_password")}
                                 isPending={isPending}
                                 className="bg-primary-600 hover:bg-primary-500  focus:ring-primary-500"

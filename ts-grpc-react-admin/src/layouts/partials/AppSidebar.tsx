@@ -22,7 +22,7 @@ function AppSidebar() {
                     <ul className="flex flex-col space-y-2">
                         <li className="text-sm text-gray-500 ">
                             <Link
-                                to={`/admin`}
+                                to={`/admin/dashboard`}
                                 className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700 "
                             >
                                 <div className="pr-2">

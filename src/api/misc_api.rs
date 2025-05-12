@@ -1,7 +1,5 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
@@ -9,7 +7,6 @@ use crate::api::proto::admin_user::StoreAdminUserRequest;
 use crate::api::proto::misc::{DeleteDemoDataRequest, DeleteDemoDataResponse, HealthCheckRequest, HealthCheckResponse, InstallDemoDataRequest, InstallDemoDataResponse, SetupRequest, SetupResponse};
 use crate::api::proto::misc::misc_server::Misc;
 use crate::avored_state::AvoRedState;
-use crate::models::admin_user_model::CreatableAdminUserModel;
 use crate::models::role_model::CreatableRole;
 
 pub struct MiscApi {
@@ -42,12 +39,10 @@ impl Misc for MiscApi {
     }
 
     async fn health_check(&self, _request: Request<HealthCheckRequest>) -> Result<Response<HealthCheckResponse>, Status> {
-        println!("request: {:?}", _request);
         let reply = HealthCheckResponse {
             status: true
         };
-
-        println!("response: {:?}", reply);
+        
         Ok(Response::new(reply))
     }
     
@@ -294,7 +289,7 @@ impl Misc for MiscApi {
         let demo_role = CreatableRole {
             name: "Demo visitor role".to_string(),
             identifier: "demo-visitor-role".to_string(),
-            logged_in_username: logged_in_user.clone().to_string(),
+            logged_in_username: logged_in_user.to_string(),
             permissions: vec![
                 String::from("dashboard"),
                 String::from("get_setting"),
@@ -310,7 +305,7 @@ impl Misc for MiscApi {
             ],
         };
 
-        let created_role_model = self
+        let _created_role_model = self
             .state
             .admin_user_service
             .store_role(demo_role, &self.state.db).await?;

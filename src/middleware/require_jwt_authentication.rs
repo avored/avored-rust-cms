@@ -54,7 +54,7 @@ pub async fn require_jwt_authentication(
                 status: false,
                 message: "You are not logged in, please provide token".to_string(),
             };
-            Err((StatusCode::UNAUTHORIZED, Json(json_error))) 
+            Err((StatusCode::BAD_REQUEST, Json(json_error))) 
         },
     }
     // let token = cookie_jar

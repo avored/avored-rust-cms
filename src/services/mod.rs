@@ -5,3 +5,4 @@ pub mod content_service;
 pub mod asset_service;
 pub mod setting_service;
 pub mod cms_service;
+pub mod general_service;

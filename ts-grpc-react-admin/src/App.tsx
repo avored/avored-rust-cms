@@ -18,6 +18,7 @@ import {AssetTablePage} from "./pages/asset/AssetTablePage";
 import {ForgotPasswordPage} from "./pages/auth/ForgotPasswordPage";
 import {ResetPasswordPage} from "./pages/auth/ResetPasswordPage";
 import {SettingPage} from "./pages/setting/SettingPage";
+import {LogoutPage} from "./pages/auth/LogoutPage";
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
 
                     <Route path="/admin/asset/:asset_id?" element={<AssetTablePage />} />
                     <Route path="/admin/setting"   element={<SettingPage />} />
+                    <Route path="/admin/logout" element={<LogoutPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -4,7 +4,7 @@ import ErrorMessage from "../../components/ErrorMessage";
 import {Link} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useAdminUserCreateSchema} from "../../schemas/admin_user/UseAdminUserCreateSchema";
+import {UseAdminUserCreateSchema} from "../../schemas/admin_user/UseAdminUserCreateSchema";
 import {UseStoreAdminUserHook} from "../../hooks/admin_user/UseStoreAdminUserHook";
 import {CreateAdminUserType} from "../../types/admin_user/AdminUserType";
 import {StoreAdminUserRequest} from "../../grpc_generated/admin_user_pb";
@@ -20,7 +20,7 @@ export const AdminUserCreatePage = () => {
         handleSubmit,
         formState: {errors},
     } = useForm<CreateAdminUserType>({
-        resolver: joiResolver(useAdminUserCreateSchema(), {allowUnknown: true})
+        resolver: joiResolver(UseAdminUserCreateSchema(), {allowUnknown: true, abortEarly: false})
     })
 
     const submitHandler = async (data: CreateAdminUserType) => {

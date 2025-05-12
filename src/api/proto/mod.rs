@@ -6,3 +6,4 @@ pub mod dashboard;
 pub mod content;
 pub mod setting;
 pub mod cms;
+pub mod general;

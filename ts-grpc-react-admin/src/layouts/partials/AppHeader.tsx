@@ -9,6 +9,10 @@ import {InstallDataConfirmationModal} from "./InstallDataConfirmationModal";
 import {DeleteDataConfirmationModal} from "./DeleteDataConfirmationModal";
 import {Bars4Icon} from "@heroicons/react/24/solid";
 import {ThemeContext} from "../../context/ThemeContext";
+import {UseLoggedInUserHook} from "../../hooks/general/UseLoggedInUserHook";
+import {LoggedInUserRequest} from "../../grpc_generated/general_pb";
+import {AdminUserModel} from "../../grpc_generated/admin_user_pb";
+import {AdminUserType} from "../../types/admin_user/AdminUserType";
 
 function AppHeader() {
   // const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
@@ -27,10 +31,18 @@ function AppHeader() {
   //   },
   // });
 
-  const adminUser = {
-    name: "Admin",
-    email: "admin@gmail.com"
-  }
+  const request = new LoggedInUserRequest();
+  const auth_user_model = UseLoggedInUserHook(request);
+
+  const adminUser: AdminUserType = auth_user_model?.data?.data as unknown as AdminUserType;
+
+  // console.log(admin_user);
+
+
+  // const adminUser = {
+  //   name: "Admin",
+  //   email: "admin@gmail.com"
+  // }
   const install_demo_data = true;
   const theme = useContext(ThemeContext);
 

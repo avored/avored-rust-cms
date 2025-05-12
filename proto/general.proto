@@ -1,0 +1,15 @@
+syntax = "proto3";
+package general;
+
+import 'admin_user.proto';
+
+message LoggedInUserRequest {}
+message LoggedInUserResponse {
+  bool status =1;
+  admin_user.AdminUserModel data = 2;
+}
+
+
+service GeneralService {
+  rpc LoggedInUser(LoggedInUserRequest) returns (LoggedInUserResponse);
+}

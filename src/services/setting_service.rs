@@ -45,10 +45,9 @@ impl SettingService {
                 value: setting.value,
                 logged_in_username: email.clone(),
             };
-            let updated_model = self
-                    .setting_repository
-                    .update_setting(datastore, database_session, updatable_setting_model)
-                    .await?;
+             self.setting_repository
+                .update_setting(datastore, database_session, updatable_setting_model)
+                .await?;
         }
         
         let res = StoreSettingResponse {
