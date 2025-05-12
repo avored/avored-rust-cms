@@ -45,7 +45,8 @@ pub enum ContentFieldDataType {
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum ContentFieldFieldType {
     #[default]
-    Text
+    Text,
+    Textarea
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -184,6 +185,7 @@ impl TryFrom<String> for ContentFieldFieldType {
     fn try_from(val: String) -> Result<ContentFieldFieldType> {
         let field_type = match val.as_str() {
             "TEXT" => ContentFieldFieldType::Text,
+            "TEXTAREA" => ContentFieldFieldType::Textarea,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -312,6 +314,7 @@ impl TryFrom<ContentFieldFieldType> for String {
 
         let string_val = match val {
             ContentFieldFieldType::Text => String::from("TEXT"),
+            ContentFieldFieldType::Textarea => String::from("TEXTAREA"),
         };
 
         Ok(string_val)
@@ -384,6 +387,7 @@ impl TryFrom<Object> for ContentFieldModel {
         let field_type_str = val.get("field_type").get_string()?;
         let field_type = match field_type_str.as_str() {
             "Text" => ContentFieldFieldType::Text,
+            "Textarea" => ContentFieldFieldType::Textarea,
             _ => ContentFieldFieldType::default(),
         };
 

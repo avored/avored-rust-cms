@@ -26,6 +26,7 @@ import {ContentFieldModal} from "./ContentFieldModal";
 import _ from "lodash";
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
 import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
+import {TextareaField} from "../../components/TextareaField";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -71,7 +72,6 @@ export const ContentEditPage = () => {
     }
 
     console.log(values)
-
 
     const {
         register,
@@ -136,6 +136,16 @@ export const ContentEditPage = () => {
                 return (
                     <div className="mb-4">
                         <InputField
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.text_value`)}
+                        />
+                    </div>
+                );
+            case ContentFieldFieldType.TEXTAREA:
+                return (
+                    <div className="mb-4">
+                        <TextareaField
                             label={t("field_content")}
                             placeholder={t("field_content")}
                             register={register(`content_fields.${index}.field_content.text_value`)}

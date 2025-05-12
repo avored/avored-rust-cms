@@ -194,7 +194,8 @@ impl ContentService {
             content_fields: content_field_models,
         };
         
-        let content_db_model = self.content_repository
+        let content_db_model = self
+            .content_repository
             .update_content(datastore, database_session, updatable_content_model)
             .await?;
         let content_grpc_model: ContentModelGrpc = content_db_model.try_into()?;

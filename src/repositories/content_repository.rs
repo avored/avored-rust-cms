@@ -116,6 +116,7 @@ impl ContentRepository {
             };
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
+                ContentFieldFieldType::Textarea => "TEXTAREA".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
             
@@ -184,7 +185,7 @@ impl ContentRepository {
             
             let field_type_value: Value = match updatable_content_field.field_type {
                 ContentFieldFieldType::Text => "Text".into(),
-            
+                ContentFieldFieldType::Textarea => "Textarea".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
         
