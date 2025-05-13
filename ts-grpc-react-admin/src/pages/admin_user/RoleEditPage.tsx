@@ -215,29 +215,26 @@ export const RoleEditPage = () => {
 
                                     <div className="border w-1/3 ml-3 border-gray-200 rounded">
                                         <div className="p-3 font-semibold border-b">
-                                            {t("page_permission")}
+                                            {t("content_permission")}
                                         </div>
                                         <div className="p-3">
-                                            {renderSwitch('page_table')}
-                                            {renderSwitch('page_create')}
-                                            {renderSwitch('page_edit')}
-                                            {renderSwitch('page_delete')}
-                                            {renderSwitch('get_page')}
+                                            {renderSwitch('content_table')}
+                                            {renderSwitch('content_create')}
+                                            {renderSwitch('content_edit')}
+                                            {renderSwitch('content_delete')}
+                                            {renderSwitch('get_content')}
                                         </div>
                                     </div>
 
                                     <div className="border w-1/3 ml-3 border-gray-200 rounded">
                                         <div className="p-3 font-semibold border-b">
-                                            {t("component_permission")}
+                                            {t("cms_permission")}
                                         </div>
                                         <div className="p-3">
-                                            {renderSwitch('component_table')}
-                                            {renderSwitch('component_create')}
-                                            {renderSwitch('component_edit')}
-                                            {renderSwitch('component_delete')}
-                                            {renderSwitch('get_component')}
+                                            {renderSwitch('get_cms_content')}
                                         </div>
                                     </div>
+
                                 </div>
 
                                 <div className="mb-4 flex">

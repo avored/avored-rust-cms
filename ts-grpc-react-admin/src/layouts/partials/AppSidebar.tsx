@@ -38,34 +38,6 @@ function AppSidebar() {
                         </div>
 
                         <li className="text-sm text-gray-500 ">
-                            {/*<Link*/}
-                            {/*    className="flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700"*/}
-                            {/*    to={`/admin/page`}*/}
-                            {/*>*/}
-                            {/*    <div className="pr-2">*/}
-                            {/*        <RocketLaunchIcon className="h-6 w-6"/>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="ml-2">{t("sidebar.page")}</div>*/}
-                            {/*</Link>*/}
-                            {/*<Link*/}
-                            {/*    className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"*/}
-                            {/*    to={`/admin/collections`}*/}
-                            {/*>*/}
-                            {/*    <div className="pr-2">*/}
-                            {/*        <CircleStackIcon className="h-6 w-6"/>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="ml-2">{t("collections")}</div>*/}
-                            {/*</Link>*/}
-
-                            {/*<Link*/}
-                            {/*    to={`admin/component`}*/}
-                            {/*    className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700 "*/}
-                            {/*>*/}
-                            {/*    <div className="pr-2">*/}
-                            {/*        <CpuChipIcon className="h-6 w-6"/>*/}
-                            {/*    </div>*/}
-                            {/*    <div className="ml-2">{t("components")}</div>*/}
-                            {/*</Link>*/}
                             <Link
                                 to={`/admin/asset`}
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
@@ -78,7 +50,7 @@ function AppSidebar() {
 
                             <Link
                                 className="flex items-center w-full py-1 px-2 mt-3 rounded relative hover:text-white hover:bg-gray-700"
-                                to={`/admin/content`}
+                                to={`/admin/content?type=pages`}
                             >
                                 <div className="pr-2">
                                     <DeviceTabletIcon className="h-6 w-6"/>
