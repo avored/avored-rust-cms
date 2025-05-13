@@ -19,6 +19,7 @@ export enum ContentFieldDataType {
 export enum ContentFieldFieldType {
     TEXT = "TEXT",
     TEXTAREA = "TEXTAREA",
+    RICH_TEXT_EDITOR = "RICH_TEXT_EDITOR",
     // INT = "INT",
     // Array_Text = "Array_Text"
 }

@@ -14,10 +14,10 @@ export const UseUpdateContentHook = () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             })
         },
-        onSuccess: (res) => {
+        onSuccess: (res, request: UpdateContentRequest) => {
             if (res.getStatus()) {
                 // localStorage.setItem("token", token);
-                redirect("/admin/content");
+                redirect("/admin/content?type=" + request.getContentType());
             }
         }
     })
