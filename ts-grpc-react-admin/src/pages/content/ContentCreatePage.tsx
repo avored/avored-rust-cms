@@ -20,6 +20,8 @@ import {useState} from "react";
 import _ from "lodash";
 import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
+import {TextareaField} from "../../components/TextareaField";
+import SimpleMDE from "react-simplemde-editor";
 
 export const ContentCreatePage = () => {
     const [t] = useTranslation("global")
@@ -97,6 +99,27 @@ export const ContentCreatePage = () => {
                             label={t("field_content")}
                             placeholder={t("field_content")}
                             register={register(`content_fields.${index}.field_content.text_value`)}
+                        />
+                    </div>
+                );
+
+            case ContentFieldFieldType.TEXTAREA:
+                return (
+                    <div className="mb-4">
+                        <TextareaField
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.text_value`)}
+                        />
+                    </div>
+                );
+
+            case ContentFieldFieldType.RICH_TEXT_EDITOR:
+                return (
+                    <div className="mb-4">
+                        <SimpleMDE
+                            value={getValues(`content_fields.${index}.field_content.text_value`)}
+                            onChange={(e) => {setValue(`content_fields.${index}.field_content.text_value`, e)}}
                         />
                     </div>
                 );
