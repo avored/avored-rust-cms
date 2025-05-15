@@ -121,7 +121,7 @@ async fn main() -> Result<(), Error>{
     
     let general_api = GeneralApi {state: state.clone()};
     let general_server = GeneralServiceServer::with_interceptor(general_api, check_auth);
-    
+
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)

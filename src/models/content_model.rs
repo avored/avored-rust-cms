@@ -39,7 +39,8 @@ pub struct ContentFieldModel {
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum ContentFieldDataType {
-    Text(String),
+    Text,
+    Int
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -53,6 +54,7 @@ pub enum ContentFieldFieldType {
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct ContentFieldFieldContent {
     pub text_value: Option<String>,
+    pub int_value: Option<i64>,
 }
 
 
@@ -110,7 +112,7 @@ pub struct PutContentIdentifierModel {
 
 impl Default for ContentFieldDataType {
     fn default() -> ContentFieldDataType {
-        ContentFieldDataType::Text("TEXT".to_string())
+        ContentFieldDataType::Text
     }
 }
 
@@ -171,7 +173,8 @@ impl TryFrom<String> for ContentFieldDataType {
     
     fn try_from(val: String) -> Result<ContentFieldDataType> {
         let data_type = match val.as_str() {
-            "TEXT" => ContentFieldDataType::Text(val),
+            "TEXT" => ContentFieldDataType::Text,
+            "INT" => ContentFieldDataType::Int,
             _ => ContentFieldDataType::default(),
         };
         
@@ -200,13 +203,22 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
     type Error = Error;
 
     fn try_from(val: Option<crate::api::proto::content::ContentFieldFieldContent>) -> Result<ContentFieldFieldContent> {
-        let option_val = match val {
-            Some(val) => val.text_value.unwrap(),
+        
+        // todo fix the issue with how to save empty string??? 
+        // somehow we need to find a way to save none 
+        let option_val = match val.clone() {
+            Some(val) => val.text_value.unwrap_or_default(),
             None => "".to_string(),       
+        };
+
+        let option_int64_val = match val {
+            Some(val) => val.int_value.unwrap_or_default(),
+            None => 0,
         };
         
         let content_field_field_content = ContentFieldFieldContent {
             text_value: Some(option_val),
+            int_value: Some(option_int64_val),
         };
 
         Ok(content_field_field_content)
@@ -218,7 +230,10 @@ impl TryFrom<ContentFieldFieldContent> for Value {
     type Error = Error;
     fn try_from(val: ContentFieldFieldContent) -> Result<Value> {
         let val_val: BTreeMap<String, Value> =
-            [("text_value".into(), val.text_value.into())].into();
+            [
+                ("text_value".into(), val.text_value.into()),
+                ("int_value".into(), val.int_value.into())
+            ].into();
 
         Ok(val_val.into())
     }
@@ -228,7 +243,11 @@ impl TryFrom<Object> for ContentFieldFieldContent {
     type Error = Error;
     fn try_from(val: Object) -> Result<ContentFieldFieldContent> {
         let value = val.get("text_value").get_string()?;
-        Ok(ContentFieldFieldContent { text_value: Some(value) })
+        let int_value = val.get("int_value").get_int()?;
+        Ok(ContentFieldFieldContent { 
+            text_value: Some(value),
+            int_value: Some(int_value),
+        })
     }
 }
 
@@ -241,7 +260,8 @@ impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFi
         // @todo think of a better way to do this
         // If string is empty then we should return None
         let model = crate::api::proto::content::ContentFieldFieldContent {
-            text_value: Some(val.text_value.unwrap_or_default()),       
+            text_value: Some(val.text_value.unwrap_or_default()),
+            int_value: Some(val.int_value.unwrap_or_default()),
         };
 
         Ok(model)
@@ -257,6 +277,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
             Some(val) => {
                 let model = crate::api::proto::content::ContentFieldFieldContent {
                     text_value: Some(val.text_value.unwrap()),
+                    int_value: Some(val.int_value.unwrap()),
                 };
                 
                 model
@@ -264,6 +285,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
             None => {
                 let model = crate::api::proto::content::ContentFieldFieldContent {
                     text_value: None,
+                    int_value: None,
                 };
                 
                 model
@@ -300,7 +322,8 @@ impl TryFrom<ContentFieldDataType> for String {
     fn try_from(val: ContentFieldDataType) -> Result<String> {
 
         let string_val = match val {
-            ContentFieldDataType::Text(val) => val,
+            ContentFieldDataType::Text => String::from("TEXT"),
+            ContentFieldDataType::Int => String::from("INT"),
         };
 
         Ok(string_val)
@@ -383,7 +406,8 @@ impl TryFrom<Object> for ContentFieldModel {
         let data_type_str = val.get("data_type").get_string()?;
 
         let data_type = match data_type_str.as_str() {
-            "TEXT" => ContentFieldDataType::Text("TEXT".to_string()),
+            "TEXT" => ContentFieldDataType::Text,
+            "INT" => ContentFieldDataType::Int,
             _ => ContentFieldDataType::default(),
         };
 
@@ -412,6 +436,23 @@ impl TryFrom<Object> for ContentFieldModel {
                 };
 
                 text_content_field_content
+            },
+            "INT" => {
+                let int_content_field_content = match val.get("field_content") {
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+
+                        let option: ContentFieldFieldContent = object.try_into()?;
+
+                        option
+                    }
+                    None => ContentFieldFieldContent::default(),
+                };
+
+                int_content_field_content
             }
 
             _ => ContentFieldFieldContent::default(),

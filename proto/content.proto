@@ -17,6 +17,7 @@ message CollectionModel {
 
 message ContentFieldFieldContent {
   optional string text_value = 1;
+  optional int64 int_value = 2;
 }
 
 message ContentFieldModel {

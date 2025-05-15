@@ -1,6 +1,6 @@
 use crate::error::{Error, Result};
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::Value::Bool;
+use surrealdb::sql::Value::{Bool, Number};
 use surrealdb::sql::{Datetime, Object, Value};
 
 pub mod admin_user_model;
@@ -39,7 +39,7 @@ pub trait BaseModel {
     fn get_string(&self) -> Result<String>;
     fn get_datetime(&self) -> Result<Datetime>;
     fn get_bool(&self) -> Result<bool>;
-    // fn get_int(&self) -> Result<i64>;
+    fn get_int(&self) -> Result<i64>;
 
     // fn get_array<T>(&self) -> Result<Vec<T>>;
 }
@@ -93,17 +93,17 @@ impl BaseModel for Option<&Value> {
         Ok(value)
     }
 
-    // fn get_int(&self) -> Result<i64> {
-    //     let value = match self.to_owned() {
-    //         Some(val) => match val.clone() {
-    //             Number(v) => v.as_int(),
-    //             _ => 0,
-    //         },
-    //         None => 0,
-    //     };
-    //
-    //     Ok(value)
-    // }
+    fn get_int(&self) -> Result<i64> {
+        let value = match self.to_owned() {
+            Some(val) => match val.clone() {
+                Number(v) => v.as_int(),
+                _ => 0,
+            },
+            None => 0,
+        };
+    
+        Ok(value)
+    }
 
     // fn get_array<T>(&self) -> Result<Vec<T>> where T : TryFrom<Object> {
     //     let value = match self.to_owned() {

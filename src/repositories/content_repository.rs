@@ -112,7 +112,8 @@ impl ContentRepository {
 
         for created_content_field in creatable_content_model.content_fields {
             let data_type_value: Value = match created_content_field.data_type {
-                ContentFieldDataType::Text(v) => v.into(),
+                ContentFieldDataType::Text => "TEXT".into(),
+                ContentFieldDataType::Int => "INT".into(),
             };
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
@@ -181,7 +182,8 @@ impl ContentRepository {
 
         for updatable_content_field in updatable_model.content_fields {
             let data_type_value: Value = match updatable_content_field.data_type {
-                ContentFieldDataType::Text(v) => v.into(),
+                ContentFieldDataType::Text => "TEXT".into(),
+                ContentFieldDataType::Int => "INT".into(),
             };
             
             let field_type_value: Value = match updatable_content_field.field_type {

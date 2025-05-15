@@ -170,7 +170,6 @@ impl ContentService {
         request: UpdateContentRequest,
         logged_in_username: String,
     ) -> Result<UpdateContentResponse> {
-        
 
         let mut content_field_models: Vec<UpdatableContentField> = vec![];
 

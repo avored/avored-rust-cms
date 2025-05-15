@@ -12,7 +12,7 @@ export type CollectionType = {
 }
 export enum ContentFieldDataType {
     TEXT = "TEXT",
-    // INT = "INT",
+    INT = "INT",
     // Array_Text = "Array_Text"
 }
 
@@ -34,6 +34,7 @@ export type ContentFieldType = {
 
 export type ContentFieldFieldContent = {
     text_value?: string,
+    int_value?: number,
 }
 
 export type ContentType = {

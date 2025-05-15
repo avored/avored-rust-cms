@@ -20,6 +20,8 @@ pub struct CollectionModel {
 pub struct ContentFieldFieldContent {
     #[prost(string, optional, tag = "1")]
     pub text_value: ::core::option::Option<::prost::alloc::string::String>,
+    #[prost(int64, optional, tag = "2")]
+    pub int_value: ::core::option::Option<i64>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldModel {
