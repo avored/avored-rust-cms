@@ -48,7 +48,7 @@ export const HomePage = (() => {
                                         safeguarding the app's content and user experience while
                                         facilitating its growth and improvement. In essence, they
                                         are the backbone of a well-maintained and secure avored rust
-                                        cms ecosystem.
+                                        cms ecosystem. AvoRed
                                     </p>
                                 </div>
                                 <div className="self-center pl-5">
