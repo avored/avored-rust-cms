@@ -51,8 +51,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "dev": "concurrently \"npx @tailwindcss/cli -i ./src/index.css -o ./public/output.css --watch\" \"react-scripts start\"",
-    "build": "react-scripts build",
+    "dev": "concurrently \"npx @tailwindcss/cli -i ./src/index.css -o ./public/output.css --watch\" \" env-cmd -f .env react-scripts start\"",
+    "build": "env-cmd -f .env.production.local react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -76,7 +76,8 @@
   },
   "devDependencies": {
     "@protobuf-ts/plugin": "^2.9.6",
-    "@types/slug": "^5.0.9"
+    "@types/slug": "^5.0.9",
+    "env-cmd": "^10.1.0"
   },
   "browser": {
     "fs": false,
