@@ -21,13 +21,20 @@ jobs:
         run: cargo build --release
       - name: Deploy release
         uses: appleboy/scp-action@master
-
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "./target/release"
           target: ${{ secrets.RUST_TARGET_PATH }}
+      - name: Deploy demo release
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./target/release"
+          target: ${{ secrets.RUST_DEMO_TARGET_PATH }}
       - name: Deploy files
         uses: appleboy/scp-action@master
         with:
@@ -36,6 +43,14 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           source: "./public,./resources"
           target: ${{ secrets.RUST_DEPLOY_PATH }}
+      - name: Deploy demo files
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          source: "./public,./resources"
+          target: ${{ secrets.RUST_DEMO_DEPLOY_PATH }}
       - name: restart service
         uses: appleboy/ssh-action@v1.1.0
         with:
