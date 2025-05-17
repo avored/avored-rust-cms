@@ -20,7 +20,6 @@ import {UseStoreCollectionHook} from "../../hooks/content/UseStoreCollectionHook
 import {UseUpdateCollectionHook} from "../../hooks/content/UseUpdateCollectionHook";
 import {UseCollectionCreateSchema} from "../../schemas/content/UseCollectionCreateSchema";
 import {UseCollectionUpdateSchema} from "../../schemas/content/UseCollectionUpdateSchema";
-import {RefetchOptions} from "@tanstack/react-query";
 
 export const ContentSidebar = (() => {
     const [t] = useTranslation("global");
