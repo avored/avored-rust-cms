@@ -221,7 +221,7 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
 
 
 
-        let option_array_val: Vec<String> = vec![];
+        // let option_array_val: Vec<String> = vec![];
         // let option_array_val = match val {
         //     Some(array_val) => {
         //         let mut array_val: Vec<String> = vec![];
@@ -279,7 +279,7 @@ impl TryFrom<Object> for ContentFieldFieldContent {
             },
             None => Vec::new(),
         };
-        
+
 
         Ok(ContentFieldFieldContent { 
             text_value: Some(value),

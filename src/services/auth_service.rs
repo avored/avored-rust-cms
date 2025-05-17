@@ -10,6 +10,7 @@ use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
 use tonic::Status;
+use tracing::error;
 use crate::api::proto::auth::{ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordResponse};
 use crate::error::Error::TonicError;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
@@ -92,7 +93,7 @@ impl AuthService {
                 return Ok(response);
             },
             Err(er) => {
-                println!("email sent error: {:?}", er);
+                error!("email sent error: {:?}", er);
                 Err(Error::Generic(String::from("error while sending an email")))
             },
         }
@@ -104,7 +105,7 @@ impl AuthService {
         jwt_secret_key: &str
     ) -> Result<LoginResponse> {
 
-        println!("request: {:?}", request);
+        // println!("request: {:?}", request);
         let admin_user_model = self
         .admin_user_repository
         .find_by_email(datastore, database_session, &request.email)
@@ -143,7 +144,7 @@ impl AuthService {
             data: token,
         };
 
-        println!("login response: {:?}", login_response);
+        // println!("login response: {:?}", login_response);
         Ok(login_response)
     }
 
