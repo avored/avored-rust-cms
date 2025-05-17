@@ -1,8 +1,9 @@
-use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreContentRequest, StoreContentResponse, UpdateContentRequest, UpdateContentResponse};
+use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
+use crate::models::collection_model::{CreatableCollection, UpdatableCollection};
 use crate::models::content_model::{CreatableContentField, CreatableContentModel, PutContentIdentifierModel, UpdatableContentField, UpdatableContentModel};
 use crate::PER_PAGE;
 use crate::repositories::collection_repository::CollectionRepository;
@@ -227,6 +228,77 @@ impl ContentService {
         let response = PutContentIdentifierResponse {
             status: true,
             data: Some(content_grpc_model)
+        };
+
+        Ok(response)
+    }
+
+    pub async fn get_collection(
+        &self,
+        (datastore, database_session): &DB,
+        request: GetCollectionRequest
+    ) -> Result<GetCollectionResponse> {
+       
+        let collection_db_model = self.collection_repository
+            .find_by_id(datastore, database_session, &request.collection_id)
+            .await?;
+        let collection_grpc_model: CollectionModel = collection_db_model.try_into()?;
+
+        let response = GetCollectionResponse {
+            status: true,
+            data: Some(collection_grpc_model)
+        };
+
+        Ok(response)
+    }
+
+    pub async fn store_collection(
+        &self,
+        (datastore, database_session): &DB,
+        request: StoreCollectionRequest,
+        logged_in_user_email: &str
+    ) -> Result<StoreCollectionResponse> {
+        let creatable_collection = CreatableCollection {
+            name: request.name,
+            identifier: request.identifier,
+            logged_in_username: logged_in_user_email.to_string(),
+        };
+        
+        let collection_db_model = self.collection_repository
+            .create_collection(datastore, database_session, creatable_collection)
+            .await?;
+        let collection_grpc_model: CollectionModel = collection_db_model.try_into()?;
+
+        let response = StoreCollectionResponse {
+            status: true,
+            data: Some(collection_grpc_model)
+        };
+
+        Ok(response)
+    }
+
+
+    pub async fn update_collection(
+        &self,
+        (datastore, database_session): &DB,
+        request: UpdateCollectionRequest,
+        logged_in_user_email: &str
+    ) -> Result<UpdateCollectionResponse> {
+        let updatable_collection = UpdatableCollection {
+            id: request.id,
+            name: request.name,
+            identifier: request.identifier,
+            logged_in_username: logged_in_user_email.to_string(),
+        };
+
+        let collection_db_model = self.collection_repository
+            .update_collection(datastore, database_session, updatable_collection)
+            .await?;
+        let collection_grpc_model: CollectionModel = collection_db_model.try_into()?;
+
+        let response = UpdateCollectionResponse {
+            status: true,
+            data: Some(collection_grpc_model)
         };
 
         Ok(response)

@@ -17,6 +17,48 @@ pub struct CollectionModel {
     pub updated_by: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCollectionRequest {
+    #[prost(string, tag = "1")]
+    pub collection_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetCollectionResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<CollectionModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreCollectionRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct StoreCollectionResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<CollectionModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateCollectionRequest {
+    #[prost(string, tag = "1")]
+    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct UpdateCollectionResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<CollectionModel>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldFieldContent {
     #[prost(string, optional, tag = "1")]
     pub text_value: ::core::option::Option<::prost::alloc::string::String>,
@@ -303,6 +345,78 @@ pub mod content_client {
                 .insert(GrpcMethod::new("content.content", "CollectionAll"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_collection(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCollectionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/GetCollection",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "GetCollection"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn store_collection(
+            &mut self,
+            request: impl tonic::IntoRequest<super::StoreCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreCollectionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/StoreCollection",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "StoreCollection"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn update_collection(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateCollectionResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/UpdateCollection",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "UpdateCollection"));
+            self.inner.unary(req, path, codec).await
+        }
         pub async fn content_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::ContentPaginateRequest>,
@@ -443,6 +557,27 @@ pub mod content_server {
             request: tonic::Request<super::CollectionAllRequest>,
         ) -> std::result::Result<
             tonic::Response<super::CollectionAllResponse>,
+            tonic::Status,
+        >;
+        async fn get_collection(
+            &self,
+            request: tonic::Request<super::GetCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetCollectionResponse>,
+            tonic::Status,
+        >;
+        async fn store_collection(
+            &self,
+            request: tonic::Request<super::StoreCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::StoreCollectionResponse>,
+            tonic::Status,
+        >;
+        async fn update_collection(
+            &self,
+            request: tonic::Request<super::UpdateCollectionRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateCollectionResponse>,
             tonic::Status,
         >;
         async fn content_paginate(
@@ -587,6 +722,141 @@ pub mod content_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = CollectionAllSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/GetCollection" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetCollectionSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::GetCollectionRequest>
+                    for GetCollectionSvc<T> {
+                        type Response = super::GetCollectionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetCollectionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::get_collection(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetCollectionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/StoreCollection" => {
+                    #[allow(non_camel_case_types)]
+                    struct StoreCollectionSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::StoreCollectionRequest>
+                    for StoreCollectionSvc<T> {
+                        type Response = super::StoreCollectionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::StoreCollectionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::store_collection(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = StoreCollectionSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/UpdateCollection" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateCollectionSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::UpdateCollectionRequest>
+                    for UpdateCollectionSvc<T> {
+                        type Response = super::UpdateCollectionResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateCollectionRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::update_collection(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateCollectionSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -49,11 +49,154 @@ export namespace CollectionModel {
   }
 }
 
+export class GetCollectionRequest extends jspb.Message {
+  getCollectionId(): string;
+  setCollectionId(value: string): GetCollectionRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetCollectionRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetCollectionRequest): GetCollectionRequest.AsObject;
+  static serializeBinaryToWriter(message: GetCollectionRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetCollectionRequest;
+  static deserializeBinaryFromReader(message: GetCollectionRequest, reader: jspb.BinaryReader): GetCollectionRequest;
+}
+
+export namespace GetCollectionRequest {
+  export type AsObject = {
+    collectionId: string,
+  }
+}
+
+export class GetCollectionResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): GetCollectionResponse;
+
+  getData(): CollectionModel | undefined;
+  setData(value?: CollectionModel): GetCollectionResponse;
+  hasData(): boolean;
+  clearData(): GetCollectionResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetCollectionResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetCollectionResponse): GetCollectionResponse.AsObject;
+  static serializeBinaryToWriter(message: GetCollectionResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetCollectionResponse;
+  static deserializeBinaryFromReader(message: GetCollectionResponse, reader: jspb.BinaryReader): GetCollectionResponse;
+}
+
+export namespace GetCollectionResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: CollectionModel.AsObject,
+  }
+}
+
+export class StoreCollectionRequest extends jspb.Message {
+  getName(): string;
+  setName(value: string): StoreCollectionRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): StoreCollectionRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreCollectionRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreCollectionRequest): StoreCollectionRequest.AsObject;
+  static serializeBinaryToWriter(message: StoreCollectionRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreCollectionRequest;
+  static deserializeBinaryFromReader(message: StoreCollectionRequest, reader: jspb.BinaryReader): StoreCollectionRequest;
+}
+
+export namespace StoreCollectionRequest {
+  export type AsObject = {
+    name: string,
+    identifier: string,
+  }
+}
+
+export class StoreCollectionResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): StoreCollectionResponse;
+
+  getData(): CollectionModel | undefined;
+  setData(value?: CollectionModel): StoreCollectionResponse;
+  hasData(): boolean;
+  clearData(): StoreCollectionResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): StoreCollectionResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: StoreCollectionResponse): StoreCollectionResponse.AsObject;
+  static serializeBinaryToWriter(message: StoreCollectionResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): StoreCollectionResponse;
+  static deserializeBinaryFromReader(message: StoreCollectionResponse, reader: jspb.BinaryReader): StoreCollectionResponse;
+}
+
+export namespace StoreCollectionResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: CollectionModel.AsObject,
+  }
+}
+
+export class UpdateCollectionRequest extends jspb.Message {
+  getId(): string;
+  setId(value: string): UpdateCollectionRequest;
+
+  getName(): string;
+  setName(value: string): UpdateCollectionRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): UpdateCollectionRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateCollectionRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateCollectionRequest): UpdateCollectionRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateCollectionRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateCollectionRequest;
+  static deserializeBinaryFromReader(message: UpdateCollectionRequest, reader: jspb.BinaryReader): UpdateCollectionRequest;
+}
+
+export namespace UpdateCollectionRequest {
+  export type AsObject = {
+    id: string,
+    name: string,
+    identifier: string,
+  }
+}
+
+export class UpdateCollectionResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): UpdateCollectionResponse;
+
+  getData(): CollectionModel | undefined;
+  setData(value?: CollectionModel): UpdateCollectionResponse;
+  hasData(): boolean;
+  clearData(): UpdateCollectionResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateCollectionResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateCollectionResponse): UpdateCollectionResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateCollectionResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateCollectionResponse;
+  static deserializeBinaryFromReader(message: UpdateCollectionResponse, reader: jspb.BinaryReader): UpdateCollectionResponse;
+}
+
+export namespace UpdateCollectionResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: CollectionModel.AsObject,
+  }
+}
+
 export class ContentFieldFieldContent extends jspb.Message {
   getTextValue(): string;
   setTextValue(value: string): ContentFieldFieldContent;
   hasTextValue(): boolean;
   clearTextValue(): ContentFieldFieldContent;
+
+  getIntValue(): number;
+  setIntValue(value: number): ContentFieldFieldContent;
+  hasIntValue(): boolean;
+  clearIntValue(): ContentFieldFieldContent;
 
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentFieldFieldContent.AsObject;
@@ -66,11 +209,17 @@ export class ContentFieldFieldContent extends jspb.Message {
 export namespace ContentFieldFieldContent {
   export type AsObject = {
     textValue?: string,
+    intValue?: number,
   }
 
   export enum TextValueCase { 
     _TEXT_VALUE_NOT_SET = 0,
     TEXT_VALUE = 1,
+  }
+
+  export enum IntValueCase { 
+    _INT_VALUE_NOT_SET = 0,
+    INT_VALUE = 2,
   }
 }
 

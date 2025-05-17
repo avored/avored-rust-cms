@@ -82,6 +82,135 @@ export class contentClient {
     this.methodDescriptorCollectionAll);
   }
 
+  methodDescriptorGetCollection = new grpcWeb.MethodDescriptor(
+    '/content.content/GetCollection',
+    grpcWeb.MethodType.UNARY,
+    content_pb.GetCollectionRequest,
+    content_pb.GetCollectionResponse,
+    (request: content_pb.GetCollectionRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.GetCollectionResponse.deserializeBinary
+  );
+
+  getCollection(
+    request: content_pb.GetCollectionRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.GetCollectionResponse>;
+
+  getCollection(
+    request: content_pb.GetCollectionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.GetCollectionResponse) => void): grpcWeb.ClientReadableStream<content_pb.GetCollectionResponse>;
+
+  getCollection(
+    request: content_pb.GetCollectionRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.GetCollectionResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/GetCollection',
+        request,
+        metadata || {},
+        this.methodDescriptorGetCollection,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/GetCollection',
+    request,
+    metadata || {},
+    this.methodDescriptorGetCollection);
+  }
+
+  methodDescriptorStoreCollection = new grpcWeb.MethodDescriptor(
+    '/content.content/StoreCollection',
+    grpcWeb.MethodType.UNARY,
+    content_pb.StoreCollectionRequest,
+    content_pb.StoreCollectionResponse,
+    (request: content_pb.StoreCollectionRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.StoreCollectionResponse.deserializeBinary
+  );
+
+  storeCollection(
+    request: content_pb.StoreCollectionRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.StoreCollectionResponse>;
+
+  storeCollection(
+    request: content_pb.StoreCollectionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.StoreCollectionResponse) => void): grpcWeb.ClientReadableStream<content_pb.StoreCollectionResponse>;
+
+  storeCollection(
+    request: content_pb.StoreCollectionRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.StoreCollectionResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/StoreCollection',
+        request,
+        metadata || {},
+        this.methodDescriptorStoreCollection,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/StoreCollection',
+    request,
+    metadata || {},
+    this.methodDescriptorStoreCollection);
+  }
+
+  methodDescriptorUpdateCollection = new grpcWeb.MethodDescriptor(
+    '/content.content/UpdateCollection',
+    grpcWeb.MethodType.UNARY,
+    content_pb.UpdateCollectionRequest,
+    content_pb.UpdateCollectionResponse,
+    (request: content_pb.UpdateCollectionRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.UpdateCollectionResponse.deserializeBinary
+  );
+
+  updateCollection(
+    request: content_pb.UpdateCollectionRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.UpdateCollectionResponse>;
+
+  updateCollection(
+    request: content_pb.UpdateCollectionRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.UpdateCollectionResponse) => void): grpcWeb.ClientReadableStream<content_pb.UpdateCollectionResponse>;
+
+  updateCollection(
+    request: content_pb.UpdateCollectionRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.UpdateCollectionResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/UpdateCollection',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateCollection,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/UpdateCollection',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateCollection);
+  }
+
   methodDescriptorContentPaginate = new grpcWeb.MethodDescriptor(
     '/content.content/ContentPaginate',
     grpcWeb.MethodType.UNARY,

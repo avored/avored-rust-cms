@@ -14,10 +14,9 @@ export const UseStoreContentHook = () => {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             })
         },
-        onSuccess: (res) => {
+        onSuccess: (res, request: StoreContentRequest) => {
             if (res.getStatus()) {
-                // localStorage.setItem("token", token);
-                redirect("/admin/content");
+                redirect("/admin/content?type=" + request.getContentType());
             }
         }
     })

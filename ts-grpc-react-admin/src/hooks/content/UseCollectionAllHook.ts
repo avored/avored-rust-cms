@@ -7,7 +7,7 @@ export const UseCollectionAllHook = (request: CollectionAllRequest) => {
     const client = new contentClient(backend_url);
 
     return useQuery({
-        queryKey: ['role-option'],
+        queryKey: ['collection-all'],
         queryFn: async () => {
             let response = await client.collectionAll(request, {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`

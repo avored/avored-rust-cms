@@ -64,3 +64,13 @@ export type SaveContentFieldType = {
     field_type: ContentFieldFieldType;
     field_content: ContentFieldFieldContent;
 }
+
+export type StoreCollectionType = {
+    name: string;
+    identifier: string;
+}
+export type UpdateCollectionType = {
+    id: string;
+    name: string;
+    identifier: string;
+}

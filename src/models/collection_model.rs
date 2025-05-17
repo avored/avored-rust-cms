@@ -37,35 +37,33 @@ pub struct CreatableCollection {
     pub name: String,
     pub identifier: String,
     pub logged_in_username: String,
-    pub collection_fields: Vec<CreatableCollectionField>,
+    // pub collection_fields: Vec<CreatableCollectionField>,
 }
 
-#[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct CreatableCollectionField {
-    pub name: String,
-    pub identifier: String,
-    pub data_type: CollectionFieldDataType,
-    pub field_type: CollectionFieldFieldType,
-}
+// #[derive(Serialize, Debug, Deserialize, Clone)]
+// pub struct CreatableCollectionField {
+//     pub name: String,
+//     pub identifier: String,
+//     pub data_type: CollectionFieldDataType,
+//     pub field_type: CollectionFieldFieldType,
+// }
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableCollection {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub created_at: Datetime,
-    pub created_by: String,
     pub logged_in_username: String,
-    pub collection_fields: Vec<UpdatableCollectionField>,
+    // pub collection_fields: Vec<UpdatableCollectionField>,
 }
 
-#[derive(Serialize, Debug, Deserialize, Clone)]
-pub struct UpdatableCollectionField {
-    pub name: String,
-    pub identifier: String,
-    pub data_type: CollectionFieldDataType,
-    pub field_type: CollectionFieldFieldType,
-}
+// #[derive(Serialize, Debug, Deserialize, Clone)]
+// pub struct UpdatableCollectionField {
+//     pub name: String,
+//     pub identifier: String,
+//     pub data_type: CollectionFieldDataType,
+//     pub field_type: CollectionFieldFieldType,
+// }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutCollectionIdentifierModel {
