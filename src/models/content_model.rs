@@ -40,7 +40,8 @@ pub struct ContentFieldModel {
 #[serde(untagged)]
 pub enum ContentFieldDataType {
     Text,
-    Int
+    Int,
+    Array,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -55,6 +56,7 @@ pub enum ContentFieldFieldType {
 pub struct ContentFieldFieldContent {
     pub text_value: Option<String>,
     pub int_value: Option<i64>,
+    pub array_value: Vec<String>,
 }
 
 
@@ -206,19 +208,37 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
         
         // todo fix the issue with how to save empty string??? 
         // somehow we need to find a way to save none 
-        let option_val = match val.clone() {
-            Some(val) => val.text_value.unwrap_or_default(),
-            None => "".to_string(),       
-        };
+        // let option_val = match val.clone() {
+        //     Some(val) => val.text_value.unwrap_or_default(),
+        //     None => "".to_string(),
+        // };
 
-        let option_int64_val = match val {
-            Some(val) => val.int_value.unwrap_or_default(),
-            None => 0,
-        };
+        // let option_int64_val = match val.clone() {
+        //     Some(val) => val.int_value.unwrap_or_default(),
+        //     None => 0,
+        // };
+
+
+
+
+        let option_array_val: Vec<String> = vec![];
+        // let option_array_val = match val {
+        //     Some(array_val) => {
+        //         let mut array_val: Vec<String> = vec![];
+        //         // for (arr_val in array_val.)
+        //
+        //         vec![]
+        //     },
+        //     None => {
+        //         vec![]
+        //     }
+        // };
+
         
         let content_field_field_content = ContentFieldFieldContent {
-            text_value: Some(option_val),
-            int_value: Some(option_int64_val),
+            text_value: val.clone().unwrap_or_default().text_value,
+            int_value: val.clone().unwrap_or_default().int_value,
+            array_value: val.unwrap_or_default().array_value,
         };
 
         Ok(content_field_field_content)
@@ -232,7 +252,8 @@ impl TryFrom<ContentFieldFieldContent> for Value {
         let val_val: BTreeMap<String, Value> =
             [
                 ("text_value".into(), val.text_value.into()),
-                ("int_value".into(), val.int_value.into())
+                ("int_value".into(), val.int_value.into()),
+                ("array_value".into(), val.array_value.into())
             ].into();
 
         Ok(val_val.into())
@@ -244,9 +265,26 @@ impl TryFrom<Object> for ContentFieldFieldContent {
     fn try_from(val: Object) -> Result<ContentFieldFieldContent> {
         let value = val.get("text_value").get_string()?;
         let int_value = val.get("int_value").get_int()?;
+        let array_value: Vec<String> = match val.get("array_value") {
+            Some(val) => match val.clone() {
+                Value::Array(v) => {
+                    let mut arr = Vec::new();
+
+                    for array in v.into_iter() {
+                        arr.push(array.as_string())
+                    }
+                    arr
+                }
+                _ => Vec::new(),
+            },
+            None => Vec::new(),
+        };
+        
+
         Ok(ContentFieldFieldContent { 
             text_value: Some(value),
             int_value: Some(int_value),
+            array_value,
         })
     }
 }
@@ -262,6 +300,7 @@ impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFi
         let model = crate::api::proto::content::ContentFieldFieldContent {
             text_value: Some(val.text_value.unwrap_or_default()),
             int_value: Some(val.int_value.unwrap_or_default()),
+            array_value: val.array_value
         };
 
         Ok(model)
@@ -278,6 +317,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                 let model = crate::api::proto::content::ContentFieldFieldContent {
                     text_value: Some(val.text_value.unwrap()),
                     int_value: Some(val.int_value.unwrap()),
+                    array_value: val.array_value,
                 };
                 
                 model
@@ -286,6 +326,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                 let model = crate::api::proto::content::ContentFieldFieldContent {
                     text_value: None,
                     int_value: None,
+                    array_value: vec![],
                 };
                 
                 model
@@ -324,6 +365,7 @@ impl TryFrom<ContentFieldDataType> for String {
         let string_val = match val {
             ContentFieldDataType::Text => String::from("TEXT"),
             ContentFieldDataType::Int => String::from("INT"),
+            ContentFieldDataType::Array => String::from("ARRAY"),
         };
 
         Ok(string_val)

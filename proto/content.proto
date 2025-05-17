@@ -48,6 +48,7 @@ message UpdateCollectionResponse {
 message ContentFieldFieldContent {
   optional string text_value = 1;
   optional int64 int_value = 2;
+  repeated string array_value = 3;
 }
 
 message ContentFieldModel {

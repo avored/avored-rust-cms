@@ -64,6 +64,8 @@ pub struct ContentFieldFieldContent {
     pub text_value: ::core::option::Option<::prost::alloc::string::String>,
     #[prost(int64, optional, tag = "2")]
     pub int_value: ::core::option::Option<i64>,
+    #[prost(string, repeated, tag = "3")]
+    pub array_value: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldModel {

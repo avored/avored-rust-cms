@@ -114,6 +114,7 @@ impl ContentRepository {
             let data_type_value: Value = match created_content_field.data_type {
                 ContentFieldDataType::Text => "TEXT".into(),
                 ContentFieldDataType::Int => "INT".into(),
+                ContentFieldDataType::Array => "ARRAY".into(),
             };
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
@@ -184,6 +185,7 @@ impl ContentRepository {
             let data_type_value: Value = match updatable_content_field.data_type {
                 ContentFieldDataType::Text => "TEXT".into(),
                 ContentFieldDataType::Int => "INT".into(),
+                ContentFieldDataType::Array => "ARRAY".into(),
             };
             
             let field_type_value: Value = match updatable_content_field.field_type {
