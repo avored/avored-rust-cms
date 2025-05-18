@@ -180,10 +180,12 @@ impl ContentService {
                 identifier: req_content_field.identifier,
                 data_type: req_content_field.data_type.try_into()?,
                 field_type: req_content_field.field_type.try_into()?,
-                field_content: req_content_field.field_content.try_into()?
+                field_content: req_content_field.field_content.try_into()?,
+                field_data: Some(req_content_field.field_data.try_into()?)
             });
         }
-
+        
+        
         let updatable_content_model = UpdatableContentModel {
             id: request.content_id,
             name: request.name,
@@ -193,6 +195,7 @@ impl ContentService {
             updated_by: "".to_string(),
             content_fields: content_field_models,
         };
+        
         
         let content_db_model = self
             .content_repository

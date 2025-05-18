@@ -51,12 +51,22 @@ message ContentFieldFieldContent {
   repeated string array_value = 3;
 }
 
+message ContentSelectFieldData {
+  string label = 1;
+  string value = 2;
+}
+
+message ContentFieldData {
+  repeated ContentSelectFieldData content_select_field_options = 1;
+}
+
 message ContentFieldModel {
   string name = 1;
   string identifier = 2;
   string data_type = 3;
   string field_type = 4;
   ContentFieldFieldContent field_content = 5;
+  optional ContentFieldData field_data = 6;
 }
 
 message ContentModel {
@@ -106,6 +116,7 @@ message StoreContentFieldModel {
   string data_type = 3;
   string field_type = 4;
   ContentFieldFieldContent field_content = 5;
+  
 }
 
 
@@ -139,6 +150,7 @@ message UpdateContentFieldModel {
   string data_type = 3;
   string field_type = 4;
   ContentFieldFieldContent field_content = 5;
+  optional ContentFieldData field_data = 6;
 }
 
 message UpdateContentRequest {

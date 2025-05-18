@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
-use surrealdb::kvs::Datastore;
+use surrealdb::kvs::{Datastore};
 use surrealdb::sql::{Datetime, Value};
 use crate::error::Error;
 use crate::models::content_model::{ContentFieldDataType, ContentFieldFieldType, ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
@@ -121,6 +121,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
+                ContentFieldFieldType::Select => "SELECT".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
             
@@ -194,15 +195,25 @@ impl ContentRepository {
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
+                ContentFieldFieldType::Select => "SELECT".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
-        
+
+            let mut field_data_value: Vec<Value> = vec![];
+            
+            let field_data = updatable_content_field.field_data.unwrap_or_default();
+            
+            for field_data_item in field_data.content_select_field_options {
+                field_data_value.push(field_data_item.try_into()?);
+            }
+            
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_content_field.name.into()),
                 ("identifier".into(), updatable_content_field.identifier.into()),
                 ("data_type".into(), data_type_value),
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
+                ("field_data".into(), field_data_value.into()),
             ]
                 .into();
         

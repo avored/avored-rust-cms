@@ -15,6 +15,20 @@ pub struct ContentPagination {
     pub data: Vec<ContentModel>,
     pub pagination: Pagination,
 }
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ContentSelectFieldData {
+    pub label: String,
+    pub value: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ContentFieldData {
+    pub content_select_field_options: Vec<ContentSelectFieldData>,
+}
+
+
+
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentModel {
     pub id: String,
@@ -34,6 +48,7 @@ pub struct ContentFieldModel {
     pub data_type: ContentFieldDataType,
     pub field_type: ContentFieldFieldType,
     pub field_content: ContentFieldFieldContent,
+    pub field_data: Option<ContentFieldData>,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize)]
@@ -50,7 +65,8 @@ pub enum ContentFieldFieldType {
     Text,
     Textarea,
     RichTextEditor,
-    NumberTextField
+    NumberTextField,
+    Select
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -98,6 +114,7 @@ pub struct UpdatableContentField {
     pub data_type: ContentFieldDataType,
     pub field_type: ContentFieldFieldType,
     pub field_content: ContentFieldFieldContent,
+    pub field_data: Option<ContentFieldData>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -164,11 +181,124 @@ impl TryFrom<ContentModel> for crate::api::proto::content::ContentModel {
             created_by: val.created_by,
             updated_by: val.updated_by,
             content_fields,
+            
         };
 
         Ok(model)
     }
 }
+
+
+impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFieldFieldContent {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldFieldContent) -> Result<crate::api::proto::content::ContentFieldFieldContent > {
+
+        // @todo think of a better way to do this
+        // If string is empty then we should return None
+        let model = crate::api::proto::content::ContentFieldFieldContent {
+            text_value: Some(val.text_value.unwrap_or_default()),
+            int_value: Some(val.int_value.unwrap_or_default()),
+            array_value: val.array_value
+        };
+
+        Ok(model)
+    }
+}
+
+
+impl TryFrom<ContentFieldData> for crate::api::proto::content::ContentFieldData {
+    type Error = Error;
+
+    fn try_from(val: ContentFieldData) -> Result<crate::api::proto::content::ContentFieldData > {
+        let mut options = vec![];
+        
+        for option in val.content_select_field_options {
+            let t: crate::api::proto::content::ContentSelectFieldData = option.try_into()?;
+            options.push(t);
+        }
+
+        // If string is empty then we should return None
+        let model = crate::api::proto::content::ContentFieldData {
+            content_select_field_options: options,
+        };
+
+        Ok(model)
+    }
+}
+
+
+impl TryFrom<ContentSelectFieldData> for crate::api::proto::content::ContentSelectFieldData {
+    type Error = Error;
+
+    fn try_from(val: ContentSelectFieldData) -> Result<crate::api::proto::content::ContentSelectFieldData > {
+
+        // @todo think of a better way to do this
+        // If string is empty then we should return None
+        let model = crate::api::proto::content::ContentSelectFieldData {
+            label: val.label,
+            value: val.value,
+        };
+
+        Ok(model)
+    }
+}
+
+
+impl TryFrom<crate::api::proto::content::ContentSelectFieldData> for ContentSelectFieldData {
+    type Error = Error;
+
+    fn try_from(val: crate::api::proto::content::ContentSelectFieldData) -> Result<ContentSelectFieldData> {
+        let content_select_field_data = ContentSelectFieldData {
+            label: val.clone().label,
+            value: val.value
+        };
+
+        Ok(content_select_field_data)
+    }
+}
+
+impl TryFrom<Option<crate::api::proto::content::ContentFieldData>> for ContentFieldData {
+    type Error = Error;
+
+    fn try_from(val: Option<crate::api::proto::content::ContentFieldData>) -> Result<ContentFieldData> {
+
+        let content_field_data = match val {
+            Some(val) => {
+                let mut options: Vec<ContentSelectFieldData> = vec![];
+
+                for option in val.content_select_field_options {
+                    let t: ContentSelectFieldData = option.try_into()?;
+                    options.push(t);
+                }
+
+               ContentFieldData {
+                   content_select_field_options: options
+               }
+            },
+            None => ContentFieldData::default()
+        };
+
+        Ok(content_field_data)
+    }
+}
+
+
+
+
+impl TryFrom<ContentSelectFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: ContentSelectFieldData) -> Result<Value> {
+        let val_val: BTreeMap<String, Value> =
+            [
+                ("label".into(), val.label.into()),
+                ("value".into(), val.value.into()),
+            ].into();
+
+        Ok(val_val.into())
+    }
+}
+
 
 
 impl TryFrom<String> for ContentFieldDataType {
@@ -195,6 +325,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "TEXTAREA" => ContentFieldFieldType::Textarea,
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
+            "SELECT" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -207,34 +338,6 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
     type Error = Error;
 
     fn try_from(val: Option<crate::api::proto::content::ContentFieldFieldContent>) -> Result<ContentFieldFieldContent> {
-        
-        // todo fix the issue with how to save empty string??? 
-        // somehow we need to find a way to save none 
-        // let option_val = match val.clone() {
-        //     Some(val) => val.text_value.unwrap_or_default(),
-        //     None => "".to_string(),
-        // };
-
-        // let option_int64_val = match val.clone() {
-        //     Some(val) => val.int_value.unwrap_or_default(),
-        //     None => 0,
-        // };
-
-
-
-
-        // let option_array_val: Vec<String> = vec![];
-        // let option_array_val = match val {
-        //     Some(array_val) => {
-        //         let mut array_val: Vec<String> = vec![];
-        //         // for (arr_val in array_val.)
-        //
-        //         vec![]
-        //     },
-        //     None => {
-        //         vec![]
-        //     }
-        // };
 
         
         let content_field_field_content = ContentFieldFieldContent {
@@ -292,23 +395,6 @@ impl TryFrom<Object> for ContentFieldFieldContent {
 }
 
 
-impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFieldFieldContent {
-    type Error = Error;
-
-    fn try_from(val: ContentFieldFieldContent) -> Result<crate::api::proto::content::ContentFieldFieldContent > {
-    
-        // @todo think of a better way to do this
-        // If string is empty then we should return None
-        let model = crate::api::proto::content::ContentFieldFieldContent {
-            text_value: Some(val.text_value.unwrap_or_default()),
-            int_value: Some(val.int_value.unwrap_or_default()),
-            array_value: val.array_value
-        };
-
-        Ok(model)
-    }
-}
-
 impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::ContentFieldFieldContent {
     type Error = Error;
 
@@ -346,6 +432,10 @@ impl TryFrom<ContentFieldModel> for crate::api::proto::content::ContentFieldMode
     fn try_from(val: ContentFieldModel) -> Result<crate::api::proto::content::ContentFieldModel > {
         
         let field_content: crate::api::proto::content::ContentFieldFieldContent  = val.field_content.try_into()?;
+        let field_data: crate::api::proto::content::ContentFieldData  = match val.field_data {
+            Some(val ) => val.try_into()?,
+            None => crate::api::proto::content::ContentFieldData::default(),
+        };
         
         let model = crate::api::proto::content::ContentFieldModel {
             name: val.name,
@@ -353,6 +443,7 @@ impl TryFrom<ContentFieldModel> for crate::api::proto::content::ContentFieldMode
             data_type: val.data_type.try_into()?,
             field_type: val.field_type.try_into()?,
             field_content: Some(field_content),
+            field_data: Some(field_data),
         };
 
         Ok(model)
@@ -386,6 +477,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::Textarea => String::from("TEXTAREA"),
             ContentFieldFieldType::RichTextEditor => String::from("RICH_TEXT_EDITOR"),
             ContentFieldFieldType::NumberTextField => String::from("NUMBER_TEXT_FIELD"),
+            ContentFieldFieldType::Select => String::from("SELECT"),
         };
 
         Ok(string_val)
@@ -462,6 +554,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "Textarea" => ContentFieldFieldType::Textarea,
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
+            "SELECT" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -504,12 +597,86 @@ impl TryFrom<Object> for ContentFieldModel {
             _ => ContentFieldFieldContent::default(),
         };
 
+
+        let field_data = match field_type_str.as_str() {
+            "SELECT" => {
+                let content_data = match val.get("field_data") {
+                    Some(val) => {
+
+                        let object = match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr: Vec<ContentSelectFieldData> = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: ContentSelectFieldData = object.try_into()?;
+                                    arr.push(option)
+                                }
+                                
+                                arr
+                            },
+                            _ => vec![]
+                        };
+
+                        println!("object {:?}", object);
+                        // option
+                        ContentFieldData {
+                            content_select_field_options: object
+                        }
+                    }
+                    None => ContentFieldData::default(),
+                };
+
+                content_data
+            },
+            
+
+            _ => ContentFieldData::default(),
+        };
+
         Ok(ContentFieldModel {
             name,
             identifier,
             data_type,
             field_type,
             field_content,
+            field_data: Some(field_data),
+        })
+    }
+}
+
+impl TryFrom<Object> for ContentFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ContentFieldData> {
+        
+        println!("object to val {:?}", val);
+        
+        
+        let content_select_field_options = vec![];
+
+
+        Ok(ContentFieldData {
+            content_select_field_options
+        })
+    }
+}
+
+
+
+impl TryFrom<Object> for ContentSelectFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ContentSelectFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+
+
+        Ok(ContentSelectFieldData {
+            label,
+            value,
         })
     }
 }

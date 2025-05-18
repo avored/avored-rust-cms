@@ -68,6 +68,18 @@ pub struct ContentFieldFieldContent {
     pub array_value: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentSelectFieldData {
+    #[prost(string, tag = "1")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub value: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentFieldData {
+    #[prost(message, repeated, tag = "1")]
+    pub content_select_field_options: ::prost::alloc::vec::Vec<ContentSelectFieldData>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldModel {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
@@ -79,6 +91,8 @@ pub struct ContentFieldModel {
     pub field_type: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
     pub field_content: ::core::option::Option<ContentFieldFieldContent>,
+    #[prost(message, optional, tag = "6")]
+    pub field_data: ::core::option::Option<ContentFieldData>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentModel {
@@ -197,6 +211,8 @@ pub struct UpdateContentFieldModel {
     pub field_type: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
     pub field_content: ::core::option::Option<ContentFieldFieldContent>,
+    #[prost(message, optional, tag = "6")]
+    pub field_data: ::core::option::Option<ContentFieldData>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateContentRequest {
