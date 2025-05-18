@@ -120,6 +120,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Text => "TEXT".into(),
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
+                ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
             
@@ -192,6 +193,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Text => "TEXT".into(),
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
+                ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
         

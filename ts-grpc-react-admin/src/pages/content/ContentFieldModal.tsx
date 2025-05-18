@@ -126,6 +126,20 @@ export const ContentFieldModal = ({
                   {t("rich_text_editor")}
                 </div>
 
+                <div
+                    onClick={() =>
+                        onContentFieldChange(
+                            currentIndex,
+                            ContentFieldFieldType.NUMBER_TEXT_FIELD,
+                            ContentFieldDataType.INT
+                        )
+                    }
+                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.NUMBER_TEXT_FIELD ? "bg-primary-200" : "bg-gray-300"} 
+                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                >
+                  {t("number_text_field")}
+                </div>
+
               </div>
             </div>
           </div>

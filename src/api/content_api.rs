@@ -188,6 +188,7 @@ impl Content for ContentApi {
         }
 
         let req = request.into_inner();
+        println!("request {:#?}", req);
         match self
             .state
             .content_service

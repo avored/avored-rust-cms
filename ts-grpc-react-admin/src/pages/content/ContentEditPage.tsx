@@ -64,6 +64,7 @@ export const ContentEditPage = () => {
                 field_type: content_field.fieldType as ContentFieldFieldType,
                 field_content: {
                     text_value: content_field.fieldContent?.textValue ?? '',
+                    int_value: content_field.fieldContent?.intValue ?? 0,
                 }
             }
 
@@ -162,6 +163,18 @@ export const ContentEditPage = () => {
                         />
                     </div>
                 );
+
+            case ContentFieldFieldType.NUMBER_TEXT_FIELD:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            type="number"
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.int_value`)}
+                        />
+                    </div>
+                );
         }
     }
 
@@ -176,6 +189,7 @@ export const ContentEditPage = () => {
             const update_content_field_request = new StoreContentFieldModel();
             const content_field_field_content =  new GrpcContentFieldFieldContent();
             content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
+            content_field_field_content.setIntValue(content_field.field_content.int_value ?? 0)
 
             update_content_field_request.setName(content_field.name);
             update_content_field_request.setIdentifier(content_field.identifier);

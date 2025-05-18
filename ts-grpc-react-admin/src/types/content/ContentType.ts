@@ -20,6 +20,7 @@ export enum ContentFieldFieldType {
     TEXT = "TEXT",
     TEXTAREA = "TEXTAREA",
     RICH_TEXT_EDITOR = "RICH_TEXT_EDITOR",
+    NUMBER_TEXT_FIELD = "NUMBER_TEXT_FIELD",
     // INT = "INT",
     // Array_Text = "Array_Text"
 }
