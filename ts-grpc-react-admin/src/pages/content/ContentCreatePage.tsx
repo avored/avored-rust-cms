@@ -123,6 +123,18 @@ export const ContentCreatePage = () => {
                         />
                     </div>
                 );
+
+            case ContentFieldFieldType.NUMBER_TEXT_FIELD:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            type="number"
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.int_value`)}
+                        />
+                    </div>
+                );
         }
     }
 
