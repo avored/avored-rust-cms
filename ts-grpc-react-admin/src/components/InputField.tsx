@@ -16,6 +16,7 @@ type AvoRedInputFieldProps = {
     disabled?: boolean;
     placeholder?: string;
     register: any;
+    step?: any
 }
 
 
@@ -36,6 +37,7 @@ const InputField = (props: AvoRedInputFieldProps) => {
                     id={props.id ?? props.name}
                     type={props.type ?? "text"}
                     name={props.name}
+                    step={props.step}
                     required={props.required}
                     value={props.value}
                     onChange={props.onChange}

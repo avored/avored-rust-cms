@@ -13,6 +13,7 @@ export type CollectionType = {
 export enum ContentFieldDataType {
     TEXT = "TEXT",
     INT = "INT",
+    FLOAT = "FLOAT",
     // Array_Text = "Array_Text"
 }
 
@@ -21,6 +22,7 @@ export enum ContentFieldFieldType {
     TEXTAREA = "TEXTAREA",
     RICH_TEXT_EDITOR = "RICH_TEXT_EDITOR",
     NUMBER_TEXT_FIELD = "NUMBER_TEXT_FIELD",
+    FLOAT_TEXT_FIELD = "FLOAT_TEXT_FIELD",
     // INT = "INT",
     // Array_Text = "Array_Text"
 }
@@ -36,6 +38,8 @@ export type ContentFieldType = {
 export type ContentFieldFieldContent = {
     text_value?: string,
     int_value?: number,
+    float_value?: number,
+    array_value?: Array<string>,
 }
 
 export type ContentType = {

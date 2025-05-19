@@ -41,6 +41,8 @@ pub trait BaseModel {
     fn get_bool(&self) -> Result<bool>;
     fn get_int(&self) -> Result<i64>;
 
+    fn get_float(&self) -> Result<f64>;
+
     // fn get_array<T>(&self) -> Result<Vec<T>>;
 }
 impl BaseModel for Option<&Value> {
@@ -102,6 +104,18 @@ impl BaseModel for Option<&Value> {
             None => 0,
         };
     
+        Ok(value)
+    }
+
+    fn get_float(&self) -> Result<f64> {
+        let value = match self.to_owned() {
+            Some(val) => match val.clone() {
+                Number(v) => v.as_float(),
+                _ => 0.00,
+            },
+            None => 0.00,
+        };
+
         Ok(value)
     }
 

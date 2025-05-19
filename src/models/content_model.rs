@@ -57,6 +57,7 @@ pub enum ContentFieldDataType {
     Text,
     Int,
     Array,
+    Float
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -66,6 +67,7 @@ pub enum ContentFieldFieldType {
     Textarea,
     RichTextEditor,
     NumberTextField,
+    FloatTextField,
     Select
 }
 
@@ -73,6 +75,7 @@ pub enum ContentFieldFieldType {
 pub struct ContentFieldFieldContent {
     pub text_value: Option<String>,
     pub int_value: Option<i64>,
+    pub float_value: Option<f64>,
     pub array_value: Vec<String>,
 }
 
@@ -199,6 +202,7 @@ impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFi
         let model = crate::api::proto::content::ContentFieldFieldContent {
             text_value: Some(val.text_value.unwrap_or_default()),
             int_value: Some(val.int_value.unwrap_or_default()),
+            float_value: Some(val.float_value.unwrap_or_default()),
             array_value: val.array_value
         };
 
@@ -308,6 +312,8 @@ impl TryFrom<String> for ContentFieldDataType {
         let data_type = match val.as_str() {
             "TEXT" => ContentFieldDataType::Text,
             "INT" => ContentFieldDataType::Int,
+            "ARRAY" => ContentFieldDataType::Array,
+            "FLOAT" => ContentFieldDataType::Float,
             _ => ContentFieldDataType::default(),
         };
         
@@ -325,6 +331,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "TEXTAREA" => ContentFieldFieldType::Textarea,
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
+            "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "SELECT" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
@@ -343,6 +350,7 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
         let content_field_field_content = ContentFieldFieldContent {
             text_value: val.clone().unwrap_or_default().text_value,
             int_value: val.clone().unwrap_or_default().int_value,
+            float_value: val.clone().unwrap_or_default().float_value,
             array_value: val.unwrap_or_default().array_value,
         };
 
@@ -354,11 +362,17 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
 impl TryFrom<ContentFieldFieldContent> for Value {
     type Error = Error;
     fn try_from(val: ContentFieldFieldContent) -> Result<Value> {
+        let float_value = match val.float_value {
+            Some(val) => val.into(),
+            None => Value::None,
+        };
+        
         let val_val: BTreeMap<String, Value> =
             [
                 ("text_value".into(), val.text_value.into()),
                 ("int_value".into(), val.int_value.into()),
-                ("array_value".into(), val.array_value.into())
+                ("array_value".into(), val.array_value.into()),
+                ("float_value".into(), float_value),
             ].into();
 
         Ok(val_val.into())
@@ -370,6 +384,8 @@ impl TryFrom<Object> for ContentFieldFieldContent {
     fn try_from(val: Object) -> Result<ContentFieldFieldContent> {
         let value = val.get("text_value").get_string()?;
         let int_value = val.get("int_value").get_int()?;
+        let float_value = val.get("float_value").get_float()?;
+        
         let array_value: Vec<String> = match val.get("array_value") {
             Some(val) => match val.clone() {
                 Value::Array(v) => {
@@ -389,6 +405,7 @@ impl TryFrom<Object> for ContentFieldFieldContent {
         Ok(ContentFieldFieldContent { 
             text_value: Some(value),
             int_value: Some(int_value),
+            float_value: Some(float_value),
             array_value,
         })
     }
@@ -406,6 +423,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                     text_value: Some(val.text_value.unwrap()),
                     int_value: Some(val.int_value.unwrap()),
                     array_value: val.array_value,
+                    float_value: val.float_value,
                 };
                 
                 model
@@ -414,6 +432,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                 let model = crate::api::proto::content::ContentFieldFieldContent {
                     text_value: None,
                     int_value: None,
+                    float_value: None,
                     array_value: vec![],
                 };
                 
@@ -459,6 +478,7 @@ impl TryFrom<ContentFieldDataType> for String {
             ContentFieldDataType::Text => String::from("TEXT"),
             ContentFieldDataType::Int => String::from("INT"),
             ContentFieldDataType::Array => String::from("ARRAY"),
+            ContentFieldDataType::Float => String::from("FLOAT"),
         };
 
         Ok(string_val)
@@ -477,7 +497,9 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::Textarea => String::from("TEXTAREA"),
             ContentFieldFieldType::RichTextEditor => String::from("RICH_TEXT_EDITOR"),
             ContentFieldFieldType::NumberTextField => String::from("NUMBER_TEXT_FIELD"),
+            ContentFieldFieldType::FloatTextField => String::from("FLOAT_TEXT_FIELD"),
             ContentFieldFieldType::Select => String::from("SELECT"),
+            
         };
 
         Ok(string_val)
@@ -545,6 +567,8 @@ impl TryFrom<Object> for ContentFieldModel {
         let data_type = match data_type_str.as_str() {
             "TEXT" => ContentFieldDataType::Text,
             "INT" => ContentFieldDataType::Int,
+            "FLOAT" => ContentFieldDataType::Float,
+            "ARRAY" => ContentFieldDataType::Array,
             _ => ContentFieldDataType::default(),
         };
 
@@ -554,6 +578,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "Textarea" => ContentFieldFieldType::Textarea,
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
+            "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "SELECT" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
@@ -592,6 +617,23 @@ impl TryFrom<Object> for ContentFieldModel {
                 };
 
                 int_content_field_content
+            },
+            "FLOAT" => {
+                let float_content_field_content = match val.get("field_content") {
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+
+                        let option: ContentFieldFieldContent = object.try_into()?;
+
+                        option
+                    }
+                    None => ContentFieldFieldContent::default(),
+                };
+
+                float_content_field_content
             }
 
             _ => ContentFieldFieldContent::default(),

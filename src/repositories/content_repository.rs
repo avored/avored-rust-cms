@@ -115,12 +115,14 @@ impl ContentRepository {
                 ContentFieldDataType::Text => "TEXT".into(),
                 ContentFieldDataType::Int => "INT".into(),
                 ContentFieldDataType::Array => "ARRAY".into(),
+                ContentFieldDataType::Float => "FLOAT".into(),
             };
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
+                ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "SELECT".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
@@ -188,6 +190,7 @@ impl ContentRepository {
                 ContentFieldDataType::Text => "TEXT".into(),
                 ContentFieldDataType::Int => "INT".into(),
                 ContentFieldDataType::Array => "ARRAY".into(),
+                ContentFieldDataType::Float => "FLOAT".into(),
             };
             
             let field_type_value: Value = match updatable_content_field.field_type {
@@ -195,6 +198,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
+                ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "SELECT".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
@@ -220,6 +224,7 @@ impl ContentRepository {
             content_fields.push(content_field.into());
         }
 
+        println!("{:?}", content_fields);
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),

@@ -66,6 +66,8 @@
   "text": "Text",
   "textarea": "Textarea",
   "rich_text_editor": "Rich text editor",
+  "number_text_field": "Number field",
+  "float_text_field": "Float field",
   "table": "Table",
   "permissions": "Permissions",
   "page": "Page",

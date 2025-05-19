@@ -135,6 +135,18 @@ export const ContentCreatePage = () => {
                         />
                     </div>
                 );
+
+            case ContentFieldFieldType.FLOAT_TEXT_FIELD:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            type="number"
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.float_value`)}
+                        />
+                    </div>
+                );
         }
     }
 

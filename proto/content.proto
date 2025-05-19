@@ -49,6 +49,7 @@ message ContentFieldFieldContent {
   optional string text_value = 1;
   optional int64 int_value = 2;
   repeated string array_value = 3;
+  optional double float_value = 4;
 }
 
 message ContentSelectFieldData {
@@ -116,7 +117,7 @@ message StoreContentFieldModel {
   string data_type = 3;
   string field_type = 4;
   ContentFieldFieldContent field_content = 5;
-  
+  optional ContentFieldData field_data = 6;
 }
 
 

@@ -65,6 +65,7 @@ export const ContentEditPage = () => {
                 field_content: {
                     text_value: content_field.fieldContent?.textValue ?? '',
                     int_value: content_field.fieldContent?.intValue ?? 0,
+                    float_value: content_field.fieldContent?.floatValue ?? 0,
                 }
             }
 
@@ -175,6 +176,19 @@ export const ContentEditPage = () => {
                         />
                     </div>
                 );
+
+            case ContentFieldFieldType.FLOAT_TEXT_FIELD:
+                return (
+                    <div className="mb-4">
+                        <InputField
+                            type="number"
+                            step="any"
+                            label={t("field_content")}
+                            placeholder={t("field_content")}
+                            register={register(`content_fields.${index}.field_content.float_value`)}
+                        />
+                    </div>
+                );
         }
     }
 
@@ -186,16 +200,27 @@ export const ContentEditPage = () => {
 
         const content_field_data_list: Array<UpdateContentFieldModel> = [];
         data.content_fields.forEach(content_field => {
+            var float_value = content_field.field_content.float_value ?? 0;
+
             const update_content_field_request = new StoreContentFieldModel();
             const content_field_field_content =  new GrpcContentFieldFieldContent();
             content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
             content_field_field_content.setIntValue(content_field.field_content.int_value ?? 0)
+            content_field_field_content.setFloatValue(float_value)
+            content_field_field_content.setArrayValueList([])
 
             update_content_field_request.setName(content_field.name);
             update_content_field_request.setIdentifier(content_field.identifier);
             update_content_field_request.setDataType(content_field.data_type as string);
             update_content_field_request.setFieldType(content_field.field_type as string);
             update_content_field_request.setFieldContent(content_field_field_content)
+            // update_content_field_request.setFieldData()
+
+            // update_content_field_request.setFieldData({});
+
+            // update_content_field_request.set(content_field.identifier);
+
+            console.log(update_content_field_request)
 
             content_field_data_list.push(update_content_field_request)
         })

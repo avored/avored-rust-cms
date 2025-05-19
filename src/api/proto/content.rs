@@ -66,6 +66,8 @@ pub struct ContentFieldFieldContent {
     pub int_value: ::core::option::Option<i64>,
     #[prost(string, repeated, tag = "3")]
     pub array_value: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(double, optional, tag = "4")]
+    pub float_value: ::core::option::Option<f64>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentSelectFieldData {
@@ -166,6 +168,8 @@ pub struct StoreContentFieldModel {
     pub field_type: ::prost::alloc::string::String,
     #[prost(message, optional, tag = "5")]
     pub field_content: ::core::option::Option<ContentFieldFieldContent>,
+    #[prost(message, optional, tag = "6")]
+    pub field_data: ::core::option::Option<ContentFieldData>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StoreContentRequest {
