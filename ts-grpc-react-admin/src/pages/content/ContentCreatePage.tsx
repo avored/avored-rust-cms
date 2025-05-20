@@ -14,7 +14,12 @@ import {
     SaveContentType
 } from "../../types/content/ContentType";
 import slug from "slug";
-import {StoreContentFieldModel, StoreContentRequest, ContentFieldFieldContent as GrpcContentFieldFieldContent} from "../../grpc_generated/content_pb";
+import {
+    StoreContentFieldModel,
+    StoreContentRequest,
+    ContentFieldFieldContent as GrpcContentFieldFieldContent,
+    ContentFieldData as GrpcContentFieldData, ContentSelectFieldData as GrpcContentSelectFieldData
+} from "../../grpc_generated/content_pb";
 import {ContentFieldModal} from "./ContentFieldModal";
 import {useState} from "react";
 import _ from "lodash";
@@ -147,6 +152,31 @@ export const ContentCreatePage = () => {
                         />
                     </div>
                 );
+            case ContentFieldFieldType.SELECT:
+                return (
+                    <div className="mb-4">
+                        <div className="mb-4">
+                            <label className="text-sm text-gray-600">
+                                {t!("field_content")}
+                            </label>
+
+                            <select
+                                {...register(
+                                    `content_fields.${index}.field_content.text_value`,
+                                )}
+                                className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
+                            >
+                                {field.field_data?.content_select_field_options?.map((option) => {
+                                    return (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                );
         }
     }
 
@@ -169,6 +199,19 @@ export const ContentCreatePage = () => {
             store_content_field_request.setDataType(content_field.data_type as string);
             store_content_field_request.setFieldType(content_field.field_type as string);
             store_content_field_request.setFieldContent(content_field_field_content)
+
+            if (content_field.field_type === ContentFieldFieldType.SELECT) {
+                const content_field_options_data = new GrpcContentFieldData();
+
+                content_field.field_data?.content_select_field_options?.forEach((option, index) => {
+                    const grpc_option = new GrpcContentSelectFieldData();
+                    grpc_option.setLabel(option.label);
+                    grpc_option.setValue(option.value);
+                    content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
+                })
+
+                store_content_field_request.setFieldData(content_field_options_data)
+            }
 
             content_field_data_list.push(store_content_field_request)
         })

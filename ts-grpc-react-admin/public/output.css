@@ -799,6 +799,9 @@
   .min-h-screen {
     min-height: 100vh;
   }
+  .w-1\/2 {
+    width: calc(1/2 * 100%);
+  }
   .w-1\/3 {
     width: calc(1/3 * 100%);
   }
@@ -1488,6 +1491,9 @@
   }
   .ring-primary-300 {
     --tw-ring-color: var(--color-primary-300);
+  }
+  .ring-primary-400 {
+    --tw-ring-color: var(--color-primary-400);
   }
   .ring-primary-600 {
     --tw-ring-color: var(--color-primary-600);

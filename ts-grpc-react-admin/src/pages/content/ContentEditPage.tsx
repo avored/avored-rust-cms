@@ -6,12 +6,15 @@ import {
     ContentFieldDataType,
     ContentFieldFieldType,
     ContentFieldType, SaveContentFieldType,
+    ContentSelectFieldData,
     SaveContentType
 } from "../../types/content/ContentType";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
 import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
 import {
+    ContentFieldData as GrpcContentFieldData,
+    ContentSelectFieldData as GrpcContentSelectFieldData,
     ContentFieldFieldContent as GrpcContentFieldFieldContent,
     GetContentRequest,
     PutContentIdentifierRequest, StoreContentFieldModel,
@@ -29,6 +32,7 @@ import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
+import ErrorMessage from "../../components/ErrorMessage";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -41,7 +45,7 @@ export const ContentEditPage = () => {
     const content_id = params.content_id as string;
     const contentType: string = searchParams.get("type") as string
 
-    const {mutate} = UseUpdateContentHook()
+    const {mutate, error} = UseUpdateContentHook()
     const { mutate: putContentIdentifierMutate } = UsePutContentIdentifierHook();
 
     const request = new GetContentRequest()
@@ -69,6 +73,15 @@ export const ContentEditPage = () => {
                 }
             }
 
+            if (content_field.fieldType as ContentFieldFieldType === ContentFieldFieldType.SELECT) {
+                const select_option_data_list = content_field?.fieldData?.contentSelectFieldOptionsList ?? [];
+                const options: Array<ContentSelectFieldData> = select_option_data_list as Array<unknown> as ContentSelectFieldData[];
+
+                grpc_content_field.field_data = {
+                    content_select_field_options: options
+                }
+            }
+
             values.content_fields.push(grpc_content_field)
 
             return grpc_content_field
@@ -79,7 +92,7 @@ export const ContentEditPage = () => {
         register,
         handleSubmit,
         getValues,
-        // formState: {},
+        formState: {errors},
         control,
         setValue,
         trigger,
@@ -189,6 +202,32 @@ export const ContentEditPage = () => {
                         />
                     </div>
                 );
+
+            case ContentFieldFieldType.SELECT:
+                return (
+                    <div className="mb-4">
+                        <div className="mb-4">
+                            <label className="text-sm text-gray-600">
+                                {t!("field_content")}
+                            </label>
+
+                            <select
+                                {...register(
+                                    `content_fields.${index}.field_content.text_value`,
+                                )}
+                                className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
+                            >
+                                {field.field_data?.content_select_field_options?.map((option) => {
+                                    return (
+                                        <option key={option.value} value={option.value}>
+                                            {option.label}
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </div>
+                );
         }
     }
 
@@ -214,14 +253,20 @@ export const ContentEditPage = () => {
             update_content_field_request.setDataType(content_field.data_type as string);
             update_content_field_request.setFieldType(content_field.field_type as string);
             update_content_field_request.setFieldContent(content_field_field_content)
-            // update_content_field_request.setFieldData()
 
-            // update_content_field_request.setFieldData({});
+            if (content_field.field_type === ContentFieldFieldType.SELECT) {
+                const content_field_options_data = new GrpcContentFieldData();
 
-            // update_content_field_request.set(content_field.identifier);
+                content_field.field_data?.content_select_field_options?.forEach((option, index) => {
+                    const grpc_option = new GrpcContentSelectFieldData();
+                    grpc_option.setLabel(option.label);
+                    grpc_option.setValue(option.value);
+                    content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
+                })
 
-            console.log(update_content_field_request)
+                update_content_field_request.setFieldData(content_field_options_data)
 
+            }
             content_field_data_list.push(update_content_field_request)
         })
 
@@ -262,6 +307,7 @@ export const ContentEditPage = () => {
                                 name="name"
                                 register={register("name")}
                             />
+                            <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="name" />
                         </div>
 
                         <div className="mb-4">

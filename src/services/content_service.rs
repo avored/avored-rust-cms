@@ -120,7 +120,8 @@ impl ContentService {
                 identifier: req_content_field.identifier,
                 data_type: req_content_field.data_type.try_into()?,
                 field_type: req_content_field.field_type.try_into()?,
-                field_content: req_content_field.field_content.try_into()?
+                field_content: req_content_field.field_content.try_into()?,
+                field_data: Some(req_content_field.field_data.try_into()?)
             });
         }
         

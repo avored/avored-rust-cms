@@ -96,6 +96,7 @@ pub struct CreatableContentField {
     pub data_type: ContentFieldDataType,
     pub field_type: ContentFieldFieldType,
     pub field_content: ContentFieldFieldContent,
+    pub field_data: Option<ContentFieldData>,
 }
 
 
@@ -332,7 +333,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
-            "SELECT" => ContentFieldFieldType::Select,
+            "Select" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -498,7 +499,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::RichTextEditor => String::from("RICH_TEXT_EDITOR"),
             ContentFieldFieldType::NumberTextField => String::from("NUMBER_TEXT_FIELD"),
             ContentFieldFieldType::FloatTextField => String::from("FLOAT_TEXT_FIELD"),
-            ContentFieldFieldType::Select => String::from("SELECT"),
+            ContentFieldFieldType::Select => String::from("Select"),
             
         };
 
@@ -579,7 +580,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "RICH_TEXT_EDITOR" => ContentFieldFieldType::RichTextEditor,
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
-            "SELECT" => ContentFieldFieldType::Select,
+            "Select" => ContentFieldFieldType::Select,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -641,7 +642,7 @@ impl TryFrom<Object> for ContentFieldModel {
 
 
         let field_data = match field_type_str.as_str() {
-            "SELECT" => {
+            "Select" => {
                 let content_data = match val.get("field_data") {
                     Some(val) => {
 

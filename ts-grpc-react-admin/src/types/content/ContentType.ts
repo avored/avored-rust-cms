@@ -14,7 +14,7 @@ export enum ContentFieldDataType {
     TEXT = "TEXT",
     INT = "INT",
     FLOAT = "FLOAT",
-    // Array_Text = "Array_Text"
+    Array = "Array"
 }
 
 export enum ContentFieldFieldType {
@@ -23,8 +23,18 @@ export enum ContentFieldFieldType {
     RICH_TEXT_EDITOR = "RICH_TEXT_EDITOR",
     NUMBER_TEXT_FIELD = "NUMBER_TEXT_FIELD",
     FLOAT_TEXT_FIELD = "FLOAT_TEXT_FIELD",
+    SELECT = "Select",
     // INT = "INT",
     // Array_Text = "Array_Text"
+}
+
+export type ContentSelectFieldData = {
+    label: string;
+    value: string;
+}
+
+export type ContentFieldData = {
+    content_select_field_options: Array<ContentSelectFieldData>;
 }
 
 export type ContentFieldType = {
@@ -33,6 +43,7 @@ export type ContentFieldType = {
     data_type: ContentFieldDataType;
     field_type: ContentFieldFieldType;
     field_content: ContentFieldFieldContent;
+    field_data?: ContentFieldData
 }
 
 export type ContentFieldFieldContent = {
@@ -68,6 +79,7 @@ export type SaveContentFieldType = {
     data_type: ContentFieldDataType;
     field_type: ContentFieldFieldType;
     field_content: ContentFieldFieldContent;
+    field_data?: ContentFieldData;
 }
 
 export type StoreCollectionType = {

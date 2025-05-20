@@ -123,9 +123,11 @@ impl ContentRepository {
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
-                ContentFieldFieldType::Select => "SELECT".into(),
+                ContentFieldFieldType::Select => "Select".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
+
+            // let field_content_value: Value = created_content_field.field_data.try_into()?;
             
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
@@ -199,7 +201,7 @@ impl ContentRepository {
                 ContentFieldFieldType::RichTextEditor => "RICH_TEXT_EDITOR".into(),
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
-                ContentFieldFieldType::Select => "SELECT".into(),
+                ContentFieldFieldType::Select => "Select".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
