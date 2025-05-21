@@ -582,6 +582,9 @@
   .top-1 {
     top: calc(var(--spacing) * 1);
   }
+  .top-2\.5 {
+    top: calc(var(--spacing) * 2.5);
+  }
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
@@ -590,6 +593,9 @@
   }
   .right-1\.5 {
     right: calc(var(--spacing) * 1.5);
+  }
+  .right-2\.5 {
+    right: calc(var(--spacing) * 2.5);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
@@ -1183,11 +1189,20 @@
   .bg-center {
     background-position: center;
   }
+  .fill-black {
+    fill: var(--color-black);
+  }
+  .fill-white\/60 {
+    fill: color-mix(in oklab, var(--color-white) 60%, transparent);
+  }
   .stroke-gray-400 {
     stroke: var(--color-gray-400);
   }
   .stroke-primary-500 {
     stroke: var(--color-primary-500);
+  }
+  .stroke-white {
+    stroke: var(--color-white);
   }
   .p-1 {
     padding: calc(var(--spacing) * 1);
@@ -1399,6 +1414,9 @@
   .text-gray-900 {
     color: var(--color-gray-900);
   }
+  .text-green-500 {
+    color: var(--color-green-500);
+  }
   .text-primary-500 {
     color: var(--color-primary-500);
   }
@@ -1597,11 +1615,26 @@
   .ring-inset {
     --tw-ring-inset: inset;
   }
+  .\*\:text-black {
+    :is(& > *) {
+      color: var(--color-black);
+    }
+  }
   .group-hover\:stroke-gray-600 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         stroke: var(--color-gray-600);
       }
+    }
+  }
+  .group-data-checked\:block {
+    &:is(:where(.group)[data-checked] *) {
+      display: block;
+    }
+  }
+  .group-data-checked\:opacity-100 {
+    &:is(:where(.group)[data-checked] *) {
+      opacity: 100%;
     }
   }
   .selection\:bg-primary-500 {
@@ -1903,6 +1936,16 @@
   .disabled\:ring-gray-200 {
     &:disabled {
       --tw-ring-color: var(--color-gray-200);
+    }
+  }
+  .data-checked\:bg-blue-500 {
+    &[data-checked] {
+      background-color: var(--color-blue-500);
+    }
+  }
+  .data-checked\:bg-primary-500 {
+    &[data-checked] {
+      background-color: var(--color-primary-500);
     }
   }
   .data-focus\:outline-2 {

@@ -68,7 +68,8 @@ pub enum ContentFieldFieldType {
     RichTextEditor,
     NumberTextField,
     FloatTextField,
-    Select
+    Select,
+    Checkbox
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -226,6 +227,7 @@ impl TryFrom<ContentFieldData> for crate::api::proto::content::ContentFieldData 
         // If string is empty then we should return None
         let model = crate::api::proto::content::ContentFieldData {
             content_select_field_options: options,
+            content_checkbox_field_data: vec![]
         };
 
         Ok(model)
@@ -500,6 +502,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::NumberTextField => String::from("NUMBER_TEXT_FIELD"),
             ContentFieldFieldType::FloatTextField => String::from("FLOAT_TEXT_FIELD"),
             ContentFieldFieldType::Select => String::from("Select"),
+            ContentFieldFieldType::Checkbox => String::from("Checkbox"),
             
         };
 

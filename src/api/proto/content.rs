@@ -70,6 +70,13 @@ pub struct ContentFieldFieldContent {
     pub float_value: ::core::option::Option<f64>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
+pub struct ContentCheckboxFieldData {
+    #[prost(string, tag = "1")]
+    pub label: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub value: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentSelectFieldData {
     #[prost(string, tag = "1")]
     pub label: ::prost::alloc::string::String,
@@ -80,6 +87,8 @@ pub struct ContentSelectFieldData {
 pub struct ContentFieldData {
     #[prost(message, repeated, tag = "1")]
     pub content_select_field_options: ::prost::alloc::vec::Vec<ContentSelectFieldData>,
+    #[prost(message, repeated, tag = "2")]
+    pub content_checkbox_field_data: ::prost::alloc::vec::Vec<ContentCheckboxFieldData>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentFieldModel {

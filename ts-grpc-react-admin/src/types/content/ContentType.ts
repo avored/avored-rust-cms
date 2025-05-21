@@ -24,8 +24,7 @@ export enum ContentFieldFieldType {
     NUMBER_TEXT_FIELD = "NUMBER_TEXT_FIELD",
     FLOAT_TEXT_FIELD = "FLOAT_TEXT_FIELD",
     SELECT = "Select",
-    // INT = "INT",
-    // Array_Text = "Array_Text"
+    Checkbox = "Checkbox",
 }
 
 export type ContentSelectFieldData = {
@@ -33,8 +32,14 @@ export type ContentSelectFieldData = {
     value: string;
 }
 
+export type ContentCheckboxFieldData = {
+    label: string;
+    value: string;
+}
+
 export type ContentFieldData = {
     content_select_field_options: Array<ContentSelectFieldData>;
+    content_checkbox_field_data: Array<ContentCheckboxFieldData>;
 }
 
 export type ContentFieldType = {

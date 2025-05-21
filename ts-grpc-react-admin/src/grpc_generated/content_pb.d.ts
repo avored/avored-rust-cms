@@ -240,6 +240,28 @@ export namespace ContentFieldFieldContent {
   }
 }
 
+export class ContentCheckboxFieldData extends jspb.Message {
+  getLabel(): string;
+  setLabel(value: string): ContentCheckboxFieldData;
+
+  getValue(): string;
+  setValue(value: string): ContentCheckboxFieldData;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentCheckboxFieldData.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentCheckboxFieldData): ContentCheckboxFieldData.AsObject;
+  static serializeBinaryToWriter(message: ContentCheckboxFieldData, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentCheckboxFieldData;
+  static deserializeBinaryFromReader(message: ContentCheckboxFieldData, reader: jspb.BinaryReader): ContentCheckboxFieldData;
+}
+
+export namespace ContentCheckboxFieldData {
+  export type AsObject = {
+    label: string,
+    value: string,
+  }
+}
+
 export class ContentSelectFieldData extends jspb.Message {
   getLabel(): string;
   setLabel(value: string): ContentSelectFieldData;
@@ -268,6 +290,11 @@ export class ContentFieldData extends jspb.Message {
   clearContentSelectFieldOptionsList(): ContentFieldData;
   addContentSelectFieldOptions(value?: ContentSelectFieldData, index?: number): ContentSelectFieldData;
 
+  getContentCheckboxFieldDataList(): Array<ContentCheckboxFieldData>;
+  setContentCheckboxFieldDataList(value: Array<ContentCheckboxFieldData>): ContentFieldData;
+  clearContentCheckboxFieldDataList(): ContentFieldData;
+  addContentCheckboxFieldData(value?: ContentCheckboxFieldData, index?: number): ContentCheckboxFieldData;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentFieldData.AsObject;
   static toObject(includeInstance: boolean, msg: ContentFieldData): ContentFieldData.AsObject;
@@ -279,6 +306,7 @@ export class ContentFieldData extends jspb.Message {
 export namespace ContentFieldData {
   export type AsObject = {
     contentSelectFieldOptionsList: Array<ContentSelectFieldData.AsObject>,
+    contentCheckboxFieldDataList: Array<ContentCheckboxFieldData.AsObject>,
   }
 }
 

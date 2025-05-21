@@ -1,5 +1,12 @@
 use std::collections::BTreeMap;
+// use std::path::Path;
+// use std::process::ExitCode;
 use std::sync::Arc;
+// use surrealdb::channel;
+// use surrealdb::channel::unbounded;
+// use tokio::fs::{File, OpenOptions};
+// use tokio::io;
+// use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
@@ -7,6 +14,7 @@ use crate::api::proto::admin_user::StoreAdminUserRequest;
 use crate::api::proto::misc::{DeleteDemoDataRequest, DeleteDemoDataResponse, HealthCheckRequest, HealthCheckResponse, InstallDemoDataRequest, InstallDemoDataResponse, SetupRequest, SetupResponse};
 use crate::api::proto::misc::misc_server::Misc;
 use crate::avored_state::AvoRedState;
+// use crate::error::Error;
 use crate::models::role_model::CreatableRole;
 
 pub struct MiscApi {
@@ -42,6 +50,57 @@ impl Misc for MiscApi {
         let reply = HealthCheckResponse {
             status: true
         };
+        
+        // let file = Path::new("public/backup.sql");
+        // 
+        // let (datastore, session) = &self.state.db;
+        // 
+        // let (tx, rx) = channel::bounded(1);
+        // let (mut writer, mut reader) = io::duplex(10_240);
+        // 
+        // // Write to channel.
+        // // let session = session.read().await.clone();
+        // let export = datastore.export(session, tx);
+        // 
+        // // Read from channel and write to pipe.
+        // let bridge = async move {
+        //     while let Ok(value) = rx.recv().await {
+        //         if writer.write_all(&value).await.is_err() {
+        //             // Broken pipe. Let either side's error be propagated.
+        //             break;
+        //         }
+        //     }
+        //     Ok(())
+        // };
+        // 
+        // // Output to stdout or file.
+        // let mut output = match OpenOptions::new()
+        //     .write(true)
+        //     .create(true)
+        //     .truncate(true)
+        //     .open(&file)
+        //     .await
+        // {
+        //     Ok(path) => path,
+        //     Err(error) => {
+        //         return Err(Error::Generic("file issue".to_string())
+        //             .into());
+        //     }
+        // };
+        // 
+        // let copy  = io::copy(&mut reader, &mut writer).await.map(|_| ()).map_err(|error| {
+        //     crate::Error::Generic("copy issue".to_string()).into()
+        // });
+        // println!("copy: {:?}", copy);
+        // Copy from pipe to output.
+        // let copy = copy(file, &mut reader, &mut output);
+
+        // tokio::try_join!(export, bridge, copy).unwrap();
+
+       
+        // let responses = datastore.export(session, s).await.unwrap();
+
+        // println!(" res: {:?}", r.recv().await);
         
         Ok(Response::new(reply))
     }

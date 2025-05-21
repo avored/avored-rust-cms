@@ -33,9 +33,10 @@ import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import ErrorMessage from "../../components/ErrorMessage";
-import {Field, Select} from "@headlessui/react";
+import {Checkbox, Field, Label, Select} from "@headlessui/react";
 import {ChevronDownIcon} from "@heroicons/react/24/solid";
 import clsx from 'clsx'
+import {CheckIcon} from "@heroicons/react/20/solid";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -81,7 +82,8 @@ export const ContentEditPage = () => {
                 const options: Array<ContentSelectFieldData> = select_option_data_list as Array<unknown> as ContentSelectFieldData[];
 
                 grpc_content_field.field_data = {
-                    content_select_field_options: options
+                    content_select_field_options: options,
+                    content_checkbox_field_data: []
                 }
             }
 
@@ -125,6 +127,18 @@ export const ContentEditPage = () => {
     const cancelIdentifierOnClick = () => {
         setIsEditableIdentifier(true);
     };
+
+    const getCheckboxCheckedStatus = (field_index: number, option_value: string) => {
+        const current_value = getValues(`content_fields.${field_index}.field_content.text_value`) ?? ''
+
+        console.log(current_value, option_value)
+        return current_value === option_value;
+    }
+
+    const setCheckboxCheckedStatus = (async (e: any, field_index: number, option_value: string) => {
+        setValue(`content_fields.${field_index}.field_content.text_value`, e ? option_value : '')
+        await trigger(`content_fields.${field_index}`)
+    })
 
     const deleteContentFieldOnClick = (e: any, index: number) => {
         e.preventDefault();
@@ -246,6 +260,47 @@ export const ContentEditPage = () => {
                         </div>
                     </div>
                 );
+
+            case ContentFieldFieldType.Checkbox:
+                return (
+                    <>
+                        <div className="mb-4">
+                            <div className="w-full">
+                                <Field>
+                                    <label className="text-sm text-gray-600">
+                                        <label className="text-sm text-gray-600">
+                                            {t!("field_content")}
+                                        </label>
+                                    </label>
+                                    <div className="relative">
+
+                                            {field.field_data?.content_checkbox_field_data?.map((option, option_index) => {
+                                                return (
+                                                    <Field className="flex items-center gap-2">
+                                                        <Checkbox
+                                                            checked={getCheckboxCheckedStatus(index , option.value)}
+                                                            onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
+                                                            value={option.value}
+                                                            className="group block size-4 rounded border bg-white data-checked:bg-primary-500"
+                                                        >
+                                                            <svg className="stroke-white opacity-0 group-data-checked:opacity-100" viewBox="0 0 14 14" fill="none">
+                                                                <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                                            </svg>
+                                                        </Checkbox>
+                                                        <Label>{option.label}</Label>
+                                                    </Field>
+                                                );
+                                            })}
+
+
+                                    </div>
+                                </Field>
+
+                            </div>
+                        </div>
+                    </>
+                );
+
         }
     }
 

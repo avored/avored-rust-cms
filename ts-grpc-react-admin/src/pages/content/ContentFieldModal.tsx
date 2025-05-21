@@ -1,5 +1,6 @@
 import {UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormTrigger,} from "react-hook-form";
 import {
+    ContentCheckboxFieldData,
     ContentFieldData,
     ContentFieldDataType,
     ContentFieldFieldType,
@@ -56,12 +57,30 @@ export const ContentFieldModal = ({
                 };
                 const content_field_data: ContentFieldData = {
                     content_select_field_options: [],
+                    content_checkbox_field_data: []
                 };
                 if (typeof content_field_data.content_select_field_options == "undefined") {
                     content_field_data.content_select_field_options = [];
                 }
                 content_field_data.content_select_field_options.push(empty_option);
                 setValue(`content_fields.${index}.field_data`, content_field_data);
+
+                break;
+
+            case ContentFieldFieldType.Checkbox:
+                const checkbox_option: ContentCheckboxFieldData = {
+                    label: "",
+                    value: "",
+                };
+                const content_field_checkbox_data: ContentFieldData = {
+                    content_select_field_options: [],
+                    content_checkbox_field_data: []
+                };
+                if (typeof content_field_checkbox_data.content_checkbox_field_data == "undefined") {
+                    content_field_checkbox_data.content_checkbox_field_data = [];
+                }
+                content_field_checkbox_data.content_checkbox_field_data.push(checkbox_option);
+                setValue(`content_fields.${index}.field_data`, content_field_checkbox_data);
 
                 break;
         }
@@ -126,6 +145,62 @@ export const ContentFieldModal = ({
     ) => {
         setValue(
             `content_fields.${field_index}.field_data.content_select_field_options.${option_index}.value`,
+            e.target.value,
+        );
+        await trigger("content_fields");
+    };
+
+    const checkboxLabelOnChange = async (
+        e: any,
+        field_index: number,
+        option_index: number,
+    ) => {
+        setValue(
+            `content_fields.${field_index}.field_data.content_checkbox_field_data.${option_index}.label`,
+            e.target.value,
+        );
+        await trigger("content_fields");
+    };
+
+    const checkboxAddOnClick = async (
+        e: React.MouseEvent<HTMLButtonElement>,
+        field_index: number,
+    ) => {
+        e.preventDefault();
+        const content_field: SaveContentFieldType = getValues(
+            `content_fields.${field_index}`,
+        );
+        const empty_option: ContentCheckboxFieldData = {
+            label: "",
+            value: "",
+        };
+
+        content_field.field_data?.content_checkbox_field_data?.push(empty_option);
+
+        await trigger("content_fields");
+    };
+
+    const checkboxRemoveOnClick = async (
+        e: React.MouseEvent<HTMLButtonElement>,
+        field_index: number,
+        option_index: number,
+    ) => {
+        e.preventDefault();
+        const content_field: SaveContentFieldType = getValues(
+            `content_fields.${field_index}`,
+        );
+        content_field.field_data?.content_checkbox_field_data?.splice(option_index, 1);
+
+        await trigger(`content_fields.${field_index}`);
+    };
+
+    const checkboxValueOnChange = async (
+        e: any,
+        field_index: number,
+        option_index: number,
+    ) => {
+        setValue(
+            `content_fields.${field_index}.field_data.content_checkbox_field_data.${option_index}.value`,
             e.target.value,
         );
         await trigger("content_fields");
@@ -209,6 +284,99 @@ export const ContentFieldModal = ({
                                                                 <button
                                                                     onClick={(e) =>
                                                                         optionRemoveOnClick(
+                                                                            e,
+                                                                            currentIndex,
+                                                                            option_index,
+                                                                        )
+                                                                    }
+                                                                    className="ml-2"
+                                                                >
+                                                                    <MinusIcon className="w-5 h-5"/>
+                                                                </button>
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            },
+                        )}
+                    </>
+                );
+
+            case ContentFieldFieldType.Checkbox:
+                return (
+                    <>
+                        {_.get(content_field, 'field_data.content_checkbox_field_data', []).map(
+                            (option, option_index) => {
+                                return (
+                                    <div key={`avored-select-${option_index}`} className="block mt-3 w-full">
+                                        <div className="flex w-full items-center">
+                                            <div className="w-1/2">
+                                                <div className="block">
+                                                    <input
+                                                        value={option.label}
+                                                        onChange={(e) =>
+                                                            checkboxLabelOnChange(
+                                                                e,
+                                                                index,
+                                                                option_index,
+                                                            )
+                                                        }
+                                                        placeholder={t("label")}
+                                                        className="appearance-none rounded-md ring-1 ring-gray-400
+                                                              relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                                                              active::ring-primary-500
+                                                              focus:ring-primary-500 focus:outline-none focus:z-10
+                                                              disabled:bg-gray-200 disabled:opacity-70
+                                                              sm:text-sm "
+                                                    />
+                                                </div>
+                                            </div>
+                                            <div className="w-1/2 ml-3">
+                                                <div className="flex items-center w-full">
+                                                    <div>
+                                                        <input
+                                                            value={option.value}
+                                                            onChange={(e) =>
+                                                                checkboxValueOnChange(
+                                                                    e,
+                                                                    index,
+                                                                    option_index,
+                                                                )
+                                                            }
+                                                            className="appearance-none rounded-md ring-1 ring-gray-400
+                                                                      relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                                                                      active::ring-primary-500
+                                                                      focus:ring-primary-500 focus:outline-none focus:z-10
+                                                                      disabled:bg-gray-200 disabled:opacity-70
+                                                                      sm:text-sm
+                                                                      "
+                                                            placeholder={t("value")}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        {_.size(getValues(
+                                                            `content_fields.${index}.field_data.content_checkbox_field_data`,
+                                                        )) ===
+                                                        option_index + 1 ? (
+                                                            <>
+                                                                <button
+                                                                    onClick={(e) =>
+                                                                        checkboxAddOnClick(e, currentIndex)
+                                                                    }
+                                                                    className="ml-2"
+                                                                >
+                                                                    <PlusIcon className="w-5 h-5"/>
+                                                                </button>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <button
+                                                                    onClick={(e) =>
+                                                                        checkboxRemoveOnClick(
                                                                             e,
                                                                             currentIndex,
                                                                             option_index,
@@ -349,6 +517,20 @@ export const ContentFieldModal = ({
                         ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
                                 >
                                     {t("select_field")}
+                                </div>
+
+                                <div
+                                    onClick={() =>
+                                        onContentFieldChange(
+                                            currentIndex,
+                                            ContentFieldFieldType.Checkbox,
+                                            ContentFieldDataType.TEXT
+                                        )
+                                    }
+                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Checkbox ? "bg-primary-200" : "bg-gray-300"} 
+                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                >
+                                    {t("checkbox_field")}
                                 </div>
 
 

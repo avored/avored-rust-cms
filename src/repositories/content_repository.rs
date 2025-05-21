@@ -124,6 +124,7 @@ impl ContentRepository {
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "Select".into(),
+                ContentFieldFieldType::Checkbox => "Checkbox".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
 
@@ -202,6 +203,7 @@ impl ContentRepository {
                 ContentFieldFieldType::NumberTextField => "NUMBER_TEXT_FIELD".into(),
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "Select".into(),
+                ContentFieldFieldType::Checkbox => "Checkbox".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
