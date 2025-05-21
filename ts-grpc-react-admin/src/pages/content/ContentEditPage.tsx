@@ -33,6 +33,9 @@ import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import ErrorMessage from "../../components/ErrorMessage";
+import {Field, Select} from "@headlessui/react";
+import {ChevronDownIcon} from "@heroicons/react/24/solid";
+import clsx from 'clsx'
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -206,25 +209,40 @@ export const ContentEditPage = () => {
             case ContentFieldFieldType.SELECT:
                 return (
                     <div className="mb-4">
-                        <div className="mb-4">
-                            <label className="text-sm text-gray-600">
-                                {t!("field_content")}
-                            </label>
+                        <div className="w-full">
+                            <Field>
+                                <label className="text-sm text-gray-600">
+                                    <label className="text-sm text-gray-600">
+                                        {t!("field_content")}
+                                    </label>
+                                </label>
+                                <div className="relative">
+                                    <Select
+                                        {...register(
+                                            `content_fields.${index}.field_content.text_value`,
+                                        )}
+                                        className={clsx(
+                                            'ring-1 ring-gray-400  px-2 py-2 bg-gray-300  mt-3 block w-full appearance-none rounded-lg border-none bg-gray-400.5 text-sm/6',
+                                            'focus:not-data-focus:outline-none data-focus:outline-2 data-focus:-outline-offset-2 data-focus:outline-white/25',
+                                            // Make the text of each option black on Windows
 
-                            <select
-                                {...register(
-                                    `content_fields.${index}.field_content.text_value`,
-                                )}
-                                className="w-full rounded border-0 ring-1 ring-primary-400 outline-none appearance-none"
-                            >
-                                {field.field_data?.content_select_field_options?.map((option) => {
-                                    return (
-                                        <option key={option.value} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    );
-                                })}
-                            </select>
+                                        )}
+                                    >
+                                            {field.field_data?.content_select_field_options?.map((option) => {
+                                                return (
+                                                    <option key={option.value} value={option.value}>
+                                                        {option.label}
+                                                    </option>
+                                                );
+                                            })}
+                                    </Select>
+                                    <ChevronDownIcon
+                                        className="group pointer-events-none absolute mt-2 mr-2 top-1 right-1 inset-3 w-5 h-5 text-gray-400"
+                                        aria-hidden="true"
+                                    />
+                                </div>
+                            </Field>
+
                         </div>
                     </div>
                 );
