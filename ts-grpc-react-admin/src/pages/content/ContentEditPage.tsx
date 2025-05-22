@@ -100,7 +100,7 @@ export const ContentEditPage = () => {
                 default:
                     break;
             }
-            
+
             values.content_fields.push(grpc_content_field)
 
             return grpc_content_field
