@@ -7,7 +7,8 @@ import {
     ContentFieldFieldType,
     ContentFieldType, SaveContentFieldType,
     ContentSelectFieldData,
-    SaveContentType
+    SaveContentType,
+    ContentCheckboxFieldData
 } from "../../types/content/ContentType";
 import {Controller, useFieldArray, useForm} from "react-hook-form";
 import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
@@ -15,6 +16,7 @@ import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
 import {
     ContentFieldData as GrpcContentFieldData,
     ContentSelectFieldData as GrpcContentSelectFieldData,
+    ContentCheckboxFieldData as GrpcContentCheckboxFieldData,
     ContentFieldFieldContent as GrpcContentFieldFieldContent,
     GetContentRequest,
     PutContentIdentifierRequest, StoreContentFieldModel,
@@ -77,16 +79,28 @@ export const ContentEditPage = () => {
                 }
             }
 
-            if (content_field.fieldType as ContentFieldFieldType === ContentFieldFieldType.SELECT) {
-                const select_option_data_list = content_field?.fieldData?.contentSelectFieldOptionsList ?? [];
-                const options: Array<ContentSelectFieldData> = select_option_data_list as Array<unknown> as ContentSelectFieldData[];
+            switch (content_field.fieldType) {
+                case ContentFieldFieldType.SELECT:
+                    const select_option_data_list = content_field?.fieldData?.contentSelectFieldOptionsList ?? [];
+                    const options: Array<ContentSelectFieldData> = select_option_data_list as Array<unknown> as ContentSelectFieldData[];
 
-                grpc_content_field.field_data = {
-                    content_select_field_options: options,
-                    content_checkbox_field_data: []
-                }
+                    grpc_content_field.field_data = {
+                        content_select_field_options: options,
+                        content_checkbox_field_data: []
+                    }
+                    break;
+                case ContentFieldFieldType.Checkbox:
+                    const checkbox_option_data_list = content_field?.fieldData?.contentCheckboxFieldDataList ?? [];
+                    const checkbox_options: Array<ContentCheckboxFieldData> = checkbox_option_data_list as Array<unknown> as ContentCheckboxFieldData[];
+                    grpc_content_field.field_data = {
+                        content_select_field_options: [],
+                        content_checkbox_field_data: checkbox_options
+                    }
+                    break;
+                default:
+                    break;
             }
-
+            
             values.content_fields.push(grpc_content_field)
 
             return grpc_content_field
@@ -131,7 +145,6 @@ export const ContentEditPage = () => {
     const getCheckboxCheckedStatus = (field_index: number, option_value: string) => {
         const current_value = getValues(`content_fields.${field_index}.field_content.text_value`) ?? ''
 
-        console.log(current_value, option_value)
         return current_value === option_value;
     }
 
@@ -327,19 +340,36 @@ export const ContentEditPage = () => {
             update_content_field_request.setFieldType(content_field.field_type as string);
             update_content_field_request.setFieldContent(content_field_field_content)
 
-            if (content_field.field_type === ContentFieldFieldType.SELECT) {
-                const content_field_options_data = new GrpcContentFieldData();
+            switch (content_field.field_type) {
+                case ContentFieldFieldType.SELECT:
+                    const content_field_options_data = new GrpcContentFieldData();
 
-                content_field.field_data?.content_select_field_options?.forEach((option, index) => {
-                    const grpc_option = new GrpcContentSelectFieldData();
-                    grpc_option.setLabel(option.label);
-                    grpc_option.setValue(option.value);
-                    content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
-                })
+                    content_field.field_data?.content_select_field_options?.forEach((option, index) => {
+                        const grpc_option = new GrpcContentSelectFieldData();
+                        grpc_option.setLabel(option.label);
+                        grpc_option.setValue(option.value);
+                        content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
+                    })
 
-                update_content_field_request.setFieldData(content_field_options_data)
+                    update_content_field_request.setFieldData(content_field_options_data)
+                    break;
+                case ContentFieldFieldType.Checkbox:
+                    const checkbox_options_data = new GrpcContentFieldData();
 
+                    content_field.field_data?.content_checkbox_field_data?.forEach((option, index) => {
+                        const grpc_option = new GrpcContentCheckboxFieldData();
+                        grpc_option.setLabel(option.label);
+                        grpc_option.setValue(option.value);
+                        checkbox_options_data.addContentCheckboxFieldData(grpc_option, index);
+                    })
+
+                    update_content_field_request.setFieldData(checkbox_options_data)
+                    break;
+
+                default:
+                    break;
             }
+
             content_field_data_list.push(update_content_field_request)
         })
 

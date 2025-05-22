@@ -128,7 +128,13 @@ impl ContentRepository {
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
 
-            // let field_content_value: Value = created_content_field.field_data.try_into()?;
+            let mut field_data_value: Vec<Value> = vec![];
+
+            let field_data = created_content_field.field_data.unwrap_or_default();
+
+            for field_data_item in field_data.content_select_field_options {
+                field_data_value.push(field_data_item.try_into()?);
+            }
             
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
@@ -136,6 +142,7 @@ impl ContentRepository {
                 ("data_type".into(), data_type_value),
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
+                ("field_data".into(), field_data_value.into()),
             ].into();
             
             content_fields.push(content_field.into());
@@ -208,12 +215,28 @@ impl ContentRepository {
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
             let mut field_data_value: Vec<Value> = vec![];
+
+            let field_data_value: Vec<Value> = match updatable_content_field.field_type {
+               
+                ContentFieldFieldType::Select => {
+                    let field_data = updatable_content_field.field_data.unwrap_or_default();
+                    for field_data_item in field_data.content_select_field_options {
+                        field_data_value.push(field_data_item.try_into()?);
+                    }
+
+                    field_data_value
+                },
+                ContentFieldFieldType::Checkbox =>  {
+                    let field_data = updatable_content_field.field_data.unwrap_or_default();
+                    for field_data_item in field_data.content_checkbox_field_data {
+                        field_data_value.push(field_data_item.try_into()?);
+                    }
+
+                    field_data_value
+                },
+                _ => vec![]
+            };
             
-            let field_data = updatable_content_field.field_data.unwrap_or_default();
-            
-            for field_data_item in field_data.content_select_field_options {
-                field_data_value.push(field_data_item.try_into()?);
-            }
             
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_content_field.name.into()),

@@ -23,8 +23,16 @@ pub struct ContentSelectFieldData {
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ContentCheckboxFieldData {
+    pub label: String,
+    pub value: String,
+}
+
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentFieldData {
     pub content_select_field_options: Vec<ContentSelectFieldData>,
+    pub content_checkbox_field_data: Vec<ContentCheckboxFieldData>,
 }
 
 
@@ -224,10 +232,17 @@ impl TryFrom<ContentFieldData> for crate::api::proto::content::ContentFieldData 
             options.push(t);
         }
 
+        let mut checkbox_options = vec![];
+        for checkbox_option in val.content_checkbox_field_data {
+            let t: crate::api::proto::content::ContentCheckboxFieldData = checkbox_option.try_into()?;
+            checkbox_options.push(t);
+        }
+
+
         // If string is empty then we should return None
         let model = crate::api::proto::content::ContentFieldData {
             content_select_field_options: options,
-            content_checkbox_field_data: vec![]
+            content_checkbox_field_data: checkbox_options
         };
 
         Ok(model)
@@ -251,6 +266,33 @@ impl TryFrom<ContentSelectFieldData> for crate::api::proto::content::ContentSele
     }
 }
 
+impl TryFrom<ContentCheckboxFieldData> for crate::api::proto::content::ContentCheckboxFieldData {
+    type Error = Error;
+
+    fn try_from(val: ContentCheckboxFieldData) -> Result<crate::api::proto::content::ContentCheckboxFieldData > {
+
+        let model = crate::api::proto::content::ContentCheckboxFieldData {
+            label: val.label,
+            value: val.value,
+        };
+
+        Ok(model)
+    }
+}
+
+
+impl TryFrom<crate::api::proto::content::ContentCheckboxFieldData> for ContentCheckboxFieldData {
+    type Error = Error;
+
+    fn try_from(val: crate::api::proto::content::ContentCheckboxFieldData) -> Result<ContentCheckboxFieldData> {
+        let content_select_field_data = ContentCheckboxFieldData {
+            label: val.clone().label,
+            value: val.value
+        };
+
+        Ok(content_select_field_data)
+    }
+}
 
 impl TryFrom<crate::api::proto::content::ContentSelectFieldData> for ContentSelectFieldData {
     type Error = Error;
@@ -279,8 +321,16 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldData>> for ContentFi
                     options.push(t);
                 }
 
+                let mut checkbox_options: Vec<ContentCheckboxFieldData> = vec![];
+
+                for checkbox_option in val.content_checkbox_field_data {
+                    let t: ContentCheckboxFieldData = checkbox_option.try_into()?;
+                    checkbox_options.push(t);
+                }
+
                ContentFieldData {
-                   content_select_field_options: options
+                   content_select_field_options: options,
+                   content_checkbox_field_data: checkbox_options,
                }
             },
             None => ContentFieldData::default()
@@ -296,6 +346,19 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldData>> for ContentFi
 impl TryFrom<ContentSelectFieldData> for Value {
     type Error = Error;
     fn try_from(val: ContentSelectFieldData) -> Result<Value> {
+        let val_val: BTreeMap<String, Value> =
+            [
+                ("label".into(), val.label.into()),
+                ("value".into(), val.value.into()),
+            ].into();
+
+        Ok(val_val.into())
+    }
+}
+
+impl TryFrom<ContentCheckboxFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: ContentCheckboxFieldData) -> Result<Value> {
         let val_val: BTreeMap<String, Value> =
             [
                 ("label".into(), val.label.into()),
@@ -336,6 +399,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "Select" => ContentFieldFieldType::Select,
+            "Checkbox" => ContentFieldFieldType::Checkbox,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -584,6 +648,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "NUMBER_TEXT_FIELD" => ContentFieldFieldType::NumberTextField,
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "Select" => ContentFieldFieldType::Select,
+            "Checkbox" => ContentFieldFieldType::Checkbox,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -671,7 +736,8 @@ impl TryFrom<Object> for ContentFieldModel {
                         println!("object {:?}", object);
                         // option
                         ContentFieldData {
-                            content_select_field_options: object
+                            content_select_field_options: object,
+                            content_checkbox_field_data: vec![]
                         }
                     }
                     None => ContentFieldData::default(),
@@ -679,6 +745,42 @@ impl TryFrom<Object> for ContentFieldModel {
 
                 content_data
             },
+            
+            "Checkbox" => {
+                let content_data = match val.get("field_data") {
+                    Some(val) => {
+
+                        let object = match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr: Vec<ContentCheckboxFieldData> = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: ContentCheckboxFieldData = object.try_into()?;
+                                    arr.push(option)
+                                }
+
+                                arr
+                            },
+                            _ => vec![]
+                        };
+
+                        println!("object {:?}", object);
+                        // option
+                        ContentFieldData {
+                            content_select_field_options: vec![],
+                            content_checkbox_field_data: object
+                        }
+                    }
+                    None => ContentFieldData::default(),
+                }; 
+                
+                content_data
+            }
             
 
             _ => ContentFieldData::default(),
@@ -695,21 +797,19 @@ impl TryFrom<Object> for ContentFieldModel {
     }
 }
 
-impl TryFrom<Object> for ContentFieldData {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<ContentFieldData> {
-        
-        println!("object to val {:?}", val);
-        
-        
-        let content_select_field_options = vec![];
-
-
-        Ok(ContentFieldData {
-            content_select_field_options
-        })
-    }
-}
+// impl TryFrom<Object> for ContentFieldData {
+//     type Error = Error;
+//     fn try_from(val: Object) -> Result<ContentFieldData> {
+//         
+//         
+//         let content_select_field_options = vec![];
+// 
+// 
+//         Ok(ContentFieldData {
+//             content_select_field_options
+//         })
+//     }
+// }
 
 
 
@@ -727,6 +827,20 @@ impl TryFrom<Object> for ContentSelectFieldData {
     }
 }
 
+
+impl TryFrom<Object> for ContentCheckboxFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ContentCheckboxFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+
+
+        Ok(ContentCheckboxFieldData {
+            label,
+            value,
+        })
+    }
+}
 
 
 // endregion: impl surreal Object for content model structs
