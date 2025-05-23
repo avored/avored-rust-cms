@@ -25,6 +25,7 @@ export enum ContentFieldFieldType {
     FLOAT_TEXT_FIELD = "FLOAT_TEXT_FIELD",
     SELECT = "Select",
     Checkbox = "Checkbox",
+    Radio = "Radio",
 }
 
 export type ContentSelectFieldData = {
@@ -37,9 +38,15 @@ export type ContentCheckboxFieldData = {
     value: string;
 }
 
+export type ContentRadioFieldData = {
+    label: string;
+    value: string;
+}
+
 export type ContentFieldData = {
     content_select_field_options: Array<ContentSelectFieldData>;
     content_checkbox_field_data: Array<ContentCheckboxFieldData>;
+    content_radio_field_data: Array<ContentRadioFieldData>;
 }
 
 export type ContentFieldType = {

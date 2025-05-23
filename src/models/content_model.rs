@@ -30,9 +30,16 @@ pub struct ContentCheckboxFieldData {
 
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct ContentRadioFieldData {
+    pub label: String,
+    pub value: String,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentFieldData {
     pub content_select_field_options: Vec<ContentSelectFieldData>,
     pub content_checkbox_field_data: Vec<ContentCheckboxFieldData>,
+    pub content_radio_field_data: Vec<ContentRadioFieldData>,
 }
 
 
@@ -77,7 +84,8 @@ pub enum ContentFieldFieldType {
     NumberTextField,
     FloatTextField,
     Select,
-    Checkbox
+    Checkbox,
+    Radio
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -238,11 +246,18 @@ impl TryFrom<ContentFieldData> for crate::api::proto::content::ContentFieldData 
             checkbox_options.push(t);
         }
 
+        let mut radio_options = vec![];
+        for radio_option in val.content_radio_field_data {
+            let t: crate::api::proto::content::ContentRadioFieldData = radio_option.try_into()?;
+            radio_options.push(t);
+        }
+
 
         // If string is empty then we should return None
         let model = crate::api::proto::content::ContentFieldData {
             content_select_field_options: options,
-            content_checkbox_field_data: checkbox_options
+            content_checkbox_field_data: checkbox_options,
+            content_radio_field_data: radio_options,
         };
 
         Ok(model)
@@ -280,6 +295,35 @@ impl TryFrom<ContentCheckboxFieldData> for crate::api::proto::content::ContentCh
     }
 }
 
+impl TryFrom<ContentRadioFieldData> for crate::api::proto::content::ContentRadioFieldData {
+    type Error = Error;
+
+    fn try_from(val: ContentRadioFieldData) -> Result<crate::api::proto::content::ContentRadioFieldData > {
+
+        // @todo think of a better way to do this
+        // If string is empty then we should return None
+        let model = crate::api::proto::content::ContentRadioFieldData {
+            label: val.label,
+            value: val.value,
+        };
+
+        Ok(model)
+    }
+}
+
+
+impl TryFrom<crate::api::proto::content::ContentSelectFieldData> for ContentSelectFieldData {
+    type Error = Error;
+
+    fn try_from(val: crate::api::proto::content::ContentSelectFieldData) -> Result<ContentSelectFieldData> {
+        let content_select_field_data = ContentSelectFieldData {
+            label: val.clone().label,
+            value: val.value
+        };
+
+        Ok(content_select_field_data)
+    }
+}
 
 impl TryFrom<crate::api::proto::content::ContentCheckboxFieldData> for ContentCheckboxFieldData {
     type Error = Error;
@@ -294,16 +338,16 @@ impl TryFrom<crate::api::proto::content::ContentCheckboxFieldData> for ContentCh
     }
 }
 
-impl TryFrom<crate::api::proto::content::ContentSelectFieldData> for ContentSelectFieldData {
+impl TryFrom<crate::api::proto::content::ContentRadioFieldData> for ContentRadioFieldData {
     type Error = Error;
 
-    fn try_from(val: crate::api::proto::content::ContentSelectFieldData) -> Result<ContentSelectFieldData> {
-        let content_select_field_data = ContentSelectFieldData {
+    fn try_from(val: crate::api::proto::content::ContentRadioFieldData) -> Result<ContentRadioFieldData> {
+        let content_radio_field_data = ContentRadioFieldData {
             label: val.clone().label,
             value: val.value
         };
 
-        Ok(content_select_field_data)
+        Ok(content_radio_field_data)
     }
 }
 
@@ -327,10 +371,18 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldData>> for ContentFi
                     let t: ContentCheckboxFieldData = checkbox_option.try_into()?;
                     checkbox_options.push(t);
                 }
+                
+                let mut radio_options: Vec<ContentRadioFieldData> = vec![];
+
+                for radio_option in val.content_radio_field_data {
+                    let t: ContentRadioFieldData = radio_option.try_into()?;
+                    radio_options.push(t);
+                }
 
                ContentFieldData {
                    content_select_field_options: options,
                    content_checkbox_field_data: checkbox_options,
+                   content_radio_field_data: radio_options,
                }
             },
             None => ContentFieldData::default()
@@ -359,6 +411,19 @@ impl TryFrom<ContentSelectFieldData> for Value {
 impl TryFrom<ContentCheckboxFieldData> for Value {
     type Error = Error;
     fn try_from(val: ContentCheckboxFieldData) -> Result<Value> {
+        let val_val: BTreeMap<String, Value> =
+            [
+                ("label".into(), val.label.into()),
+                ("value".into(), val.value.into()),
+            ].into();
+
+        Ok(val_val.into())
+    }
+}
+
+impl TryFrom<ContentRadioFieldData> for Value {
+    type Error = Error;
+    fn try_from(val: ContentRadioFieldData) -> Result<Value> {
         let val_val: BTreeMap<String, Value> =
             [
                 ("label".into(), val.label.into()),
@@ -400,6 +465,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "Select" => ContentFieldFieldType::Select,
             "Checkbox" => ContentFieldFieldType::Checkbox,
+            "Radio" => ContentFieldFieldType::Radio,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -567,7 +633,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::FloatTextField => String::from("FLOAT_TEXT_FIELD"),
             ContentFieldFieldType::Select => String::from("Select"),
             ContentFieldFieldType::Checkbox => String::from("Checkbox"),
-            
+            ContentFieldFieldType::Radio => String::from("Radio"),
         };
 
         Ok(string_val)
@@ -649,6 +715,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "FLOAT_TEXT_FIELD" => ContentFieldFieldType::FloatTextField,
             "Select" => ContentFieldFieldType::Select,
             "Checkbox" => ContentFieldFieldType::Checkbox,
+            "Radio" => ContentFieldFieldType::Radio,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -733,11 +800,11 @@ impl TryFrom<Object> for ContentFieldModel {
                             _ => vec![]
                         };
 
-                        println!("object {:?}", object);
                         // option
                         ContentFieldData {
                             content_select_field_options: object,
-                            content_checkbox_field_data: vec![]
+                            content_checkbox_field_data: vec![],
+                            content_radio_field_data: vec![]
                         }
                     }
                     None => ContentFieldData::default(),
@@ -769,18 +836,54 @@ impl TryFrom<Object> for ContentFieldModel {
                             _ => vec![]
                         };
 
-                        println!("object {:?}", object);
                         // option
                         ContentFieldData {
                             content_select_field_options: vec![],
-                            content_checkbox_field_data: object
+                            content_checkbox_field_data: object,
+                            content_radio_field_data: vec![]
                         }
                     }
                     None => ContentFieldData::default(),
                 }; 
                 
                 content_data
+            },
+
+            "Radio" => {
+                let content_data = match val.get("field_data") {
+                    Some(val) => {
+
+                        let object = match val.clone() {
+                            Value::Array(v) => {
+                                let mut arr: Vec<ContentRadioFieldData> = Vec::new();
+
+                                for array in v.into_iter() {
+                                    let object = match array.clone() {
+                                        Value::Object(v) => v,
+                                        _ => Object::default(),
+                                    };
+
+                                    let option: ContentRadioFieldData = object.try_into()?;
+                                    arr.push(option)
+                                }
+
+                                arr
+                            },
+                            _ => vec![]
+                        };
+                        // option
+                        ContentFieldData {
+                            content_select_field_options: vec![],
+                            content_checkbox_field_data: vec![],
+                            content_radio_field_data: object
+                        }
+                    }
+                    None => ContentFieldData::default(),
+                };
+
+                content_data
             }
+            
             
 
             _ => ContentFieldData::default(),
@@ -836,6 +939,20 @@ impl TryFrom<Object> for ContentCheckboxFieldData {
 
 
         Ok(ContentCheckboxFieldData {
+            label,
+            value,
+        })
+    }
+}
+
+impl TryFrom<Object> for ContentRadioFieldData {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<ContentRadioFieldData> {
+        let label = val.get("label").get_string()?;
+        let value = val.get("value").get_string()?;
+
+
+        Ok(ContentRadioFieldData {
             label,
             value,
         })

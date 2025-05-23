@@ -582,6 +582,9 @@
   .top-1 {
     top: calc(var(--spacing) * 1);
   }
+  .top-2\.5 {
+    top: calc(var(--spacing) * 2.5);
+  }
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
@@ -590,6 +593,9 @@
   }
   .right-1\.5 {
     right: calc(var(--spacing) * 1.5);
+  }
+  .right-2\.5 {
+    right: calc(var(--spacing) * 2.5);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
@@ -1183,8 +1189,8 @@
   .bg-center {
     background-position: center;
   }
-  .fill-black {
-    fill: var(--color-black);
+  .fill-white\/60 {
+    fill: color-mix(in oklab, var(--color-white) 60%, transparent);
   }
   .stroke-gray-400 {
     stroke: var(--color-gray-400);
@@ -1510,6 +1516,9 @@
   .ring-primary-300 {
     --tw-ring-color: var(--color-primary-300);
   }
+  .ring-primary-400 {
+    --tw-ring-color: var(--color-primary-400);
+  }
   .ring-primary-600 {
     --tw-ring-color: var(--color-primary-600);
   }
@@ -1600,16 +1609,16 @@
   .ring-inset {
     --tw-ring-inset: inset;
   }
+  .\*\:text-black {
+    :is(& > *) {
+      color: var(--color-black);
+    }
+  }
   .group-hover\:stroke-gray-600 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         stroke: var(--color-gray-600);
       }
-    }
-  }
-  .group-data-checked\:block {
-    &:is(:where(.group)[data-checked] *) {
-      display: block;
     }
   }
   .group-data-checked\:opacity-100 {

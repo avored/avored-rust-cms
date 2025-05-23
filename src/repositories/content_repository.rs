@@ -125,6 +125,7 @@ impl ContentRepository {
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "Select".into(),
                 ContentFieldFieldType::Checkbox => "Checkbox".into(),
+                ContentFieldFieldType::Radio => "Radio".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
 
@@ -135,7 +136,16 @@ impl ContentRepository {
             for field_data_item in field_data.content_select_field_options {
                 field_data_value.push(field_data_item.try_into()?);
             }
-            
+
+            for field_data_item in field_data.content_checkbox_field_data {
+                field_data_value.push(field_data_item.try_into()?);
+            }
+
+            for field_data_item in field_data.content_radio_field_data {
+                field_data_value.push(field_data_item.try_into()?);
+            }
+
+
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
                 ("identifier".into(), created_content_field.identifier.into()),
@@ -211,6 +221,7 @@ impl ContentRepository {
                 ContentFieldFieldType::FloatTextField => "FLOAT_TEXT_FIELD".into(),
                 ContentFieldFieldType::Select => "Select".into(),
                 ContentFieldFieldType::Checkbox => "Checkbox".into(),
+                ContentFieldFieldType::Radio => "Radio".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
@@ -234,6 +245,15 @@ impl ContentRepository {
 
                     field_data_value
                 },
+
+                ContentFieldFieldType::Radio =>  {
+                    let field_data = updatable_content_field.field_data.unwrap_or_default();
+                    for field_data_item in field_data.content_radio_field_data {
+                        field_data_value.push(field_data_item.try_into()?);
+                    }
+
+                    field_data_value
+                },
                 _ => vec![]
             };
             
@@ -251,7 +271,7 @@ impl ContentRepository {
             content_fields.push(content_field.into());
         }
 
-        println!("{:?}", content_fields);
+        println!(" value {:?}", content_fields);
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),

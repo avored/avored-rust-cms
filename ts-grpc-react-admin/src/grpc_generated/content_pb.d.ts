@@ -240,6 +240,28 @@ export namespace ContentFieldFieldContent {
   }
 }
 
+export class ContentRadioFieldData extends jspb.Message {
+  getLabel(): string;
+  setLabel(value: string): ContentRadioFieldData;
+
+  getValue(): string;
+  setValue(value: string): ContentRadioFieldData;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ContentRadioFieldData.AsObject;
+  static toObject(includeInstance: boolean, msg: ContentRadioFieldData): ContentRadioFieldData.AsObject;
+  static serializeBinaryToWriter(message: ContentRadioFieldData, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ContentRadioFieldData;
+  static deserializeBinaryFromReader(message: ContentRadioFieldData, reader: jspb.BinaryReader): ContentRadioFieldData;
+}
+
+export namespace ContentRadioFieldData {
+  export type AsObject = {
+    label: string,
+    value: string,
+  }
+}
+
 export class ContentCheckboxFieldData extends jspb.Message {
   getLabel(): string;
   setLabel(value: string): ContentCheckboxFieldData;
@@ -295,6 +317,11 @@ export class ContentFieldData extends jspb.Message {
   clearContentCheckboxFieldDataList(): ContentFieldData;
   addContentCheckboxFieldData(value?: ContentCheckboxFieldData, index?: number): ContentCheckboxFieldData;
 
+  getContentRadioFieldDataList(): Array<ContentRadioFieldData>;
+  setContentRadioFieldDataList(value: Array<ContentRadioFieldData>): ContentFieldData;
+  clearContentRadioFieldDataList(): ContentFieldData;
+  addContentRadioFieldData(value?: ContentRadioFieldData, index?: number): ContentRadioFieldData;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentFieldData.AsObject;
   static toObject(includeInstance: boolean, msg: ContentFieldData): ContentFieldData.AsObject;
@@ -307,6 +334,7 @@ export namespace ContentFieldData {
   export type AsObject = {
     contentSelectFieldOptionsList: Array<ContentSelectFieldData.AsObject>,
     contentCheckboxFieldDataList: Array<ContentCheckboxFieldData.AsObject>,
+    contentRadioFieldDataList: Array<ContentRadioFieldData.AsObject>,
   }
 }
 

@@ -18,7 +18,10 @@ import {
     StoreContentFieldModel,
     StoreContentRequest,
     ContentFieldFieldContent as GrpcContentFieldFieldContent,
-    ContentFieldData as GrpcContentFieldData, ContentSelectFieldData as GrpcContentSelectFieldData
+    ContentFieldData as GrpcContentFieldData,
+    ContentSelectFieldData as GrpcContentSelectFieldData,
+    ContentCheckboxFieldData as GrpcContentCheckboxFieldData,
+    ContentRadioFieldData as GrpcContentRadioFieldData,
 } from "../../grpc_generated/content_pb";
 import {ContentFieldModal} from "./ContentFieldModal";
 import {useState} from "react";
@@ -27,7 +30,7 @@ import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
 import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
 import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
-import {Field, Select} from "@headlessui/react";
+import {Checkbox, Field, Label, Radio, RadioGroup, Select} from "@headlessui/react";
 import clsx from "clsx";
 import {ChevronDownIcon} from "@heroicons/react/24/solid";
 
@@ -96,6 +99,28 @@ export const ContentCreatePage = () => {
         setCurrentIndex(max_index);
         setIsContentFieldModalOpen(true)
     })
+
+    const getCheckboxCheckedStatus = (field_index: number, option_value: string) => {
+        const current_value = getValues(`content_fields.${field_index}.field_content.text_value`) ?? ''
+
+        return current_value === option_value;
+    }
+
+    const setCheckboxCheckedStatus = (async (e: any, field_index: number, option_value: string) => {
+        setValue(`content_fields.${field_index}.field_content.text_value`, e ? option_value : '')
+        await trigger(`content_fields.${field_index}`)
+    })
+
+    const getRadioFieldCurrentValue = ((field_index: number) => {
+        return getValues(`content_fields.${field_index}.field_content.text_value`) ?? ''
+    })
+
+    const setRadioCheckedStatus = (async (option_value: string, field_index: number) => {
+
+        setValue(`content_fields.${field_index}.field_content.text_value`, option_value)
+        await trigger(`content_fields.${field_index}`)
+    })
+
 
 
     const renderField = (field: SaveContentFieldType, index: number) => {
@@ -195,6 +220,91 @@ export const ContentCreatePage = () => {
                         </div>
                     </div>
                 );
+
+            case ContentFieldFieldType.Checkbox:
+                return (
+                    <>
+                        <div className="mb-4">
+                            <div className="w-full">
+                                <Field>
+                                    <label className="text-sm text-gray-600">
+                                        <label className="text-sm text-gray-600">
+                                            {t!("field_content")}
+                                        </label>
+                                    </label>
+                                    <div className="relative">
+
+                                        {field.field_data?.content_checkbox_field_data?.map((option, option_index) => {
+                                            return (
+                                                <Field className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        checked={getCheckboxCheckedStatus(index , option.value)}
+                                                        onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
+                                                        value={option.value}
+                                                        className="group block size-4 rounded border bg-white data-checked:bg-primary-500"
+                                                    >
+                                                        <svg className="stroke-white opacity-0 group-data-checked:opacity-100" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </Checkbox>
+                                                    <Label>{option.label}</Label>
+                                                </Field>
+                                            );
+                                        })}
+
+
+                                    </div>
+                                </Field>
+
+                            </div>
+                        </div>
+                    </>
+                );
+
+            case ContentFieldFieldType.Radio:
+                return (
+                    <>
+                        <div className="mb-4">
+                            <div className="w-full">
+                                <Field>
+                                    <label className="text-sm text-gray-600">
+                                        <label className="text-sm text-gray-600">
+                                            {t!("field_content")}
+                                        </label>
+                                    </label>
+                                    <div className="relative">
+
+                                        <RadioGroup
+                                            value={getRadioFieldCurrentValue(index)}
+                                            onChange={value => setRadioCheckedStatus(value, index)}
+                                            className="flex items-center gap-2">
+                                            {field.field_data?.content_radio_field_data?.map((option, option_index) => {
+                                                return (
+                                                    <Field key={option.value} className="flex items-center gap-2">
+                                                        <Radio
+                                                            // onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
+                                                            value={option.value}
+                                                            className="group block size-4 rounded border bg-white data-checked:bg-primary-500"
+                                                        >
+                                                            <svg className="stroke-white opacity-0 group-data-checked:opacity-100" viewBox="0 0 14 14" fill="none">
+                                                                <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                                            </svg>
+                                                        </Radio>
+                                                        <Label>{option.label}</Label>
+                                                    </Field>
+
+                                                );
+                                            })}
+                                        </RadioGroup>
+
+
+                                    </div>
+                                </Field>
+
+                            </div>
+                        </div>
+                    </>
+                );
         }
     }
 
@@ -218,18 +328,49 @@ export const ContentCreatePage = () => {
             store_content_field_request.setFieldType(content_field.field_type as string);
             store_content_field_request.setFieldContent(content_field_field_content)
 
-            if (content_field.field_type === ContentFieldFieldType.SELECT) {
-                const content_field_options_data = new GrpcContentFieldData();
+            switch (content_field.field_type) {
+                case ContentFieldFieldType.SELECT:
+                    const content_field_options_data = new GrpcContentFieldData();
 
-                content_field.field_data?.content_select_field_options?.forEach((option, index) => {
-                    const grpc_option = new GrpcContentSelectFieldData();
-                    grpc_option.setLabel(option.label);
-                    grpc_option.setValue(option.value);
-                    content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
-                })
+                    content_field.field_data?.content_select_field_options?.forEach((option, index) => {
+                        const grpc_option = new GrpcContentSelectFieldData();
+                        grpc_option.setLabel(option.label);
+                        grpc_option.setValue(option.value);
+                        content_field_options_data.addContentSelectFieldOptions(grpc_option, index);
+                    })
 
-                store_content_field_request.setFieldData(content_field_options_data)
+                    store_content_field_request.setFieldData(content_field_options_data)
+                    break;
+                case ContentFieldFieldType.Checkbox:
+                    const checkbox_options_data = new GrpcContentFieldData();
+
+                    content_field.field_data?.content_checkbox_field_data?.forEach((option, index) => {
+                        const grpc_option = new GrpcContentCheckboxFieldData();
+                        grpc_option.setLabel(option.label);
+                        grpc_option.setValue(option.value);
+                        checkbox_options_data.addContentCheckboxFieldData(grpc_option, index);
+                    })
+
+                    store_content_field_request.setFieldData(checkbox_options_data)
+                    break;
+
+                case ContentFieldFieldType.Radio:
+                    const radio_options_data = new GrpcContentFieldData();
+
+                    content_field.field_data?.content_radio_field_data?.forEach((option, index) => {
+                        const grpc_option = new GrpcContentRadioFieldData();
+                        grpc_option.setLabel(option.label);
+                        grpc_option.setValue(option.value);
+                        radio_options_data.addContentRadioFieldData(grpc_option, index);
+                    })
+
+                    store_content_field_request.setFieldData(radio_options_data)
+                    break;
+
+                default:
+                    break;
             }
+
 
             content_field_data_list.push(store_content_field_request)
         })
