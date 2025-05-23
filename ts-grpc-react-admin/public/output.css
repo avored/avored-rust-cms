@@ -657,6 +657,9 @@
   .-my-2 {
     margin-block: calc(var(--spacing) * -2);
   }
+  .my-3 {
+    margin-block: calc(var(--spacing) * 3);
+  }
   .my-5 {
     margin-block: calc(var(--spacing) * 5);
   }
@@ -1524,6 +1527,9 @@
   }
   .ring-primary-300 {
     --tw-ring-color: var(--color-primary-300);
+  }
+  .ring-primary-500 {
+    --tw-ring-color: var(--color-primary-500);
   }
   .ring-primary-600 {
     --tw-ring-color: var(--color-primary-600);

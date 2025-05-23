@@ -208,6 +208,11 @@ export class ContentFieldFieldContent extends jspb.Message {
   hasFloatValue(): boolean;
   clearFloatValue(): ContentFieldFieldContent;
 
+  getBoolValue(): boolean;
+  setBoolValue(value: boolean): ContentFieldFieldContent;
+  hasBoolValue(): boolean;
+  clearBoolValue(): ContentFieldFieldContent;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): ContentFieldFieldContent.AsObject;
   static toObject(includeInstance: boolean, msg: ContentFieldFieldContent): ContentFieldFieldContent.AsObject;
@@ -222,6 +227,7 @@ export namespace ContentFieldFieldContent {
     intValue?: number,
     arrayValueList: Array<string>,
     floatValue?: number,
+    boolValue?: boolean,
   }
 
   export enum TextValueCase { 
@@ -237,6 +243,11 @@ export namespace ContentFieldFieldContent {
   export enum FloatValueCase { 
     _FLOAT_VALUE_NOT_SET = 0,
     FLOAT_VALUE = 4,
+  }
+
+  export enum BoolValueCase { 
+    _BOOL_VALUE_NOT_SET = 0,
+    BOOL_VALUE = 5,
   }
 }
 

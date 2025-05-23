@@ -2100,7 +2100,8 @@ proto.content.ContentFieldFieldContent.toObject = function(includeInstance, msg)
 textValue: (f = jspb.Message.getField(msg, 1)) == null ? undefined : f,
 intValue: (f = jspb.Message.getField(msg, 2)) == null ? undefined : f,
 arrayValueList: (f = jspb.Message.getRepeatedField(msg, 3)) == null ? undefined : f,
-floatValue: (f = jspb.Message.getOptionalFloatingPointField(msg, 4)) == null ? undefined : f
+floatValue: (f = jspb.Message.getOptionalFloatingPointField(msg, 4)) == null ? undefined : f,
+boolValue: (f = jspb.Message.getBooleanField(msg, 5)) == null ? undefined : f
   };
 
   if (includeInstance) {
@@ -2152,6 +2153,10 @@ proto.content.ContentFieldFieldContent.deserializeBinaryFromReader = function(ms
     case 4:
       var value = /** @type {number} */ (reader.readDouble());
       msg.setFloatValue(value);
+      break;
+    case 5:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setBoolValue(value);
       break;
     default:
       reader.skipField();
@@ -2207,6 +2212,13 @@ proto.content.ContentFieldFieldContent.serializeBinaryToWriter = function(messag
   if (f != null) {
     writer.writeDouble(
       4,
+      f
+    );
+  }
+  f = /** @type {boolean} */ (jspb.Message.getField(message, 5));
+  if (f != null) {
+    writer.writeBool(
+      5,
       f
     );
   }
@@ -2355,6 +2367,42 @@ proto.content.ContentFieldFieldContent.prototype.clearFloatValue = function() {
  */
 proto.content.ContentFieldFieldContent.prototype.hasFloatValue = function() {
   return jspb.Message.getField(this, 4) != null;
+};
+
+
+/**
+ * optional bool bool_value = 5;
+ * @return {boolean}
+ */
+proto.content.ContentFieldFieldContent.prototype.getBoolValue = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.content.ContentFieldFieldContent} returns this
+ */
+proto.content.ContentFieldFieldContent.prototype.setBoolValue = function(value) {
+  return jspb.Message.setField(this, 5, value);
+};
+
+
+/**
+ * Clears the field making it undefined.
+ * @return {!proto.content.ContentFieldFieldContent} returns this
+ */
+proto.content.ContentFieldFieldContent.prototype.clearBoolValue = function() {
+  return jspb.Message.setField(this, 5, undefined);
+};
+
+
+/**
+ * Returns whether this field is set.
+ * @return {boolean}
+ */
+proto.content.ContentFieldFieldContent.prototype.hasBoolValue = function() {
+  return jspb.Message.getField(this, 5) != null;
 };
 
 

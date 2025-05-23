@@ -65,6 +65,7 @@ export type ContentFieldFieldContent = {
     int_value?: number,
     float_value?: number,
     array_value?: Array<string>,
+    bool_value?: boolean,
 }
 
 export type ContentType = {

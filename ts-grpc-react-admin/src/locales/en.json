@@ -100,6 +100,7 @@
   "content_field": "content field",
   "model_information": "Model Information",
   "collection_information": "Collection Information",
+  "is_switch_on": "Switch on",
   "components": "Components",
   "field_type": "Field type",
   "upload_asset": "Upload asset",

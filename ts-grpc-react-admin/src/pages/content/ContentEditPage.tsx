@@ -78,6 +78,7 @@ export const ContentEditPage = () => {
                     text_value: content_field.fieldContent?.textValue ?? '',
                     int_value: content_field.fieldContent?.intValue ?? 0,
                     float_value: content_field.fieldContent?.floatValue ?? 0,
+                    bool_value: content_field.fieldContent?.boolValue ?? false,
                 }
             }
 
@@ -200,7 +201,15 @@ export const ContentEditPage = () => {
         setIsContentFieldModalOpen(true)
     })
 
-    const [enabled, setEnabled] = useState(false)
+    const getSwitchFieldCurrentValue = ((field_index: number) => {
+        return getValues(`content_fields.${field_index}.field_content.bool_value`) ?? false
+    })
+
+    const setSwitchCheckedStatus = (async (switch_value: boolean, field_index: number) => {
+
+        setValue(`content_fields.${field_index}.field_content.bool_value`, switch_value)
+        await trigger(`content_fields.${field_index}`)
+    })
 
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
@@ -390,17 +399,26 @@ export const ContentEditPage = () => {
             case ContentFieldFieldType.Switch:
                 return (
                     <>
-                        Here
-                        {/*<Switch*/}
-                        {/*    checked={enabled}*/}
-                        {/*    onChange={setEnabled}*/}
-                        {/*    className="group relative flex h-7 w-14 cursor-pointer rounded-full bg-white/10 p-1 ease-in-out focus:not-data-focus:outline-none data-checked:bg-white/10 data-focus:outline data-focus:outline-white"*/}
-                        {/*>*/}
-                        {/*  <span*/}
-                        {/*      aria-hidden="true"*/}
-                        {/*      className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-7"*/}
-                        {/*  />*/}
-                        {/*</Switch>*/}
+                        <Field>
+                            <label className="text-sm text-gray-600">
+                                {t!("is_switch_on")}
+                            </label>
+                            <Switch
+                                checked={getSwitchFieldCurrentValue(index)}
+                                onChange={val => setSwitchCheckedStatus(val, index)}
+                                className="group mt-3 ring-1 ring-primary-500 relative flex
+                                            h-7 w-14 cursor-pointer rounded-full bg-white/10 p-1
+                                            ease-in-out focus:not-data-focus:outline-none
+                                            data-checked:bg-primary-500 data-focus:outline data-focus:outline-white"
+                            >
+                              <span
+                                  aria-hidden="true"
+                                  className="pointer-events-none inline-block size-5 translate-x-0
+                                            rounded-full bg-white shadow-lg ring-0 transition duration-200
+                                            ease-in-out group-data-checked:translate-x-7"
+                              />
+                            </Switch>
+                        </Field>
                     </>
                 )
         }
@@ -420,6 +438,7 @@ export const ContentEditPage = () => {
             const content_field_field_content =  new GrpcContentFieldFieldContent();
             content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
             content_field_field_content.setIntValue(content_field.field_content.int_value ?? 0)
+            content_field_field_content.setBoolValue(content_field.field_content.bool_value ?? false)
             content_field_field_content.setFloatValue(float_value)
             content_field_field_content.setArrayValueList([])
 
