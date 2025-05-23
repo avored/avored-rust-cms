@@ -116,6 +116,7 @@ impl ContentRepository {
                 ContentFieldDataType::Int => "INT".into(),
                 ContentFieldDataType::Array => "ARRAY".into(),
                 ContentFieldDataType::Float => "FLOAT".into(),
+                ContentFieldDataType::Bool => "Bool".into(),
             };
             let field_type_value: Value = match created_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
@@ -126,6 +127,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Select => "Select".into(),
                 ContentFieldFieldType::Checkbox => "Checkbox".into(),
                 ContentFieldFieldType::Radio => "Radio".into(),
+                ContentFieldFieldType::Switch => "Switch".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
 
@@ -211,6 +213,7 @@ impl ContentRepository {
                 ContentFieldDataType::Int => "INT".into(),
                 ContentFieldDataType::Array => "ARRAY".into(),
                 ContentFieldDataType::Float => "FLOAT".into(),
+                ContentFieldDataType::Bool => "Bool".into(),
             };
             
             let field_type_value: Value = match updatable_content_field.field_type {
@@ -222,6 +225,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Select => "Select".into(),
                 ContentFieldFieldType::Checkbox => "Checkbox".into(),
                 ContentFieldFieldType::Radio => "Radio".into(),
+                ContentFieldFieldType::Switch => "Switch".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
@@ -271,7 +275,7 @@ impl ContentRepository {
             content_fields.push(content_field.into());
         }
 
-        println!(" value {:?}", content_fields);
+        // println!("final value {:?}", content_fields);
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),

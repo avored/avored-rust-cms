@@ -582,9 +582,6 @@
   .top-1 {
     top: calc(var(--spacing) * 1);
   }
-  .top-2\.5 {
-    top: calc(var(--spacing) * 2.5);
-  }
   .right-0 {
     right: calc(var(--spacing) * 0);
   }
@@ -593,9 +590,6 @@
   }
   .right-1\.5 {
     right: calc(var(--spacing) * 1.5);
-  }
-  .right-2\.5 {
-    right: calc(var(--spacing) * 2.5);
   }
   .left-0 {
     left: calc(var(--spacing) * 0);
@@ -763,6 +757,10 @@
     width: calc(var(--spacing) * 4);
     height: calc(var(--spacing) * 4);
   }
+  .size-5 {
+    width: calc(var(--spacing) * 5);
+    height: calc(var(--spacing) * 5);
+  }
   .h-4 {
     height: calc(var(--spacing) * 4);
   }
@@ -844,6 +842,9 @@
   .w-11 {
     width: calc(var(--spacing) * 11);
   }
+  .w-14 {
+    width: calc(var(--spacing) * 14);
+  }
   .w-16 {
     width: calc(var(--spacing) * 16);
   }
@@ -894,6 +895,10 @@
   }
   .origin-top-right {
     transform-origin: top right;
+  }
+  .translate-x-0 {
+    --tw-translate-x: calc(var(--spacing) * 0);
+    translate: var(--tw-translate-x) var(--tw-translate-y);
   }
   .translate-x-1 {
     --tw-translate-x: calc(var(--spacing) * 1);
@@ -1186,11 +1191,11 @@
   .bg-white\/5 {
     background-color: color-mix(in oklab, var(--color-white) 5%, transparent);
   }
+  .bg-white\/10 {
+    background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+  }
   .bg-center {
     background-position: center;
-  }
-  .fill-white\/60 {
-    fill: color-mix(in oklab, var(--color-white) 60%, transparent);
   }
   .stroke-gray-400 {
     stroke: var(--color-gray-400);
@@ -1494,6 +1499,10 @@
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentColor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
   }
+  .ring-0 {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentColor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
   .ring-1 {
     --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentColor);
     box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
@@ -1515,9 +1524,6 @@
   }
   .ring-primary-300 {
     --tw-ring-color: var(--color-primary-300);
-  }
-  .ring-primary-400 {
-    --tw-ring-color: var(--color-primary-400);
   }
   .ring-primary-600 {
     --tw-ring-color: var(--color-primary-600);
@@ -1609,16 +1615,17 @@
   .ring-inset {
     --tw-ring-inset: inset;
   }
-  .\*\:text-black {
-    :is(& > *) {
-      color: var(--color-black);
-    }
-  }
   .group-hover\:stroke-gray-600 {
     &:is(:where(.group):hover *) {
       @media (hover: hover) {
         stroke: var(--color-gray-600);
       }
+    }
+  }
+  .group-data-checked\:translate-x-7 {
+    &:is(:where(.group)[data-checked] *) {
+      --tw-translate-x: calc(var(--spacing) * 7);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
     }
   }
   .group-data-checked\:opacity-100 {
@@ -1927,14 +1934,20 @@
       --tw-ring-color: var(--color-gray-200);
     }
   }
-  .data-checked\:bg-blue-500 {
-    &[data-checked] {
-      background-color: var(--color-blue-500);
-    }
-  }
   .data-checked\:bg-primary-500 {
     &[data-checked] {
       background-color: var(--color-primary-500);
+    }
+  }
+  .data-checked\:bg-white\/10 {
+    &[data-checked] {
+      background-color: color-mix(in oklab, var(--color-white) 10%, transparent);
+    }
+  }
+  .data-focus\:outline {
+    &[data-focus] {
+      outline-style: var(--tw-outline-style);
+      outline-width: 1px;
     }
   }
   .data-focus\:outline-2 {
@@ -1946,6 +1959,11 @@
   .data-focus\:-outline-offset-2 {
     &[data-focus] {
       outline-offset: calc(2px * -1);
+    }
+  }
+  .data-focus\:outline-white {
+    &[data-focus] {
+      outline-color: var(--color-white);
     }
   }
   .data-focus\:outline-white\/25 {

@@ -185,7 +185,7 @@ impl ContentService {
                 field_data: Some(req_content_field.field_data.try_into()?)
             });
         }
-        
+
         
         let updatable_content_model = UpdatableContentModel {
             id: request.content_id,

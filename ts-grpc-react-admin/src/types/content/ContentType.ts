@@ -11,6 +11,7 @@ export type CollectionType = {
     action?: string;
 }
 export enum ContentFieldDataType {
+    Bool = "Bool",
     TEXT = "TEXT",
     INT = "INT",
     FLOAT = "FLOAT",
@@ -26,6 +27,7 @@ export enum ContentFieldFieldType {
     SELECT = "Select",
     Checkbox = "Checkbox",
     Radio = "Radio",
+    Switch = "Switch"
 }
 
 export type ContentSelectFieldData = {

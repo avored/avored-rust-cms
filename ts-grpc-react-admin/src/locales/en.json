@@ -59,6 +59,7 @@
   "text_editor_field": "Text editor field",
   "radio_field": "Radio field",
   "checkbox_field": "Checkbox field",
+  "switch_field": "Switch field",
   "single_image_field": "Single image field",
   "field_content": "Field content",
   "identifier": "Identifier",

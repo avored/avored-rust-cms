@@ -37,7 +37,7 @@ import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import ErrorMessage from "../../components/ErrorMessage";
-import {Checkbox, Field, Label, Radio, RadioGroup, Select} from "@headlessui/react";
+import {Checkbox, Field, Label, Radio, RadioGroup, Select, Switch} from "@headlessui/react";
 import {ChevronDownIcon} from "@heroicons/react/24/solid";
 import clsx from 'clsx'
 import {CheckIcon} from "@heroicons/react/20/solid";
@@ -200,6 +200,8 @@ export const ContentEditPage = () => {
         setIsContentFieldModalOpen(true)
     })
 
+    const [enabled, setEnabled] = useState(false)
+
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
             case ContentFieldFieldType.TEXT:
@@ -212,6 +214,7 @@ export const ContentEditPage = () => {
                         />
                     </div>
                 );
+
             case ContentFieldFieldType.TEXTAREA:
                 return (
                     <div className="mb-4">
@@ -384,6 +387,22 @@ export const ContentEditPage = () => {
                     </>
                 );
 
+            case ContentFieldFieldType.Switch:
+                return (
+                    <>
+                        Here
+                        {/*<Switch*/}
+                        {/*    checked={enabled}*/}
+                        {/*    onChange={setEnabled}*/}
+                        {/*    className="group relative flex h-7 w-14 cursor-pointer rounded-full bg-white/10 p-1 ease-in-out focus:not-data-focus:outline-none data-checked:bg-white/10 data-focus:outline data-focus:outline-white"*/}
+                        {/*>*/}
+                        {/*  <span*/}
+                        {/*      aria-hidden="true"*/}
+                        {/*      className="pointer-events-none inline-block size-5 translate-x-0 rounded-full bg-white shadow-lg ring-0 transition duration-200 ease-in-out group-data-checked:translate-x-7"*/}
+                        {/*  />*/}
+                        {/*</Switch>*/}
+                    </>
+                )
         }
     }
 

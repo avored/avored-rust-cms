@@ -68,6 +68,8 @@ pub struct ContentFieldFieldContent {
     pub array_value: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(double, optional, tag = "4")]
     pub float_value: ::core::option::Option<f64>,
+    #[prost(bool, optional, tag = "5")]
+    pub bool_value: ::core::option::Option<bool>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct ContentRadioFieldData {

@@ -72,7 +72,8 @@ pub enum ContentFieldDataType {
     Text,
     Int,
     Array,
-    Float
+    Float,
+    Bool
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -85,7 +86,8 @@ pub enum ContentFieldFieldType {
     FloatTextField,
     Select,
     Checkbox,
-    Radio
+    Radio,
+    Switch
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -94,6 +96,7 @@ pub struct ContentFieldFieldContent {
     pub int_value: Option<i64>,
     pub float_value: Option<f64>,
     pub array_value: Vec<String>,
+    pub bool_value: Option<bool>,
 }
 
 
@@ -215,13 +218,12 @@ impl TryFrom<ContentFieldFieldContent> for crate::api::proto::content::ContentFi
 
     fn try_from(val: ContentFieldFieldContent) -> Result<crate::api::proto::content::ContentFieldFieldContent > {
 
-        // @todo think of a better way to do this
-        // If string is empty then we should return None
         let model = crate::api::proto::content::ContentFieldFieldContent {
-            text_value: Some(val.text_value.unwrap_or_default()),
-            int_value: Some(val.int_value.unwrap_or_default()),
-            float_value: Some(val.float_value.unwrap_or_default()),
-            array_value: val.array_value
+            text_value: val.text_value,
+            int_value: val.int_value,
+            float_value: val.float_value,
+            array_value: val.array_value,
+            bool_value: val.bool_value
         };
 
         Ok(model)
@@ -311,7 +313,6 @@ impl TryFrom<ContentRadioFieldData> for crate::api::proto::content::ContentRadio
     }
 }
 
-
 impl TryFrom<crate::api::proto::content::ContentSelectFieldData> for ContentSelectFieldData {
     type Error = Error;
 
@@ -393,8 +394,6 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldData>> for ContentFi
 }
 
 
-
-
 impl TryFrom<ContentSelectFieldData> for Value {
     type Error = Error;
     fn try_from(val: ContentSelectFieldData) -> Result<Value> {
@@ -434,8 +433,6 @@ impl TryFrom<ContentRadioFieldData> for Value {
     }
 }
 
-
-
 impl TryFrom<String> for ContentFieldDataType {
     type Error = Error; 
     
@@ -445,6 +442,7 @@ impl TryFrom<String> for ContentFieldDataType {
             "INT" => ContentFieldDataType::Int,
             "ARRAY" => ContentFieldDataType::Array,
             "FLOAT" => ContentFieldDataType::Float,
+            "Bool" => ContentFieldDataType::Bool,
             _ => ContentFieldDataType::default(),
         };
         
@@ -466,6 +464,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "Select" => ContentFieldFieldType::Select,
             "Checkbox" => ContentFieldFieldType::Checkbox,
             "Radio" => ContentFieldFieldType::Radio,
+            "Switch" => ContentFieldFieldType::Switch,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -484,7 +483,8 @@ impl TryFrom<Option<crate::api::proto::content::ContentFieldFieldContent>> for C
             text_value: val.clone().unwrap_or_default().text_value,
             int_value: val.clone().unwrap_or_default().int_value,
             float_value: val.clone().unwrap_or_default().float_value,
-            array_value: val.unwrap_or_default().array_value,
+            array_value: val.clone().unwrap_or_default().array_value,
+            bool_value: val.unwrap_or_default().bool_value,
         };
 
         Ok(content_field_field_content)
@@ -499,6 +499,11 @@ impl TryFrom<ContentFieldFieldContent> for Value {
             Some(val) => val.into(),
             None => Value::None,
         };
+
+        let bool_value = match val.bool_value {
+            Some(val) => val.into(),
+            None => Value::None,
+        };
         
         let val_val: BTreeMap<String, Value> =
             [
@@ -506,6 +511,7 @@ impl TryFrom<ContentFieldFieldContent> for Value {
                 ("int_value".into(), val.int_value.into()),
                 ("array_value".into(), val.array_value.into()),
                 ("float_value".into(), float_value),
+                ("bool_value".into(), bool_value),
             ].into();
 
         Ok(val_val.into())
@@ -518,6 +524,7 @@ impl TryFrom<Object> for ContentFieldFieldContent {
         let value = val.get("text_value").get_string()?;
         let int_value = val.get("int_value").get_int()?;
         let float_value = val.get("float_value").get_float()?;
+        let bool_value = val.get("bool_value").get_bool()?;
         
         let array_value: Vec<String> = match val.get("array_value") {
             Some(val) => match val.clone() {
@@ -540,6 +547,7 @@ impl TryFrom<Object> for ContentFieldFieldContent {
             int_value: Some(int_value),
             float_value: Some(float_value),
             array_value,
+            bool_value: Some(bool_value),
         })
     }
 }
@@ -557,6 +565,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                     int_value: Some(val.int_value.unwrap()),
                     array_value: val.array_value,
                     float_value: val.float_value,
+                    bool_value: val.bool_value,
                 };
                 
                 model
@@ -567,6 +576,7 @@ impl TryFrom<Option<ContentFieldFieldContent>> for crate::api::proto::content::C
                     int_value: None,
                     float_value: None,
                     array_value: vec![],
+                    bool_value: None,
                 };
                 
                 model
@@ -612,6 +622,7 @@ impl TryFrom<ContentFieldDataType> for String {
             ContentFieldDataType::Int => String::from("INT"),
             ContentFieldDataType::Array => String::from("ARRAY"),
             ContentFieldDataType::Float => String::from("FLOAT"),
+            ContentFieldDataType::Bool => String::from("Bool"),
         };
 
         Ok(string_val)
@@ -634,6 +645,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::Select => String::from("Select"),
             ContentFieldFieldType::Checkbox => String::from("Checkbox"),
             ContentFieldFieldType::Radio => String::from("Radio"),
+            ContentFieldFieldType::Switch => String::from("Switch"),
         };
 
         Ok(string_val)
@@ -703,6 +715,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "INT" => ContentFieldDataType::Int,
             "FLOAT" => ContentFieldDataType::Float,
             "ARRAY" => ContentFieldDataType::Array,
+            "Bool" => ContentFieldDataType::Bool,
             _ => ContentFieldDataType::default(),
         };
 
@@ -716,6 +729,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "Select" => ContentFieldFieldType::Select,
             "Checkbox" => ContentFieldFieldType::Checkbox,
             "Radio" => ContentFieldFieldType::Radio,
+            "Switch" => ContentFieldFieldType::Switch,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -770,7 +784,25 @@ impl TryFrom<Object> for ContentFieldModel {
                 };
 
                 float_content_field_content
+            },
+            "Bool" => {
+                let bool_content_field_content = match val.get("field_content") {
+                    Some(val) => {
+                        let object = match val.clone() {
+                            Value::Object(v) => v,
+                            _ => Object::default(),
+                        };
+
+                        let option: ContentFieldFieldContent = object.try_into()?;
+
+                        option
+                    }
+                    None => ContentFieldFieldContent::default(),
+                };
+
+                bool_content_field_content
             }
+
 
             _ => ContentFieldFieldContent::default(),
         };

@@ -50,6 +50,7 @@ message ContentFieldFieldContent {
   optional int64 int_value = 2;
   repeated string array_value = 3;
   optional double float_value = 4;
+  optional bool bool_value = 5;
 }
 
 message ContentRadioFieldData {
