@@ -732,6 +732,20 @@ export const ContentFieldModal = ({
                                     {t("switch_field")}
                                 </div>
 
+                                <div
+                                    onClick={() =>
+                                        onContentFieldChange(
+                                            currentIndex,
+                                            ContentFieldFieldType.Date,
+                                            ContentFieldDataType.INT
+                                        )
+                                    }
+                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Date ? "bg-primary-200" : "bg-gray-300"} 
+                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                >
+                                    {t("date_field")}
+                                </div>
+
 
                             </div>
                         </div>

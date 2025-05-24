@@ -61,6 +61,7 @@
   "checkbox_field": "Checkbox field",
   "switch_field": "Switch field",
   "single_image_field": "Single image field",
+  "date_field": "Date field",
   "field_content": "Field content",
   "identifier": "Identifier",
   "created_at": "Created at",

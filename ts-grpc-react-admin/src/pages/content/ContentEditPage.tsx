@@ -40,7 +40,9 @@ import ErrorMessage from "../../components/ErrorMessage";
 import {Checkbox, Field, Label, Radio, RadioGroup, Select, Switch} from "@headlessui/react";
 import {ChevronDownIcon} from "@heroicons/react/24/solid";
 import clsx from 'clsx'
-import {CheckIcon} from "@heroicons/react/20/solid";
+import Datetime from 'react-datetime';
+import "react-datetime/css/react-datetime.css";
+import moment, {Moment} from "moment";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
@@ -208,6 +210,18 @@ export const ContentEditPage = () => {
     const setSwitchCheckedStatus = (async (switch_value: boolean, field_index: number) => {
 
         setValue(`content_fields.${field_index}.field_content.bool_value`, switch_value)
+        await trigger(`content_fields.${field_index}`)
+    })
+
+    const getDateFieldCurrentValue = ((field_index: number) => {
+        const current_val = getValues(`content_fields.${field_index}.field_content.int_value`);
+        return moment.unix(current_val ? current_val :  moment().unix())
+    })
+
+
+    const setDateChange =(async (date_value: string | Moment, field_index: number) => {
+        date_value = moment(date_value)
+        setValue(`content_fields.${field_index}.field_content.int_value`, date_value.unix())
         await trigger(`content_fields.${field_index}`)
     })
 
@@ -419,6 +433,24 @@ export const ContentEditPage = () => {
                               />
                             </Switch>
                         </Field>
+                    </>
+                )
+
+            case ContentFieldFieldType.Date:
+                return (
+                    <>
+                        <Datetime
+                            initialValue={getDateFieldCurrentValue(index)}
+                            onChange={(e) => {setDateChange(e as string, index)}}
+                            dateFormat="DD-MM-YYYY"
+                            timeFormat={false}
+                            inputProps={{className: `mt-3 appearance-none rounded-md ring-1 ring-gray-400
+                                relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
+                                active::ring-primary-500
+                                focus:ring-primary-500 focus:outline-none focus:z-10
+                                disabled:bg-gray-200 disabled:opacity-70
+                                sm:text-sm`}}
+                        />
                     </>
                 )
         }
