@@ -9,7 +9,7 @@ AvoRed Rust CMS implement with the help of axum web framework and surrealdb as d
 
 ## Demo admin
 
-Please visit [Demo AvoRed Rust CMS Admin](https://demo.avored.com/admin)
+Please visit [Demo AvoRed Rust CMS Admin](https://demo-admin.avored.com)
 
 ## Installation
 
