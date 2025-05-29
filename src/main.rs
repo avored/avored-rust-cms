@@ -13,12 +13,12 @@ use tower_http::services::ServeDir;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use crate::api::admin_user_api::AdminUserApi;
+use crate::api::asset_api::AssetApi;
 use crate::api::auth_api::AuthApi;
 use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::general_api::GeneralApi;
-use crate::api::handlers::asset::asset_table_api_handler::asset_table_api_handler;
 use crate::api::handlers::asset::create_folder_api_handler::create_folder_api_handler;
 use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
 use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
@@ -26,6 +26,7 @@ use crate::api::handlers::asset::rename_asset_api_handler::rename_asset_api_hand
 use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handler;
 use crate::api::misc_api::MiscApi;
 use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
+use crate::api::proto::asset::asset_server::AssetServer;
 use crate::api::proto::auth::auth_server::AuthServer;
 use crate::api::proto::cms::cms_server::CmsServer;
 use crate::api::proto::content::content_server::ContentServer;
@@ -122,6 +123,11 @@ async fn main() -> Result<(), Error>{
     let general_api = GeneralApi {state: state.clone()};
     let general_server = GeneralServiceServer::with_interceptor(general_api, check_auth);
 
+    let asset_api = AssetApi {state: state.clone()};
+    let asset_server = AssetServer::with_interceptor(asset_api, check_auth);
+
+
+
     let grpc_router = Router::new()
         .nest_tonic(test_server)
         .nest_tonic(misc_server)
@@ -131,6 +137,7 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(content_server)
         .nest_tonic(setting_server)
         .nest_tonic(general_server)
+        .nest_tonic(asset_server)
         .nest_tonic(cms_server)
         .layer(cors.clone());
 
@@ -139,7 +146,7 @@ async fn main() -> Result<(), Error>{
 
     let rest_router = Router::new()
         .route("/", get(handler))
-        .route("/api/asset", get(asset_table_api_handler))
+        // .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
         .route(
             "/api/rename-asset/{asset_id}",

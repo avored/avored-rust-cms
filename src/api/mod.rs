@@ -11,3 +11,5 @@ pub mod setting_api;
 
 pub mod cms_api;
 pub mod general_api;
+
+pub mod asset_api;

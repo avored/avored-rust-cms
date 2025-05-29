@@ -1,10 +1,8 @@
-use crate::models::asset_model::{AssetModel, AssetPagination, CreatableAssetModel, MetaDataType};
+use crate::models::asset_model::{AssetModel, CreatableAssetModel, MetaDataType};
 use crate::models::token_claim_model::LoggedInUser;
-use crate::models::Pagination;
-use crate::{
-    error::Result, providers::avored_database_provider::DB,
-    repositories::asset_repository::AssetRepository,
-};
+use crate::{error::Result, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository, PER_PAGE};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse};
+use crate::api::proto::asset::asset_paginate_response::{AssetPaginateData, AssetPagination};
 
 pub struct AssetService {
     asset_repository: AssetRepository,
@@ -18,48 +16,65 @@ impl AssetService {
 impl AssetService {
     pub async fn paginate(
         &self,
+        req: AssetPaginateRequest,
         (datastore, database_session): &DB,
-        current_page: i64,
-        parent_id: String,
-    ) -> Result<AssetPagination> {
-        let start = (current_page - 1) * 10;
-        let to = start + 10;
-
-        let asset_model_count = self
+    ) -> Result<AssetPaginateResponse> {
+        let asset_model_count   = self
             .asset_repository
-            .get_total_count(datastore, database_session, parent_id.clone())
+            .get_total_count(datastore, database_session, "".to_string())
             .await?;
 
-        let mut has_next_page = false;
-        if asset_model_count.total > to {
-            has_next_page = true;
-        };
-        let mut has_previous_page = false;
-        if current_page > 1 {
-            has_previous_page = true;
-        };
+        let per_page: i64 = PER_PAGE as i64;
+        let current_page = req.page.unwrap_or(0);
+        let order = req.order.unwrap_or_default();
 
-        let pagination = Pagination {
-            total: asset_model_count.total,
-            per_page: 10,
-            current_page,
-            from: (start + 1),
-            to,
-            has_previous_page,
-            next_page_number: (current_page + 1),
-            has_next_page,
-            previous_page_number: (current_page - 1),
-        };
+        let start = current_page * per_page;
+        let mut order_column = "id";
+        let mut order_type = "desc";
+        if !order.is_empty() {
+            let mut parts = order.split(':');
+            if parts.clone().count() == 2 {
+                order_column = parts.clone().nth(0).unwrap_or("");
+                order_type = parts.nth(1).unwrap_or("");
+            }
+        }
 
         let assets = self
             .asset_repository
-            .paginate(datastore, database_session, start, parent_id)
+            .paginate(
+                datastore,
+                database_session,
+                start,
+                "".to_string(),
+                order_column.to_string(),
+                order_type.to_string(),
+            )
             .await?;
+        
+        println!("{:?}", assets);
 
-        Ok(AssetPagination {
-            data: assets,
-            pagination,
-        })
+        let mut grpc_assets = vec![];
+        assets.iter().for_each(|asset| {
+            let model: crate::api::proto::asset::AssetModel = asset.clone().try_into().unwrap();
+            
+            grpc_assets.push(model);
+        });
+
+
+        let pagination = AssetPagination {
+            total: asset_model_count.total,
+        };
+        let paginate_data = AssetPaginateData {
+            pagination: Option::from(pagination),
+            data: grpc_assets,
+        };
+
+        let res = AssetPaginateResponse {
+            status: true,
+            data: Option::from(paginate_data),
+        };
+
+        Ok(res)
     }
 
     // pub async fn find_by_id(
@@ -128,7 +143,8 @@ impl AssetService {
             parent_id,
             name: name.clone(),
             asset_type: "FOLDER".to_string(),
-            metadata: MetaDataType::FolderTypeMetaData { color },
+            // metadata: MetaDataType::FolderTypeMetaData { color },
+            metadata: MetaDataType::default()
         };
 
         self.asset_repository

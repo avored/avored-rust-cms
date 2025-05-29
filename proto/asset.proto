@@ -1,0 +1,57 @@
+syntax = "proto3";
+package asset;
+
+
+import "google/protobuf/timestamp.proto";
+
+message FolderTypeMetaData {
+  string color = 1;
+}
+
+message FileTypeMetaData {
+  string file_type = 1;
+}
+
+message MetaDataType {
+    optional FileTypeMetaData file_meta_data = 1;
+    optional FolderTypeMetaData folder_meta_data = 2;
+}
+
+message AssetModel {
+  string id = 1;
+  optional string parent_id = 2;
+  string name = 3;
+  string new_path = 4;
+  string asset_type = 5;
+  MetaDataType metadata = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  string created_by = 9;
+  string updated_by = 10;
+}
+
+
+
+
+message AssetPaginateRequest {
+  optional int64 page = 1;
+  optional string order = 2;
+}
+
+message AssetPaginateResponse {
+  bool status = 1;
+  
+  message AssetPagination {
+    int64 total = 1;
+  }
+  message AssetPaginateData {
+    AssetPagination pagination = 1;
+    repeated AssetModel data = 2;
+  }
+
+  AssetPaginateData data = 2;
+}
+
+service Asset {
+  rpc Paginate(AssetPaginateRequest) returns (AssetPaginateResponse);
+}

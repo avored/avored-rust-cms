@@ -82,7 +82,8 @@ pub async fn store_asset_api_handler(
 
                     creatable_asset_model.name = new_file_name.clone();
                     creatable_asset_model.asset_type = String::from("FILE");
-                    creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
+                    // creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
+                    creatable_asset_model.metadata = MetaDataType::default();
 
                     let full_path = format!("./{}", asset_file);
 

@@ -25,16 +25,20 @@ impl AssetRepository {
         database_session: &Session,
         start: i64,
         parent_id: String,
+        order_column: String,
+        order_type: String,
     ) -> Result<Vec<AssetModel>> {
-        let sql = "SELECT * FROM type::table($table) WHERE parent_id=$parent_id LIMIT $limit START $start;";
+        let sql = format!("SELECT * FROM type::table($table) WHERE parent_id=$parent_id ORDER  {} {} LIMIT $limit START $start;", order_column, order_type);
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
+            ("order_type".into(), order_type.into()),
+            ("order_column".into(), order_column.into()),
             ("table".into(), ASSET_TABLE.into()),
             ("parent_id".into(), parent_id.into()),
         ]);
 
-        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
 
         let mut asset_list: Vec<AssetModel> = Vec::new();
 
@@ -95,15 +99,12 @@ impl AssetRepository {
         creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
-        let meta = creatable_asset_model.metadata.get_file_metadata();
-        let metadata: BTreeMap<String, Value> =
-            [("file_type".into(), meta.file_type.into())].into();
-
+       
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
             ("asset_type".into(), creatable_asset_model.asset_type.into()),
-            ("metadata".into(), metadata.into()),
+            ("metadata".into(), creatable_asset_model.metadata.try_into().unwrap()),
             (
                 "created_by".into(),
                 creatable_asset_model.logged_in_username.clone().into(),
@@ -140,14 +141,12 @@ impl AssetRepository {
         creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
-        let meta = creatable_asset_model.metadata.get_folder_metadata();
-        let metadata: BTreeMap<String, Value> = [("color".into(), meta.color.into())].into();
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
             ("asset_type".into(), creatable_asset_model.asset_type.into()),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
-            ("metadata".into(), metadata.into()),
+            ("metadata".into(), creatable_asset_model.metadata.try_into().unwrap()),
             (
                 "created_by".into(),
                 creatable_asset_model.logged_in_username.clone().into(),
