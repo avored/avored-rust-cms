@@ -68,6 +68,20 @@ pub mod asset_paginate_response {
         pub data: ::prost::alloc::vec::Vec<super::AssetModel>,
     }
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateFolderRequest {
+    #[prost(string, tag = "1")]
+    pub name: ::prost::alloc::string::String,
+    #[prost(string, optional, tag = "2")]
+    pub parent_id: ::core::option::Option<::prost::alloc::string::String>,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct CreateFolderResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<AssetModel>,
+}
 /// Generated client implementations.
 pub mod asset_client {
     #![allow(
@@ -180,6 +194,27 @@ pub mod asset_client {
             req.extensions_mut().insert(GrpcMethod::new("asset.Asset", "Paginate"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn create_folder(
+            &mut self,
+            request: impl tonic::IntoRequest<super::CreateFolderRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateFolderResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static("/asset.Asset/CreateFolder");
+            let mut req = request.into_request();
+            req.extensions_mut().insert(GrpcMethod::new("asset.Asset", "CreateFolder"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -200,6 +235,13 @@ pub mod asset_server {
             request: tonic::Request<super::AssetPaginateRequest>,
         ) -> std::result::Result<
             tonic::Response<super::AssetPaginateResponse>,
+            tonic::Status,
+        >;
+        async fn create_folder(
+            &self,
+            request: tonic::Request<super::CreateFolderRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::CreateFolderResponse>,
             tonic::Status,
         >;
     }
@@ -309,6 +351,51 @@ pub mod asset_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = PaginateSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/asset.Asset/CreateFolder" => {
+                    #[allow(non_camel_case_types)]
+                    struct CreateFolderSvc<T: Asset>(pub Arc<T>);
+                    impl<
+                        T: Asset,
+                    > tonic::server::UnaryService<super::CreateFolderRequest>
+                    for CreateFolderSvc<T> {
+                        type Response = super::CreateFolderResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::CreateFolderRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Asset>::create_folder(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = CreateFolderSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

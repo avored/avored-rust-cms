@@ -52,6 +52,17 @@ message AssetPaginateResponse {
   AssetPaginateData data = 2;
 }
 
+message CreateFolderRequest {
+  string name = 1;
+  optional string parent_id = 2;
+}
+
+message CreateFolderResponse {
+  bool status = 1;
+  AssetModel data = 2;
+}
+
 service Asset {
   rpc Paginate(AssetPaginateRequest) returns (AssetPaginateResponse);
+  rpc CreateFolder(CreateFolderRequest) returns (CreateFolderResponse);
 }

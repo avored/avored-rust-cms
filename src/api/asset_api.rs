@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::asset::asset_server::Asset;
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::models::token_claim_model::TokenClaims;
@@ -17,7 +17,7 @@ impl Asset for AssetApi {
         request: Request<AssetPaginateRequest>
     ) -> Result<Response<AssetPaginateResponse>, Status>
     {
-        println!("->> {:<12} - paginate_asset", "gRPC_Admin_User_Api_Service");
+        println!("->> {:<12} - paginate_asset", "gRPC_Asset_Api_Service");
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
         let logged_in_user = claims.admin_user_model;
 
@@ -39,6 +39,38 @@ impl Asset for AssetApi {
             paginate(
                 req,
                 &self.state.db
+            ).await {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            },
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string()))
+            }
+        }
+    }
+
+    async fn create_folder(
+        &self,
+        request: Request<CreateFolderRequest>
+    ) -> Result<Response<CreateFolderResponse>, Status>
+    {
+        println!("->> {:<12} - create_folder", "gRPC_Asset_Api_Service");
+
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let logged_in_user = claims.admin_user_model;
+
+        let req = request.into_inner();
+
+        match self.
+            state.
+            asset_service.
+            create_asset_folder(
+                &self.state.db,
+                req,
+                &logged_in_user.email
             ).await {
             Ok(reply) => {
                 let res = Response::new(reply);

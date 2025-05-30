@@ -19,7 +19,6 @@ use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::general_api::GeneralApi;
-use crate::api::handlers::asset::create_folder_api_handler::create_folder_api_handler;
 use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
 use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
 use crate::api::handlers::asset::rename_asset_api_handler::rename_asset_api_handler;
@@ -152,7 +151,7 @@ async fn main() -> Result<(), Error>{
             "/api/rename-asset/{asset_id}",
             post(rename_asset_api_handler),
         )
-        .route("/api/create-folder", post(create_folder_api_handler))
+        // .route("/api/create-folder", post(create_folder_api_handler))
         .route(
             "/api/delete-folder/{asset_id}",
             delete(delete_folder_api_handler),

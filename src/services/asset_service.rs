@@ -1,7 +1,6 @@
-use crate::models::asset_model::{AssetModel, CreatableAssetModel, MetaDataType};
-use crate::models::token_claim_model::LoggedInUser;
+use crate::models::asset_model::{AssetModel, CreatableAssetModel, FolderTypeMetaData, MetaDataType};
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository, PER_PAGE};
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse};
 use crate::api::proto::asset::asset_paginate_response::{AssetPaginateData, AssetPagination};
 
 pub struct AssetService {
@@ -56,7 +55,7 @@ impl AssetService {
         let mut grpc_assets = vec![];
         assets.iter().for_each(|asset| {
             let model: crate::api::proto::asset::AssetModel = asset.clone().try_into().unwrap();
-            
+
             grpc_assets.push(model);
         });
 
@@ -120,11 +119,13 @@ impl AssetService {
     pub async fn create_asset_folder(
         &self,
         db: &DB,
-        name: String,
-        parent_id: String,
-        logged_in_user: LoggedInUser,
-    ) -> Result<AssetModel> {
+        req : CreateFolderRequest,
+        logged_in_user: &str,
+    ) -> Result<CreateFolderResponse> {
         let (datastore, database_session) = db;
+        
+        let name = req.name;
+        let parent_id = req.parent_id.unwrap_or_default();
 
         let mut full_path = format!("public/upload/{}", name.clone());
 
@@ -139,17 +140,31 @@ impl AssetService {
         let color = String::from("text-gray-400");
 
         let creatable_asset_model = CreatableAssetModel {
-            logged_in_username: logged_in_user.email,
+            logged_in_username: logged_in_user.to_string(),
             parent_id,
             name: name.clone(),
             asset_type: "FOLDER".to_string(),
-            // metadata: MetaDataType::FolderTypeMetaData { color },
-            metadata: MetaDataType::default()
+            metadata: MetaDataType {
+                file_meta_data: Default::default(),
+                folder_meta_data: FolderTypeMetaData {
+                    color,
+                }
+            },
         };
 
-        self.asset_repository
+        let asset_model = self.asset_repository
             .create_asset_folder(datastore, database_session, creatable_asset_model)
-            .await
+            .await?;
+        
+        let grpc_asset_model: crate::api::proto::asset::AssetModel = asset_model.try_into()?;
+        
+        
+        let res = CreateFolderResponse {
+            status: true,
+            data: Option::from(grpc_asset_model),
+        };
+        
+        Ok(res)
     }
 
     pub async fn update_asset_path(
