@@ -2,7 +2,7 @@ use tokio::fs;
 use tonic::Status;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel, FolderTypeMetaData, MetaDataType};
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository, PER_PAGE};
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse};
 use crate::api::proto::asset::asset_paginate_response::{AssetPaginateData, AssetPagination};
 use crate::error::Error;
 
@@ -212,5 +212,33 @@ impl AssetService {
         }
 
         Err(Error::TonicError(Status::internal("Unable to delete asset")))
+    }
+
+    pub async fn delete_folder(
+        &self,
+        (datastore, database_session): &DB,
+        request: DeleteFolderRequest
+    ) -> Result<DeleteFolderResponse> {
+
+        let asset_model = self.asset_repository
+            .find_by_id(datastore, database_session, &request.folder_id)
+            .await?;
+        let asset_path = format!("./{path}", path = asset_model.new_path);
+
+
+        if fs::try_exists(&asset_path).await? {
+            tokio::fs::remove_file(asset_path).await?;
+
+            let result =self.asset_repository
+                .delete_by_id(datastore, database_session, &request.folder_id)
+                .await?;
+            let res = DeleteFolderResponse {
+                status: result
+            };
+
+            return Ok(res);
+        }
+
+        Err(Error::TonicError(Status::internal("Unable to delete folder")))
     }
 }

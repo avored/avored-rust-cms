@@ -5,7 +5,7 @@ use std::sync::Arc;
 use axum::http::{HeaderName, HeaderValue};
 use axum::response::Html;
 use axum::Router;
-use axum::routing::{delete, get, post};
+use axum::routing::{get, post};
 use axum_tonic::{NestTonic, RestGrpcService};
 use tower_http::cors::{Any, CorsLayer};
 use tracing_subscriber::{filter, Layer};
@@ -20,7 +20,7 @@ use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::general_api::GeneralApi;
 // use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
-use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
+// use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
 use crate::api::handlers::asset::rename_asset_api_handler::rename_asset_api_handler;
 use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handler;
 use crate::api::misc_api::MiscApi;
@@ -152,10 +152,10 @@ async fn main() -> Result<(), Error>{
             post(rename_asset_api_handler),
         )
         // .route("/api/create-folder", post(create_folder_api_handler))
-        .route(
-            "/api/delete-folder/{asset_id}",
-            delete(delete_folder_api_handler),
-        )
+        // .route(
+        //     "/api/delete-folder/{asset_id}",
+        //     delete(delete_folder_api_handler),
+        // )
         // .route(
         //     "/api/delete-asset/{asset_id}",
         //     delete(delete_asset_api_handler),

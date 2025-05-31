@@ -70,8 +70,18 @@ message DeleteAssetResponse {
   bool status = 1;
 }
 
+
+message DeleteFolderRequest {
+  string folder_id = 1;
+}
+
+message DeleteFolderResponse {
+  bool status = 1;
+}
+
 service Asset {
   rpc Paginate(AssetPaginateRequest) returns (AssetPaginateResponse);
   rpc CreateFolder(CreateFolderRequest) returns (CreateFolderResponse);
   rpc DeleteAsset(DeleteAssetRequest) returns (DeleteAssetResponse);
+  rpc DeleteFolder(DeleteFolderRequest) returns (DeleteFolderResponse);
 }
