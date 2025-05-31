@@ -1,4 +1,4 @@
-import {QueryClient, RefetchOptions, useMutation} from "@tanstack/react-query";
+import {QueryClient, useMutation} from "@tanstack/react-query";
 import {useNavigate} from "react-router-dom";
 import {contentClient} from "../../grpc_generated/ContentServiceClientPb";
 import {StoreCollectionRequest} from "../../grpc_generated/content_pb";

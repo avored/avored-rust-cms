@@ -1,15 +1,15 @@
 import {useMutation, useQueryClient} from "@tanstack/react-query";
 import {AssetClient} from "../../grpc_generated/AssetServiceClientPb";
-import {DeleteFolderRequest} from "../../grpc_generated/asset_pb";
+import {DeleteAssetRequest} from "../../grpc_generated/asset_pb";
 
-export const UseDeleteFolderHook = () => {
+export const UseDeleteAssetHook = () => {
     const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
     const client = new AssetClient(backend_url);
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (request: DeleteFolderRequest) => {
-            return await client.deleteFolder(request, {
+        mutationFn: async (request: DeleteAssetRequest) => {
+            return await client.deleteAsset(request, {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             });
         },

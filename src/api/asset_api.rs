@@ -146,9 +146,9 @@ impl Asset for AssetApi {
     ) -> Result<Response<RenameAssetResponse>, Status>
     {
         println!("->> {:<12} - rename_asset", "gRPC_Asset_Api_Service");
-       
+
         let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
-        let req = request.into_inner(); 
+        let req = request.into_inner();
 
         match self.
             state.

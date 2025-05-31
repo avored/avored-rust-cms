@@ -1,13 +1,13 @@
 export type AssetType = {
     id: string;
     name: string;
-    new_path: string;
-    asset_type: string;
+    newPath: string;
+    assetType: string;
     metadata: string;
-    created_at: string;
-    created_by: string;
-    updated_at: string;
-    updated_by: string;
+    createdAt: string;
+    createdBy: string;
+    updatedAt: string;
+    updatedBy: string;
 }
 
 export type AssetSaveType = {
@@ -25,5 +25,5 @@ export type DeleteFolderType = {
 
 export type RenameFolderType = {
     id: string;
-    name: String;
+    name: string;
 }

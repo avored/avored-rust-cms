@@ -10,7 +10,7 @@ import { AssetSaveSchema } from "../../schemas/asset/AssetSaveSchema";
 import {AssetUploadModal} from "./AssetUploadModal";
 import {CreateFolderModal} from "./CreateFolderModal";
 import {DisplayAsset} from "./DisplayAsset";
-import _ from "lodash";
+import {AssetPaginateRequest} from "../../grpc_generated/asset_pb";
 
 export const AssetTablePage = () => {
     const [isUploadAssetModalOpen, setIsUploadAssetModalOpen] = useState(false);
@@ -18,13 +18,13 @@ export const AssetTablePage = () => {
 
     const params = useParams()
     const asset_id: string = params.asset_id ?? ''
+    const request = new AssetPaginateRequest();
 
-    const asset_api_table_response = UseAssetTableHook(asset_id);
-    const assets: Array<AssetType> = _.get(
-        asset_api_table_response,
-        "data.data.data",
-        [],
-    ) as Array<AssetType>;
+    const asset_api_table_response = UseAssetTableHook(request);
+
+    const data_list = asset_api_table_response.data?.data?.dataList ?? [];
+    const assets = data_list as Array<unknown> as AssetType[];
+
 
     const {mutate} = UseStoreAssetHook(asset_id);
     const [t] = useTranslation("global");

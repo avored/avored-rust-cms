@@ -1,22 +1,27 @@
-import {useNavigate} from "react-router-dom";
 import {useQuery} from "@tanstack/react-query";
-import {UseAxiosHook} from "../misc/UseAxiosHook";
-import _ from "lodash";
+import {AssetClient} from "../../grpc_generated/AssetServiceClientPb";
+import {AssetPaginateRequest} from "../../grpc_generated/asset_pb";
 
-export const UseAssetTableHook = (asset_id: string) => {
-    const client = UseAxiosHook();
-    const redirect = useNavigate();
+
+export const UseAssetTableHook = (request: AssetPaginateRequest) => {
+    const backend_url: string = process.env.REACT_APP_BACKEND_BASE_URL ?? "http://localhost:50051";
+    const client = new AssetClient(backend_url);
+
+
     return useQuery({
-        queryKey: ['asset-table', {asset_id}],
+        queryKey: ['asset-table'],
         queryFn: (async () => {
             try {
-                const assetUrl: string = _.isEmpty(asset_id) ? '/asset' : '/asset?parent_id=' + asset_id;
-                return await client.get(assetUrl)
-            } catch (error) {
-                if (_.get(error, 'response.status') === 401) {
-                    // localStorage.removeItem('AUTH_TOKEN')
-                    redirect("/admin/login")
+                let response = await client.paginate(request, {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                })
+                if (response.getStatus()) {
+                    // may be map a type and return a proper type
+                    return response.toObject();
                 }
+                console.log('feel like error thrown... ')
+            } catch (error) {
+                console.log(error)
             }
         })
     })

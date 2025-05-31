@@ -8,8 +8,10 @@ import { RenameAssetModal } from "./RenameAssetModal";
 import { useTranslation } from "react-i18next";
 import {Link} from "react-router-dom";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/react";
-import {UseDeleteFolderHook} from "../../hooks/asset/UseDeleteFolderHook";
+import {UseDeleteAssetHook} from "../../hooks/asset/UseDeleteAssetHook";
 import {AssetType} from "../../types/asset/AssetType";
+import {DeleteAssetRequest, DeleteFolderRequest} from "../../grpc_generated/asset_pb";
+import {UseDeleteFolderHook} from "../../hooks/asset/UseDeleteFolderHook";
 
 type DisplayAssetProp = {
     asset: AssetType;
@@ -23,10 +25,12 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
         setIsRenameFolderModalOpen(false);
     };
 
-    const openRenameFolderModal = () => {
+    const openRenameFolderModal = (e: React.MouseEvent<HTMLElement>) => {
+        e.preventDefault();
         setIsRenameFolderModalOpen(true);
     };
     const backend_url = process.env.REACT_APP_BACKEND_BASE_URL;
+    const { mutate: deleteAssetMutate } = UseDeleteAssetHook();
     const { mutate: deleteFolderMutate } = UseDeleteFolderHook();
 
     const onRemoveAssetOnClick = (
@@ -35,8 +39,15 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
         asset_id: string,
     ) => {
         e.preventDefault();
+        if (type === "FILE") {
+            const request = new DeleteAssetRequest();
+            request.setAssetId(asset_id);
+            deleteAssetMutate(request);
+        }
         if (type === "FOLDER") {
-            deleteFolderMutate({ asset_id });
+            const request = new DeleteFolderRequest();
+            request.setFolderId(asset_id);
+            deleteFolderMutate(request);
         }
     };
 
@@ -62,7 +73,7 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
                                 <a href={`/admin/asset/delete/${asset.id}`}
                                     className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                                     onClick={(e) =>
-                                        onRemoveAssetOnClick(e, asset.asset_type, asset.id)
+                                        onRemoveAssetOnClick(e, asset.assetType, asset.id)
                                     }
                                     type="button"
                                 >
@@ -71,7 +82,7 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
                             </MenuItem>
                             <MenuItem as="div" className="cursor-pointer">
                                 <a
-                                    onClick={openRenameFolderModal}
+                                    onClick={e => openRenameFolderModal(e)}
                                     className="flex items-center gap-x-3.5 py-2 px-3 rounded-lg text-sm text-gray-800 hover:bg-gray-100 focus:outline-none focus:bg-gray-100"
                                     href={`/admin/asset/rename/${asset.id}`}
                                 >
@@ -82,14 +93,14 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
                     </Menu>
                 </div>
                 <div className="flex justify-center h-40 mb-3">
-                    {asset.asset_type === "FOLDER" ? (
+                    {asset.assetType === "FOLDER" ? (
                         <>
                             <FolderPlusIcon className="h-32 w-32 text-gray-300" />
                         </>
                     ) : (
                         <>
                             <img
-                                src={`${backend_url}${asset.new_path}`}
+                                src={`${backend_url}${asset.newPath}`}
                                 className="h-40"
                                 alt={asset.name}
                             />
@@ -98,7 +109,7 @@ export const DisplayAsset = ({ asset, openFolder }: DisplayAssetProp) => {
                 </div>
                 <div className="flex justify-center  text-xs text-slate-900">
                     <div className="w-full items-center">
-                        {asset.asset_type === "FOLDER" ? (
+                        {asset.assetType === "FOLDER" ? (
                             <>
                                 <button
                                     onClick={(e) => openFolder(e, asset.id)}

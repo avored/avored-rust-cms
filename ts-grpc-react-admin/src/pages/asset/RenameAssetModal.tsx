@@ -4,9 +4,10 @@ import React from "react";
 import {useTranslation} from "react-i18next";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {UseRenameFolderHook} from "../../hooks/asset/UseRenameFolderHook";
+import {UseRenameAssetHook} from "../../hooks/asset/UseRenameAssetHook";
 import {AssetType, RenameFolderType} from "../../types/asset/AssetType";
 import {UseRenameFolderSchema} from "../../schemas/asset/UseRenameFolderSchema";
+import {RenameAssetRequest} from "../../grpc_generated/asset_pb";
 
 type RenameAssetModalProps = {
     isOpen: any,
@@ -20,12 +21,15 @@ export const RenameAssetModal = (({
                                        asset
                                   }: RenameAssetModalProps) => {
     const [t] = useTranslation("global");
-    const { mutate } = UseRenameFolderHook()
+    const { mutate } = UseRenameAssetHook()
 
 
     const submitHandler: SubmitHandler<RenameFolderType>  = ((data: RenameFolderType) => {
         onCloseModal()
-        mutate(data)
+        const request = new RenameAssetRequest();
+        request.setAssetId(asset.id)
+        request.setName(data.name)
+        mutate(request)
     })
 
     const {
