@@ -2,7 +2,7 @@ use tokio::fs;
 use tonic::Status;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel, FolderTypeMetaData, MetaDataType};
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository, PER_PAGE};
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse, RenameAssetRequest, RenameAssetResponse};
 use crate::api::proto::asset::asset_paginate_response::{AssetPaginateData, AssetPagination};
 use crate::error::Error;
 
@@ -107,16 +107,6 @@ impl AssetService {
             .await
     }
 
-    pub async fn delete_by_id(
-        &self,
-        (datastore, database_session): &DB,
-        asset_id: &str,
-    ) -> Result<bool> {
-        self.asset_repository
-            .delete_by_id(datastore, database_session, asset_id)
-            .await
-    }
-
     pub async fn create_asset_folder(
         &self,
         db: &DB,
@@ -167,24 +157,6 @@ impl AssetService {
 
         Ok(res)
     }
-
-    pub async fn update_asset_path(
-        &self,
-        (datastore, database_session): &DB,
-        name: &str,
-        asset_id: &str,
-        logged_in_username: &str,
-    ) -> Result<AssetModel> {
-        self.asset_repository
-            .update_asset_path(
-                datastore,
-                database_session,
-                name,
-                asset_id,
-                logged_in_username,
-            )
-            .await
-    }
     
     pub async fn delete_asset(
         &self,
@@ -223,11 +195,10 @@ impl AssetService {
         let asset_model = self.asset_repository
             .find_by_id(datastore, database_session, &request.folder_id)
             .await?;
-        let asset_path = format!("./{path}", path = asset_model.new_path);
-
-
-        if fs::try_exists(&asset_path).await? {
-            tokio::fs::remove_file(asset_path).await?;
+        let folder_path = format!("./{path}", path = asset_model.new_path);
+        
+        if fs::try_exists(&folder_path).await? {
+            tokio::fs::remove_dir(&folder_path).await?;
 
             let result =self.asset_repository
                 .delete_by_id(datastore, database_session, &request.folder_id)
@@ -240,5 +211,43 @@ impl AssetService {
         }
 
         Err(Error::TonicError(Status::internal("Unable to delete folder")))
+    }
+
+
+    pub async fn rename_asset(
+        &self,
+        (datastore, database_session): &DB,
+        request: RenameAssetRequest,
+        logged_in_username: &str,
+    ) -> Result<RenameAssetResponse> {
+
+        let asset_model = self.asset_repository
+            .find_by_id(datastore, database_session, &request.asset_id)
+            .await?;
+        let old_asset_path = format!(".{}", asset_model.new_path);
+        let new_asset_path = format!("/public/upload/{}", &request.name);
+
+        if fs::try_exists(&old_asset_path).await? {
+            fs::rename(&old_asset_path, &format!(".{}", new_asset_path)).await?;
+            let updated_asset_model = self.asset_repository
+                .update_asset_path(
+                    datastore,
+                    database_session,
+                    &request.name,
+                    &request.asset_id,
+                    logged_in_username,
+                )
+                .await?;
+            let updated_asset_model: crate::api::proto::asset::AssetModel = updated_asset_model.try_into()?;
+            
+            let response  = RenameAssetResponse {
+                status: true,
+                data: Some(updated_asset_model)
+            };
+            
+            return Ok(response);
+        }
+
+        Err(Error::TonicError(Status::internal("Unable to rename asset")))
     }
 }

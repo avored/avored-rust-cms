@@ -79,9 +79,20 @@ message DeleteFolderResponse {
   bool status = 1;
 }
 
+message RenameAssetRequest {
+  string asset_id = 1;
+  string name = 2;
+}
+
+message RenameAssetResponse {
+  bool status = 1;
+  AssetModel data = 2;
+}
+
 service Asset {
   rpc Paginate(AssetPaginateRequest) returns (AssetPaginateResponse);
   rpc CreateFolder(CreateFolderRequest) returns (CreateFolderResponse);
   rpc DeleteAsset(DeleteAssetRequest) returns (DeleteAssetResponse);
   rpc DeleteFolder(DeleteFolderRequest) returns (DeleteFolderResponse);
+  rpc RenameAsset(RenameAssetRequest) returns (RenameAssetResponse);
 }

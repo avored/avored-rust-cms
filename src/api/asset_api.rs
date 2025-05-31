@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::asset::asset_server::Asset;
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse, RenameAssetRequest, RenameAssetResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::models::token_claim_model::TokenClaims;
@@ -127,6 +127,36 @@ impl Asset for AssetApi {
             delete_folder(
                 &self.state.db,
                 req
+            ).await {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            },
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string()))
+            }
+        }
+    }
+
+    async fn rename_asset(
+        &self,
+        request: Request<RenameAssetRequest>
+    ) -> Result<Response<RenameAssetResponse>, Status>
+    {
+        println!("->> {:<12} - rename_asset", "gRPC_Asset_Api_Service");
+       
+        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let req = request.into_inner(); 
+
+        match self.
+            state.
+            asset_service.
+            rename_asset(
+                &self.state.db,
+                req,
+                &claims.email
             ).await {
             Ok(reply) => {
                 let res = Response::new(reply);
