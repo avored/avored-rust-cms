@@ -1,7 +1,10 @@
+use tokio::fs;
+use tonic::Status;
 use crate::models::asset_model::{AssetModel, CreatableAssetModel, FolderTypeMetaData, MetaDataType};
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::asset_repository::AssetRepository, PER_PAGE};
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse};
 use crate::api::proto::asset::asset_paginate_response::{AssetPaginateData, AssetPagination};
+use crate::error::Error;
 
 pub struct AssetService {
     asset_repository: AssetRepository,
@@ -50,8 +53,6 @@ impl AssetService {
             )
             .await?;
         
-        println!("{:?}", assets);
-
         let mut grpc_assets = vec![];
         assets.iter().for_each(|asset| {
             let model: crate::api::proto::asset::AssetModel = asset.clone().try_into().unwrap();
@@ -123,7 +124,7 @@ impl AssetService {
         logged_in_user: &str,
     ) -> Result<CreateFolderResponse> {
         let (datastore, database_session) = db;
-        
+
         let name = req.name;
         let parent_id = req.parent_id.unwrap_or_default();
 
@@ -155,15 +156,15 @@ impl AssetService {
         let asset_model = self.asset_repository
             .create_asset_folder(datastore, database_session, creatable_asset_model)
             .await?;
-        
+
         let grpc_asset_model: crate::api::proto::asset::AssetModel = asset_model.try_into()?;
-        
-        
+
+
         let res = CreateFolderResponse {
             status: true,
             data: Option::from(grpc_asset_model),
         };
-        
+
         Ok(res)
     }
 
@@ -183,5 +184,33 @@ impl AssetService {
                 logged_in_username,
             )
             .await
+    }
+    
+    pub async fn delete_asset(
+        &self,
+        (datastore, database_session): &DB,
+        request: DeleteAssetRequest
+    ) -> Result<DeleteAssetResponse> {
+
+       let asset_model = self.asset_repository
+            .find_by_id(datastore, database_session, &request.asset_id)
+            .await?;
+        let asset_path = format!("./{path}", path = asset_model.new_path);
+
+
+        if fs::try_exists(&asset_path).await? {
+            tokio::fs::remove_file(asset_path).await?;
+
+            let result =self.asset_repository
+                .delete_by_id(datastore, database_session, &request.asset_id)
+                .await?;
+            let res = DeleteAssetResponse {
+                status: result
+            };
+            
+            return Ok(res);
+        }
+
+        Err(Error::TonicError(Status::internal("Unable to delete asset")))
     }
 }

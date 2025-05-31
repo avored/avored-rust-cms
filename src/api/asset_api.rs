@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::asset::asset_server::Asset;
-use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse};
+use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::models::token_claim_model::TokenClaims;
@@ -83,4 +83,34 @@ impl Asset for AssetApi {
             }
         }
     }
+
+    async fn delete_asset(
+        &self,
+        request: Request<DeleteAssetRequest>
+    ) -> Result<Response<DeleteAssetResponse>, Status>
+    {
+        println!("->> {:<12} - delete_asset", "gRPC_Asset_Api_Service");
+
+
+        let req = request.into_inner();
+
+        match self.
+            state.
+            asset_service.
+            delete_asset(
+                &self.state.db,
+                req
+            ).await {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            },
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string()))
+            }
+        }
+    }
+
 }
