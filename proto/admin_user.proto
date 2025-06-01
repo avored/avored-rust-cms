@@ -90,6 +90,7 @@ message UpdateAdminUserRequest {
   bytes profile_image_content = 3;
   string profile_image_file_name = 4;
   repeated string role_ids = 5;
+  bool is_super_admin = 6;
 }
 
 message UpdateAdminUserResponse {

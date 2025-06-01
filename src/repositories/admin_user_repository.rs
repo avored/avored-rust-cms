@@ -323,8 +323,7 @@ impl AdminUserRepository {
         let responses = datastore
             .execute(sql.as_str(), database_session, Some(vars))
             .await?;
-        println!("RESPONSE ATTACHED: {responses:?}");
-    
+        
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);
@@ -348,8 +347,7 @@ impl AdminUserRepository {
         let responses = datastore
             .execute(sql.as_str(), database_session, None)
             .await?;
-        println!("RESPONSE DETACHED: {responses:?}");
-    
+         
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);

@@ -373,6 +373,9 @@ export class UpdateAdminUserRequest extends jspb.Message {
   clearRoleIdsList(): UpdateAdminUserRequest;
   addRoleIds(value: string, index?: number): UpdateAdminUserRequest;
 
+  getIsSuperAdmin(): boolean;
+  setIsSuperAdmin(value: boolean): UpdateAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateAdminUserRequest): UpdateAdminUserRequest.AsObject;
@@ -388,6 +391,7 @@ export namespace UpdateAdminUserRequest {
     profileImageContent: Uint8Array | string,
     profileImageFileName: string,
     roleIdsList: Array<string>,
+    isSuperAdmin: boolean,
   }
 }
 

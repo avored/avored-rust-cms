@@ -2,7 +2,7 @@ use argon2::{Argon2, PasswordHasher};
 use argon2::password_hash::SaltString;
 use crate::{error::Result, providers::avored_database_provider::DB, repositories::admin_user_repository::AdminUserRepository, PER_PAGE};
 use std::path::Path;
-use crate::api::proto::admin_user::{AdminUserModel, AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
+use crate::api::proto::admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
 use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
@@ -12,21 +12,18 @@ use crate::repositories::role_repository::RoleRepository;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
-    role_repository: RoleRepository,
-    // password_reset_repository: PasswordResetRepository,
+    role_repository: RoleRepository
 }
 
 impl AdminUserService {
 
     pub fn new(
         admin_user_repository: AdminUserRepository,
-        role_repository: RoleRepository,
-        // password_reset_repository: PasswordResetRepository,
+        role_repository: RoleRepository
     ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
-            role_repository,
-            // password_reset_repository,
+            role_repository
         })
     }
 
@@ -68,7 +65,7 @@ impl AdminUserService {
 
         let mut grpc_admin_users = vec![];
         admin_users.iter().for_each(|admin_user| {
-            let model: AdminUserModel = admin_user.clone().try_into().unwrap();
+            let model: crate::api::proto::admin_user::AdminUserModel = admin_user.clone().try_into().unwrap();
             grpc_admin_users.push(model);
         });
 
@@ -127,7 +124,7 @@ impl AdminUserService {
             )
             .await?;
 
-        let model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+        let model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.clone().try_into().unwrap();
 
 
         let res = StoreAdminUserResponse {
@@ -152,7 +149,7 @@ impl AdminUserService {
             )
             .await?;
 
-        let model: AdminUserModel = admin_user_model.try_into().unwrap();
+        let model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.try_into().unwrap();
 
 
         let res = GetAdminUserResponse {
@@ -173,10 +170,12 @@ impl AdminUserService {
             id: req.admin_user_id,
             full_name: req.full_name,
             profile_image: String::from(""),
-            is_super_admin: false,
+            is_super_admin: req.is_super_admin,
             logged_in_username: logged_in_username.clone(),
             role_ids: req.role_ids,
         };
+        
+        println!("UP: {:?}", updatable_admin_user_model);
         
 
         // needs to handle the existing image scenario
@@ -199,7 +198,7 @@ impl AdminUserService {
             )
             .await?;
 
-        let mut model: AdminUserModel = admin_user_model.clone().try_into().unwrap();
+        let mut model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.clone().try_into().unwrap();
 
         for role_id in updatable_admin_user_model.clone().role_ids {
             self.admin_user_repository

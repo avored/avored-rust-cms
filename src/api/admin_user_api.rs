@@ -18,7 +18,12 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<AdminUserPaginateResponse>, Status>
     {
         println!("->> {:<12} - paginate_admin_user", "gRPC_Admin_User_Api_Service");
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = match request.extensions().get::<TokenClaims>() {
+            Some(claims) => claims.clone(),
+            None => {
+                return Err(Status::unauthenticated("Unauthenticated"));
+            }       
+        };
         let logged_in_user = claims.admin_user_model;
         
         let has_permission_bool = self.state

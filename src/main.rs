@@ -145,21 +145,7 @@ async fn main() -> Result<(), Error>{
 
     let rest_router = Router::new()
         .route("/", get(handler))
-        // .route("/api/asset", get(asset_table_api_handler))
         .route("/api/asset", post(store_asset_api_handler))
-        // .route(
-        //     "/api/rename-asset/{asset_id}",
-        //     post(rename_asset_api_handler),
-        // )
-        // .route("/api/create-folder", post(create_folder_api_handler))
-        // .route(
-        //     "/api/delete-folder/{asset_id}",
-        //     delete(delete_folder_api_handler),
-        // )
-        // .route(
-        //     "/api/delete-asset/{asset_id}",
-        //     delete(delete_asset_api_handler),
-        // )
         .route_layer(axum::middleware::from_fn_with_state(
             state.clone(),
             require_jwt_authentication,

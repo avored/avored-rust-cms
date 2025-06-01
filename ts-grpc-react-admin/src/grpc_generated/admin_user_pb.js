@@ -3244,7 +3244,8 @@ adminUserId: jspb.Message.getFieldWithDefault(msg, 1, ""),
 fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
 profileImageContent: msg.getProfileImageContent_asB64(),
 profileImageFileName: jspb.Message.getFieldWithDefault(msg, 4, ""),
-roleIdsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f
+roleIdsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
+isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
   };
 
   if (includeInstance) {
@@ -3300,6 +3301,10 @@ proto.admin_user.UpdateAdminUserRequest.deserializeBinaryFromReader = function(m
     case 5:
       var value = /** @type {string} */ (reader.readString());
       msg.addRoleIds(value);
+      break;
+    case 6:
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setIsSuperAdmin(value);
       break;
     default:
       reader.skipField();
@@ -3362,6 +3367,13 @@ proto.admin_user.UpdateAdminUserRequest.serializeBinaryToWriter = function(messa
   if (f.length > 0) {
     writer.writeRepeatedString(
       5,
+      f
+    );
+  }
+  f = message.getIsSuperAdmin();
+  if (f) {
+    writer.writeBool(
+      6,
       f
     );
   }
@@ -3498,6 +3510,24 @@ proto.admin_user.UpdateAdminUserRequest.prototype.addRoleIds = function(value, o
  */
 proto.admin_user.UpdateAdminUserRequest.prototype.clearRoleIdsList = function() {
   return this.setRoleIdsList([]);
+};
+
+
+/**
+ * optional bool is_super_admin = 6;
+ * @return {boolean}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getIsSuperAdmin = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 6, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.setIsSuperAdmin = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 6, value);
 };
 
 

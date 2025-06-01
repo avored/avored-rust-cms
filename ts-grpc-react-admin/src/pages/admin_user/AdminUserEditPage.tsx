@@ -59,13 +59,13 @@ export const AdminUserEditPage = () => {
     const {mutate, error} = UseUpdateAdminUserHook();
 
 
-    const isSuperAdminSwitchOnChange = ((is_checked: boolean) => {
+    const isSuperAdminSwitchOnChange = (async (is_checked: boolean) => {
         if (is_checked) {
             setSelectedOption([])
         }
 
         setValue("isSuperAdmin", is_checked)
-        trigger('isSuperAdmin')
+        await trigger('isSuperAdmin')
     })
 
     const submitHandler = async (data: EditAdminUserType) => {
@@ -73,6 +73,7 @@ export const AdminUserEditPage = () => {
         update_admin_user.setFullName(data.fullName);
         update_admin_user.setAdminUserId(params.admin_user_id ?? '');
         update_admin_user.setRoleIdsList(selectedOption);
+        update_admin_user.setIsSuperAdmin(data.isSuperAdmin)
 
         var profile_image_file_name = ""
         const file: File = data.profile_image[0];

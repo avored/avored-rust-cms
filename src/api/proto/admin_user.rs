@@ -128,6 +128,8 @@ pub struct UpdateAdminUserRequest {
     pub profile_image_file_name: ::prost::alloc::string::String,
     #[prost(string, repeated, tag = "5")]
     pub role_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
+    #[prost(bool, tag = "6")]
+    pub is_super_admin: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateAdminUserResponse {
