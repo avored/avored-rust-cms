@@ -28,7 +28,7 @@ impl AdminUser for AdminUserApi {
         
         let has_permission_bool = self.state
             .admin_user_service
-            .has_permission(logged_in_user, String::from("admin_user_table"))
+            .has_permission(logged_in_user, String::from("paginate_admin_user"))
             .await?;
         if !has_permission_bool {
             let status = Status::permission_denied("You don't have permission to access this resource");
@@ -234,7 +234,7 @@ impl AdminUser for AdminUserApi {
 
         let has_permission_bool = self.state
             .admin_user_service
-            .has_permission(logged_in_user, String::from("role_paginate"))
+            .has_permission(logged_in_user, String::from("role_option"))
             .await?;
         if !has_permission_bool {
             let status = Status::permission_denied("You don't have permission to access this resource");

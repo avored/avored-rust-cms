@@ -104,7 +104,7 @@ async fn main() -> Result<(), Error>{
     let cms_api = CmsApi {state: state.clone()};
     let cms_server = CmsServer::new(cms_api);
 
-    let dashboard_api = DashboardApi {};
+    let dashboard_api = DashboardApi {state: state.clone()};
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
 
     let auth_api = AuthApi {state: state.clone()};
