@@ -1,7 +1,5 @@
 import _ from "lodash";
 import {ErrorMessageType, GrpcErrorCode} from "../types/common/ErrorType";
-import {Switch} from "@headlessui/react";
-import AvoredModal from "./AvoredModal";
 
 type ErrorMessageProps = {
     backendErrors: any;
