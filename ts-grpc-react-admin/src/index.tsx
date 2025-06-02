@@ -94,10 +94,10 @@ root.render(
                     </div>
 
                 )}
-            </Toaster>;
+            </Toaster>
             <App/>
         </I18nextProvider>
-    </QueryClientProvider>,
+    </QueryClientProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
