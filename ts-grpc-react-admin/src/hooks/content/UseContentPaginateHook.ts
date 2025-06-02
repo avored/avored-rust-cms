@@ -8,7 +8,7 @@ export const UseContentPaginateHook = (request: ContentPaginateRequest, query: P
     const client = new contentClient(backend_url);
 
     return useQuery({
-        queryKey: ['content-table-paginate', query],
+        queryKey: ['content-table-paginate', 'content-' + request.getContentType(), query],
         queryFn: async () => {
             request.setPage(query.page ?? 0);
             request.setOrder(query.order as string)

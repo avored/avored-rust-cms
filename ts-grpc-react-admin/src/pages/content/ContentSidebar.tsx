@@ -1,4 +1,4 @@
-import {Link, useSearchParams} from "react-router-dom";
+import {Link, useNavigate, useSearchParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {
     CollectionType,
@@ -20,6 +20,7 @@ import {UseStoreCollectionHook} from "../../hooks/content/UseStoreCollectionHook
 import {UseUpdateCollectionHook} from "../../hooks/content/UseUpdateCollectionHook";
 import {UseCollectionCreateSchema} from "../../schemas/content/UseCollectionCreateSchema";
 import {UseCollectionUpdateSchema} from "../../schemas/content/UseCollectionUpdateSchema";
+import {useQueryClient} from "@tanstack/react-query";
 
 export const ContentSidebar = (() => {
     const [t] = useTranslation("global");
@@ -35,6 +36,8 @@ export const ContentSidebar = (() => {
 
     const {mutate: storeCollectionMutate, error: storeCollectionError} = UseStoreCollectionHook(refetch)
     const {mutate: updateCollectionMutate, error: updateCollectionError} = UseUpdateCollectionHook(refetch)
+    const queryClient = useQueryClient()
+    const redirect = useNavigate()
 
 
     const {
@@ -71,6 +74,13 @@ export const ContentSidebar = (() => {
         setIsEditCollectionModalOpen(false)
         // await collections_api_response?.refetch()
     })
+    
+    const collectionTypeOnClick = async (e: React.MouseEvent<HTMLAnchorElement>, type: string) => {
+        // const queryClient
+        e.preventDefault();
+        await queryClient.invalidateQueries({ queryKey: ['content-table-paginate'] });
+        redirect(`/admin/content?type=${encodeURI(type)}`)
+    }
 
     const editCollectionOnClick = (e:any, collection: CollectionType) => {
         e.preventDefault();
@@ -176,6 +186,7 @@ export const ContentSidebar = (() => {
                                 <div className="flex-1">
                                     <Link
                                         to={`/admin/content?type=${encodeURI(collection.identifier)}`}
+                                        onClick={(e) => collectionTypeOnClick(e, collection.identifier)}
                                         key={collection.identifier}
                                         className={`text-sm cursor-pointer overflow-x-hidden`}
                                     >
