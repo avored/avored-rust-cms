@@ -209,7 +209,7 @@ export const RoleEditPage = () => {
                                             {renderSwitch('dashboard')}
 
                                             {renderSwitch('get_setting')}
-                                            {renderSwitch('save_setting')}
+                                            {renderSwitch('store_setting')}
                                         </div>
                                     </div>
 
@@ -218,11 +218,13 @@ export const RoleEditPage = () => {
                                             {t("content_permission")}
                                         </div>
                                         <div className="p-3">
-                                            {renderSwitch('content_table')}
-                                            {renderSwitch('content_create')}
+                                            {renderSwitch('content_paginate')}
+                                            {renderSwitch('store_content')}
                                             {renderSwitch('content_edit')}
                                             {renderSwitch('content_delete')}
                                             {renderSwitch('get_content')}
+                                            {renderSwitch('store_collection')}
+                                            {renderSwitch('update_collection')}
                                         </div>
                                     </div>
 
@@ -243,7 +245,7 @@ export const RoleEditPage = () => {
                                             {t("asset_permission")}
                                         </div>
                                         <div className="p-3">
-                                            {renderSwitch('asset_table')}
+                                            {renderSwitch('paginate_asset')}
                                             {renderSwitch('asset_create')}
                                             {renderSwitch('rename_asset')}
                                             {renderSwitch('asset_delete')}
@@ -258,7 +260,7 @@ export const RoleEditPage = () => {
                                         </div>
 
                                         <div className="p-3">
-                                            {renderSwitch('admin_user_table')}
+                                            {renderSwitch('paginate_admin_user')}
                                             {renderSwitch('admin_user_create')}
                                             {renderSwitch('admin_user_edit')}
                                             {renderSwitch('admin_user_delete')}
@@ -272,11 +274,12 @@ export const RoleEditPage = () => {
                                         </div>
 
                                         <div className="p-3">
-                                            {renderSwitch('role_table')}
-                                            {renderSwitch('role_create')}
-                                            {renderSwitch('role_edit')}
-                                            {renderSwitch('role_delete')}
+                                            {renderSwitch('role_paginate')}
+                                            {renderSwitch('store_role')}
+                                            {renderSwitch('update_role')}
+                                            {renderSwitch('role_option')}
                                             {renderSwitch('get_role')}
+                                            {renderSwitch('put_role_identifier')}
                                         </div>
                                     </div>
                                 </div>

@@ -1,12 +1,5 @@
 use std::collections::BTreeMap;
-// use std::path::Path;
-// use std::process::ExitCode;
 use std::sync::Arc;
-// use surrealdb::channel;
-// use surrealdb::channel::unbounded;
-// use tokio::fs::{File, OpenOptions};
-// use tokio::io;
-// use tokio::io::{AsyncReadExt, AsyncWriteExt};
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
@@ -14,7 +7,6 @@ use crate::api::proto::admin_user::StoreAdminUserRequest;
 use crate::api::proto::misc::{DeleteDemoDataRequest, DeleteDemoDataResponse, HealthCheckRequest, HealthCheckResponse, InstallDemoDataRequest, InstallDemoDataResponse, SetupRequest, SetupResponse};
 use crate::api::proto::misc::misc_server::Misc;
 use crate::avored_state::AvoRedState;
-// use crate::error::Error;
 use crate::models::role_model::CreatableRole;
 
 pub struct MiscApi {
@@ -25,12 +17,6 @@ pub struct MiscApi {
 impl Misc for MiscApi {
     async fn setup(&self, request: Request<SetupRequest>) -> Result<Response<SetupResponse>, Status> {
         let req = request.into_inner();
-        // let (valid, error_messages) = req.validate()?;
-
-        // if !valid {
-        //     return Err(Status::invalid_argument(error_messages))
-        // }
-
         
         match self.
             state.
