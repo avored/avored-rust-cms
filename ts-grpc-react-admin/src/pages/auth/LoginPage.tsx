@@ -88,7 +88,7 @@ export const LoginPage = (() => {
                                     onClick={handleSubmit}
                                     label={t("sign_in")}
                                     isPending={isPending}
-                                    className="bg-red-600 hover:bg-red-500 focus:ring-red-500"
+                                    className="bg-primary-600 hover:bg-primary-500 focus:ring-primary-500"
                                 />
                             </div>
 

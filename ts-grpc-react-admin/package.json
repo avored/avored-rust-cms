@@ -38,6 +38,7 @@
     "react-datetime": "^3.3.1",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.51.2",
+    "react-hot-toast": "^2.5.2",
     "react-i18next": "^14.1.2",
     "react-query-grpc-gateway": "^1.4.0",
     "react-router-dom": "^7.3.0",

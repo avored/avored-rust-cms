@@ -1,5 +1,7 @@
 import _ from "lodash";
-import {ErrorMessageType} from "../types/common/ErrorType";
+import {ErrorMessageType, GrpcErrorCode} from "../types/common/ErrorType";
+import {Switch} from "@headlessui/react";
+import AvoredModal from "./AvoredModal";
 
 type ErrorMessageProps = {
     backendErrors: any;
@@ -15,7 +17,16 @@ function ErrorMessage(props: ErrorMessageProps) {
             return 1;
         }
 
-        const backendErrorMessages = JSON.parse(props.backendErrors?.message ?? '{"errors": []}');
+        let backendErrorMessages = JSON.parse('{"errors": []}');
+        switch (props.backendErrors?.code) {
+            case GrpcErrorCode.InvalidArgument:
+                backendErrorMessages = JSON.parse(props.backendErrors?.message ?? '{"errors": []}');
+                break;
+            default:
+                // do nothing as it should be handled by global query client
+                //
+                break;
+        }
 
         return _.findIndex(_.get(backendErrorMessages, 'errors', []), ((err: ErrorMessageType) => err.key === key))
     }
@@ -26,7 +37,16 @@ function ErrorMessage(props: ErrorMessageProps) {
         if (message) {
             return message;
         }
-        const backendErrorMessages = JSON.parse(props.backendErrors?.message ?? '{"errors": []}');
+        let backendErrorMessages = JSON.parse('{"errors": []}');
+        switch (props.backendErrors?.code) {
+            case GrpcErrorCode.InvalidArgument:
+                backendErrorMessages = JSON.parse(props.backendErrors?.message ?? '{"errors": []}');
+                break;
+            default:
+                // do nothing as it should be handled by global query client
+                //
+                break;
+        }
 
         return _.get(backendErrorMessages, "errors." + getErrorIndex(props.identifier) + ".message")
     }
