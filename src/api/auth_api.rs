@@ -80,15 +80,6 @@ impl Auth for AuthApi {
                     status: sent_status,
                 };
                 Ok(Response::new(forgot_password_response))
-            },
-            )
-            .await
-        {
-            Ok(sent_status) => {
-                let forgot_password_response = ForgotPasswordResponse {
-                    status: sent_status,
-                };
-                Ok(Response::new(forgot_password_response))
             }
             Err(e) => match e {
                 TonicError(status) => Err(status),
@@ -111,34 +102,6 @@ impl Auth for AuthApi {
             return Err(Status::invalid_argument(error_messages));
         }
 
-        let password_hash = self
-            .state
-            .admin_user_service
-            .get_password_hash_from_raw_password(&req.password, &self.state.config.password_salt)?;
-
-        match self
-            .state
-            .auth_service
-            .reset_password(&self.state.db, req.email.clone(), password_hash)
-            .await
-        {
-            Ok(reply) => {
-                // Improve this service call
-
-                let expire_token = self
-                    .state
-                    .auth_service
-                    .expire_token(&req.token, &req.email, &self.state.db)
-                    .await?;
-                if expire_token {
-                    let res = Response::new(reply);
-
-                    return Ok(res);
-                }
-
-                Err(Status::internal("there is an issue with token".to_string()))
-            }
-
         match self
             .state
             .auth_service
@@ -146,19 +109,20 @@ impl Auth for AuthApi {
             .await
         {
             Ok(reset_password_status) => {
-               
-                let reset_password_status = ResetPasswordResponse { 
+                
+                let reset_password_response = ResetPasswordResponse {
                     status: reset_password_status
                 };
-                let res = Response::new(reset_password_status);
+                let res = Response::new(reset_password_response);
 
-                Ok(res)
-                
-            },
-            Err(e) => match e {
+                 Ok(res)
+            
+            }
+             Err(e) => match e {
                 TonicError(status) => Err(status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
+    
     }
 }

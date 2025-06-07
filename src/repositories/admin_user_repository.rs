@@ -14,6 +14,8 @@ use crate::error::Error::TonicError;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use super::into_iter_objects;
 
+const ADMIN_USER_TABLE: &str = "admin_users";
+
 #[derive(Clone)]
 pub struct AdminUserRepository {}
 
@@ -69,7 +71,7 @@ impl AdminUserRepository {
         let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM type::thing($table, $id);";
         // let sql = "SELECT * FROM type::thing($table, $id);";
         let vars = BTreeMap::from([
-            ("table".into(), "admin_users".into()),
+            ("table".into(), ADMIN_USER_TABLE.into()),
             ("id".into(), id.into()),
         ]);
 
@@ -167,7 +169,7 @@ impl AdminUserRepository {
                 updatable_admin_user.is_super_admin.into(),
             ),
             ("id".into(), updatable_admin_user.id.into()),
-            ("table".into(), "admin_users".into()),
+            ("table".into(), ADMIN_USER_TABLE.into()),
         ]);
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
@@ -194,8 +196,8 @@ impl AdminUserRepository {
     
         let vars = BTreeMap::from([
             ("password".into(), new_password.into()),
-            ("email".into(), email.clone().into()),
-            ("table".into(), "admin_users".into()),
+            ("email".into(), email.into()),
+            ("table".into(), ADMIN_USER_TABLE.into()),
         ]);
     
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
