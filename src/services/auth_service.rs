@@ -3,6 +3,7 @@ use crate::error::{Error, Result};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::models::token_claim_model::TokenClaims;
+use crate::repositories::password_reset_repository::PasswordResetRepository;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
 use lettre::message::{header, MultiPart, SinglePart};
@@ -13,12 +14,6 @@ use tonic::Status;
 use tracing::error;
 use crate::extensions::email_message_builder::EmailMessageBuilder;
 use crate::extensions::string_extension::StringExtension;
-use crate::api::proto::auth::{ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordResponse};
-use crate::error::Error::TonicError;
-use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-use crate::providers::avored_template_provider::AvoRedTemplateProvider;
-use crate::repositories::password_reset_repository::PasswordResetRepository;
 
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
@@ -185,32 +180,6 @@ impl AuthService {
         }
         
         let expire_token_status = self
-        email: String,
-        password_hash: String,
-    ) -> Result<ResetPasswordResponse> {
-        let status = self.
-            admin_user_repository.
-            update_password_by_email(
-                datastore, 
-                database_session,
-                email,
-                password_hash
-            ).await?;
-        
-        let res = ResetPasswordResponse {
-            status
-        };
-        
-        Ok(res)
-    }
-
-    pub(crate) async fn expire_token(
-        &self,
-        token: &str,
-        email: &str,
-        (datastore, database_session): &DB,
-    ) -> Result<bool>{
-        match self
             .password_reset_repository
             .expire_password_token_by_email_and_token(datastore, database_session, email, token)
             .await?;
@@ -218,16 +187,6 @@ impl AuthService {
         Ok(expire_token_status)
     }
 
-            .expire_password_token_by_email_and_token(
-                datastore,
-                database_session,
-                email,
-                token,
-            ).await {
-            Ok(_model) => Ok(true),
-            Err(_) => Ok(false)
-        }
-    }
     pub(crate) async fn validate_token(
         &self,
         token: &str,

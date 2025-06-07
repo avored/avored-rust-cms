@@ -81,8 +81,6 @@ impl Auth for AuthApi {
                 };
                 Ok(Response::new(forgot_password_response))
             }
-            ).await {
-            Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
                 TonicError(status) => Err(status),
                 _ => Err(Status::internal(e.to_string()))
@@ -116,41 +114,8 @@ impl Auth for AuthApi {
                     status: reset_password_status
                 };
                 let res = Response::new(reset_password_status);
-        
-        let password_hash = 
-            self.
-                state.
-                admin_user_service.
-                get_password_hash_from_raw_password(
-                    &req.password, 
-                    &self.state.config.password_salt
-                )?;
-        
-        match self.
-            state.
-            auth_service.
-            reset_password(
-                &self.state.db,
-                req.email.clone(),
-                password_hash
-            ).await {
-            Ok(reply) => {
-                // Improve this service call
-                
-                let expire_token = self
-                    .state
-                    .auth_service
-                    .expire_token(&req.token, &req.email, &self.state.db)
-                    .await?;
-                if expire_token {
-                    let res = Response::new(reply);
-
-                    return Ok(res)   
-                }
 
                 Ok(res)
-            }
-                Err(Status::internal("there is an issue with token".to_string()))
                 
             },
             Err(e) => match e {
