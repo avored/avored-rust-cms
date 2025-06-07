@@ -10,7 +10,7 @@ import {GetCmsContentRequest} from "../../grpc_generated/cms_pb";
 
 const HomePage = () => {
     const request = new GetCmsContentRequest();
-    request.setContentId("wvb4100904eaf3ykz64c");
+    request.setContentIdentifier("home-page");
     request.setContentType("pages");
     const get_cms_content_api_response = useHomeCmsPage(request)
     const get_content_model = get_cms_content_api_response?.data?.data ?? [];
@@ -48,7 +48,7 @@ const HomePage = () => {
 
                 <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
                     <img
-                        className="h-96 pt-20 mt-5 hidden lg:block object-cover"
+                        className="h-80 pl-24 pt-20 mt-5 hidden lg:block object-cover"
                         src={mainHeroImage}
                         alt="avored rust main hero"
                     />

@@ -41,6 +41,33 @@ impl ContentRepository {
         model
     }
 
+    pub(crate) async fn find_by_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        content_type: &str,
+        identifier: &str,
+    ) -> Result<ContentModel> {
+        let sql = "SELECT * FROM type::table($table) WHERE identifier=$identifier;";
+        let vars: BTreeMap<String, Value> = [
+            ("identifier".into(), identifier.into()),
+            ("table".into(), content_type.into()),
+        ]
+            .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+
+        let model: Result<ContentModel> = result_object?.try_into();
+
+        model
+    }
+
     pub(crate) async fn paginate(
         &self,
         datastore: &Datastore,

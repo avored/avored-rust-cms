@@ -1,10 +1,12 @@
-use std::sync::Arc;
-use tonic::{async_trait, Request, Response, Status};
-use crate::api::proto::auth::{ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordRequest, ResetPasswordResponse};
 use crate::api::proto::auth::auth_server::Auth;
+use crate::api::proto::auth::{
+    ForgotPasswordRequest, ForgotPasswordResponse, LoginRequest, LoginResponse,
+    ResetPasswordRequest, ResetPasswordResponse,
+};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-
+use std::sync::Arc;
+use tonic::{async_trait, Request, Response, Status};
 
 pub struct AuthApi {
     pub state: Arc<AvoRedState>,
@@ -12,62 +14,60 @@ pub struct AuthApi {
 
 #[async_trait]
 impl Auth for AuthApi {
-    async fn login(&self, request: Request<LoginRequest>) -> Result<Response<LoginResponse>, Status> {
-
+    async fn login(
+        &self,
+        request: Request<LoginRequest>,
+    ) -> Result<Response<LoginResponse>, Status> {
         println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
+        
 
         let req = request.into_inner();
-
-
         let (valid, error_messages) = req.validate()?;
-
         if !valid {
-            return Err(Status::invalid_argument(error_messages))
+            return Err(Status::invalid_argument(error_messages));
         }
 
-        match self.
-            state.
-            auth_service.
-            auth_user(
-                req,
+        match self
+            .state
+            .auth_service
+            .auth_user(
+                &req.email,
+                &req.password,
                 &self.state.db,
-                &self.state.config.jwt_secret_key
-            ).await {
-                Ok(reply) => {
-                    let res = Response::new(reply);
-
-                    // let meta_data = res.metadata();
-                    // meta_data.get_all()
-                    // res.metadata.into_headers()
-
-                    Ok(res)
-                },
-                Err(e) => match e {
-                    TonicError(status) => Err(status),
-                    _ => Err(Status::internal(e.to_string()))
-                }
+                &self.state.config.jwt_secret_key,
+            )
+            .await
+        {
+            Ok(token) => {
+                let login_response = LoginResponse {
+                    status: true,
+                    data: token,
+                };
+                Ok(Response::new(login_response))
             }
-
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
     }
-    
+
     async fn forgot_password(
-        &self, 
-        request: Request<ForgotPasswordRequest>
+        &self,
+        request: Request<ForgotPasswordRequest>,
     ) -> Result<Response<ForgotPasswordResponse>, Status> {
         println!("->> {:<12} - forgot_password", "GRPC_Auth_API_SERVICE");
-        
-        let req = request.into_inner();
-        
-        let (valid, error_messages) = req.validate(&self.state).await?;
 
+        let req = request.into_inner();
+        let (valid, error_messages) = req.validate(&self.state).await?;
         if !valid {
-            return Err(Status::invalid_argument(error_messages))
+            return Err(Status::invalid_argument(error_messages));
         }
 
-        match self.
-            state.
-            auth_service.
-            forgot_password(
+        match self
+            .state
+            .auth_service
+            .forgot_password(
                 &self.state.db,
                 &self.state.template,
                 &self.state.config.react_admin_app_url,
@@ -80,17 +80,26 @@ impl Auth for AuthApi {
                     status: sent_status,
                 };
                 Ok(Response::new(forgot_password_response))
+            },
+            )
+            .await
+        {
+            Ok(sent_status) => {
+                let forgot_password_response = ForgotPasswordResponse {
+                    status: sent_status,
+                };
+                Ok(Response::new(forgot_password_response))
             }
             Err(e) => match e {
                 TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string()))
-            }
+                _ => Err(Status::internal(e.to_string())),
+            },
         }
     }
-    
+
     async fn reset_password(
         &self,
-        request: Request<ResetPasswordRequest>
+        request: Request<ResetPasswordRequest>,
     ) -> Result<Response<ResetPasswordResponse>, Status> {
         println!("->> {:<12} - reset_password", "GRPC_Auth_API_SERVICE");
 
@@ -99,8 +108,36 @@ impl Auth for AuthApi {
         let (valid, error_messages) = req.validate(&self.state).await?;
 
         if !valid {
-            return Err(Status::invalid_argument(error_messages))
+            return Err(Status::invalid_argument(error_messages));
         }
+
+        let password_hash = self
+            .state
+            .admin_user_service
+            .get_password_hash_from_raw_password(&req.password, &self.state.config.password_salt)?;
+
+        match self
+            .state
+            .auth_service
+            .reset_password(&self.state.db, req.email.clone(), password_hash)
+            .await
+        {
+            Ok(reply) => {
+                // Improve this service call
+
+                let expire_token = self
+                    .state
+                    .auth_service
+                    .expire_token(&req.token, &req.email, &self.state.db)
+                    .await?;
+                if expire_token {
+                    let res = Response::new(reply);
+
+                    return Ok(res);
+                }
+
+                Err(Status::internal("there is an issue with token".to_string()))
+            }
 
         match self
             .state
@@ -120,8 +157,8 @@ impl Auth for AuthApi {
             },
             Err(e) => match e {
                 TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string()))
-            }
+                _ => Err(Status::internal(e.to_string())),
+            },
         }
     }
 }

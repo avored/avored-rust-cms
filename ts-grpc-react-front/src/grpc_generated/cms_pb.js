@@ -143,7 +143,7 @@ proto.cms.GetCmsContentRequest.prototype.toObject = function(opt_includeInstance
  */
 proto.cms.GetCmsContentRequest.toObject = function(includeInstance, msg) {
   var f, obj = {
-contentId: jspb.Message.getFieldWithDefault(msg, 1, ""),
+contentIdentifier: jspb.Message.getFieldWithDefault(msg, 1, ""),
 contentType: jspb.Message.getFieldWithDefault(msg, 2, "")
   };
 
@@ -183,7 +183,7 @@ proto.cms.GetCmsContentRequest.deserializeBinaryFromReader = function(msg, reade
     switch (field) {
     case 1:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContentId(value);
+      msg.setContentIdentifier(value);
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
@@ -218,7 +218,7 @@ proto.cms.GetCmsContentRequest.prototype.serializeBinary = function() {
  */
 proto.cms.GetCmsContentRequest.serializeBinaryToWriter = function(message, writer) {
   var f = undefined;
-  f = message.getContentId();
+  f = message.getContentIdentifier();
   if (f.length > 0) {
     writer.writeString(
       1,
@@ -236,10 +236,10 @@ proto.cms.GetCmsContentRequest.serializeBinaryToWriter = function(message, write
 
 
 /**
- * optional string content_id = 1;
+ * optional string content_identifier = 1;
  * @return {string}
  */
-proto.cms.GetCmsContentRequest.prototype.getContentId = function() {
+proto.cms.GetCmsContentRequest.prototype.getContentIdentifier = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
 };
 
@@ -248,7 +248,7 @@ proto.cms.GetCmsContentRequest.prototype.getContentId = function() {
  * @param {string} value
  * @return {!proto.cms.GetCmsContentRequest} returns this
  */
-proto.cms.GetCmsContentRequest.prototype.setContentId = function(value) {
+proto.cms.GetCmsContentRequest.prototype.setContentIdentifier = function(value) {
   return jspb.Message.setProto3StringField(this, 1, value);
 };
 

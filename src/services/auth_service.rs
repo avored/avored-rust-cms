@@ -8,7 +8,6 @@ use crate::models::token_claim_model::TokenClaims;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
-use lettre::message::{header, MultiPart, SinglePart};
 use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
@@ -23,20 +22,20 @@ pub struct AuthService {
 }
 
 impl AuthService {
-    
     pub async fn forgot_password(
         &self,
         (datastore, database_session): &DB,
         template: &AvoRedTemplateProvider,
         react_admin_url: &str,
         to_address: &str,
-    ) -> Result<ForgotPasswordResponse> {
-
+    ) -> Result<bool> {
         let admin_user_model = self
             .admin_user_repository
             .find_by_email(datastore, database_session, to_address)
             .await?;
 
+        // is it ok to move this email as part of configuration on admin?
+        // or may be moved this as part of the setup process?
         let from_address = String::from("info@avored.com");
         let email_subject = "Forgot your password?";
         let token = rand::rng()
@@ -46,11 +45,16 @@ impl AuthService {
             .collect();
 
         let creatable_password_reset_model = CreatablePasswordResetModel {
-            email: admin_user_model.email,
+            email: admin_user_model.clone().email,
             token,
         };
 
-        //@todo before creating a token make sure expire any past token that could have been generated?
+        // expiring any old token that might have been an active. 
+        // as most commonly user tries again as they have not received an email or received inside a spam inbox.
+        self.
+            password_reset_repository.
+            expire_password_token_by_email(datastore, database_session, &admin_user_model.email)
+            .await?;
 
         let password_reset_model = self
             .password_reset_repository
@@ -64,54 +68,39 @@ impl AuthService {
         let data = ForgotPasswordViewModel { link };
 
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
-
-        let email = Message::builder()
-            .from(from_address.parse()?)
-            .to(to_address.parse()?)
-            .subject(email_subject)
-            .multipart(
-                MultiPart::alternative()
-                    // .singlepart(
-                    //     SinglePart::builder()
-                    //         .header(header::ContentType::TEXT_PLAIN)
-                    //         .body(String::from("Hello from Lettre! A mailer library for Rust")), // Every message should have a plain text fallback.
-                    // )
-                    .singlepart(
-                        SinglePart::builder()
-                            .header(header::ContentType::TEXT_HTML)
-                            .body(forgot_password_email_content),
-                    ),
+        let email_message = Message::builder()
+            .build_email_message(
+                &from_address, 
+                &to_address, 
+                &email_subject, 
+                forgot_password_email_content
             )?;
-
+        
         // Send the email
-        match template.mailer.send(email).await {
+        match template.mailer.send(email_message).await {
             Ok(_) => {
-                let response = ForgotPasswordResponse {
-                    status: true
-                };
-                return Ok(response);
-            },
+                Ok(true)
+            }
             Err(er) => {
                 error!("email sent error: {:?}", er);
                 Err(Error::Generic(String::from("error while sending an email")))
-            },
+            }
         }
     }
     pub(crate) async fn auth_user(
         &self,
-        request: LoginRequest,
+        email: &str,
+        password: &str,
         (datastore, database_session): &DB,
-        jwt_secret_key: &str
-    ) -> Result<LoginResponse> {
-
-        // println!("request: {:?}", request);
+        jwt_secret_key: &str,
+    ) -> Result<String> {
         let admin_user_model = self
-        .admin_user_repository
-        .find_by_email(datastore, database_session, &request.email)
-        .await?;
+            .admin_user_repository
+            .find_by_email(datastore, database_session, email)
+            .await?;
 
-        let is_password_match: bool = self
-            .compare_password(request.password, admin_user_model.password.clone())?;
+        let is_password_match: bool =
+            self.compare_password(password, admin_user_model.password.clone())?;
 
         if !is_password_match {
             let mut errors: Vec<ErrorMessage> = vec![];
@@ -138,22 +127,15 @@ impl AuthService {
             &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
         )?;
 
-        let login_response = LoginResponse {
-            status: true,
-            data: token,
-        };
-
-        // println!("login response: {:?}", login_response);
-        Ok(login_response)
+        Ok(token)
     }
 
     pub fn compare_password(
         &self,
-        plain_password: String,
+        plain_password: &str,
         encrypted_password: String,
     ) -> Result<bool> {
         let argon2 = Argon2::default();
-
         let parsed_hash = PasswordHash::new(&encrypted_password)?;
 
         Ok(argon2
@@ -194,24 +176,26 @@ impl AuthService {
         token: &str,
         email: &str,
         (datastore, database_session): &DB,
-    ) -> Result<bool>{
+    ) -> Result<bool> {
         match self
             .password_reset_repository
-            .get_password_reset_by_email_and_token(
-                datastore,
-                database_session,
-                email,
-                token,
-            ).await {
+            .get_password_reset_by_email_and_token(datastore, database_session, email, token)
+            .await
+        {
             Ok(_model) => Ok(true),
-            Err(_) => Ok(false)
+            Err(_) => Ok(false),
         }
     }
-
 }
 
 impl AuthService {
-    pub async fn new(admin_user_repository: AdminUserRepository, password_reset_repository: PasswordResetRepository) -> Result<AuthService> {
-        Ok(AuthService {admin_user_repository, password_reset_repository})
+    pub async fn new(
+        admin_user_repository: AdminUserRepository,
+        password_reset_repository: PasswordResetRepository,
+    ) -> Result<AuthService> {
+        Ok(AuthService {
+            admin_user_repository,
+            password_reset_repository,
+        })
     }
 }

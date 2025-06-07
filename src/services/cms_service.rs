@@ -1,10 +1,10 @@
 use lettre::{AsyncTransport, Message};
-use lettre::message::{header, MultiPart, SinglePart};
 use serde::{Deserialize, Serialize};
 use tracing::log::error;
 use crate::error::{Error, Result};
 use crate::api::proto::cms::{GetCmsContentRequest, GetCmsContentResponse, SentContactFormRequest, SentContactFormResponse};
 use crate::api::proto::content::ContentModel;
+use crate::extensions::email_message_builder::EmailMessageBuilder;
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::content_repository::ContentRepository;
@@ -42,20 +42,16 @@ impl CmsService {
         let sent_contact_email_message_body =
             template.handlebars.render("contact-us-email", &payload)?;
     
-        let email = Message::builder()
-            .from(from_address.parse()?)
-            .to(to_address.parse()?)
-            .subject(email_subject)
-            .multipart(
-                MultiPart::alternative().singlepart(
-                    SinglePart::builder()
-                        .header(header::ContentType::TEXT_HTML)
-                        .body(sent_contact_email_message_body),
-                ),
+        let email_message = Message::builder()
+            .build_email_message(
+                &from_address,
+                &to_address,
+                &email_subject,
+                sent_contact_email_message_body
             )?;
     
         // Send the email
-        match template.mailer.send(email).await {
+        match template.mailer.send(email_message).await {
             Ok(_) =>  {
                 let response = SentContactFormResponse {
                     status: true
@@ -78,7 +74,7 @@ impl CmsService {
 
         let content_model = self
             .content_repository
-            .find_by_id(datastore, database_session, &request.content_type, &request.content_id)
+            .find_by_identifier(datastore, database_session, &request.content_type, &request.content_identifier)
             .await?;
         let grpc_model: ContentModel = content_model.try_into()?;
         
