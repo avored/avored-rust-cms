@@ -1,6 +1,8 @@
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
+use crate::api::proto::auth::ForgotPasswordResponse;
 use crate::error::{Error, Result};
 use crate::providers::avored_database_provider::DB;
+use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::models::token_claim_model::TokenClaims;
 use crate::repositories::password_reset_repository::PasswordResetRepository;

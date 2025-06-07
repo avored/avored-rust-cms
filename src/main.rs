@@ -50,6 +50,7 @@ mod services;
 mod requests;
 mod repositories;
 mod middleware;
+mod extensions;
 
 const PER_PAGE: u64 = 10;
 
