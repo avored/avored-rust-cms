@@ -538,6 +538,17 @@
   .visible {
     visibility: visible;
   }
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
   .absolute {
     position: absolute;
   }
@@ -570,6 +581,12 @@
   }
   .z-\[80\] {
     z-index: 80;
+  }
+  .float-left {
+    float: left;
+  }
+  .float-right {
+    float: right;
   }
   .\!container {
     width: 100% !important;
@@ -643,6 +660,9 @@
   .mt-10 {
     margin-top: calc(var(--spacing) * 10);
   }
+  .mr-2 {
+    margin-right: calc(var(--spacing) * 2);
+  }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
   }
@@ -681,6 +701,9 @@
   }
   .table {
     display: table;
+  }
+  .table-row {
+    display: table-row;
   }
   .size-5 {
     width: calc(var(--spacing) * 5);
