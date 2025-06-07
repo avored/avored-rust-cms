@@ -2,7 +2,7 @@
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetCmsContentRequest {
     #[prost(string, tag = "1")]
-    pub content_id: ::prost::alloc::string::String,
+    pub content_identifier: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
     pub content_type: ::prost::alloc::string::String,
 }

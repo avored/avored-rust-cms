@@ -5,7 +5,7 @@ package cms;
 import "content.proto";
 
 message GetCmsContentRequest {
-  string content_id = 1;
+  string content_identifier = 1;
   string content_type = 2;
 }
 

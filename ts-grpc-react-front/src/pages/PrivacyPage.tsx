@@ -1,16 +1,13 @@
-import {ContactSection} from "./ContactSection";
-import FeaturesSection from "./FeaturesSection";
-import MainHeroSection from "./MainHeroSection";
-import RepositoryInformation from "./RepositoryInformation";
-import {useHomeCmsPage} from "./hooks/useHomeCmsPage";
-import mainHeroImage from "../../assets/main-hero.svg";
+import {GetCmsContentRequest} from "../grpc_generated/cms_pb";
+import {useHomeCmsPage} from "./home/hooks/useHomeCmsPage";
+import {CmsContentType, ContentFieldDataType, ContentFieldFieldType, ContentFieldType} from "../types/CmsPageType";
 import _ from "lodash";
-import {CmsContentType, ContentFieldDataType, ContentFieldFieldType, ContentFieldType} from "../../types/CmsPageType";
-import {GetCmsContentRequest} from "../../grpc_generated/cms_pb";
+import {GetElementValue} from "../lib/page";
+import Markdown from "react-markdown";
 
-const HomePage = () => {
+export const PrivacyPage = () => {
     const request = new GetCmsContentRequest();
-    request.setContentIdentifier("home-page");
+    request.setContentIdentifier("privacy-page");
     request.setContentType("pages");
     const get_cms_content_api_response = useHomeCmsPage(request)
     const get_content_model = get_cms_content_api_response?.data?.data ?? [];
@@ -41,24 +38,27 @@ const HomePage = () => {
     const GetPageFields = ((): Array<ContentFieldType> => {
         return _.get(values, 'content_fields', [])
     })
+
+
     return (
         <>
-            <div className="relative bg-white overflow-hidden">
-                <MainHeroSection content_fields={GetPageFields()}/>
+            <div className="mt-10 px-5">
 
-                <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
-                    <img
-                        className="h-80 pl-24 pt-20 mt-5 hidden lg:block object-cover"
-                        src={mainHeroImage}
-                        alt="avored rust main hero"
-                    />
+                <div className="mb-10 block">
+                    <div className="text-4xl heading-font text-primary-600 font-bold mt-10">
+                        {GetElementValue(GetPageFields(), 'privacy-title')}
+                    </div>
+
+                    <div className="mt-10 mb-10">
+                        <div className="markdown-body">
+                            <Markdown>
+                                {GetElementValue(GetPageFields(), 'privacy-content')}
+                            </Markdown>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-
-            <RepositoryInformation content_fields={GetPageFields()}/>
-            <FeaturesSection content_fields={GetPageFields()}/>
-            <ContactSection content_fields={GetPageFields()}/>
         </>
-    );
-};
-export default HomePage;
+    )
+}

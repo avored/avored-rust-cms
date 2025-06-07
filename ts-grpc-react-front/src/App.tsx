@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import AppLayout from "./layout/AppLayout";
 import HomePage from "./pages/home/HomePage";
+import {PrivacyPage} from "./pages/PrivacyPage";
 
 function App() {
     return (
@@ -9,6 +10,7 @@ function App() {
             <Routes>
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<HomePage />} />
+                    <Route path="/privacy" element={<PrivacyPage />} />
                 </Route>
             </Routes>
         </BrowserRouter>

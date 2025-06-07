@@ -4,8 +4,8 @@ import * as content_pb from './content_pb'; // proto import: "content.proto"
 
 
 export class GetCmsContentRequest extends jspb.Message {
-  getContentId(): string;
-  setContentId(value: string): GetCmsContentRequest;
+  getContentIdentifier(): string;
+  setContentIdentifier(value: string): GetCmsContentRequest;
 
   getContentType(): string;
   setContentType(value: string): GetCmsContentRequest;
@@ -20,7 +20,7 @@ export class GetCmsContentRequest extends jspb.Message {
 
 export namespace GetCmsContentRequest {
   export type AsObject = {
-    contentId: string,
+    contentIdentifier: string,
     contentType: string,
   }
 }

@@ -19,9 +19,6 @@ use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
 use crate::api::general_api::GeneralApi;
-// use crate::api::handlers::asset::delete_asset_api_handler::delete_asset_api_handler;
-// use crate::api::handlers::asset::delete_folder_api_handler::delete_folder_api_handler;
-// use crate::api::handlers::asset::rename_asset_api_handler::rename_asset_api_handler;
 use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handler;
 use crate::api::misc_api::MiscApi;
 use crate::api::proto::admin_user::admin_user_server::AdminUserServer;
@@ -51,12 +48,14 @@ mod requests;
 mod repositories;
 mod middleware;
 
+mod extensions;
+
 const PER_PAGE: u64 = 10;
 
 rust_i18n::i18n!("resources/locales");
 
 async fn handler() -> Html<&'static str> {
-    Html("<h1>Hello, World!</h1>")
+    Html("<h1>Hello, AvoRed content management system!</h1>")
 }
 
 #[tokio::main]
