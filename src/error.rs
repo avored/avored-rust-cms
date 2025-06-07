@@ -16,6 +16,7 @@ pub enum Error {
     ConfigMissing(String),
     TonicError(Status),
     BadRequest(ErrorResponse),
+    Unauthorizeed(String),
     Argon2Error(argon2::password_hash::Error),
 }
 
@@ -62,8 +63,13 @@ impl From<serde_json::Error> for Error {
 
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
-        error!("there is with tonic status: {val:?}");
-        Self::invalid_argument("500 Internal server error")
+        match val {
+            Error::Unauthorizeed(resource_name) => {
+                let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
+                Self::permission_denied(error_message)
+            },
+            _ => Self::invalid_argument("500 Internal server error")
+        } 
     }
 }
 
@@ -142,11 +148,15 @@ impl IntoResponse for Error {
 
         match self {
             Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            
+            Error::Unauthorizeed(resource_name) => {
+                let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
+                (StatusCode::UNAUTHORIZED, error_message).into_response()
+            },
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),
         }
     }
 }
+
 impl IntoResponse for ErrorResponse {
     fn into_response(self) -> Response {
         let validation_errors = match serde_json::to_string(&self) {
