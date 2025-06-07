@@ -1,46 +1,56 @@
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
-use crate::{error::Result, providers::avored_database_provider::DB, repositories::admin_user_repository::AdminUserRepository, PER_PAGE};
-use std::path::Path;
-use crate::api::proto::admin_user::{AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse};
-use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
+use crate::api::proto::admin_user::{
+    GetAdminUserRequest, GetAdminUserResponse,
+    GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
+    RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
+    StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest,
+    UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse,
+};
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
-use crate::models::ModelCount;
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
+use crate::models::ModelCount;
 use crate::repositories::role_repository::RoleRepository;
+use crate::{
+    error::Result, providers::avored_database_provider::DB,
+    repositories::admin_user_repository::AdminUserRepository, PER_PAGE,
+};
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHasher};
+use std::path::Path;
 
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
-    role_repository: RoleRepository
+    role_repository: RoleRepository,
 }
 
 impl AdminUserService {
-
     pub fn new(
         admin_user_repository: AdminUserRepository,
-        role_repository: RoleRepository
+        role_repository: RoleRepository,
     ) -> Result<Self> {
         Ok(AdminUserService {
             admin_user_repository,
-            role_repository
+            role_repository,
         })
     }
 
     pub async fn paginate(
         &self,
-        req: AdminUserPaginateRequest,
+        page: i64,
+        order: String, 
         (datastore, database_session): &DB,
-    ) -> Result<AdminUserPaginateResponse> {
-        let admin_user_model_count   = self
+    ) -> Result<(
+        ModelCount,
+        Vec<crate::api::proto::admin_user::AdminUserModel>,
+    )> {
+        let admin_user_model_count = self
             .admin_user_repository
             .get_total_count(datastore, database_session)
             .await?;
 
         let per_page: i64 = PER_PAGE as i64;
-        let current_page = req.page.unwrap_or(0);
-        let order = req.order.unwrap_or_default();
-        
+        let current_page = page;
+
         let start = current_page * per_page;
         let mut order_column = "id";
         let mut order_type = "desc";
@@ -65,37 +75,23 @@ impl AdminUserService {
 
         let mut grpc_admin_users = vec![];
         admin_users.iter().for_each(|admin_user| {
-            let model: crate::api::proto::admin_user::AdminUserModel = admin_user.clone().try_into().unwrap();
+            let model: crate::api::proto::admin_user::AdminUserModel =
+                admin_user.clone().try_into().unwrap();
             grpc_admin_users.push(model);
         });
 
-        
-        let pagination = AdminUserPagination {
-            total: admin_user_model_count.total,
-        };
-        let paginate_data = AdminUserPaginateData {
-            pagination: Option::from(pagination),
-            data: grpc_admin_users,
-        };
-        
-        let res = AdminUserPaginateResponse {
-            status: true,
-            data: Option::from(paginate_data),
-        };
-        
-        Ok(res)
+        Ok((admin_user_model_count, grpc_admin_users))
     }
 
-    pub async fn store (
+    pub async fn store(
         &self,
         req: StoreAdminUserRequest,
         logged_in_username: String,
         password_salt: &str,
         (datastore, database_session): &DB,
     ) -> Result<StoreAdminUserResponse> {
-
-        let password_hash = self
-            .get_password_hash_from_raw_password(&req.password, password_salt)?;
+        let password_hash =
+            self.get_password_hash_from_raw_password(&req.password, password_salt)?;
 
         let mut created_admin_user_model = CreatableAdminUserModel {
             full_name: req.full_name,
@@ -108,7 +104,9 @@ impl AdminUserService {
 
         if !req.profile_image_file_name.is_empty() {
             let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
-            let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
+            let full_path = Path::new("public")
+                .join("upload")
+                .join(req.profile_image_file_name);
 
             tokio::fs::write(full_path, &req.profile_image_content).await?;
 
@@ -117,55 +115,45 @@ impl AdminUserService {
 
         let admin_user_model = self
             .admin_user_repository
-            .create_admin_user(
-                datastore,
-                database_session,
-                created_admin_user_model,
-            )
+            .create_admin_user(datastore, database_session, created_admin_user_model)
             .await?;
 
-        let model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.clone().try_into().unwrap();
-
+        let model: crate::api::proto::admin_user::AdminUserModel =
+            admin_user_model.clone().try_into().unwrap();
 
         let res = StoreAdminUserResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
 
-    pub async fn find_admin_user_by_id (
+    pub async fn find_admin_user_by_id(
         &self,
         req: GetAdminUserRequest,
         (datastore, database_session): &DB,
     ) -> Result<GetAdminUserResponse> {
-
         let admin_user_model = self
             .admin_user_repository
-            .find_by_id(
-                datastore,
-                database_session,
-                req.admin_user_id,
-            )
+            .find_by_id(datastore, database_session, req.admin_user_id)
             .await?;
 
-        let model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.try_into().unwrap();
-
+        let model: crate::api::proto::admin_user::AdminUserModel =
+            admin_user_model.try_into().unwrap();
 
         let res = GetAdminUserResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
 
-    pub  async fn update_admin_user(
+    pub async fn update_admin_user(
         &self,
         req: UpdateAdminUserRequest,
         logged_in_username: String,
         (datastore, database_session): &DB,
     ) -> Result<UpdateAdminUserResponse> {
-
         let mut updatable_admin_user_model = UpdatableAdminUserModel {
             id: req.admin_user_id,
             full_name: req.full_name,
@@ -174,15 +162,16 @@ impl AdminUserService {
             logged_in_username: logged_in_username.clone(),
             role_ids: req.role_ids,
         };
-        
+
         println!("UP: {:?}", updatable_admin_user_model);
-        
 
         // needs to handle the existing image scenario
 
         if !req.profile_image_file_name.is_empty() {
             let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
-            let full_path = Path::new("public").join("upload").join(req.profile_image_file_name);
+            let full_path = Path::new("public")
+                .join("upload")
+                .join(req.profile_image_file_name);
 
             tokio::fs::write(full_path, &req.profile_image_content).await?;
 
@@ -194,11 +183,12 @@ impl AdminUserService {
             .update_admin_user(
                 datastore,
                 database_session,
-                updatable_admin_user_model.clone()
+                updatable_admin_user_model.clone(),
             )
             .await?;
 
-        let mut model: crate::api::proto::admin_user::AdminUserModel = admin_user_model.clone().try_into().unwrap();
+        let mut model: crate::api::proto::admin_user::AdminUserModel =
+            admin_user_model.clone().try_into().unwrap();
 
         for role_id in updatable_admin_user_model.clone().role_ids {
             self.admin_user_repository
@@ -210,13 +200,13 @@ impl AdminUserService {
                 )
                 .await?;
         }
-        
+
         for role_id in &updatable_admin_user_model.role_ids {
             let role_model = self
                 .role_repository
                 .find_by_id(datastore, database_session, role_id.to_string())
                 .await?;
-            
+
             let grpc_role_model: RoleModel = role_model.clone().try_into().unwrap();
             let logged_in_user = logged_in_username.clone();
             self.admin_user_repository
@@ -228,16 +218,13 @@ impl AdminUserService {
                     &logged_in_user,
                 )
                 .await?;
-        
+
             model.roles.push(grpc_role_model);
         }
-        
-        
-        
 
         let res = UpdateAdminUserResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
@@ -247,7 +234,7 @@ impl AdminUserService {
         req: RolePaginateRequest,
         (datastore, database_session): &DB,
     ) -> Result<RolePaginateResponse> {
-        let role_model_count   = self
+        let role_model_count = self
             .role_repository
             .get_total_count(datastore, database_session)
             .await?;
@@ -266,7 +253,6 @@ impl AdminUserService {
                 order_type = parts.nth(1).unwrap_or("");
             }
         }
-        
 
         let roles = self
             .role_repository
@@ -284,7 +270,6 @@ impl AdminUserService {
             let model: RoleModel = role.clone().try_into().unwrap();
             grpc_roles.push(model);
         });
-
 
         let pagination = RolePagination {
             total: role_model_count.total,
@@ -306,25 +291,19 @@ impl AdminUserService {
         &self,
         (datastore, database_session): &DB,
     ) -> Result<RoleOptionResponse> {
-
-
         let roles = self
             .role_repository
-            .all(
-                datastore,
-                database_session
-            )
+            .all(datastore, database_session)
             .await?;
 
         let mut grpc_role_options = vec![];
         roles.iter().for_each(|role| {
             let model = RoleOptionModel {
                 value: role.id.clone(),
-                label: role.name.clone()
+                label: role.name.clone(),
             };
             grpc_role_options.push(model);
         });
-
 
         let res = RoleOptionResponse {
             status: true,
@@ -334,122 +313,97 @@ impl AdminUserService {
         Ok(res)
     }
 
-    pub async fn store_role (
+    pub async fn store_role(
         &self,
         created_role_request: CreatableRole,
         (datastore, database_session): &DB,
     ) -> Result<StoreRoleResponse> {
-
-       
         let admin_user_model = self
             .role_repository
-            .create_role(
-                datastore,
-                database_session,
-                created_role_request,
-            )
+            .create_role(datastore, database_session, created_role_request)
             .await?;
 
         let model: RoleModel = admin_user_model.clone().try_into().unwrap();
 
-
         let res = StoreRoleResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
 
-    pub async fn find_role_by_id (
+    pub async fn find_role_by_id(
         &self,
         req: GetRoleRequest,
         (datastore, database_session): &DB,
     ) -> Result<GetRoleResponse> {
-
         let admin_user_model = self
             .role_repository
-            .find_by_id(
-                datastore,
-                database_session,
-                req.role_id,
-            )
+            .find_by_id(datastore, database_session, req.role_id)
             .await?;
 
         let model: RoleModel = admin_user_model.try_into().unwrap();
 
         let res = GetRoleResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
-        
+
         Ok(res)
     }
 
-    pub  async fn update_role(
+    pub async fn update_role(
         &self,
         req: UpdateRoleRequest,
         logged_in_username: String,
         (datastore, database_session): &DB,
     ) -> Result<UpdateRoleResponse> {
-
         let updatable_role_model = UpdatableRoleModel {
             id: req.role_id,
             name: req.name,
             permissions: req.permissions,
             logged_in_username: logged_in_username.clone(),
         };
-        
 
         let role_model = self
             .role_repository
-            .update_role(
-                datastore,
-                database_session,
-                updatable_role_model.clone()
-            )
+            .update_role(datastore, database_session, updatable_role_model.clone())
             .await?;
 
         let model: RoleModel = role_model.clone().try_into().unwrap();
-        
+
         let res = UpdateRoleResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
 
-    pub  async fn put_role_identifier(
+    pub async fn put_role_identifier(
         &self,
         req: PutRoleIdentifierRequest,
         logged_in_username: String,
         (datastore, database_session): &DB,
     ) -> Result<PutRoleIdentifierResponse> {
-
         let updatable_role_model = PutRoleIdentifierModel {
             id: req.role_id,
             identifier: req.identifier,
             logged_in_username: logged_in_username.clone(),
         };
 
-
         let role_model = self
             .role_repository
-            .update_role_identifier(
-                datastore,
-                database_session,
-                updatable_role_model.clone()
-            )
+            .update_role_identifier(datastore, database_session, updatable_role_model.clone())
             .await?;
 
         let model: RoleModel = role_model.clone().try_into().unwrap();
 
         let res = PutRoleIdentifierResponse {
             status: true,
-            data: Option::from(model)
+            data: Option::from(model),
         };
         Ok(res)
     }
-
 
     // pub async fn sent_forgot_password_email (
     //     &self,
@@ -547,10 +501,10 @@ impl AdminUserService {
                 }
             }
         }
-    
+
         Ok(has_permission)
     }
-    
+
     // pub async fn auth_admin_user(
     //     &self,
     //     (datastore, database_session): &DB,

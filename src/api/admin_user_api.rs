@@ -1,3 +1,4 @@
+use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
 use crate::api::proto::admin_user::admin_user_server::AdminUser;
 use crate::api::proto::admin_user::{
     AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse,
@@ -27,31 +28,49 @@ impl AdminUser for AdminUserApi {
             "->> {:<12} - paginate_admin_user",
             "gRPC_Admin_User_Api_Service"
         );
+
         let claims = match request.extensions().get::<TokenClaims>() {
             Some(claims) => claims.clone(),
             None => {
                 return Err(Status::unauthenticated("Unauthenticated"));
             }
         };
+
         let logged_in_user = claims.admin_user_model;
-
-
         logged_in_user
-            .check_user_has_resouce_access(&self.state.admin_user_service , String::from("paginate_admin_user"))
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("paginate_admin_user"),
+            )
             .await?;
 
         let req = request.into_inner();
+        let page = req.page.unwrap_or_default();
+        let order = req.order.unwrap_or_default();
 
         match self
             .state
             .admin_user_service
-            .paginate(req, &self.state.db)
+            .paginate(page, order, &self.state.db)
             .await
         {
-            Ok(reply) => {
-                let res = Response::new(reply);
+            Ok(admin_user_paginate_data) => {
+    
+                let pagination = AdminUserPagination {
+                    total: admin_user_paginate_data.0.total,
+                };
 
-                Ok(res)
+                let paginate_data = AdminUserPaginateData {
+                    pagination: Option::from(pagination),
+                    data: admin_user_paginate_data.1,
+                };
+                
+                let admin_user_paginate_response = AdminUserPaginateResponse {
+                    status: true,
+                    data: Option::from(paginate_data),
+                };
+
+                Ok(Response::new(admin_user_paginate_response))
             }
             Err(e) => match e {
                 TonicError(status) => Err(status),
