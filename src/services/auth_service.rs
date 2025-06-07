@@ -11,6 +11,8 @@ use rand::Rng;
 use rust_i18n::t;
 use tonic::Status;
 use tracing::error;
+use crate::extensions::email_message_builder::EmailMessageBuilder;
+use crate::extensions::string_extension::StringExtension;
 use crate::api::proto::auth::{ForgotPasswordResponse, LoginRequest, LoginResponse, ResetPasswordResponse};
 use crate::error::Error::TonicError;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
@@ -165,6 +167,24 @@ impl AuthService {
     pub(crate) async fn reset_password(
         &self,
         (datastore, database_session): &DB,
+        email: &str,
+        password: String,
+        password_salt: &str,
+        token: &str,
+    ) -> Result<bool> {
+        
+        let password_hash = password.get_password_hash(password_salt)?;
+        
+        let status = self
+            .admin_user_repository
+            .update_password_by_email(datastore, database_session, email, password_hash)
+            .await?;
+
+        if !status {
+            return Err(Error::Generic(String::from("there is an issue while updating password.")));
+        }
+        
+        let expire_token_status = self
         email: String,
         password_hash: String,
     ) -> Result<ResetPasswordResponse> {
@@ -192,6 +212,12 @@ impl AuthService {
     ) -> Result<bool>{
         match self
             .password_reset_repository
+            .expire_password_token_by_email_and_token(datastore, database_session, email, token)
+            .await?;
+
+        Ok(expire_token_status)
+    }
+
             .expire_password_token_by_email_and_token(
                 datastore,
                 database_session,

@@ -71,7 +71,7 @@ export const AssetTablePage = () => {
         <>
             <div className="p-5 flex w-full items-center">
                 <div className="text-primary-500 text-2xl font-semibold">
-                    {t("asset_table")}
+                    {t("assets")}
                 </div>
                 <div className="ml-auto">
                     <button

@@ -186,7 +186,7 @@ impl AdminUserRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        email: String,
+        email: &str,
         new_password: String
     ) -> Result<bool> {
         let sql = "

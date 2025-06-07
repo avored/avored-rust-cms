@@ -15,6 +15,7 @@ impl Auth for AuthApi {
     async fn login(&self, request: Request<LoginRequest>) -> Result<Response<LoginResponse>, Status> {
 
         println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
+
         let req = request.into_inner();
 
 
@@ -71,6 +72,15 @@ impl Auth for AuthApi {
                 &self.state.template,
                 &self.state.config.react_admin_app_url,
                 &req.email,
+            )
+            .await
+        {
+            Ok(sent_status) => {
+                let forgot_password_response = ForgotPasswordResponse {
+                    status: sent_status,
+                };
+                Ok(Response::new(forgot_password_response))
+            }
             ).await {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
@@ -93,6 +103,19 @@ impl Auth for AuthApi {
         if !valid {
             return Err(Status::invalid_argument(error_messages))
         }
+
+        match self
+            .state
+            .auth_service
+            .reset_password(&self.state.db, &req.email, req.password, &self.state.config.password_salt, &req.token)
+            .await
+        {
+            Ok(reset_password_status) => {
+               
+                let reset_password_status = ResetPasswordResponse { 
+                    status: reset_password_status
+                };
+                let res = Response::new(reset_password_status);
         
         let password_hash = 
             self.
@@ -125,6 +148,8 @@ impl Auth for AuthApi {
                     return Ok(res)   
                 }
 
+                Ok(res)
+            }
                 Err(Status::internal("there is an issue with token".to_string()))
                 
             },

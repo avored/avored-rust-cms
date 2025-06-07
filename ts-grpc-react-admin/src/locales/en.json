@@ -105,6 +105,7 @@
   "components": "Components",
   "field_type": "Field type",
   "upload_asset": "Upload asset",
+  "assets": "Assets",
   "paginate_asset": "Paginate asset",
   "create_folder": "Create folder",
   "create_content_field": "Create content field",

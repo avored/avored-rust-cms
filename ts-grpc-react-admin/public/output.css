@@ -1850,11 +1850,6 @@
       --tw-ring-color: var(--color-primary-500);
     }
   }
-  .focus\:ring-red-500 {
-    &:focus {
-      --tw-ring-color: var(--color-red-500);
-    }
-  }
   .focus\:ring-offset-2 {
     &:focus {
       --tw-ring-offset-width: 2px;
