@@ -1,15 +1,14 @@
-use email_address::EmailAddress;
-use rust_i18n::t;
 use crate::api::proto::admin_user::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
+use rust_i18n::t;
 
 impl StoreAdminUserRequest {
-    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<(bool, String)> {
+    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
-        if self.email.is_empty() {
+        if !self.email.required()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: t!("validation_required", attribute = t!("email")).to_string(),
@@ -18,7 +17,7 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        if !EmailAddress::is_valid(&self.email) {
+        if !self.email.validate_email()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
                 message: t!("email_address_not_valid").to_string(),
@@ -38,13 +37,12 @@ impl StoreAdminUserRequest {
                 key: String::from("email"),
                 message: t!("validation_count", attribute = t!("email")).to_string(),
             };
-        
+
             errors.push(error_message);
         }
 
         // if profile photo exist then certain type of photo is only allowed
-
-        if self.password.is_empty() {
+        if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
                 message: t!("validation_required", attribute = t!("password")).to_string(),
@@ -64,14 +62,15 @@ impl StoreAdminUserRequest {
             errors.push(error_message);
         }
 
-        let error_response = ErrorResponse {
-            status: valid,
-            errors,
-        };
+        if !valid {
+            let error_response = ErrorResponse {
+                status: valid,
+                errors,
+            };
+            let error_string = serde_json::to_string(&error_response)?;
+            return Err(crate::error::Error::InvalidArgument(error_string));
+        }
 
-        let error_string = serde_json::to_string(&error_response)?;
-
-
-        Ok((valid ,error_string))
+        Ok(())
     }
 }

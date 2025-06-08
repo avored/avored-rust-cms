@@ -18,6 +18,7 @@ pub enum Error {
     BadRequest(ErrorResponse),
     Unauthorizeed(String),
     Unauthenticated(String),
+    InvalidArgument(String),
     Argon2Error(argon2::password_hash::Error),
 }
 
@@ -65,6 +66,9 @@ impl From<serde_json::Error> for Error {
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
         match val {
+            Error::InvalidArgument(error_response) => {
+                Self::invalid_argument(error_response)
+            }
             Error::Unauthorizeed(resource_name) => {
                 let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
                 Self::permission_denied(error_message)
