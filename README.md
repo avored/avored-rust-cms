@@ -1,5 +1,5 @@
-# Avored rust content management system
-AvoRed Rust CMS implement with the help of axum web framework and surrealdb as database.
+# Avored, Rust content management system
+AvoRed Rust CMS implemented with the help of [Axum](https://docs.rs/axum/latest/axum/) web framework and [SurrealDB](https://surrealdb.com/) as the database and a [React](https://react.dev/) admin frontend.
 
 
 [![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
@@ -13,13 +13,31 @@ Please visit [Demo AvoRed Rust CMS Admin](https://demo-admin.avored.com)
 
 ## Installation
 
-*Steps*
+Make sure the prerequisite are installed and then go through the install steps to install a local build of Avored.
+
+### Prerequisites
+
+**Protobuf**, Google's data interchange format written in C++, is required to be installed before build.  Read more about it at the protocol buffers website: https://protobuf.dev/ or at the repository https://github.com/protocolbuffers/protobuf
+
+* Install the precompiled binary on any OS
+
+https://protobuf.dev/installation/
+
+* Install Protobuf package on MacOS with `install protobuf`
+
+**Rust**, the systems programing lanugage for backend development.  https://www.rust-lang.org/
+
+**NodeJS**, the frontend web server and frontend toolchain. https://nodejs.org/en
+
+
+### Install Steps
 1. Clone the repository and create the local .env file from the `EXAMPLE.env`.
 
 ```bash
 git clone https://github.com/avored/avored-rust-cms.git
 cd avored-rust-cms
 cp EXAMPLE.env .env.dev
+ln -s .env.dev .env
 ```
 
 2. Set up your `.env.dev` file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optional).
@@ -32,17 +50,22 @@ cp EXAMPLE.env .env.dev
 cargo run
 ```
 
-4. Once the application start you can visit `http://localhost:3000/setup` this url will create database tables and admin user once you submit it and redirect to login screen but ignore this page as we got react admin setup in progress.
-
-### Start react application admin
+4. Navigate to the admin web app directory `cd ts-grpc-react-admin` install the javascript dependencies and start the admin page.
 
 ```bash
-cd react-admin
 npm i
-npm start
+npm run dev
 ```
 
-Visit `localhost:3000/admin` to access the react admin for the portal. Right now react admin does not have many pages redone yet but work in progress.
+5. Once the application start you can visit [http://localhost:3000/setup](http://localhost:3000/setup).  This url will create the base database tables and an admin user once you submit the form on that page.
+
+6. After the form submit a redirect to login screen will occur [localhost:3000/admin](localhost:3000/admin).  Use the email and password you set with the setup form.
+
+Finished!
+
+You can now visit `localhost:3000/admin` when the backend and frontend are running to access the react admin for the portal.
+
+**NOTE:** Right now react admin does not have many pages redone yet but work in progress.
 
 
 ## Features
