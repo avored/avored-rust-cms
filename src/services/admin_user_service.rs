@@ -1,6 +1,5 @@
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::api::proto::admin_user::{
-    GetAdminUserRequest, GetAdminUserResponse,
     GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
     RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
     StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest,
@@ -130,22 +129,19 @@ impl AdminUserService {
 
     pub async fn find_admin_user_by_id(
         &self,
-        req: GetAdminUserRequest,
+        admin_user_id: &str,
         (datastore, database_session): &DB,
-    ) -> Result<GetAdminUserResponse> {
+    ) -> Result<crate::api::proto::admin_user::AdminUserModel> {
         let admin_user_model = self
             .admin_user_repository
-            .find_by_id(datastore, database_session, req.admin_user_id)
+            .find_by_id(datastore, database_session, admin_user_id)
             .await?;
 
         let model: crate::api::proto::admin_user::AdminUserModel =
             admin_user_model.try_into().unwrap();
 
-        let res = GetAdminUserResponse {
-            status: true,
-            data: Option::from(model),
-        };
-        Ok(res)
+       
+        Ok(model)
     }
 
     pub async fn update_admin_user(

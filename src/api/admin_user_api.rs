@@ -126,29 +126,30 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<GetAdminUserResponse>, Status> {
         println!("->> {:<12} - get_admin_user", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
+        
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("get_admin_user"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("get_admin_user"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
+
 
         let req = request.into_inner();
         match self
             .state
             .admin_user_service
-            .find_admin_user_by_id(req, &self.state.db)
+            .find_admin_user_by_id(&req.admin_user_id, &self.state.db)
             .await
         {
-            Ok(reply) => {
-                let res = Response::new(reply);
+            Ok(admin_user_model) => {
+                let get_admin_user_response = GetAdminUserResponse {
+                    status: true,
+                    data: Some(admin_user_model)
+                };
+                let res = Response::new(get_admin_user_response);
                 Ok(res)
             }
             Err(e) => match e {

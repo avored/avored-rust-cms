@@ -66,7 +66,7 @@ impl AdminUserRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        id: String,
+        id: &str,
     ) -> Result<AdminUserModel> {
         let sql = "SELECT *, ->admin_user_role->roles.* as roles FROM type::thing($table, $id);";
         // let sql = "SELECT * FROM type::thing($table, $id);";
