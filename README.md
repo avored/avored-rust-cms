@@ -37,10 +37,10 @@ https://protobuf.dev/installation/
 git clone https://github.com/avored/avored-rust-cms.git
 cd avored-rust-cms
 cp EXAMPLE.env .env.dev
-ln -s .env.dev .env
+cp .env.dev .env
 ```
 
-2. Set up your `.env.dev` file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optional).
+2. Set up your `.env.dev`, or `.env.stg`, `.env.prd`, file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optional).
 
 **NOTE:** For local dev mail/SMTP info can be ignored, there are other ways to recover your login locally.
 
