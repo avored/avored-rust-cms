@@ -17,6 +17,7 @@ pub enum Error {
     TonicError(Status),
     BadRequest(ErrorResponse),
     Unauthorizeed(String),
+    Unauthenticated(String),
     Argon2Error(argon2::password_hash::Error),
 }
 
@@ -67,6 +68,9 @@ impl From<Error> for Status {
             Error::Unauthorizeed(resource_name) => {
                 let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
                 Self::permission_denied(error_message)
+            },
+            Error::Unauthenticated(error_message) => {
+                Self::unauthenticated(error_message)
             },
             _ => Self::invalid_argument("500 Internal server error")
         } 

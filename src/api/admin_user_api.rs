@@ -9,6 +9,7 @@ use crate::api::proto::admin_user::{
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
+use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
 use crate::models::role_model::CreatableRole;
 use crate::models::token_claim_model::TokenClaims;
@@ -29,12 +30,9 @@ impl AdminUser for AdminUserApi {
             "gRPC_Admin_User_Api_Service"
         );
 
-        let claims = match request.extensions().get::<TokenClaims>() {
-            Some(claims) => claims.clone(),
-            None => {
-                return Err(Status::unauthenticated("Unauthenticated"));
-            }
-        };
+        let claims = request.get_token_claim()?;
+
+        println!("here");
 
         let logged_in_user = claims.admin_user_model;
         logged_in_user
