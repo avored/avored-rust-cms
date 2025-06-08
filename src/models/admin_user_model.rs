@@ -1,6 +1,7 @@
 use std::time::SystemTime;
 use prost_types::Timestamp;
 use crate::error::{Error, Result};
+use crate::services::admin_user_service::AdminUserService;
 use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object, Value};
 use crate::models::token_claim_model::TokenClaims;
@@ -168,4 +169,30 @@ pub struct UpdatableAdminUserModel {
 pub struct AdminUserPagination {
     pub data: Vec<AdminUserModel>,
     pub pagination: Pagination,
+}
+
+
+pub trait AdminUserModelExtension {
+    async fn check_user_has_resouce_access(
+        &self,
+        admin_user_service: &AdminUserService,
+        permission_identifier: String
+    ) -> crate::error::Result<()>;
+}
+
+
+
+impl AdminUserModelExtension for AdminUserModel {
+    async fn check_user_has_resouce_access(&self, admin_user_service: &AdminUserService, permission_identifier: String) -> crate::error::Result<()> {
+        
+        let logged_in_user = self.clone();
+         let has_permission_bool = admin_user_service
+            .has_permission(logged_in_user, permission_identifier.clone())
+            .await?;
+        if !has_permission_bool {
+            return Err(crate::error::Error::Unauthorizeed(permission_identifier));
+        }
+
+        Ok(())
+    }
 }

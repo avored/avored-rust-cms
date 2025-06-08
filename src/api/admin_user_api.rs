@@ -9,7 +9,7 @@ use crate::api::proto::admin_user::{
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-use crate::extensions::admin_user_model_extension::AdminUserModelExtension;
+use crate::models::admin_user_model::AdminUserModelExtension;
 use crate::models::role_model::CreatableRole;
 use crate::models::token_claim_model::TokenClaims;
 use std::sync::Arc;
