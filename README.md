@@ -23,7 +23,7 @@ Make sure the prerequisite are installed and then go through the install steps t
 
 https://protobuf.dev/installation/
 
-* Install Protobuf package on MacOS with `install protobuf`
+* Install Protobuf package on MacOS with `brew install protobuf`
 
 **Rust**, the systems programing lanugage for backend development.  https://www.rust-lang.org/
 
@@ -40,7 +40,7 @@ cp EXAMPLE.env .env.dev
 cp .env.dev .env
 ```
 
-2. Set up your `.env.dev`, or `.env.stg`, `.env.prd`, file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optional).
+2. Set up your `.env.dev`, or `.env.stg`, `.env.prd`, file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optionacd l).
 
 **NOTE:** For local dev mail/SMTP info can be ignored, there are other ways to recover your login locally.
 
