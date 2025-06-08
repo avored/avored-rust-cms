@@ -29,6 +29,10 @@ const queryClient = new QueryClient({
 const handleError = (error: Error) => {
     const grpcError = error as unknown as GrpcErrorType;
     switch (grpcError.code) {
+        case GrpcErrorCode.PermissionDenied:
+            toast.error(grpcError.message)
+
+            break;
         case GrpcErrorCode.Unknown:
             toast.error(grpcError.message)
 
