@@ -2,7 +2,8 @@ use crate::api::proto::content::content_server::Content;
 use crate::api::proto::content::{CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-use crate::models::token_claim_model::TokenClaims;
+use crate::extensions::tonic_request::TonicRequest;
+use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
@@ -18,19 +19,14 @@ impl Content for ContentApi {
     ) -> Result<Response<CollectionAllResponse>, Status> {
         println!("->> {:<12} - collection_all", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("content_paginate"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("collection_all"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         match self
             .state
@@ -56,19 +52,15 @@ impl Content for ContentApi {
     ) -> Result<Response<ContentPaginateResponse>, Status> {
         println!("->> {:<12} - content_paginate", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("content_paginate"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("content_paginate"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
+
 
         let req = request.into_inner();
         match self
@@ -95,19 +87,14 @@ impl Content for ContentApi {
     ) -> Result<Response<StoreContentResponse>, Status> {
         println!("->> {:<12} - store_content", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("store_content"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("store_content"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -134,19 +121,14 @@ impl Content for ContentApi {
     ) -> Result<Response<GetContentResponse>, Status> {
         println!("->> {:<12} - get_content", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("get_content"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("get_content"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -173,23 +155,17 @@ impl Content for ContentApi {
     ) -> Result<Response<UpdateContentResponse>, Status> {
         println!("->> {:<12} - update_content", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("update_content"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("update_content"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         
-        // println!("request {:#?}", req);
         match self
             .state
             .content_service
@@ -217,19 +193,15 @@ impl Content for ContentApi {
             "gRPC_Content_Api_Service"
         );
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("put_content_identifier"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("put_content_identifier"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
+
 
         let req = request.into_inner();
         match self
@@ -256,19 +228,14 @@ impl Content for ContentApi {
     ) -> Result<Response<GetCollectionResponse>, Status> {
         println!("->> {:<12} - get_collection", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("get_collection"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("get_collection"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -294,19 +261,14 @@ impl Content for ContentApi {
     ) -> Result<Response<StoreCollectionResponse>, Status> {
         println!("->> {:<12} - store_collection", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user.clone(), String::from("store_collection"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("store_collection"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -333,19 +295,14 @@ impl Content for ContentApi {
     ) -> Result<Response<UpdateCollectionResponse>, Status> {
         println!("->> {:<12} - update_collection", "gRPC_Content_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user.clone(), String::from("update_collection"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("update_collection"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self

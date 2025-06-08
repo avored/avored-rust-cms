@@ -131,83 +131,90 @@ export const RoleCreatePage = () => {
                                 <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="identifier" />
                             </div>
 
-                            <div className="mb-4 flex">
-                                <div className="border w-1/3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("generics")}
+                            <div className="block">
+                                <div className="mb-4 flex">
+                                    <div className="border w-1/3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("generics")}
+                                        </div>
+                                        <div className="p-3">
+                                            {renderSwitch('dashboard')}
+
+                                            {renderSwitch('get_setting')}
+                                            {renderSwitch('store_setting')}
+                                        </div>
                                     </div>
-                                    <div className="p-3">
-                                        {renderSwitch('dashboard')}
-                                        {renderSwitch('get_setting')}
-                                        {renderSwitch('save_setting')}
+
+                                    <div className="border w-1/3 ml-3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("content_permission")}
+                                        </div>
+                                        <div className="p-3">
+                                            {renderSwitch('content_paginate')}
+                                            {renderSwitch('store_content')}
+                                            {renderSwitch('content_edit')}
+                                            {renderSwitch('content_delete')}
+                                            {renderSwitch('get_content')}
+                                            {renderSwitch('collection_all')}
+                                            {renderSwitch('get_collection')}
+                                            {renderSwitch('store_collection')}
+                                            {renderSwitch('update_collection')}
+                                        </div>
                                     </div>
+
+                                    <div className="border w-1/3 ml-3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("cms_permission")}
+                                        </div>
+                                        <div className="p-3">
+                                            {renderSwitch('get_cms_content')}
+                                        </div>
+                                    </div>
+
                                 </div>
 
-                                <div className="border w-1/3 ml-3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("page_permission")}
-                                    </div>
-                                    <div className="p-3">
-                                        {renderSwitch('page_table')}
-                                        {renderSwitch('page_create')}
-                                        {renderSwitch('page_edit')}
-                                        {renderSwitch('page_delete')}
-                                        {renderSwitch('get_page')}
-                                    </div>
-                                </div>
-
-                                <div className="border w-1/3 ml-3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("component_permission")}
-                                    </div>
-                                    <div className="p-3">
-                                        {renderSwitch('component_table')}
-                                        {renderSwitch('component_create')}
-                                        {renderSwitch('component_edit')}
-                                        {renderSwitch('component_delete')}
-                                        {renderSwitch('get_component')}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="mb-4 flex">
-                                <div className="border w-1/3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("asset_permission")}
-                                    </div>
-                                    <div className="p-3">
-                                        {renderSwitch('asset_table')}
-                                        {renderSwitch('asset_create')}
-                                        {renderSwitch('asset_edit')}
-                                        {renderSwitch('asset_delete')}
-                                    </div>
-                                </div>
-
-                                <div className="border w-1/3 ml-3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("admin_user_permission")}
+                                <div className="mb-4 flex">
+                                    <div className="border w-1/3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("asset_permission")}
+                                        </div>
+                                        <div className="p-3">
+                                            {renderSwitch('paginate_asset')}
+                                            {renderSwitch('asset_create')}
+                                            {renderSwitch('rename_asset')}
+                                            {renderSwitch('asset_delete')}
+                                            {renderSwitch('create_folder')}
+                                            {renderSwitch('delete_folder')}
+                                        </div>
                                     </div>
 
-                                    <div className="p-3">
-                                        {renderSwitch('admin_user_table')}
-                                        {renderSwitch('admin_user_create')}
-                                        {renderSwitch('admin_user_edit')}
-                                        {renderSwitch('admin_user_delete')}
-                                        {renderSwitch('get_admin_user')}
-                                    </div>
-                                </div>
+                                    <div className="border w-1/3 ml-3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("admin_user_permission")}
+                                        </div>
 
-                                <div className="border w-1/3 ml-3 border-gray-200 rounded">
-                                    <div className="p-3 font-semibold border-b">
-                                        {t("role_permission")}
+                                        <div className="p-3">
+                                            {renderSwitch('paginate_admin_user')}
+                                            {renderSwitch('admin_user_create')}
+                                            {renderSwitch('admin_user_edit')}
+                                            {renderSwitch('admin_user_delete')}
+                                            {renderSwitch('get_admin_user')}
+                                        </div>
                                     </div>
 
-                                    <div className="p-3">
-                                        {renderSwitch('role_table')}
-                                        {renderSwitch('role_create')}
-                                        {renderSwitch('role_edit')}
-                                        {renderSwitch('role_delete')}
-                                        {renderSwitch('get_role')}
+                                    <div className="border w-1/3 ml-3 border-gray-200 rounded">
+                                        <div className="p-3 font-semibold border-b">
+                                            {t("role_permission")}
+                                        </div>
+
+                                        <div className="p-3">
+                                            {renderSwitch('role_paginate')}
+                                            {renderSwitch('store_role')}
+                                            {renderSwitch('update_role')}
+                                            {renderSwitch('role_option')}
+                                            {renderSwitch('get_role')}
+                                            {renderSwitch('put_role_identifier')}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

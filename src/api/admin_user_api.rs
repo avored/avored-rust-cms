@@ -12,7 +12,6 @@ use crate::error::Error::TonicError;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
 use crate::models::role_model::CreatableRole;
-use crate::models::token_claim_model::TokenClaims;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
@@ -136,7 +135,6 @@ impl AdminUser for AdminUserApi {
             )
             .await?;
 
-
         let req = request.into_inner();
         match self
             .state
@@ -168,19 +166,15 @@ impl AdminUser for AdminUserApi {
             "gRPC_Admin_User_Api_Service"
         );
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
+        
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("update_admin_user"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("update_admin_user"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -207,19 +201,14 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<RolePaginateResponse>, Status> {
         println!("->> {:<12} - role_paginate", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("role_paginate"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("role_paginate"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
 
@@ -247,19 +236,14 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<RoleOptionResponse>, Status> {
         println!("->> {:<12} - role_paginate", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("role_option"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("role_option"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         match self
             .state
@@ -285,19 +269,14 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<StoreRoleResponse>, Status> {
         println!("->> {:<12} - store_role", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("store_role"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("store_role"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
 
@@ -338,19 +317,14 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<GetRoleResponse>, Status> {
         println!("->> {:<12} - get_role", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("get_role"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("get_role"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self
@@ -376,19 +350,14 @@ impl AdminUser for AdminUserApi {
     ) -> Result<Response<UpdateRoleResponse>, Status> {
         println!("->> {:<12} - update_role", "gRPC_Admin_User_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("update_role"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("update_role"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         let (valid, error_messages) = req.validate()?;
@@ -424,19 +393,14 @@ impl AdminUser for AdminUserApi {
             "gRPC_Admin_User_Api_Service"
         );
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self
-            .state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("put_role_identifier"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("put_role_identifier"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status =
-                Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
         match self

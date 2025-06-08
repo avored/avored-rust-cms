@@ -223,6 +223,8 @@ export const RoleEditPage = () => {
                                             {renderSwitch('content_edit')}
                                             {renderSwitch('content_delete')}
                                             {renderSwitch('get_content')}
+                                            {renderSwitch('collection_all')}
+                                            {renderSwitch('get_collection')}
                                             {renderSwitch('store_collection')}
                                             {renderSwitch('update_collection')}
                                         </div>

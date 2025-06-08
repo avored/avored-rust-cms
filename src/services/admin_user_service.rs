@@ -159,10 +159,6 @@ impl AdminUserService {
             role_ids: req.role_ids,
         };
 
-        println!("UP: {:?}", updatable_admin_user_model);
-
-        // needs to handle the existing image scenario
-
         if !req.profile_image_file_name.is_empty() {
             let profile_image = format!("upload/{}", req.profile_image_file_name.clone());
             let full_path = Path::new("public")

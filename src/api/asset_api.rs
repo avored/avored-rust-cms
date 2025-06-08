@@ -4,7 +4,8 @@ use crate::api::proto::asset::asset_server::Asset;
 use crate::api::proto::asset::{AssetPaginateRequest, AssetPaginateResponse, CreateFolderRequest, CreateFolderResponse, DeleteAssetRequest, DeleteAssetResponse, DeleteFolderRequest, DeleteFolderResponse, RenameAssetRequest, RenameAssetResponse};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
-use crate::models::token_claim_model::TokenClaims;
+use crate::extensions::tonic_request::TonicRequest;
+use crate::models::admin_user_model::AdminUserModelExtension;
 
 pub struct AssetApi {
     pub state: Arc<AvoRedState>,
@@ -18,17 +19,14 @@ impl Asset for AssetApi {
     ) -> Result<Response<AssetPaginateResponse>, Status>
     {
         println!("->> {:<12} - paginate_asset", "gRPC_Asset_Api_Service");
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
-
-        let has_permission_bool = self.state
-            .admin_user_service
-            .has_permission(logged_in_user, String::from("asset_table"))
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("paginate_asset"),
+            )
             .await?;
-        if !has_permission_bool {
-            let status = Status::permission_denied("You don't have permission to access this resource");
-            return Err(status);
-        }
 
         let req = request.into_inner();
 
@@ -59,8 +57,14 @@ impl Asset for AssetApi {
     {
         println!("->> {:<12} - create_folder", "gRPC_Asset_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("create_folder"),
+            )
+            .await?;
 
         let req = request.into_inner();
 
@@ -90,7 +94,14 @@ impl Asset for AssetApi {
     ) -> Result<Response<DeleteAssetResponse>, Status>
     {
         println!("->> {:<12} - delete_asset", "gRPC_Asset_Api_Service");
-
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("asset_delete"),
+            )
+            .await?;
 
         let req = request.into_inner();
 
@@ -119,6 +130,15 @@ impl Asset for AssetApi {
     ) -> Result<Response<DeleteFolderResponse>, Status>
     {
         println!("->> {:<12} - delete_folder", "gRPC_Asset_Api_Service");
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("delete_folder"),
+            )
+            .await?;
+
         let req = request.into_inner();
 
         match self.
@@ -147,7 +167,15 @@ impl Asset for AssetApi {
     {
         println!("->> {:<12} - rename_asset", "gRPC_Asset_Api_Service");
 
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("rename_asset"),
+            )
+            .await?;
+
         let req = request.into_inner();
 
         match self.
