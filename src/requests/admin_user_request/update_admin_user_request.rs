@@ -1,16 +1,17 @@
+use crate::api::proto::admin_user::UpdateAdminUserRequest;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
 use rust_i18n::t;
-use crate::api::proto::admin_user::UpdateRoleRequest;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 
-impl UpdateRoleRequest {
-    pub fn validate(&self) -> crate::error::Result<()> {
+impl UpdateAdminUserRequest {
+    pub async fn validate(&self) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
-        if self.name.is_empty() {
+       
+        if !self.full_name.required()? {
             let error_message = ErrorMessage {
-                key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string(),
+                key: String::from("full_name"),
+                message: t!("validation_required", attribute = t!("full_name")).to_string(),
             };
 
             valid = false;

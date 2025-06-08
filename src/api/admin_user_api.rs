@@ -177,6 +177,9 @@ impl AdminUser for AdminUserApi {
             .await?;
 
         let req = request.into_inner();
+        req.validate().await?;
+
+
         match self
             .state
             .admin_user_service
@@ -279,12 +282,7 @@ impl AdminUser for AdminUserApi {
             .await?;
 
         let req = request.into_inner();
-
-        let (valid, error_messages) = req.validate(&self.state).await?;
-
-        if !valid {
-            return Err(Status::invalid_argument(error_messages));
-        }
+        req.validate(&self.state).await?;
 
         let created_role_request = CreatableRole {
             name: req.name,
@@ -360,11 +358,7 @@ impl AdminUser for AdminUserApi {
             .await?;
 
         let req = request.into_inner();
-        let (valid, error_messages) = req.validate()?;
-
-        if !valid {
-            return Err(Status::invalid_argument(error_messages));
-        }
+        req.validate()?;
 
         match self
             .state
@@ -403,6 +397,8 @@ impl AdminUser for AdminUserApi {
             .await?;
 
         let req = request.into_inner();
+        req.validate(&self.state).await?;
+
         match self
             .state
             .admin_user_service
