@@ -97,6 +97,8 @@ impl Content for ContentApi {
             .await?;
 
         let req = request.into_inner();
+        req.validate(&self.state).await?;
+
         match self
             .state
             .content_service

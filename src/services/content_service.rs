@@ -1,5 +1,6 @@
 use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
+use crate::models::ModelCount;
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::content_repository::ContentRepository;
 use crate::error::Result;
@@ -307,17 +308,17 @@ impl ContentService {
 
         Ok(response)
     }
-    // 
-    // pub(crate) async fn count_of_identifier(
-    //     &self,
-    //     (datastore, database_session): &DB,
-    //     identifier: &str,
-    //     collection_type: &str
-    // ) -> Result<ModelCount> {
-    //     self.content_repository
-    //         .count_of_identifier(datastore, database_session, collection_type, identifier)
-    //         .await
-    // }
+    
+    pub(crate) async fn count_of_identifier(
+        &self,
+        (datastore, database_session): &DB,
+        collection_type: &str,
+        identifier: &str
+    ) -> Result<ModelCount> {
+        self.content_repository
+            .count_of_identifier(datastore, database_session, collection_type, identifier)
+            .await
+    }
     // 
     // pub(crate) async fn update_content_identifier(
     //     &self,
