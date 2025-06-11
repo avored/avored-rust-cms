@@ -1,5 +1,11 @@
 use crate::api::proto::content::content_server::Content;
-use crate::api::proto::content::{CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
+use crate::api::proto::content::{
+    CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse,
+    GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse,
+    PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest,
+    StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest,
+    UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse,
+};
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
 use crate::extensions::tonic_request::TonicRequest;
@@ -60,7 +66,6 @@ impl Content for ContentApi {
                 String::from("content_paginate"),
             )
             .await?;
-
 
         let req = request.into_inner();
         match self
@@ -167,7 +172,8 @@ impl Content for ContentApi {
             .await?;
 
         let req = request.into_inner();
-        
+        req.validate().await?;
+
         match self
             .state
             .content_service
@@ -204,8 +210,9 @@ impl Content for ContentApi {
             )
             .await?;
 
-
         let req = request.into_inner();
+        req.validate(&self.state).await?;
+
         match self
             .state
             .content_service
@@ -273,6 +280,8 @@ impl Content for ContentApi {
             .await?;
 
         let req = request.into_inner();
+        req.validate(&self.state).await?;
+
         match self
             .state
             .content_service
@@ -307,6 +316,8 @@ impl Content for ContentApi {
             .await?;
 
         let req = request.into_inner();
+        req.validate()?;
+
         match self
             .state
             .content_service

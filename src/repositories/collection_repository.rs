@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use super::into_iter_objects;
 use crate::error::{Error, Result};
 use crate::models::collection_model::{CollectionModel, CreatableCollection, UpdatableCollection};
+use crate::models::ModelCount;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
@@ -176,27 +177,27 @@ impl CollectionRepository {
     //     updated_model
     // }
     // 
-    // pub async fn count_of_identifier(
-    //     &self,
-    //     datastore: &Datastore,
-    //     database_session: &Session,
-    //     identifier: String
-    // ) -> Result<ModelCount> {
-    //     let sql = "SELECT count(identifier=$identifier) FROM collections GROUP ALL";
-    // 
-    //     let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
-    //     let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    // 
-    //     let result_object_option = into_iter_objects(responses)?.next();
-    //     let result_object = match result_object_option {
-    //         Some(object) => object,
-    //         None => Err(Error::Generic("no record found".to_string())),
-    //     };
-    //     let model_count: Result<ModelCount> = result_object?.try_into();
-    // 
-    //     model_count
-    // }
-    // 
+    pub async fn count_of_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: &str
+    ) -> Result<ModelCount> {
+        let sql = "SELECT count(identifier=$identifier) FROM collections GROUP ALL";
+    
+        let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+    
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+    
+        model_count
+    }
+    
     pub async fn update_collection(
         &self,
         datastore: &Datastore,

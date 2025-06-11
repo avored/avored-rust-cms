@@ -319,6 +319,18 @@ impl ContentService {
             .count_of_identifier(datastore, database_session, collection_type, identifier)
             .await
     }
+
+     pub(crate) async fn count_of_collection(
+        &self,
+        (datastore, database_session): &DB,
+        identifier: &str
+    ) -> Result<ModelCount> {
+        self.collection_repository
+            .count_of_identifier(datastore, database_session, identifier)
+            .await
+    }
+
+
     // 
     // pub(crate) async fn update_content_identifier(
     //     &self,
