@@ -1,7 +1,7 @@
-import {useTranslation} from "react-i18next";
-import {ContentSidebar} from "./ContentSidebar";
+import { useTranslation } from "react-i18next";
+import { ContentSidebar } from "./ContentSidebar";
 import InputField from "../../components/InputField";
-import {joiResolver} from "@hookform/resolvers/joi";
+import { joiResolver } from "@hookform/resolvers/joi";
 import {
     ContentFieldDataType,
     ContentFieldFieldType,
@@ -11,9 +11,9 @@ import {
     SaveContentType,
     ContentCheckboxFieldData
 } from "../../types/content/ContentType";
-import {Controller, useFieldArray, useForm} from "react-hook-form";
-import {UseContentEditSchema} from "../../schemas/content/UseContentEditSchema";
-import {UseUpdateContentHook} from "../../hooks/content/UseUpdateContentHook";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { UseContentEditSchema } from "../../schemas/content/UseContentEditSchema";
+import { UseUpdateContentHook } from "../../hooks/content/UseUpdateContentHook";
 import {
     ContentFieldData as GrpcContentFieldData,
     ContentSelectFieldData as GrpcContentSelectFieldData,
@@ -23,39 +23,45 @@ import {
     GetContentRequest,
     PutContentIdentifierRequest, StoreContentFieldModel,
     UpdateContentFieldModel,
-    UpdateContentRequest
+    UpdateContentRequest,
+    DeleteContentRequest
 } from "../../grpc_generated/content_pb";
-import {Link, useParams, useSearchParams} from "react-router-dom";
-import {UseGetContentHook} from "../../hooks/content/UseGetContentHook";
-import {useState} from "react";
-import {UsePutContentIdentifierHook} from "../../hooks/content/UsePutContentIdentifierHook";
-import {ContentFieldModal} from "./ContentFieldModal";
+import { Link, useParams, useSearchParams } from "react-router-dom";
+import { UseGetContentHook } from "../../hooks/content/UseGetContentHook";
+import React, { useState } from "react";
+import { UsePutContentIdentifierHook } from "../../hooks/content/UsePutContentIdentifierHook";
+import { ContentFieldModal } from "./ContentFieldModal";
 import _ from "lodash";
-import {Cog8ToothIcon, TrashIcon} from "@heroicons/react/16/solid";
-import AvoRedButton, {ButtonType} from "../../components/AvoRedButton";
-import {TextareaField} from "../../components/TextareaField";
+import { Cog8ToothIcon, TrashIcon } from "@heroicons/react/16/solid";
+import AvoRedButton, { ButtonType } from "../../components/AvoRedButton";
+import { TextareaField } from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import ErrorMessage from "../../components/ErrorMessage";
-import {Checkbox, Field, Label, Radio, RadioGroup, Select, Switch} from "@headlessui/react";
-import {ChevronDownIcon} from "@heroicons/react/24/solid";
+import { Checkbox, Field, Label, Radio, RadioGroup, Select, Switch } from "@headlessui/react";
+import { ChevronDownIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import clsx from 'clsx'
 import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
-import moment, {Moment} from "moment";
+import moment, { Moment } from "moment";
+import AvoredModal from "../../components/AvoredModal";
+import { UseDeleteContentHook } from "../../hooks/content/UseDeleteContentHook";
 
 export const ContentEditPage = () => {
     const [t] = useTranslation("global")
     const [searchParams] = useSearchParams()
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true);
+    const [isDeleteConfirmationModalOpen, setIiDeleteConfirmationModalOpen] = useState<boolean>(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
+
+    const {mutate: deleteContentMutate} = UseDeleteContentHook()
 
     const params = useParams()
     const content_id = params.content_id as string;
     const contentType: string = searchParams.get("type") as string
 
-    const {mutate, error} = UseUpdateContentHook()
+    const { mutate, error } = UseUpdateContentHook()
     const { mutate: putContentIdentifierMutate } = UsePutContentIdentifierHook();
 
     const request = new GetContentRequest()
@@ -71,7 +77,7 @@ export const ContentEditPage = () => {
     if (values) {
         values.content_fields = [];
         content_content_field_list.map(content_field => {
-            const grpc_content_field: ContentFieldType =  {
+            const grpc_content_field: ContentFieldType = {
                 name: content_field.name,
                 identifier: content_field.identifier,
                 data_type: content_field.dataType as ContentFieldDataType,
@@ -123,17 +129,17 @@ export const ContentEditPage = () => {
             return grpc_content_field
         })
     }
-    
+
     const {
         register,
         handleSubmit,
         getValues,
-        formState: {errors},
+        formState: { errors },
         control,
         setValue,
         trigger,
     } = useForm<SaveContentType>({
-        resolver: joiResolver(UseContentEditSchema(), {allowUnknown: true}),
+        resolver: joiResolver(UseContentEditSchema(), { allowUnknown: true }),
         values
     })
 
@@ -158,6 +164,19 @@ export const ContentEditPage = () => {
     const cancelIdentifierOnClick = () => {
         setIsEditableIdentifier(true);
     };
+
+    const deleteButtonOnClick = (() => {
+        setIiDeleteConfirmationModalOpen(true)
+    })
+
+    const confirmOnDelete = ((e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+        e.preventDefault()
+        const request = new DeleteContentRequest()
+        request.setContentId(content_id)
+        request.setContentType(contentType)
+        
+        deleteContentMutate(request)        
+    })
 
     const getCheckboxCheckedStatus = (field_index: number, option_value: string) => {
         const current_value = getValues(`content_fields.${field_index}.field_content.text_value`) ?? ''
@@ -215,11 +234,11 @@ export const ContentEditPage = () => {
 
     const getDateFieldCurrentValue = ((field_index: number) => {
         const current_val = getValues(`content_fields.${field_index}.field_content.int_value`);
-        return moment.unix(current_val ? current_val :  moment().unix())
+        return moment.unix(current_val ? current_val : moment().unix())
     })
 
 
-    const setDateChange =(async (date_value: string | Moment, field_index: number) => {
+    const setDateChange = (async (date_value: string | Moment, field_index: number) => {
         date_value = moment(date_value)
         setValue(`content_fields.${field_index}.field_content.int_value`, date_value.unix())
         await trigger(`content_fields.${field_index}`)
@@ -254,7 +273,7 @@ export const ContentEditPage = () => {
                     <div className="mb-4">
                         <SimpleMDE
                             value={getValues(`content_fields.${index}.field_content.text_value`)}
-                            onChange={(e) => {setValue(`content_fields.${index}.field_content.text_value`, e)}}
+                            onChange={(e) => { setValue(`content_fields.${index}.field_content.text_value`, e) }}
                         />
                     </div>
                 );
@@ -306,13 +325,13 @@ export const ContentEditPage = () => {
 
                                         )}
                                     >
-                                            {field.field_data?.content_select_field_options?.map((option) => {
-                                                return (
-                                                    <option key={option.value} value={option.value}>
-                                                        {option.label}
-                                                    </option>
-                                                );
-                                            })}
+                                        {field.field_data?.content_select_field_options?.map((option) => {
+                                            return (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            );
+                                        })}
                                     </Select>
                                     <ChevronDownIcon
                                         className="group pointer-events-none absolute mt-2 mr-2 top-1 right-1 inset-3 w-5 h-5 text-gray-400"
@@ -338,23 +357,23 @@ export const ContentEditPage = () => {
                                     </label>
                                     <div className="relative">
 
-                                            {field.field_data?.content_checkbox_field_data?.map((option, option_index) => {
-                                                return (
-                                                    <Field className="flex items-center gap-2">
-                                                        <Checkbox
-                                                            checked={getCheckboxCheckedStatus(index , option.value)}
-                                                            onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
-                                                            value={option.value}
-                                                            className="group block size-4 rounded border bg-white data-checked:bg-primary-500"
-                                                        >
-                                                            <svg className="stroke-white opacity-0 group-data-checked:opacity-100" viewBox="0 0 14 14" fill="none">
-                                                                <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-                                                            </svg>
-                                                        </Checkbox>
-                                                        <Label>{option.label}</Label>
-                                                    </Field>
-                                                );
-                                            })}
+                                        {field.field_data?.content_checkbox_field_data?.map((option, option_index) => {
+                                            return (
+                                                <Field className="flex items-center gap-2">
+                                                    <Checkbox
+                                                        checked={getCheckboxCheckedStatus(index, option.value)}
+                                                        onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
+                                                        value={option.value}
+                                                        className="group block size-4 rounded border bg-white data-checked:bg-primary-500"
+                                                    >
+                                                        <svg className="stroke-white opacity-0 group-data-checked:opacity-100" viewBox="0 0 14 14" fill="none">
+                                                            <path d="M3 8L6 11L11 3.5" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </Checkbox>
+                                                    <Label>{option.label}</Label>
+                                                </Field>
+                                            );
+                                        })}
 
 
                                     </div>
@@ -382,8 +401,8 @@ export const ContentEditPage = () => {
                                             value={getRadioFieldCurrentValue(index)}
                                             onChange={value => setRadioCheckedStatus(value, index)}
                                             className="flex items-center gap-2">
-                                        {field.field_data?.content_radio_field_data?.map((option, option_index) => {
-                                            return (
+                                            {field.field_data?.content_radio_field_data?.map((option, option_index) => {
+                                                return (
                                                     <Field key={option.value} className="flex items-center gap-2">
                                                         <Radio
                                                             // onChange={e => setCheckboxCheckedStatus(e, index, option.value)}
@@ -397,8 +416,8 @@ export const ContentEditPage = () => {
                                                         <Label>{option.label}</Label>
                                                     </Field>
 
-                                            );
-                                        })}
+                                                );
+                                            })}
                                         </RadioGroup>
 
 
@@ -425,12 +444,12 @@ export const ContentEditPage = () => {
                                             ease-in-out focus:not-data-focus:outline-none
                                             data-checked:bg-primary-500 data-focus:outline data-focus:outline-white"
                             >
-                              <span
-                                  aria-hidden="true"
-                                  className="pointer-events-none inline-block size-5 translate-x-0
+                                <span
+                                    aria-hidden="true"
+                                    className="pointer-events-none inline-block size-5 translate-x-0
                                             rounded-full bg-white shadow-lg ring-0 transition duration-200
                                             ease-in-out group-data-checked:translate-x-7"
-                              />
+                                />
                             </Switch>
                         </Field>
                     </>
@@ -441,10 +460,11 @@ export const ContentEditPage = () => {
                     <>
                         <Datetime
                             initialValue={getDateFieldCurrentValue(index)}
-                            onChange={(e) => {setDateChange(e as string, index)}}
+                            onChange={(e) => { setDateChange(e as string, index) }}
                             dateFormat="DD-MM-YYYY"
                             timeFormat={false}
-                            inputProps={{className: `mt-3 appearance-none rounded-md ring-1 ring-gray-400
+                            inputProps={{
+                                className: `mt-3 appearance-none rounded-md ring-1 ring-gray-400
                                 relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
                                 active::ring-primary-500
                                 focus:ring-primary-500 focus:outline-none focus:z-10
@@ -467,7 +487,7 @@ export const ContentEditPage = () => {
             var float_value = content_field.field_content.float_value ?? 0;
 
             const update_content_field_request = new StoreContentFieldModel();
-            const content_field_field_content =  new GrpcContentFieldFieldContent();
+            const content_field_field_content = new GrpcContentFieldFieldContent();
             content_field_field_content.setTextValue(content_field.field_content.text_value ?? '')
             content_field_field_content.setIntValue(content_field.field_content.int_value ?? 0)
             content_field_field_content.setBoolValue(content_field.field_content.bool_value ?? false)
@@ -532,7 +552,7 @@ export const ContentEditPage = () => {
     })
 
 
-    return(
+    return (
         <>
             <div className="flex w-full">
                 <div className="p-5 w-64 bg-gray-50 min-h-screen">
@@ -576,12 +596,12 @@ export const ContentEditPage = () => {
                             <div className="mt-2">
                                 {isEditableIdentifier ? (
                                     <>
-                          <span
-                              onClick={editableIdentifierOnClick}
-                              className="text-xs text-blue-600 cursor-pointer"
-                          >
-                            {t("edit_identifier")}
-                          </span>
+                                        <span
+                                            onClick={editableIdentifierOnClick}
+                                            className="text-xs text-blue-600 cursor-pointer"
+                                        >
+                                            {t("edit_identifier")}
+                                        </span>
                                     </>
                                 ) : (
                                     <>
@@ -613,7 +633,7 @@ export const ContentEditPage = () => {
                                 >
                                     <Controller
                                         name={`content_fields.${index}`}
-                                        render={({field}) => {
+                                        render={({ field }) => {
                                             return (
                                                 <>
                                                     <div className="flex mt-3 w-full justify-center">
@@ -622,13 +642,13 @@ export const ContentEditPage = () => {
                                                                 <div
                                                                     className="flex text-sm w-full border-gray-300 border-b py-2">
                                                                     <div className="flex-1">
-                                                                                <span>
-                                                                                    {field.value.name}
-                                                                                </span>
+                                                                        <span>
+                                                                            {field.value.name}
+                                                                        </span>
                                                                         <span
                                                                             className="ml-1 text-xs text-gray-500">
-                                                                                    ({field.value.identifier})
-                                                                                </span>
+                                                                            ({field.value.identifier})
+                                                                        </span>
                                                                     </div>
                                                                     <div className="ml-auto flex items-center">
                                                                         <div>
@@ -637,7 +657,7 @@ export const ContentEditPage = () => {
                                                                                 className="outline-none"
                                                                                 onClick={() => setIsContentFieldModalOpen(true)}
                                                                             >
-                                                                                <Cog8ToothIcon className="w-5 h-5"/>
+                                                                                <Cog8ToothIcon className="w-5 h-5" />
                                                                             </button>
                                                                         </div>
                                                                         <div
@@ -646,7 +666,7 @@ export const ContentEditPage = () => {
                                                                             }
                                                                             className="ml-3"
                                                                         >
-                                                                            <TrashIcon className="w-4 h-4"/>
+                                                                            <TrashIcon className="w-4 h-4" />
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -685,8 +705,39 @@ export const ContentEditPage = () => {
                             <AvoRedButton
                                 label="Add"
                                 onClick={(e: React.MouseEvent<HTMLButtonElement>) => addFieldButtonOnClick(e, fields.length)}
-                                type={ButtonType.button}/>
+                                type={ButtonType.button} />
                         </div>
+
+                        <AvoredModal
+                            isOpen={isDeleteConfirmationModalOpen}
+                            
+                            closeModal={() => setIiDeleteConfirmationModalOpen(false)}
+                            modal_header=""
+                            modal_body={
+                                <div>
+                                    <div className="">
+                                        <div className="p-6 pt-0 text-center">
+                                            <ExclamationTriangleIcon className="w-20 h-20 text-red-600 mx-auto" />
+                                            <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
+                                                Are you sure you want to delete this user?
+                                            </h3>
+                                            <a href="#"
+                                                onClick={e => confirmOnDelete(e)} 
+                                                className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2">
+                                                Yes, I'm sure
+                                            </a>
+                                            <a href="#" 
+                                                onClick={e => { e.preventDefault(); setIiDeleteConfirmationModalOpen(false)} } 
+                                                className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
+                                                data-modal-toggle="delete-user-modal">
+                                                No, cancel
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            }
+                        />
 
                         <div className="flex items-center">
                             <button
@@ -697,10 +748,18 @@ export const ContentEditPage = () => {
                             </button>
                             <Link
                                 to={`/admin/content?type=${contentType}`}
-                                className="ml-auto font-medium text-gray-600 hover:text-gray-500"
+                                className="ml-3 font-medium text-gray-600 hover:text-gray-500"
                             >
                                 {t("cancel")}
                             </Link>
+
+                            <button
+                                onClick={deleteButtonOnClick}
+                                type={ButtonType.button}
+                                className="ml-auto bg-red-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            >
+                                {t("delete")}
+                            </button>
                         </div>
                     </form>
                 </div>

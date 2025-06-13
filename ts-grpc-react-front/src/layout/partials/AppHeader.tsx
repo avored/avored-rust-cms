@@ -14,7 +14,9 @@ const AppHeader = (() => {
 
             </div>
             <div className='ml-auto flex'>
-
+                <Link to="/docs">
+                    Docs
+                </Link>
             </div>
         </div>
     )

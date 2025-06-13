@@ -272,6 +272,18 @@ pub struct PutContentIdentifierResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<ContentModel>,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DeleteContentRequest {
+    #[prost(string, tag = "1")]
+    pub content_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DeleteContentResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+}
 /// Generated client implementations.
 pub mod content_client {
     #![allow(
@@ -579,6 +591,30 @@ pub mod content_client {
                 .insert(GrpcMethod::new("content.content", "PutContentIdentifier"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn delete_content(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteContentResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/content.content/DeleteContent",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("content.content", "DeleteContent"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -655,6 +691,13 @@ pub mod content_server {
             request: tonic::Request<super::PutContentIdentifierRequest>,
         ) -> std::result::Result<
             tonic::Response<super::PutContentIdentifierResponse>,
+            tonic::Status,
+        >;
+        async fn delete_content(
+            &self,
+            request: tonic::Request<super::DeleteContentRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteContentResponse>,
             tonic::Status,
         >;
     }
@@ -1125,6 +1168,51 @@ pub mod content_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = PutContentIdentifierSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/content.content/DeleteContent" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteContentSvc<T: Content>(pub Arc<T>);
+                    impl<
+                        T: Content,
+                    > tonic::server::UnaryService<super::DeleteContentRequest>
+                    for DeleteContentSvc<T> {
+                        type Response = super::DeleteContentResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteContentRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Content>::delete_content(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteContentSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -191,6 +191,14 @@ message PutContentIdentifierResponse {
   ContentModel data = 2;
 }
 
+message DeleteContentRequest {
+  string content_id = 1;
+  string content_type = 2;
+}
+
+message DeleteContentResponse {
+  bool status = 1;
+}
 
 
 service content {
@@ -203,4 +211,5 @@ service content {
   rpc GetContent(GetContentRequest) returns (GetContentResponse);
   rpc UpdateContent(UpdateContentRequest) returns (UpdateContentResponse);
   rpc PutContentIdentifier(PutContentIdentifierRequest) returns (PutContentIdentifierResponse);
+  rpc DeleteContent(DeleteContentRequest) returns (DeleteContentResponse);
 }

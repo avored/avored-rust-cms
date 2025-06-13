@@ -898,3 +898,43 @@ export namespace PutContentIdentifierResponse {
   }
 }
 
+export class DeleteContentRequest extends jspb.Message {
+  getContentId(): string;
+  setContentId(value: string): DeleteContentRequest;
+
+  getContentType(): string;
+  setContentType(value: string): DeleteContentRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteContentRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteContentRequest): DeleteContentRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteContentRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteContentRequest;
+  static deserializeBinaryFromReader(message: DeleteContentRequest, reader: jspb.BinaryReader): DeleteContentRequest;
+}
+
+export namespace DeleteContentRequest {
+  export type AsObject = {
+    contentId: string,
+    contentType: string,
+  }
+}
+
+export class DeleteContentResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): DeleteContentResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteContentResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteContentResponse): DeleteContentResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteContentResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteContentResponse;
+  static deserializeBinaryFromReader(message: DeleteContentResponse, reader: jspb.BinaryReader): DeleteContentResponse;
+}
+
+export namespace DeleteContentResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+

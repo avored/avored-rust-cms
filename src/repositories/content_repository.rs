@@ -389,6 +389,31 @@ impl ContentRepository {
         updated_model
     }
 
+    pub async fn delete_content(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        content_id: &str,
+        content_type: &str
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+    
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), content_id.into()),
+            ("table".into(), content_type.into()),
+        ]
+        .into();
+    
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+    
+        Ok(false)
+    }
+
     pub fn new() -> Self {
         ContentRepository {}
     }

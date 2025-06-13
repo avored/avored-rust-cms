@@ -426,5 +426,48 @@ export class contentClient {
     this.methodDescriptorPutContentIdentifier);
   }
 
+  methodDescriptorDeleteContent = new grpcWeb.MethodDescriptor(
+    '/content.content/DeleteContent',
+    grpcWeb.MethodType.UNARY,
+    content_pb.DeleteContentRequest,
+    content_pb.DeleteContentResponse,
+    (request: content_pb.DeleteContentRequest) => {
+      return request.serializeBinary();
+    },
+    content_pb.DeleteContentResponse.deserializeBinary
+  );
+
+  deleteContent(
+    request: content_pb.DeleteContentRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<content_pb.DeleteContentResponse>;
+
+  deleteContent(
+    request: content_pb.DeleteContentRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: content_pb.DeleteContentResponse) => void): grpcWeb.ClientReadableStream<content_pb.DeleteContentResponse>;
+
+  deleteContent(
+    request: content_pb.DeleteContentRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: content_pb.DeleteContentResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/content.content/DeleteContent',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteContent,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/content.content/DeleteContent',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteContent);
+  }
+
 }
 
