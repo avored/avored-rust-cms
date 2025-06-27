@@ -1,10 +1,6 @@
 use crate::api::proto::content::content_server::Content;
 use crate::api::proto::content::{
-    CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse,
-    GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse,
-    PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest,
-    StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest,
-    UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse,
+    CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse, DeleteContentRequest, DeleteContentResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
@@ -322,6 +318,42 @@ impl Content for ContentApi {
             .state
             .content_service
             .update_collection(&self.state.db, req, &logged_in_user.email)
+            .await
+        {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            }
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
+    }
+
+    async fn delete_content(
+        &self,
+        request: Request<DeleteContentRequest>,
+    ) -> Result<Response<DeleteContentResponse>, Status> {
+        println!("->> {:<12} - delete_content", "gRPC_Content_Api_Service");
+
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("delete_content"),
+            )
+            .await?;
+
+        let req = request.into_inner();
+        req.validate()?;
+
+        match self
+            .state
+            .content_service
+            .delete_content(&self.state.db, &req.content_id, &req.content_type)
             .await
         {
             Ok(reply) => {

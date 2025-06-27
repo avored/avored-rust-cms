@@ -1,4 +1,4 @@
-use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
+use crate::api::proto::content::{CollectionAllResponse, CollectionModel, ContentModel as ContentModelGrpc, ContentPaginateRequest, ContentPaginateResponse, DeleteContentResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse};
 use crate::api::proto::content::content_paginate_response::{ContentPaginateData, ContentPagination as ContentPaginationGrpc};
 use crate::models::ModelCount;
 use crate::providers::avored_database_provider::DB;
@@ -328,6 +328,23 @@ impl ContentService {
         self.collection_repository
             .count_of_identifier(datastore, database_session, identifier)
             .await
+    }
+
+       pub(crate) async fn delete_content(
+        &self,
+        (datastore, database_session): &DB,
+        content_id: &str,
+        content_type: &str
+    ) -> Result<DeleteContentResponse> {
+        let delete_status = self.content_repository
+            .delete_content(datastore, database_session, content_id, content_type)
+            .await?;
+
+        let contemessage = DeleteContentResponse {
+            status: delete_status
+        };
+
+        Ok(contemessage)
     }
 
 

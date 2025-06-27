@@ -308,6 +308,11 @@ export const ContentCreatePage = () => {
         }
     }
 
+    const clickOnCogIconButton = ((currentIndex: number) => {
+        setCurrentIndex(currentIndex)
+        setIsContentFieldModalOpen(true)
+    })
+
     const submitHandler = (async (data: SaveContentType) => {
         const request  = new StoreContentRequest();
         request.setName(data.name)
@@ -462,7 +467,7 @@ export const ContentCreatePage = () => {
                                                                             <button
                                                                                 type="button"
                                                                                 className="outline-none"
-                                                                                onClick={() => setIsContentFieldModalOpen(true)}
+                                                                                onClick={() => clickOnCogIconButton(index)}
                                                                             >
                                                                                 <Cog8ToothIcon className="w-5 h-5"/>
                                                                             </button>

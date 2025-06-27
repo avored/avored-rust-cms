@@ -11,7 +11,7 @@ export type CmsContentType = {
     createdBy: string;
     updatedAt: GrpcTimeStamp;
     updatedBy: string;
-    content_fields: Array<ContentFieldType>;
+    contentFields: Array<ContentFieldType>;
     action: string;
 }
 
@@ -30,12 +30,12 @@ export enum ContentFieldFieldType {
 export type ContentFieldType = {
     name: string;
     identifier: string;
-    data_type: ContentFieldDataType;
-    field_type: ContentFieldFieldType;
-    field_content: ContentFieldFieldContent;
+    dataType: ContentFieldDataType;
+    fieldType: ContentFieldFieldType;
+    fieldContent: ContentFieldFieldContent;
 }
 
 export type ContentFieldFieldContent = {
-    text_value?: string,
+    textValue?: string,
 }
 
