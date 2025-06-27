@@ -20,31 +20,31 @@ const HomePage = () => {
     const content_content_field_list: Array<any> = get_cms_content_api_response?.data?.data?.contentFieldsList ?? [];
 
     if (values) {
-        values.content_fields = [];
+        values.contentFields = [];
         content_content_field_list.map(content_field => {
             const grpc_content_field: ContentFieldType = {
                 name: content_field.name,
                 identifier: content_field.identifier,
-                data_type: content_field.dataType as ContentFieldDataType,
-                field_type: content_field.fieldType as ContentFieldFieldType,
-                field_content: {
-                    text_value: content_field.fieldContent?.textValue ?? '',
+                dataType: content_field.dataType as ContentFieldDataType,
+                fieldType: content_field.fieldType as ContentFieldFieldType,
+                fieldContent: {
+                    textValue: content_field.fieldContent?.textValue ?? '',
                 }
             }
 
-            values.content_fields.push(grpc_content_field)
+            values.contentFields.push(grpc_content_field)
 
             return grpc_content_field
         })
     }
 
     const GetPageFields = ((): Array<ContentFieldType> => {
-        return _.get(values, 'content_fields', [])
+        return _.get(values, 'contentFields', [])
     })
     return (
         <>
             <div className="relative bg-white overflow-hidden">
-                <MainHeroSection content_fields={GetPageFields()}/>
+                <MainHeroSection contentFields={GetPageFields()}/>
 
                 <div className="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
                     <img
@@ -55,9 +55,9 @@ const HomePage = () => {
                 </div>
             </div>
 
-            <RepositoryInformation content_fields={GetPageFields()}/>
-            <FeaturesSection content_fields={GetPageFields()}/>
-            <ContactSection content_fields={GetPageFields()}/>
+            <RepositoryInformation contentFields={GetPageFields()}/>
+            <FeaturesSection contentFields={GetPageFields()}/>
+            <ContactSection contentFields={GetPageFields()}/>
         </>
     );
 };

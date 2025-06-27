@@ -8,7 +8,7 @@ import {useContactUsForm} from "./hooks/useContactUsForm";
 import {SentContactFormRequest} from "../../grpc_generated/cms_pb";
 
 type ContactUsComponentProps = {
-    content_fields: ContentFieldType[]
+    contentFields: ContentFieldType[]
 }
 export const ContactSection = ((props: ContactUsComponentProps) => {
     const {
@@ -56,11 +56,11 @@ export const ContactSection = ((props: ContactUsComponentProps) => {
                 <div className="md:flex flex-row pt-10">
                     <div className="md:w-1/2 w-full pr-5">
                         <div className="text-xl mb-3">
-                            {GetElementValue(props.content_fields, 'contact-us-title')}
+                            {GetElementValue(props.contentFields, 'contact-us-title')}
                         </div>
                         <div className="text-sm">
                             <p>
-                                {GetElementValue(props.content_fields, 'contact-us-description')}
+                                {GetElementValue(props.contentFields, 'contact-us-description')}
                             </p>
                         </div>
                     </div>

@@ -17,7 +17,6 @@ const HasPermission = (props: HasPermissionProps) => {
 
         const logged_in_user: AdminUserType = auth_user_model?.data?.data as unknown as AdminUserType;
 
-        // console.log(logged_in_user)
 
         if (logged_in_user?.isSuperAdmin) {
             return true
@@ -30,7 +29,7 @@ const HasPermission = (props: HasPermissionProps) => {
                 }
             })
         })
-        // console.log(has_permission, identifier)
+
         return has_permission
     }
 

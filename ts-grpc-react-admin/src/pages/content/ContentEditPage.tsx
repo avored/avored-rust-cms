@@ -244,6 +244,13 @@ export const ContentEditPage = () => {
         await trigger(`content_fields.${field_index}`)
     })
 
+    const clickOnCogIconButton = ((currentIndex: number) => {
+        console.log(currentIndex)
+        setCurrentIndex(currentIndex)
+        setIsContentFieldModalOpen(true)
+    })
+
+
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
             case ContentFieldFieldType.TEXT:
@@ -655,7 +662,7 @@ export const ContentEditPage = () => {
                                                                             <button
                                                                                 type="button"
                                                                                 className="outline-none"
-                                                                                onClick={() => setIsContentFieldModalOpen(true)}
+                                                                                onClick={() => clickOnCogIconButton(index)}
                                                                             >
                                                                                 <Cog8ToothIcon className="w-5 h-5" />
                                                                             </button>
