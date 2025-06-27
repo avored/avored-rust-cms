@@ -39,7 +39,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import ErrorMessage from "../../components/ErrorMessage";
 import { Checkbox, Field, Label, Radio, RadioGroup, Select, Switch } from "@headlessui/react";
-import { ChevronDownIcon, ExclamationCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { ChevronDownIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import clsx from 'clsx'
 import Datetime from 'react-datetime';
 import "react-datetime/css/react-datetime.css";
