@@ -1,6 +1,6 @@
 import Markdown from "react-markdown";
 import { GetCmsContentRequest } from "../../grpc_generated/cms_pb";
-import { CmsContentType } from "../../types/CmsPageType";
+// import { CmsContentType } from "../../types/CmsPageType";
 import { useHomeCmsPage } from "../home/hooks/useHomeCmsPage";
 import { GetElementValue } from "../../lib/page";
 import { Link } from "react-router-dom";
@@ -12,9 +12,9 @@ export const DocsPage = (() => {
     request.setContentType("pages");
     
     const get_cms_content_api_response = useHomeCmsPage(request)
-    const get_content_model = get_cms_content_api_response?.data?.data ?? [];
+    // const get_content_model = get_cms_content_api_response?.data?.data ?? [];
 
-    const values: CmsContentType = get_content_model as unknown as CmsContentType;
+    // const values: CmsContentType = get_content_model as unknown as CmsContentType;
 
     const content_content_field_list: Array<any> = get_cms_content_api_response?.data?.data?.contentFieldsList ?? [];
     
