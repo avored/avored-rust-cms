@@ -170,6 +170,13 @@ message PutRoleIdentifierResponse {
   RoleModel data = 2;
 }
 
+message DeleteRoleRequest {
+  string role_id = 1;
+}
+
+message DeleteRoleResponse {
+  bool status = 1;
+}
 
 message RoleOptionRequest {}
 
@@ -184,4 +191,5 @@ service AdminUser {
   rpc GetRole(GetRoleRequest) returns(GetRoleResponse);
   rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
   rpc PutRoleIdentifier(PutRoleIdentifierRequest) returns (PutRoleIdentifierResponse);
+  rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
 }

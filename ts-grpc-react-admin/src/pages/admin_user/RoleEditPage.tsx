@@ -7,16 +7,21 @@ import InputField from "../../components/InputField";
 import {Switch} from "@headlessui/react";
 import {UseRoleEditSchema} from "../../schemas/admin_user/UserRoleEditSchema";
 import {UseGetRoleHook} from "../../hooks/admin_user/UseGetRoleHook";
-import {GetRoleRequest, PutRoleIdentifierRequest, UpdateRoleRequest} from "../../grpc_generated/admin_user_pb";
+import {DeleteRoleRequest, GetRoleRequest, PutRoleIdentifierRequest, UpdateRoleRequest} from "../../grpc_generated/admin_user_pb";
 import {EditRoleType, PutRoleIdentifierType} from "../../types/admin_user/AdminUserType";
 import {UseRolePutSchema} from "../../schemas/admin_user/UsePutRoleSchema";
 import {UseUpdateRoleHook} from "../../hooks/admin_user/UseUpdateRoleHook";
 import {UsePutRoleIdentifierHook} from "../../hooks/admin_user/UsePutRoleIdentifierHook";
 import ErrorMessage from "../../components/ErrorMessage";
+import { UseDeleteRoleHook } from "../../hooks/admin_user/UseDeleteRoleHook";
+import { ButtonType } from "../../components/AvoRedButton";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import AvoredModal from "../../components/AvoredModal";
 
 export const RoleEditPage = () => {
     const params = useParams();
     const [isEditableIdentifier, setIsEditableIdentifier] = useState<boolean>(true)
+    const [isDeleteConfirmationModalOpen, setIiDeleteConfirmationModalOpen] = useState<boolean>(false)
     const role_id = params.role_id ?? ''
     const { mutate } = UseUpdateRoleHook();
     const [t] = useTranslation("global")
@@ -58,6 +63,7 @@ export const RoleEditPage = () => {
     })
 
     const {mutate: putRoleIdentifierMutate} = UsePutRoleIdentifierHook()
+    const {mutate: deleteRoleMutate} = UseDeleteRoleHook()
 
 
     const editableIdentifierOnClick = (() => {
@@ -145,6 +151,19 @@ export const RoleEditPage = () => {
                 }}
             />
         )
+    })
+
+    const deleteButtonOnClick = (() => {
+        setIiDeleteConfirmationModalOpen(true)
+    })
+
+    const confirmOnDelete = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault()
+        const request = new DeleteRoleRequest()
+        request.setRoleId(role_id)
+
+        
+        deleteRoleMutate(request)        
     })
 
     return(
@@ -288,6 +307,38 @@ export const RoleEditPage = () => {
                             </div>
 
 
+                            <AvoredModal
+                                isOpen={isDeleteConfirmationModalOpen}
+                                
+                                closeModal={() => setIiDeleteConfirmationModalOpen(false)}
+                                modal_header=""
+                                modal_body={
+                                    <div>
+                                        <div className="">
+                                            <div className="p-6 pt-0 text-center">
+                                                <ExclamationTriangleIcon className="w-20 h-20 text-red-600 mx-auto" />
+                                                <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
+                                                    Are you sure you want to delete this role?
+                                                </h3>
+                                                <button type="button"
+                                                    onClick={e => confirmOnDelete(e)} 
+                                                    className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2">
+                                                    Yes, I'm sure
+                                                </button>
+                                                <button type="button"
+                                                    onClick={e => { e.preventDefault(); setIiDeleteConfirmationModalOpen(false)} } 
+                                                    className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
+                                                    data-modal-toggle="delete-user-modal">
+                                                    No, cancel
+                                                </button>
+                                            </div>
+    
+                                        </div>
+                                    </div>
+                                }
+                            />
+
+
                             <div className="flex items-center">
                                 <button
                                     type="submit"
@@ -297,10 +348,18 @@ export const RoleEditPage = () => {
                                 </button>
                                 <Link
                                     to="/admin/role"
-                                    className="ml-auto font-medium text-gray-600 hover:text-gray-500"
+                                    className="ml-5 font-medium text-gray-600 hover:text-gray-500"
                                 >
                                     {t("cancel")}
                                 </Link>
+
+                                <button
+                                    onClick={deleteButtonOnClick}
+                                    type={ButtonType.button}
+                                    className="ml-auto bg-red-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                >
+                                    {t("delete")}
+                                </button>
                             </div>
                         </form>
                     </div>

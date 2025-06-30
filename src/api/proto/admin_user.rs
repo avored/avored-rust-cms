@@ -232,6 +232,16 @@ pub struct PutRoleIdentifierResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<RoleModel>,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DeleteRoleRequest {
+    #[prost(string, tag = "1")]
+    pub role_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DeleteRoleResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+}
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct RoleOptionRequest {}
 /// Generated client implementations.
@@ -565,6 +575,30 @@ pub mod admin_user_client {
                 .insert(GrpcMethod::new("admin_user.AdminUser", "PutRoleIdentifier"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn delete_role(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteRoleResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/admin_user.AdminUser/DeleteRole",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "DeleteRole"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -645,6 +679,13 @@ pub mod admin_user_server {
             request: tonic::Request<super::PutRoleIdentifierRequest>,
         ) -> std::result::Result<
             tonic::Response<super::PutRoleIdentifierResponse>,
+            tonic::Status,
+        >;
+        async fn delete_role(
+            &self,
+            request: tonic::Request<super::DeleteRoleRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         >;
     }
@@ -1157,6 +1198,51 @@ pub mod admin_user_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = PutRoleIdentifierSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/admin_user.AdminUser/DeleteRole" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteRoleSvc<T: AdminUser>(pub Arc<T>);
+                    impl<
+                        T: AdminUser,
+                    > tonic::server::UnaryService<super::DeleteRoleRequest>
+                    for DeleteRoleSvc<T> {
+                        type Response = super::DeleteRoleResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteRoleRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::delete_role(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteRoleSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

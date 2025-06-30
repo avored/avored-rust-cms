@@ -15,6 +15,7 @@ use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use super::into_iter_objects;
 
 const ADMIN_USER_TABLE: &str = "admin_users";
+const ROLE_TABLE: &str = "roles";
 
 #[derive(Clone)]
 pub struct AdminUserRepository {}
@@ -378,4 +379,29 @@ impl AdminUserRepository {
     
         model_count
     }
+
+    pub async fn delete_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: &str,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+    
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), ROLE_TABLE.into()),
+        ]
+        .into();
+    
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+    
+        Ok(false)
+    }
+
 }

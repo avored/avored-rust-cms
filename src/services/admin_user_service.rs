@@ -1,9 +1,6 @@
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::api::proto::admin_user::{
-    GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
-    RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
-    StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest,
-    UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse,
+    DeleteRoleRequest, DeleteRoleResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse
 };
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
@@ -759,6 +756,24 @@ impl AdminUserService {
             .count_of_identifier(datastore, database_session, identifier)
             .await
     }
+
+    pub async fn delete_role(
+        &self,
+        request: DeleteRoleRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteRoleResponse> {
+        
+        let delete_status = self.admin_user_repository
+            .delete_role(datastore, database_session, &request.role_id)
+            .await?;
+
+        let response = DeleteRoleResponse {
+            status: delete_status
+        };
+
+        Ok(response)
+    }
+
 
     //count_of_identifier
 
