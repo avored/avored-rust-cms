@@ -178,6 +178,14 @@ message DeleteRoleResponse {
   bool status = 1;
 }
 
+message DeleteAdminUserRequest {
+  string admin_user_id = 1;
+}
+
+message DeleteAdminUserResponse {
+  bool status = 1;
+}
+
 message RoleOptionRequest {}
 
 service AdminUser {
@@ -192,4 +200,5 @@ service AdminUser {
   rpc UpdateRole(UpdateRoleRequest) returns (UpdateRoleResponse);
   rpc PutRoleIdentifier(PutRoleIdentifierRequest) returns (PutRoleIdentifierResponse);
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
+  rpc DeleteAdminUser(DeleteAdminUserRequest) returns (DeleteAdminUserResponse);
 }

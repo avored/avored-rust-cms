@@ -512,5 +512,48 @@ export class AdminUserClient {
     this.methodDescriptorDeleteRole);
   }
 
+  methodDescriptorDeleteAdminUser = new grpcWeb.MethodDescriptor(
+    '/admin_user.AdminUser/DeleteAdminUser',
+    grpcWeb.MethodType.UNARY,
+    admin_user_pb.DeleteAdminUserRequest,
+    admin_user_pb.DeleteAdminUserResponse,
+    (request: admin_user_pb.DeleteAdminUserRequest) => {
+      return request.serializeBinary();
+    },
+    admin_user_pb.DeleteAdminUserResponse.deserializeBinary
+  );
+
+  deleteAdminUser(
+    request: admin_user_pb.DeleteAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<admin_user_pb.DeleteAdminUserResponse>;
+
+  deleteAdminUser(
+    request: admin_user_pb.DeleteAdminUserRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: admin_user_pb.DeleteAdminUserResponse) => void): grpcWeb.ClientReadableStream<admin_user_pb.DeleteAdminUserResponse>;
+
+  deleteAdminUser(
+    request: admin_user_pb.DeleteAdminUserRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: admin_user_pb.DeleteAdminUserResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/admin_user.AdminUser/DeleteAdminUser',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteAdminUser,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/admin_user.AdminUser/DeleteAdminUser',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteAdminUser);
+  }
+
 }
 

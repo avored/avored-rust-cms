@@ -1,6 +1,6 @@
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::api::proto::admin_user::{
-    DeleteRoleRequest, DeleteRoleResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse
+    DeleteAdminUserRequest, DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse
 };
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
@@ -769,6 +769,23 @@ impl AdminUserService {
 
         let response = DeleteRoleResponse {
             status: delete_status
+        };
+
+        Ok(response)
+    }
+
+    pub async fn delete_admin_user(
+        &self,
+        request: DeleteAdminUserRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteAdminUserResponse> {
+        let delete_status = self
+            .admin_user_repository
+            .delete_admin_user(datastore, database_session, &request.admin_user_id)
+            .await?;
+
+        let response = DeleteAdminUserResponse {
+            status: delete_status,
         };
 
         Ok(response)

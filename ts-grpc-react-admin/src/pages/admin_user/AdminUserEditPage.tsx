@@ -6,7 +6,7 @@ import InputField from "../../components/InputField";
 import {UseAdminUserEditSchema} from "../../schemas/admin_user/UseAdminUserEditSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {Controller, useForm} from "react-hook-form";
-import {GetAdminUserRequest, RoleOptionRequest, UpdateAdminUserRequest} from "../../grpc_generated/admin_user_pb";
+import {DeleteAdminUserRequest, GetAdminUserRequest, RoleOptionRequest, UpdateAdminUserRequest} from "../../grpc_generated/admin_user_pb";
 import ErrorMessage from "../../components/ErrorMessage";
 import {UseUpdateAdminUserHook} from "../../hooks/admin_user/UseUpdateAdminUserHook";
 import _ from "lodash";
@@ -14,9 +14,14 @@ import {Switch} from "@headlessui/react";
 import AvoRedMultiSelectField from "../../components/AvoRedMultiSelectField";
 import {useState} from "react";
 import {UseGetRoleOptionHook} from "../../hooks/admin_user/UseGetRoleOption";
+import { UseDeleteAdminUserHook } from "../../hooks/admin_user/UseDeleteAdminUserHook";
+import AvoredModal from "../../components/AvoredModal";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/solid";
+import { ButtonType } from "../../components/AvoRedButton";
 
 export const AdminUserEditPage = () => {
     const [selectedOption, setSelectedOption] = useState<Array<string>>([]);
+    const [isDeleteConfirmationModalOpen, setIiDeleteConfirmationModalOpen] = useState<boolean>(false)
     const params = useParams();
     const [t] = useTranslation("global")
     const req = new GetAdminUserRequest();
@@ -57,6 +62,7 @@ export const AdminUserEditPage = () => {
         values
     })
     const {mutate, error} = UseUpdateAdminUserHook();
+    const { mutate: deleteAdminUserMutate } = UseDeleteAdminUserHook()
 
 
     const isSuperAdminSwitchOnChange = (async (is_checked: boolean) => {
@@ -66,6 +72,19 @@ export const AdminUserEditPage = () => {
 
         setValue("isSuperAdmin", is_checked)
         await trigger('isSuperAdmin')
+    })
+
+    const deleteButtonOnClick = (() => {
+        setIiDeleteConfirmationModalOpen(true)
+    })
+
+    const confirmOnDelete = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.preventDefault()
+        const request = new DeleteAdminUserRequest()
+        request.setAdminUserId(params.admin_user_id ?? '')
+
+
+        deleteAdminUserMutate(request)
     })
 
     const submitHandler = async (data: EditAdminUserType) => {
@@ -201,7 +220,39 @@ export const AdminUserEditPage = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex border border-x-0 border-b-0 border-gray-200 pt-5 items-center mt-5">
+                            <AvoredModal
+                                isOpen={isDeleteConfirmationModalOpen}
+
+                                closeModal={() => setIiDeleteConfirmationModalOpen(false)}
+                                modal_header=""
+                                modal_body={
+                                    <div>
+                                        <div className="">
+                                            <div className="p-6 pt-0 text-center">
+                                                <ExclamationTriangleIcon className="w-20 h-20 text-red-600 mx-auto" />
+                                                <h3 className="text-xl font-normal text-gray-500 mt-5 mb-6">
+                                                    Are you sure you want to delete this role?
+                                                </h3>
+                                                <button type="button"
+                                                    onClick={e => confirmOnDelete(e)}
+                                                    className="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2">
+                                                    Yes, I'm sure
+                                                </button>
+                                                <button type="button"
+                                                    onClick={e => { e.preventDefault(); setIiDeleteConfirmationModalOpen(false) }}
+                                                    className="text-gray-900 bg-white hover:bg-gray-100 focus:ring-4 focus:ring-cyan-200 border border-gray-200 font-medium inline-flex items-center rounded-lg text-base px-3 py-2.5 text-center"
+                                                    data-modal-toggle="delete-user-modal">
+                                                    No, cancel
+                                                </button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                }
+                            />
+
+
+                            <div className="mt-5  flex items-center">
                                 <button
                                     type="submit"
                                     className="bg-primary-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
@@ -210,10 +261,18 @@ export const AdminUserEditPage = () => {
                                 </button>
                                 <Link
                                     to="/admin/admin-user"
-                                    className="ml-auto font-medium text-gray-600 hover:text-gray-500"
+                                    className="ml-5 font-medium text-gray-600 hover:text-gray-500"
                                 >
                                     {t("cancel")}
                                 </Link>
+
+                                <button
+                                    onClick={deleteButtonOnClick}
+                                    type={ButtonType.button}
+                                    className="ml-auto bg-red-600 py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                                >
+                                    {t("delete")}
+                                </button>
                             </div>
                         </form>
                     </div>
