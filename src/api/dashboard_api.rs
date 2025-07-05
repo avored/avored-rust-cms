@@ -1,10 +1,10 @@
-use std::sync::Arc;
-use tonic::{async_trait, Request, Response, Status};
 use crate::api::proto::dashboard::dashboard_server::Dashboard;
 use crate::api::proto::dashboard::{DashboardRequest, DashboardResponse};
 use crate::avored_state::AvoRedState;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
+use std::sync::Arc;
+use tonic::{async_trait, Request, Response, Status};
 
 pub struct DashboardApi {
     pub state: Arc<AvoRedState>,
@@ -12,8 +12,10 @@ pub struct DashboardApi {
 
 #[async_trait]
 impl Dashboard for DashboardApi {
-    async fn dashboard(&self, request: Request<DashboardRequest>) -> Result<Response<DashboardResponse>, Status> {
-        
+    async fn dashboard(
+        &self,
+        request: Request<DashboardRequest>,
+    ) -> Result<Response<DashboardResponse>, Status> {
         println!("->> {:<12} - dashboard", "gRPC_Dashboard_Api_Service");
 
         let claims = request.get_token_claim()?;
@@ -24,7 +26,6 @@ impl Dashboard for DashboardApi {
                 String::from("dashboard"),
             )
             .await?;
-
 
         let reply = DashboardResponse { status: true };
         Ok(Response::new(reply))

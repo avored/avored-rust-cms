@@ -35,10 +35,10 @@ pub mod misc_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct MiscClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -69,10 +69,7 @@ pub mod misc_client {
             let inner = tonic::client::Grpc::with_origin(inner, origin);
             Self { inner }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> MiscClient<InterceptedService<T, F>>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> MiscClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -82,9 +79,8 @@ pub mod misc_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             MiscClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -123,83 +119,59 @@ pub mod misc_client {
             &mut self,
             request: impl tonic::IntoRequest<super::SetupRequest>,
         ) -> std::result::Result<tonic::Response<super::SetupResponse>, tonic::Status> {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/misc.Misc/Setup");
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "Setup"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("misc.Misc", "Setup"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn health_check(
             &mut self,
             request: impl tonic::IntoRequest<super::HealthCheckRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::HealthCheckResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::HealthCheckResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/misc.Misc/HealthCheck");
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "HealthCheck"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("misc.Misc", "HealthCheck"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn install_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::InstallDemoDataRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::InstallDemoDataResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::InstallDemoDataResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/misc.Misc/InstallDemoData",
-            );
+            let path = http::uri::PathAndQuery::from_static("/misc.Misc/InstallDemoData");
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "InstallDemoData"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("misc.Misc", "InstallDemoData"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn delete_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteDemoDataRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteDemoDataResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::DeleteDemoDataResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static("/misc.Misc/DeleteDemoData");
             let mut req = request.into_request();
-            req.extensions_mut().insert(GrpcMethod::new("misc.Misc", "DeleteDemoData"));
+            req.extensions_mut()
+                .insert(GrpcMethod::new("misc.Misc", "DeleteDemoData"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -211,7 +183,7 @@ pub mod misc_server {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with MiscServer.
@@ -224,24 +196,15 @@ pub mod misc_server {
         async fn health_check(
             &self,
             request: tonic::Request<super::HealthCheckRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::HealthCheckResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::HealthCheckResponse>, tonic::Status>;
         async fn install_demo_data(
             &self,
             request: tonic::Request<super::InstallDemoDataRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::InstallDemoDataResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::InstallDemoDataResponse>, tonic::Status>;
         async fn delete_demo_data(
             &self,
             request: tonic::Request<super::DeleteDemoDataRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteDemoDataResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::DeleteDemoDataResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct MiscServer<T> {
@@ -264,10 +227,7 @@ pub mod misc_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -322,21 +282,15 @@ pub mod misc_server {
                 "/misc.Misc/Setup" => {
                     #[allow(non_camel_case_types)]
                     struct SetupSvc<T: Misc>(pub Arc<T>);
-                    impl<T: Misc> tonic::server::UnaryService<super::SetupRequest>
-                    for SetupSvc<T> {
+                    impl<T: Misc> tonic::server::UnaryService<super::SetupRequest> for SetupSvc<T> {
                         type Response = super::SetupResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::SetupRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Misc>::setup(&inner, request).await
-                            };
+                            let fut = async move { <T as Misc>::setup(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -365,21 +319,16 @@ pub mod misc_server {
                 "/misc.Misc/HealthCheck" => {
                     #[allow(non_camel_case_types)]
                     struct HealthCheckSvc<T: Misc>(pub Arc<T>);
-                    impl<T: Misc> tonic::server::UnaryService<super::HealthCheckRequest>
-                    for HealthCheckSvc<T> {
+                    impl<T: Misc> tonic::server::UnaryService<super::HealthCheckRequest> for HealthCheckSvc<T> {
                         type Response = super::HealthCheckResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::HealthCheckRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Misc>::health_check(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as Misc>::health_check(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -408,15 +357,9 @@ pub mod misc_server {
                 "/misc.Misc/InstallDemoData" => {
                     #[allow(non_camel_case_types)]
                     struct InstallDemoDataSvc<T: Misc>(pub Arc<T>);
-                    impl<
-                        T: Misc,
-                    > tonic::server::UnaryService<super::InstallDemoDataRequest>
-                    for InstallDemoDataSvc<T> {
+                    impl<T: Misc> tonic::server::UnaryService<super::InstallDemoDataRequest> for InstallDemoDataSvc<T> {
                         type Response = super::InstallDemoDataResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::InstallDemoDataRequest>,
@@ -453,23 +396,16 @@ pub mod misc_server {
                 "/misc.Misc/DeleteDemoData" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteDemoDataSvc<T: Misc>(pub Arc<T>);
-                    impl<
-                        T: Misc,
-                    > tonic::server::UnaryService<super::DeleteDemoDataRequest>
-                    for DeleteDemoDataSvc<T> {
+                    impl<T: Misc> tonic::server::UnaryService<super::DeleteDemoDataRequest> for DeleteDemoDataSvc<T> {
                         type Response = super::DeleteDemoDataResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::DeleteDemoDataRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Misc>::delete_demo_data(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as Misc>::delete_demo_data(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -495,25 +431,19 @@ pub mod misc_server {
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        let mut response = http::Response::new(
-                            tonic::body::Body::default(),
-                        );
-                        let headers = response.headers_mut();
-                        headers
-                            .insert(
-                                tonic::Status::GRPC_STATUS,
-                                (tonic::Code::Unimplemented as i32).into(),
-                            );
-                        headers
-                            .insert(
-                                http::header::CONTENT_TYPE,
-                                tonic::metadata::GRPC_CONTENT_TYPE,
-                            );
-                        Ok(response)
-                    })
-                }
+                _ => Box::pin(async move {
+                    let mut response = http::Response::new(tonic::body::Body::default());
+                    let headers = response.headers_mut();
+                    headers.insert(
+                        tonic::Status::GRPC_STATUS,
+                        (tonic::Code::Unimplemented as i32).into(),
+                    );
+                    headers.insert(
+                        http::header::CONTENT_TYPE,
+                        tonic::metadata::GRPC_CONTENT_TYPE,
+                    );
+                    Ok(response)
+                }),
             }
         }
     }

@@ -77,16 +77,16 @@ impl SettingRepository {
     // ) -> crate::error::Result<SettingModel> {
     //     let sql = "SELECT * FROM settings WHERE identifier=$data;";
     //     let data: BTreeMap<String, Value> = [("data".into(), identifier.into())].into();
-    // 
+    //
     //     let responses = datastore.execute(sql, database_session, Some(data)).await?;
-    // 
+    //
     //     let result_object_option = into_iter_objects(responses)?.next();
     //     let result_object = match result_object_option {
     //         Some(object) => object,
     //         None => Err(Error::Generic("no record found".to_string())),
     //     };
     //     let setting_model: crate::error::Result<SettingModel> = result_object?.try_into();
-    // 
+    //
     //     setting_model
     // }
 }

@@ -19,7 +19,6 @@ impl Auth for AuthApi {
         request: Request<LoginRequest>,
     ) -> Result<Response<LoginResponse>, Status> {
         println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
-        
 
         let req = request.into_inner();
         let (valid, error_messages) = req.validate()?;
@@ -105,24 +104,27 @@ impl Auth for AuthApi {
         match self
             .state
             .auth_service
-            .reset_password(&self.state.db, &req.email, req.password, &self.state.config.password_salt, &req.token)
+            .reset_password(
+                &self.state.db,
+                &req.email,
+                req.password,
+                &self.state.config.password_salt,
+                &req.token,
+            )
             .await
         {
             Ok(reset_password_status) => {
-                
                 let reset_password_response = ResetPasswordResponse {
-                    status: reset_password_status
+                    status: reset_password_status,
                 };
                 let res = Response::new(reset_password_response);
 
-                 Ok(res)
-            
+                Ok(res)
             }
-             Err(e) => match e {
+            Err(e) => match e {
                 TonicError(status) => Err(status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
-    
     }
 }

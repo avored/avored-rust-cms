@@ -1,11 +1,12 @@
-use std::sync::Arc;
-use tonic::{async_trait, Response, Status};
-use crate::api::proto::setting::{GetSettingRequest, GetSettingResponse, StoreSettingRequest, StoreSettingResponse};
 use crate::api::proto::setting::setting_server::Setting;
+use crate::api::proto::setting::{
+    GetSettingRequest, GetSettingResponse, StoreSettingRequest, StoreSettingResponse,
+};
 use crate::avored_state::AvoRedState;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
-
+use std::sync::Arc;
+use tonic::{async_trait, Response, Status};
 
 pub struct SettingApi {
     pub state: Arc<AvoRedState>,
@@ -14,8 +15,8 @@ pub struct SettingApi {
 #[async_trait]
 impl Setting for SettingApi {
     async fn get_setting(
-        &self, 
-        request: tonic::Request<GetSettingRequest>
+        &self,
+        request: tonic::Request<GetSettingRequest>,
     ) -> Result<Response<GetSettingResponse>, tonic::Status> {
         println!("->> {:<12} - get_setting", "gRPC_Setting_Service");
 
@@ -28,21 +29,15 @@ impl Setting for SettingApi {
             )
             .await?;
 
-        
-        match self.
-            state.
-            setting_service.
-            get_setting(
-                &self.state.db
-            ).await {
+        match self.state.setting_service.get_setting(&self.state.db).await {
             Ok(reply) => Ok(Response::new(reply)),
-            Err(e) => Err(Status::internal(e.to_string()))
+            Err(e) => Err(Status::internal(e.to_string())),
         }
     }
 
     async fn store_setting(
         &self,
-        request: tonic::Request<StoreSettingRequest>
+        request: tonic::Request<StoreSettingRequest>,
     ) -> Result<Response<StoreSettingResponse>, tonic::Status> {
         println!("->> {:<12} - store_setting", "gRPC_Setting_Service");
 
@@ -56,16 +51,14 @@ impl Setting for SettingApi {
             .await?;
 
         let req = request.into_inner();
-        match self.
-            state.
-            setting_service.
-            store_setting(
-                &self.state.db,
-                req,
-                claims.email
-            ).await {
+        match self
+            .state
+            .setting_service
+            .store_setting(&self.state.db, req, claims.email)
+            .await
+        {
             Ok(reply) => Ok(Response::new(reply)),
-            Err(e) => Err(Status::internal(e.to_string()))
+            Err(e) => Err(Status::internal(e.to_string())),
         }
     }
 }
