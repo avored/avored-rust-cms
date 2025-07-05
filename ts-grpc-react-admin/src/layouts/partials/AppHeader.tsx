@@ -8,47 +8,12 @@ import { useTranslation } from "react-i18next";
 import {InstallDataConfirmationModal} from "./InstallDataConfirmationModal";
 import {DeleteDataConfirmationModal} from "./DeleteDataConfirmationModal";
 import {Bars4Icon} from "@heroicons/react/24/solid";
-import {ThemeContext} from "../../context/ThemeContext";
-import {UseLoggedInUserHook} from "../../hooks/general/UseLoggedInUserHook";
-import {LoggedInUserRequest} from "../../grpc_generated/general_pb";
-import {AdminUserType} from "../../types/admin_user/AdminUserType";
+import {AvoredAdminContext} from "../../context/AvoredAdminContext";
 
 function AppHeader() {
-  // const auth_user_model = localStorage.getItem("AUTH_ADMIN_USER") ?? "";
-  // const adminUser: IAdminUserModel = JSON.parse(auth_user_model);
-  // const redirect = useNavigate();
-  // const client = useAxios();
-  // const { data } = useQuery({
-  //   queryKey: ["logged-in-user"],
-  //   queryFn: async () => {
-  //     try {
-  //       const assetUrl: string = "/logged-in-user";
-  //       return await client.get(assetUrl);
-  //     } catch (error) {
-  //       redirect("/admin/login");
-  //     }
-  //   },
-  // });
 
-  const request = new LoggedInUserRequest();
-  const auth_user_model = UseLoggedInUserHook(request);
-
-  const adminUser: AdminUserType = auth_user_model?.data?.data as unknown as AdminUserType;
-
-  // console.log(admin_user);
-
-
-  // const adminUser = {
-  //   name: "Admin",
-  //   email: "admin@gmail.com"
-  // }
   const install_demo_data = true;
-  const theme = useContext(ThemeContext);
-
-
-  // const install_demo_data = _.get(data, "data.data.demo_data_status", false);
-
-  // const navigate = useNavigate();
+  const avoredAdminContext = useContext(AvoredAdminContext);
   const [t, i18n] = useTranslation("global");
   let [isInstallDemoDataVisible, setIsInstallDemoDataVisible] = useState(false);
   let [isDeleteDemoDataVisible, setIsDeleteDemoDataVisible] = useState(false);
@@ -73,14 +38,6 @@ function AppHeader() {
 
   })
 
-
-  // useEffect(() => {
-    // if (!_.get(adminUser, "id")) {
-    //   localStorage.clear();
-      // navigate("/admin/login");
-    // }
-  // });
-
   return (
     <header className="h-16 py-2 flex shadow-lg px-4 fixed inset-y-0 md:sticky bg-gray-800 z-40">
       <InstallDataConfirmationModal close={closeInstallDemoDataVisible} isOpen={isInstallDemoDataVisible} />
@@ -88,19 +45,19 @@ function AppHeader() {
       <div className="flex w-full items-center">
         <a
           href="/admin"
-          className={`${theme.isSidebarOpen ? "w-16" : "w-64"} text-white  flex items-center space-x-2 group hover:text-white `}
+          className={`${avoredAdminContext.isSidebarOpen ? "w-16" : "w-64"} text-white  flex items-center space-x-2 group hover:text-white `}
         >
           <div>
             <img src={logo} alt="AvoRed Rust Cms Logo" className="h-12" />
           </div>
 
-          <div className={`${theme.isSidebarOpen ? "hidden" : ""} `}>
+          <div className={`${avoredAdminContext.isSidebarOpen ? "hidden" : ""} `}>
             <span className="text-2xl font-semibold">{t("avored")}</span>
             <span className="text-xs block">{t("rust_cms")}</span>
           </div>
         </a>
         <div className="text-white">
-            <div className="cursor-pointer" onClick={() => theme.toggleSidebar()}>
+            <div className="cursor-pointer" onClick={() => avoredAdminContext.toggleSidebar()}>
                 <Bars4Icon className="w-6 h-6" />
             </div>
         </div>
@@ -148,16 +105,16 @@ function AppHeader() {
               <div className="flex-shrink-0 w-10 h-10 relative">
                 <img
                   className="w-10 h-10 ring ring-white rounded-full"
-                  src={_.get(adminUser, "profile_image")}
-                  alt={_.get(adminUser, "full_name")}
+                  src={_.get(avoredAdminContext.adminUser, "profile_image")}
+                  alt={_.get(avoredAdminContext.adminUser, "full_name")}
                 />
               </div>
               <div className="p-2 text-left">
                 <h2 className="text-sm font-semibold text-white">
-                  {_.get(adminUser, "full_name")}
+                  {_.get(avoredAdminContext.adminUser, "full_name")}
                 </h2>
                 <p className="text-xs text-gray-400">
-                  {_.get(adminUser, "email")}
+                  {_.get(avoredAdminContext.adminUser, "email")}
                 </p>
               </div>
             </MenuButton>
@@ -167,7 +124,7 @@ function AppHeader() {
             >
               <MenuItem as="div">
                 <Link
-                  to={`/admin/admin-user-edit/${_.get(adminUser, "id")}`}
+                  to={`/admin/admin-user-edit/${_.get(avoredAdminContext.adminUser, "id")}`}
                   className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50"
                 >
                   {t("profile")}
