@@ -1,12 +1,12 @@
-use std::net::AddrParseError;
-use std::num::ParseIntError;
+use crate::models::validation_error::ErrorResponse;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
+use std::net::AddrParseError;
+use std::num::ParseIntError;
 use tonic::Status;
 use tracing::error;
-use crate::models::validation_error::ErrorResponse;
 
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -66,18 +66,17 @@ impl From<serde_json::Error> for Error {
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
         match val {
-            Error::InvalidArgument(error_response) => {
-                Self::invalid_argument(error_response)
-            }
+            Error::InvalidArgument(error_response) => Self::invalid_argument(error_response),
             Error::Unauthorizeed(resource_name) => {
-                let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
+                let error_message = format!(
+                    "unauthorized: you do not have access to access this ({}) resource",
+                    resource_name
+                );
                 Self::permission_denied(error_message)
-            },
-            Error::Unauthenticated(error_message) => {
-                Self::unauthenticated(error_message)
-            },
-            _ => Self::invalid_argument("500 Internal server error")
-        } 
+            }
+            Error::Unauthenticated(error_message) => Self::unauthenticated(error_message),
+            _ => Self::invalid_argument("500 Internal server error"),
+        }
     }
 }
 
@@ -153,13 +152,15 @@ impl From<AddressError> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-
         match self {
             Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
             Error::Unauthorizeed(resource_name) => {
-                let error_message = format!("unauthorized: you do not have access to access this ({}) resource", resource_name);
+                let error_message = format!(
+                    "unauthorized: you do not have access to access this ({}) resource",
+                    resource_name
+                );
                 (StatusCode::UNAUTHORIZED, error_message).into_response()
-            },
+            }
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),
         }
     }

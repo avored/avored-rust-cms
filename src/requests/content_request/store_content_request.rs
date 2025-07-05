@@ -17,7 +17,6 @@ impl StoreContentRequest {
             errors.push(error_message);
         }
 
-
         let model_counte = state
             .content_service
             .count_of_identifier(&state.db, &self.content_type, &self.identifier)
@@ -43,7 +42,6 @@ impl StoreContentRequest {
             errors.push(error_message);
         }
 
-       
         if !valid {
             let error_response = ErrorResponse {
                 status: valid,

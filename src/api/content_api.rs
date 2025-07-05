@@ -1,6 +1,11 @@
 use crate::api::proto::content::content_server::Content;
 use crate::api::proto::content::{
-    CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse, DeleteContentRequest, DeleteContentResponse, GetCollectionRequest, GetCollectionResponse, GetContentRequest, GetContentResponse, PutContentIdentifierRequest, PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse, StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse, UpdateContentRequest, UpdateContentResponse
+    CollectionAllRequest, CollectionAllResponse, ContentPaginateRequest, ContentPaginateResponse,
+    DeleteContentRequest, DeleteContentResponse, GetCollectionRequest, GetCollectionResponse,
+    GetContentRequest, GetContentResponse, PutContentIdentifierRequest,
+    PutContentIdentifierResponse, StoreCollectionRequest, StoreCollectionResponse,
+    StoreContentRequest, StoreContentResponse, UpdateCollectionRequest, UpdateCollectionResponse,
+    UpdateContentRequest, UpdateContentResponse,
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;

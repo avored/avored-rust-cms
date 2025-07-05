@@ -1,9 +1,9 @@
-use std::collections::BTreeMap;
-use argon2::{Argon2, PasswordHasher};
-use argon2::password_hash::SaltString;
 use crate::api::proto::misc::{SetupRequest, SetupResponse};
 use crate::error::Result;
 use crate::providers::avored_database_provider::DB;
+use argon2::password_hash::SaltString;
+use argon2::{Argon2, PasswordHasher};
+use std::collections::BTreeMap;
 
 pub struct MiscService {}
 
@@ -12,7 +12,7 @@ impl MiscService {
         &self,
         req: SetupRequest,
         password_salt: &str,
-        (ds, ses): &DB
+        (ds, ses): &DB,
     ) -> Result<SetupResponse> {
         let sql = "
 
@@ -184,10 +184,7 @@ impl MiscService {
         println!();
         println!("Migrate fresh done!");
 
-
-        let reply = SetupResponse {
-            status: true,
-        };
+        let reply = SetupResponse { status: true };
 
         Ok(reply)
     }

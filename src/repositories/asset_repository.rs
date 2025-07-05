@@ -38,7 +38,9 @@ impl AssetRepository {
             ("parent_id".into(), parent_id.into()),
         ]);
 
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
 
         let mut asset_list: Vec<AssetModel> = Vec::new();
 
@@ -99,12 +101,15 @@ impl AssetRepository {
         creatable_asset_model: CreatableAssetModel,
     ) -> Result<AssetModel> {
         let sql = "CREATE assets CONTENT $data";
-       
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_asset_model.name.into()),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
             ("asset_type".into(), creatable_asset_model.asset_type.into()),
-            ("metadata".into(), creatable_asset_model.metadata.try_into().unwrap()),
+            (
+                "metadata".into(),
+                creatable_asset_model.metadata.try_into().unwrap(),
+            ),
             (
                 "created_by".into(),
                 creatable_asset_model.logged_in_username.clone().into(),
@@ -125,9 +130,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic (
-                "cannot create assets record".to_string(),
-            )),
+            None => Err(Error::Generic("cannot create assets record".to_string())),
         };
         let asset_model: Result<AssetModel> = result_object?.try_into();
 
@@ -146,7 +149,10 @@ impl AssetRepository {
             ("name".into(), creatable_asset_model.name.into()),
             ("asset_type".into(), creatable_asset_model.asset_type.into()),
             ("parent_id".into(), creatable_asset_model.parent_id.into()),
-            ("metadata".into(), creatable_asset_model.metadata.try_into().unwrap()),
+            (
+                "metadata".into(),
+                creatable_asset_model.metadata.try_into().unwrap(),
+            ),
             (
                 "created_by".into(),
                 creatable_asset_model.logged_in_username.clone().into(),
@@ -166,9 +172,7 @@ impl AssetRepository {
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
-            None => Err(Error::Generic(
-                "cannot create assets record".to_string(),
-            )),
+            None => Err(Error::Generic("cannot create assets record".to_string())),
         };
         let asset_model: Result<AssetModel> = result_object?.try_into();
 

@@ -1,18 +1,179 @@
-/node_modules
+# =============================================================================
+# AvoRed Rust CMS - Comprehensive .gitignore Configuration
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Rust Build Artifacts
+# -----------------------------------------------------------------------------
+/target/
+target/
+Cargo.lock
+*.pdb
+
+# Rust analyzer cache
+.rust-analyzer/
+
+# -----------------------------------------------------------------------------
+# Node.js / React Dependencies & Build Artifacts
+# -----------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Package manager lock files (project-specific decision)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# React build outputs
+build/
+dist/
+.next/
+out/
+
+# React specific
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Coverage reports
+coverage/
+*.lcov
+.nyc_output
+
+# -----------------------------------------------------------------------------
+# Environment & Configuration Files
+# -----------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Local configuration
+config/local.json
+config/development.json
+config/production.json
+
+# -----------------------------------------------------------------------------
+# IDE & Editor Files
+# -----------------------------------------------------------------------------
+# VSCode
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.sublime-workspace
+*.sublime-project
+
+# -----------------------------------------------------------------------------
+# Operating System Files
+# -----------------------------------------------------------------------------
+# macOS
 .DS_Store
-.env.dev
-.env.test
-.env.stag
-.env.prod
-.idea
-.vscode
-.devcontainer
-/target/debug
-/target/release
-/target/tmp
-/target/.rustc_info.json
-/target/CACHEDIR.TAG
-/public/upload
-/public/log
-/public/install_demo
-ts-grpc-react-admin/node_modules
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# -----------------------------------------------------------------------------
+# Development & Container Files
+# -----------------------------------------------------------------------------
+.devcontainer/
+.docker/
+docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# Logs & Temporary Files
+# -----------------------------------------------------------------------------
+logs/
+*.log
+log/
+tmp/
+temp/
+
+# -----------------------------------------------------------------------------
+# Application Specific
+# -----------------------------------------------------------------------------
+# Public upload directories
+/public/upload/
+/public/log/
+/public/install_demo/
+
+# Database files (if using local SQLite)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# -----------------------------------------------------------------------------
+# Security & Secrets
+# -----------------------------------------------------------------------------
+# SSL certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# API keys and secrets
+secrets/
+.secrets/

@@ -29,7 +29,7 @@ pub struct AvoRedState {
     pub asset_service: AssetService,
     pub setting_service: SettingService,
     pub cms_service: CmsService,
-    pub general_service: GeneralService
+    pub general_service: GeneralService,
 }
 
 impl AvoRedState {
@@ -48,11 +48,12 @@ impl AvoRedState {
         let password_reset_repository = PasswordResetRepository::new();
         let setting_repository = SettingRepository::new();
 
-
         let misc_service = MiscService::new().await?;
-        let auth_service = AuthService::new(admin_user_repository.clone(), password_reset_repository).await?;
+        let auth_service =
+            AuthService::new(admin_user_repository.clone(), password_reset_repository).await?;
         let admin_user_service = AdminUserService::new(admin_user_repository, role_repository)?;
-        let content_service = ContentService::new(content_repository.clone(), collection_repository)?;
+        let content_service =
+            ContentService::new(content_repository.clone(), collection_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;
         let cms_service = CmsService::new(content_repository)?;

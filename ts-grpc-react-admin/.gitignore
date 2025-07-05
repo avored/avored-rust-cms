@@ -9,6 +9,32 @@
 /coverage
 
 # production
+/build
+/dist
+
+# package lock files (managed at root level)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
 
 # misc
 .DS_Store
@@ -16,6 +42,9 @@
 .env.development.local
 .env.test.local
 
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# IDE
+.vscode/
+.idea/
+
+# OS generated files
+Thumbs.db

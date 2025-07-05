@@ -1,8 +1,8 @@
-use std::time::SystemTime;
-use prost_types::Timestamp;
 use crate::error::{Error, Result};
 use crate::models::{BaseModel, Pagination};
+use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -16,7 +16,6 @@ pub struct CollectionModel {
     pub updated_by: String,
     // pub collection_fields: Vec<CollectionFieldModel>,
 }
-
 
 // #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 // pub struct CollectionFieldModel {
@@ -81,7 +80,7 @@ pub enum CollectionFieldDataType {
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum CollectionFieldFieldType {
     #[default]
-    Text
+    Text,
 }
 
 impl Default for CollectionFieldDataType {
@@ -90,19 +89,18 @@ impl Default for CollectionFieldDataType {
     }
 }
 
-
 impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
     type Error = Error;
 
     fn try_from(val: CollectionModel) -> Result<crate::api::proto::content::CollectionModel> {
-        let chrono_utc_created_at= val.created_at.to_utc();
+        let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
 
-        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let chrono_utc_updated_at = val.updated_at.to_utc();
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
-        
+
         let model = crate::api::proto::content::CollectionModel {
             id: val.id,
             name: val.name,
@@ -116,7 +114,6 @@ impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
         Ok(model)
     }
 }
-
 
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
@@ -133,15 +130,15 @@ impl TryFrom<Object> for CollectionModel {
         //     Some(val) => match val.clone() {
         //         Value::Array(v) => {
         //             let mut arr = Vec::new();
-        // 
+        //
         //             for array in v.into_iter() {
         //                 let object = match array.clone() {
         //                     Value::Object(v) => v,
         //                     _ => Object::default(),
         //                 };
-        // 
+        //
         //                 let content_field: CollectionFieldModel = object.try_into()?;
-        // 
+        //
         //                 arr.push(content_field)
         //             }
         //             arr
@@ -170,20 +167,20 @@ impl TryFrom<Object> for CollectionModel {
 //         let name = val.get("name").get_string()?;
 //         let identifier = val.get("identifier").get_string()?;
 //         let data_type_str = val.get("data_type").get_string()?;
-// 
+//
 //         let data_type = match data_type_str.as_str() {
 //             "TEXT" => CollectionFieldDataType::Text("TEXT".to_string()),
 //             _ => CollectionFieldDataType::default(),
 //         };
-// 
+//
 //         let field_type_str = val.get("field_type").get_string()?;
 //         let field_type = match field_type_str.as_str() {
 //             "Text" => CollectionFieldFieldType::Text,
-// 
+//
 //             _ => CollectionFieldFieldType::default(),
 //         };
-// 
-// 
+//
+//
 //         Ok(CollectionFieldModel {
 //             name,
 //             identifier,
@@ -192,4 +189,3 @@ impl TryFrom<Object> for CollectionModel {
 //         })
 //     }
 // }
-
