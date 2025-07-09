@@ -75,22 +75,10 @@ async fn main() -> Result<(), Error>{
         ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout", "authorization"];
 
     let cors = CorsLayer::new()
-        .allow_origin(origins)
-        .expose_headers(
-            DEFAULT_EXPOSED_HEADERS
-                .iter()
-                .cloned()
-                .map(HeaderName::from_static)
-                .collect::<Vec<HeaderName>>(),
-        )
-        .allow_headers(
-            DEFAULT_ALLOW_HEADERS
-                .iter()
-                .cloned()
-                .map(HeaderName::from_static)
-                .collect::<Vec<HeaderName>>(),
-        )
-        .allow_methods(Any);
+        .allow_origin(Any) // Allow all origins for local development
+        .allow_headers(Any) // Allow all headers
+        .allow_methods(Any) // Allow all methods
+        .expose_headers(Any); // Expose all headers
 
 
     let test_api = Test2Api {};
