@@ -2,7 +2,7 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use axum::http::{HeaderName, HeaderValue};
+use axum::http::{HeaderValue};
 use axum::response::Html;
 use axum::Router;
 use axum::routing::{get, post};
@@ -27,12 +27,10 @@ use crate::api::proto::auth::auth_server::AuthServer;
 use crate::api::proto::cms::cms_server::CmsServer;
 use crate::api::proto::content::content_server::ContentServer;
 use crate::api::proto::dashboard::dashboard_server::DashboardServer;
-use crate::api::proto::echo::test2_server::Test2Server;
 use crate::api::proto::general::general_service_server::GeneralServiceServer;
 use crate::api::proto::misc::misc_server::MiscServer;
 use crate::api::proto::setting::setting_server::SettingServer;
 use crate::api::setting_api::SettingApi;
-use crate::api::test_api::Test2Api;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
@@ -69,20 +67,16 @@ async fn main() -> Result<(), Error>{
     }
 
     // const DEFAULT_MAX_AGE: Duration = Duration::from_secs(24 * 60 * 60);
-    const DEFAULT_EXPOSED_HEADERS: [&str; 3] =
-        ["grpc-status", "grpc-message", "grpc-status-details-bin"];
-    const DEFAULT_ALLOW_HEADERS: [&str; 5] =
-        ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout", "authorization"];
+    // const DEFAULT_EXPOSED_HEADERS: [&str; 3] =
+    //     ["grpc-status", "grpc-message", "grpc-status-details-bin"];
+    // const DEFAULT_ALLOW_HEADERS: [&str; 5] =
+    //     ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout", "authorization"];
 
     let cors = CorsLayer::new()
         .allow_origin(Any) // Allow all origins for local development
         .allow_headers(Any) // Allow all headers
         .allow_methods(Any) // Allow all methods
         .expose_headers(Any); // Expose all headers
-
-
-    let test_api = Test2Api {};
-    let test_server = Test2Server::new(test_api);
 
     let misc_api = MiscApi {state: state.clone()};
     let misc_server = MiscServer::new(misc_api);
@@ -114,7 +108,6 @@ async fn main() -> Result<(), Error>{
 
 
     let grpc_router = Router::new()
-        .nest_tonic(test_server)
         .nest_tonic(misc_server)
         .nest_tonic(auth_server)
         .nest_tonic(dashboard_server)
