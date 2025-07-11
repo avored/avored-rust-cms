@@ -1,13 +1,15 @@
 use std::collections::BTreeMap;
 
+use super::into_iter_objects;
 use crate::error::{Error, Result};
-use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, RoleModel, UpdatableRoleModel};
+use crate::models::role_model::{
+    CreatableRole, PutRoleIdentifierModel, RoleModel, UpdatableRoleModel,
+};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use super::into_iter_objects;
 
 #[derive(Clone)]
 pub struct RoleRepository {}
@@ -61,17 +63,17 @@ impl RoleRepository {
         identifier: &str,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(identifier=$identifier) FROM roles GROUP ALL";
-    
+
         let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let model_count: Result<ModelCount> = result_object?.try_into();
-    
+
         model_count
     }
 
@@ -88,7 +90,7 @@ impl RoleRepository {
                         updated_by = $updated_by
                     ;
         ";
-    
+
         let vars: BTreeMap<String, Value> = [
             (
                 "identifier".into(),
@@ -104,14 +106,14 @@ impl RoleRepository {
         ]
         .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let updated_model: Result<RoleModel> = result_object?.try_into();
-    
+
         updated_model
     }
 
@@ -142,7 +144,7 @@ impl RoleRepository {
         creatable_role_model: CreatableRole,
     ) -> Result<RoleModel> {
         let sql = "CREATE roles CONTENT $data";
-    
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_role_model.name.into()),
             ("identifier".into(), creatable_role_model.identifier.into()),
@@ -163,19 +165,19 @@ impl RoleRepository {
         ]
         .into();
         let vars: BTreeMap<String, Value> = [("data".into(), data.into())].into();
-    
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let role_model: Result<RoleModel> = result_object?.try_into();
-    
+
         role_model
     }
-    
+
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -188,16 +190,16 @@ impl RoleRepository {
             ("table".into(), "roles".into()),
         ]
         .into();
-    
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let role_model: Result<RoleModel> = result_object?.try_into();
-    
+
         role_model
     }
     //
@@ -214,7 +216,7 @@ impl RoleRepository {
                 updated_at: time::now(),
                 permissions: $permissions
             };";
-    
+
         let vars = BTreeMap::from([
             ("name".into(), updatable_admin_user.name.into()),
             (
@@ -229,14 +231,14 @@ impl RoleRepository {
             ("table".into(), "roles".into()),
         ]);
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let role_model: Result<RoleModel> = result_object?.try_into();
-    
+
         role_model
     }
 

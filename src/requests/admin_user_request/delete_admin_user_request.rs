@@ -1,5 +1,5 @@
 use crate::{
-    api::proto::admin_user::{DeleteAdminUserRequest},
+    api::proto::admin_user::DeleteAdminUserRequest,
     models::validation_error::{ErrorMessage, ErrorResponse, Validate},
 };
 use rust_i18n::t;

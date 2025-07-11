@@ -26,7 +26,7 @@ impl Validate for String {
         }
         Ok(false)
     }
-    
+
     fn validate_email(&self) -> crate::error::Result<bool> {
         if !EmailAddress::is_valid(self) {
             return Ok(false);

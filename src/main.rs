@@ -1,17 +1,3 @@
-use std::env;
-use std::fs::File;
-use std::path::Path;
-use std::sync::Arc;
-use axum::http::{HeaderValue};
-use axum::response::Html;
-use axum::Router;
-use axum::routing::{get, post};
-use axum_tonic::{NestTonic, RestGrpcService};
-use tower_http::cors::{Any, CorsLayer};
-use tracing_subscriber::{filter, Layer};
-use tower_http::services::ServeDir;
-use tracing_subscriber::layer::SubscriberExt;
-use tracing_subscriber::util::SubscriberInitExt;
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::asset_api::AssetApi;
 use crate::api::auth_api::AuthApi;
@@ -35,17 +21,31 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
+use axum::http::HeaderValue;
+use axum::response::Html;
+use axum::routing::{get, post};
+use axum::Router;
+use axum_tonic::{NestTonic, RestGrpcService};
+use std::env;
+use std::fs::File;
+use std::path::Path;
+use std::sync::Arc;
+use tower_http::cors::{Any, CorsLayer};
+use tower_http::services::ServeDir;
+use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::util::SubscriberInitExt;
+use tracing_subscriber::{filter, Layer};
 
 mod api;
 mod avored_state;
 mod error;
+mod extensions;
+mod middleware;
 mod models;
 mod providers;
-mod services;
-mod requests;
 mod repositories;
-mod middleware;
-mod extensions;
+mod requests;
+mod services;
 
 const PER_PAGE: u64 = 10;
 
@@ -56,7 +56,7 @@ async fn handler() -> Html<&'static str> {
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Error>{
+async fn main() -> Result<(), Error> {
     init_log();
 
     let state = Arc::new(AvoRedState::new().await?);
@@ -78,34 +78,50 @@ async fn main() -> Result<(), Error>{
         .allow_methods(Any) // Allow all methods
         .expose_headers(Any); // Expose all headers
 
-    let misc_api = MiscApi {state: state.clone()};
+    let misc_api = MiscApi {
+        state: state.clone(),
+    };
     let misc_server = MiscServer::new(misc_api);
 
-    let cms_api = CmsApi {state: state.clone()};
+    let cms_api = CmsApi {
+        state: state.clone(),
+    };
     let cms_server = CmsServer::new(cms_api);
 
-    let dashboard_api = DashboardApi {state: state.clone()};
+    let dashboard_api = DashboardApi {
+        state: state.clone(),
+    };
     let dashboard_server = DashboardServer::with_interceptor(dashboard_api, check_auth);
 
-    let auth_api = AuthApi {state: state.clone()};
+    let auth_api = AuthApi {
+        state: state.clone(),
+    };
     let auth_server = AuthServer::new(auth_api);
 
-    let admin_user_api = AdminUserApi {state: state.clone()};
+    let admin_user_api = AdminUserApi {
+        state: state.clone(),
+    };
     let admin_user_server = AdminUserServer::with_interceptor(admin_user_api, check_auth);
 
-    let content_api = ContentApi {state: state.clone()};
+    let content_api = ContentApi {
+        state: state.clone(),
+    };
     let content_server = ContentServer::with_interceptor(content_api, check_auth);
-    
-    let setting_api = SettingApi {state: state.clone()};
+
+    let setting_api = SettingApi {
+        state: state.clone(),
+    };
     let setting_server = SettingServer::with_interceptor(setting_api, check_auth);
-    
-    let general_api = GeneralApi {state: state.clone()};
+
+    let general_api = GeneralApi {
+        state: state.clone(),
+    };
     let general_server = GeneralServiceServer::with_interceptor(general_api, check_auth);
 
-    let asset_api = AssetApi {state: state.clone()};
+    let asset_api = AssetApi {
+        state: state.clone(),
+    };
     let asset_server = AssetServer::with_interceptor(asset_api, check_auth);
-
-
 
     let grpc_router = Router::new()
         .nest_tonic(misc_server)
@@ -118,7 +134,6 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(asset_server)
         .nest_tonic(cms_server)
         .layer(cors.clone());
-
 
     let static_routing_service = ServeDir::new("public");
 
@@ -152,14 +167,12 @@ async fn main() -> Result<(), Error>{
 
     println!("Server started: http://0.0.0.0:{}", port);
 
-    axum::serve(listener ,service.into_make_service())
+    axum::serve(listener, service.into_make_service())
         .await
         .unwrap();
 
     Ok(())
-
 }
-
 
 fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();
