@@ -1,6 +1,6 @@
-use rust_i18n::t;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
 use crate::api::proto::auth::LoginRequest;
+use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
+use rust_i18n::t;
 
 impl LoginRequest {
     pub fn validate(&self) -> crate::error::Result<(bool, String)> {
@@ -43,8 +43,6 @@ impl LoginRequest {
 
         let error_string = serde_json::to_string(&error_response)?;
 
-
-        Ok((valid ,error_string))
+        Ok((valid, error_string))
     }
-
 }

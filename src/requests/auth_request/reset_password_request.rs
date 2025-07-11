@@ -1,7 +1,7 @@
-use rust_i18n::t;
 use crate::api::proto::auth::ResetPasswordRequest;
 use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
+use rust_i18n::t;
 
 impl ResetPasswordRequest {
     pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<(bool, String)> {
@@ -46,14 +46,11 @@ impl ResetPasswordRequest {
             valid = false;
             errors.push(error_message);
         }
-        
+
         let validated_token_result = state
             .auth_service
-            .validate_token(
-                &self.token,
-                &self.email,
-                &state.db,
-            ).await?;
+            .validate_token(&self.token, &self.email, &state.db)
+            .await?;
 
         if !validated_token_result {
             let error_message = ErrorMessage {
@@ -72,7 +69,6 @@ impl ResetPasswordRequest {
 
         let error_string = serde_json::to_string(&error_response)?;
 
-
-        Ok((valid ,error_string))
+        Ok((valid, error_string))
     }
 }

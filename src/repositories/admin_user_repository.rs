@@ -1,20 +1,21 @@
-use std::collections::BTreeMap;
-use rust_i18n::t;
+use super::into_iter_objects;
+use crate::error::Error::TonicError;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{
     AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel,
 };
+use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use crate::models::ModelCount;
 use crate::PER_PAGE;
+use rust_i18n::t;
+use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 use tonic::Status;
-use crate::error::Error::TonicError;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-use super::into_iter_objects;
 
 const ADMIN_USER_TABLE: &str = "admin_users";
+const ROLE_TABLE: &str = "roles";
 
 #[derive(Clone)]
 pub struct AdminUserRepository {}
@@ -40,7 +41,6 @@ impl AdminUserRepository {
         let result_object = match result_object_option {
             Some(object) => object,
             None => {
-
                 // Somehow we need to log the user not found error too.
                 // maybe we create a MODEL_NOT_FOUND then handle the error in error.rs
                 let mut errors: Vec<ErrorMessage> = vec![];
@@ -56,7 +56,7 @@ impl AdminUserRepository {
                 };
                 let error_string = serde_json::to_string(&error_response)?;
                 return Err(TonicError(Status::invalid_argument(error_string)));
-            },
+            }
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 
@@ -189,29 +189,29 @@ impl AdminUserRepository {
         datastore: &Datastore,
         database_session: &Session,
         email: &str,
-        new_password: String
+        new_password: String,
     ) -> Result<bool> {
         let sql = "
             UPDATE type::table($table) SET password=$password WHERE email=$email";
-    
+
         let vars = BTreeMap::from([
             ("password".into(), new_password.into()),
             ("email".into(), email.into()),
             ("table".into(), ADMIN_USER_TABLE.into()),
         ]);
-    
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
-    
+
         if result_object.is_ok() {
             return Ok(true);
         }
-    
+
         Err(Error::Generic(format!(
             "issue while updating password by email: {email}"
         )))
@@ -311,7 +311,7 @@ impl AdminUserRepository {
             "RELATE {}:{}->{}->{}:{} CONTENT $attached_data;",
             "admin_users", admin_user_id, "admin_user_role", "roles", role_id
         );
-    
+
         let attached_data: BTreeMap<String, Value> = [
             ("created_by".into(), logged_in_user_email.into()),
             ("updated_by".into(), logged_in_user_email.into()),
@@ -319,18 +319,18 @@ impl AdminUserRepository {
             ("updated_at".into(), Datetime::default().into()),
         ]
         .into();
-    
+
         let vars: BTreeMap<String, Value> = [("attached_data".into(), attached_data.into())].into();
-    
+
         let responses = datastore
             .execute(sql.as_str(), database_session, Some(vars))
             .await?;
-        
+
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);
         }
-    
+
         Ok(true)
     }
 
@@ -345,16 +345,16 @@ impl AdminUserRepository {
             "DELETE {}:{}->{} WHERE {}:{};",
             "admin_users", admin_user_id, "admin_user_role", "roles", role_id
         );
-    
+
         let responses = datastore
             .execute(sql.as_str(), database_session, None)
             .await?;
-         
+
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);
         }
-    
+
         Ok(true)
     }
 
@@ -365,17 +365,65 @@ impl AdminUserRepository {
         email: String,
     ) -> Result<ModelCount> {
         let sql = "SELECT count(email=$email) FROM admin_users GROUP ALL";
-    
+
         let vars: BTreeMap<String, Value> = [("email".into(), email.into())].into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
-    
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let model_count: Result<ModelCount> = result_object?.try_into();
-    
+
         model_count
+    }
+
+    pub async fn delete_role(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        role_id: &str,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), role_id.into()),
+            ("table".into(), ROLE_TABLE.into()),
+        ]
+        .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(false)
+    }
+
+    pub async fn delete_admin_user(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        admin_user_id: &str,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), admin_user_id.into()),
+            ("table".into(), ADMIN_USER_TABLE.into()),
+        ]
+        .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(false)
     }
 }

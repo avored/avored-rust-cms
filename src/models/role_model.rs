@@ -1,10 +1,10 @@
-use std::time::SystemTime;
-use prost_types::Timestamp;
-use crate::error::{Error, Result};
-use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object};
-use surrealdb::sql::Value;
 use super::{BaseModel, Pagination};
+use crate::error::{Error, Result};
+use prost_types::Timestamp;
+use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
+use surrealdb::sql::Value;
+use surrealdb::sql::{Datetime, Object};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RoleModel {
@@ -24,29 +24,29 @@ pub struct RoleOptionModel {
     pub value: String,
 }
 
-
 impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
     type Error = Error;
 
     fn try_from(val: RoleModel) -> Result<crate::api::proto::admin_user::RoleModel> {
-        let chrono_utc_created_at= val.created_at.to_utc();
+        let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
 
-        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let chrono_utc_updated_at = val.updated_at.to_utc();
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
-        let model: crate::api::proto::admin_user::RoleModel = crate::api::proto::admin_user::RoleModel {
-            id: val.id,
-            name: val.name,
-            identifier: val.identifier,
-            created_at: Option::from(created_at),
-            updated_at: Option::from(updated_at),
-            created_by: val.created_by,
-            updated_by: val.updated_by,
-            permissions: val.permissions,
-        };
+        let model: crate::api::proto::admin_user::RoleModel =
+            crate::api::proto::admin_user::RoleModel {
+                id: val.id,
+                name: val.name,
+                identifier: val.identifier,
+                created_at: Option::from(created_at),
+                updated_at: Option::from(updated_at),
+                created_by: val.created_by,
+                updated_by: val.updated_by,
+                permissions: val.permissions,
+            };
 
         Ok(model)
     }

@@ -16,7 +16,6 @@ impl DeleteContentRequest {
             errors.push(error_message);
         }
 
-
         if !self.content_type.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
@@ -26,8 +25,6 @@ impl DeleteContentRequest {
             errors.push(error_message);
         }
 
-
-       
         if !valid {
             let error_response = ErrorResponse {
                 status: valid,

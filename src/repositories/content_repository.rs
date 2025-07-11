@@ -1,19 +1,21 @@
+use crate::error::Error;
+use crate::error::Result;
+use crate::models::content_model::{
+    ContentFieldDataType, ContentFieldFieldType, ContentModel, CreatableContentModel,
+    PutContentIdentifierModel, UpdatableContentModel,
+};
+use crate::models::ModelCount;
+use crate::repositories::into_iter_objects;
+use crate::PER_PAGE;
 use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
-use surrealdb::kvs::{Datastore};
+use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
-use crate::error::Error;
-use crate::models::content_model::{ContentFieldDataType, ContentFieldFieldType, ContentModel, CreatableContentModel, PutContentIdentifierModel, UpdatableContentModel};
-use crate::repositories::into_iter_objects;
-use crate::error::Result;
-use crate::models::ModelCount;
-use crate::PER_PAGE;
 
 #[derive(Clone)]
 pub struct ContentRepository {}
 
 impl ContentRepository {
-
     pub(crate) async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -26,7 +28,7 @@ impl ContentRepository {
             ("id".into(), id.into()),
             ("table".into(), content_type.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -53,7 +55,7 @@ impl ContentRepository {
             ("identifier".into(), identifier.into()),
             ("table".into(), content_type.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -110,7 +112,7 @@ impl ContentRepository {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        content_type: &str
+        content_type: &str,
     ) -> Result<ModelCount> {
         let sql = format!("SELECT count() FROM {content_type} GROUP ALL;");
         let responses = datastore.execute(&sql, database_session, None).await?;
@@ -132,7 +134,7 @@ impl ContentRepository {
         datastore: &Datastore,
         database_session: &Session,
         creatable_content_model: CreatableContentModel,
-    ) -> Result<ContentModel>{
+    ) -> Result<ContentModel> {
         let sql = "CREATE type::table($table) CONTENT $data";
 
         let mut content_fields: Vec<Value> = vec![];
@@ -176,7 +178,6 @@ impl ContentRepository {
                 field_data_value.push(field_data_item.try_into()?);
             }
 
-
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), created_content_field.name.into()),
                 ("identifier".into(), created_content_field.identifier.into()),
@@ -184,15 +185,18 @@ impl ContentRepository {
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
                 ("field_data".into(), field_data_value.into()),
-            ].into();
-            
+            ]
+            .into();
+
             content_fields.push(content_field.into());
         }
 
-
         let data: BTreeMap<String, Value> = [
             ("name".into(), creatable_content_model.name.into()),
-            ("identifier".into(), creatable_content_model.identifier.into()),
+            (
+                "identifier".into(),
+                creatable_content_model.identifier.into(),
+            ),
             (
                 "created_by".into(),
                 creatable_content_model.logged_in_username.clone().into(),
@@ -205,13 +209,13 @@ impl ContentRepository {
             ("created_at".into(), Datetime::default().into()),
             ("updated_at".into(), Datetime::default().into()),
         ]
-            .into();
+        .into();
 
         let vars: BTreeMap<String, Value> = [
             ("data".into(), data.into()),
             ("table".into(), creatable_content_model.content_type.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -244,7 +248,7 @@ impl ContentRepository {
                 ContentFieldDataType::Float => "FLOAT".into(),
                 ContentFieldDataType::Bool => "Bool".into(),
             };
-            
+
             let field_type_value: Value = match updatable_content_field.field_type {
                 ContentFieldFieldType::Text => "TEXT".into(),
                 ContentFieldFieldType::Textarea => "TEXTAREA".into(),
@@ -263,7 +267,6 @@ impl ContentRepository {
             let mut field_data_value: Vec<Value> = vec![];
 
             let field_data_value: Vec<Value> = match updatable_content_field.field_type {
-               
                 ContentFieldFieldType::Select => {
                     let field_data = updatable_content_field.field_data.unwrap_or_default();
                     for field_data_item in field_data.content_select_field_options {
@@ -271,38 +274,40 @@ impl ContentRepository {
                     }
 
                     field_data_value
-                },
-                ContentFieldFieldType::Checkbox =>  {
+                }
+                ContentFieldFieldType::Checkbox => {
                     let field_data = updatable_content_field.field_data.unwrap_or_default();
                     for field_data_item in field_data.content_checkbox_field_data {
                         field_data_value.push(field_data_item.try_into()?);
                     }
 
                     field_data_value
-                },
+                }
 
-                ContentFieldFieldType::Radio =>  {
+                ContentFieldFieldType::Radio => {
                     let field_data = updatable_content_field.field_data.unwrap_or_default();
                     for field_data_item in field_data.content_radio_field_data {
                         field_data_value.push(field_data_item.try_into()?);
                     }
 
                     field_data_value
-                },
-                _ => vec![]
+                }
+                _ => vec![],
             };
-            
-            
+
             let content_field: BTreeMap<String, Value> = [
                 ("name".into(), updatable_content_field.name.into()),
-                ("identifier".into(), updatable_content_field.identifier.into()),
+                (
+                    "identifier".into(),
+                    updatable_content_field.identifier.into(),
+                ),
                 ("data_type".into(), data_type_value),
                 ("field_type".into(), field_type_value),
                 ("field_content".into(), field_content_value),
                 ("field_data".into(), field_data_value.into()),
             ]
-                .into();
-        
+            .into();
+
             content_fields.push(content_field.into());
         }
 
@@ -310,17 +315,21 @@ impl ContentRepository {
 
         let data: BTreeMap<String, Value> = [
             ("name".into(), updatable_model.name.into()),
-            ("updated_by".into(), updatable_model.logged_in_username.clone().into()),
+            (
+                "updated_by".into(),
+                updatable_model.logged_in_username.clone().into(),
+            ),
             ("content_fields".into(), content_fields.into()),
             ("updated_at".into(), Datetime::default().into()),
-        ].into();
+        ]
+        .into();
 
         let vars: BTreeMap<String, Value> = [
             ("data".into(), data.into()),
             ("table".into(), updatable_model.content_type.into()),
             ("id".into(), updatable_model.id.into()),
         ]
-            .into();
+        .into();
 
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
@@ -340,20 +349,22 @@ impl ContentRepository {
         datastore: &Datastore,
         database_session: &Session,
         collection_type: &str,
-        identifier: &str
+        identifier: &str,
     ) -> Result<ModelCount> {
         let sql = format!("SELECT count(identifier=$identifier) FROM {collection_type} GROUP ALL");
-    
+
         let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
-        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
-    
+        let responses = datastore
+            .execute(&sql, database_session, Some(vars))
+            .await?;
+
         let result_object_option = into_iter_objects(responses)?.next();
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic("no record found".to_string())),
         };
         let model_count: Result<ModelCount> = result_object?.try_into();
-    
+
         model_count
     }
 
@@ -372,13 +383,22 @@ impl ContentRepository {
         ";
 
         let vars: BTreeMap<String, Value> = [
-            ("identifier".into(), put_content_identifier_model.identifier.into()),
-            ("table".into(), put_content_identifier_model.content_type.into()),
+            (
+                "identifier".into(),
+                put_content_identifier_model.identifier.into(),
+            ),
+            (
+                "table".into(),
+                put_content_identifier_model.content_type.into(),
+            ),
             ("updated_at".into(), Datetime::default().into()),
-            ("updated_by".into(), put_content_identifier_model.logged_in_username.into()),
+            (
+                "updated_by".into(),
+                put_content_identifier_model.logged_in_username.into(),
+            ),
             ("id".into(), put_content_identifier_model.id.into()),
         ]
-            .into();
+        .into();
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
@@ -396,23 +416,23 @@ impl ContentRepository {
         datastore: &Datastore,
         database_session: &Session,
         content_id: &str,
-        content_type: &str
+        content_type: &str,
     ) -> Result<bool> {
         let sql = "
             DELETE type::thing($table, $id);";
-    
+
         let vars: BTreeMap<String, Value> = [
             ("id".into(), content_id.into()),
             ("table".into(), content_type.into()),
         ]
         .into();
-    
+
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
         let response = responses.into_iter().next().map(|rp| rp.result).transpose();
         if response.is_ok() {
             return Ok(true);
         }
-    
+
         Ok(false)
     }
 

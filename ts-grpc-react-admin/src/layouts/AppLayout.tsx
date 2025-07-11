@@ -1,15 +1,17 @@
 import AppHeader from "./partials/AppHeader";
 import AppSidebar from "./partials/AppSidebar";
-import {useState} from "react";
-// import {useNavigate} from "react-router-dom";
-// import {isEmpty} from "lodash";
-import {ThemeContext} from "../context/ThemeContext";
+import { useState } from "react";
+import { AvoredAdminContext } from "../context/AvoredAdminContext";
+import { LoggedInUserRequest } from "../grpc_generated/general_pb";
+import { UseLoggedInUserHook } from "../hooks/general/UseLoggedInUserHook";
+import { AdminUserType } from "../types/admin_user/AdminUserType";
 
 
 function AppLayout() {
-
-    // const redirect = useNavigate()
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const request = new LoggedInUserRequest();
+    const auth_user_model = UseLoggedInUserHook(request);
+    const adminUser: AdminUserType = auth_user_model?.data?.data as unknown as AdminUserType;
 
     const toggleSidebar = () => {
         setIsSidebarOpen((prev) => !prev)
@@ -17,24 +19,17 @@ function AppLayout() {
     const value = {
         isSidebarOpen,
         toggleSidebar,
+        adminUser
     }
 
-    // useEffect(() => {
-    //     // @todo permission check here
-    //     const token = localStorage.getItem("AUTH_TOKEN")
-    //     if (isEmpty(token)) {
-    //         return redirect("/admin/login")
-    //     }
-    // })
-
     return (
-        <ThemeContext.Provider value={value}>
+        <AvoredAdminContext.Provider value={value}>
             <div
                 className="min-h-screen">
-                <AppHeader/>
-                <AppSidebar/>
+                <AppHeader />
+                <AppSidebar />
             </div>
-        </ThemeContext.Provider>
+        </AvoredAdminContext.Provider>
 
     );
 }

@@ -1,11 +1,15 @@
-use crate::api::proto::admin_user::admin_user_paginate_response::{AdminUserPaginateData, AdminUserPagination};
+use crate::api::proto::admin_user::admin_user_paginate_response::{
+    AdminUserPaginateData, AdminUserPagination,
+};
 use crate::api::proto::admin_user::admin_user_server::AdminUser;
 use crate::api::proto::admin_user::{
-    AdminUserPaginateRequest, AdminUserPaginateResponse, GetAdminUserRequest, GetAdminUserResponse,
-    GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
-    RoleOptionRequest, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
-    StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest, StoreRoleResponse,
-    UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse,
+    AdminUserPaginateRequest, AdminUserPaginateResponse, DeleteAdminUserRequest,
+    DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse, GetAdminUserRequest,
+    GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest,
+    PutRoleIdentifierResponse, RoleOptionRequest, RoleOptionResponse, RolePaginateRequest,
+    RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest,
+    StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest,
+    UpdateRoleResponse,
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
@@ -50,7 +54,6 @@ impl AdminUser for AdminUserApi {
             .await
         {
             Ok(admin_user_paginate_data) => {
-    
                 let pagination = AdminUserPagination {
                     total: admin_user_paginate_data.0.total,
                 };
@@ -59,7 +62,7 @@ impl AdminUser for AdminUserApi {
                     pagination: Option::from(pagination),
                     data: admin_user_paginate_data.1,
                 };
-                
+
                 let admin_user_paginate_response = AdminUserPaginateResponse {
                     status: true,
                     data: Option::from(paginate_data),
@@ -84,7 +87,7 @@ impl AdminUser for AdminUserApi {
         );
 
         let claims = request.get_token_claim()?;
-        
+
         let logged_in_user = claims.admin_user_model;
         logged_in_user
             .check_user_has_resouce_access(
@@ -126,7 +129,7 @@ impl AdminUser for AdminUserApi {
         println!("->> {:<12} - get_admin_user", "gRPC_Admin_User_Api_Service");
 
         let claims = request.get_token_claim()?;
-        
+
         let logged_in_user = claims.admin_user_model;
         logged_in_user
             .check_user_has_resouce_access(
@@ -145,7 +148,7 @@ impl AdminUser for AdminUserApi {
             Ok(admin_user_model) => {
                 let get_admin_user_response = GetAdminUserResponse {
                     status: true,
-                    data: Some(admin_user_model)
+                    data: Some(admin_user_model),
                 };
                 let res = Response::new(get_admin_user_response);
                 Ok(res)
@@ -167,7 +170,7 @@ impl AdminUser for AdminUserApi {
         );
 
         let claims = request.get_token_claim()?;
-        
+
         let logged_in_user = claims.admin_user_model;
         logged_in_user
             .check_user_has_resouce_access(
@@ -178,7 +181,6 @@ impl AdminUser for AdminUserApi {
 
         let req = request.into_inner();
         req.validate().await?;
-
 
         match self
             .state
@@ -318,10 +320,7 @@ impl AdminUser for AdminUserApi {
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
         logged_in_user
-            .check_user_has_resouce_access(
-                &self.state.admin_user_service,
-                String::from("get_role"),
-            )
+            .check_user_has_resouce_access(&self.state.admin_user_service, String::from("get_role"))
             .await?;
 
         let req = request.into_inner();
@@ -403,6 +402,81 @@ impl AdminUser for AdminUserApi {
             .state
             .admin_user_service
             .put_role_identifier(req, claims.email, &self.state.db)
+            .await
+        {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            }
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
+    }
+
+    async fn delete_role(
+        &self,
+        request: Request<DeleteRoleRequest>,
+    ) -> Result<Response<DeleteRoleResponse>, Status> {
+        println!("->> {:<12} - delete_role", "gRPC_Admin_User_Api_Service");
+
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("delete_role"),
+            )
+            .await?;
+
+        let req = request.into_inner();
+        req.validate()?;
+
+        match self
+            .state
+            .admin_user_service
+            .delete_role(req, &self.state.db)
+            .await
+        {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            }
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
+    }
+
+    async fn delete_admin_user(
+        &self,
+        request: Request<DeleteAdminUserRequest>,
+    ) -> Result<Response<DeleteAdminUserResponse>, Status> {
+        println!(
+            "->> {:<12} - delete_admin_user",
+            "gRPC_Admin_User_Api_Service"
+        );
+
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("delete_admin_user"),
+            )
+            .await?;
+
+        let req = request.into_inner();
+        req.validate()?;
+
+        match self
+            .state
+            .admin_user_service
+            .delete_admin_user(req, &self.state.db)
             .await
         {
             Ok(reply) => {

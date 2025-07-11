@@ -1,5 +1,6 @@
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::api::proto::admin_user::{
+    DeleteAdminUserRequest, DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse,
     GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
     RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
     StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest,
@@ -36,7 +37,7 @@ impl AdminUserService {
     pub async fn paginate(
         &self,
         page: i64,
-        order: String, 
+        order: String,
         (datastore, database_session): &DB,
     ) -> Result<(
         ModelCount,
@@ -140,7 +141,6 @@ impl AdminUserService {
         let model: crate::api::proto::admin_user::AdminUserModel =
             admin_user_model.try_into().unwrap();
 
-       
         Ok(model)
     }
 
@@ -758,6 +758,40 @@ impl AdminUserService {
         self.role_repository
             .count_of_identifier(datastore, database_session, identifier)
             .await
+    }
+
+    pub async fn delete_role(
+        &self,
+        request: DeleteRoleRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteRoleResponse> {
+        let delete_status = self
+            .admin_user_repository
+            .delete_role(datastore, database_session, &request.role_id)
+            .await?;
+
+        let response = DeleteRoleResponse {
+            status: delete_status,
+        };
+
+        Ok(response)
+    }
+
+    pub async fn delete_admin_user(
+        &self,
+        request: DeleteAdminUserRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteAdminUserResponse> {
+        let delete_status = self
+            .admin_user_repository
+            .delete_admin_user(datastore, database_session, &request.admin_user_id)
+            .await?;
+
+        let response = DeleteAdminUserResponse {
+            status: delete_status,
+        };
+
+        Ok(response)
     }
 
     //count_of_identifier
