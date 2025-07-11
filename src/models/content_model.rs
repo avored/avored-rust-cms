@@ -87,7 +87,8 @@ pub enum ContentFieldFieldType {
     Checkbox,
     Radio,
     Switch,
-    Date
+    Date,
+    Asset
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -576,6 +577,7 @@ impl TryFrom<String> for ContentFieldFieldType {
             "Radio" => ContentFieldFieldType::Radio,
             "Switch" => ContentFieldFieldType::Switch,
             "Date" => ContentFieldFieldType::Date,
+            "Asset" => ContentFieldFieldType::Asset,
             _ => ContentFieldFieldType::default(),
         };
 
@@ -625,6 +627,7 @@ impl TryFrom<ContentFieldFieldType> for String {
             ContentFieldFieldType::Radio => String::from("Radio"),
             ContentFieldFieldType::Switch => String::from("Switch"),
             ContentFieldFieldType::Date => String::from("Date"),
+            ContentFieldFieldType::Asset => String::from("Asset"),
         };
 
         Ok(string_val)
@@ -748,6 +751,7 @@ impl TryFrom<Object> for ContentFieldModel {
             "Radio" => ContentFieldFieldType::Radio,
             "Switch" => ContentFieldFieldType::Switch,
             "Date" => ContentFieldFieldType::Date,
+            "Asset" => ContentFieldFieldType::Asset,
             _ => ContentFieldFieldType::default(),
         };
 

@@ -1,4 +1,4 @@
-import {UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormTrigger,} from "react-hook-form";
+import { UseFormGetValues, UseFormRegister, UseFormSetValue, UseFormTrigger, } from "react-hook-form";
 import {
     ContentCheckboxFieldData,
     ContentFieldData,
@@ -11,13 +11,13 @@ import {
 } from "../../types/content/ContentType";
 import AvoredModal from "../../components/AvoredModal";
 import AvoRedButton from "../../components/AvoRedButton";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import InputField from "../../components/InputField";
 import React from "react";
 import slug from "slug";
 import _ from "lodash";
-import {PlusIcon} from "@heroicons/react/24/solid";
-import {MinusIcon} from "@heroicons/react/16/solid";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { MinusIcon } from "@heroicons/react/16/solid";
 
 type ContentFieldProps = {
     register: UseFormRegister<SaveContentType>;
@@ -31,15 +31,15 @@ type ContentFieldProps = {
 }
 
 export const ContentFieldModal = ({
-                                      register,
-                                      currentIndex,
-                                      getValues,
-                                      setValue,
-                                      trigger,
-                                      setIsOpen,
-                                      isOpen,
-                                      collectionType,
-                                  }: ContentFieldProps) => {
+    register,
+    currentIndex,
+    getValues,
+    setValue,
+    trigger,
+    setIsOpen,
+    isOpen,
+    collectionType,
+}: ContentFieldProps) => {
     const [t] = useTranslation("global");
 
     const onContentFieldChange = async (
@@ -346,7 +346,7 @@ export const ContentFieldModal = ({
                                                         {_.size(getValues(
                                                             `content_fields.${index}.field_data.content_select_field_options`,
                                                         )) ===
-                                                        option_index + 1 ? (
+                                                            option_index + 1 ? (
                                                             <>
                                                                 <button
                                                                     onClick={(e) =>
@@ -354,7 +354,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <PlusIcon className="w-5 h-5"/>
+                                                                    <PlusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         ) : (
@@ -369,7 +369,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <MinusIcon className="w-5 h-5"/>
+                                                                    <MinusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         )}
@@ -439,7 +439,7 @@ export const ContentFieldModal = ({
                                                         {_.size(getValues(
                                                             `content_fields.${index}.field_data.content_checkbox_field_data`,
                                                         )) ===
-                                                        option_index + 1 ? (
+                                                            option_index + 1 ? (
                                                             <>
                                                                 <button
                                                                     onClick={(e) =>
@@ -447,7 +447,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <PlusIcon className="w-5 h-5"/>
+                                                                    <PlusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         ) : (
@@ -462,7 +462,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <MinusIcon className="w-5 h-5"/>
+                                                                    <MinusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         )}
@@ -532,7 +532,7 @@ export const ContentFieldModal = ({
                                                         {_.size(getValues(
                                                             `content_fields.${index}.field_data.content_radio_field_data`,
                                                         )) ===
-                                                        option_index + 1 ? (
+                                                            option_index + 1 ? (
                                                             <>
                                                                 <button
                                                                     onClick={(e) =>
@@ -540,7 +540,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <PlusIcon className="w-5 h-5"/>
+                                                                    <PlusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         ) : (
@@ -555,7 +555,7 @@ export const ContentFieldModal = ({
                                                                     }
                                                                     className="ml-2"
                                                                 >
-                                                                    <MinusIcon className="w-5 h-5"/>
+                                                                    <MinusIcon className="w-5 h-5" />
                                                                 </button>
                                                             </>
                                                         )}
@@ -746,11 +746,25 @@ export const ContentFieldModal = ({
                                     {t("date_field")}
                                 </div>
 
+                                <div
+                                    onClick={() =>
+                                        onContentFieldChange(
+                                            currentIndex,
+                                            ContentFieldFieldType.Asset,
+                                            ContentFieldDataType.TEXT
+                                        )
+                                    }
+                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Asset ? "bg-primary-200" : "bg-gray-300"} 
+                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                >
+                                    {t("asset_field")}
+                                </div>
+
 
                             </div>
                         </div>
                     </div>
-                    <hr className="mt-3"/>
+                    <hr className="mt-3" />
                     <div className="mt-3">
                         <div className="flex">
                             <div>

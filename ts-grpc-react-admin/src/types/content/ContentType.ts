@@ -28,7 +28,8 @@ export enum ContentFieldFieldType {
     Checkbox = "Checkbox",
     Radio = "Radio",
     Switch = "Switch",
-    Date = "Date"
+    Date = "Date",
+    Asset = "Asset"
 }
 
 export type ContentSelectFieldData = {

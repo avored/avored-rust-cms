@@ -156,6 +156,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Radio => "Radio".into(),
                 ContentFieldFieldType::Switch => "Switch".into(),
                 ContentFieldFieldType::Date => "Date".into(),
+                ContentFieldFieldType::Asset => "Asset".into(),
             };
             let field_content_value: Value = created_content_field.field_content.try_into()?;
 
@@ -255,6 +256,7 @@ impl ContentRepository {
                 ContentFieldFieldType::Radio => "Radio".into(),
                 ContentFieldFieldType::Switch => "Switch".into(),
                 ContentFieldFieldType::Date => "Date".into(),
+                ContentFieldFieldType::Asset => "Asset".into(),
             };
             let field_content_value: Value = updatable_content_field.field_content.try_into()?;
 
