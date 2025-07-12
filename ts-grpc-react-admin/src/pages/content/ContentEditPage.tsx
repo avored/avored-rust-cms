@@ -57,6 +57,7 @@ export const ContentEditPage = () => {
     const [isDeleteConfirmationModalOpen, setIiDeleteConfirmationModalOpen] = useState<boolean>(false);
     const [isSelectAssetModalOpen, setIsSelectAssetModalOpen] = useState<boolean>(false);
     const [currentIndex, setCurrentIndex] = useState<number>(0);
+    const [currentAssetId, setCurrentAssetId] = useState<string>('');
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
 
     const {mutate: deleteContentMutate} = UseDeleteContentHook()
@@ -262,10 +263,14 @@ export const ContentEditPage = () => {
         setIsContentFieldModalOpen(true)
     })
 
+    const isAssetSelected = ((asseId: string) => { 
+        return (asseId === currentAssetId)
+    })
 
     const selectAssetButtonOnClick = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         e.preventDefault()
         setCurrentIndex(index)
+        setCurrentAssetId(getValues(`content_fields.${index}.field_content.text_value`) ?? '')
         setIsSelectAssetModalOpen(true)
     })
 
@@ -784,7 +789,7 @@ export const ContentEditPage = () => {
                                                             <>
                                                                 <img
                                                                     src={`${backend_url}${asset.newPath}`}
-                                                                    className="h-40"
+                                                                    className={`rounded p-3 h-40 ${isAssetSelected(asset.id) ?  'bg-gray-300' : ''}`}
                                                                     alt={asset.name}
                                                                 />
                                                             </>

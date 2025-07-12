@@ -44,6 +44,7 @@ export const ContentCreatePage = () => {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
     const [isSelectAssetModalOpen, setIsSelectAssetModalOpen] = useState<boolean>(false);
+    const [currentAssetId, setCurrentAssetId] = useState<string>('');
 
     const contentType: string = searchParams.get("type") as string
     const {mutate, error} = UseStoreContentHook()
@@ -138,6 +139,7 @@ export const ContentCreatePage = () => {
 
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
+
             case ContentFieldFieldType.TEXT:
                 return (
                     <div className="mb-4">
@@ -193,6 +195,7 @@ export const ContentCreatePage = () => {
                         />
                     </div>
                 );
+            
             case ContentFieldFieldType.SELECT:
                 return (
                     <div className="mb-4">
@@ -347,9 +350,14 @@ export const ContentCreatePage = () => {
         setIsContentFieldModalOpen(true)
     })
 
+    const isAssetSelected = ((asseId: string) => { 
+        return (asseId === currentAssetId)
+    })
+
     const selectAssetButtonOnClick = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
         e.preventDefault()
         setCurrentIndex(index)
+        setCurrentAssetId(getValues(`content_fields.${index}.field_content.text_value`) ?? '')
         setIsSelectAssetModalOpen(true)
     })
 
@@ -582,7 +590,7 @@ export const ContentCreatePage = () => {
                                                             <>
                                                                 <img
                                                                     src={`${backend_url}${asset.newPath}`}
-                                                                    className="h-40"
+                                                                    className={`rounded p-3 h-40 ${isAssetSelected(asset.id) ?  'bg-gray-300' : ''}`}
                                                                     alt={asset.name}
                                                                 />
                                                             </>
