@@ -427,9 +427,9 @@ dependencies = [
 
 [[package]]
 name = "axum_tonic"
-version = "0.4.0"
+version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bee3b24966cf7d0ad114099e736f33ec65df0aa069197ee513a37d86b1760e5"
+checksum = "4c637eb01e48c54cd9e520c1d11f7870d198ca780724e9ad2d318efbc6c58de9"
 dependencies = [
  "axum",
  "futures",
@@ -2181,9 +2181,9 @@ checksum = "830d08ce1d1d941e6b30645f1a0eb5643013d835ce3779a5fc208261dbe10f55"
 
 [[package]]
 name = "lettre"
-version = "0.11.16"
+version = "0.11.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87ffd14fa289730e3ad68edefdc31f603d56fe716ec38f2076bb7410e09147c2"
+checksum = "cb2a0354e9ece2fcdcf9fa53417f6de587230c0c248068eb058fa26c4a753179"
 dependencies = [
  "async-trait",
  "base64 0.22.1",
@@ -4258,9 +4258,9 @@ checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
 
 [[package]]
 name = "surrealdb"
-version = "2.3.3"
+version = "2.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cf2d416390d6acd6e37b369805324a27398fa881b2279d85c65f7a857ef72c6"
+checksum = "5545940eb21920f4eb3fbdd4a805c68c9917e9ee95b805d7702c0a6cf61ed4d0"
 dependencies = [
  "arrayvec",
  "async-channel",
@@ -4300,9 +4300,9 @@ dependencies = [
 
 [[package]]
 name = "surrealdb-core"
-version = "2.3.3"
+version = "2.3.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5eb78cf5031f8a506be71ee978faf541446e879862f727dc372d2227a7e0f585"
+checksum = "04c0c3d3e8e8156a1f15e3f146b8e40d7a0197e89abea6c4aa0178d06d11e6d1"
 dependencies = [
  "addr",
  "affinitypool",
@@ -4810,12 +4810,13 @@ dependencies = [
 
 [[package]]
 name = "tower-http"
-version = "0.6.4"
+version = "0.6.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0fdb0c213ca27a9f57ab69ddb290fd80d970922355b83ae380b395d3986b8a2e"
+checksum = "adc82fd73de2a9722ac5da747f12383d2bfdb93591ee6c58486e0097890f05f2"
 dependencies = [
  "bitflags 2.9.0",
  "bytes",
+ "futures-core",
  "futures-util",
  "http",
  "http-body",
