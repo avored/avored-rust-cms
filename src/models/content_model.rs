@@ -84,7 +84,7 @@ pub enum ContentFieldFieldType {
     Radio,
     Switch,
     Date,
-    Asset
+    Asset,
 }
 
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]

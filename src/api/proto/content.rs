@@ -291,10 +291,10 @@ pub mod content_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct ContentClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -338,9 +338,8 @@ pub mod content_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             ContentClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -378,22 +377,13 @@ pub mod content_client {
         pub async fn collection_all(
             &mut self,
             request: impl tonic::IntoRequest<super::CollectionAllRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CollectionAllResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/CollectionAll",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/CollectionAll");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "CollectionAll"));
@@ -402,22 +392,13 @@ pub mod content_client {
         pub async fn get_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetCollectionResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/GetCollection",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/GetCollection");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "GetCollection"));
@@ -426,22 +407,13 @@ pub mod content_client {
         pub async fn store_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreCollectionResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/StoreCollection",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/StoreCollection");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "StoreCollection"));
@@ -450,22 +422,13 @@ pub mod content_client {
         pub async fn update_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateCollectionResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/UpdateCollection",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/UpdateCollection");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "UpdateCollection"));
@@ -474,22 +437,13 @@ pub mod content_client {
         pub async fn content_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::ContentPaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ContentPaginateResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/ContentPaginate",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/ContentPaginate");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "ContentPaginate"));
@@ -498,22 +452,13 @@ pub mod content_client {
         pub async fn store_content(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreContentResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::StoreContentResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/StoreContent",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/StoreContent");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "StoreContent"));
@@ -522,22 +467,13 @@ pub mod content_client {
         pub async fn get_content(
             &mut self,
             request: impl tonic::IntoRequest<super::GetContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetContentResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetContentResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/GetContent",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/GetContent");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "GetContent"));
@@ -546,22 +482,13 @@ pub mod content_client {
         pub async fn update_content(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateContentResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/UpdateContent",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/UpdateContent");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "UpdateContent"));
@@ -570,22 +497,14 @@ pub mod content_client {
         pub async fn put_content_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutContentIdentifierRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::PutContentIdentifierResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/PutContentIdentifier",
-            );
+            let path =
+                http::uri::PathAndQuery::from_static("/content.content/PutContentIdentifier");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "PutContentIdentifier"));
@@ -594,22 +513,13 @@ pub mod content_client {
         pub async fn delete_content(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteContentResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/content.content/DeleteContent",
-            );
+            let path = http::uri::PathAndQuery::from_static("/content.content/DeleteContent");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("content.content", "DeleteContent"));
@@ -624,7 +534,7 @@ pub mod content_server {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with ContentServer.
@@ -633,73 +543,43 @@ pub mod content_server {
         async fn collection_all(
             &self,
             request: tonic::Request<super::CollectionAllRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CollectionAllResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>;
         async fn get_collection(
             &self,
             request: tonic::Request<super::GetCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetCollectionResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>;
         async fn store_collection(
             &self,
             request: tonic::Request<super::StoreCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreCollectionResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>;
         async fn update_collection(
             &self,
             request: tonic::Request<super::UpdateCollectionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateCollectionResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>;
         async fn content_paginate(
             &self,
             request: tonic::Request<super::ContentPaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ContentPaginateResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>;
         async fn store_content(
             &self,
             request: tonic::Request<super::StoreContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreContentResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::StoreContentResponse>, tonic::Status>;
         async fn get_content(
             &self,
             request: tonic::Request<super::GetContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetContentResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetContentResponse>, tonic::Status>;
         async fn update_content(
             &self,
             request: tonic::Request<super::UpdateContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateContentResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>;
         async fn put_content_identifier(
             &self,
             request: tonic::Request<super::PutContentIdentifierRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::PutContentIdentifierResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>;
         async fn delete_content(
             &self,
             request: tonic::Request<super::DeleteContentRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteContentResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct ContentServer<T> {
@@ -722,10 +602,7 @@ pub mod content_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -780,15 +657,9 @@ pub mod content_server {
                 "/content.content/CollectionAll" => {
                     #[allow(non_camel_case_types)]
                     struct CollectionAllSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::CollectionAllRequest>
-                    for CollectionAllSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::CollectionAllRequest> for CollectionAllSvc<T> {
                         type Response = super::CollectionAllResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::CollectionAllRequest>,
@@ -825,15 +696,9 @@ pub mod content_server {
                 "/content.content/GetCollection" => {
                     #[allow(non_camel_case_types)]
                     struct GetCollectionSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::GetCollectionRequest>
-                    for GetCollectionSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::GetCollectionRequest> for GetCollectionSvc<T> {
                         type Response = super::GetCollectionResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetCollectionRequest>,
@@ -870,15 +735,11 @@ pub mod content_server {
                 "/content.content/StoreCollection" => {
                     #[allow(non_camel_case_types)]
                     struct StoreCollectionSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::StoreCollectionRequest>
-                    for StoreCollectionSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::StoreCollectionRequest>
+                        for StoreCollectionSvc<T>
+                    {
                         type Response = super::StoreCollectionResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StoreCollectionRequest>,
@@ -915,15 +776,11 @@ pub mod content_server {
                 "/content.content/UpdateCollection" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateCollectionSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::UpdateCollectionRequest>
-                    for UpdateCollectionSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::UpdateCollectionRequest>
+                        for UpdateCollectionSvc<T>
+                    {
                         type Response = super::UpdateCollectionResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateCollectionRequest>,
@@ -960,15 +817,11 @@ pub mod content_server {
                 "/content.content/ContentPaginate" => {
                     #[allow(non_camel_case_types)]
                     struct ContentPaginateSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::ContentPaginateRequest>
-                    for ContentPaginateSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::ContentPaginateRequest>
+                        for ContentPaginateSvc<T>
+                    {
                         type Response = super::ContentPaginateResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ContentPaginateRequest>,
@@ -1005,23 +858,16 @@ pub mod content_server {
                 "/content.content/StoreContent" => {
                     #[allow(non_camel_case_types)]
                     struct StoreContentSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::StoreContentRequest>
-                    for StoreContentSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::StoreContentRequest> for StoreContentSvc<T> {
                         type Response = super::StoreContentResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StoreContentRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Content>::store_content(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as Content>::store_content(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1050,23 +896,16 @@ pub mod content_server {
                 "/content.content/GetContent" => {
                     #[allow(non_camel_case_types)]
                     struct GetContentSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::GetContentRequest>
-                    for GetContentSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::GetContentRequest> for GetContentSvc<T> {
                         type Response = super::GetContentResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetContentRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as Content>::get_content(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as Content>::get_content(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1095,15 +934,9 @@ pub mod content_server {
                 "/content.content/UpdateContent" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateContentSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::UpdateContentRequest>
-                    for UpdateContentSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::UpdateContentRequest> for UpdateContentSvc<T> {
                         type Response = super::UpdateContentResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateContentRequest>,
@@ -1140,23 +973,18 @@ pub mod content_server {
                 "/content.content/PutContentIdentifier" => {
                     #[allow(non_camel_case_types)]
                     struct PutContentIdentifierSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::PutContentIdentifierRequest>
-                    for PutContentIdentifierSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::PutContentIdentifierRequest>
+                        for PutContentIdentifierSvc<T>
+                    {
                         type Response = super::PutContentIdentifierResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PutContentIdentifierRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as Content>::put_content_identifier(&inner, request)
-                                    .await
+                                <T as Content>::put_content_identifier(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1186,15 +1014,9 @@ pub mod content_server {
                 "/content.content/DeleteContent" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteContentSvc<T: Content>(pub Arc<T>);
-                    impl<
-                        T: Content,
-                    > tonic::server::UnaryService<super::DeleteContentRequest>
-                    for DeleteContentSvc<T> {
+                    impl<T: Content> tonic::server::UnaryService<super::DeleteContentRequest> for DeleteContentSvc<T> {
                         type Response = super::DeleteContentResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::DeleteContentRequest>,
@@ -1228,25 +1050,19 @@ pub mod content_server {
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        let mut response = http::Response::new(
-                            tonic::body::Body::default(),
-                        );
-                        let headers = response.headers_mut();
-                        headers
-                            .insert(
-                                tonic::Status::GRPC_STATUS,
-                                (tonic::Code::Unimplemented as i32).into(),
-                            );
-                        headers
-                            .insert(
-                                http::header::CONTENT_TYPE,
-                                tonic::metadata::GRPC_CONTENT_TYPE,
-                            );
-                        Ok(response)
-                    })
-                }
+                _ => Box::pin(async move {
+                    let mut response = http::Response::new(tonic::body::Body::default());
+                    let headers = response.headers_mut();
+                    headers.insert(
+                        tonic::Status::GRPC_STATUS,
+                        (tonic::Code::Unimplemented as i32).into(),
+                    );
+                    headers.insert(
+                        http::header::CONTENT_TYPE,
+                        tonic::metadata::GRPC_CONTENT_TYPE,
+                    );
+                    Ok(response)
+                }),
             }
         }
     }

@@ -70,14 +70,8 @@ pub async fn add_security_headers(
             header::CACHE_CONTROL,
             HeaderValue::from_static("no-cache, no-store, must-revalidate"),
         );
-        headers.insert(
-            header::PRAGMA,
-            HeaderValue::from_static("no-cache"),
-        );
-        headers.insert(
-            header::EXPIRES,
-            HeaderValue::from_static("0"),
-        );
+        headers.insert(header::PRAGMA, HeaderValue::from_static("no-cache"));
+        headers.insert(header::EXPIRES, HeaderValue::from_static("0"));
     }
 
     Ok(response)
@@ -86,8 +80,8 @@ pub async fn add_security_headers(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use axum::{routing::get, Router};
     use axum::http::StatusCode;
+    use axum::{routing::get, Router};
     use tower::util::ServiceExt;
 
     async fn test_handler() -> &'static str {
@@ -100,29 +94,17 @@ mod tests {
             .route("/", get(test_handler))
             .layer(axum::middleware::from_fn(add_security_headers));
 
-        let request = Request::builder()
-            .uri("/")
-            .body(Body::empty())
-            .unwrap();
+        let request = Request::builder().uri("/").body(Body::empty()).unwrap();
 
         let response = app.oneshot(request).await.unwrap();
 
         assert_eq!(response.status(), StatusCode::OK);
 
         let headers = response.headers();
-        
-        assert_eq!(
-            headers.get("x-content-type-options").unwrap(),
-            "nosniff"
-        );
-        assert_eq!(
-            headers.get("x-frame-options").unwrap(),
-            "DENY"
-        );
-        assert_eq!(
-            headers.get("x-xss-protection").unwrap(),
-            "1; mode=block"
-        );
+
+        assert_eq!(headers.get("x-content-type-options").unwrap(), "nosniff");
+        assert_eq!(headers.get("x-frame-options").unwrap(), "DENY");
+        assert_eq!(headers.get("x-xss-protection").unwrap(), "1; mode=block");
         assert_eq!(
             headers.get("strict-transport-security").unwrap(),
             "max-age=31536000; includeSubDomains"
@@ -148,18 +130,12 @@ mod tests {
         let response = app.oneshot(request).await.unwrap();
 
         let headers = response.headers();
-        
+
         assert_eq!(
             headers.get("cache-control").unwrap(),
             "no-cache, no-store, must-revalidate"
         );
-        assert_eq!(
-            headers.get("pragma").unwrap(),
-            "no-cache"
-        );
-        assert_eq!(
-            headers.get("expires").unwrap(),
-            "0"
-        );
+        assert_eq!(headers.get("pragma").unwrap(), "no-cache");
+        assert_eq!(headers.get("expires").unwrap(), "0");
     }
 }
