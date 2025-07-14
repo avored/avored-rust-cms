@@ -1,0 +1,20 @@
+[build]
+# Parallel compilation
+jobs = 8
+# Use sccache for distributed caching
+rustc-wrapper = "sccache"
+# Additional optimization flags
+rustflags = ["-C", "target-cpu=native"]
+
+[profile.dev]
+# Faster debug builds
+debug = 1
+opt-level = 0
+incremental = true
+
+[profile.dev-fast]
+inherits = "dev"
+opt-level = 1
+debug = false
+incremental = true
+codegen-units = 256

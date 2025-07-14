@@ -1,3 +1,4 @@
+use std::path::Path;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let proto_root = "./proto";
     let proto_files = &[
@@ -12,9 +13,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "asset.proto",
     ];
 
-    tonic_build::configure()
-        .out_dir("src/api/proto")
-        .build_server(true)
-        .compile_protos(proto_files, &[proto_root])?;
+    // Tell cargo to rerun this build script only if proto files change
+    println!("cargo:rerun-if-changed={}", proto_root);
+    for proto_file in proto_files {
+        println!("cargo:rerun-if-changed={}/{}", proto_root, proto_file);
+    }
+
+    // Only compile if we're not in a cached environment or if proto files changed
+    let proto_out_dir = "src/api/proto";
+
+    // Check if proto output directory exists and has files
+    let should_compile = !Path::new(proto_out_dir).exists()
+        || std::fs::read_dir(proto_out_dir)?.count() < proto_files.len();
+
+    if should_compile {
+        println!("cargo:warning=Compiling protobuf files...");
+        tonic_build::configure()
+            .out_dir(proto_out_dir)
+            .build_server(true)
+            .compile_protos(proto_files, &[proto_root])?;
+    } else {
+        println!("cargo:warning=Using cached protobuf files");
+    }
+
     Ok(())
 }
