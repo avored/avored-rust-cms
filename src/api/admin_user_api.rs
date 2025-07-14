@@ -3,12 +3,13 @@ use crate::api::proto::admin_user::admin_user_paginate_response::{
 };
 use crate::api::proto::admin_user::admin_user_server::AdminUser;
 use crate::api::proto::admin_user::{
-    AdminUserPaginateRequest, AdminUserPaginateResponse, DeleteRoleRequest, DeleteRoleResponse,
-    GetAdminUserRequest, GetAdminUserResponse, GetRoleRequest, GetRoleResponse,
-    PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleOptionRequest, RoleOptionResponse,
-    RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse,
-    StoreRoleRequest, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse,
-    UpdateRoleRequest, UpdateRoleResponse,
+    AdminUserPaginateRequest, AdminUserPaginateResponse, DeleteAdminUserRequest,
+    DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse, GetAdminUserRequest,
+    GetAdminUserResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest,
+    PutRoleIdentifierResponse, RoleOptionRequest, RoleOptionResponse, RolePaginateRequest,
+    RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleRequest,
+    StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest,
+    UpdateRoleResponse,
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::TonicError;
@@ -437,6 +438,45 @@ impl AdminUser for AdminUserApi {
             .state
             .admin_user_service
             .delete_role(req, &self.state.db)
+            .await
+        {
+            Ok(reply) => {
+                let res = Response::new(reply);
+
+                Ok(res)
+            }
+            Err(e) => match e {
+                TonicError(status) => Err(status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
+    }
+
+    async fn delete_admin_user(
+        &self,
+        request: Request<DeleteAdminUserRequest>,
+    ) -> Result<Response<DeleteAdminUserResponse>, Status> {
+        println!(
+            "->> {:<12} - delete_admin_user",
+            "gRPC_Admin_User_Api_Service"
+        );
+
+        let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("delete_admin_user"),
+            )
+            .await?;
+
+        let req = request.into_inner();
+        req.validate()?;
+
+        match self
+            .state
+            .admin_user_service
+            .delete_admin_user(req, &self.state.db)
             .await
         {
             Ok(reply) => {

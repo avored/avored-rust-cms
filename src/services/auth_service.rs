@@ -1,13 +1,15 @@
-use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use crate::error::{Error, Result};
+use crate::extensions::email_message_builder::EmailMessageBuilder;
+use crate::extensions::string_extension::StringExtension;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
+use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-use crate::Error::TonicError;
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
-use crate::models::token_claim_model::TokenClaims;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
+use crate::Error::TonicError;
+use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
 use rand::distr::Alphanumeric;
@@ -15,8 +17,6 @@ use rand::Rng;
 use rust_i18n::t;
 use tonic::Status;
 use tracing::error;
-use crate::extensions::email_message_builder::EmailMessageBuilder;
-use crate::extensions::string_extension::StringExtension;
 
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
@@ -51,11 +51,10 @@ impl AuthService {
             token,
         };
 
-        // expiring any old token that might have been an active. 
+        // expiring any old token that might have been an active.
         // as most commonly user tries again as they have not received an email or received inside a spam inbox.
-        self.
-            password_reset_repository.
-            expire_password_token_by_email(datastore, database_session, &admin_user_model.email)
+        self.password_reset_repository
+            .expire_password_token_by_email(datastore, database_session, &admin_user_model.email)
             .await?;
 
         let password_reset_model = self
@@ -70,19 +69,16 @@ impl AuthService {
         let data = ForgotPasswordViewModel { link };
 
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
-        let email_message = Message::builder()
-            .build_email_message(
-                &from_address, 
-                &to_address, 
-                &email_subject, 
-                forgot_password_email_content
-            )?;
-        
+        let email_message = Message::builder().build_email_message(
+            &from_address,
+            &to_address,
+            &email_subject,
+            forgot_password_email_content,
+        )?;
+
         // Send the email
         match template.mailer.send(email_message).await {
-            Ok(_) => {
-                Ok(true)
-            }
+            Ok(_) => Ok(true),
             Err(er) => {
                 error!("email sent error: {:?}", er);
                 Err(Error::Generic(String::from("error while sending an email")))
@@ -153,18 +149,19 @@ impl AuthService {
         password_salt: &str,
         token: &str,
     ) -> Result<bool> {
-        
         let password_hash = password.get_password_hash(password_salt)?;
-        
+
         let status = self
             .admin_user_repository
             .update_password_by_email(datastore, database_session, email, password_hash)
             .await?;
 
         if !status {
-            return Err(Error::Generic(String::from("there is an issue while updating password.")));
+            return Err(Error::Generic(String::from(
+                "there is an issue while updating password.",
+            )));
         }
-        
+
         let expire_token_status = self
             .password_reset_repository
             .expire_password_token_by_email_and_token(datastore, database_session, email, token)

@@ -2,7 +2,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let proto_root = "./proto";
     let proto_files = &[
-        "echo.proto",
         "misc.proto",
         "auth.proto",
         "dashboard.proto",

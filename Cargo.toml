@@ -20,12 +20,12 @@ jsonwebtoken = "9.3.1"
 chrono = { version = "0.4.41", features = [] }
 email_address = "0.2.9"
 rust-i18n = "3.1.5"
-surrealdb = { version = "2.3.3", features = ["kv-rocksdb", "kv-mem"] }
+surrealdb = { version = "2.3.7", features = ["kv-rocksdb", "kv-mem"] }
 rand = "0.9.1"
 dotenvy = "0.15.7"
 tower-http = { version = "0.6.6", features = ["fs", "cors"] }
 tower = { version = "0.5.2", features = ["util"] }
-lettre = { version = "0.11.16", features = ["tokio1-native-tls"] }
+lettre = { version = "0.11.17", features = ["tokio1-native-tls"] }
 handlebars = "6.3.2"
 
 

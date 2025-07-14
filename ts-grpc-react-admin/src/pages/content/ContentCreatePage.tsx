@@ -32,16 +32,30 @@ import {TextareaField} from "../../components/TextareaField";
 import SimpleMDE from "react-simplemde-editor";
 import {Checkbox, Field, Label, Radio, RadioGroup, Select} from "@headlessui/react";
 import clsx from "clsx";
-import {ChevronDownIcon} from "@heroicons/react/24/solid";
+import {ChevronDownIcon, FolderPlusIcon} from "@heroicons/react/24/solid";
+import AvoredModal from "../../components/AvoredModal";
+import { AssetType } from "../../types/asset/AssetType";
+import { AssetPaginateRequest } from "../../grpc_generated/asset_pb";
+import { UseAssetTableHook } from "../../hooks/asset/UseAssetTableHook";
 
 export const ContentCreatePage = () => {
     const [t] = useTranslation("global")
     const [searchParams] = useSearchParams()
     const [currentIndex, setCurrentIndex] = useState<number>(0);
     const [isContentFieldModalOpen, setIsContentFieldModalOpen] = useState<boolean>(false);
+    const [isSelectAssetModalOpen, setIsSelectAssetModalOpen] = useState<boolean>(false);
+    const [currentAssetId, setCurrentAssetId] = useState<string>('');
 
     const contentType: string = searchParams.get("type") as string
     const {mutate, error} = UseStoreContentHook()
+
+    const backend_url = process.env.REACT_APP_BACKEND_BASE_URL;
+
+    const assetRequest = new AssetPaginateRequest();
+    const asset_api_table_response = UseAssetTableHook(assetRequest);
+
+    const data_list = asset_api_table_response.data?.data?.dataList ?? [];
+    const assets = data_list as Array<unknown> as AssetType[];
 
 
     const convertToContentModal = (() => {
@@ -125,6 +139,7 @@ export const ContentCreatePage = () => {
 
     const renderField = (field: SaveContentFieldType, index: number) => {
         switch (field.field_type) {
+
             case ContentFieldFieldType.TEXT:
                 return (
                     <div className="mb-4">
@@ -180,6 +195,7 @@ export const ContentCreatePage = () => {
                         />
                     </div>
                 );
+            
             case ContentFieldFieldType.SELECT:
                 return (
                     <div className="mb-4">
@@ -305,12 +321,54 @@ export const ContentCreatePage = () => {
                         </div>
                     </>
                 );
+
+            case ContentFieldFieldType.Asset:
+                return (
+                    <div className="mb-4">
+                        <div className="mb-4">
+                            <AvoRedButton
+                                label="Select Asset"
+                                className="bg-primary-700 w-auto"
+                                onClick={(e: React.MouseEvent<HTMLButtonElement>) => selectAssetButtonOnClick(e, index)}
+                                type={ButtonType.button} />
+                        </div>
+
+                        <div>
+                            <InputField 
+                                type="hidden"
+                                register={register(`content_fields.${index}.field_content.text_value`)}
+                            />
+                        </div>
+
+                    </div>
+                );
         }
     }
 
     const clickOnCogIconButton = ((currentIndex: number) => {
         setCurrentIndex(currentIndex)
         setIsContentFieldModalOpen(true)
+    })
+
+    const isAssetSelected = ((asseId: string) => { 
+        return (asseId === currentAssetId)
+    })
+
+    const selectAssetButtonOnClick = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>, index: number) => {
+        e.preventDefault()
+        setCurrentIndex(index)
+        setCurrentAssetId(getValues(`content_fields.${index}.field_content.text_value`) ?? '')
+        setIsSelectAssetModalOpen(true)
+    })
+
+    const selectedAssetButtonOnClick = ((e: React.MouseEvent<HTMLButtonElement, MouseEvent>, asset: AssetType) => {
+        e.preventDefault()
+        setValue(`content_fields.${currentIndex}.field_content.text_value`, asset.id)
+        closeSelectAssetModal()
+    })
+
+    const closeSelectAssetModal = (() => {
+        setIsSelectAssetModalOpen(false)
     })
 
     const submitHandler = (async (data: SaveContentType) => {
@@ -511,6 +569,47 @@ export const ContentCreatePage = () => {
                                 </div>
                             )
                         })}
+
+                        {/*
+                            ASSET MODAL
+                        */}
+                        <AvoredModal
+                            modal_header="please Select asset"
+                            modal_body={(
+                                <>
+                                    <div className="flex">
+                                        {assets.map((asset: AssetType) => {
+                                            return (
+                                                <div>
+                                                    <div className="ml-3 justify-center h-40 mb-3">
+                                                        {asset.assetType === "FOLDER" ? (
+                                                            <>
+                                                                <FolderPlusIcon className="h-32 w-32 text-gray-300" />
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                <img
+                                                                    src={`${backend_url}${asset.newPath}`}
+                                                                    className={`rounded p-3 h-40 ${isAssetSelected(asset.id) ?  'bg-gray-300' : ''}`}
+                                                                    alt={asset.name}
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <button type="button"
+                                                            onClick={e => selectedAssetButtonOnClick(e, asset)}
+                                                            className="text-white bg-primary-600 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-base inline-flex items-center px-3 py-2.5 text-center mr-2">
+                                                            Select
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </>
+                            )} isOpen={isSelectAssetModalOpen} closeModal={closeSelectAssetModal}
+                        ></AvoredModal>
 
                         <div className="mb-4">
                             <AvoRedButton

@@ -7,7 +7,6 @@ impl UpdateAdminUserRequest {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
-       
         if !self.full_name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("full_name"),

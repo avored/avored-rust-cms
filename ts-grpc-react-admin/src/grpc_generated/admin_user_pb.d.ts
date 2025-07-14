@@ -777,6 +777,42 @@ export namespace DeleteRoleResponse {
   }
 }
 
+export class DeleteAdminUserRequest extends jspb.Message {
+  getAdminUserId(): string;
+  setAdminUserId(value: string): DeleteAdminUserRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteAdminUserRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteAdminUserRequest): DeleteAdminUserRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteAdminUserRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteAdminUserRequest;
+  static deserializeBinaryFromReader(message: DeleteAdminUserRequest, reader: jspb.BinaryReader): DeleteAdminUserRequest;
+}
+
+export namespace DeleteAdminUserRequest {
+  export type AsObject = {
+    adminUserId: string,
+  }
+}
+
+export class DeleteAdminUserResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): DeleteAdminUserResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteAdminUserResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteAdminUserResponse): DeleteAdminUserResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteAdminUserResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteAdminUserResponse;
+  static deserializeBinaryFromReader(message: DeleteAdminUserResponse, reader: jspb.BinaryReader): DeleteAdminUserResponse;
+}
+
+export namespace DeleteAdminUserResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+
 export class RoleOptionRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RoleOptionRequest.AsObject;

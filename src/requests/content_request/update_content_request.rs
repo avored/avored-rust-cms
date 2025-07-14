@@ -16,7 +16,6 @@ impl UpdateContentRequest {
             errors.push(error_message);
         }
 
-       
         if !valid {
             let error_response = ErrorResponse {
                 status: valid,
