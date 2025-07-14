@@ -37,6 +37,7 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
+use crate::middleware::security_headers::add_security_headers;
 
 mod api;
 mod avored_state;
@@ -136,7 +137,8 @@ async fn main() -> Result<(), Error>{
         .nest_tonic(general_server)
         .nest_tonic(asset_server)
         .nest_tonic(cms_server)
-        .layer(cors.clone());
+        .layer(cors.clone())
+        .layer(axum::middleware::from_fn(add_security_headers));
 
 
     let static_routing_service = ServeDir::new("public");
@@ -150,7 +152,8 @@ async fn main() -> Result<(), Error>{
         ))
         .nest_service("/public", static_routing_service)
         .with_state(state)
-        .layer(cors);
+        .layer(cors)
+        .layer(axum::middleware::from_fn(add_security_headers));
 
     let service = RestGrpcService::new(rest_router, grpc_router);
 
