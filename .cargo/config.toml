@@ -1,8 +1,8 @@
 [build]
 # Parallel compilation
 jobs = 8
-# Use sccache for distributed caching
-rustc-wrapper = "sccache"
+# Use sccache for distributed caching (only if available)
+# rustc-wrapper = "sccache"  # Commented out to avoid CI failures when sccache is not available
 # Additional optimization flags
 rustflags = ["-C", "target-cpu=native"]
 

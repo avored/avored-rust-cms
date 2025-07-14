@@ -14,9 +14,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     ];
 
     // Tell cargo to rerun this build script only if proto files change
-    println!("cargo:rerun-if-changed={}", proto_root);
+    println!("cargo:rerun-if-changed={proto_root}");
     for proto_file in proto_files {
-        println!("cargo:rerun-if-changed={}/{}", proto_root, proto_file);
+        println!("cargo:rerun-if-changed={proto_root}/{proto_file}");
     }
 
     // Only compile if we're not in a cached environment or if proto files changed

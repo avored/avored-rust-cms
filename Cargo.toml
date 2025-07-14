@@ -6,8 +6,8 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.8.4", features = ["multipart", "http2"] }
-prost = "0.14.1"
-prost-types = "0.14.1"
+prost = "0.13.5"
+prost-types = "0.13.5"
 tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread", "net", "fs", "io-util"] }
 tonic = { version = "0.13.1" }
 axum_tonic = "0.4.1"
