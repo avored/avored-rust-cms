@@ -1,5 +1,4 @@
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-
     let proto_root = "./proto";
     let proto_files = &[
         "misc.proto",
@@ -10,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "setting.proto",
         "cms.proto",
         "general.proto",
-        "asset.proto"
+        "asset.proto",
     ];
 
     tonic_build::configure()

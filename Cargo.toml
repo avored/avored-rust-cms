@@ -8,7 +8,7 @@ edition = "2021"
 axum = { version =  "0.8.4", features = ["multipart", "http2"] }
 prost = "0.13.5"
 prost-types = "0.13.5"
-tokio = { version = "1.45.1", features = ["full"] }
+tokio = { version = "1.46.1", features = ["full"] }
 tonic = { version = "0.13.1" }
 axum_tonic = "0.4.1"
 tracing = "0.1.41"
@@ -24,6 +24,7 @@ surrealdb = { version = "2.3.7", features = ["kv-rocksdb", "kv-mem"] }
 rand = "0.9.1"
 dotenvy = "0.15.7"
 tower-http = { version = "0.6.6", features = ["fs", "cors"] }
+tower = { version = "0.5.2", features = ["util"] }
 lettre = { version = "0.11.17", features = ["tokio1-native-tls"] }
 handlebars = "6.3.2"
 
