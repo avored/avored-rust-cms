@@ -88,7 +88,7 @@ mod tests {
     use super::*;
     use axum::{routing::get, Router};
     use axum::http::StatusCode;
-    use tower::ServiceExt;
+    use tower::util::ServiceExt;
 
     async fn test_handler() -> &'static str {
         "Hello, World!"
