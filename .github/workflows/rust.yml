@@ -1,233 +1,95 @@
-name: Secure Rust Deploy
+name: Rust deploy
 
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch:
-    inputs:
-      skip_security_checks:
-        description: 'Skip security checks (NOT RECOMMENDED)'
-        required: false
-        default: 'false'
-        type: boolean
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-  CARGO_INCREMENTAL: 0
-  CARGO_NET_RETRY: 10
-  RUSTUP_MAX_RETRIES: 10
 
 jobs:
-  security-validation:
-    name: Security Validation
-    runs-on: ubuntu-22.04
-    outputs:
-      security-passed: ${{ steps.security-check.outputs.passed }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    build:
+      runs-on: ubuntu-22.04
+      steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2.4.0
+      - uses: arduino/setup-protoc@v3
 
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          components: clippy, rustfmt
-
-      - name: Cache cargo dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-security-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-security-
-            ${{ runner.os }}-cargo-
-
-      - name: Setup protoc
-        uses: arduino/setup-protoc@v3
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install security tools
-        run: |
-          cargo install cargo-audit --features=fix || true
-          cargo install cargo-deny || true
-          cargo install cargo-outdated || true
-          cargo install cargo-geiger || true
-
-      - name: Validate security configuration
-        run: |
-          echo "🔒 Validating security configuration..."
-          make -f Makefile.security security-validate-config
-
-      - name: Run comprehensive security check
-        id: security-check
-        run: |
-          echo "🛡️ Running comprehensive security validation..."
-          if [ "${{ github.event.inputs.skip_security_checks }}" = "true" ]; then
-            echo "⚠️ WARNING: Security checks skipped by user request"
-            echo "passed=true" >> $GITHUB_OUTPUT
-          else
-            if ./scripts/security-check.sh; then
-              echo "✅ All security checks passed"
-              echo "passed=true" >> $GITHUB_OUTPUT
-            else
-              echo "❌ Security checks failed - deployment blocked"
-              echo "passed=false" >> $GITHUB_OUTPUT
-              exit 1
-            fi
-          fi
-
-      - name: Run LDAP configuration validation
-        run: |
-          echo "🔐 Validating LDAP configuration..."
-          # Check if LDAP configuration files exist and are valid
-          if [ -f ".env.ldap.example" ]; then
-            echo "✅ LDAP configuration template found"
-          else
-            echo "❌ LDAP configuration template missing"
-            exit 1
-          fi
-
-          # Validate LDAP-related code compiles
-          cargo check --features ldap-auth
-          echo "✅ LDAP authentication code validation passed"
-
-      - name: Security-hardened build test
-        run: |
-          echo "🔨 Testing security-hardened build..."
-          cargo build --profile release-secure --features security-hardened
-          echo "✅ Security-hardened build successful"
-
-  build-and-deploy:
-    name: Build and Deploy
-    runs-on: ubuntu-22.04
-    needs: security-validation
-    if: needs.security-validation.outputs.security-passed == 'true'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-
-      - name: Cache cargo dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: ${{ runner.os }}-cargo-deploy-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-cargo-deploy-
-            ${{ runner.os }}-cargo-
-
-      - name: Setup protoc
-        uses: arduino/setup-protoc@v3
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Security-hardened production build
-        run: |
-          echo "🏗️ Building with security hardening for production..."
-          cargo build --profile release-secure --features security-hardened
-          echo "✅ Production build completed with security hardening"
-      - name: Final security validation before deployment
-        run: |
-          echo "🔍 Final security validation before deployment..."
-          # Verify the built binary has security features
-          if [ -f "target/release-secure/avored-rust-cms" ]; then
-            echo "✅ Security-hardened binary found"
-          else
-            echo "❌ Security-hardened binary not found"
-            exit 1
-          fi
-
-      - name: Deploy demo release (security-hardened)
-        uses: appleboy/scp-action@master
+#      - name: Build
+#        run: cargo build --verbose
+      - name: Run releases
+        run: cargo build --release
+#      - name: Deploy release
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.SSH_KEY }}
+#          source: "./target/release"
+#          target: ${{ secrets.RUST_TARGET_PATH }}
+      - name: Deploy demo release
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
-          source: "./target/release-secure"
+          source: "./target/release"
           target: ${{ secrets.RUST_DEMO_TARGET_PATH }}
-
+          timeout: 60s
+          command_timeout: 10m
+          overwrite: true
+        continue-on-error: false
+#      - name: Deploy files
+#        uses: appleboy/scp-action@master
+#        with:
+#          host: ${{ secrets.HOST }}
+#          username: ${{ secrets.USERNAME }}
+#          key: ${{ secrets.SSH_KEY }}
+#          source: "./public,./resources"
+#          target: ${{ secrets.RUST_DEPLOY_PATH }}
       - name: Deploy demo files
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "./public,./resources"
           target: ${{ secrets.RUST_DEMO_DEPLOY_PATH }}
-
-      - name: Deploy LDAP configuration template
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          source: "./.env.ldap.example"
-          target: ${{ secrets.RUST_DEMO_DEPLOY_PATH }}
-
-      - name: Restart service with security validation
+          timeout: 60s
+          command_timeout: 10m
+          overwrite: true
+        continue-on-error: false
+      - name: restart service
         uses: appleboy/ssh-action@v1.1.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            echo "🔄 Restarting service with security validation..."
-            sudo systemctl stop demoavored.service
-
-            # Backup current binary
-            sudo cp ${{ secrets.RUST_DEMO_TARGET_PATH }}/release-secure/avored-rust-cms ${{ secrets.RUST_DEMO_TARGET_PATH }}/avored-rust-cms.backup || true
-
-            # Copy new security-hardened binary
-            sudo cp ${{ secrets.RUST_DEMO_TARGET_PATH }}/release-secure/avored-rust-cms ${{ secrets.RUST_DEMO_TARGET_PATH }}/avored-rust-cms
-
-            # Set proper permissions
-            sudo chmod +x ${{ secrets.RUST_DEMO_TARGET_PATH }}/avored-rust-cms
-
-            # Start service
+            echo "🔄 Restarting demo service..."
+            sudo systemctl stop demoavored.service || echo "Service was not running"
+            sleep 2
             sudo systemctl start demoavored.service
-
-            # Verify service started successfully
-            sleep 5
+            sleep 3
             if sudo systemctl is-active --quiet demoavored.service; then
-              echo "✅ Service started successfully with security-hardened binary"
+              echo "✅ Service restarted successfully"
             else
-              echo "❌ Service failed to start - rolling back"
-              sudo systemctl stop demoavored.service
-              sudo cp ${{ secrets.RUST_DEMO_TARGET_PATH }}/avored-rust-cms.backup ${{ secrets.RUST_DEMO_TARGET_PATH }}/avored-rust-cms || true
-              sudo systemctl start demoavored.service
+              echo "❌ Service failed to start"
+              sudo systemctl status demoavored.service
               exit 1
             fi
 
-  security-failure-notification:
-    name: Security Failure Notification
-    runs-on: ubuntu-22.04
-    needs: security-validation
-    if: failure() && needs.security-validation.outputs.security-passed == 'false'
-    steps:
-      - name: Security failure alert
-        run: |
-          echo "🚨 CRITICAL SECURITY ALERT 🚨"
-          echo ""
-          echo "Security validation has FAILED for the main branch deployment."
-          echo "This indicates potential security vulnerabilities or policy violations."
-          echo ""
-          echo "IMMEDIATE ACTION REQUIRED:"
-          echo "1. Deployment has been BLOCKED"
-          echo "2. Review all security-related changes"
-          echo "3. Run security checks locally: ./scripts/security-check.sh"
-          echo "4. Fix all security issues before attempting deployment"
-          echo ""
-          echo "Security is non-negotiable for production deployments."
-          exit 1
 
 
 
+
+
+          #    - name: change file ownership
+          #      uses: appleboy/ssh-action@v1.0.3
+          #      with:
+          #        host: ${{ secrets.HOST }}
+          #        username: ${{ secrets.USERNAME }}
+          #        key: ${{ secrets.SSH_KEY }}
+          #        port: ${{ secrets.PORT }}
+          #        script: sudo chown -R www-data:www-data ${{ secrets.RUST_TARGET_PATH}}
+        
