@@ -69,7 +69,7 @@ jobs:
       - name: Run enhanced cargo audit
         run: |
           echo "🔍 Running enhanced security vulnerability audit..."
-          cargo audit --config audit.toml --format json --output security-audit-report.json
+          cargo audit --json > security-audit-report.json
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Security vulnerabilities detected!"
             cat security-audit-report.json

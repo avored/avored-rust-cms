@@ -65,7 +65,7 @@ jobs:
       - name: Run Security Regression Tests
         run: |
           echo "Running security regression prevention tests..."
-          cargo test security_regression_tests --verbose -- --nocapture
+          cargo test --test security_regression_tests --verbose -- --nocapture
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Security regression tests failed!"
             echo "This indicates that security measures have been weakened or disabled."
@@ -77,7 +77,7 @@ jobs:
       - name: Run Zero Trust Security Tests
         run: |
           echo "Running zero trust security validation..."
-          cargo test zero_trust_security_tests --verbose -- --nocapture
+          cargo test --test zero_trust_security_tests --verbose -- --nocapture
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Zero trust security tests failed!"
             echo "This indicates that zero trust principles are not being enforced."
@@ -88,7 +88,7 @@ jobs:
       - name: Run Security Property Tests
         run: |
           echo "Running security property-based tests..."
-          cargo test security_property_tests --verbose -- --nocapture
+          cargo test --test security_property_tests --verbose -- --nocapture
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Security property tests failed!"
             echo "This indicates that security properties are not holding."
@@ -166,7 +166,7 @@ jobs:
       - name: Run Timing Attack Tests
         run: |
           echo "Running timing attack prevention tests..."
-          cargo test timing_attack_tests --verbose -- --nocapture
+          cargo test --test timing_attack_tests --verbose -- --nocapture
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Timing attack prevention failed!"
             echo "The system is vulnerable to timing attacks."
