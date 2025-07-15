@@ -1,0 +1,133 @@
+# Security audit configuration for cargo-audit
+# This file configures security vulnerability scanning
+
+[database]
+# Path to the advisory database
+path = "~/.cargo/advisory-db"
+# URL to fetch the advisory database from
+url = "https://github.com/rustsec/advisory-db.git"
+# Automatically fetch updates to the advisory database
+fetch = true
+
+[output]
+# Output format: json, toml, or human
+format = "human"
+# Show additional information about advisories
+show-tree = true
+# Colorize output
+color = "auto"
+
+[advisories]
+# Deny vulnerabilities (fail on any vulnerability)
+vulnerability = "deny"
+# Warn on unmaintained crates
+unmaintained = "warn"
+# Warn on yanked crates
+yanked = "warn"
+# Show informational notices
+notice = "warn"
+
+# Ignore specific advisories (use sparingly and with good reason)
+ignore = [
+    # Example: { id = "RUSTSEC-2020-0001", reason = "False positive for our use case" }
+]
+
+[yanked]
+# How to handle yanked crates
+enabled = true
+# Update index before checking
+update-index = true
+
+[licenses]
+# Check licenses for security implications
+enabled = true
+# Deny copyleft licenses that could have security implications
+deny = [
+    "GPL-2.0",
+    "GPL-3.0", 
+    "AGPL-1.0",
+    "AGPL-3.0",
+    "LGPL-2.0",
+    "LGPL-2.1",
+    "LGPL-3.0",
+]
+
+# Allow secure and permissive licenses
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unlicense",
+    "CC0-1.0",
+]
+
+[bans]
+# Security-focused crate bans
+enabled = true
+
+# Cryptographically insecure crates
+[[bans.deny]]
+name = "md5"
+reason = "MD5 is cryptographically broken"
+
+[[bans.deny]]
+name = "sha1" 
+reason = "SHA1 is cryptographically weak"
+
+[[bans.deny]]
+name = "openssl"
+reason = "Use rustls for better security"
+
+# Vulnerable versions
+[[bans.deny]]
+name = "time"
+version = "<0.3"
+reason = "Contains security vulnerabilities"
+
+[[bans.deny]]
+name = "chrono"
+version = "<0.4.20"
+reason = "Contains security vulnerabilities"
+
+[[bans.deny]]
+name = "regex"
+version = "<1.5"
+reason = "Contains ReDoS vulnerabilities"
+
+[[bans.deny]]
+name = "hyper"
+version = "<0.14.18"
+reason = "Contains HTTP/2 vulnerabilities"
+
+[[bans.deny]]
+name = "tokio"
+version = "<1.20"
+reason = "Contains security fixes"
+
+[[bans.deny]]
+name = "serde"
+version = "<1.0.130"
+reason = "Contains deserialization vulnerabilities"
+
+[[bans.deny]]
+name = "serde_json"
+version = "<1.0.85"
+reason = "Contains parsing vulnerabilities"
+
+[sources]
+# Only allow crates from trusted sources
+enabled = true
+# Allow crates.io
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]
+# Don't allow git dependencies by default (security risk)
+allow-git = []
+
+[reporting]
+# Generate security reports
+enabled = true
+# Report format
+format = "json"
+# Output file for reports
+output = "security-audit-report.json"

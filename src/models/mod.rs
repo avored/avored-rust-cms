@@ -7,6 +7,7 @@ pub mod admin_user_model;
 pub mod asset_model;
 pub mod collection_model;
 pub mod content_model;
+pub mod ldap_config_model;
 pub mod password_rest_model;
 pub mod role_model;
 pub mod setting_model;

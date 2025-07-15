@@ -46,6 +46,7 @@ mod models;
 mod providers;
 mod repositories;
 mod requests;
+mod security;
 mod services;
 
 const PER_PAGE: u64 = 10;

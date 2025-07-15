@@ -20,6 +20,9 @@ pub enum Error {
     Unauthenticated(String),
     InvalidArgument(String),
     Argon2Error(argon2::password_hash::Error),
+    LdapConnectionError(String),
+    LdapAuthenticationError(String),
+    LdapSearchError(String),
 }
 
 impl core::fmt::Display for Error {
@@ -147,6 +150,13 @@ impl From<AddressError> for Error {
     fn from(actual_error: AddressError) -> Self {
         error!("there is an issue while parsing email address: {actual_error:?}");
         Error::Generic("parse lettre address parsing error".to_string())
+    }
+}
+
+impl From<ldap3::LdapError> for Error {
+    fn from(actual_error: ldap3::LdapError) -> Self {
+        error!("LDAP error: {actual_error:?}");
+        Error::Generic("LDAP operation failed".to_string())
     }
 }
 

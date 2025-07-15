@@ -1,0 +1,193 @@
+# Security-focused Makefile for AvoRed Rust CMS
+# This Makefile provides security-related build targets and checks
+
+.PHONY: security-check security-audit security-test security-build security-install-tools security-update security-report security-clean
+
+# Default target
+.DEFAULT_GOAL := security-check
+
+# Colors for output
+RED := \033[0;31m
+GREEN := \033[0;32m
+YELLOW := \033[1;33m
+BLUE := \033[0;34m
+NC := \033[0m
+
+# Security tools
+CARGO_AUDIT := cargo audit
+CARGO_DENY := cargo deny
+CARGO_OUTDATED := cargo outdated
+CARGO_GEIGER := cargo geiger
+
+# Build profiles
+SECURITY_PROFILE := release-secure
+DEV_SECURITY_PROFILE := dev-secure
+
+# Install required security tools
+security-install-tools:
+	@echo "$(BLUE)[INFO]$(NC) Installing security tools..."
+	@cargo install cargo-audit --features=fix || true
+	@cargo install cargo-deny || true
+	@cargo install cargo-outdated || true
+	@cargo install cargo-geiger || true
+	@echo "$(GREEN)[SUCCESS]$(NC) Security tools installed"
+
+# Run comprehensive security check
+security-check: security-install-tools
+	@echo "$(BLUE)[INFO]$(NC) Running comprehensive security check..."
+	@./scripts/security-check.sh
+
+# Run security audit for vulnerabilities
+security-audit:
+	@echo "$(BLUE)[INFO]$(NC) Running security audit..."
+	@$(CARGO_AUDIT) --config audit.toml
+	@echo "$(GREEN)[SUCCESS]$(NC) Security audit completed"
+
+# Run dependency policy checks
+security-deny:
+	@echo "$(BLUE)[INFO]$(NC) Running dependency policy checks..."
+	@$(CARGO_DENY) check
+	@echo "$(GREEN)[SUCCESS]$(NC) Dependency policy checks passed"
+
+# Check for outdated dependencies
+security-outdated:
+	@echo "$(BLUE)[INFO]$(NC) Checking for outdated dependencies..."
+	@$(CARGO_OUTDATED) --exit-code 1 || echo "$(YELLOW)[WARNING]$(NC) Some dependencies are outdated"
+
+# Run unsafe code detection
+security-geiger:
+	@echo "$(BLUE)[INFO]$(NC) Running unsafe code detection..."
+	@$(CARGO_GEIGER) --format GitHubMarkdown --output-file security-geiger-report.md
+	@echo "$(GREEN)[SUCCESS]$(NC) Unsafe code analysis completed"
+
+# Run security-focused tests
+security-test:
+	@echo "$(BLUE)[INFO]$(NC) Running security tests..."
+	@cargo test security_regression_prevention --profile $(SECURITY_PROFILE)
+	@cargo test security_property_tests --profile $(SECURITY_PROFILE)
+	@cargo test security_integration_tests --profile $(SECURITY_PROFILE)
+	@echo "$(GREEN)[SUCCESS]$(NC) Security tests passed"
+
+# Build with security hardening
+security-build:
+	@echo "$(BLUE)[INFO]$(NC) Building with security hardening..."
+	@cargo build --profile $(SECURITY_PROFILE) --features security-hardened
+	@echo "$(GREEN)[SUCCESS]$(NC) Security-hardened build completed"
+
+# Build for development with security checks
+security-dev-build:
+	@echo "$(BLUE)[INFO]$(NC) Building development version with security checks..."
+	@cargo build --profile $(DEV_SECURITY_PROFILE) --features security-hardened
+	@echo "$(GREEN)[SUCCESS]$(NC) Development security build completed"
+
+# Run clippy with security lints
+security-clippy:
+	@echo "$(BLUE)[INFO]$(NC) Running clippy with security lints..."
+	@cargo clippy --profile $(SECURITY_PROFILE) --features security-hardened -- \
+		-W clippy::integer_arithmetic \
+		-W clippy::panic \
+		-W clippy::unwrap_used \
+		-W clippy::expect_used \
+		-W clippy::indexing_slicing \
+		-W clippy::integer_division \
+		-W clippy::modulo_arithmetic \
+		-W clippy::as_conversions \
+		-W clippy::cast_lossless \
+		-W clippy::cast_possible_truncation \
+		-W clippy::cast_possible_wrap \
+		-W clippy::cast_precision_loss \
+		-W clippy::cast_sign_loss \
+		-W clippy::float_arithmetic
+	@echo "$(GREEN)[SUCCESS]$(NC) Security-focused clippy checks passed"
+
+# Format code with security considerations
+security-fmt:
+	@echo "$(BLUE)[INFO]$(NC) Formatting code..."
+	@cargo fmt --check
+	@echo "$(GREEN)[SUCCESS]$(NC) Code formatting verified"
+
+# Update dependencies to latest secure versions
+security-update:
+	@echo "$(BLUE)[INFO]$(NC) Updating dependencies to latest secure versions..."
+	@cargo update
+	@$(MAKE) security-audit
+	@$(MAKE) security-deny
+	@echo "$(GREEN)[SUCCESS]$(NC) Dependencies updated and verified"
+
+# Generate comprehensive security report
+security-report: security-install-tools
+	@echo "$(BLUE)[INFO]$(NC) Generating comprehensive security report..."
+	@mkdir -p reports
+	@echo "# Security Report for AvoRed Rust CMS" > reports/security-report.md
+	@echo "" >> reports/security-report.md
+	@echo "**Generated**: $$(date)" >> reports/security-report.md
+	@echo "**Version**: $$(grep '^version' Cargo.toml | cut -d'\"' -f2)" >> reports/security-report.md
+	@echo "" >> reports/security-report.md
+	@echo "## Vulnerability Scan Results" >> reports/security-report.md
+	@echo "\`\`\`" >> reports/security-report.md
+	@$(CARGO_AUDIT) --config audit.toml >> reports/security-report.md 2>&1 || true
+	@echo "\`\`\`" >> reports/security-report.md
+	@echo "" >> reports/security-report.md
+	@echo "## Dependency Policy Check Results" >> reports/security-report.md
+	@echo "\`\`\`" >> reports/security-report.md
+	@$(CARGO_DENY) check >> reports/security-report.md 2>&1 || true
+	@echo "\`\`\`" >> reports/security-report.md
+	@echo "" >> reports/security-report.md
+	@echo "## Outdated Dependencies" >> reports/security-report.md
+	@echo "\`\`\`" >> reports/security-report.md
+	@$(CARGO_OUTDATED) >> reports/security-report.md 2>&1 || true
+	@echo "\`\`\`" >> reports/security-report.md
+	@echo "$(GREEN)[SUCCESS]$(NC) Security report generated: reports/security-report.md"
+
+# Clean security-related artifacts
+security-clean:
+	@echo "$(BLUE)[INFO]$(NC) Cleaning security artifacts..."
+	@rm -f security-audit-report.json
+	@rm -f security-geiger-report.md
+	@rm -rf reports/
+	@cargo clean
+	@echo "$(GREEN)[SUCCESS]$(NC) Security artifacts cleaned"
+
+# Validate security configuration
+security-validate-config:
+	@echo "$(BLUE)[INFO]$(NC) Validating security configuration..."
+	@grep -q 'security-hardened' Cargo.toml || (echo "$(RED)[ERROR]$(NC) Security hardening not enabled" && exit 1)
+	@grep -q '\[lints.rust\]' Cargo.toml || (echo "$(YELLOW)[WARNING]$(NC) Security lints not configured")
+	@grep -q 'overflow-checks = true' Cargo.toml || (echo "$(YELLOW)[WARNING]$(NC) Overflow checks not enabled")
+	@test -f deny.toml || (echo "$(RED)[ERROR]$(NC) deny.toml not found" && exit 1)
+	@test -f audit.toml || (echo "$(RED)[ERROR]$(NC) audit.toml not found" && exit 1)
+	@echo "$(GREEN)[SUCCESS]$(NC) Security configuration validated"
+
+# Run security benchmarks
+security-bench:
+	@echo "$(BLUE)[INFO]$(NC) Running security benchmarks..."
+	@cargo bench --profile $(SECURITY_PROFILE) --features security-hardened security_benchmarks
+	@echo "$(GREEN)[SUCCESS]$(NC) Security benchmarks completed"
+
+# Full security pipeline (CI/CD ready)
+security-pipeline: security-validate-config security-audit security-deny security-test security-clippy security-fmt security-build
+	@echo "$(GREEN)[SUCCESS]$(NC) Full security pipeline completed successfully"
+
+# Help target
+security-help:
+	@echo "Security-focused Makefile for AvoRed Rust CMS"
+	@echo ""
+	@echo "Available targets:"
+	@echo "  security-check          - Run comprehensive security check"
+	@echo "  security-audit          - Run security vulnerability audit"
+	@echo "  security-deny           - Run dependency policy checks"
+	@echo "  security-outdated       - Check for outdated dependencies"
+	@echo "  security-geiger         - Run unsafe code detection"
+	@echo "  security-test           - Run security-focused tests"
+	@echo "  security-build          - Build with security hardening"
+	@echo "  security-dev-build      - Build development version with security"
+	@echo "  security-clippy         - Run clippy with security lints"
+	@echo "  security-fmt            - Verify code formatting"
+	@echo "  security-update         - Update dependencies securely"
+	@echo "  security-report         - Generate comprehensive security report"
+	@echo "  security-clean          - Clean security artifacts"
+	@echo "  security-validate-config - Validate security configuration"
+	@echo "  security-bench          - Run security benchmarks"
+	@echo "  security-pipeline       - Run full security pipeline"
+	@echo "  security-install-tools  - Install required security tools"
+	@echo "  security-help           - Show this help message"

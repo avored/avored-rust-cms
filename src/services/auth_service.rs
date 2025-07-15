@@ -1,6 +1,7 @@
 use crate::error::{Error, Result};
 use crate::extensions::email_message_builder::EmailMessageBuilder;
 use crate::extensions::string_extension::StringExtension;
+use crate::models::ldap_config_model::LdapConfig;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
@@ -8,6 +9,9 @@ use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
+use crate::services::ldap_auth_service::LdapAuthService;
+use crate::services::local_auth_service::LocalAuthService;
+use crate::services::multi_auth_service::MultiAuthService;
 use crate::Error::TonicError;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use jsonwebtoken::{encode, EncodingKey, Header};
@@ -15,25 +19,27 @@ use lettre::{AsyncTransport, Message};
 use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
+use std::sync::Arc;
 use tonic::Status;
 use tracing::error;
 
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
     password_reset_repository: PasswordResetRepository,
+    multi_auth_service: MultiAuthService,
 }
 
 impl AuthService {
     pub async fn forgot_password(
         &self,
-        (datastore, database_session): &DB,
+        db: &DB,
         template: &AvoRedTemplateProvider,
         react_admin_url: &str,
         to_address: &str,
     ) -> Result<bool> {
         let admin_user_model = self
             .admin_user_repository
-            .find_by_email(datastore, database_session, to_address)
+            .find_by_email(&db.0, &db.1, to_address)
             .await?;
 
         // is it ok to move this email as part of configuration on admin?
@@ -54,12 +60,12 @@ impl AuthService {
         // expiring any old token that might have been an active.
         // as most commonly user tries again as they have not received an email or received inside a spam inbox.
         self.password_reset_repository
-            .expire_password_token_by_email(datastore, database_session, &admin_user_model.email)
+            .expire_password_token_by_email(&db.0, &db.1, &admin_user_model.email)
             .await?;
 
         let password_reset_model = self
             .password_reset_repository
-            .create_password_reset(datastore, database_session, creatable_password_reset_model)
+            .create_password_reset(&db.0, &db.1, creatable_password_reset_model)
             .await?;
 
         let link = format!(
@@ -89,33 +95,33 @@ impl AuthService {
         &self,
         email: &str,
         password: &str,
-        (datastore, database_session): &DB,
+        db: &DB,
         jwt_secret_key: &str,
     ) -> Result<String> {
-        let admin_user_model = self
-            .admin_user_repository
-            .find_by_email(datastore, database_session, email)
-            .await?;
+        // Use multi-provider authentication
+        let admin_user_model = match self
+            .multi_auth_service
+            .authenticate(email, password, db, None)
+            .await
+        {
+            Ok(user) => user,
+            Err(_e) => {
+                let mut errors: Vec<ErrorMessage> = vec![];
+                let error_message = ErrorMessage {
+                    key: String::from("email"),
+                    message: t!("email_address_password_not_match").to_string(),
+                };
 
-        let is_password_match: bool =
-            self.compare_password(password, admin_user_model.password.clone())?;
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors,
+                };
+                let error_string = serde_json::to_string(&error_response)?;
 
-        if !is_password_match {
-            let mut errors: Vec<ErrorMessage> = vec![];
-            let error_message = ErrorMessage {
-                key: String::from("email"),
-                message: t!("email_address_password_not_match").to_string(),
-            };
-
-            errors.push(error_message);
-            let error_response = ErrorResponse {
-                status: false,
-                errors,
-            };
-            let error_string = serde_json::to_string(&error_response)?;
-
-            return Err(TonicError(Status::invalid_argument(error_string)));
-        }
+                return Err(TonicError(Status::invalid_argument(error_string)));
+            }
+        };
 
         let claims: TokenClaims = admin_user_model.clone().try_into()?;
 
@@ -143,7 +149,7 @@ impl AuthService {
 
     pub(crate) async fn reset_password(
         &self,
-        (datastore, database_session): &DB,
+        db: &DB,
         email: &str,
         password: String,
         password_salt: &str,
@@ -153,7 +159,7 @@ impl AuthService {
 
         let status = self
             .admin_user_repository
-            .update_password_by_email(datastore, database_session, email, password_hash)
+            .update_password_by_email(&db.0, &db.1, email, password_hash)
             .await?;
 
         if !status {
@@ -164,7 +170,7 @@ impl AuthService {
 
         let expire_token_status = self
             .password_reset_repository
-            .expire_password_token_by_email_and_token(datastore, database_session, email, token)
+            .expire_password_token_by_email_and_token(&db.0, &db.1, email, token)
             .await?;
 
         Ok(expire_token_status)
@@ -174,11 +180,11 @@ impl AuthService {
         &self,
         token: &str,
         email: &str,
-        (datastore, database_session): &DB,
+        db: &DB,
     ) -> Result<bool> {
         match self
             .password_reset_repository
-            .get_password_reset_by_email_and_token(datastore, database_session, email, token)
+            .get_password_reset_by_email_and_token(&db.0, &db.1, email, token)
             .await
         {
             Ok(_model) => Ok(true),
@@ -192,9 +198,31 @@ impl AuthService {
         admin_user_repository: AdminUserRepository,
         password_reset_repository: PasswordResetRepository,
     ) -> Result<AuthService> {
+        // Initialize multi-provider authentication system
+        let mut multi_auth_service = MultiAuthService::new();
+
+        // Add local authentication provider (always enabled)
+        let local_auth_service = LocalAuthService::new(admin_user_repository.clone());
+        multi_auth_service.add_provider(Arc::new(local_auth_service));
+
+        // Add LDAP authentication provider if enabled
+        match LdapConfig::from_env() {
+            Ok(ldap_config) => {
+                if ldap_config.enabled {
+                    let ldap_auth_service = LdapAuthService::new(ldap_config, admin_user_repository.clone());
+                    multi_auth_service.add_provider(Arc::new(ldap_auth_service));
+                }
+            }
+            Err(e) => {
+                error!("Failed to load LDAP configuration: {}", e);
+                // Continue without LDAP authentication
+            }
+        }
+
         Ok(AuthService {
             admin_user_repository,
             password_reset_repository,
+            multi_auth_service,
         })
     }
 }

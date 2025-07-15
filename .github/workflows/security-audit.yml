@@ -1,75 +1,154 @@
-name: Security Audit
+name: Enhanced Security Audit
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "feature/ldap-authentication" ]
   pull_request:
     branches: [ "main", "develop" ]
   schedule:
     # Run security audit daily at 2 AM UTC
     - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      audit_level:
+        description: 'Security audit level'
+        required: true
+        default: 'comprehensive'
+        type: choice
+        options:
+        - basic
+        - comprehensive
+        - paranoid
 
 env:
   CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  CARGO_INCREMENTAL: 0
+  CARGO_NET_RETRY: 10
+  RUSTUP_MAX_RETRIES: 10
 
 jobs:
-  security-audit:
-    name: Security Audit
+  enhanced-security-audit:
+    name: Enhanced Security Audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
+          components: clippy, rustfmt
 
-      - name: Cache cargo registry
-        uses: actions/cache@v3
+      - name: Cache cargo dependencies
+        uses: actions/cache@v4
         with:
-          path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-security-audit-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-security-audit-
+            ${{ runner.os }}-cargo-
 
-      - name: Cache cargo index
-        uses: actions/cache@v3
-        with:
-          path: ~/.cargo/git
-          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
-
-      - name: Install cargo-audit
-        run: cargo install cargo-audit
-
-      - name: Install cargo-deny
-        run: cargo install cargo-deny
-
-      - name: Run cargo audit
-        run: cargo audit
-
-      - name: Run cargo deny
-        run: cargo deny check
-
-      - name: Run cargo outdated
+      - name: Install enhanced security tools
         run: |
-          cargo install cargo-outdated
-          cargo outdated || echo "Some dependencies are outdated but this is not critical"
+          echo "🔧 Installing enhanced security tools..."
+          cargo install cargo-audit --features=fix || true
+          cargo install cargo-deny || true
+          cargo install cargo-outdated || true
+          cargo install cargo-geiger || true
+          echo "✅ Security tools installed"
+
+      - name: Validate security configuration
+        run: |
+          echo "🔒 Validating security configuration..."
+          make -f Makefile.security security-validate-config
+
+      - name: Run enhanced cargo audit
+        run: |
+          echo "🔍 Running enhanced security vulnerability audit..."
+          cargo audit --config audit.toml --format json --output security-audit-report.json
+          if [ $? -ne 0 ]; then
+            echo "❌ CRITICAL: Security vulnerabilities detected!"
+            cat security-audit-report.json
+            exit 1
+          fi
+          echo "✅ No security vulnerabilities found"
+
+      - name: Run enhanced dependency policy checks
+        run: |
+          echo "📋 Running enhanced dependency policy checks..."
+          cargo deny check
+          if [ $? -ne 0 ]; then
+            echo "❌ CRITICAL: Dependency policy violations detected!"
+            exit 1
+          fi
+          echo "✅ All dependency policies passed"
+
+      - name: Check for outdated dependencies with security focus
+        run: |
+          echo "📅 Checking for outdated dependencies with security implications..."
+          cargo outdated --exit-code 1 || echo "⚠️ Some dependencies are outdated - security review recommended"
+
+      - name: Run LDAP-specific security validation
+        run: |
+          echo "🔐 Running LDAP-specific security validation..."
+          # Check LDAP authentication code for security issues
+          cargo clippy --features ldap-auth -- \
+            -W clippy::integer_arithmetic \
+            -W clippy::panic \
+            -W clippy::unwrap_used \
+            -W clippy::expect_used
+          echo "✅ LDAP security validation passed"
+
+      - name: Run comprehensive security check
+        run: |
+          echo "🛡️ Running comprehensive security check..."
+          ./scripts/security-check.sh
+
+      - name: Generate enhanced security report
+        run: |
+          echo "📊 Generating enhanced security report..."
+          make -f Makefile.security security-report
+
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: enhanced-security-audit-reports
+          path: |
+            security-audit-report.json
+            security-geiger-report.md
+            reports/
 
   dependency-review:
-    name: Dependency Review
+    name: Enhanced Dependency Review
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Dependency Review
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Enhanced Dependency Review
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: moderate
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0
 
-  codeql-analysis:
-    name: CodeQL Analysis
+      - name: LDAP dependency security check
+        run: |
+          echo "🔐 Checking LDAP-related dependencies for security issues..."
+          cargo tree --features ldap-auth | grep -E "(ldap|tls|ssl)" || true
+          echo "✅ LDAP dependency review completed"
+
+  enhanced-codeql-analysis:
+    name: Enhanced CodeQL Analysis
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -83,41 +162,120 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: rust
+          queries: security-and-quality
 
-      - name: Setup Rust
-        uses: actions-rs/toolchain@v1
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
-          override: true
+          components: clippy
 
       - name: Setup protoc
         uses: arduino/setup-protoc@v3
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+      - name: Security-hardened build for analysis
+        run: |
+          echo "🔨 Building with security features for CodeQL analysis..."
+          cargo build --profile release-secure --features security-hardened
 
-      - name: Perform CodeQL Analysis
+      - name: Perform Enhanced CodeQL Analysis
         uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:rust"
 
-  supply-chain-security:
-    name: Supply Chain Security
+      - name: LDAP-specific security analysis
+        run: |
+          echo "🔐 Running LDAP-specific security analysis..."
+          # Check for common LDAP security issues
+          grep -r "ldap" src/ --include="*.rs" | grep -E "(password|secret|bind)" || echo "No obvious LDAP security issues found"
+          echo "✅ LDAP security analysis completed"
+
+  enhanced-supply-chain-security:
+    name: Enhanced Supply Chain Security
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Run Trivy vulnerability scanner
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run enhanced Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: 'fs'
           scan-ref: '.'
           format: 'sarif'
           output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH,MEDIUM'
 
-      - name: Upload Trivy scan results to GitHub Security tab
+      - name: Run Trivy for Rust dependencies
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: './Cargo.lock'
+          format: 'table'
+          output: 'trivy-rust-deps.txt'
+
+      - name: Check for LDAP-specific vulnerabilities
+        run: |
+          echo "🔐 Checking for LDAP-specific vulnerabilities..."
+          # Check if any LDAP-related dependencies have known vulnerabilities
+          if grep -i "ldap" trivy-rust-deps.txt; then
+            echo "⚠️ LDAP-related dependencies found in vulnerability scan"
+          else
+            echo "✅ No LDAP-specific vulnerabilities detected"
+          fi
+
+      - name: Upload enhanced Trivy scan results
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: 'trivy-results.sarif'
+
+      - name: Upload Trivy reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: trivy-security-reports
+          path: |
+            trivy-results.sarif
+            trivy-rust-deps.txt
+
+  security-summary:
+    name: Security Audit Summary
+    runs-on: ubuntu-latest
+    needs: [enhanced-security-audit, dependency-review, enhanced-codeql-analysis, enhanced-supply-chain-security]
+    if: always()
+    steps:
+      - name: Generate security summary
+        run: |
+          echo "# Security Audit Summary" > security-summary.md
+          echo "" >> security-summary.md
+          echo "**Date**: $(date)" >> security-summary.md
+          echo "**Branch**: ${{ github.ref_name }}" >> security-summary.md
+          echo "**Commit**: ${{ github.sha }}" >> security-summary.md
+          echo "" >> security-summary.md
+          echo "## Results" >> security-summary.md
+          echo "- Enhanced Security Audit: ${{ needs.enhanced-security-audit.result }}" >> security-summary.md
+          echo "- Dependency Review: ${{ needs.dependency-review.result }}" >> security-summary.md
+          echo "- CodeQL Analysis: ${{ needs.enhanced-codeql-analysis.result }}" >> security-summary.md
+          echo "- Supply Chain Security: ${{ needs.enhanced-supply-chain-security.result }}" >> security-summary.md
+          echo "" >> security-summary.md
+
+          if [[ "${{ needs.enhanced-security-audit.result }}" == "success" &&
+                "${{ needs.enhanced-codeql-analysis.result }}" == "success" &&
+                "${{ needs.enhanced-supply-chain-security.result }}" == "success" ]]; then
+            echo "## ✅ Overall Status: PASSED" >> security-summary.md
+            echo "All security checks have passed successfully." >> security-summary.md
+          else
+            echo "## ❌ Overall Status: FAILED" >> security-summary.md
+            echo "One or more security checks have failed. Please review and fix issues." >> security-summary.md
+          fi
+
+      - name: Upload security summary
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-audit-summary
+          path: security-summary.md

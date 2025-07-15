@@ -1,0 +1,295 @@
+# AvoRed Rust CMS Security Configuration Template
+# Copy this file to security.toml and customize for your environment
+
+[security]
+# Enable/disable the security framework
+enabled = true
+
+# Strict mode enforces additional security checks
+strict_mode = true
+
+# Security framework version
+version = "1.0.0"
+
+# Debug mode (DISABLE in production)
+debug_mode = false
+
+[authentication]
+# Available providers: ldap, local, oauth, saml
+providers = ["ldap", "local"]
+
+# Default authentication provider
+default_provider = "ldap"
+
+# Session configuration
+session_timeout = 3600  # seconds (1 hour)
+max_concurrent_sessions = 5
+session_cookie_secure = true
+session_cookie_httponly = true
+session_cookie_samesite = "Strict"
+
+# Password policy
+password_min_length = 12
+password_max_length = 128
+password_require_uppercase = true
+password_require_lowercase = true
+password_require_numbers = true
+password_require_symbols = true
+password_history_count = 5
+password_expiry_days = 90
+
+# Account lockout policy
+max_failed_attempts = 5
+lockout_duration = 900  # seconds (15 minutes)
+lockout_threshold_window = 300  # seconds (5 minutes)
+
+[ldap]
+# LDAP server configuration
+url = "ldap://localhost:389"
+bind_dn = "cn=admin,dc=example,dc=com"
+bind_password = "CHANGE_ME"
+base_dn = "dc=example,dc=com"
+user_filter = "(uid={})"
+group_filter = "(memberUid={})"
+
+# Connection settings
+connection_timeout = 30
+search_timeout = 30
+use_tls = true
+verify_certificates = true
+
+# Connection pool settings
+pool_max_connections = 10
+pool_min_connections = 2
+pool_idle_timeout = 300
+pool_max_lifetime = 3600
+
+[rate_limiting]
+# Enable rate limiting
+enabled = true
+
+# Global rate limits
+max_requests_per_minute = 60
+max_requests_per_hour = 1000
+
+# Authentication rate limits
+auth_max_attempts = 5
+auth_window_seconds = 300
+auth_lockout_duration = 900
+
+# API rate limits
+api_max_requests_per_minute = 100
+api_burst_limit = 20
+
+# Rate limiting storage
+storage_type = "memory"  # Options: memory, redis
+redis_url = "redis://localhost:6379"
+
+[input_validation]
+# Enable strict input validation
+strict_mode = true
+
+# Maximum input lengths
+max_username_length = 50
+max_password_length = 128
+max_email_length = 254
+max_input_length = 1000
+
+# Content filtering
+sanitize_html = true
+block_suspicious_patterns = true
+allow_unicode = true
+
+# File upload restrictions
+max_file_size = 10485760  # 10MB in bytes
+allowed_file_types = ["jpg", "jpeg", "png", "gif", "pdf", "doc", "docx", "txt"]
+scan_uploads = true
+quarantine_suspicious_files = true
+
+# Input validation patterns
+username_pattern = "^[a-zA-Z0-9._-]{3,50}$"
+email_pattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+
+[monitoring]
+# Enable security monitoring
+enabled = true
+
+# Logging configuration
+log_level = "INFO"  # Options: DEBUG, INFO, WARN, ERROR
+log_format = "json"  # Options: json, text
+log_file = "logs/security.log"
+log_rotation = "daily"  # Options: daily, weekly, monthly
+log_retention_days = 90
+
+# Alert configuration
+alert_threshold = "MEDIUM"  # Options: LOW, MEDIUM, HIGH, CRITICAL
+alert_email = "security@example.com"
+alert_webhook = "https://hooks.example.com/security"
+alert_slack_webhook = ""
+
+# Health check configuration
+health_check_interval = 60  # seconds
+health_check_timeout = 10   # seconds
+health_check_retries = 3
+
+# Metrics collection
+collect_metrics = true
+metrics_interval = 30  # seconds
+metrics_retention_days = 30
+
+[audit]
+# Enable audit logging
+enabled = true
+
+# Audit configuration
+log_all_events = true
+log_sensitive_data = false  # NEVER enable in production
+export_format = "json"
+retention_days = 90
+
+# Events to audit
+audit_authentication = true
+audit_authorization = true
+audit_data_access = true
+audit_configuration_changes = true
+audit_security_events = true
+audit_admin_actions = true
+
+# Audit log destinations
+audit_file = "logs/audit.log"
+audit_syslog = false
+audit_database = true
+
+[encryption]
+# Encryption settings
+algorithm = "AES-256-GCM"
+key_rotation_days = 30
+use_hardware_security_module = false
+
+# Key derivation
+pbkdf2_iterations = 100000
+salt_length = 32
+
+# TLS configuration
+tls_min_version = "1.2"
+tls_max_version = "1.3"
+tls_cipher_suites = [
+    "TLS_AES_256_GCM_SHA384",
+    "TLS_CHACHA20_POLY1305_SHA256",
+    "TLS_AES_128_GCM_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
+]
+
+[compliance]
+# Compliance frameworks
+frameworks = ["OWASP", "NIST", "ISO27001", "SOC2"]
+
+# Data protection regulations
+gdpr_compliance = true
+ccpa_compliance = true
+hipaa_compliance = false
+
+# Security controls
+access_control = "RBAC"  # Role-Based Access Control
+data_classification = true
+incident_response = true
+vulnerability_management = true
+
+[security_headers]
+# HTTP security headers
+enable_hsts = true
+hsts_max_age = 31536000  # 1 year
+hsts_include_subdomains = true
+hsts_preload = true
+
+enable_csp = true
+csp_policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+enable_x_frame_options = true
+x_frame_options = "DENY"
+
+enable_x_content_type_options = true
+enable_x_xss_protection = true
+enable_referrer_policy = true
+referrer_policy = "strict-origin-when-cross-origin"
+
+[backup]
+# Security backup configuration
+enable_config_backup = true
+backup_encryption = true
+backup_retention_days = 365
+backup_location = "backups/"
+
+# Automated backup schedule
+backup_schedule = "0 2 * * *"  # Daily at 2 AM
+backup_compression = true
+
+[incident_response]
+# Incident response configuration
+enable_auto_response = true
+response_escalation_threshold = "HIGH"
+
+# Automated actions
+auto_block_suspicious_ips = true
+auto_disable_compromised_accounts = true
+auto_quarantine_malicious_files = true
+
+# Notification settings
+notify_security_team = true
+notify_admin_team = true
+escalate_to_oncall = true
+
+[threat_intelligence]
+# Threat intelligence integration
+enable_threat_feeds = true
+threat_feed_urls = [
+    "https://feeds.example.com/malicious-ips",
+    "https://feeds.example.com/malware-hashes"
+]
+
+# IP reputation checking
+check_ip_reputation = true
+block_known_malicious_ips = true
+reputation_cache_ttl = 3600  # seconds
+
+[development]
+# Development-specific settings (REMOVE in production)
+allow_insecure_connections = false
+disable_csrf_protection = false
+enable_debug_endpoints = false
+mock_external_services = false
+
+# Testing configuration
+enable_test_mode = false
+test_user_credentials = false
+
+[production]
+# Production-specific settings
+enforce_https = true
+require_strong_passwords = true
+enable_security_monitoring = true
+disable_debug_features = true
+
+# Performance optimizations
+enable_caching = true
+cache_ttl = 300  # seconds
+connection_pool_size = 20
+
+[notifications]
+# Notification channels
+email_enabled = true
+slack_enabled = false
+webhook_enabled = true
+sms_enabled = false
+
+# Notification thresholds
+critical_alert_immediate = true
+high_alert_within_minutes = 5
+medium_alert_within_hours = 1
+low_alert_daily_summary = true
+
+# Contact information
+security_team_email = "security@example.com"
+admin_team_email = "admin@example.com"
+oncall_phone = "+1-555-0123"
