@@ -4,7 +4,7 @@ use crate::models::ldap_config_model::{LdapConfig, LdapUser};
 use crate::providers::auth_provider::{AuthProvider, AuthenticationResult};
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;
-use crate::services::ldap_connection_pool::{LdapConnectionPool, AuthRateLimiter};
+use crate::services::ldap_connection_pool::{AuthRateLimiter, LdapConnectionPool};
 use crate::services::security_monitoring_service::SecurityMonitoringService;
 use async_trait::async_trait;
 use ldap3::{Ldap, LdapConnAsync, LdapConnSettings, Scope, SearchEntry};
@@ -38,11 +38,12 @@ impl LdapAuthService {
 
     async fn create_ldap_connection(&self) -> Result<Ldap> {
         let ldap_url = self.config.get_ldap_url();
-        
+
         let settings = LdapConnSettings::new()
             .set_conn_timeout(Duration::from_secs(self.config.connection_timeout));
 
-        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url).await
+        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
+            .await
             .map_err(|e| {
                 error!("Failed to connect to LDAP server {}: {}", ldap_url, e);
                 Error::LdapConnectionError(format!("Connection failed: {}", e))
@@ -52,9 +53,13 @@ impl LdapAuthService {
         ldap3::drive!(conn);
 
         // Bind with service account
-        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password).await
+        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password)
+            .await
             .map_err(|e| {
-                error!("Failed to bind to LDAP server with DN {}: {}", self.config.bind_dn, e);
+                error!(
+                    "Failed to bind to LDAP server with DN {}: {}",
+                    self.config.bind_dn, e
+                );
                 Error::LdapAuthenticationError(format!("Bind failed: {}", e))
             })?;
 
@@ -65,7 +70,9 @@ impl LdapAuthService {
     async fn search_user(&self, ldap: &mut Ldap, username: &str) -> Result<Option<LdapUser>> {
         // Validate and sanitize username input
         if username.is_empty() || username.len() > 256 {
-            return Err(Error::InvalidArgument("Invalid username format".to_string()));
+            return Err(Error::InvalidArgument(
+                "Invalid username format".to_string(),
+            ));
         }
 
         let search_filter = self.config.get_user_search_filter(username)?;
@@ -152,9 +159,13 @@ impl LdapAuthService {
         let settings = LdapConnSettings::new()
             .set_conn_timeout(Duration::from_secs(self.config.connection_timeout));
 
-        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url).await
+        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
+            .await
             .map_err(|e| {
-                error!("Failed to connect to LDAP server for user authentication: {}", e);
+                error!(
+                    "Failed to connect to LDAP server for user authentication: {}",
+                    e
+                );
                 Error::LdapConnectionError("Connection failed".to_string())
             })?;
 
@@ -182,11 +193,7 @@ impl LdapAuthService {
         Ok(auth_result)
     }
 
-    async fn sync_user_to_local_db(
-        &self,
-        ldap_user: &LdapUser,
-        db: &DB,
-    ) -> Result<AdminUserModel> {
+    async fn sync_user_to_local_db(&self, ldap_user: &LdapUser, db: &DB) -> Result<AdminUserModel> {
         // First, try to find existing user by email
         match self
             .admin_user_repository
@@ -233,22 +240,30 @@ impl AuthProvider for LdapAuthService {
         let start_time = Instant::now();
 
         if !self.config.enabled {
-            return Ok(AuthenticationResult::Failed("LDAP authentication is disabled".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "LDAP authentication is disabled".to_string(),
+            ));
         }
 
         // Input validation
         if username.is_empty() || password.is_empty() {
-            return Ok(AuthenticationResult::Failed("Username and password are required".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Username and password are required".to_string(),
+            ));
         }
 
         if username.len() > 256 || password.len() > 1024 {
-            return Ok(AuthenticationResult::Failed("Invalid credentials format".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Invalid credentials format".to_string(),
+            ));
         }
 
         // Rate limiting check
         if !self.rate_limiter.is_allowed(username).await {
             warn!("Rate limit exceeded for authentication attempt");
-            return Ok(AuthenticationResult::Failed("Too many authentication attempts. Please try again later.".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Too many authentication attempts. Please try again later.".to_string(),
+            ));
         }
 
         // Get connection from pool
@@ -256,7 +271,9 @@ impl AuthProvider for LdapAuthService {
             Ok(conn) => conn,
             Err(e) => {
                 error!("Failed to get LDAP connection from pool: {}", e);
-                return Ok(AuthenticationResult::Failed("Authentication service unavailable".to_string()));
+                return Ok(AuthenticationResult::Failed(
+                    "Authentication service unavailable".to_string(),
+                ));
             }
         };
 
@@ -273,10 +290,12 @@ impl AuthProvider for LdapAuthService {
                     tokio::time::sleep(min_duration - elapsed).await;
                 }
                 return Ok(AuthenticationResult::UserNotFound);
-            },
+            }
             Err(e) => {
                 error!("LDAP user search failed: {}", e);
-                return Ok(AuthenticationResult::Failed("Authentication failed".to_string()));
+                return Ok(AuthenticationResult::Failed(
+                    "Authentication failed".to_string(),
+                ));
             }
         };
 
@@ -285,12 +304,16 @@ impl AuthProvider for LdapAuthService {
             Ok(auth_result) => auth_result,
             Err(e) => {
                 error!("LDAP authentication error: {}", e);
-                return Ok(AuthenticationResult::Failed("Authentication failed".to_string()));
+                return Ok(AuthenticationResult::Failed(
+                    "Authentication failed".to_string(),
+                ));
             }
         };
 
         if !is_authenticated {
-            return Ok(AuthenticationResult::Failed("Invalid credentials".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Invalid credentials".to_string(),
+            ));
         }
 
         // Sync user to local database
@@ -298,7 +321,9 @@ impl AuthProvider for LdapAuthService {
             Ok(admin_user) => Ok(AuthenticationResult::Success(admin_user)),
             Err(e) => {
                 error!("Failed to sync LDAP user to local database: {}", e);
-                Ok(AuthenticationResult::Failed("User synchronization failed".to_string()))
+                Ok(AuthenticationResult::Failed(
+                    "User synchronization failed".to_string(),
+                ))
             }
         }
     }

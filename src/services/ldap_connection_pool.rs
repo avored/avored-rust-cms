@@ -36,12 +36,13 @@ impl LdapConnectionPool {
     /// Get a connection from the pool or create a new one
     pub async fn get_connection(&self) -> Result<PooledLdapConnection> {
         // Acquire semaphore permit to limit concurrent connections
-        let permit = self.semaphore.clone().acquire_owned().await
-            .map_err(|_| Error::LdapConnectionError("Failed to acquire connection permit".to_string()))?;
+        let permit = self.semaphore.clone().acquire_owned().await.map_err(|_| {
+            Error::LdapConnectionError("Failed to acquire connection permit".to_string())
+        })?;
 
         // Try to get a connection from the pool
         let mut pool = self.pool.lock().await;
-        
+
         // Clean up expired connections
         self.cleanup_expired_connections(&mut pool).await;
 
@@ -69,12 +70,13 @@ impl LdapConnectionPool {
 
     async fn create_new_connection(&self) -> Result<Ldap> {
         let ldap_url = self.config.get_ldap_url();
-        
+
         let settings = LdapConnSettings::new()
             .set_conn_timeout(Duration::from_secs(self.config.connection_timeout))
             .set_starttls(self.config.use_tls);
 
-        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url).await
+        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
+            .await
             .map_err(|e| {
                 error!("Failed to connect to LDAP server: {}", e);
                 Error::LdapConnectionError("Connection failed".to_string())
@@ -84,7 +86,8 @@ impl LdapConnectionPool {
         ldap3::drive!(conn);
 
         // Bind with service account
-        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password).await
+        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password)
+            .await
             .map_err(|e| {
                 error!("Failed to bind to LDAP server: {}", e);
                 Error::LdapAuthenticationError("Bind failed".to_string())
@@ -171,19 +174,21 @@ impl AuthRateLimiter {
     pub async fn is_allowed(&self, identifier: &str) -> bool {
         let mut attempts = self.attempts.lock().await;
         let now = Instant::now();
-        
+
         // Clean up old attempts
         let cutoff = now - self.window_duration;
-        
-        let user_attempts = attempts.entry(identifier.to_string()).or_insert_with(Vec::new);
+
+        let user_attempts = attempts
+            .entry(identifier.to_string())
+            .or_insert_with(Vec::new);
         user_attempts.retain(|&attempt_time| attempt_time > cutoff);
-        
+
         // Check if under limit
         if user_attempts.len() >= self.max_attempts {
             warn!("Rate limit exceeded for identifier: {}", identifier);
             return false;
         }
-        
+
         // Record this attempt
         user_attempts.push(now);
         true
@@ -194,7 +199,7 @@ impl AuthRateLimiter {
         let attempts = self.attempts.lock().await;
         let now = Instant::now();
         let cutoff = now - self.window_duration;
-        
+
         if let Some(user_attempts) = attempts.get(identifier) {
             let recent_attempts = user_attempts.iter().filter(|&&t| t > cutoff).count();
             self.max_attempts.saturating_sub(recent_attempts)

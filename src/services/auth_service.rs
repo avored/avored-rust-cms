@@ -176,12 +176,7 @@ impl AuthService {
         Ok(expire_token_status)
     }
 
-    pub(crate) async fn validate_token(
-        &self,
-        token: &str,
-        email: &str,
-        db: &DB,
-    ) -> Result<bool> {
+    pub(crate) async fn validate_token(&self, token: &str, email: &str, db: &DB) -> Result<bool> {
         match self
             .password_reset_repository
             .get_password_reset_by_email_and_token(&db.0, &db.1, email, token)
@@ -209,7 +204,8 @@ impl AuthService {
         match LdapConfig::from_env() {
             Ok(ldap_config) => {
                 if ldap_config.enabled {
-                    let ldap_auth_service = LdapAuthService::new(ldap_config, admin_user_repository.clone());
+                    let ldap_auth_service =
+                        LdapAuthService::new(ldap_config, admin_user_repository.clone());
                     multi_auth_service.add_provider(Arc::new(ldap_auth_service));
                 }
             }

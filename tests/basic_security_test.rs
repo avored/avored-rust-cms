@@ -26,11 +26,11 @@ mod basic_security_tests {
         let jndi_injection_pattern = Regex::new(r"\$\{jndi:").unwrap();
 
         for input in malicious_inputs {
-            let is_malicious = sql_injection_pattern.is_match(input) ||
-                             ldap_injection_pattern.is_match(input) ||
-                             path_traversal_pattern.is_match(input) ||
-                             null_byte_pattern.is_match(input) ||
-                             jndi_injection_pattern.is_match(input);
+            let is_malicious = sql_injection_pattern.is_match(input)
+                || ldap_injection_pattern.is_match(input)
+                || path_traversal_pattern.is_match(input)
+                || null_byte_pattern.is_match(input)
+                || jndi_injection_pattern.is_match(input);
 
             assert!(is_malicious, "Failed to detect malicious input: {}", input);
         }
@@ -49,13 +49,23 @@ mod basic_security_tests {
 
         // These patterns should be more restrictive for valid input
         let valid_username_pattern = Regex::new(r"^[a-zA-Z0-9_.-]+$").unwrap();
-        let valid_email_pattern = Regex::new(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").unwrap();
+        let valid_email_pattern =
+            Regex::new(r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$").unwrap();
 
-        for input in &valid_inputs[0..3] { // Test first 3 as usernames
+        for input in &valid_inputs[0..3] {
+            // Test first 3 as usernames
             if input.contains('@') {
-                assert!(valid_email_pattern.is_match(input), "Valid email rejected: {}", input);
+                assert!(
+                    valid_email_pattern.is_match(input),
+                    "Valid email rejected: {}",
+                    input
+                );
             } else {
-                assert!(valid_username_pattern.is_match(input), "Valid username rejected: {}", input);
+                assert!(
+                    valid_username_pattern.is_match(input),
+                    "Valid username rejected: {}",
+                    input
+                );
             }
         }
     }
@@ -77,16 +87,16 @@ mod basic_security_tests {
 
         for input in test_inputs {
             let start = Instant::now();
-            
+
             // Simulate validation work
             let _result = validate_input_simulation(input);
-            
+
             // Enforce minimum timing
             let elapsed = start.elapsed();
             if elapsed < min_duration {
                 std::thread::sleep(min_duration - elapsed);
             }
-            
+
             timings.push(start.elapsed());
         }
 
@@ -99,7 +109,7 @@ mod basic_security_tests {
         let min_time = timings.iter().min().unwrap();
         let max_time = timings.iter().max().unwrap();
         let variance = max_time.as_millis() - min_time.as_millis();
-        
+
         assert!(variance < 50, "Timing variance too high: {}ms", variance);
     }
 
@@ -107,15 +117,15 @@ mod basic_security_tests {
     fn validate_input_simulation(input: &str) -> Result<String, String> {
         // Simulate some processing time
         std::thread::sleep(Duration::from_millis(1));
-        
+
         if input.is_empty() {
             return Err("Input cannot be empty".to_string());
         }
-        
+
         if input.len() > 256 {
             return Err("Input too long".to_string());
         }
-        
+
         // Check for malicious patterns
         let malicious_patterns = vec![
             r"(?i)(drop|delete|insert|update|select|union|exec)",
@@ -126,7 +136,7 @@ mod basic_security_tests {
             r"<script",
             r"javascript:",
         ];
-        
+
         for pattern in malicious_patterns {
             if let Ok(regex) = Regex::new(pattern) {
                 if regex.is_match(input) {
@@ -134,7 +144,7 @@ mod basic_security_tests {
                 }
             }
         }
-        
+
         Ok(input.to_string())
     }
 
@@ -160,12 +170,18 @@ mod basic_security_tests {
             }
 
             fn is_allowed(&mut self, identifier: &str) -> bool {
-                let now = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
-                let attempts = self.attempts.entry(identifier.to_string()).or_insert_with(Vec::new);
-                
+                let now = SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs();
+                let attempts = self
+                    .attempts
+                    .entry(identifier.to_string())
+                    .or_insert_with(Vec::new);
+
                 // Remove old attempts
                 attempts.retain(|&timestamp| now - timestamp < self.window_seconds);
-                
+
                 if attempts.len() >= self.max_attempts {
                     false
                 } else {
@@ -180,11 +196,18 @@ mod basic_security_tests {
 
         // First 5 attempts should be allowed
         for i in 0..5 {
-            assert!(rate_limiter.is_allowed(identifier), "Attempt {} should be allowed", i + 1);
+            assert!(
+                rate_limiter.is_allowed(identifier),
+                "Attempt {} should be allowed",
+                i + 1
+            );
         }
 
         // 6th attempt should be blocked
-        assert!(!rate_limiter.is_allowed(identifier), "6th attempt should be blocked");
+        assert!(
+            !rate_limiter.is_allowed(identifier),
+            "6th attempt should be blocked"
+        );
     }
 
     /// Test security event logging simulation
@@ -206,16 +229,17 @@ mod basic_security_tests {
 
         impl SecurityLogger {
             fn new() -> Self {
-                Self {
-                    events: Vec::new(),
-                }
+                Self { events: Vec::new() }
             }
 
             fn log_event(&mut self, event_type: &str, message: &str, severity: &str) {
                 let event = SecurityEvent {
                     event_type: event_type.to_string(),
                     message: message.to_string(),
-                    timestamp: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
+                    timestamp: SystemTime::now()
+                        .duration_since(UNIX_EPOCH)
+                        .unwrap()
+                        .as_secs(),
                     severity: severity.to_string(),
                 };
                 self.events.push(event);
@@ -256,18 +280,32 @@ mod basic_security_tests {
 
         for (attack_type, payload) in malicious_inputs {
             let result = validate_input_simulation(payload);
-            
+
             if let Err(error_message) = result {
                 // Error messages should be generic and not reveal what was detected
                 let attack_type_lower = attack_type.to_lowercase();
                 let forbidden_terms = vec![
-                    "sql", "injection", "ldap", "script", "xss", "drop", "table",
-                    "objectclass", "jndi", "traversal", "path", attack_type_lower.as_str(),
+                    "sql",
+                    "injection",
+                    "ldap",
+                    "script",
+                    "xss",
+                    "drop",
+                    "table",
+                    "objectclass",
+                    "jndi",
+                    "traversal",
+                    "path",
+                    attack_type_lower.as_str(),
                 ];
 
                 for term in forbidden_terms {
-                    assert!(!error_message.to_lowercase().contains(&term.to_lowercase()),
-                        "Error message for {} leaks detection info: contains '{}'", attack_type, term);
+                    assert!(
+                        !error_message.to_lowercase().contains(&term.to_lowercase()),
+                        "Error message for {} leaks detection info: contains '{}'",
+                        attack_type,
+                        term
+                    );
                 }
 
                 // Error message should be one of the expected generic messages
@@ -276,8 +314,13 @@ mod basic_security_tests {
                     "Input cannot be empty",
                     "Input too long",
                 ];
-                assert!(allowed_messages.iter().any(|&allowed| error_message.contains(allowed)),
-                    "Error message is not generic enough: {}", error_message);
+                assert!(
+                    allowed_messages
+                        .iter()
+                        .any(|&allowed| error_message.contains(allowed)),
+                    "Error message is not generic enough: {}",
+                    error_message
+                );
             }
         }
     }

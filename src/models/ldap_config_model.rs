@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use std::env;
 use crate::error::{Error, Result};
 use crate::services::input_validation_service::InputValidationService;
+use serde::{Deserialize, Serialize};
+use std::env;
 use std::fmt;
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -84,8 +84,8 @@ impl LdapConfig {
         let user_search_filter = env::var("AVORED_LDAP_USER_SEARCH_FILTER")
             .unwrap_or_else(|_| "(uid={username})".to_string());
 
-        let user_attribute_email = env::var("AVORED_LDAP_USER_ATTRIBUTE_EMAIL")
-            .unwrap_or_else(|_| "mail".to_string());
+        let user_attribute_email =
+            env::var("AVORED_LDAP_USER_ATTRIBUTE_EMAIL").unwrap_or_else(|_| "mail".to_string());
 
         let user_attribute_name = env::var("AVORED_LDAP_USER_ATTRIBUTE_NAME")
             .unwrap_or_else(|_| "displayName".to_string());
@@ -119,19 +119,27 @@ impl LdapConfig {
 
     pub fn get_ldap_url(&self) -> String {
         if self.use_tls {
-            format!("ldaps://{}:{}", self.server.replace("ldap://", "").replace("ldaps://", ""), self.port)
+            format!(
+                "ldaps://{}:{}",
+                self.server.replace("ldap://", "").replace("ldaps://", ""),
+                self.port
+            )
         } else {
-            format!("ldap://{}:{}", self.server.replace("ldap://", "").replace("ldaps://", ""), self.port)
+            format!(
+                "ldap://{}:{}",
+                self.server.replace("ldap://", "").replace("ldaps://", ""),
+                self.port
+            )
         }
     }
 
     pub fn get_user_search_filter(&self, username: &str) -> Result<String> {
         // Validate and sanitize username to prevent LDAP injection
         let sanitized_username = InputValidationService::sanitize_ldap_value(username)?;
-        Ok(self.user_search_filter.replace("{username}", &sanitized_username))
+        Ok(self
+            .user_search_filter
+            .replace("{username}", &sanitized_username))
     }
-
-
 }
 
 // Secure Debug implementation that doesn't expose sensitive data

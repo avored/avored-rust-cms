@@ -36,7 +36,9 @@ impl AuthProvider for LocalAuthService {
         db: &DB,
     ) -> Result<AuthenticationResult> {
         if username.is_empty() || password.is_empty() {
-            return Ok(AuthenticationResult::Failed("Username and password are required".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Username and password are required".to_string(),
+            ));
         }
 
         // Find user by email (username is email in local auth)
@@ -57,13 +59,17 @@ impl AuthProvider for LocalAuthService {
             Ok(result) => result,
             Err(e) => {
                 error!("Password comparison failed for user {}: {}", username, e);
-                return Ok(AuthenticationResult::Failed("Authentication failed".to_string()));
+                return Ok(AuthenticationResult::Failed(
+                    "Authentication failed".to_string(),
+                ));
             }
         };
 
         if !is_password_match {
             info!("Invalid password for local user: {}", username);
-            return Ok(AuthenticationResult::Failed("Invalid credentials".to_string()));
+            return Ok(AuthenticationResult::Failed(
+                "Invalid credentials".to_string(),
+            ));
         }
 
         info!("Local user authenticated successfully: {}", username);

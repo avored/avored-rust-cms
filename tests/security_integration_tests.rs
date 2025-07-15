@@ -30,7 +30,7 @@ mod rate_limiting_security_tests {
     #[tokio::test]
     async fn test_rate_limiting_per_user_isolation() {
         let rate_limiter = AuthRateLimiter::new(2, Duration::from_secs(60));
-        
+
         // Exhaust rate limit for user1
         assert!(rate_limiter.is_allowed("user1").await);
         assert!(rate_limiter.is_allowed("user1").await);
@@ -91,7 +91,10 @@ mod security_audit_tests {
     #[tokio::test]
     async fn test_security_event_logging() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Log a failed authentication attempt
         let event = SecurityEvent::AuthenticationAttempt {
@@ -110,7 +113,9 @@ mod security_audit_tests {
         assert_eq!(recent_events.len(), 1);
 
         match &recent_events[0] {
-            SecurityEvent::AuthenticationAttempt { username, success, .. } => {
+            SecurityEvent::AuthenticationAttempt {
+                username, success, ..
+            } => {
                 assert_eq!(username, "test_user");
                 assert!(!success);
             }
@@ -121,7 +126,10 @@ mod security_audit_tests {
     #[tokio::test]
     async fn test_suspicious_activity_detection() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Simulate multiple failed authentication attempts (brute force pattern)
         for i in 0..12 {
@@ -138,17 +146,24 @@ mod security_audit_tests {
 
         // Check that suspicious activity was detected
         let recent_events = audit_service.get_recent_events(20).await;
-        let suspicious_events: Vec<_> = recent_events.iter()
+        let suspicious_events: Vec<_> = recent_events
+            .iter()
             .filter(|event| matches!(event, SecurityEvent::SuspiciousActivity { .. }))
             .collect();
 
-        assert!(!suspicious_events.is_empty(), "Should detect suspicious activity");
+        assert!(
+            !suspicious_events.is_empty(),
+            "Should detect suspicious activity"
+        );
     }
 
     #[tokio::test]
     async fn test_authentication_statistics() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Log various authentication attempts
         let events = vec![
@@ -183,8 +198,10 @@ mod security_audit_tests {
         }
 
         // Get authentication statistics
-        let stats = audit_service.get_auth_stats(Duration::from_secs(3600)).await;
-        
+        let stats = audit_service
+            .get_auth_stats(Duration::from_secs(3600))
+            .await;
+
         assert_eq!(stats.total_attempts, 3);
         assert_eq!(stats.successful_attempts, 2);
         assert_eq!(stats.failed_attempts, 1);
@@ -195,7 +212,10 @@ mod security_audit_tests {
     #[tokio::test]
     async fn test_security_metrics() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Log various security events
         let events = vec![
@@ -233,8 +253,10 @@ mod security_audit_tests {
         }
 
         // Get security metrics
-        let metrics = audit_service.get_security_metrics(Duration::from_secs(3600)).await;
-        
+        let metrics = audit_service
+            .get_security_metrics(Duration::from_secs(3600))
+            .await;
+
         assert_eq!(metrics.failed_auth_rate, 0.5); // 1 failed out of 2 total
         assert_eq!(metrics.rate_limited_requests, 1);
         assert_eq!(metrics.suspicious_activities, 1);
@@ -243,7 +265,10 @@ mod security_audit_tests {
     #[tokio::test]
     async fn test_event_retention_limit() {
         let audit_service = SecurityAuditService::new(5); // Small limit for testing
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Log more events than the retention limit
         for i in 0..10 {

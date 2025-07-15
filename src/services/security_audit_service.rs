@@ -64,24 +64,55 @@ impl SecurityAuditService {
 
         // Log the event
         match &event {
-            SecurityEvent::AuthenticationAttempt { username, provider, success, .. } => {
+            SecurityEvent::AuthenticationAttempt {
+                username,
+                provider,
+                success,
+                ..
+            } => {
                 if *success {
-                    info!("Authentication successful - User: {}, Provider: {}", username, provider);
+                    info!(
+                        "Authentication successful - User: {}, Provider: {}",
+                        username, provider
+                    );
                 } else {
-                    warn!("Authentication failed - User: {}, Provider: {}", username, provider);
+                    warn!(
+                        "Authentication failed - User: {}, Provider: {}",
+                        username, provider
+                    );
                 }
             }
             SecurityEvent::RateLimitExceeded { identifier, .. } => {
                 warn!("Rate limit exceeded for identifier: {}", identifier);
             }
-            SecurityEvent::SuspiciousActivity { event_type, details, .. } => {
-                error!("Suspicious activity detected - Type: {}, Details: {}", event_type, details);
+            SecurityEvent::SuspiciousActivity {
+                event_type,
+                details,
+                ..
+            } => {
+                error!(
+                    "Suspicious activity detected - Type: {}, Details: {}",
+                    event_type, details
+                );
             }
-            SecurityEvent::ConfigurationChange { component, change_type, user, .. } => {
-                info!("Configuration changed - Component: {}, Type: {}, User: {}", component, change_type, user);
+            SecurityEvent::ConfigurationChange {
+                component,
+                change_type,
+                user,
+                ..
+            } => {
+                info!(
+                    "Configuration changed - Component: {}, Type: {}, User: {}",
+                    component, change_type, user
+                );
             }
-            SecurityEvent::LdapConnectionFailure { server, error_type, .. } => {
-                error!("LDAP connection failure - Server: {}, Error: {}", server, error_type);
+            SecurityEvent::LdapConnectionFailure {
+                server, error_type, ..
+            } => {
+                error!(
+                    "LDAP connection failure - Server: {}, Error: {}",
+                    server, error_type
+                );
             }
         }
 
@@ -113,7 +144,13 @@ impl SecurityAuditService {
         let mut stats = AuthenticationStats::default();
 
         for event in events.iter() {
-            if let SecurityEvent::AuthenticationAttempt { provider, success, timestamp, .. } = event {
+            if let SecurityEvent::AuthenticationAttempt {
+                provider,
+                success,
+                timestamp,
+                ..
+            } = event
+            {
                 if *timestamp >= cutoff_time {
                     stats.total_attempts += 1;
                     if *success {
@@ -135,21 +172,33 @@ impl SecurityAuditService {
         let mut detector = self.suspicious_activity_detector.lock().await;
 
         match event {
-            SecurityEvent::AuthenticationAttempt { username, success, ip_address, timestamp, .. } => {
+            SecurityEvent::AuthenticationAttempt {
+                username,
+                success,
+                ip_address,
+                timestamp,
+                ..
+            } => {
                 if !success {
                     detector.record_failed_attempt(username.clone(), *ip_address, *timestamp);
-                    
+
                     // Check for brute force patterns
                     if detector.is_brute_force_attack(username, *timestamp) {
                         let _suspicious_event = SecurityEvent::SuspiciousActivity {
                             event_type: "brute_force_attack".to_string(),
-                            details: format!("Multiple failed authentication attempts for user: {}", username),
+                            details: format!(
+                                "Multiple failed authentication attempts for user: {}",
+                                username
+                            ),
                             ip_address: *ip_address,
                             timestamp: *timestamp,
                         };
-                        
+
                         // Log the suspicious activity (avoid infinite recursion by not calling log_event)
-                        error!("SECURITY ALERT: Brute force attack detected for user: {}", username);
+                        error!(
+                            "SECURITY ALERT: Brute force attack detected for user: {}",
+                            username
+                        );
                     }
                 }
             }
@@ -180,11 +229,19 @@ impl SuspiciousActivityDetector {
         }
     }
 
-    fn record_failed_attempt(&mut self, username: String, ip_address: Option<IpAddr>, timestamp: u64) {
+    fn record_failed_attempt(
+        &mut self,
+        username: String,
+        ip_address: Option<IpAddr>,
+        timestamp: u64,
+    ) {
         // Record by username
-        let user_attempts = self.failed_attempts.entry(username).or_insert_with(Vec::new);
+        let user_attempts = self
+            .failed_attempts
+            .entry(username)
+            .or_insert_with(Vec::new);
         user_attempts.push(timestamp);
-        
+
         // Keep only recent attempts (last hour)
         let cutoff = timestamp.saturating_sub(3600);
         user_attempts.retain(|&t| t >= cutoff);
@@ -235,7 +292,9 @@ impl SecurityAuditService {
 
         for event in events.iter() {
             match event {
-                SecurityEvent::AuthenticationAttempt { success, timestamp, .. } => {
+                SecurityEvent::AuthenticationAttempt {
+                    success, timestamp, ..
+                } => {
                     if *timestamp >= cutoff_time {
                         total_auth += 1;
                         if !success {

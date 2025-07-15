@@ -1,6 +1,6 @@
 use avored_rust_cms::error::Error;
-use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::models::ldap_config_model::LdapConfig;
+use avored_rust_cms::services::input_validation_service::InputValidationService;
 use proptest::prelude::*;
 use std::collections::HashMap;
 
@@ -52,10 +52,10 @@ mod property_based_security_tests {
         ) {
             // Property: No malicious input should ever pass username validation
             let result = InputValidationService::validate_username(&malicious_input);
-            
+
             // All malicious inputs should be rejected
             prop_assert!(result.is_err(), "Malicious input was accepted: {}", malicious_input);
-            
+
             // Error messages should not leak information about what was detected
             if let Err(Error::InvalidArgument(msg)) = result {
                 prop_assert!(!msg.contains("injection"), "Error message leaks detection info: {}", msg);
@@ -82,7 +82,7 @@ mod property_based_security_tests {
         ) {
             let malicious_email = format!("{}{}", base_email, injection);
             let result = InputValidationService::validate_email(&malicious_email);
-            
+
             // All injection attempts should be rejected
             prop_assert!(result.is_err(), "Malicious email was accepted: {}", malicious_email);
         }
@@ -94,7 +94,7 @@ mod property_based_security_tests {
             password in ".*{0,2000}"
         ) {
             let result = InputValidationService::validate_password(&password);
-            
+
             // Password validation should never panic or crash
             // It should either accept or reject, but never fail unexpectedly
             match result {
@@ -130,7 +130,7 @@ mod property_based_security_tests {
         ) {
             let malicious_filter = format!("{}{}", base_filter, injection);
             let result = InputValidationService::validate_ldap_filter(&malicious_filter);
-            
+
             // All filter injection attempts should be rejected
             prop_assert!(result.is_err(), "Malicious LDAP filter was accepted: {}", malicious_filter);
         }
@@ -151,7 +151,7 @@ mod property_based_security_tests {
         ) {
             let malicious_dn = format!("{}{}", base_dn, injection);
             let result = InputValidationService::validate_dn(&malicious_dn);
-            
+
             // All DN injection attempts should be rejected
             prop_assert!(result.is_err(), "Malicious DN was accepted: {}", malicious_dn);
         }
@@ -174,7 +174,7 @@ mod property_based_security_tests {
         ) {
             let malicious_url = format!("{}{}{}", protocol, host, injection);
             let result = InputValidationService::validate_server_url(&malicious_url);
-            
+
             // Only valid LDAP URLs should be accepted
             if result.is_ok() {
                 prop_assert!(malicious_url.starts_with("ldap://") || malicious_url.starts_with("ldaps://"),
@@ -204,25 +204,31 @@ mod property_based_security_tests {
         for input in test_inputs {
             // Username validation must always be called and must always return a result
             let username_result = InputValidationService::validate_username(input);
-            assert!(username_result.is_ok() || username_result.is_err(), 
-                "Username validation must always return a result");
+            assert!(
+                username_result.is_ok() || username_result.is_err(),
+                "Username validation must always return a result"
+            );
 
             // Email validation must always be called and must always return a result
             let email_result = InputValidationService::validate_email(input);
-            assert!(email_result.is_ok() || email_result.is_err(), 
-                "Email validation must always return a result");
+            assert!(
+                email_result.is_ok() || email_result.is_err(),
+                "Email validation must always return a result"
+            );
 
             // Password validation must always be called and must always return a result
             let password_result = InputValidationService::validate_password(input);
-            assert!(password_result.is_ok() || password_result.is_err(), 
-                "Password validation must always return a result");
+            assert!(
+                password_result.is_ok() || password_result.is_err(),
+                "Password validation must always return a result"
+            );
         }
     }
 
     #[test]
     fn test_timing_consistency_invariant() {
         use std::time::{Duration, Instant};
-        
+
         // Security Invariant 2: Response times must be consistent to prevent timing attacks
         let test_cases = vec![
             ("valid_user", "valid_pass"),
@@ -235,27 +241,33 @@ mod property_based_security_tests {
 
         for (username, password) in test_cases {
             let start = Instant::now();
-            
+
             // Simulate the validation that happens in authentication
             let _username_result = InputValidationService::validate_username(username);
             let _password_result = InputValidationService::validate_password(password);
-            
+
             // Simulate minimum response time (like in actual implementation)
             let min_duration = Duration::from_millis(100);
             let elapsed = start.elapsed();
             if elapsed < min_duration {
                 std::thread::sleep(min_duration - elapsed);
             }
-            
+
             timings.push(start.elapsed());
         }
 
         // All timings should be close to the minimum duration
         for timing in &timings {
-            assert!(timing >= &Duration::from_millis(100), 
-                "Response time too fast: {:?}", timing);
-            assert!(timing <= &Duration::from_millis(150), 
-                "Response time too slow: {:?}", timing);
+            assert!(
+                timing >= &Duration::from_millis(100),
+                "Response time too fast: {:?}",
+                timing
+            );
+            assert!(
+                timing <= &Duration::from_millis(150),
+                "Response time too slow: {:?}",
+                timing
+            );
         }
     }
 
@@ -272,19 +284,55 @@ mod property_based_security_tests {
 
         for input in malicious_inputs {
             let result = InputValidationService::validate_username(input);
-            
+
             if let Err(Error::InvalidArgument(msg)) = result {
                 // Error messages must be generic and not reveal what was detected
-                assert!(!msg.contains("SQL"), "Error message leaks SQL detection: {}", msg);
-                assert!(!msg.contains("injection"), "Error message leaks injection detection: {}", msg);
-                assert!(!msg.contains("LDAP"), "Error message leaks LDAP detection: {}", msg);
-                assert!(!msg.contains("script"), "Error message leaks script detection: {}", msg);
-                assert!(!msg.contains("XSS"), "Error message leaks XSS detection: {}", msg);
-                assert!(!msg.contains("DROP"), "Error message leaks SQL command: {}", msg);
-                assert!(!msg.contains("TABLE"), "Error message leaks SQL keyword: {}", msg);
-                assert!(!msg.contains("objectClass"), "Error message leaks LDAP attribute: {}", msg);
-                assert!(!msg.contains("jndi"), "Error message leaks JNDI detection: {}", msg);
-                
+                assert!(
+                    !msg.contains("SQL"),
+                    "Error message leaks SQL detection: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("injection"),
+                    "Error message leaks injection detection: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("LDAP"),
+                    "Error message leaks LDAP detection: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("script"),
+                    "Error message leaks script detection: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("XSS"),
+                    "Error message leaks XSS detection: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("DROP"),
+                    "Error message leaks SQL command: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("TABLE"),
+                    "Error message leaks SQL keyword: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("objectClass"),
+                    "Error message leaks LDAP attribute: {}",
+                    msg
+                );
+                assert!(
+                    !msg.contains("jndi"),
+                    "Error message leaks JNDI detection: {}",
+                    msg
+                );
+
                 // Error messages should be one of the expected generic messages
                 let allowed_messages = vec![
                     "Username format is invalid",
@@ -292,8 +340,13 @@ mod property_based_security_tests {
                     "Username too long",
                     "Username cannot be empty",
                 ];
-                assert!(allowed_messages.iter().any(|&allowed| msg.contains(allowed)),
-                    "Error message is not generic enough: {}", msg);
+                assert!(
+                    allowed_messages
+                        .iter()
+                        .any(|&allowed| msg.contains(allowed)),
+                    "Error message is not generic enough: {}",
+                    msg
+                );
             }
         }
     }
@@ -329,7 +382,7 @@ mod fuzzing_security_tests {
 
         for data in fuzz_data {
             let mut unstructured = Unstructured::new(&data);
-            
+
             if let Ok(fuzz_input) = FuzzInput::arbitrary(&mut unstructured) {
                 // All validation functions must handle arbitrary input without panicking
                 let _ = InputValidationService::validate_username(&fuzz_input.username);

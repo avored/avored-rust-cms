@@ -1,6 +1,6 @@
 use avored_rust_cms::error::Error;
-use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::models::ldap_config_model::LdapConfig;
+use avored_rust_cms::services::input_validation_service::InputValidationService;
 
 #[cfg(test)]
 mod input_validation_security_tests {
@@ -52,7 +52,11 @@ mod input_validation_security_tests {
 
         for payload in sql_injection_payloads {
             let result = InputValidationService::validate_username(payload);
-            assert!(result.is_err(), "SQL injection payload should be rejected: {}", payload);
+            assert!(
+                result.is_err(),
+                "SQL injection payload should be rejected: {}",
+                payload
+            );
         }
     }
 
@@ -68,22 +72,25 @@ mod input_validation_security_tests {
 
         for payload in xss_payloads {
             let result = InputValidationService::validate_username(payload);
-            assert!(result.is_err(), "XSS payload should be rejected: {}", payload);
+            assert!(
+                result.is_err(),
+                "XSS payload should be rejected: {}",
+                payload
+            );
         }
     }
 
     #[test]
     fn test_null_byte_injection_prevention() {
-        let null_byte_payloads = vec![
-            "admin\0",
-            "admin\0.txt",
-            "admin\x00",
-            "admin\u{0000}",
-        ];
+        let null_byte_payloads = vec!["admin\0", "admin\0.txt", "admin\x00", "admin\u{0000}"];
 
         for payload in null_byte_payloads {
             let result = InputValidationService::validate_username(payload);
-            assert!(result.is_err(), "Null byte injection should be rejected: {:?}", payload);
+            assert!(
+                result.is_err(),
+                "Null byte injection should be rejected: {:?}",
+                payload
+            );
         }
     }
 
@@ -91,12 +98,18 @@ mod input_validation_security_tests {
     fn test_control_character_prevention() {
         // Test various control characters
         for i in 0..32u8 {
-            if i == 9 || i == 10 || i == 13 { continue; } // Skip tab, LF, CR for some contexts
+            if i == 9 || i == 10 || i == 13 {
+                continue;
+            } // Skip tab, LF, CR for some contexts
             let control_char = char::from(i);
             let payload = format!("admin{}", control_char);
-            
+
             let result = InputValidationService::validate_username(&payload);
-            assert!(result.is_err(), "Control character should be rejected: {:?}", control_char);
+            assert!(
+                result.is_err(),
+                "Control character should be rejected: {:?}",
+                control_char
+            );
         }
     }
 
@@ -183,7 +196,7 @@ mod ldap_config_security_tests {
         };
 
         let debug_output = format!("{:?}", config);
-        
+
         // Verify sensitive data is redacted
         assert!(!debug_output.contains("secret-server.com"));
         assert!(!debug_output.contains("super-secret-password"));
@@ -208,7 +221,7 @@ mod ldap_config_security_tests {
         // Test invalid DN format
         env::set_var("AVORED_LDAP_SERVER", "ldap://example.com");
         env::set_var("AVORED_LDAP_BASE_DN", "invalid-dn-format");
-        
+
         let result = LdapConfig::from_env();
         assert!(result.is_err(), "Invalid DN format should be rejected");
 
@@ -225,11 +238,11 @@ mod ldap_config_security_tests {
     #[test]
     fn test_ldap_filter_sanitization() {
         let config = LdapConfig::default();
-        
+
         // Test with malicious username
         let malicious_username = "admin)(|(objectClass=*)";
         let result = config.get_user_search_filter(malicious_username);
-        
+
         match result {
             Ok(filter) => {
                 // Verify that the filter doesn't contain unescaped special characters
@@ -251,7 +264,7 @@ mod error_handling_security_tests {
     fn test_error_messages_dont_leak_information() {
         // Test that error messages don't reveal system internals
         let result = InputValidationService::validate_username("admin'; DROP TABLE users; --");
-        
+
         match result {
             Err(Error::InvalidArgument(msg)) => {
                 // Error message should be generic, not revealing what was detected
@@ -266,9 +279,10 @@ mod error_handling_security_tests {
 
     #[test]
     fn test_log_message_sanitization() {
-        let malicious_input = "admin\n[FAKE LOG ENTRY] Authentication successful for admin\nReal log: ";
+        let malicious_input =
+            "admin\n[FAKE LOG ENTRY] Authentication successful for admin\nReal log: ";
         let sanitized = InputValidationService::sanitize_log_message(malicious_input);
-        
+
         // Verify that newlines and carriage returns are removed
         assert!(!sanitized.contains('\n'));
         assert!(!sanitized.contains('\r'));

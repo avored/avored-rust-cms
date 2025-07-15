@@ -2,8 +2,8 @@ use avored_rust_cms::error::Error;
 use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::services::ldap_connection_pool::AuthRateLimiter;
 use avored_rust_cms::services::security_audit_service::{SecurityAuditService, SecurityEvent};
-use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 use std::net::IpAddr;
+use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 /// Security regression tests to ensure that future code changes cannot break security measures
 /// These tests are designed to fail if security features are removed or weakened
@@ -31,7 +31,7 @@ mod security_regression_prevention {
 
         for injection in critical_injections {
             let result = InputValidationService::validate_username(injection);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: LDAP injection '{}' was not blocked! This indicates the LDAP injection prevention has been disabled or weakened.", 
                 injection);
         }
@@ -52,7 +52,7 @@ mod security_regression_prevention {
 
         for injection in sql_injections {
             let result = InputValidationService::validate_username(injection);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: SQL injection '{}' was not blocked! This indicates SQL injection prevention has been disabled or weakened.", 
                 injection);
         }
@@ -73,7 +73,7 @@ mod security_regression_prevention {
 
         for payload in xss_payloads {
             let result = InputValidationService::validate_username(payload);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: XSS payload '{}' was not blocked! This indicates XSS prevention has been disabled or weakened.", 
                 payload);
         }
@@ -93,7 +93,7 @@ mod security_regression_prevention {
 
         for traversal in path_traversals {
             let result = InputValidationService::validate_username(traversal);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: Path traversal '{}' was not blocked! This indicates path traversal prevention has been disabled or weakened.", 
                 traversal);
         }
@@ -115,7 +115,7 @@ mod security_regression_prevention {
 
         for injection in command_injections {
             let result = InputValidationService::validate_username(injection);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: Command injection '{}' was not blocked! This indicates command injection prevention has been disabled or weakened.", 
                 injection);
         }
@@ -134,7 +134,7 @@ mod security_regression_prevention {
 
         for injection in jndi_injections {
             let result = InputValidationService::validate_username(injection);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: JNDI injection '{}' was not blocked! This indicates JNDI injection prevention has been disabled or weakened.", 
                 injection);
         }
@@ -153,7 +153,7 @@ mod security_regression_prevention {
 
         for injection in null_byte_injections {
             let result = InputValidationService::validate_username(injection);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: Null byte injection '{}' was not blocked! This indicates null byte injection prevention has been disabled or weakened.", 
                 injection);
         }
@@ -168,12 +168,16 @@ mod security_regression_prevention {
         // Make 5 attempts (should be allowed)
         for i in 0..5 {
             let allowed = rate_limiter.is_allowed(&identifier).await;
-            assert!(allowed, "Rate limiter rejected attempt {} when it should allow 5 attempts", i + 1);
+            assert!(
+                allowed,
+                "Rate limiter rejected attempt {} when it should allow 5 attempts",
+                i + 1
+            );
         }
 
         // 6th attempt should be blocked
         let blocked = rate_limiter.is_allowed(&identifier).await;
-        assert!(!blocked, 
+        assert!(!blocked,
             "SECURITY REGRESSION: Rate limiting is not working! The 6th attempt was allowed when it should be blocked. This indicates rate limiting has been disabled or weakened.");
     }
 
@@ -191,24 +195,24 @@ mod security_regression_prevention {
 
         for (username, password) in test_cases {
             let start = Instant::now();
-            
+
             // Simulate the validation process
             let _username_result = InputValidationService::validate_username(username);
             let _password_result = InputValidationService::validate_password(password);
-            
+
             // The actual implementation should enforce minimum timing
             let min_duration = Duration::from_millis(100);
             let elapsed = start.elapsed();
             if elapsed < min_duration {
                 tokio::time::sleep(min_duration - elapsed).await;
             }
-            
+
             timings.push(start.elapsed());
         }
 
         // All responses must take at least 100ms to prevent timing attacks
         for (i, timing) in timings.iter().enumerate() {
-            assert!(timing >= &Duration::from_millis(100), 
+            assert!(timing >= &Duration::from_millis(100),
                 "SECURITY REGRESSION: Response {} was too fast ({:?}). This indicates timing attack prevention has been disabled or weakened.", 
                 i, timing);
         }
@@ -217,8 +221,8 @@ mod security_regression_prevention {
         let min_time = timings.iter().min().unwrap();
         let max_time = timings.iter().max().unwrap();
         let variance = max_time.as_millis() - min_time.as_millis();
-        
-        assert!(variance < 100, 
+
+        assert!(variance < 100,
             "SECURITY REGRESSION: Timing variance is too high ({}ms). This could allow timing attacks and indicates timing consistency has been weakened.", 
             variance);
     }
@@ -227,7 +231,10 @@ mod security_regression_prevention {
     #[tokio::test]
     async fn test_security_audit_logging_cannot_be_disabled() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Log a security event
         let event = SecurityEvent::AuthenticationAttempt {
@@ -243,7 +250,7 @@ mod security_regression_prevention {
 
         // Verify the event was logged
         let events = audit_service.get_recent_events(10).await;
-        assert!(!events.is_empty(), 
+        assert!(!events.is_empty(),
             "SECURITY REGRESSION: Security audit logging is not working! Events are not being logged. This indicates security audit logging has been disabled.");
 
         // Verify the event contains expected data
@@ -261,7 +268,10 @@ mod security_regression_prevention {
     #[tokio::test]
     async fn test_suspicious_activity_detection_cannot_be_disabled() {
         let audit_service = SecurityAuditService::new(100);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Simulate brute force attack (10+ failed attempts)
         for i in 0..12 {
@@ -278,11 +288,12 @@ mod security_regression_prevention {
 
         // Check if suspicious activity was detected
         let events = audit_service.get_recent_events(50).await;
-        let suspicious_events: Vec<_> = events.iter().filter(|event| {
-            matches!(event, SecurityEvent::SuspiciousActivity { .. })
-        }).collect();
+        let suspicious_events: Vec<_> = events
+            .iter()
+            .filter(|event| matches!(event, SecurityEvent::SuspiciousActivity { .. }))
+            .collect();
 
-        assert!(!suspicious_events.is_empty(), 
+        assert!(!suspicious_events.is_empty(),
             "SECURITY REGRESSION: Suspicious activity detection is not working! Brute force attack was not detected. This indicates suspicious activity detection has been disabled.");
     }
 
@@ -292,19 +303,19 @@ mod security_regression_prevention {
         // Test username length limit (256 characters)
         let long_username = "a".repeat(257);
         let result = InputValidationService::validate_username(&long_username);
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Username length limit was bypassed! This indicates input length validation has been disabled or weakened.");
 
         // Test password length limit (1024 characters)
         let long_password = "a".repeat(1025);
         let result = InputValidationService::validate_password(&long_password);
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Password length limit was bypassed! This indicates input length validation has been disabled or weakened.");
 
         // Test email length limit (320 characters)
         let long_email = format!("{}@example.com", "a".repeat(310));
         let result = InputValidationService::validate_email(&long_email);
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Email length limit was bypassed! This indicates input length validation has been disabled or weakened.");
     }
 
@@ -313,17 +324,17 @@ mod security_regression_prevention {
     fn test_empty_input_validation_cannot_be_bypassed() {
         // Empty username should be rejected
         let result = InputValidationService::validate_username("");
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Empty username was accepted! This indicates empty input validation has been disabled or weakened.");
 
         // Empty password should be rejected
         let result = InputValidationService::validate_password("");
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Empty password was accepted! This indicates empty input validation has been disabled or weakened.");
 
         // Empty email should be rejected
         let result = InputValidationService::validate_email("");
-        assert!(result.is_err(), 
+        assert!(result.is_err(),
             "SECURITY REGRESSION: Empty email was accepted! This indicates empty input validation has been disabled or weakened.");
     }
 
@@ -364,7 +375,7 @@ mod security_regression_prevention {
 
         for control_char_input in control_chars {
             let result = InputValidationService::validate_username(control_char_input);
-            assert!(result.is_err(), 
+            assert!(result.is_err(),
                 "SECURITY REGRESSION: Control character input '{}' was accepted! This indicates control character filtering has been disabled or weakened.", 
                 control_char_input.escape_debug());
         }

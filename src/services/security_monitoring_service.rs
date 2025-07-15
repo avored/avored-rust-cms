@@ -87,23 +87,28 @@ impl SecurityMonitoringService {
     pub async fn record_authentication_attempt(&self, success: bool, provider: &str) {
         let mut metrics = self.metrics.lock().await;
         metrics.total_authentication_attempts += 1;
-        
+
         if !success {
             metrics.failed_authentication_attempts += 1;
-            
+
             // Alert if failure rate is too high
-            let failure_rate = metrics.failed_authentication_attempts as f64 / metrics.total_authentication_attempts as f64;
+            let failure_rate = metrics.failed_authentication_attempts as f64
+                / metrics.total_authentication_attempts as f64;
             if failure_rate > 0.5 && metrics.total_authentication_attempts > 10 {
                 self.create_alert(
                     SecurityAlertType::SuspiciousActivity,
                     AlertSeverity::High,
-                    format!("High authentication failure rate: {:.2}%", failure_rate * 100.0),
+                    format!(
+                        "High authentication failure rate: {:.2}%",
+                        failure_rate * 100.0
+                    ),
                     "authentication_monitor",
                     HashMap::from([("provider".to_string(), provider.to_string())]),
-                ).await;
+                )
+                .await;
             }
         }
-        
+
         metrics.update_timestamp();
         self.update_security_health_score().await;
     }
@@ -113,7 +118,7 @@ impl SecurityMonitoringService {
         let mut metrics = self.metrics.lock().await;
         metrics.blocked_injection_attempts += 1;
         metrics.security_violations += 1;
-        
+
         self.create_alert(
             SecurityAlertType::InjectionAttempt,
             AlertSeverity::High,
@@ -123,8 +128,9 @@ impl SecurityMonitoringService {
                 ("injection_type".to_string(), injection_type.to_string()),
                 ("payload_length".to_string(), payload.len().to_string()),
             ]),
-        ).await;
-        
+        )
+        .await;
+
         metrics.update_timestamp();
         self.update_security_health_score().await;
     }
@@ -133,15 +139,16 @@ impl SecurityMonitoringService {
     pub async fn record_rate_limit_exceeded(&self, identifier: &str) {
         let mut metrics = self.metrics.lock().await;
         metrics.rate_limited_requests += 1;
-        
+
         self.create_alert(
             SecurityAlertType::RateLimitExceeded,
             AlertSeverity::Medium,
             format!("Rate limit exceeded for identifier: {}", identifier),
             "rate_limiter",
             HashMap::from([("identifier".to_string(), identifier.to_string())]),
-        ).await;
-        
+        )
+        .await;
+
         metrics.update_timestamp();
     }
 
@@ -150,7 +157,7 @@ impl SecurityMonitoringService {
         let mut metrics = self.metrics.lock().await;
         metrics.suspicious_activities_detected += 1;
         metrics.security_violations += 1;
-        
+
         self.create_alert(
             SecurityAlertType::SuspiciousActivity,
             AlertSeverity::High,
@@ -160,8 +167,9 @@ impl SecurityMonitoringService {
                 ("activity_type".to_string(), activity_type.to_string()),
                 ("details".to_string(), details.to_string()),
             ]),
-        ).await;
-        
+        )
+        .await;
+
         metrics.update_timestamp();
         self.update_security_health_score().await;
     }
@@ -179,7 +187,10 @@ impl SecurityMonitoringService {
             alert_type,
             severity: severity.clone(),
             message: message.clone(),
-            timestamp: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
+            timestamp: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
             source: source.to_string(),
             metadata,
         };
@@ -226,8 +237,15 @@ impl SecurityMonitoringService {
 
             let health_result = HealthCheckResult {
                 check_name: check_name.to_string(),
-                status: if result.is_ok() { HealthStatus::Healthy } else { HealthStatus::Critical },
-                last_check: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
+                status: if result.is_ok() {
+                    HealthStatus::Healthy
+                } else {
+                    HealthStatus::Critical
+                },
+                last_check: SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .unwrap()
+                    .as_secs(),
                 error_message: result.err().map(|e| format!("{:?}", e)),
                 check_duration_ms: duration.as_millis() as u64,
             };
@@ -239,7 +257,8 @@ impl SecurityMonitoringService {
                     format!("Security health check failed: {}", check_name),
                     "health_monitor",
                     HashMap::from([("check_name".to_string(), check_name.to_string())]),
-                ).await;
+                )
+                .await;
             }
 
             let mut health_checks = self.health_checks.lock().await;
@@ -264,9 +283,10 @@ impl SecurityMonitoringService {
         for injection in test_injections {
             let result = InputValidationService::validate_username(injection);
             if result.is_ok() {
-                return Err(crate::error::Error::Generic(
-                    format!("Input validation failed to block injection: {}", injection)
-                ));
+                return Err(crate::error::Error::Generic(format!(
+                    "Input validation failed to block injection: {}",
+                    injection
+                )));
             }
         }
 
@@ -289,7 +309,7 @@ impl SecurityMonitoringService {
         let should_be_blocked = rate_limiter.is_allowed(&test_identifier).await;
         if should_be_blocked {
             return Err(crate::error::Error::Generic(
-                "Rate limiting is not working properly".to_string()
+                "Rate limiting is not working properly".to_string(),
             ));
         }
 
@@ -301,7 +321,10 @@ impl SecurityMonitoringService {
         use crate::services::security_audit_service::{SecurityAuditService, SecurityEvent};
 
         let audit_service = SecurityAuditService::new(10);
-        let timestamp = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
 
         // Test that audit logging is working
         let test_event = SecurityEvent::AuthenticationAttempt {
@@ -318,7 +341,7 @@ impl SecurityMonitoringService {
 
         if events.is_empty() {
             return Err(crate::error::Error::Generic(
-                "Audit logging is not working properly".to_string()
+                "Audit logging is not working properly".to_string(),
             ));
         }
 
@@ -331,19 +354,19 @@ impl SecurityMonitoringService {
 
         // Test that timing protection is working
         let start = Instant::now();
-        
+
         // Simulate validation that should take at least 100ms
         let min_duration = Duration::from_millis(100);
         let elapsed = start.elapsed();
         if elapsed < min_duration {
             tokio::time::sleep(min_duration - elapsed).await;
         }
-        
+
         let total_duration = start.elapsed();
-        
+
         if total_duration < Duration::from_millis(100) {
             return Err(crate::error::Error::Generic(
-                "Timing protection is not working properly".to_string()
+                "Timing protection is not working properly".to_string(),
             ));
         }
 
@@ -366,9 +389,10 @@ impl SecurityMonitoringService {
         for (injection_type, pattern) in critical_patterns {
             let result = InputValidationService::validate_username(pattern);
             if result.is_ok() {
-                return Err(crate::error::Error::Generic(
-                    format!("{} injection prevention is not working: {}", injection_type, pattern)
-                ));
+                return Err(crate::error::Error::Generic(format!(
+                    "{} injection prevention is not working: {}",
+                    injection_type, pattern
+                )));
             }
         }
 
@@ -378,30 +402,32 @@ impl SecurityMonitoringService {
     /// Update security health score based on current metrics
     async fn update_security_health_score(&self) {
         let mut metrics = self.metrics.lock().await;
-        
+
         let mut score = 100.0;
-        
+
         // Deduct points for security violations
         if metrics.total_authentication_attempts > 0 {
-            let failure_rate = metrics.failed_authentication_attempts as f64 / metrics.total_authentication_attempts as f64;
+            let failure_rate = metrics.failed_authentication_attempts as f64
+                / metrics.total_authentication_attempts as f64;
             score -= failure_rate * 30.0; // Max 30 points deduction for high failure rate
         }
-        
+
         // Deduct points for injection attempts
         if metrics.blocked_injection_attempts > 0 {
             score -= (metrics.blocked_injection_attempts as f64).min(20.0); // Max 20 points deduction
         }
-        
+
         // Deduct points for suspicious activities
         if metrics.suspicious_activities_detected > 0 {
-            score -= (metrics.suspicious_activities_detected as f64 * 5.0).min(25.0); // Max 25 points deduction
+            score -= (metrics.suspicious_activities_detected as f64 * 5.0).min(25.0);
+            // Max 25 points deduction
         }
-        
+
         // Ensure score is between 0 and 100
         score = score.max(0.0).min(100.0);
-        
+
         metrics.security_health_score = score;
-        
+
         // Alert if health score is too low
         if score < 70.0 {
             drop(metrics); // Release the lock before creating alert
@@ -411,7 +437,8 @@ impl SecurityMonitoringService {
                 format!("Security health score is critically low: {:.1}", score),
                 "health_monitor",
                 HashMap::from([("score".to_string(), score.to_string())]),
-            ).await;
+            )
+            .await;
         }
     }
 
@@ -441,14 +468,20 @@ impl SecurityMetrics {
             rate_limited_requests: 0,
             suspicious_activities_detected: 0,
             security_violations: 0,
-            last_updated: SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs(),
+            last_updated: SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .unwrap()
+                .as_secs(),
             uptime_seconds: 0,
             security_health_score: 100.0,
         }
     }
 
     fn update_timestamp(&mut self) {
-        self.last_updated = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_secs();
+        self.last_updated = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
     }
 }
 

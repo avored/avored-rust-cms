@@ -1,6 +1,6 @@
-use std::time::{Duration, Instant};
-use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::models::ldap_config_model::LdapConfig;
+use avored_rust_cms::services::input_validation_service::InputValidationService;
+use std::time::{Duration, Instant};
 
 #[cfg(test)]
 mod timing_attack_prevention_tests {
@@ -12,11 +12,11 @@ mod timing_attack_prevention_tests {
         let test_cases = vec![
             ("valid_user", true),
             ("", false),
-            (long_username.as_str(), false), // Too long
+            (long_username.as_str(), false),         // Too long
             ("admin'; DROP TABLE users; --", false), // SQL injection
-            ("admin)(|(objectClass=*)", false), // LDAP injection
-            ("user\0null", false), // Null byte
-            ("user\x01control", false), // Control character
+            ("admin)(|(objectClass=*)", false),      // LDAP injection
+            ("user\0null", false),                   // Null byte
+            ("user\x01control", false),              // Control character
         ];
 
         let mut timings = Vec::new();
@@ -35,7 +35,7 @@ mod timing_attack_prevention_tests {
 
         // Timing variance should be minimal (less than 50% difference)
         let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
-        
+
         println!("Timing analysis:");
         println!("  Min: {:?}", min_time);
         println!("  Max: {:?}", max_time);
@@ -44,13 +44,17 @@ mod timing_attack_prevention_tests {
 
         // In a real implementation, we might want stricter timing consistency
         // For now, we just ensure it's not wildly different
-        assert!(variance_ratio < 10.0, "Timing variance too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 10.0,
+            "Timing variance too high: {:.2}",
+            variance_ratio
+        );
     }
 
     #[test]
     fn test_ldap_filter_generation_timing() {
         let config = LdapConfig::default();
-        
+
         let test_usernames = vec![
             "normaluser",
             "admin)(|(objectClass=*)", // Injection attempt
@@ -80,19 +84,23 @@ mod timing_attack_prevention_tests {
         println!("  Variance ratio: {:.2}", variance_ratio);
 
         // Timing should be relatively consistent
-        assert!(variance_ratio < 5.0, "LDAP filter timing variance too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 5.0,
+            "LDAP filter timing variance too high: {:.2}",
+            variance_ratio
+        );
     }
 
     #[tokio::test]
     async fn test_authentication_response_timing() {
         // This test would ideally test the actual authentication service
         // For now, we test the components that contribute to timing
-        
+
         let test_scenarios = vec![
             ("valid_user", "valid_password"),
             ("nonexistent_user", "any_password"),
             ("valid_user", "wrong_password"),
-            ("", ""), // Empty credentials
+            ("", ""),                                     // Empty credentials
             ("admin'; DROP TABLE users; --", "password"), // Injection attempt
         ];
 
@@ -100,26 +108,29 @@ mod timing_attack_prevention_tests {
 
         for (username, password) in test_scenarios {
             let start = Instant::now();
-            
+
             // Simulate the validation steps that would happen in authentication
             let _username_valid = InputValidationService::validate_username(username);
             let _password_valid = InputValidationService::validate_password(password);
-            
+
             // Simulate minimum response time (like in the actual implementation)
             let min_duration = Duration::from_millis(100);
             let elapsed = start.elapsed();
             if elapsed < min_duration {
                 tokio::time::sleep(min_duration - elapsed).await;
             }
-            
+
             let total_duration = start.elapsed();
             timings.push(total_duration);
         }
 
         // Verify that all responses take at least the minimum time
         for timing in &timings {
-            assert!(timing >= &Duration::from_millis(100), 
-                "Response time too fast: {:?}", timing);
+            assert!(
+                timing >= &Duration::from_millis(100),
+                "Response time too fast: {:?}",
+                timing
+            );
         }
 
         // Verify timing consistency (should all be close to minimum time)
@@ -133,7 +144,11 @@ mod timing_attack_prevention_tests {
         println!("  Variance: {}ms", variance);
 
         // Variance should be small (within 50ms)
-        assert!(variance < 50, "Authentication timing variance too high: {}ms", variance);
+        assert!(
+            variance < 50,
+            "Authentication timing variance too high: {}ms",
+            variance
+        );
     }
 
     #[test]
@@ -167,7 +182,11 @@ mod timing_attack_prevention_tests {
         println!("  Variance ratio: {:.2}", variance_ratio);
 
         // Error generation should be consistent
-        assert!(variance_ratio < 3.0, "Error message timing variance too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 3.0,
+            "Error message timing variance too high: {:.2}",
+            variance_ratio
+        );
     }
 
     #[test]
@@ -201,7 +220,11 @@ mod timing_attack_prevention_tests {
         println!("  Variance ratio: {:.2}", variance_ratio);
 
         // Should be reasonably consistent (allowing for length differences)
-        assert!(variance_ratio < 10.0, "Log sanitization timing variance too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 10.0,
+            "Log sanitization timing variance too high: {:.2}",
+            variance_ratio
+        );
     }
 }
 
@@ -231,8 +254,9 @@ mod side_channel_attack_prevention_tests {
                 let start = Instant::now();
                 let _result = InputValidationService::validate_username(input);
                 let duration = start.elapsed();
-                
-                timings_by_type.entry(input_type.to_string())
+
+                timings_by_type
+                    .entry(input_type.to_string())
                     .or_insert_with(Vec::new)
                     .push(duration);
             }
@@ -254,7 +278,11 @@ mod side_channel_attack_prevention_tests {
         println!("Overall timing variance ratio: {:.2}", variance_ratio);
 
         // Different validation failures should not have significantly different timings
-        assert!(variance_ratio < 5.0, "Timing variance between input types too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 5.0,
+            "Timing variance between input types too high: {:.2}",
+            variance_ratio
+        );
     }
 
     #[test]
@@ -262,14 +290,14 @@ mod side_channel_attack_prevention_tests {
         // While Rust's string comparison isn't constant-time by default,
         // we can test that our validation doesn't leak information about
         // how far into the string the validation failed
-        
+
         let base_invalid = "admin'; DROP TABLE users; --";
         let variations = vec![
-            "a", // Fails immediately
-            "admin", // Fails at SQL injection part
-            "admin'", // Fails slightly later
+            "a",            // Fails immediately
+            "admin",        // Fails at SQL injection part
+            "admin'",       // Fails slightly later
             "admin'; DROP", // Fails even later
-            base_invalid, // Full malicious input
+            base_invalid,   // Full malicious input
         ];
 
         let mut timings = Vec::new();
@@ -289,6 +317,10 @@ mod side_channel_attack_prevention_tests {
         println!("String validation timing variance: {:.2}", variance_ratio);
 
         // Should not leak information about validation progress
-        assert!(variance_ratio < 3.0, "String validation timing variance too high: {:.2}", variance_ratio);
+        assert!(
+            variance_ratio < 3.0,
+            "String validation timing variance too high: {:.2}",
+            variance_ratio
+        );
     }
 }

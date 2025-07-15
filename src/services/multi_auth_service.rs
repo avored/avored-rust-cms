@@ -18,10 +18,16 @@ impl MultiAuthService {
 
     pub fn add_provider(&mut self, provider: Arc<dyn AuthProvider>) {
         if provider.is_enabled() {
-            info!("Adding authentication provider: {}", provider.provider_name());
+            info!(
+                "Adding authentication provider: {}",
+                provider.provider_name()
+            );
             self.providers.push(provider);
         } else {
-            info!("Skipping disabled authentication provider: {}", provider.provider_name());
+            info!(
+                "Skipping disabled authentication provider: {}",
+                provider.provider_name()
+            );
         }
     }
 
@@ -34,27 +40,45 @@ impl MultiAuthService {
     ) -> Result<AdminUserModel> {
         if self.providers.is_empty() {
             error!("No authentication providers configured");
-            return Err(crate::error::Error::Generic("No authentication providers available".to_string()));
+            return Err(crate::error::Error::Generic(
+                "No authentication providers available".to_string(),
+            ));
         }
 
         // If a preferred provider is specified, try it first
         if let Some(provider_name) = preferred_provider {
-            if let Some(provider) = self.providers.iter().find(|p| p.provider_name() == provider_name) {
-                info!("Attempting authentication with preferred provider: {}", provider_name);
+            if let Some(provider) = self
+                .providers
+                .iter()
+                .find(|p| p.provider_name() == provider_name)
+            {
+                info!(
+                    "Attempting authentication with preferred provider: {}",
+                    provider_name
+                );
                 match provider.authenticate(username, password, db).await? {
                     AuthenticationResult::Success(user) => {
-                        info!("Authentication successful with preferred provider: {}", provider_name);
+                        info!(
+                            "Authentication successful with preferred provider: {}",
+                            provider_name
+                        );
                         return Ok(user);
                     }
                     AuthenticationResult::Failed(reason) => {
-                        warn!("Authentication failed with preferred provider {}: {}", provider_name, reason);
+                        warn!(
+                            "Authentication failed with preferred provider {}: {}",
+                            provider_name, reason
+                        );
                     }
                     AuthenticationResult::UserNotFound => {
                         info!("User not found in preferred provider: {}", provider_name);
                     }
                 }
             } else {
-                warn!("Preferred provider '{}' not found or not enabled", provider_name);
+                warn!(
+                    "Preferred provider '{}' not found or not enabled",
+                    provider_name
+                );
             }
         }
 
@@ -70,15 +94,25 @@ impl MultiAuthService {
                 }
             }
 
-            info!("Attempting authentication with provider: {}", provider.provider_name());
-            
+            info!(
+                "Attempting authentication with provider: {}",
+                provider.provider_name()
+            );
+
             match provider.authenticate(username, password, db).await? {
                 AuthenticationResult::Success(user) => {
-                    info!("Authentication successful with provider: {}", provider.provider_name());
+                    info!(
+                        "Authentication successful with provider: {}",
+                        provider.provider_name()
+                    );
                     return Ok(user);
                 }
                 AuthenticationResult::Failed(reason) => {
-                    warn!("Authentication failed with provider {}: {}", provider.provider_name(), reason);
+                    warn!(
+                        "Authentication failed with provider {}: {}",
+                        provider.provider_name(),
+                        reason
+                    );
                     last_error = reason;
                     user_found_somewhere = true; // User exists but auth failed
                 }
@@ -90,11 +124,16 @@ impl MultiAuthService {
 
         // If we get here, authentication failed with all providers
         if user_found_somewhere {
-            error!("Authentication failed for user {} with all providers. Last error: {}", username, last_error);
+            error!(
+                "Authentication failed for user {} with all providers. Last error: {}",
+                username, last_error
+            );
             Err(crate::error::Error::Unauthenticated(last_error))
         } else {
             error!("User {} not found in any authentication provider", username);
-            Err(crate::error::Error::Unauthenticated("User not found".to_string()))
+            Err(crate::error::Error::Unauthenticated(
+                "User not found".to_string(),
+            ))
         }
     }
 
@@ -103,7 +142,9 @@ impl MultiAuthService {
     }
 
     pub fn has_provider(&self, provider_name: &str) -> bool {
-        self.providers.iter().any(|p| p.provider_name() == provider_name)
+        self.providers
+            .iter()
+            .any(|p| p.provider_name() == provider_name)
     }
 }
 

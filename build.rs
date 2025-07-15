@@ -1,3 +1,5 @@
+//! Build script for generating protobuf code from .proto files.
+
 use std::path::Path;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let proto_root = "./proto";
