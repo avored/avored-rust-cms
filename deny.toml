@@ -68,16 +68,13 @@ db-path = "$CARGO_HOME/advisory-dbs"
 # The url(s) of the advisory databases to use
 db-urls = ["https://github.com/rustsec/advisory-db"]
 # Security-first approach: deny vulnerabilities, warn on unmaintained
-vulnerability = "deny"
-unmaintained = "warn"
+# vulnerability = "deny"  # Removed in version 2, all vulnerabilities now emit errors
+unmaintained = "workspace"  # Only fail on unmaintained direct dependencies
 yanked = "warn"
-notice = "warn"
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
 ignore = [
-    # Ignore paste unmaintained warning - it's a transitive dependency through surrealdb
-    # We'll wait for surrealdb to update their dependencies
-    { id = "RUSTSEC-2024-0436", reason = "paste is a transitive dependency via surrealdb, waiting for upstream fix" },
+    # Currently no advisories need to be ignored
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
@@ -107,6 +104,7 @@ allow = [
     "MPL-2.0",
     "BUSL-1.1",  # Business Source License for SurrealDB
     "CDLA-Permissive-2.0",  # Community Data License Agreement Permissive 2.0 for webpki-roots
+    "OpenSSL",  # OpenSSL License for aws-lc-sys (AWS LibCrypto)
 ]
 # The confidence threshold for detecting a license from license text.
 # The higher the value, the more closely the license text must be to the

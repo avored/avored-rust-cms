@@ -147,7 +147,7 @@ pedantic = "warn"
 nursery = "warn"
 cargo = "warn"
 # Security-focused lints
-integer_arithmetic = "warn"
+arithmetic_side_effects = "warn"
 panic = "warn"
 unwrap_used = "warn"
 expect_used = "warn"

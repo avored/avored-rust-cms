@@ -70,8 +70,8 @@ check_tools() {
 run_cargo_audit() {
     log_info "Running cargo audit for security vulnerabilities..."
 
-    # Ignore vulnerabilities in development tools that don't affect the main application
-    if cargo audit --ignore RUSTSEC-2025-0021 --ignore RUSTSEC-2024-0350 --ignore RUSTSEC-2024-0348 --ignore RUSTSEC-2024-0352 --ignore RUSTSEC-2024-0351 --ignore RUSTSEC-2024-0335 --ignore RUSTSEC-2024-0349 --ignore RUSTSEC-2024-0353 --ignore RUSTSEC-2025-0001 --ignore RUSTSEC-2024-0436 --ignore RUSTSEC-2024-0359 --ignore RUSTSEC-2022-0092; then
+    # Only ignore unmaintained crates that don't pose security risks
+    if cargo audit --ignore RUSTSEC-2024-0436; then
         log_success "No security vulnerabilities found in main application"
     else
         log_error "Security vulnerabilities detected in main application!"
@@ -158,7 +158,7 @@ check_secrets() {
     local secrets_found=false
     
     for pattern in "${secret_patterns[@]}"; do
-        if grep -r -i -E "$pattern" src/ --exclude-dir=target; then
+        if grep -r -i -E "$pattern" src/ --exclude-dir=target 2>/dev/null; then
             log_error "Potential hardcoded secret found!"
             secrets_found=true
         fi
@@ -195,6 +195,13 @@ validate_security_config() {
     else
         log_warning "Overflow checks are not enabled in release profile"
     fi
+
+    # Check for audit.toml (optional)
+    if [ -f "audit.toml" ]; then
+        log_success "audit.toml configuration file found"
+    else
+        log_info "audit.toml not found (optional configuration file)"
+    fi
 }
 
 # Generate security report
@@ -224,7 +231,7 @@ This report contains the results of comprehensive security checks performed on t
 ## Results
 
 ### Vulnerability Scan
-$(cargo audit --ignore RUSTSEC-2025-0021 --ignore RUSTSEC-2024-0350 --ignore RUSTSEC-2024-0348 --ignore RUSTSEC-2024-0352 --ignore RUSTSEC-2024-0351 --ignore RUSTSEC-2024-0335 --ignore RUSTSEC-2024-0349 --ignore RUSTSEC-2024-0353 --ignore RUSTSEC-2025-0001 --ignore RUSTSEC-2024-0436 --ignore RUSTSEC-2024-0359 --ignore RUSTSEC-2022-0092 2>&1 || echo "Vulnerabilities detected - see details above")
+$(cargo audit --ignore RUSTSEC-2024-0436 2>&1 || echo "Vulnerabilities detected - see details above")
 
 ### Dependency Policy Check
 $(cargo deny check 2>&1 || echo "Policy violations detected - see details above")

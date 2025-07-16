@@ -1,3 +1,30 @@
+//! # AvoRed Rust CMS
+//!
+//! A secure, high-performance Content Management System built with Rust.
+//!
+//! This CMS provides enterprise-grade security features including:
+//! - Zero-trust security architecture
+//! - Comprehensive input validation and injection prevention
+//! - LDAP authentication with rate limiting
+//! - Real-time security monitoring and alerting
+//! - Audit logging and compliance reporting
+//!
+//! ## Security Features
+//!
+//! - **Input Validation**: Prevents SQL, LDAP, XSS, and command injection attacks
+//! - **Authentication**: Multi-provider support (LDAP, local, OAuth, SAML)
+//! - **Authorization**: Role-based access control with fine-grained permissions
+//! - **Monitoring**: Real-time threat detection and security health scoring
+//! - **Audit**: Comprehensive logging of all security-relevant events
+//!
+//! ## Architecture
+//!
+//! The system is built with a modular architecture featuring:
+//! - gRPC API services for high-performance communication
+//! - Async/await throughout for optimal resource utilization
+//! - Comprehensive error handling and recovery
+//! - Configurable security policies and thresholds
+
 use crate::api::admin_user_api::AdminUserApi;
 use crate::api::asset_api::AssetApi;
 use crate::api::auth_api::AuthApi;
@@ -154,9 +181,10 @@ async fn main() -> Result<(), Error> {
 
     let service = RestGrpcService::new(rest_router, grpc_router);
 
-    let port = env::var("PORT").unwrap_or("50051".to_string());
+    let port = env::var("AVORED_PORT").unwrap_or_else(|_| "50051".to_string());
+    let host = env::var("AVORED_HOST").unwrap_or_else(|_| "127.0.0.1".to_string());
 
-    let listener = tokio::net::TcpListener::bind(format!("127.0.0.1:{}", port))
+    let listener = tokio::net::TcpListener::bind(format!("{}:{}", host, port))
         .await
         .unwrap();
 
@@ -169,7 +197,7 @@ async fn main() -> Result<(), Error> {
     println!();
     println!();
 
-    println!("Server started: http://0.0.0.0:{}", port);
+    println!("Server started: http://{}:{}", host, port);
 
     axum::serve(listener, service.into_make_service())
         .await
@@ -182,7 +210,9 @@ fn init_log() {
     let stdout_log = tracing_subscriber::fmt::layer().pretty();
 
     // A layer that logs events to a file.
-    let file = File::create(Path::new("public").join("log").join("avored.log"));
+    let log_dir = env::var("AVORED_LOG_DIR").unwrap_or_else(|_| "public/log".to_string());
+    let log_file = env::var("AVORED_LOG_FILE").unwrap_or_else(|_| "avored.log".to_string());
+    let file = File::create(Path::new(&log_dir).join(&log_file));
     let file = match file {
         Ok(file) => file,
         Err(error) => panic!("Error: {:?}", error),

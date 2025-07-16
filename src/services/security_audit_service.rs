@@ -184,7 +184,7 @@ impl SecurityAuditService {
 
                     // Check for brute force patterns
                     if detector.is_brute_force_attack(username, *timestamp) {
-                        let _suspicious_event = SecurityEvent::SuspiciousActivity {
+                        let suspicious_event = SecurityEvent::SuspiciousActivity {
                             event_type: "brute_force_attack".to_string(),
                             details: format!(
                                 "Multiple failed authentication attempts for user: {}",
@@ -194,7 +194,16 @@ impl SecurityAuditService {
                             timestamp: *timestamp,
                         };
 
-                        // Log the suspicious activity (avoid infinite recursion by not calling log_event)
+                        // Store the suspicious activity event
+                        let mut events = self.events.lock().await;
+                        events.push(suspicious_event);
+
+                        // Maintain max events limit
+                        if events.len() > self.max_events {
+                            events.remove(0);
+                        }
+
+                        // Log the suspicious activity
                         error!(
                             "SECURITY ALERT: Brute force attack detected for user: {}",
                             username

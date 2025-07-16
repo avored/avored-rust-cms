@@ -136,7 +136,7 @@ echo "----------------------------------------"
 
 run_test "Security Configuration Validation" "make -f Makefile.security security-validate-config"
 
-run_test "Security Audit (cargo-audit)" "cargo audit --ignore RUSTSEC-2025-0021 --ignore RUSTSEC-2024-0350 --ignore RUSTSEC-2024-0348 --ignore RUSTSEC-2024-0352 --ignore RUSTSEC-2024-0351 --ignore RUSTSEC-2024-0335 --ignore RUSTSEC-2024-0349 --ignore RUSTSEC-2024-0353 --ignore RUSTSEC-2025-0001 --ignore RUSTSEC-2024-0436 --ignore RUSTSEC-2024-0359 --ignore RUSTSEC-2022-0092"
+run_test "Security Audit (cargo-audit)" "cargo audit --ignore RUSTSEC-2024-0436"
 
 run_test "Dependency Policy Check (cargo-deny)" "cargo deny check"
 

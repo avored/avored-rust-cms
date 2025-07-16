@@ -109,7 +109,6 @@ impl SecurityMonitoringService {
             }
         }
 
-        metrics.update_timestamp();
         self.update_security_health_score().await;
     }
 
@@ -131,7 +130,6 @@ impl SecurityMonitoringService {
         )
         .await;
 
-        metrics.update_timestamp();
         self.update_security_health_score().await;
     }
 
@@ -148,8 +146,6 @@ impl SecurityMonitoringService {
             HashMap::from([("identifier".to_string(), identifier.to_string())]),
         )
         .await;
-
-        metrics.update_timestamp();
     }
 
     /// Record suspicious activity
@@ -170,7 +166,6 @@ impl SecurityMonitoringService {
         )
         .await;
 
-        metrics.update_timestamp();
         self.update_security_health_score().await;
     }
 
@@ -475,13 +470,6 @@ impl SecurityMetrics {
             uptime_seconds: 0,
             security_health_score: 100.0,
         }
-    }
-
-    fn update_timestamp(&mut self) {
-        self.last_updated = SystemTime::now()
-            .duration_since(UNIX_EPOCH)
-            .unwrap()
-            .as_secs();
     }
 }
 

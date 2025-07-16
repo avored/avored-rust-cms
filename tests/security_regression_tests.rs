@@ -2,7 +2,6 @@ use avored_rust_cms::error::Error;
 use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::services::ldap_connection_pool::AuthRateLimiter;
 use avored_rust_cms::services::security_audit_service::{SecurityAuditService, SecurityEvent};
-use std::net::IpAddr;
 use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 
 /// Security regression tests to ensure that future code changes cannot break security measures
