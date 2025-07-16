@@ -75,11 +75,11 @@ arbitrary = { version = "1.3", features = ["derive"] }
 quickcheck = "1.0"
 criterion = "0.5"
 
-# Security testing dependencies
-cargo-audit = "0.20"
-cargo-deny = "0.14"
-cargo-outdated = "0.15"
-cargo-geiger = "0.11"
+# Security testing dependencies (installed globally via cargo install)
+# cargo-audit = "0.20"
+# cargo-deny = "0.14"
+# cargo-outdated = "0.15"
+# cargo-geiger = "0.11"
 semver-parser = "0.10"
 tempfile = "3.8"
 wiremock = "0.6"

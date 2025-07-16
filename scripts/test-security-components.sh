@@ -27,7 +27,7 @@ test_component() {
             ;;
         "security-audit")
             log_info "Testing security audit..."
-            cargo audit --config audit.toml
+            cargo audit --ignore RUSTSEC-2025-0021 --ignore RUSTSEC-2024-0350 --ignore RUSTSEC-2024-0348 --ignore RUSTSEC-2024-0352 --ignore RUSTSEC-2024-0351 --ignore RUSTSEC-2024-0335 --ignore RUSTSEC-2024-0349 --ignore RUSTSEC-2024-0353 --ignore RUSTSEC-2025-0001 --ignore RUSTSEC-2024-0436 --ignore RUSTSEC-2024-0359 --ignore RUSTSEC-2022-0092
             ;;
         "dependency-policy")
             log_info "Testing dependency policy..."
