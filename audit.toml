@@ -1,0 +1,36 @@
+# Cargo Audit Configuration
+# This file configures cargo-audit security vulnerability scanning
+# Documentation: https://docs.rs/cargo-audit/latest/cargo_audit/
+
+[advisories]
+# Ignore specific security advisories
+# Format: "RUSTSEC-YYYY-NNNN"
+ignore = [
+    # Currently no advisories need to be ignored
+    #
+    # Unmaintained dependencies are tracked via deny.toml unmaintained policy
+    # Current unmaintained transitive dependencies:
+    # - RUSTSEC-2024-0436: paste v1.0.15 (via rmp → surrealdb)
+    #   Status: Monitoring - waiting for SurrealDB to migrate away from rmp
+    #   Review: 2025-Q2 - reassess if still present
+]
+
+# Severity levels to report
+# Options: "low", "medium", "high", "critical"
+severity-threshold = "low"
+
+# Database configuration
+[database]
+# Automatically update the advisory database
+auto-update = true
+
+# Fetch timeout in seconds
+fetch-timeout = 30
+
+# Output configuration
+[output]
+# Output format: "json", "toml", "yaml"
+format = "json"
+
+# Show additional information
+show-tree = false

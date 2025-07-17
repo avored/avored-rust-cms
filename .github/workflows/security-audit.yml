@@ -2,7 +2,8 @@ name: Security Audit
 
 on:
   push:
-    branches: [ "main", "develop", "feature/ldap-authentication" ]
+    branches: [ "main", "develop" ]
+    # Feature branches can be tested via pull requests
   pull_request:
     branches: [ "main", "develop" ]
   schedule:
@@ -19,6 +20,16 @@ on:
         - basic
         - comprehensive
         - paranoid
+      build_profile:
+        description: 'Build profile for CodeQL analysis'
+        required: false
+        default: 'release-secure'
+        type: string
+      security_features:
+        description: 'Security features to enable'
+        required: false
+        default: 'security-hardened'
+        type: string
 
 env:
   CARGO_TERM_COLOR: always
@@ -69,13 +80,41 @@ jobs:
       - name: Run cargo audit
         run: |
           echo "🔍 Running security vulnerability audit..."
-          cargo audit --json --ignore RUSTSEC-2024-0436 > security-audit-report.json
+          # Configuration is read from audit.toml
+          cargo audit --json > security-audit-report.json
           if [ $? -ne 0 ]; then
             echo "❌ CRITICAL: Security vulnerabilities detected!"
             cat security-audit-report.json
             exit 1
           fi
           echo "✅ No security vulnerabilities found"
+
+      - name: Track unmaintained dependencies
+        run: |
+          echo "📊 Tracking unmaintained dependencies..."
+          # Run audit with warnings to capture unmaintained dependencies
+          cargo audit --format json --quiet > unmaintained-audit.json 2>/dev/null || true
+
+          # Extract unmaintained dependencies for reporting
+          if command -v jq >/dev/null 2>&1; then
+            echo "## Unmaintained Dependencies Report" > unmaintained-report.md
+            echo "Generated: $(date)" >> unmaintained-report.md
+            echo "" >> unmaintained-report.md
+
+            # Check if there are any unmaintained warnings
+            UNMAINTAINED_COUNT=$(jq -r '.warnings // [] | length' unmaintained-audit.json 2>/dev/null || echo "0")
+            if [ "$UNMAINTAINED_COUNT" -gt 0 ]; then
+              echo "⚠️ Found $UNMAINTAINED_COUNT unmaintained dependencies:" >> unmaintained-report.md
+              jq -r '.warnings[]? | "- **\(.package.name)** v\(.package.version): \(.advisory.title)"' unmaintained-audit.json >> unmaintained-report.md 2>/dev/null || true
+            else
+              echo "✅ No unmaintained dependencies detected" >> unmaintained-report.md
+            fi
+
+            cat unmaintained-report.md
+          else
+            echo "⚠️ jq not available - skipping detailed unmaintained dependency analysis"
+            cargo audit 2>&1 | grep -E "(unmaintained|Warning)" || echo "✅ No unmaintained warnings found"
+          fi
 
       - name: Run dependency policy checks
         run: |
@@ -133,6 +172,8 @@ jobs:
           path: |
             security-audit-report.json
             security-geiger-report.md
+            unmaintained-audit.json
+            unmaintained-report.md
             reports/
 
   dependency-review:
@@ -149,13 +190,8 @@ jobs:
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
-          fail-on-severity: moderate
-          # Use only allow-licenses (cannot use both allow and deny)
-          allow-licenses: MIT, Apache-2.0, Apache-2.0 WITH LLVM-exception, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Unlicense, 0BSD, Zlib, CC0-1.0, MPL-2.0, BUSL-1.1, CDLA-Permissive-2.0, OpenSSL
-          license-check: false  # Disable license check to focus on vulnerabilities
-          vulnerability-check: true
+          # All configuration is centralized in the config file
           config-file: .github/dependency-review-config.yml
-          warn-only: false
 
       - name: Comprehensive License Check with cargo-deny
         run: |
@@ -203,7 +239,11 @@ jobs:
       - name: Security-hardened build for analysis
         run: |
           echo "🔨 Building with security features for CodeQL analysis..."
-          cargo build --profile release-secure --features security-hardened
+          BUILD_PROFILE="${{ github.event.inputs.build_profile || 'release-secure' }}"
+          SECURITY_FEATURES="${{ github.event.inputs.security_features || 'security-hardened' }}"
+          echo "Using build profile: $BUILD_PROFILE"
+          echo "Using security features: $SECURITY_FEATURES"
+          cargo build --profile "$BUILD_PROFILE" --features "$SECURITY_FEATURES"
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3

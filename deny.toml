@@ -67,9 +67,9 @@ feature-depth = 1
 db-path = "$CARGO_HOME/advisory-dbs"
 # The url(s) of the advisory databases to use
 db-urls = ["https://github.com/rustsec/advisory-db"]
-# Security-first approach: deny vulnerabilities, warn on unmaintained
+# Security-first approach: deny vulnerabilities, track unmaintained dependencies
 # vulnerability = "deny"  # Removed in version 2, all vulnerabilities now emit errors
-unmaintained = "workspace"  # Only fail on unmaintained direct dependencies
+unmaintained = "workspace"  # Only fail on unmaintained direct dependencies, warn on transitive
 yanked = "warn"
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
