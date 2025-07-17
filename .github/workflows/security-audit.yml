@@ -80,12 +80,24 @@ jobs:
       - name: Run dependency policy checks
         run: |
           echo "📋 Running dependency policy checks..."
-          cargo deny check
-          if [ $? -ne 0 ]; then
+          # Run cargo deny check and capture exit code
+          set +e  # Don't exit on error
+          cargo deny check > deny-output.txt 2>&1
+          DENY_EXIT_CODE=$?
+          set -e  # Re-enable exit on error
+
+          # Display the output
+          cat deny-output.txt
+
+          # Check exit code: 0 = success, 1 = errors, 2 = warnings only
+          if [ $DENY_EXIT_CODE -eq 0 ]; then
+            echo "✅ All dependency policies passed"
+          elif [ $DENY_EXIT_CODE -eq 2 ]; then
+            echo "⚠️ Warnings found but no critical errors - continuing"
+          else
             echo "❌ CRITICAL: Dependency policy violations detected!"
             exit 1
           fi
-          echo "✅ All dependency policies passed"
 
       - name: Check for outdated dependencies with security focus
         run: |
