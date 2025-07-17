@@ -140,18 +140,20 @@ jobs:
           fail-on-severity: moderate
           # Use only allow-licenses (cannot use both allow and deny)
           allow-licenses: MIT, Apache-2.0, Apache-2.0 WITH LLVM-exception, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Unlicense, 0BSD, Zlib, CC0-1.0, MPL-2.0, BUSL-1.1, CDLA-Permissive-2.0, OpenSSL
-          license-check: true
+          license-check: false  # Disable license check to focus on vulnerabilities
           vulnerability-check: true
           config-file: .github/dependency-review-config.yml
           warn-only: false
 
-      - name: Fallback License Check with cargo-deny
-        if: failure()
+      - name: Comprehensive License Check with cargo-deny
         run: |
-          echo "🔄 Running fallback license check with cargo-deny..."
+          echo "🔄 Running comprehensive license check with cargo-deny..."
           cargo install cargo-deny || true
-          cargo deny check licenses || echo "⚠️ Some license issues detected but not blocking"
-          echo "✅ Fallback license check completed"
+          echo "📋 Checking license compliance..."
+          cargo deny check licenses
+          echo "📊 License summary:"
+          cargo tree --format "{p} {l}" | sort | uniq -c | sort -nr | head -10
+          echo "✅ License check completed successfully"
 
       - name: LDAP dependency security check
         run: |

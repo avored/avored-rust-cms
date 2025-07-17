@@ -22,7 +22,7 @@ allow-licenses:
 
 # Vulnerability configuration
 vulnerability-check: true
-license-check: true
+license-check: false  # Disabled due to SPDX detection issues, using cargo-deny instead
 fail-on-severity: moderate
 
 # Comment configuration
