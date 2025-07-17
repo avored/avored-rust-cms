@@ -282,8 +282,8 @@ pub mod admin_user_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -300,14 +300,14 @@ pub mod admin_user_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             AdminUserClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -345,7 +345,7 @@ pub mod admin_user_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AdminUserPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -360,7 +360,7 @@ pub mod admin_user_client {
         pub async fn store_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -375,7 +375,7 @@ pub mod admin_user_client {
         pub async fn get_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -390,7 +390,7 @@ pub mod admin_user_client {
         pub async fn update_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -406,7 +406,7 @@ pub mod admin_user_client {
         pub async fn role_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::RolePaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::RolePaginateResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::RolePaginateResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -421,7 +421,7 @@ pub mod admin_user_client {
         pub async fn role_option(
             &mut self,
             request: impl tonic::IntoRequest<super::RoleOptionRequest>,
-        ) -> std::result::Result<tonic::Response<super::RoleOptionResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::RoleOptionResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -436,7 +436,7 @@ pub mod admin_user_client {
         pub async fn store_role(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreRoleResponse>, tonic::Status> {
+        ) -> Result<tonic::Response<super::StoreRoleResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -450,7 +450,7 @@ pub mod admin_user_client {
         pub async fn get_role(
             &mut self,
             request: impl tonic::IntoRequest<super::GetRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status> {
+        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -464,7 +464,7 @@ pub mod admin_user_client {
         pub async fn update_role(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -479,7 +479,7 @@ pub mod admin_user_client {
         pub async fn put_role_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutRoleIdentifierRequest>,
-        ) -> std::result::Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -495,7 +495,7 @@ pub mod admin_user_client {
         pub async fn delete_role(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -510,7 +510,7 @@ pub mod admin_user_client {
         pub async fn delete_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -537,55 +537,55 @@ pub mod admin_user_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AdminUserServer.
     #[async_trait]
-    pub trait AdminUser: std::marker::Send + std::marker::Sync + 'static {
+    pub trait AdminUser: Send + Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AdminUserPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status>;
         async fn store_admin_user(
             &self,
             request: tonic::Request<super::StoreAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status>;
         async fn get_admin_user(
             &self,
             request: tonic::Request<super::GetAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status>;
         async fn update_admin_user(
             &self,
             request: tonic::Request<super::UpdateAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status>;
         async fn role_paginate(
             &self,
             request: tonic::Request<super::RolePaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::RolePaginateResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::RolePaginateResponse>, tonic::Status>;
         async fn role_option(
             &self,
             request: tonic::Request<super::RoleOptionRequest>,
-        ) -> std::result::Result<tonic::Response<super::RoleOptionResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::RoleOptionResponse>, tonic::Status>;
         async fn store_role(
             &self,
             request: tonic::Request<super::StoreRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreRoleResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::StoreRoleResponse>, tonic::Status>;
         async fn get_role(
             &self,
             request: tonic::Request<super::GetRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
         async fn update_role(
             &self,
             request: tonic::Request<super::UpdateRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status>;
         async fn put_role_identifier(
             &self,
             request: tonic::Request<super::PutRoleIdentifierRequest>,
-        ) -> std::result::Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status>;
         async fn delete_role(
             &self,
             request: tonic::Request<super::DeleteRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status>;
         async fn delete_admin_user(
             &self,
             request: tonic::Request<super::DeleteAdminUserRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct AdminUserServer<T> {
@@ -643,11 +643,11 @@ pub mod admin_user_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for AdminUserServer<T>
+    impl<T, B> Service<http::Request<B>> for AdminUserServer<T>
     where
         T: AdminUser,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -655,7 +655,7 @@ pub mod admin_user_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

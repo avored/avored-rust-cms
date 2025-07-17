@@ -2,7 +2,7 @@
 /// These ensure that critical security properties always hold true
 use crate::error::{Error, Result};
 use std::time::Duration;
-use tracing::{error, warn};
+use tracing::error;
 
 /// Macro to assert that a security invariant holds
 /// If the invariant is violated, it logs a critical error and returns an error

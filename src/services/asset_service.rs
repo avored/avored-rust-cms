@@ -133,7 +133,7 @@ impl AssetService {
 
             full_path = format!("{}/{}", asset.new_path, name.clone());
         }
-        tokio::fs::create_dir_all(&format!("./{}", full_path.clone())).await?;
+        fs::create_dir_all(&format!("./{}", full_path.clone())).await?;
 
         // @todo fix this default color????
         let color = String::from("text-gray-400");
@@ -176,7 +176,7 @@ impl AssetService {
         let asset_path = format!("./{path}", path = asset_model.new_path);
 
         if fs::try_exists(&asset_path).await? {
-            tokio::fs::remove_file(asset_path).await?;
+            fs::remove_file(asset_path).await?;
 
             let result = self
                 .asset_repository
@@ -204,7 +204,7 @@ impl AssetService {
         let folder_path = format!("./{path}", path = asset_model.new_path);
 
         if fs::try_exists(&folder_path).await? {
-            tokio::fs::remove_dir(&folder_path).await?;
+            fs::remove_dir(&folder_path).await?;
 
             let result = self
                 .asset_repository

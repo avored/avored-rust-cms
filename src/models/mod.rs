@@ -148,7 +148,7 @@ impl TryFrom<Object> for ModelCount {
     fn try_from(val: Object) -> Result<ModelCount> {
         let count = match val.get("count") {
             Some(val) => match val.clone() {
-                Value::Number(v) => v,
+                Number(v) => v,
                 _ => surrealdb::sql::Number::Int(0),
             },
             None => surrealdb::sql::Number::Int(0),

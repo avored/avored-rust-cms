@@ -146,8 +146,8 @@ pub mod asset_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -164,14 +164,14 @@ pub mod asset_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             AssetClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -209,7 +209,7 @@ pub mod asset_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AssetPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::AssetPaginateResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::AssetPaginateResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -224,7 +224,7 @@ pub mod asset_client {
         pub async fn create_folder(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateFolderRequest>,
-        ) -> std::result::Result<tonic::Response<super::CreateFolderResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::CreateFolderResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -239,7 +239,7 @@ pub mod asset_client {
         pub async fn delete_asset(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteAssetRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteAssetResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::DeleteAssetResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -254,7 +254,7 @@ pub mod asset_client {
         pub async fn delete_folder(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteFolderRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteFolderResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::DeleteFolderResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -269,7 +269,7 @@ pub mod asset_client {
         pub async fn rename_asset(
             &mut self,
             request: impl tonic::IntoRequest<super::RenameAssetRequest>,
-        ) -> std::result::Result<tonic::Response<super::RenameAssetResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::RenameAssetResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -295,27 +295,27 @@ pub mod asset_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AssetServer.
     #[async_trait]
-    pub trait Asset: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Asset: Send + Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AssetPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::AssetPaginateResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::AssetPaginateResponse>, tonic::Status>;
         async fn create_folder(
             &self,
             request: tonic::Request<super::CreateFolderRequest>,
-        ) -> std::result::Result<tonic::Response<super::CreateFolderResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::CreateFolderResponse>, tonic::Status>;
         async fn delete_asset(
             &self,
             request: tonic::Request<super::DeleteAssetRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteAssetResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::DeleteAssetResponse>, tonic::Status>;
         async fn delete_folder(
             &self,
             request: tonic::Request<super::DeleteFolderRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteFolderResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::DeleteFolderResponse>, tonic::Status>;
         async fn rename_asset(
             &self,
             request: tonic::Request<super::RenameAssetRequest>,
-        ) -> std::result::Result<tonic::Response<super::RenameAssetResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::RenameAssetResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct AssetServer<T> {
@@ -373,11 +373,11 @@ pub mod asset_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for AssetServer<T>
+    impl<T, B> Service<http::Request<B>> for AssetServer<T>
     where
         T: Asset,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -385,7 +385,7 @@ pub mod asset_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

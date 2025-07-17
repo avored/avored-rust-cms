@@ -422,6 +422,7 @@ dependencies = [
  "async-trait",
  "axum",
  "axum_tonic",
+ "base64 0.22.1",
  "chrono",
  "constant_time_eq",
  "criterion",
@@ -429,7 +430,9 @@ dependencies = [
  "email_address",
  "getrandom 0.2.16",
  "handlebars",
+ "hashbrown 0.15.4",
  "hmac",
+ "itertools 0.14.0",
  "jsonwebtoken",
  "lazy_static",
  "ldap3",
@@ -3130,9 +3133,9 @@ dependencies = [
 
 [[package]]
 name = "object_store"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7781f96d79ed0f961a7021424ab01840efbda64ae7a505aaea195efc91eaaec4"
+checksum = "efc4f07659e11cd45a341cd24d71e683e3be65d9ff1f8150061678fe60437496"
 dependencies = [
  "async-trait",
  "bytes",

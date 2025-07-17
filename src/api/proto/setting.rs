@@ -75,8 +75,8 @@ pub mod setting_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -93,14 +93,14 @@ pub mod setting_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + Send + Sync,
         {
             SettingClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -138,7 +138,7 @@ pub mod setting_client {
         pub async fn get_setting(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSettingRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetSettingResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::GetSettingResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -153,7 +153,7 @@ pub mod setting_client {
         pub async fn store_setting(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreSettingRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreSettingResponse>, tonic::Status>
+        ) -> Result<tonic::Response<super::StoreSettingResponse>, tonic::Status>
         {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
@@ -179,15 +179,15 @@ pub mod setting_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with SettingServer.
     #[async_trait]
-    pub trait Setting: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Setting: Send + Sync + 'static {
         async fn get_setting(
             &self,
             request: tonic::Request<super::GetSettingRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetSettingResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetSettingResponse>, tonic::Status>;
         async fn store_setting(
             &self,
             request: tonic::Request<super::StoreSettingRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreSettingResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::StoreSettingResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct SettingServer<T> {
@@ -245,11 +245,11 @@ pub mod setting_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for SettingServer<T>
+    impl<T, B> Service<http::Request<B>> for SettingServer<T>
     where
         T: Setting,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -257,7 +257,7 @@ pub mod setting_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
