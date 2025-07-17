@@ -138,14 +138,12 @@ jobs:
         uses: actions/dependency-review-action@v4
         with:
           fail-on-severity: moderate
-          deny-licenses: GPL-2.0, GPL-3.0, AGPL-3.0, LGPL-2.1, LGPL-3.0
-          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Unlicense, 0BSD, Zlib, CC0-1.0, MPL-2.0, BUSL-1.1, CDLA-Permissive-2.0, OpenSSL
+          # Use only allow-licenses (cannot use both allow and deny)
+          allow-licenses: MIT, Apache-2.0, Apache-2.0 WITH LLVM-exception, BSD-2-Clause, BSD-3-Clause, ISC, Unicode-3.0, Unlicense, 0BSD, Zlib, CC0-1.0, MPL-2.0, BUSL-1.1, CDLA-Permissive-2.0, OpenSSL
           license-check: true
           vulnerability-check: true
           config-file: .github/dependency-review-config.yml
-          # Temporarily allow unresolved licenses to prevent blocking
-          allow-unresolved-licenses: true
-        continue-on-error: false
+          warn-only: false
 
       - name: Fallback License Check with cargo-deny
         if: failure()
