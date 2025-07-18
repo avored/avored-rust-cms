@@ -48,6 +48,7 @@ use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
 use crate::middleware::require_jwt_authentication::require_jwt_authentication;
+use crate::security::invariants::{SecurityInvariantChecker, RuntimeSecurityMonitor};
 use crate::middleware::security_headers::add_security_headers;
 use axum::http::HeaderValue;
 use axum::response::Html;
@@ -88,7 +89,41 @@ async fn handler() -> Html<&'static str> {
 async fn main() -> Result<(), Error> {
     init_log();
 
+    // Perform security invariant checks at startup
+    if let Err(e) = SecurityInvariantChecker::check_all_invariants() {
+        eprintln!("Security invariant check failed: {}", e);
+        return Err(e);
+    }
+    println!("✅ Security invariant checks passed");
+
     let state = Arc::new(AvoRedState::new().await?);
+
+    // Start background security monitoring
+    tokio::spawn(async {
+        let mut interval = tokio::time::interval(std::time::Duration::from_secs(300)); // Every 5 minutes
+        loop {
+            interval.tick().await;
+            match RuntimeSecurityMonitor::perform_security_health_check().await {
+                Ok(report) => {
+                    let overall_status = report.overall_status();
+                    match overall_status {
+                        crate::security::invariants::SecurityStatus::Healthy => {
+                            tracing::debug!("Security health check: All systems healthy");
+                        }
+                        crate::security::invariants::SecurityStatus::Warning => {
+                            tracing::warn!("Security health check: Warning status detected");
+                        }
+                        crate::security::invariants::SecurityStatus::Critical => {
+                            tracing::error!("Security health check: Critical issues detected");
+                        }
+                    }
+                }
+                Err(e) => {
+                    tracing::error!("Security health check failed: {}", e);
+                }
+            }
+        }
+    });
 
     let mut origins: Vec<HeaderValue> = vec![];
     for origin in &state.config.cors_allowed_app_url {

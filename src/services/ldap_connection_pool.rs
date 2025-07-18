@@ -103,10 +103,11 @@ impl LdapConnectionPool {
 
         pool.retain(|conn| {
             let is_expired = now.duration_since(conn.last_used) > self.max_idle_time;
-            if is_expired {
+            let is_too_old = now.duration_since(conn.created_at) > Duration::from_secs(3600); // 1 hour max lifetime
+            if is_expired || is_too_old {
                 expired_count += 1;
             }
-            !is_expired
+            !is_expired && !is_too_old
         });
 
         if expired_count > 0 {
@@ -137,13 +138,19 @@ impl PooledLdapConnection {
     pub fn as_mut(&mut self) -> &mut Ldap {
         &mut self.connection
     }
+
+    /// Get pool statistics (for monitoring purposes)
+    pub async fn pool_size(&self) -> usize {
+        self.pool.lock().await.len()
+    }
 }
 
 impl Drop for PooledLdapConnection {
     fn drop(&mut self) {
-        // Note: In a real implementation, we would properly return the connection to the pool
-        // For now, we just let the connection drop naturally
-        // This is safe but not optimal for performance
+        // Note: Connection will be dropped naturally when this struct is dropped
+        // The pool reference is used for potential future connection return logic
+        // For now, we let connections drop to avoid complexity in the Drop trait
+        debug!("Dropping LDAP connection from pool");
     }
 }
 

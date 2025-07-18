@@ -1,6 +1,6 @@
 use crate::error::Result;
 use crate::models::admin_user_model::AdminUserModel;
-use crate::providers::auth_provider::{AuthProvider, AuthenticationResult};
+use crate::providers::auth_provider::{AuthProvider, AuthProviderType, AuthenticationResult};
 use crate::providers::avored_database_provider::DB;
 use std::sync::Arc;
 use tracing::{error, info, warn};
@@ -145,6 +145,20 @@ impl MultiAuthService {
         self.providers
             .iter()
             .any(|p| p.provider_name() == provider_name)
+    }
+
+    /// Get provider information with types
+    pub fn get_provider_info(&self) -> Vec<(String, String)> {
+        self.providers
+            .iter()
+            .map(|p| {
+                let provider_type = match p.provider_name() {
+                    "ldap" => AuthProviderType::Ldap,
+                    _ => AuthProviderType::Local,
+                };
+                (p.provider_name().to_string(), provider_type.as_str().to_string())
+            })
+            .collect()
     }
 }
 

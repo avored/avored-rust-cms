@@ -36,7 +36,7 @@ impl LdapAuthService {
         }
     }
 
-    async fn create_ldap_connection(&self) -> Result<Ldap> {
+    pub async fn create_ldap_connection(&self) -> Result<Ldap> {
         let ldap_url = self.config.get_ldap_url();
 
         let settings = LdapConnSettings::new()
@@ -261,6 +261,7 @@ impl AuthProvider for LdapAuthService {
         // Rate limiting check
         if !self.rate_limiter.is_allowed(username).await {
             warn!("Rate limit exceeded for authentication attempt");
+            self.security_monitor.record_rate_limit_exceeded(username).await;
             return Ok(AuthenticationResult::Failed(
                 "Too many authentication attempts. Please try again later.".to_string(),
             ));
@@ -311,6 +312,7 @@ impl AuthProvider for LdapAuthService {
         };
 
         if !is_authenticated {
+            self.security_monitor.record_authentication_attempt(false, "ldap").await;
             return Ok(AuthenticationResult::Failed(
                 "Invalid credentials".to_string(),
             ));
@@ -318,9 +320,13 @@ impl AuthProvider for LdapAuthService {
 
         // Sync user to local database
         match self.sync_user_to_local_db(&ldap_user, db).await {
-            Ok(admin_user) => Ok(AuthenticationResult::Success(admin_user)),
+            Ok(admin_user) => {
+                self.security_monitor.record_authentication_attempt(true, "ldap").await;
+                Ok(AuthenticationResult::Success(admin_user))
+            },
             Err(e) => {
                 error!("Failed to sync LDAP user to local database: {}", e);
+                self.security_monitor.record_authentication_attempt(false, "ldap").await;
                 Ok(AuthenticationResult::Failed(
                     "User synchronization failed".to_string(),
                 ))
