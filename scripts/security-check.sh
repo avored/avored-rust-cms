@@ -70,8 +70,10 @@ check_tools() {
 run_cargo_audit() {
     log_info "Running cargo audit for security vulnerabilities..."
 
-    # Only ignore unmaintained crates that don't pose security risks
-    if cargo audit --ignore RUSTSEC-2024-0436; then
+    # Configuration is read from audit.toml which includes ignored advisories
+    # RUSTSEC-2024-0436 (paste crate) is ignored as it's a transitive dependency
+    # with no security impact (only used for procedural macros)
+    if cargo audit; then
         log_success "No security vulnerabilities found in main application"
     else
         log_error "Security vulnerabilities detected in main application!"

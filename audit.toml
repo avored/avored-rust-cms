@@ -6,13 +6,12 @@
 # Ignore specific security advisories
 # Format: "RUSTSEC-YYYY-NNNN"
 ignore = [
-    # Currently no advisories need to be ignored
-    #
-    # Unmaintained dependencies are tracked via deny.toml unmaintained policy
-    # Current unmaintained transitive dependencies:
-    # - RUSTSEC-2024-0436: paste v1.0.15 (via rmp → surrealdb)
+    # Unmaintained transitive dependencies that don't pose security risks
+    "RUSTSEC-2024-0436",  # paste v1.0.15 (via rmp → surrealdb)
     #   Status: Monitoring - waiting for SurrealDB to migrate away from rmp
     #   Review: 2025-Q2 - reassess if still present
+    #   Risk Assessment: Low - paste is only used for procedural macros, no runtime security impact
+    #   Mitigation: Transitive dependency only, no direct usage in our codebase
 ]
 
 # Severity levels to report

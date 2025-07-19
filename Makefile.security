@@ -40,7 +40,8 @@ security-check: security-install-tools
 # Run security audit for vulnerabilities
 security-audit:
 	@echo "$(BLUE)[INFO]$(NC) Running security audit..."
-	@$(CARGO_AUDIT) --ignore RUSTSEC-2024-0436
+	@echo "$(BLUE)[INFO]$(NC) Using configuration from audit.toml"
+	@$(CARGO_AUDIT)
 	@echo "$(GREEN)[SUCCESS]$(NC) Security audit completed"
 
 # Run dependency policy checks
