@@ -8,6 +8,10 @@ use std::time::{Duration, Instant, SystemTime, UNIX_EPOCH};
 /// Zero Trust Security Tests
 /// These tests implement the "never trust, always verify" principle
 /// Every security assumption is tested and validated
+///
+/// NOTE: This file is excluded from CodeQL cleartext-logging analysis
+/// because it intentionally logs test data and mock credentials for
+/// validation purposes. No real sensitive information is logged.
 
 #[cfg(test)]
 mod zero_trust_validation {
@@ -374,6 +378,8 @@ mod zero_trust_validation {
     }
 
     /// Test that audit logging captures all security events
+    /// NOTE: This test intentionally logs mock/test data to validate audit functionality
+    /// CodeQL cleartext-logging suppressed: test uses mock credentials, not real data
     #[tokio::test]
     async fn test_audit_logging_zero_trust() {
         let audit_service = SecurityAuditService::new(100);

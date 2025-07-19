@@ -225,6 +225,7 @@ jobs:
         with:
           languages: rust
           queries: security-and-quality
+          config-file: .github/codeql/codeql-config.yml
 
       - name: Setup Rust toolchain
         uses: dtolnay/rust-toolchain@stable
