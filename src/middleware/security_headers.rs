@@ -34,16 +34,22 @@ pub async fn add_security_headers(
     );
 
     // Strict-Transport-Security: Enforces HTTPS
+    let hsts_header = std::env::var("AVORED_HSTS_HEADER")
+        .unwrap_or_else(|_| "max-age=31536000; includeSubDomains".to_string());
     headers.insert(
         header::HeaderName::from_static("strict-transport-security"),
-        HeaderValue::from_static("max-age=31536000; includeSubDomains"),
+        HeaderValue::from_str(&hsts_header)
+            .unwrap_or_else(|_| HeaderValue::from_static("max-age=31536000; includeSubDomains")),
     );
 
     // Content-Security-Policy: Prevents XSS and data injection attacks
     // Note: This is a basic policy, adjust based on your application's needs
+    let csp_header = std::env::var("AVORED_CSP_HEADER")
+        .unwrap_or_else(|_| "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';".to_string());
     headers.insert(
         header::HeaderName::from_static("content-security-policy"),
-        HeaderValue::from_static("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"),
+        HeaderValue::from_str(&csp_header)
+            .unwrap_or_else(|_| HeaderValue::from_static("default-src 'self'")),
     );
 
     // Referrer-Policy: Controls how much referrer information is included with requests

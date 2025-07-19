@@ -359,7 +359,7 @@ impl Misc for MiscApi {
             .store_role(demo_role, &self.state.db)
             .await?;
 
-        // let password = "admin123".as_bytes();
+        // Example: let password = env::var("ADMIN_PASSWORD").unwrap().as_bytes();
         // let salt = SaltString::from_b64(&self.state.config.password_salt)?;
 
         // let argon2 = Argon2::default();

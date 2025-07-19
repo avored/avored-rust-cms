@@ -107,7 +107,7 @@ impl TryFrom<Object> for AdminUserModel {
                     for array in v.into_iter() {
                         let object = match array.clone() {
                             Value::Object(v) => v,
-                            _ => surrealdb::sql::Object::default(),
+                            _ => Object::default(),
                         };
 
                         let role_model: RoleModel = object.try_into()?;
@@ -176,7 +176,7 @@ pub trait AdminUserModelExtension {
         &self,
         admin_user_service: &AdminUserService,
         permission_identifier: String,
-    ) -> crate::error::Result<()>;
+    ) -> Result<()>;
 }
 
 impl AdminUserModelExtension for AdminUserModel {
@@ -184,13 +184,13 @@ impl AdminUserModelExtension for AdminUserModel {
         &self,
         admin_user_service: &AdminUserService,
         permission_identifier: String,
-    ) -> crate::error::Result<()> {
+    ) -> Result<()> {
         let logged_in_user = self.clone();
         let has_permission_bool = admin_user_service
             .has_permission(logged_in_user, permission_identifier.clone())
             .await?;
         if !has_permission_bool {
-            return Err(crate::error::Error::Unauthorizeed(permission_identifier));
+            return Err(Error::Unauthorizeed(permission_identifier));
         }
 
         Ok(())

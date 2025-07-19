@@ -314,8 +314,8 @@ pub mod content_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -332,14 +332,13 @@ pub mod content_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error: Into<StdError> + Send + Sync,
         {
             ContentClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -377,8 +376,7 @@ pub mod content_client {
         pub async fn collection_all(
             &mut self,
             request: impl tonic::IntoRequest<super::CollectionAllRequest>,
-        ) -> std::result::Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::CollectionAllResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -392,8 +390,7 @@ pub mod content_client {
         pub async fn get_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::GetCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -407,8 +404,7 @@ pub mod content_client {
         pub async fn store_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -422,8 +418,7 @@ pub mod content_client {
         pub async fn update_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -437,8 +432,7 @@ pub mod content_client {
         pub async fn content_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::ContentPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -452,8 +446,7 @@ pub mod content_client {
         pub async fn store_content(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::StoreContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -467,8 +460,7 @@ pub mod content_client {
         pub async fn get_content(
             &mut self,
             request: impl tonic::IntoRequest<super::GetContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::GetContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -482,8 +474,7 @@ pub mod content_client {
         pub async fn update_content(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::UpdateContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -497,8 +488,7 @@ pub mod content_client {
         pub async fn put_content_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutContentIdentifierRequest>,
-        ) -> std::result::Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -513,8 +503,7 @@ pub mod content_client {
         pub async fn delete_content(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::DeleteContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -539,47 +528,47 @@ pub mod content_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with ContentServer.
     #[async_trait]
-    pub trait Content: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Content: Send + Sync + 'static {
         async fn collection_all(
             &self,
             request: tonic::Request<super::CollectionAllRequest>,
-        ) -> std::result::Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>;
         async fn get_collection(
             &self,
             request: tonic::Request<super::GetCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>;
         async fn store_collection(
             &self,
             request: tonic::Request<super::StoreCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>;
         async fn update_collection(
             &self,
             request: tonic::Request<super::UpdateCollectionRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>;
         async fn content_paginate(
             &self,
             request: tonic::Request<super::ContentPaginateRequest>,
-        ) -> std::result::Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>;
         async fn store_content(
             &self,
             request: tonic::Request<super::StoreContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::StoreContentResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::StoreContentResponse>, tonic::Status>;
         async fn get_content(
             &self,
             request: tonic::Request<super::GetContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetContentResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetContentResponse>, tonic::Status>;
         async fn update_content(
             &self,
             request: tonic::Request<super::UpdateContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>;
         async fn put_content_identifier(
             &self,
             request: tonic::Request<super::PutContentIdentifierRequest>,
-        ) -> std::result::Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>;
         async fn delete_content(
             &self,
             request: tonic::Request<super::DeleteContentRequest>,
-        ) -> std::result::Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct ContentServer<T> {
@@ -637,19 +626,16 @@ pub mod content_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for ContentServer<T>
+    impl<T, B> Service<http::Request<B>> for ContentServer<T>
     where
         T: Content,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

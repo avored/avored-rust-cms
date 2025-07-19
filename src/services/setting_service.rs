@@ -12,7 +12,7 @@ pub struct SettingService {
 
 impl SettingService {
     pub fn new(setting_repository: SettingRepository) -> Result<Self> {
-        Ok(SettingService { setting_repository })
+        Ok(Self { setting_repository })
     }
 
     pub async fn get_setting(

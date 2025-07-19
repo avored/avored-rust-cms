@@ -7,6 +7,7 @@ pub mod admin_user_model;
 pub mod asset_model;
 pub mod collection_model;
 pub mod content_model;
+pub mod ldap_config_model;
 pub mod password_rest_model;
 pub mod role_model;
 pub mod setting_model;
@@ -147,7 +148,7 @@ impl TryFrom<Object> for ModelCount {
     fn try_from(val: Object) -> Result<ModelCount> {
         let count = match val.get("count") {
             Some(val) => match val.clone() {
-                Value::Number(v) => v,
+                Number(v) => v,
                 _ => surrealdb::sql::Number::Int(0),
             },
             None => surrealdb::sql::Number::Int(0),

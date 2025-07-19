@@ -90,7 +90,7 @@ pub async fn store_asset_api_handler(
                     tokio::fs::write(full_path, data).await?;
                 }
             }
-            &_ => continue,
+            &_ => {}
         }
     }
 

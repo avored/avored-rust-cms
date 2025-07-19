@@ -2,6 +2,21 @@
 name = "avored-rust-cms"
 version = "0.1.0"
 edition = "2021"
+authors = ["AvoRed Team <team@avored.com>"]
+description = "Enterprise-grade CMS with LDAP authentication and security hardening"
+license = "MIT"
+repository = "https://github.com/avored/avored-rust-cms"
+keywords = ["cms", "ldap", "security", "authentication", "enterprise"]
+categories = ["web-programming", "authentication"]
+readme = "README.md"
+rust-version = "1.70"
+
+# Security metadata
+[package.metadata.security]
+audit = true
+vulnerability-scan = true
+dependency-check = true
+license-check = true
 
 
 [dependencies]
@@ -28,10 +43,52 @@ tower-http = { version = "0.6.6", features = ["fs", "cors"] }
 tower = { version = "0.5.2", features = ["util"] }
 lettre = { version = "0.11.17", features = ["tokio1-native-tls"] }
 handlebars = "6.3.2"
+ldap3 = { version = "0.11.5", features = ["tls"] }
+async-trait = "0.1.83"
+regex = "1.11.1"
+lazy_static = "1.5.0"
+
+# Security-focused dependencies (optional for features)
+secrecy = { version = "0.10", features = ["serde"], optional = true }
+zeroize = { version = "1.7", features = ["zeroize_derive"], optional = true }
+constant_time_eq = { version = "0.4", optional = true }
+ring = { version = "0.17", optional = true }
+rustls = { version = "0.23", optional = true }
+rustls-webpki = { version = "0.103", optional = true }
+webpki-roots = { version = "1.0", optional = true }
+x509-parser = { version = "0.17", optional = true }
+sha2 = { version = "0.10", optional = true }
+hmac = { version = "0.12", optional = true }
+subtle = { version = "2.5", optional = true }
+getrandom = { version = "0.3", features = ["std"] }
+uuid = { version = "1.6", features = ["v4", "serde"] }
+thiserror = "2.0"
+
+# Explicit dependencies to resolve version conflicts and reduce duplicates
+base64 = "0.22.1"  # Force newer version (was conflicting 0.21.7 vs 0.22.1)
+hashbrown = "0.15.4"  # Force latest version (was multiple: 0.12.3, 0.14.5, 0.15.4)
+itertools = "0.14.0"  # Force latest version (was multiple: 0.10.5, 0.11.0, 0.12.1, 0.13.0, 0.14.0)
 
 
 [build-dependencies]
 tonic-build = { version = "0.13.1", features = ["prost"] }
+
+[dev-dependencies]
+tokio-test = "0.4"
+proptest = "1.4"
+arbitrary = { version = "1.3", features = ["derive"] }
+quickcheck = "1.0"
+criterion = "0.6"
+
+# Security testing dependencies (installed globally via cargo install)
+# cargo-audit = "0.20"
+# cargo-deny = "0.14"
+# cargo-outdated = "0.15"
+# cargo-geiger = "0.11"
+semver-parser = "0.10"
+tempfile = "3.8"
+wiremock = "0.6"
+mockall = "0.13"
 
 [profile.dev-fast]
 inherits = "dev"
@@ -47,3 +104,74 @@ debug = false
 lto = "thin"
 codegen-units = 1
 panic = "abort"
+
+# Security-hardened release profile
+[profile.release-secure]
+inherits = "release"
+opt-level = 3
+debug = false
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+overflow-checks = true
+debug-assertions = false
+rpath = false
+strip = "symbols"
+
+# Security-focused development profile
+[profile.dev-secure]
+inherits = "dev"
+opt-level = 1
+debug = true
+overflow-checks = true
+debug-assertions = true
+incremental = false
+
+# Security features configuration
+[features]
+default = ["security-hardened", "ldap-auth"]
+security-hardened = ["dep:secrecy", "dep:zeroize", "dep:constant_time_eq", "dep:ring"]
+ldap-auth = ["dep:rustls"]
+crypto-secure = ["dep:ring", "dep:sha2", "dep:hmac", "dep:subtle"]
+timing-safe = ["dep:constant_time_eq", "dep:subtle"]
+memory-safe = ["dep:zeroize", "dep:secrecy"]
+tls-secure = ["dep:rustls", "dep:rustls-webpki", "dep:webpki-roots"]
+
+# Security lints and checks
+[lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+unused_extern_crates = "warn"
+unused_import_braces = "warn"
+unused_qualifications = "warn"
+variant_size_differences = "warn"
+
+
+
+[lints.clippy]
+all = "warn"
+pedantic = "warn"
+nursery = "warn"
+cargo = "warn"
+# Security-focused lints
+arithmetic_side_effects = "warn"
+panic = "warn"
+unwrap_used = "warn"
+expect_used = "warn"
+indexing_slicing = "warn"
+integer_division = "warn"
+modulo_arithmetic = "warn"
+as_conversions = "warn"
+cast_lossless = "warn"
+cast_possible_truncation = "warn"
+cast_possible_wrap = "warn"
+cast_precision_loss = "warn"
+cast_sign_loss = "warn"
+float_arithmetic = "warn"
+lossy_float_literal = "warn"
+imprecise_flops = "warn"
+suboptimal_flops = "warn"
+
+# Dependency resolution to reduce duplicates
+# Note: Most duplicates come from surrealdb transitive dependencies
+# We'll add explicit version constraints for commonly duplicated crates

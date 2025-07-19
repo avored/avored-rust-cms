@@ -27,9 +27,12 @@ impl CmsService {
         template: &AvoRedTemplateProvider,
         request: SentContactFormRequest,
     ) -> Result<SentContactFormResponse> {
-        let from_address = String::from("info@avored.com");
-        let to_address = String::from("ind.purvesh@gmail.com");
-        let email_subject = String::from("Contact us message");
+        let from_address = std::env::var("AVORED_CONTACT_FROM_EMAIL")
+            .unwrap_or_else(|_| "info@avored.com".to_string());
+        let to_address = std::env::var("AVORED_CONTACT_TO_EMAIL")
+            .unwrap_or_else(|_| "admin@avored.com".to_string());
+        let email_subject = std::env::var("AVORED_CONTACT_EMAIL_SUBJECT")
+            .unwrap_or_else(|_| "Contact us message".to_string());
 
         let payload = SentContactUsEmailRequest {
             email: request.email,

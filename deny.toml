@@ -64,15 +64,17 @@ feature-depth = 1
 # https://embarkstudios.github.io/cargo-deny/checks/advisories/cfg.html
 [advisories]
 # The path where the advisory databases are cloned/fetched into
-#db-path = "$CARGO_HOME/advisory-dbs"
+db-path = "$CARGO_HOME/advisory-dbs"
 # The url(s) of the advisory databases to use
-#db-urls = ["https://github.com/rustsec/advisory-db"]
+db-urls = ["https://github.com/rustsec/advisory-db"]
+# Security-first approach: deny vulnerabilities, track unmaintained dependencies
+# vulnerability = "deny"  # Removed in version 2, all vulnerabilities now emit errors
+unmaintained = "workspace"  # Only fail on unmaintained direct dependencies, warn on transitive
+yanked = "warn"
 # A list of advisory IDs to ignore. Note that ignored advisories will still
 # output a note when they are encountered.
 ignore = [
-    # Ignore paste unmaintained warning - it's a transitive dependency through surrealdb
-    # We'll wait for surrealdb to update their dependencies
-    { id = "RUSTSEC-2024-0436", reason = "paste is a transitive dependency via surrealdb, waiting for upstream fix" },
+    # Currently no advisories need to be ignored
 ]
 # If this is true, then cargo deny will use the git executable to fetch advisory database.
 # If this is false, then it uses a built-in git library.
@@ -102,6 +104,7 @@ allow = [
     "MPL-2.0",
     "BUSL-1.1",  # Business Source License for SurrealDB
     "CDLA-Permissive-2.0",  # Community Data License Agreement Permissive 2.0 for webpki-roots
+    "OpenSSL",  # OpenSSL License for aws-lc-sys (AWS LibCrypto)
 ]
 # The confidence threshold for detecting a license from license text.
 # The higher the value, the more closely the license text must be to the
@@ -170,17 +173,33 @@ workspace-default-features = "allow"
 # on a crate-by-crate basis if desired.
 external-default-features = "allow"
 # List of crates that are allowed. Use with care!
-allow = [
-    #"ansi_term@0.11.0",
-    #{ crate = "ansi_term@0.11.0", reason = "you can specify a reason it is allowed" },
-]
-# List of crates to deny
+# We don't use an allowlist - instead we rely on the deny list below for security restrictions
+# allow = []
+# List of crates to deny for security reasons
 deny = [
-    #"ansi_term@0.11.0",
-    #{ crate = "ansi_term@0.11.0", reason = "you can specify a reason it is banned" },
-    # Wrapper crates can optionally be specified to allow the crate when it
-    # is a direct dependency of the otherwise banned crate
-    #{ crate = "ansi_term@0.11.0", wrappers = ["this-crate-directly-depends-on-ansi_term"] },
+    # Cryptographically insecure crates
+    { crate = "md5", reason = "MD5 is cryptographically broken and vulnerable to collision attacks" },
+    # Note: SHA1 is used by SurrealDB and tungstenite for non-cryptographic purposes, so we allow it
+
+    # Unsafe or deprecated crates with known vulnerabilities
+    { crate = "time@<0.3.0", reason = "Use chrono or time 0.3+ for security fixes" },
+    { crate = "chrono@<0.4.20", reason = "Contains security vulnerabilities in date parsing" },
+    { crate = "regex@<1.5", reason = "Contains ReDoS (Regular Expression Denial of Service) vulnerabilities" },
+
+    # Network security risks
+    { crate = "hyper@<0.14.18", reason = "Contains HTTP/2 security vulnerabilities" },
+    { crate = "tokio@<1.20", reason = "Contains security fixes for async runtime" },
+
+    # Serialization security risks
+    { crate = "serde@<1.0.130", reason = "Contains deserialization vulnerabilities" },
+    { crate = "serde_json@<1.0.85", reason = "Contains JSON parsing vulnerabilities" },
+
+    # Random number generation security (allow current versions)
+    { crate = "rand@<0.8.0", reason = "Use rand 0.8+ for cryptographically secure random number generation" },
+
+    # Memory safety concerns
+    { crate = "memchr@<2.5", reason = "Contains potential memory safety issues" },
+    { crate = "smallvec@<1.9", reason = "Contains buffer overflow vulnerabilities" },
 ]
 
 # List of features to allow/deny
@@ -208,8 +227,48 @@ deny = [
 
 # Certain crates/versions that will be skipped when doing duplicate detection.
 skip = [
-    #"ansi_term@0.11.0",
-    #{ crate = "ansi_term@0.11.0", reason = "you can specify a reason why it can't be updated/removed" },
+    # Allow duplicate versions for these crates that come from different dependency trees
+    { crate = "approx", reason = "Different versions required by ndarray and geo-types dependencies" },
+    { crate = "base64", reason = "Different versions required by various crypto and web dependencies" },
+    { crate = "bindgen", reason = "Different versions required by build dependencies" },
+    { crate = "bitflags", reason = "Different versions required by system and crypto dependencies" },
+    { crate = "fixedbitset", reason = "Different versions required by petgraph dependencies" },
+    { crate = "getrandom", reason = "Different versions required by various crypto dependencies" },
+    { crate = "hashbrown", reason = "Different versions required by indexmap and other dependencies" },
+    { crate = "indexmap", reason = "Different versions required by various dependencies" },
+    { crate = "itertools", reason = "Different versions required by various build and runtime dependencies" },
+    { crate = "linux-raw-sys", reason = "Different versions required by rustix dependencies" },
+    { crate = "nom", reason = "Different versions required by LDAP and email parsing" },
+    { crate = "petgraph", reason = "Different versions required by build dependencies" },
+    { crate = "quick_cache", reason = "Different versions required by SurrealDB dependencies" },
+    { crate = "rand", reason = "Different versions required by various dependencies" },
+    { crate = "rand_chacha", reason = "Different versions required by various dependencies" },
+    { crate = "rand_core", reason = "Different versions required by various dependencies" },
+    { crate = "regex-automata", reason = "Different versions required by various dependencies" },
+    { crate = "windows_i686_msvc", reason = "Different versions required by Windows system dependencies" },
+    { crate = "regex-syntax", reason = "Different versions required by regex and tracing dependencies" },
+    { crate = "revision", reason = "Different versions required by SurrealDB dependencies" },
+    { crate = "revision-derive", reason = "Different versions required by SurrealDB dependencies" },
+    { crate = "rustc-hash", reason = "Different versions required by bindgen dependencies" },
+    { crate = "rustix", reason = "Different versions required by system dependencies" },
+    { crate = "thiserror", reason = "Different versions required by various dependencies" },
+    { crate = "thiserror-impl", reason = "Different versions required by various dependencies" },
+    { crate = "vart", reason = "Different versions required by SurrealDB dependencies" },
+    { crate = "wasi", reason = "Different versions required by WASM and system dependencies" },
+    { crate = "windows-core", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_aarch64_msvc", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_i686_gnu", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_i686_gnullvm", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_i686_msvc", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_x86_64_gnu", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows-implement", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows-interface", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows-result", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows-sys", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows-targets", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_aarch64_gnullvm", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_x86_64_gnullvm", reason = "Different versions required by Windows system dependencies" },
+    { crate = "windows_x86_64_msvc", reason = "Different versions required by Windows system dependencies" },
 ]
 # Similarly to `skip` allows you to skip certain crates during duplicate
 # detection. Unlike skip, it also includes the entire tree of transitive

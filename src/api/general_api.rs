@@ -14,9 +14,13 @@ impl GeneralService for GeneralApi {
     async fn logged_in_user(
         &self,
         request: tonic::Request<LoggedInUserRequest>,
-    ) -> Result<Response<LoggedInUserResponse>, tonic::Status> {
+    ) -> Result<Response<LoggedInUserResponse>, Status> {
         println!("->> {:<12} - logged_in_user", "gRPC_General_Service");
-        let claims = request.extensions().get::<TokenClaims>().cloned().unwrap();
+        let claims = request
+            .extensions()
+            .get::<TokenClaims>()
+            .cloned()
+            .ok_or_else(|| Status::unauthenticated("Missing authentication token"))?;
 
         match self.state.general_service.logged_in_user(claims).await {
             Ok(reply) => Ok(Response::new(reply)),

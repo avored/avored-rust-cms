@@ -14,8 +14,6 @@ jobs:
       - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2.4.0
       - uses: arduino/setup-protoc@v3
-        with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
 #      - name: Build
 #        run: cargo build --verbose
@@ -30,13 +28,17 @@ jobs:
 #          source: "./target/release"
 #          target: ${{ secrets.RUST_TARGET_PATH }}
       - name: Deploy demo release
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "./target/release"
           target: ${{ secrets.RUST_DEMO_TARGET_PATH }}
+          timeout: 60s
+          command_timeout: 10m
+          overwrite: true
+        continue-on-error: false
 #      - name: Deploy files
 #        uses: appleboy/scp-action@master
 #        with:
@@ -46,13 +48,17 @@ jobs:
 #          source: "./public,./resources"
 #          target: ${{ secrets.RUST_DEPLOY_PATH }}
       - name: Deploy demo files
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           source: "./public,./resources"
           target: ${{ secrets.RUST_DEMO_DEPLOY_PATH }}
+          timeout: 60s
+          command_timeout: 10m
+          overwrite: true
+        continue-on-error: false
       - name: restart service
         uses: appleboy/ssh-action@v1.1.0
         with:
@@ -60,8 +66,18 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            sudo systemctl stop demoavored.service
+            echo "🔄 Restarting demo service..."
+            sudo systemctl stop demoavored.service || echo "Service was not running"
+            sleep 2
             sudo systemctl start demoavored.service
+            sleep 3
+            if sudo systemctl is-active --quiet demoavored.service; then
+              echo "✅ Service restarted successfully"
+            else
+              echo "❌ Service failed to start"
+              sudo systemctl status demoavored.service
+              exit 1
+            fi
 
 
 

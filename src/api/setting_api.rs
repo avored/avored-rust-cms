@@ -17,7 +17,7 @@ impl Setting for SettingApi {
     async fn get_setting(
         &self,
         request: tonic::Request<GetSettingRequest>,
-    ) -> Result<Response<GetSettingResponse>, tonic::Status> {
+    ) -> Result<Response<GetSettingResponse>, Status> {
         println!("->> {:<12} - get_setting", "gRPC_Setting_Service");
 
         let claims = request.get_token_claim()?;
@@ -38,7 +38,7 @@ impl Setting for SettingApi {
     async fn store_setting(
         &self,
         request: tonic::Request<StoreSettingRequest>,
-    ) -> Result<Response<StoreSettingResponse>, tonic::Status> {
+    ) -> Result<Response<StoreSettingResponse>, Status> {
         println!("->> {:<12} - store_setting", "gRPC_Setting_Service");
 
         let claims = request.get_token_claim()?;
