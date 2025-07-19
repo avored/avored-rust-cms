@@ -79,8 +79,7 @@ pub mod misc_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error: Into<StdError> + Send + Sync,
         {
             MiscClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -132,8 +131,7 @@ pub mod misc_client {
         pub async fn health_check(
             &mut self,
             request: impl tonic::IntoRequest<super::HealthCheckRequest>,
-        ) -> Result<tonic::Response<super::HealthCheckResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::HealthCheckResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -147,8 +145,7 @@ pub mod misc_client {
         pub async fn install_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::InstallDemoDataRequest>,
-        ) -> Result<tonic::Response<super::InstallDemoDataResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::InstallDemoDataResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -162,8 +159,7 @@ pub mod misc_client {
         pub async fn delete_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteDemoDataRequest>,
-        ) -> Result<tonic::Response<super::DeleteDemoDataResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::DeleteDemoDataResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -271,10 +267,7 @@ pub mod misc_server {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

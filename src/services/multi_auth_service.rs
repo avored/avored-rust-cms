@@ -156,7 +156,10 @@ impl MultiAuthService {
                     "ldap" => AuthProviderType::Ldap,
                     _ => AuthProviderType::Local,
                 };
-                (p.provider_name().to_string(), provider_type.as_str().to_string())
+                (
+                    p.provider_name().to_string(),
+                    provider_type.as_str().to_string(),
+                )
             })
             .collect()
     }

@@ -27,7 +27,7 @@ lazy_static! {
     // LDAP injection patterns
     static ref LDAP_INJECTION_PATTERNS: Vec<Regex> = vec![
         Regex::new(r"[()&|!]").unwrap(),
-        Regex::new(r#"\\[0-9a-fA-F]{2}"#).unwrap(),
+        Regex::new(r"\\[0-9a-fA-F]{2}").unwrap(),
     ];
 }
 

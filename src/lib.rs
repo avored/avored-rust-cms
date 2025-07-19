@@ -1,6 +1,6 @@
-//! AvoRed Rust CMS Library
+//! `AvoRed` Rust CMS Library
 //!
-//! This library provides the core functionality for the AvoRed CMS,
+//! This library provides the core functionality for the `AvoRed` CMS,
 //! including security services, authentication, and data models.
 
 pub mod api;

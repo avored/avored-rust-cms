@@ -82,8 +82,7 @@ pub mod cms_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error: Into<StdError> + Send + Sync,
         {
             CmsClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -121,8 +120,7 @@ pub mod cms_client {
         pub async fn get_cms_content(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCmsContentRequest>,
-        ) -> Result<tonic::Response<super::GetCmsContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::GetCmsContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -136,8 +134,7 @@ pub mod cms_client {
         pub async fn sent_contact_form(
             &mut self,
             request: impl tonic::IntoRequest<super::SentContactFormRequest>,
-        ) -> Result<tonic::Response<super::SentContactFormResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::SentContactFormResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -237,10 +234,7 @@ pub mod cms_server {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

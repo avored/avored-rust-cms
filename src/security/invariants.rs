@@ -386,7 +386,7 @@ impl SecurityHealthReport {
     }
 
     pub fn overall_status(&self) -> SecurityStatus {
-        let statuses = vec![
+        let statuses = [
             &self.invariants_status,
             &self.error_handling_status,
             &self.configuration_status,

@@ -338,8 +338,7 @@ pub mod content_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<http::Request<tonic::body::Body>>>::Error:
-                Into<StdError> + Send + Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error: Into<StdError> + Send + Sync,
         {
             ContentClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -377,8 +376,7 @@ pub mod content_client {
         pub async fn collection_all(
             &mut self,
             request: impl tonic::IntoRequest<super::CollectionAllRequest>,
-        ) -> Result<tonic::Response<super::CollectionAllResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::CollectionAllResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -392,8 +390,7 @@ pub mod content_client {
         pub async fn get_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCollectionRequest>,
-        ) -> Result<tonic::Response<super::GetCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::GetCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -407,8 +404,7 @@ pub mod content_client {
         pub async fn store_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreCollectionRequest>,
-        ) -> Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::StoreCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -422,8 +418,7 @@ pub mod content_client {
         pub async fn update_collection(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateCollectionRequest>,
-        ) -> Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::UpdateCollectionResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -437,8 +432,7 @@ pub mod content_client {
         pub async fn content_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::ContentPaginateRequest>,
-        ) -> Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::ContentPaginateResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -452,8 +446,7 @@ pub mod content_client {
         pub async fn store_content(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreContentRequest>,
-        ) -> Result<tonic::Response<super::StoreContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::StoreContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -467,8 +460,7 @@ pub mod content_client {
         pub async fn get_content(
             &mut self,
             request: impl tonic::IntoRequest<super::GetContentRequest>,
-        ) -> Result<tonic::Response<super::GetContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::GetContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -482,8 +474,7 @@ pub mod content_client {
         pub async fn update_content(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateContentRequest>,
-        ) -> Result<tonic::Response<super::UpdateContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::UpdateContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -497,8 +488,7 @@ pub mod content_client {
         pub async fn put_content_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutContentIdentifierRequest>,
-        ) -> Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::PutContentIdentifierResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -513,8 +503,7 @@ pub mod content_client {
         pub async fn delete_content(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteContentRequest>,
-        ) -> Result<tonic::Response<super::DeleteContentResponse>, tonic::Status>
-        {
+        ) -> Result<tonic::Response<super::DeleteContentResponse>, tonic::Status> {
             self.inner.ready().await.map_err(|e| {
                 tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
             })?;
@@ -646,10 +635,7 @@ pub mod content_server {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

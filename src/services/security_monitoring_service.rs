@@ -419,7 +419,7 @@ impl SecurityMonitoringService {
         }
 
         // Ensure score is between 0 and 100
-        score = score.max(0.0).min(100.0);
+        score = score.clamp(0.0, 100.0);
 
         metrics.security_health_score = score;
 
@@ -429,7 +429,7 @@ impl SecurityMonitoringService {
             self.create_alert(
                 SecurityAlertType::SystemCompromise,
                 AlertSeverity::Critical,
-                format!("Security health score is critically low: {:.1}", score),
+                format!("Security health score is critically low: {score:.1}"),
                 "health_monitor",
                 HashMap::from([("score".to_string(), score.to_string())]),
             )
@@ -465,7 +465,7 @@ impl SecurityMetrics {
             security_violations: 0,
             last_updated: SystemTime::now()
                 .duration_since(UNIX_EPOCH)
-                .unwrap()
+                .unwrap_or_default()
                 .as_secs(),
             uptime_seconds: 0,
             security_health_score: 100.0,

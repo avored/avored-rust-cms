@@ -96,14 +96,14 @@ impl AdminUser for AdminUserApi {
             )
             .await?;
 
-        let req = request.into_inner();
-        req.validate(&self.state).await?;
+        let request_data = request.into_inner();
+        request_data.validate(&self.state).await?;
 
         match self
             .state
             .admin_user_service
             .store(
-                req,
+                request_data,
                 claims.email,
                 &self.state.config.password_salt,
                 &self.state.db,
@@ -111,9 +111,9 @@ impl AdminUser for AdminUserApi {
             .await
         {
             Ok(reply) => {
-                let res = Response::new(reply);
+                let response = Response::new(reply);
 
-                Ok(res)
+                Ok(response)
             }
             Err(e) => match e {
                 TonicError(status) => Err(status),
