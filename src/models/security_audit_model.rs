@@ -287,3 +287,120 @@ impl CreateSecurityAuditModel {
         Ok(())
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::BTreeMap;
+    use surrealdb::sql::{Datetime, Object, Value};
+
+    #[test]
+    fn test_validate_ip_address() {
+        // Valid IPv4 addresses
+        assert!(SecurityAuditModel::validate_ip_address("192.168.1.1"));
+        assert!(SecurityAuditModel::validate_ip_address("127.0.0.1"));
+        assert!(SecurityAuditModel::validate_ip_address("255.255.255.255"));
+        assert!(SecurityAuditModel::validate_ip_address("0.0.0.0"));
+
+        // Valid special case
+        assert!(SecurityAuditModel::validate_ip_address("unknown"));
+
+        // Valid IPv6 addresses (simplified validation)
+        assert!(SecurityAuditModel::validate_ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334"));
+        assert!(SecurityAuditModel::validate_ip_address("::1"));
+
+        // Invalid addresses
+        assert!(!SecurityAuditModel::validate_ip_address("256.1.1.1"));
+        assert!(!SecurityAuditModel::validate_ip_address("192.168.1"));
+        assert!(!SecurityAuditModel::validate_ip_address("invalid"));
+        assert!(!SecurityAuditModel::validate_ip_address(""));
+    }
+
+    #[test]
+    fn test_calculate_health_score() {
+        let mut audit = SecurityAuditModel {
+            failed_authentication_attempts: 0,
+            blocked_injection_attempts: 0,
+            suspicious_activities_detected: 0,
+            security_violations: 0,
+            ..Default::default()
+        };
+
+        // Perfect score
+        assert_eq!(audit.calculate_health_score(), 100.0);
+
+        // Deduct points for failed auth attempts (2 points each)
+        audit.failed_authentication_attempts = 5;
+        assert_eq!(audit.calculate_health_score(), 90.0);
+
+        // Deduct points for injection attempts (5 points each)
+        audit.blocked_injection_attempts = 2;
+        assert_eq!(audit.calculate_health_score(), 80.0);
+
+        // Deduct points for suspicious activities (3 points each)
+        audit.suspicious_activities_detected = 3;
+        assert_eq!(audit.calculate_health_score(), 71.0);
+
+        // Deduct points for security violations (4 points each)
+        audit.security_violations = 1;
+        assert_eq!(audit.calculate_health_score(), 67.0);
+
+        // Score should not go below 0
+        audit.failed_authentication_attempts = 100;
+        assert_eq!(audit.calculate_health_score(), 0.0);
+    }
+
+    #[test]
+    fn test_create_security_audit_model_validation() {
+        // Valid model
+        let valid_model = CreateSecurityAuditModel {
+            security_audit_id: "audit_123".to_string(),
+            ip_address: "192.168.1.1".to_string(),
+            security_health_score: Some(85.5),
+            ..Default::default()
+        };
+        assert!(valid_model.validate().is_ok());
+
+        // Empty security_audit_id
+        let invalid_model = CreateSecurityAuditModel {
+            security_audit_id: "".to_string(),
+            ip_address: "192.168.1.1".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Empty ip_address
+        let invalid_model = CreateSecurityAuditModel {
+            security_audit_id: "audit_123".to_string(),
+            ip_address: "".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Invalid ip_address
+        let invalid_model = CreateSecurityAuditModel {
+            security_audit_id: "audit_123".to_string(),
+            ip_address: "invalid_ip".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Invalid security_health_score (too high)
+        let invalid_model = CreateSecurityAuditModel {
+            security_audit_id: "audit_123".to_string(),
+            ip_address: "192.168.1.1".to_string(),
+            security_health_score: Some(150.0),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Invalid security_health_score (negative)
+        let invalid_model = CreateSecurityAuditModel {
+            security_audit_id: "audit_123".to_string(),
+            ip_address: "192.168.1.1".to_string(),
+            security_health_score: Some(-10.0),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+    }
+}

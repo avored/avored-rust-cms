@@ -312,3 +312,151 @@ impl CreateSecurityAlertModel {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::collections::BTreeMap;
+    use surrealdb::sql::{Datetime, Object, Value};
+
+    #[test]
+    fn test_alert_type_conversions() {
+        // Test as_str
+        assert_eq!(AlertType::AuthenticationFailure.as_str(), "authentication_failure");
+        assert_eq!(AlertType::InjectionAttempt.as_str(), "injection_attempt");
+        assert_eq!(AlertType::RateLimitExceeded.as_str(), "rate_limit_exceeded");
+        assert_eq!(AlertType::SuspiciousActivity.as_str(), "suspicious_activity");
+        assert_eq!(AlertType::PrivilegeEscalation.as_str(), "privilege_escalation");
+        assert_eq!(AlertType::DataBreachAttempt.as_str(), "data_breach_attempt");
+        assert_eq!(AlertType::UnauthorizedAccess.as_str(), "unauthorized_access");
+        assert_eq!(AlertType::MalformedRequest.as_str(), "malformed_request");
+        assert_eq!(AlertType::BruteForceAttack.as_str(), "brute_force_attack");
+        assert_eq!(AlertType::SessionHijacking.as_str(), "session_hijacking");
+
+        // Test from_str
+        assert!(matches!(AlertType::from_str("authentication_failure").unwrap(), AlertType::AuthenticationFailure));
+        assert!(matches!(AlertType::from_str("injection_attempt").unwrap(), AlertType::InjectionAttempt));
+        assert!(matches!(AlertType::from_str("rate_limit_exceeded").unwrap(), AlertType::RateLimitExceeded));
+        assert!(matches!(AlertType::from_str("suspicious_activity").unwrap(), AlertType::SuspiciousActivity));
+        assert!(matches!(AlertType::from_str("privilege_escalation").unwrap(), AlertType::PrivilegeEscalation));
+        assert!(matches!(AlertType::from_str("data_breach_attempt").unwrap(), AlertType::DataBreachAttempt));
+        assert!(matches!(AlertType::from_str("unauthorized_access").unwrap(), AlertType::UnauthorizedAccess));
+        assert!(matches!(AlertType::from_str("malformed_request").unwrap(), AlertType::MalformedRequest));
+        assert!(matches!(AlertType::from_str("brute_force_attack").unwrap(), AlertType::BruteForceAttack));
+        assert!(matches!(AlertType::from_str("session_hijacking").unwrap(), AlertType::SessionHijacking));
+
+        // Test invalid string
+        assert!(AlertType::from_str("invalid_type").is_err());
+    }
+
+    #[test]
+    fn test_alert_severity_conversions() {
+        // Test as_str
+        assert_eq!(AlertSeverity::Low.as_str(), "low");
+        assert_eq!(AlertSeverity::Medium.as_str(), "medium");
+        assert_eq!(AlertSeverity::High.as_str(), "high");
+        assert_eq!(AlertSeverity::Critical.as_str(), "critical");
+
+        // Test from_str
+        assert!(matches!(AlertSeverity::from_str("low").unwrap(), AlertSeverity::Low));
+        assert!(matches!(AlertSeverity::from_str("medium").unwrap(), AlertSeverity::Medium));
+        assert!(matches!(AlertSeverity::from_str("high").unwrap(), AlertSeverity::High));
+        assert!(matches!(AlertSeverity::from_str("critical").unwrap(), AlertSeverity::Critical));
+
+        // Test invalid string
+        assert!(AlertSeverity::from_str("invalid_severity").is_err());
+
+        // Test priority scores
+        assert_eq!(AlertSeverity::Low.priority_score(), 1);
+        assert_eq!(AlertSeverity::Medium.priority_score(), 2);
+        assert_eq!(AlertSeverity::High.priority_score(), 3);
+        assert_eq!(AlertSeverity::Critical.priority_score(), 4);
+    }
+
+    #[test]
+    fn test_security_alert_model_requires_immediate_attention() {
+        let mut alert = SecurityAlertModel {
+            severity: AlertSeverity::Low,
+            resolved: false,
+            ..Default::default()
+        };
+
+        // Low severity, unresolved - no immediate attention
+        assert!(!alert.requires_immediate_attention());
+
+        // Medium severity, unresolved - no immediate attention
+        alert.severity = AlertSeverity::Medium;
+        assert!(!alert.requires_immediate_attention());
+
+        // High severity, unresolved - requires immediate attention
+        alert.severity = AlertSeverity::High;
+        assert!(alert.requires_immediate_attention());
+
+        // Critical severity, unresolved - requires immediate attention
+        alert.severity = AlertSeverity::Critical;
+        assert!(alert.requires_immediate_attention());
+
+        // Critical severity, resolved - no immediate attention
+        alert.resolved = true;
+        assert!(!alert.requires_immediate_attention());
+    }
+
+    #[test]
+    fn test_create_security_alert_model_validation() {
+        // Valid model
+        let valid_model = CreateSecurityAlertModel {
+            alert_id: "alert_123".to_string(),
+            alert_type: AlertType::AuthenticationFailure,
+            severity: AlertSeverity::Medium,
+            message: "Test alert message".to_string(),
+            source: "192.168.1.1".to_string(),
+            ..Default::default()
+        };
+        assert!(valid_model.validate().is_ok());
+
+        // Empty alert_id
+        let invalid_model = CreateSecurityAlertModel {
+            alert_id: "".to_string(),
+            message: "Test alert message".to_string(),
+            source: "192.168.1.1".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Empty message
+        let invalid_model = CreateSecurityAlertModel {
+            alert_id: "alert_123".to_string(),
+            message: "".to_string(),
+            source: "192.168.1.1".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+
+        // Empty source
+        let invalid_model = CreateSecurityAlertModel {
+            alert_id: "alert_123".to_string(),
+            message: "Test alert message".to_string(),
+            source: "".to_string(),
+            ..Default::default()
+        };
+        assert!(invalid_model.validate().is_err());
+    }
+
+    #[test]
+    fn test_create_security_alert_model_new_with_auto_id() {
+        let alert = CreateSecurityAlertModel::new_with_auto_id(
+            AlertType::BruteForceAttack,
+            AlertSeverity::High,
+            "Brute force attack detected".to_string(),
+            "192.168.1.100".to_string(),
+        );
+
+        assert!(alert.alert_id.starts_with("alert_"));
+        assert!(matches!(alert.alert_type, AlertType::BruteForceAttack));
+        assert!(matches!(alert.severity, AlertSeverity::High));
+        assert_eq!(alert.message, "Brute force attack detected");
+        assert_eq!(alert.source, "192.168.1.100");
+        assert_eq!(alert.affected_resource, None);
+        assert_eq!(alert.metadata, None);
+    }
+}

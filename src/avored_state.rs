@@ -9,6 +9,8 @@ use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::repositories::setting_repository::SettingRepository;
+use crate::repositories::security_audit_repository::SecurityAuditRepository;
+use crate::repositories::security_alert_repository::SecurityAlertRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
@@ -17,6 +19,8 @@ use crate::services::content_service::ContentService;
 use crate::services::general_service::GeneralService;
 use crate::services::misc_service::MiscService;
 use crate::services::setting_service::SettingService;
+use crate::services::security_audit_service::SecurityAuditService;
+use crate::services::security_alert_service::SecurityAlertService;
 
 pub struct AvoRedState {
     pub db: DB,
@@ -29,7 +33,9 @@ pub struct AvoRedState {
     pub asset_service: AssetService,
     pub setting_service: SettingService,
     pub cms_service: CmsService,
-    pub general_service: GeneralService
+    pub general_service: GeneralService,
+    pub security_audit_service: SecurityAuditService,
+    pub security_alert_service: SecurityAlertService,
 }
 
 impl AvoRedState {
@@ -47,6 +53,8 @@ impl AvoRedState {
         let asset_repository = AssetRepository::new();
         let password_reset_repository = PasswordResetRepository::new();
         let setting_repository = SettingRepository::new();
+        let security_audit_repository = SecurityAuditRepository::new();
+        let security_alert_repository = SecurityAlertRepository::new();
 
 
         let misc_service = MiscService::new().await?;
@@ -57,6 +65,8 @@ impl AvoRedState {
         let setting_service = SettingService::new(setting_repository)?;
         let cms_service = CmsService::new(content_repository)?;
         let general_service = GeneralService::new()?;
+        let security_audit_service = SecurityAuditService::new(security_audit_repository);
+        let security_alert_service = SecurityAlertService::new(security_alert_repository);
 
         Ok(AvoRedState {
             config: avored_config_provider,
@@ -70,6 +80,8 @@ impl AvoRedState {
             setting_service,
             cms_service,
             general_service,
+            security_audit_service,
+            security_alert_service,
         })
     }
 }
