@@ -1,13 +1,16 @@
+use crate::api::proto::admin_user::StoreAdminUserRequest;
+use crate::api::proto::misc::misc_server::Misc;
+use crate::api::proto::misc::{
+    DeleteDemoDataRequest, DeleteDemoDataResponse, HealthCheckRequest, HealthCheckResponse,
+    InstallDemoDataRequest, InstallDemoDataResponse, SetupRequest, SetupResponse,
+};
+use crate::avored_state::AvoRedState;
+use crate::models::role_model::CreatableRole;
 use std::collections::BTreeMap;
 use std::sync::Arc;
 use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
-use crate::api::proto::admin_user::StoreAdminUserRequest;
-use crate::api::proto::misc::{DeleteDemoDataRequest, DeleteDemoDataResponse, HealthCheckRequest, HealthCheckResponse, InstallDemoDataRequest, InstallDemoDataResponse, SetupRequest, SetupResponse};
-use crate::api::proto::misc::misc_server::Misc;
-use crate::avored_state::AvoRedState;
-use crate::models::role_model::CreatableRole;
 
 pub struct MiscApi {
     pub state: Arc<AvoRedState>,
@@ -15,39 +18,40 @@ pub struct MiscApi {
 
 #[async_trait]
 impl Misc for MiscApi {
-    async fn setup(&self, request: Request<SetupRequest>) -> Result<Response<SetupResponse>, Status> {
+    async fn setup(
+        &self,
+        request: Request<SetupRequest>,
+    ) -> Result<Response<SetupResponse>, Status> {
         let req = request.into_inner();
-        
-        match self.
-            state.
-            misc_service.
-            setup(
-                req,
-                &self.state.config.password_salt,
-                &self.state.db
-            ).await {
-                Ok(reply) => Ok(Response::new(reply)),
-                Err(e) => Err(Status::internal(e.to_string()))
-            }
 
+        match self
+            .state
+            .misc_service
+            .setup(req, &self.state.config.password_salt, &self.state.db)
+            .await
+        {
+            Ok(reply) => Ok(Response::new(reply)),
+            Err(e) => Err(Status::internal(e.to_string())),
+        }
     }
 
-    async fn health_check(&self, _request: Request<HealthCheckRequest>) -> Result<Response<HealthCheckResponse>, Status> {
-        let reply = HealthCheckResponse {
-            status: true
-        };
-        
+    async fn health_check(
+        &self,
+        _request: Request<HealthCheckRequest>,
+    ) -> Result<Response<HealthCheckResponse>, Status> {
+        let reply = HealthCheckResponse { status: true };
+
         // let file = Path::new("public/backup.sql");
-        // 
+        //
         // let (datastore, session) = &self.state.db;
-        // 
+        //
         // let (tx, rx) = channel::bounded(1);
         // let (mut writer, mut reader) = io::duplex(10_240);
-        // 
+        //
         // // Write to channel.
         // // let session = session.read().await.clone();
         // let export = datastore.export(session, tx);
-        // 
+        //
         // // Read from channel and write to pipe.
         // let bridge = async move {
         //     while let Ok(value) = rx.recv().await {
@@ -58,7 +62,7 @@ impl Misc for MiscApi {
         //     }
         //     Ok(())
         // };
-        // 
+        //
         // // Output to stdout or file.
         // let mut output = match OpenOptions::new()
         //     .write(true)
@@ -73,7 +77,7 @@ impl Misc for MiscApi {
         //             .into());
         //     }
         // };
-        // 
+        //
         // let copy  = io::copy(&mut reader, &mut writer).await.map(|_| ()).map_err(|error| {
         //     crate::Error::Generic("copy issue".to_string()).into()
         // });
@@ -83,17 +87,16 @@ impl Misc for MiscApi {
 
         // tokio::try_join!(export, bridge, copy).unwrap();
 
-       
         // let responses = datastore.export(session, s).await.unwrap();
 
         // println!(" res: {:?}", r.recv().await);
-        
+
         Ok(Response::new(reply))
     }
-    
+
     async fn install_demo_data(
-        &self, 
-        _request: Request<InstallDemoDataRequest>
+        &self,
+        _request: Request<InstallDemoDataRequest>,
     ) -> Result<Response<InstallDemoDataResponse>, Status> {
         println!("request: {:?}", _request);
 
@@ -353,9 +356,10 @@ impl Misc for MiscApi {
         let _created_role_model = self
             .state
             .admin_user_service
-            .store_role(demo_role, &self.state.db).await?;
+            .store_role(demo_role, &self.state.db)
+            .await?;
 
-        // let password = "admin123".as_bytes();
+        // Example: let password = env::var("ADMIN_PASSWORD").unwrap().as_bytes();
         // let salt = SaltString::from_b64(&self.state.config.password_salt)?;
 
         // let argon2 = Argon2::default();
@@ -374,40 +378,39 @@ impl Misc for MiscApi {
             profile_image_file_name: "".to_string(),
         };
 
-        
-        let created_admin_user = self.state
+        let created_admin_user = self
+            .state
             .admin_user_service
             .store(
-                creatable_admin_user, 
-                "admin@admin.com".to_string(), 
-                &self.state.config.password_salt, 
-                &self.state.db
+                creatable_admin_user,
+                "admin@admin.com".to_string(),
+                &self.state.config.password_salt,
+                &self.state.db,
             )
             .await?;
 
         println!("Created admin user: {:?}", created_admin_user);
-        
+
         let reply = InstallDemoDataResponse {};
 
         println!("response: {:?}", reply);
-        Ok(Response::new(reply))   
+        Ok(Response::new(reply))
     }
-    
+
     async fn delete_demo_data(
         &self,
-        _request: Request<DeleteDemoDataRequest>
+        _request: Request<DeleteDemoDataRequest>,
     ) -> Result<Response<DeleteDemoDataResponse>, Status> {
-
         let sql = "
             DELETE roles WHERE identifier='demo-visitor-role';
             DELETE admin_users WHERE email='demo@avored.com';
             DELETE pages WHERE identifier='home-page';
         ";
-    
+
         // let vars = BTreeMap::from([("email".into(), logged_in_user.email.into())]);
-    
+
         let (ds, ses) = &self.state.db;
-    
+
         let responses = ds.execute(sql, ses, None).await.unwrap();
 
         println!("{responses:?}");

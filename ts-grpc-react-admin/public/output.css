@@ -867,6 +867,9 @@
   .w-64 {
     width: calc(var(--spacing) * 64);
   }
+  .w-auto {
+    width: auto;
+  }
   .w-fit {
     width: fit-content;
   }
@@ -1198,6 +1201,9 @@
   }
   .bg-primary-600 {
     background-color: var(--color-primary-600);
+  }
+  .bg-primary-700 {
+    background-color: var(--color-primary-700);
   }
   .bg-red-600 {
     background-color: var(--color-red-600);
@@ -1793,6 +1799,13 @@
       }
     }
   }
+  .hover\:bg-primary-800 {
+    &:hover {
+      @media (hover: hover) {
+        background-color: var(--color-primary-800);
+      }
+    }
+  }
   .hover\:bg-red-500 {
     &:hover {
       @media (hover: hover) {
@@ -1905,6 +1918,11 @@
   .focus\:ring-cyan-200 {
     &:focus {
       --tw-ring-color: var(--color-cyan-200);
+    }
+  }
+  .focus\:ring-primary-300 {
+    &:focus {
+      --tw-ring-color: var(--color-primary-300);
     }
   }
   .focus\:ring-primary-500 {

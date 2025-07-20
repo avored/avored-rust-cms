@@ -4,12 +4,12 @@ use surrealdb::sql::{Object, Value};
 
 pub mod admin_user_repository;
 
-pub mod password_reset_repository;
-pub mod role_repository;
 pub mod asset_repository;
 pub mod collection_repository;
-pub mod setting_repository;
 pub mod content_repository;
+pub mod password_reset_repository;
+pub mod role_repository;
+pub mod setting_repository;
 pub mod security_audit_repository;
 pub mod security_alert_repository;
 

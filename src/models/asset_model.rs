@@ -1,9 +1,9 @@
-use std::collections::BTreeMap;
-use std::time::SystemTime;
-use prost_types::Timestamp;
 use super::{BaseModel, Pagination};
 use crate::error::{Error, Result};
+use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -22,19 +22,18 @@ pub struct AssetModel {
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FileTypeMetaData {
-    pub file_type: String
+    pub file_type: String,
 }
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FolderTypeMetaData {
-    pub color: String
+    pub color: String,
 }
-
 
 // { color: String }
 //FileTypeMetaData { file_type: String }
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct  MetaDataType {
+pub struct MetaDataType {
     // values can be folder color or no of files
     pub file_meta_data: FileTypeMetaData,
     // file type might have a metadata as
@@ -146,16 +145,16 @@ impl TryFrom<AssetModel> for crate::api::proto::asset::AssetModel {
     type Error = Error;
 
     fn try_from(val: AssetModel) -> Result<crate::api::proto::asset::AssetModel> {
-        let chrono_utc_created_at= val.created_at.to_utc();
+        let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
 
-        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let chrono_utc_updated_at = val.updated_at.to_utc();
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
         let metadata = val.metadata.try_into()?;
-        
+
         let model: crate::api::proto::asset::AssetModel = crate::api::proto::asset::AssetModel {
             id: val.id,
             name: val.name,
@@ -173,83 +172,68 @@ impl TryFrom<AssetModel> for crate::api::proto::asset::AssetModel {
     }
 }
 
-
 impl TryFrom<FileTypeMetaData> for crate::api::proto::asset::FileTypeMetaData {
     type Error = Error;
     fn try_from(val: FileTypeMetaData) -> Result<crate::api::proto::asset::FileTypeMetaData> {
-        let model: crate::api::proto::asset::FileTypeMetaData = crate::api::proto::asset::FileTypeMetaData {
-            file_type: val.file_type
-        };
+        let model: crate::api::proto::asset::FileTypeMetaData =
+            crate::api::proto::asset::FileTypeMetaData {
+                file_type: val.file_type,
+            };
         Ok(model)
     }
 }
-
 
 impl TryFrom<FolderTypeMetaData> for crate::api::proto::asset::FolderTypeMetaData {
     type Error = Error;
     fn try_from(val: FolderTypeMetaData) -> Result<crate::api::proto::asset::FolderTypeMetaData> {
-        let model: crate::api::proto::asset::FolderTypeMetaData = crate::api::proto::asset::FolderTypeMetaData {
-            color: val.color
-        };
+        let model: crate::api::proto::asset::FolderTypeMetaData =
+            crate::api::proto::asset::FolderTypeMetaData { color: val.color };
         Ok(model)
     }
 }
-
 
 impl TryFrom<MetaDataType> for crate::api::proto::asset::MetaDataType {
     type Error = Error;
     fn try_from(val: MetaDataType) -> Result<crate::api::proto::asset::MetaDataType> {
-        let model: crate::api::proto::asset::MetaDataType = crate::api::proto::asset::MetaDataType {
-            file_meta_data: Some(val.file_meta_data.try_into()?),
-            folder_meta_data: Some(val.folder_meta_data.try_into()?)
-        };
+        let model: crate::api::proto::asset::MetaDataType =
+            crate::api::proto::asset::MetaDataType {
+                file_meta_data: Some(val.file_meta_data.try_into()?),
+                folder_meta_data: Some(val.folder_meta_data.try_into()?),
+            };
         Ok(model)
     }
 }
 
-
-
-
 impl TryFrom<FolderTypeMetaData> for Value {
     type Error = Error;
     fn try_from(val: FolderTypeMetaData) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> =
-            [
-                ("color".into(), val.color.into()),
-            ].into();
+        let val_val: BTreeMap<String, Value> = [("color".into(), val.color.into())].into();
 
         Ok(val_val.into())
     }
 }
-
 
 impl TryFrom<FileTypeMetaData> for Value {
     type Error = Error;
     fn try_from(val: FileTypeMetaData) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> =
-            [
-                ("file_type".into(), val.file_type.into()),
-            ].into();
+        let val_val: BTreeMap<String, Value> = [("file_type".into(), val.file_type.into())].into();
 
         Ok(val_val.into())
     }
 }
-
-
 
 impl TryFrom<MetaDataType> for Value {
     type Error = Error;
     fn try_from(val: MetaDataType) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> =
-            [
-                ("folder_meta_data".into(), val.folder_meta_data.try_into()?),
-                ("file_meta_data".into(), val.file_meta_data.try_into()?),
-            ].into();
+        let val_val: BTreeMap<String, Value> = [
+            ("folder_meta_data".into(), val.folder_meta_data.try_into()?),
+            ("file_meta_data".into(), val.file_meta_data.try_into()?),
+        ]
+        .into();
 
         Ok(val_val.into())
     }
 }
-
 
 impl TryFrom<Object> for FileTypeMetaDataStruct {
     type Error = Error;

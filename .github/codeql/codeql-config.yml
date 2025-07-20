@@ -1,0 +1,126 @@
+name: "CodeQL Configuration for AvoRed Rust CMS"
+
+# Disable specific queries for test files
+disable-default-queries: false
+
+# Query filters to suppress false positives in test code
+query-filters:
+  - exclude:
+      id: rust/cleartext-logging
+      # Suppress cleartext logging alerts in test files since they use mock/test data
+      paths:
+        - tests/**
+        - "**/tests/**"
+        - "**/*test*.rs"
+        - "**/*_test.rs"
+        - "**/test_*.rs"
+
+  - exclude:
+      id: rust/sensitive-data-logging
+      # Suppress sensitive data logging alerts in test files
+      paths:
+        - tests/**
+        - "**/tests/**"
+        - "**/*test*.rs"
+        - "**/*_test.rs"
+        - "**/test_*.rs"
+
+# Paths to exclude from analysis entirely
+paths-ignore:
+  - "tests/zero_trust_security_tests.rs"  # Test file with intentional logging for validation
+  - "tests/**/*_mock.rs"                  # Mock files with test data
+  - "target/**"                           # Build artifacts
+  - "**/*.md"                             # Documentation files
+  - "**/*.yml"                            # Configuration files
+  - "**/*.yaml"                           # Configuration files
+  - "**/*.json"                           # Configuration files
+  - "**/*.toml"                           # Configuration files
+
+# Paths to include (override excludes if needed)
+paths:
+  - "src/**"
+  - "build.rs"
+
+# Additional queries to run for enhanced security analysis
+queries:
+  - uses: security-and-quality
+  - uses: security-extended
+
+# Custom query packs for Rust security
+packs:
+  - codeql/rust-queries
+
+# Configuration for specific languages
+languages:
+  rust:
+    # Rust-specific configuration
+    queries:
+      - uses: security-and-quality
+    # Additional Rust security queries
+    query-filters:
+      - exclude:
+          id: rust/cleartext-logging
+          paths:
+            - tests/**
+            - "**/*test*.rs"
+      - exclude:
+          id: rust/hardcoded-credentials
+          paths:
+            - tests/**
+            - "**/*test*.rs"
+            - "**/*mock*.rs"
+
+# External data configuration
+external-data:
+  # Allow external data for enhanced analysis
+  enabled: true
+
+# Analysis configuration
+analysis:
+  # Increase timeout for complex analysis
+  timeout: 30m
+  # Use more memory for analysis
+  memory: 4096
+  # Enable debug mode for troubleshooting (can be disabled in production)
+  debug: false
+
+# Compilation configuration for Rust
+compile-commands:
+  # Use cargo for compilation
+  - "cargo build --release --all-features"
+
+# Feature flags for analysis
+features:
+  # Enable all security-related features
+  - security-hardened
+  - ldap-auth
+  - audit-logging
+  - rate-limiting
+  - input-validation
+
+# Suppress specific warnings for test files
+suppressions:
+  - rule: "rust/cleartext-logging"
+    paths:
+      - "tests/zero_trust_security_tests.rs"
+    reason: "Test file uses mock credentials and test data, not real sensitive information"
+  
+  - rule: "rust/sensitive-data-logging"
+    paths:
+      - "tests/**"
+    reason: "Test files contain mock data and validation tests, not real sensitive data"
+  
+  - rule: "rust/hardcoded-credentials"
+    paths:
+      - "tests/**"
+      - "**/*test*.rs"
+    reason: "Test files use hardcoded test credentials for validation purposes"
+
+# Custom metadata for the configuration
+metadata:
+  name: "AvoRed Rust CMS Security Analysis"
+  description: "CodeQL configuration optimized for enterprise CMS security analysis"
+  version: "1.0.0"
+  author: "AvoRed Security Team"
+  created: "2024-01-19"
+  updated: "2024-01-19"

@@ -61,9 +61,7 @@ pub struct AdminUserPaginateResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    pub data: ::core::option::Option<
-        admin_user_paginate_response::AdminUserPaginateData,
-    >,
+    pub data: ::core::option::Option<admin_user_paginate_response::AdminUserPaginateData>,
 }
 /// Nested message and enum types in `AdminUserPaginateResponse`.
 pub mod admin_user_paginate_response {
@@ -242,6 +240,16 @@ pub struct DeleteRoleResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct DeleteAdminUserRequest {
+    #[prost(string, tag = "1")]
+    pub admin_user_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+pub struct DeleteAdminUserResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+}
 #[derive(Clone, Copy, PartialEq, ::prost::Message)]
 pub struct RoleOptionRequest {}
 /// Generated client implementations.
@@ -251,10 +259,10 @@ pub mod admin_user_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct AdminUserClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -274,8 +282,8 @@ pub mod admin_user_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -292,15 +300,13 @@ pub mod admin_user_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as Service<http::Request<tonic::body::Body>>>::Error: Into<StdError> + Send + Sync,
         {
             AdminUserClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -338,22 +344,12 @@ pub mod admin_user_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AdminUserPaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::AdminUserPaginateResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/Paginate",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/Paginate");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "Paginate"));
@@ -362,22 +358,12 @@ pub mod admin_user_client {
         pub async fn store_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreAdminUserResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/StoreAdminUser",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/StoreAdminUser");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "StoreAdminUser"));
@@ -386,22 +372,12 @@ pub mod admin_user_client {
         pub async fn get_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAdminUserResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/GetAdminUser",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/GetAdminUser");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "GetAdminUser"));
@@ -410,22 +386,13 @@ pub mod admin_user_client {
         pub async fn update_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateAdminUserResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/UpdateAdminUser",
-            );
+            let path =
+                http::uri::PathAndQuery::from_static("/admin_user.AdminUser/UpdateAdminUser");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "UpdateAdminUser"));
@@ -434,22 +401,12 @@ pub mod admin_user_client {
         pub async fn role_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::RolePaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::RolePaginateResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::RolePaginateResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/RolePaginate",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/RolePaginate");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "RolePaginate"));
@@ -458,22 +415,12 @@ pub mod admin_user_client {
         pub async fn role_option(
             &mut self,
             request: impl tonic::IntoRequest<super::RoleOptionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::RoleOptionResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::RoleOptionResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/RoleOption",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/RoleOption");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "RoleOption"));
@@ -482,22 +429,12 @@ pub mod admin_user_client {
         pub async fn store_role(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreRoleResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::StoreRoleResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/StoreRole",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/StoreRole");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "StoreRole"));
@@ -506,22 +443,12 @@ pub mod admin_user_client {
         pub async fn get_role(
             &mut self,
             request: impl tonic::IntoRequest<super::GetRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetRoleResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/GetRole",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/GetRole");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "GetRole"));
@@ -530,22 +457,12 @@ pub mod admin_user_client {
         pub async fn update_role(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateRoleResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/UpdateRole",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/UpdateRole");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "UpdateRole"));
@@ -554,22 +471,13 @@ pub mod admin_user_client {
         pub async fn put_role_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutRoleIdentifierRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::PutRoleIdentifierResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/PutRoleIdentifier",
-            );
+            let path =
+                http::uri::PathAndQuery::from_static("/admin_user.AdminUser/PutRoleIdentifier");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "PutRoleIdentifier"));
@@ -578,25 +486,30 @@ pub mod admin_user_client {
         pub async fn delete_role(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteRoleResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
-            let path = http::uri::PathAndQuery::from_static(
-                "/admin_user.AdminUser/DeleteRole",
-            );
+            let path = http::uri::PathAndQuery::from_static("/admin_user.AdminUser/DeleteRole");
             let mut req = request.into_request();
             req.extensions_mut()
                 .insert(GrpcMethod::new("admin_user.AdminUser", "DeleteRole"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn delete_admin_user(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteAdminUserRequest>,
+        ) -> Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status> {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path =
+                http::uri::PathAndQuery::from_static("/admin_user.AdminUser/DeleteAdminUser");
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("admin_user.AdminUser", "DeleteAdminUser"));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -608,86 +521,60 @@ pub mod admin_user_server {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AdminUserServer.
     #[async_trait]
-    pub trait AdminUser: std::marker::Send + std::marker::Sync + 'static {
+    pub trait AdminUser: Send + Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AdminUserPaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::AdminUserPaginateResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::AdminUserPaginateResponse>, tonic::Status>;
         async fn store_admin_user(
             &self,
             request: tonic::Request<super::StoreAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreAdminUserResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::StoreAdminUserResponse>, tonic::Status>;
         async fn get_admin_user(
             &self,
             request: tonic::Request<super::GetAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAdminUserResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::GetAdminUserResponse>, tonic::Status>;
         async fn update_admin_user(
             &self,
             request: tonic::Request<super::UpdateAdminUserRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateAdminUserResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::UpdateAdminUserResponse>, tonic::Status>;
         async fn role_paginate(
             &self,
             request: tonic::Request<super::RolePaginateRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::RolePaginateResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::RolePaginateResponse>, tonic::Status>;
         async fn role_option(
             &self,
             request: tonic::Request<super::RoleOptionRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::RoleOptionResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::RoleOptionResponse>, tonic::Status>;
         async fn store_role(
             &self,
             request: tonic::Request<super::StoreRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::StoreRoleResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::StoreRoleResponse>, tonic::Status>;
         async fn get_role(
             &self,
             request: tonic::Request<super::GetRoleRequest>,
-        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
+        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
         async fn update_role(
             &self,
             request: tonic::Request<super::UpdateRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateRoleResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::UpdateRoleResponse>, tonic::Status>;
         async fn put_role_identifier(
             &self,
             request: tonic::Request<super::PutRoleIdentifierRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::PutRoleIdentifierResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::PutRoleIdentifierResponse>, tonic::Status>;
         async fn delete_role(
             &self,
             request: tonic::Request<super::DeleteRoleRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteRoleResponse>,
-            tonic::Status,
-        >;
+        ) -> Result<tonic::Response<super::DeleteRoleResponse>, tonic::Status>;
+        async fn delete_admin_user(
+            &self,
+            request: tonic::Request<super::DeleteAdminUserRequest>,
+        ) -> Result<tonic::Response<super::DeleteAdminUserResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct AdminUserServer<T> {
@@ -710,10 +597,7 @@ pub mod admin_user_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -748,19 +632,16 @@ pub mod admin_user_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for AdminUserServer<T>
+    impl<T, B> Service<http::Request<B>> for AdminUserServer<T>
     where
         T: AdminUser,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
         type Future = BoxFuture<Self::Response, Self::Error>;
-        fn poll_ready(
-            &mut self,
-            _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        fn poll_ready(&mut self, _cx: &mut Context<'_>) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -768,23 +649,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/Paginate" => {
                     #[allow(non_camel_case_types)]
                     struct PaginateSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::AdminUserPaginateRequest>
-                    for PaginateSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::AdminUserPaginateRequest> for PaginateSvc<T> {
                         type Response = super::AdminUserPaginateResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::AdminUserPaginateRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::paginate(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::paginate(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -813,15 +687,11 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/StoreAdminUser" => {
                     #[allow(non_camel_case_types)]
                     struct StoreAdminUserSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::StoreAdminUserRequest>
-                    for StoreAdminUserSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::StoreAdminUserRequest>
+                        for StoreAdminUserSvc<T>
+                    {
                         type Response = super::StoreAdminUserResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StoreAdminUserRequest>,
@@ -858,15 +728,9 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/GetAdminUser" => {
                     #[allow(non_camel_case_types)]
                     struct GetAdminUserSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::GetAdminUserRequest>
-                    for GetAdminUserSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::GetAdminUserRequest> for GetAdminUserSvc<T> {
                         type Response = super::GetAdminUserResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetAdminUserRequest>,
@@ -903,15 +767,11 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/UpdateAdminUser" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateAdminUserSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::UpdateAdminUserRequest>
-                    for UpdateAdminUserSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::UpdateAdminUserRequest>
+                        for UpdateAdminUserSvc<T>
+                    {
                         type Response = super::UpdateAdminUserResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateAdminUserRequest>,
@@ -948,15 +808,9 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/RolePaginate" => {
                     #[allow(non_camel_case_types)]
                     struct RolePaginateSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::RolePaginateRequest>
-                    for RolePaginateSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::RolePaginateRequest> for RolePaginateSvc<T> {
                         type Response = super::RolePaginateResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RolePaginateRequest>,
@@ -993,23 +847,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/RoleOption" => {
                     #[allow(non_camel_case_types)]
                     struct RoleOptionSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::RoleOptionRequest>
-                    for RoleOptionSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::RoleOptionRequest> for RoleOptionSvc<T> {
                         type Response = super::RoleOptionResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::RoleOptionRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::role_option(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::role_option(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1038,23 +885,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/StoreRole" => {
                     #[allow(non_camel_case_types)]
                     struct StoreRoleSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::StoreRoleRequest>
-                    for StoreRoleSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::StoreRoleRequest> for StoreRoleSvc<T> {
                         type Response = super::StoreRoleResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::StoreRoleRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::store_role(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::store_role(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1083,21 +923,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/GetRole" => {
                     #[allow(non_camel_case_types)]
                     struct GetRoleSvc<T: AdminUser>(pub Arc<T>);
-                    impl<T: AdminUser> tonic::server::UnaryService<super::GetRoleRequest>
-                    for GetRoleSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::GetRoleRequest> for GetRoleSvc<T> {
                         type Response = super::GetRoleResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetRoleRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::get_role(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::get_role(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1126,23 +961,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/UpdateRole" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateRoleSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::UpdateRoleRequest>
-                    for UpdateRoleSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::UpdateRoleRequest> for UpdateRoleSvc<T> {
                         type Response = super::UpdateRoleResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateRoleRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::update_role(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::update_role(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1171,15 +999,11 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/PutRoleIdentifier" => {
                     #[allow(non_camel_case_types)]
                     struct PutRoleIdentifierSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::PutRoleIdentifierRequest>
-                    for PutRoleIdentifierSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::PutRoleIdentifierRequest>
+                        for PutRoleIdentifierSvc<T>
+                    {
                         type Response = super::PutRoleIdentifierResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::PutRoleIdentifierRequest>,
@@ -1216,23 +1040,16 @@ pub mod admin_user_server {
                 "/admin_user.AdminUser/DeleteRole" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteRoleSvc<T: AdminUser>(pub Arc<T>);
-                    impl<
-                        T: AdminUser,
-                    > tonic::server::UnaryService<super::DeleteRoleRequest>
-                    for DeleteRoleSvc<T> {
+                    impl<T: AdminUser> tonic::server::UnaryService<super::DeleteRoleRequest> for DeleteRoleSvc<T> {
                         type Response = super::DeleteRoleResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::DeleteRoleRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
-                            let fut = async move {
-                                <T as AdminUser>::delete_role(&inner, request).await
-                            };
+                            let fut =
+                                async move { <T as AdminUser>::delete_role(&inner, request).await };
                             Box::pin(fut)
                         }
                     }
@@ -1258,25 +1075,60 @@ pub mod admin_user_server {
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        let mut response = http::Response::new(
-                            tonic::body::Body::default(),
-                        );
-                        let headers = response.headers_mut();
-                        headers
-                            .insert(
-                                tonic::Status::GRPC_STATUS,
-                                (tonic::Code::Unimplemented as i32).into(),
+                "/admin_user.AdminUser/DeleteAdminUser" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteAdminUserSvc<T: AdminUser>(pub Arc<T>);
+                    impl<T: AdminUser> tonic::server::UnaryService<super::DeleteAdminUserRequest>
+                        for DeleteAdminUserSvc<T>
+                    {
+                        type Response = super::DeleteAdminUserResponse;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteAdminUserRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as AdminUser>::delete_admin_user(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteAdminUserSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
                             );
-                        headers
-                            .insert(
-                                http::header::CONTENT_TYPE,
-                                tonic::metadata::GRPC_CONTENT_TYPE,
-                            );
-                        Ok(response)
-                    })
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
                 }
+                _ => Box::pin(async move {
+                    let mut response = http::Response::new(tonic::body::Body::default());
+                    let headers = response.headers_mut();
+                    headers.insert(
+                        tonic::Status::GRPC_STATUS,
+                        (tonic::Code::Unimplemented as i32).into(),
+                    );
+                    headers.insert(
+                        http::header::CONTENT_TYPE,
+                        tonic::metadata::GRPC_CONTENT_TYPE,
+                    );
+                    Ok(response)
+                }),
             }
         }
     }

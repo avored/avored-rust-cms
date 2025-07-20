@@ -3,3 +3,4 @@ pub mod require_jwt_authentication;
 
 pub mod grpc_auth_middleware;
 pub mod audit_enhanced_auth_middleware;
+pub mod security_headers;

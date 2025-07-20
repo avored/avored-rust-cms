@@ -1,14 +1,14 @@
-use std::time::SystemTime;
-use prost_types::Timestamp;
-use crate::error::{Error, Result};
-use crate::services::admin_user_service::AdminUserService;
-use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
-use crate::models::token_claim_model::TokenClaims;
 use super::{BaseModel, Pagination};
-use crate::api::proto::admin_user::{AdminUserModel as GrpcAdminUserModel};
+use crate::api::proto::admin_user::AdminUserModel as GrpcAdminUserModel;
+use crate::api::proto::admin_user::RoleModel as GrpcRoleModel;
+use crate::error::{Error, Result};
 use crate::models::role_model::RoleModel;
-use crate::api::proto::admin_user::{RoleModel as GrpcRoleModel};
+use crate::models::token_claim_model::TokenClaims;
+use crate::services::admin_user_service::AdminUserService;
+use prost_types::Timestamp;
+use serde::{Deserialize, Serialize};
+use std::time::SystemTime;
+use surrealdb::sql::{Datetime, Object, Value};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {
@@ -46,23 +46,23 @@ impl TryFrom<AdminUserModel> for TokenClaims {
     }
 }
 
-impl TryFrom<AdminUserModel> for  GrpcAdminUserModel {
+impl TryFrom<AdminUserModel> for GrpcAdminUserModel {
     type Error = Error;
 
     fn try_from(val: AdminUserModel) -> Result<GrpcAdminUserModel> {
-        let chrono_utc_created_at= val.created_at.to_utc();
+        let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
 
-        let chrono_utc_updated_at= val.updated_at.to_utc();
+        let chrono_utc_updated_at = val.updated_at.to_utc();
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
-        
+
         let mut grpc_roles: Vec<GrpcRoleModel> = vec![];
-        
+
         for role in val.roles {
             let grpc_role: GrpcRoleModel = role.try_into()?;
-            grpc_roles.push(grpc_role);       
+            grpc_roles.push(grpc_role);
         }
 
         let model: GrpcAdminUserModel = GrpcAdminUserModel {
@@ -103,15 +103,15 @@ impl TryFrom<Object> for AdminUserModel {
             Some(val) => match val.clone() {
                 Value::Array(v) => {
                     let mut arr = Vec::new();
-        
+
                     for array in v.into_iter() {
                         let object = match array.clone() {
                             Value::Object(v) => v,
-                            _ => surrealdb::sql::Object::default(),
+                            _ => Object::default(),
                         };
-        
+
                         let role_model: RoleModel = object.try_into()?;
-        
+
                         arr.push(role_model)
                     }
                     arr
@@ -171,26 +171,26 @@ pub struct AdminUserPagination {
     pub pagination: Pagination,
 }
 
-
 pub trait AdminUserModelExtension {
     async fn check_user_has_resouce_access(
         &self,
         admin_user_service: &AdminUserService,
-        permission_identifier: String
-    ) -> crate::error::Result<()>;
+        permission_identifier: String,
+    ) -> Result<()>;
 }
 
-
-
 impl AdminUserModelExtension for AdminUserModel {
-    async fn check_user_has_resouce_access(&self, admin_user_service: &AdminUserService, permission_identifier: String) -> crate::error::Result<()> {
-        
+    async fn check_user_has_resouce_access(
+        &self,
+        admin_user_service: &AdminUserService,
+        permission_identifier: String,
+    ) -> Result<()> {
         let logged_in_user = self.clone();
-         let has_permission_bool = admin_user_service
+        let has_permission_bool = admin_user_service
             .has_permission(logged_in_user, permission_identifier.clone())
             .await?;
         if !has_permission_bool {
-            return Err(crate::error::Error::Unauthorizeed(permission_identifier));
+            return Err(Error::Unauthorizeed(permission_identifier));
         }
 
         Ok(())
