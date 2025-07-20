@@ -8,3 +8,4 @@ pub mod cms_service;
 pub mod general_service;
 pub mod security_audit_service;
 pub mod security_alert_service;
+pub mod security_monitoring_service;
