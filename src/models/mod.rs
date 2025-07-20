@@ -12,6 +12,8 @@ pub mod setting_model;
 pub mod token_claim_model;
 pub mod validation_error;
 pub mod content_model;
+pub mod security_audit_model;
+pub mod security_alert_model;
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct Pagination {

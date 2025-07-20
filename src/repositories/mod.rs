@@ -10,6 +10,8 @@ pub mod asset_repository;
 pub mod collection_repository;
 pub mod setting_repository;
 pub mod content_repository;
+pub mod security_audit_repository;
+pub mod security_alert_repository;
 
 pub fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {
     let response = responses
