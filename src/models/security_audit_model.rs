@@ -288,6 +288,46 @@ impl CreateSecurityAuditModel {
     }
 }
 
+// gRPC Conversions
+impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::SecurityAuditModel {
+    type Error = Error;
+
+    fn try_from(model: SecurityAuditModel) -> Result<Self> {
+        let metadata_json = if let Some(ref metadata) = model.metadata {
+            Some(serde_json::to_string(&metadata).map_err(|e| {
+                Error::Generic(format!("Failed to serialize metadata: {}", e))
+            })?)
+        } else {
+            None
+        };
+
+        let created_at_timestamp = model.created_at_timestamp();
+        let updated_at_timestamp = model.updated_at_timestamp();
+
+        Ok(Self {
+            id: model.id,
+            security_audit_id: model.security_audit_id,
+            admin_user_id: model.admin_user_id,
+            session_id: model.session_id,
+            ip_address: model.ip_address,
+            user_agent: model.user_agent,
+            endpoint: model.endpoint,
+            request_method: model.request_method,
+            total_authentication_attempts: model.total_authentication_attempts,
+            failed_authentication_attempts: model.failed_authentication_attempts,
+            blocked_injection_attempts: model.blocked_injection_attempts,
+            rate_limited_requests: model.rate_limited_requests,
+            suspicious_activities_detected: model.suspicious_activities_detected,
+            security_violations: model.security_violations,
+            uptime_seconds: model.uptime_seconds,
+            security_health_score: model.security_health_score,
+            created_at: Some(created_at_timestamp),
+            updated_at: Some(updated_at_timestamp),
+            metadata_json,
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

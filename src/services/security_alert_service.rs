@@ -1,10 +1,22 @@
 use std::collections::BTreeMap;
 use crate::error::Result;
 use crate::models::security_alert_model::{
-    AlertSeverity, AlertType, CreateSecurityAlertModel, SecurityAlertModel, 
+    AlertSeverity, AlertType, CreateSecurityAlertModel, SecurityAlertModel,
     SecurityAlertPaginationModel, UpdateSecurityAlertModel
 };
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
+use crate::providers::avored_database_provider::DB;
+use crate::api::proto::security_audit::{
+    CreateSecurityAlertRequest, CreateSecurityAlertResponse,
+    CreateSecurityAlertAutoIdRequest, CreateSecurityAlertAutoIdResponse,
+    GetSecurityAlertResponse, GetUnresolvedAlertsBySeverityResponse,
+    GetAlertsByTypeResponse, GetAlertsBySourceResponse,
+    ResolveSecurityAlertResponse, GetSecurityAlertsPaginatedResponse,
+    GetCriticalUnresolvedAlertsResponse, DeleteSecurityAlertResponse,
+    GetAlertStatisticsResponse, SecurityAlertModel as GrpcSecurityAlertModel,
+    SecurityAlertPaginationModel as GrpcSecurityAlertPaginationModel, AlertStatistics as GrpcAlertStatistics,
+    Pagination as GrpcPagination, AlertType as GrpcAlertType, AlertSeverity as GrpcAlertSeverity,
+};
 use surrealdb::kvs::Datastore;
 use surrealdb::dbs::Session;
 use surrealdb::sql::Value;
@@ -316,4 +328,284 @@ pub struct AlertStatistics {
     pub total_medium: i64,
     pub total_high: i64,
     pub total_critical: i64,
+}
+
+// gRPC Integration Methods
+impl SecurityAlertService {
+    /// Create alert from gRPC request
+    pub async fn create_alert_from_grpc(
+        &self,
+        request: CreateSecurityAlertRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<CreateSecurityAlertResponse> {
+        let alert_data = request.alert.ok_or_else(|| {
+            crate::error::Error::Generic("Missing alert data".to_string())
+        })?;
+
+        let createable_model = CreateSecurityAlertModel {
+            alert_id: alert_data.alert_id,
+            alert_type: AlertType::from_grpc_alert_type(GrpcAlertType::from_i32(alert_data.alert_type).unwrap_or(GrpcAlertType::Unspecified)),
+            severity: AlertSeverity::from_grpc_alert_severity(GrpcAlertSeverity::from_i32(alert_data.severity).unwrap_or(GrpcAlertSeverity::Unspecified)),
+            message: alert_data.message,
+            source: alert_data.source,
+            affected_resource: alert_data.affected_resource,
+            metadata: if let Some(json_str) = alert_data.metadata_json {
+                serde_json::from_str(&json_str).ok()
+            } else {
+                None
+            },
+        };
+
+        let model = self.create_alert(datastore, database_session, createable_model).await?;
+        let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+
+        Ok(CreateSecurityAlertResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Create alert with auto-generated ID from gRPC request
+    pub async fn create_alert_auto_id_from_grpc(
+        &self,
+        request: CreateSecurityAlertAutoIdRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<CreateSecurityAlertAutoIdResponse> {
+        let model = self.create_alert_auto_id(
+            datastore,
+            database_session,
+            AlertType::from_grpc_alert_type(GrpcAlertType::from_i32(request.alert_type).unwrap_or(GrpcAlertType::Unspecified)),
+            AlertSeverity::from_grpc_alert_severity(GrpcAlertSeverity::from_i32(request.severity).unwrap_or(GrpcAlertSeverity::Unspecified)),
+            request.message,
+            request.source,
+            request.affected_resource,
+            if let Some(json_str) = request.metadata_json {
+                serde_json::from_str(&json_str).ok()
+            } else {
+                None
+            },
+        ).await?;
+
+        let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+
+        Ok(CreateSecurityAlertAutoIdResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Get alert by ID for gRPC
+    pub async fn get_alert_by_id_grpc(
+        &self,
+        id: String,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAlertResponse> {
+        let model = self.get_alert_by_id(datastore, database_session, &id).await?;
+        let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+
+        Ok(GetSecurityAlertResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Get unresolved alerts by severity for gRPC
+    pub async fn get_unresolved_alerts_by_severity_grpc(
+        &self,
+        severity: i32,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetUnresolvedAlertsBySeverityResponse> {
+        let alert_severity = AlertSeverity::from_grpc_alert_severity(
+            GrpcAlertSeverity::from_i32(severity).unwrap_or(GrpcAlertSeverity::Unspecified)
+        );
+
+        let pagination_model = self.get_unresolved_alerts_by_severity(
+            datastore,
+            database_session,
+            alert_severity,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetUnresolvedAlertsBySeverityResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Get alerts by type for gRPC
+    pub async fn get_alerts_by_type_grpc(
+        &self,
+        alert_type: i32,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetAlertsByTypeResponse> {
+        let alert_type = AlertType::from_grpc_alert_type(
+            GrpcAlertType::from_i32(alert_type).unwrap_or(GrpcAlertType::Unspecified)
+        );
+
+        let pagination_model = self.get_alerts_by_type(
+            datastore,
+            database_session,
+            alert_type,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetAlertsByTypeResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Get alerts by source for gRPC
+    pub async fn get_alerts_by_source_grpc(
+        &self,
+        source: String,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetAlertsBySourceResponse> {
+        let pagination_model = self.get_alerts_by_source(
+            datastore,
+            database_session,
+            &source,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetAlertsBySourceResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Resolve alert for gRPC
+    pub async fn resolve_alert_grpc(
+        &self,
+        id: String,
+        resolved_by: String,
+        (datastore, database_session): &DB,
+    ) -> Result<ResolveSecurityAlertResponse> {
+        let model = self.resolve_alert(datastore, database_session, &id, &resolved_by).await?;
+        let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+
+        Ok(ResolveSecurityAlertResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Get paginated alerts for gRPC
+    pub async fn get_alerts_paginated_grpc(
+        &self,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAlertsPaginatedResponse> {
+        let pagination_model = self.get_alerts_paginated(
+            datastore,
+            database_session,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetSecurityAlertsPaginatedResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Get critical unresolved alerts for gRPC
+    pub async fn get_critical_unresolved_alerts_grpc(
+        &self,
+        (datastore, database_session): &DB,
+    ) -> Result<GetCriticalUnresolvedAlertsResponse> {
+        let models = self.get_critical_unresolved_alerts(datastore, database_session).await?;
+        let mut grpc_models = Vec::new();
+
+        for model in models {
+            let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+            grpc_models.push(grpc_model);
+        }
+
+        Ok(GetCriticalUnresolvedAlertsResponse {
+            status: true,
+            data: grpc_models,
+        })
+    }
+
+    /// Delete alert for gRPC
+    pub async fn delete_alert_grpc(
+        &self,
+        id: String,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteSecurityAlertResponse> {
+        self.delete_alert(datastore, database_session, &id).await?;
+
+        Ok(DeleteSecurityAlertResponse {
+            status: true,
+        })
+    }
+
+    /// Get alert statistics for gRPC
+    pub async fn get_alert_statistics_grpc(
+        &self,
+        (datastore, database_session): &DB,
+    ) -> Result<GetAlertStatisticsResponse> {
+        let stats = self.get_alert_statistics(datastore, database_session).await?;
+        let grpc_stats = GrpcAlertStatistics {
+            total_alerts: stats.total_alerts,
+            total_unresolved: stats.total_unresolved,
+            total_critical_unresolved: stats.total_critical_unresolved,
+            total_low: stats.total_low,
+            total_medium: stats.total_medium,
+            total_high: stats.total_high,
+            total_critical: stats.total_critical,
+        };
+
+        Ok(GetAlertStatisticsResponse {
+            status: true,
+            data: Some(grpc_stats),
+        })
+    }
+}
+
+/// Helper function to convert alert pagination model to gRPC
+fn convert_alert_pagination_to_grpc(
+    pagination_model: SecurityAlertPaginationModel,
+) -> Result<GrpcSecurityAlertPaginationModel> {
+    let mut grpc_data = Vec::new();
+    for model in pagination_model.data {
+        let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
+        grpc_data.push(grpc_model);
+    }
+
+    let grpc_pagination = GrpcPagination {
+        total: pagination_model.pagination.total,
+        per_page: pagination_model.pagination.per_page,
+        current_page: pagination_model.pagination.current_page,
+        from: pagination_model.pagination.from,
+        to: pagination_model.pagination.to,
+        has_next_page: pagination_model.pagination.has_next_page,
+        has_previous_page: pagination_model.pagination.has_previous_page,
+        next_page_number: pagination_model.pagination.next_page_number,
+        previous_page_number: pagination_model.pagination.previous_page_number,
+    };
+
+    Ok(GrpcSecurityAlertPaginationModel {
+        data: grpc_data,
+        pagination: Some(grpc_pagination),
+    })
 }

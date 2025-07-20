@@ -4,6 +4,17 @@ use crate::models::security_audit_model::{
     CreateSecurityAuditModel, SecurityAuditModel, SecurityAuditPaginationModel, UpdateSecurityAuditModel
 };
 use crate::repositories::security_audit_repository::SecurityAuditRepository;
+use crate::providers::avored_database_provider::DB;
+use crate::api::proto::security_audit::{
+    CreateSecurityAuditRequest, CreateSecurityAuditResponse,
+    LogSecurityEventRequest, LogSecurityEventResponse,
+    GetSecurityAuditResponse, GetSecurityAuditsByUserResponse,
+    GetSecurityAuditsByIpResponse, GetSecurityAuditsPaginatedResponse,
+    UpdateSecurityAuditResponse, DeleteSecurityAuditResponse,
+    GetIpSecuritySummaryResponse, SecurityAuditModel as GrpcSecurityAuditModel,
+    SecurityAuditPaginationModel as GrpcSecurityAuditPaginationModel, SecuritySummary as GrpcSecuritySummary, SecurityEventType as GrpcSecurityEventType,
+    Pagination as GrpcPagination,
+};
 use surrealdb::kvs::Datastore;
 use surrealdb::dbs::Session;
 use surrealdb::sql::Value;
@@ -300,4 +311,282 @@ impl Default for SecuritySummary {
             lowest_health_score: 100.0,
         }
     }
+}
+
+// gRPC Integration Methods
+impl SecurityAuditService {
+    /// Create audit from gRPC request
+    pub async fn create_audit_from_grpc(
+        &self,
+        request: CreateSecurityAuditRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<CreateSecurityAuditResponse> {
+        let audit_data = request.audit.ok_or_else(|| {
+            crate::error::Error::Generic("Missing audit data".to_string())
+        })?;
+
+        let createable_model = CreateSecurityAuditModel {
+            security_audit_id: audit_data.security_audit_id,
+            admin_user_id: audit_data.admin_user_id,
+            session_id: audit_data.session_id,
+            ip_address: audit_data.ip_address,
+            user_agent: audit_data.user_agent,
+            endpoint: audit_data.endpoint,
+            request_method: audit_data.request_method,
+            total_authentication_attempts: audit_data.total_authentication_attempts,
+            failed_authentication_attempts: audit_data.failed_authentication_attempts,
+            blocked_injection_attempts: audit_data.blocked_injection_attempts,
+            rate_limited_requests: audit_data.rate_limited_requests,
+            suspicious_activities_detected: audit_data.suspicious_activities_detected,
+            security_violations: audit_data.security_violations,
+            uptime_seconds: audit_data.uptime_seconds,
+            security_health_score: audit_data.security_health_score,
+            metadata: if let Some(json_str) = audit_data.metadata_json {
+                serde_json::from_str(&json_str).ok()
+            } else {
+                None
+            },
+        };
+
+        let model = self.create_audit(datastore, database_session, createable_model).await?;
+        let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
+
+        Ok(CreateSecurityAuditResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Log security event from gRPC request
+    pub async fn log_security_event_from_grpc(
+        &self,
+        request: LogSecurityEventRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<LogSecurityEventResponse> {
+        let metadata = if let Some(json_str) = request.metadata_json {
+            serde_json::from_str(&json_str).ok()
+        } else {
+            None
+        };
+
+        let model = self.log_security_event(
+            datastore,
+            database_session,
+            request.admin_user_id,
+            request.session_id,
+            request.ip_address,
+            request.user_agent,
+            request.endpoint,
+            request.request_method,
+            convert_grpc_security_event_type(GrpcSecurityEventType::from_i32(request.event_type).unwrap_or(GrpcSecurityEventType::Unspecified)),
+            metadata,
+        ).await?;
+
+        let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
+
+        Ok(LogSecurityEventResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Get audit by ID for gRPC
+    pub async fn get_audit_by_id_grpc(
+        &self,
+        id: String,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAuditResponse> {
+        let model = self.get_audit_by_id(datastore, database_session, &id).await?;
+        let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
+
+        Ok(GetSecurityAuditResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Get audits by admin user for gRPC
+    pub async fn get_audits_by_admin_user_grpc(
+        &self,
+        admin_user_id: String,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAuditsByUserResponse> {
+        let pagination_model = self.get_audits_by_admin_user(
+            datastore,
+            database_session,
+            &admin_user_id,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetSecurityAuditsByUserResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Get audits by IP address for gRPC
+    pub async fn get_audits_by_ip_address_grpc(
+        &self,
+        ip_address: String,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAuditsByIpResponse> {
+        let pagination_model = self.get_audits_by_ip_address(
+            datastore,
+            database_session,
+            &ip_address,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetSecurityAuditsByIpResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Get paginated audits for gRPC
+    pub async fn get_audits_paginated_grpc(
+        &self,
+        page: i64,
+        per_page: i64,
+        (datastore, database_session): &DB,
+    ) -> Result<GetSecurityAuditsPaginatedResponse> {
+        let pagination_model = self.get_audits_paginated(
+            datastore,
+            database_session,
+            page,
+            per_page,
+        ).await?;
+
+        let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
+
+        Ok(GetSecurityAuditsPaginatedResponse {
+            status: true,
+            data: Some(grpc_pagination),
+        })
+    }
+
+    /// Update audit for gRPC
+    pub async fn update_audit_grpc(
+        &self,
+        id: String,
+        update_data: Option<crate::api::proto::security_audit::UpdateSecurityAuditModel>,
+        (datastore, database_session): &DB,
+    ) -> Result<UpdateSecurityAuditResponse> {
+        let update_data = update_data.ok_or_else(|| {
+            crate::error::Error::Generic("Missing update data".to_string())
+        })?;
+
+        let updatable_model = UpdateSecurityAuditModel {
+            total_authentication_attempts: update_data.total_authentication_attempts,
+            failed_authentication_attempts: update_data.failed_authentication_attempts,
+            blocked_injection_attempts: update_data.blocked_injection_attempts,
+            rate_limited_requests: update_data.rate_limited_requests,
+            suspicious_activities_detected: update_data.suspicious_activities_detected,
+            security_violations: update_data.security_violations,
+            uptime_seconds: update_data.uptime_seconds,
+            security_health_score: update_data.security_health_score,
+            metadata: if let Some(json_str) = update_data.metadata_json {
+                serde_json::from_str(&json_str).ok()
+            } else {
+                None
+            },
+        };
+
+        let model = self.update_audit(datastore, database_session, &id, updatable_model).await?;
+        let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
+
+        Ok(UpdateSecurityAuditResponse {
+            status: true,
+            data: Some(grpc_model),
+        })
+    }
+
+    /// Delete audit for gRPC
+    pub async fn delete_audit_grpc(
+        &self,
+        id: String,
+        (datastore, database_session): &DB,
+    ) -> Result<DeleteSecurityAuditResponse> {
+        self.delete_audit(datastore, database_session, &id).await?;
+
+        Ok(DeleteSecurityAuditResponse {
+            status: true,
+        })
+    }
+
+    /// Get IP security summary for gRPC
+    pub async fn get_ip_security_summary_grpc(
+        &self,
+        ip_address: String,
+        (datastore, database_session): &DB,
+    ) -> Result<GetIpSecuritySummaryResponse> {
+        let summary = self.get_ip_security_summary(datastore, database_session, &ip_address).await?;
+        let grpc_summary = GrpcSecuritySummary {
+            ip_address: summary.ip_address,
+            total_records: summary.total_records,
+            total_authentication_attempts: summary.total_authentication_attempts,
+            failed_authentication_attempts: summary.failed_authentication_attempts,
+            blocked_injection_attempts: summary.blocked_injection_attempts,
+            rate_limited_requests: summary.rate_limited_requests,
+            suspicious_activities_detected: summary.suspicious_activities_detected,
+            security_violations: summary.security_violations,
+            lowest_health_score: summary.lowest_health_score,
+        };
+
+        Ok(GetIpSecuritySummaryResponse {
+            status: true,
+            data: Some(grpc_summary),
+        })
+    }
+}
+
+/// Helper function to convert grpc security event type to local enum
+fn convert_grpc_security_event_type(grpc_type: GrpcSecurityEventType) -> SecurityEventType {
+    match grpc_type {
+        GrpcSecurityEventType::AuthenticationSuccess => SecurityEventType::AuthenticationSuccess,
+        GrpcSecurityEventType::AuthenticationFailureEvent => SecurityEventType::AuthenticationFailure,
+        GrpcSecurityEventType::InjectionAttemptEvent => SecurityEventType::InjectionAttempt,
+        GrpcSecurityEventType::RateLimitExceededEvent => SecurityEventType::RateLimitExceeded,
+        GrpcSecurityEventType::SuspiciousActivityEvent => SecurityEventType::SuspiciousActivity,
+        GrpcSecurityEventType::SecurityViolationEvent => SecurityEventType::SecurityViolation,
+        GrpcSecurityEventType::Unspecified => SecurityEventType::SuspiciousActivity,
+    }
+}
+
+/// Helper function to convert pagination model to gRPC
+fn convert_pagination_to_grpc(
+    pagination_model: SecurityAuditPaginationModel,
+) -> Result<GrpcSecurityAuditPaginationModel> {
+    let mut grpc_data = Vec::new();
+    for model in pagination_model.data {
+        let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
+        grpc_data.push(grpc_model);
+    }
+
+    let grpc_pagination = GrpcPagination {
+        total: pagination_model.pagination.total,
+        per_page: pagination_model.pagination.per_page,
+        current_page: pagination_model.pagination.current_page,
+        from: pagination_model.pagination.from,
+        to: pagination_model.pagination.to,
+        has_next_page: pagination_model.pagination.has_next_page,
+        has_previous_page: pagination_model.pagination.has_previous_page,
+        next_page_number: pagination_model.pagination.next_page_number,
+        previous_page_number: pagination_model.pagination.previous_page_number,
+    };
+
+    Ok(GrpcSecurityAuditPaginationModel {
+        data: grpc_data,
+        pagination: Some(grpc_pagination),
+    })
 }
