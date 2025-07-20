@@ -1,0 +1,398 @@
+syntax = "proto3";
+package security_audit;
+
+import "google/protobuf/timestamp.proto";
+
+// Security Audit Models
+message SecurityAuditModel {
+  string id = 1;
+  string security_audit_id = 2;
+  optional string admin_user_id = 3;
+  optional string session_id = 4;
+  string ip_address = 5;
+  optional string user_agent = 6;
+  optional string endpoint = 7;
+  optional string request_method = 8;
+  int32 total_authentication_attempts = 9;
+  int32 failed_authentication_attempts = 10;
+  int32 blocked_injection_attempts = 11;
+  int32 rate_limited_requests = 12;
+  int32 suspicious_activities_detected = 13;
+  int32 security_violations = 14;
+  int32 uptime_seconds = 15;
+  double security_health_score = 16;
+  google.protobuf.Timestamp created_at = 17;
+  google.protobuf.Timestamp updated_at = 18;
+  optional string metadata_json = 19; // JSON string for metadata
+}
+
+message CreateSecurityAuditModel {
+  string security_audit_id = 1;
+  optional string admin_user_id = 2;
+  optional string session_id = 3;
+  string ip_address = 4;
+  optional string user_agent = 5;
+  optional string endpoint = 6;
+  optional string request_method = 7;
+  optional int32 total_authentication_attempts = 8;
+  optional int32 failed_authentication_attempts = 9;
+  optional int32 blocked_injection_attempts = 10;
+  optional int32 rate_limited_requests = 11;
+  optional int32 suspicious_activities_detected = 12;
+  optional int32 security_violations = 13;
+  optional int32 uptime_seconds = 14;
+  optional double security_health_score = 15;
+  optional string metadata_json = 16; // JSON string for metadata
+}
+
+message UpdateSecurityAuditModel {
+  optional int32 total_authentication_attempts = 1;
+  optional int32 failed_authentication_attempts = 2;
+  optional int32 blocked_injection_attempts = 3;
+  optional int32 rate_limited_requests = 4;
+  optional int32 suspicious_activities_detected = 5;
+  optional int32 security_violations = 6;
+  optional int32 uptime_seconds = 7;
+  optional double security_health_score = 8;
+  optional string metadata_json = 9; // JSON string for metadata
+}
+
+// Security Alert Models
+message SecurityAlertModel {
+  string id = 1;
+  string alert_id = 2;
+  AlertType alert_type = 3;
+  AlertSeverity severity = 4;
+  string message = 5;
+  string source = 6;
+  optional string affected_resource = 7;
+  optional string metadata_json = 8; // JSON string for metadata
+  bool resolved = 9;
+  optional google.protobuf.Timestamp resolved_at = 10;
+  optional string resolved_by = 11;
+  google.protobuf.Timestamp created_at = 12;
+}
+
+message CreateSecurityAlertModel {
+  string alert_id = 1;
+  AlertType alert_type = 2;
+  AlertSeverity severity = 3;
+  string message = 4;
+  string source = 5;
+  optional string affected_resource = 6;
+  optional string metadata_json = 7; // JSON string for metadata
+}
+
+message UpdateSecurityAlertModel {
+  optional bool resolved = 1;
+  optional string resolved_by = 2;
+  optional string metadata_json = 3; // JSON string for metadata
+}
+
+// Enums
+enum AlertType {
+  ALERT_TYPE_UNSPECIFIED = 0;
+  AUTHENTICATION_FAILURE = 1;
+  INJECTION_ATTEMPT = 2;
+  RATE_LIMIT_EXCEEDED = 3;
+  SUSPICIOUS_ACTIVITY = 4;
+  PRIVILEGE_ESCALATION = 5;
+  DATA_BREACH_ATTEMPT = 6;
+  UNAUTHORIZED_ACCESS = 7;
+  MALFORMED_REQUEST = 8;
+  BRUTE_FORCE_ATTACK = 9;
+  SESSION_HIJACKING = 10;
+}
+
+enum AlertSeverity {
+  ALERT_SEVERITY_UNSPECIFIED = 0;
+  LOW = 1;
+  MEDIUM = 2;
+  HIGH = 3;
+  CRITICAL = 4;
+}
+
+enum SecurityEventType {
+  SECURITY_EVENT_TYPE_UNSPECIFIED = 0;
+  AUTHENTICATION_SUCCESS = 1;
+  AUTHENTICATION_FAILURE_EVENT = 2;
+  INJECTION_ATTEMPT_EVENT = 3;
+  RATE_LIMIT_EXCEEDED_EVENT = 4;
+  SUSPICIOUS_ACTIVITY_EVENT = 5;
+  SECURITY_VIOLATION_EVENT = 6;
+}
+
+// Pagination
+message Pagination {
+  int64 total = 1;
+  int64 per_page = 2;
+  int64 current_page = 3;
+  int64 from = 4;
+  int64 to = 5;
+  bool has_next_page = 6;
+  bool has_previous_page = 7;
+  int64 next_page_number = 8;
+  int64 previous_page_number = 9;
+}
+
+message SecurityAuditPaginationModel {
+  repeated SecurityAuditModel data = 1;
+  Pagination pagination = 2;
+}
+
+message SecurityAlertPaginationModel {
+  repeated SecurityAlertModel data = 1;
+  Pagination pagination = 2;
+}
+
+// Security Summary Models
+message SecuritySummary {
+  string ip_address = 1;
+  int64 total_records = 2;
+  int32 total_authentication_attempts = 3;
+  int32 failed_authentication_attempts = 4;
+  int32 blocked_injection_attempts = 5;
+  int32 rate_limited_requests = 6;
+  int32 suspicious_activities_detected = 7;
+  int32 security_violations = 8;
+  double lowest_health_score = 9;
+}
+
+message AlertStatistics {
+  int64 total_alerts = 1;
+  int64 total_unresolved = 2;
+  int64 total_critical_unresolved = 3;
+  int64 total_low = 4;
+  int64 total_medium = 5;
+  int64 total_high = 6;
+  int64 total_critical = 7;
+}
+
+// Security Audit Service Requests/Responses
+message CreateSecurityAuditRequest {
+  CreateSecurityAuditModel audit = 1;
+}
+
+message CreateSecurityAuditResponse {
+  bool status = 1;
+  SecurityAuditModel data = 2;
+}
+
+message LogSecurityEventRequest {
+  optional string admin_user_id = 1;
+  optional string session_id = 2;
+  string ip_address = 3;
+  optional string user_agent = 4;
+  optional string endpoint = 5;
+  optional string request_method = 6;
+  SecurityEventType event_type = 7;
+  optional string metadata_json = 8;
+}
+
+message LogSecurityEventResponse {
+  bool status = 1;
+  SecurityAuditModel data = 2;
+}
+
+message GetSecurityAuditRequest {
+  string id = 1;
+}
+
+message GetSecurityAuditResponse {
+  bool status = 1;
+  SecurityAuditModel data = 2;
+}
+
+message GetSecurityAuditsByUserRequest {
+  string admin_user_id = 1;
+  int64 page = 2;
+  int64 per_page = 3;
+}
+
+message GetSecurityAuditsByUserResponse {
+  bool status = 1;
+  SecurityAuditPaginationModel data = 2;
+}
+
+message GetSecurityAuditsByIpRequest {
+  string ip_address = 1;
+  int64 page = 2;
+  int64 per_page = 3;
+}
+
+message GetSecurityAuditsByIpResponse {
+  bool status = 1;
+  SecurityAuditPaginationModel data = 2;
+}
+
+message GetSecurityAuditsPaginatedRequest {
+  int64 page = 1;
+  int64 per_page = 2;
+}
+
+message GetSecurityAuditsPaginatedResponse {
+  bool status = 1;
+  SecurityAuditPaginationModel data = 2;
+}
+
+message UpdateSecurityAuditRequest {
+  string id = 1;
+  UpdateSecurityAuditModel audit = 2;
+}
+
+message UpdateSecurityAuditResponse {
+  bool status = 1;
+  SecurityAuditModel data = 2;
+}
+
+message DeleteSecurityAuditRequest {
+  string id = 1;
+}
+
+message DeleteSecurityAuditResponse {
+  bool status = 1;
+}
+
+message GetIpSecuritySummaryRequest {
+  string ip_address = 1;
+}
+
+message GetIpSecuritySummaryResponse {
+  bool status = 1;
+  SecuritySummary data = 2;
+}
+
+// Security Alert Service Requests/Responses
+message CreateSecurityAlertRequest {
+  CreateSecurityAlertModel alert = 1;
+}
+
+message CreateSecurityAlertResponse {
+  bool status = 1;
+  SecurityAlertModel data = 2;
+}
+
+message CreateSecurityAlertAutoIdRequest {
+  AlertType alert_type = 1;
+  AlertSeverity severity = 2;
+  string message = 3;
+  string source = 4;
+  optional string affected_resource = 5;
+  optional string metadata_json = 6;
+}
+
+message CreateSecurityAlertAutoIdResponse {
+  bool status = 1;
+  SecurityAlertModel data = 2;
+}
+
+message GetSecurityAlertRequest {
+  string id = 1;
+}
+
+message GetSecurityAlertResponse {
+  bool status = 1;
+  SecurityAlertModel data = 2;
+}
+
+message GetUnresolvedAlertsBySeverityRequest {
+  AlertSeverity severity = 1;
+  int64 page = 2;
+  int64 per_page = 3;
+}
+
+message GetUnresolvedAlertsBySeverityResponse {
+  bool status = 1;
+  SecurityAlertPaginationModel data = 2;
+}
+
+message GetAlertsByTypeRequest {
+  AlertType alert_type = 1;
+  int64 page = 2;
+  int64 per_page = 3;
+}
+
+message GetAlertsByTypeResponse {
+  bool status = 1;
+  SecurityAlertPaginationModel data = 2;
+}
+
+message GetAlertsBySourceRequest {
+  string source = 1;
+  int64 page = 2;
+  int64 per_page = 3;
+}
+
+message GetAlertsBySourceResponse {
+  bool status = 1;
+  SecurityAlertPaginationModel data = 2;
+}
+
+message ResolveSecurityAlertRequest {
+  string id = 1;
+  string resolved_by = 2;
+}
+
+message ResolveSecurityAlertResponse {
+  bool status = 1;
+  SecurityAlertModel data = 2;
+}
+
+message GetSecurityAlertsPaginatedRequest {
+  int64 page = 1;
+  int64 per_page = 2;
+}
+
+message GetSecurityAlertsPaginatedResponse {
+  bool status = 1;
+  SecurityAlertPaginationModel data = 2;
+}
+
+message GetCriticalUnresolvedAlertsRequest {}
+
+message GetCriticalUnresolvedAlertsResponse {
+  bool status = 1;
+  repeated SecurityAlertModel data = 2;
+}
+
+message DeleteSecurityAlertRequest {
+  string id = 1;
+}
+
+message DeleteSecurityAlertResponse {
+  bool status = 1;
+}
+
+message GetAlertStatisticsRequest {}
+
+message GetAlertStatisticsResponse {
+  bool status = 1;
+  AlertStatistics data = 2;
+}
+
+// Services
+service SecurityAudit {
+  rpc CreateSecurityAudit(CreateSecurityAuditRequest) returns (CreateSecurityAuditResponse);
+  rpc LogSecurityEvent(LogSecurityEventRequest) returns (LogSecurityEventResponse);
+  rpc GetSecurityAudit(GetSecurityAuditRequest) returns (GetSecurityAuditResponse);
+  rpc GetSecurityAuditsByUser(GetSecurityAuditsByUserRequest) returns (GetSecurityAuditsByUserResponse);
+  rpc GetSecurityAuditsByIp(GetSecurityAuditsByIpRequest) returns (GetSecurityAuditsByIpResponse);
+  rpc GetSecurityAuditsPaginated(GetSecurityAuditsPaginatedRequest) returns (GetSecurityAuditsPaginatedResponse);
+  rpc UpdateSecurityAudit(UpdateSecurityAuditRequest) returns (UpdateSecurityAuditResponse);
+  rpc DeleteSecurityAudit(DeleteSecurityAuditRequest) returns (DeleteSecurityAuditResponse);
+  rpc GetIpSecuritySummary(GetIpSecuritySummaryRequest) returns (GetIpSecuritySummaryResponse);
+}
+
+service SecurityAlert {
+  rpc CreateSecurityAlert(CreateSecurityAlertRequest) returns (CreateSecurityAlertResponse);
+  rpc CreateSecurityAlertAutoId(CreateSecurityAlertAutoIdRequest) returns (CreateSecurityAlertAutoIdResponse);
+  rpc GetSecurityAlert(GetSecurityAlertRequest) returns (GetSecurityAlertResponse);
+  rpc GetUnresolvedAlertsBySeverity(GetUnresolvedAlertsBySeverityRequest) returns (GetUnresolvedAlertsBySeverityResponse);
+  rpc GetAlertsByType(GetAlertsByTypeRequest) returns (GetAlertsByTypeResponse);
+  rpc GetAlertsBySource(GetAlertsBySourceRequest) returns (GetAlertsBySourceResponse);
+  rpc ResolveSecurityAlert(ResolveSecurityAlertRequest) returns (ResolveSecurityAlertResponse);
+  rpc GetSecurityAlertsPaginated(GetSecurityAlertsPaginatedRequest) returns (GetSecurityAlertsPaginatedResponse);
+  rpc GetCriticalUnresolvedAlerts(GetCriticalUnresolvedAlertsRequest) returns (GetCriticalUnresolvedAlertsResponse);
+  rpc DeleteSecurityAlert(DeleteSecurityAlertRequest) returns (DeleteSecurityAlertResponse);
+  rpc GetAlertStatistics(GetAlertStatisticsRequest) returns (GetAlertStatisticsResponse);
+}
