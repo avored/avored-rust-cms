@@ -12,7 +12,7 @@ use crate::api::proto::admin_user::{
     UpdateRoleResponse,
 };
 use crate::avored_state::AvoRedState;
-use crate::error::Error::TonicError;
+use crate::error::Error::Tonic;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
 use crate::models::role_model::CreatableRole;
@@ -71,7 +71,7 @@ impl AdminUser for AdminUserApi {
                 Ok(Response::new(admin_user_paginate_response))
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -116,7 +116,7 @@ impl AdminUser for AdminUserApi {
                 Ok(response)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -154,7 +154,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -194,7 +194,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -229,7 +229,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -262,7 +262,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -305,7 +305,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -335,7 +335,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -371,7 +371,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -410,7 +410,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -446,7 +446,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }

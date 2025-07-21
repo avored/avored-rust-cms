@@ -28,7 +28,7 @@ impl AssetRepository {
         order_column: String,
         order_type: String,
     ) -> Result<Vec<AssetModel>> {
-        let sql = format!("SELECT * FROM type::table($table) WHERE parent_id=$parent_id ORDER  {} {} LIMIT $limit START $start;", order_column, order_type);
+        let sql = format!("SELECT * FROM type::table($table) WHERE parent_id=$parent_id ORDER  {order_column} {order_type} LIMIT $limit START $start;");
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
             ("start".into(), start.into()),
@@ -76,8 +76,7 @@ impl AssetRepository {
         parent_id: String,
     ) -> Result<ModelCount> {
         let sql = format!(
-            "SELECT count() FROM assets WHERE parent_id = '{}' GROUP ALL;",
-            parent_id
+            "SELECT count() FROM assets WHERE parent_id = '{parent_id}' GROUP ALL;"
         );
 
         let responses = datastore.execute(&sql, database_session, None).await?;

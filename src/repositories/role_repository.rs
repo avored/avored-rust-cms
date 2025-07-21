@@ -31,11 +31,10 @@ impl RoleRepository {
             "\
             SELECT * \
             FROM roles \
-            ORDER {} {} \
+            ORDER {order_column} {order_type} \
             LIMIT $limit \
             START $start;\
-        ",
-            order_column, order_type
+        "
         );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),
