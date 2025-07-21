@@ -1,10 +1,10 @@
-use std::collections::BTreeMap;
-use std::time::SystemTime;
-use prost_types::Timestamp;
 use super::{BaseModel, Pagination};
 use crate::error::{Error, Result};
+use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value, Uuid};
+use std::collections::BTreeMap;
+use std::time::SystemTime;
+use surrealdb::sql::{Datetime, Object, Uuid, Value};
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub enum AlertType {
@@ -60,32 +60,74 @@ impl AlertType {
 
     pub fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
         match grpc_type {
-            crate::api::proto::security_audit::AlertType::AuthenticationFailure => AlertType::AuthenticationFailure,
-            crate::api::proto::security_audit::AlertType::InjectionAttempt => AlertType::InjectionAttempt,
-            crate::api::proto::security_audit::AlertType::RateLimitExceeded => AlertType::RateLimitExceeded,
-            crate::api::proto::security_audit::AlertType::SuspiciousActivity => AlertType::SuspiciousActivity,
-            crate::api::proto::security_audit::AlertType::PrivilegeEscalation => AlertType::PrivilegeEscalation,
-            crate::api::proto::security_audit::AlertType::DataBreachAttempt => AlertType::DataBreachAttempt,
-            crate::api::proto::security_audit::AlertType::UnauthorizedAccess => AlertType::UnauthorizedAccess,
-            crate::api::proto::security_audit::AlertType::MalformedRequest => AlertType::MalformedRequest,
-            crate::api::proto::security_audit::AlertType::BruteForceAttack => AlertType::BruteForceAttack,
-            crate::api::proto::security_audit::AlertType::SessionHijacking => AlertType::SessionHijacking,
-            crate::api::proto::security_audit::AlertType::Unspecified => AlertType::SuspiciousActivity, // Default fallback
+            crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
+                AlertType::AuthenticationFailure
+            }
+            crate::api::proto::security_audit::AlertType::InjectionAttempt => {
+                AlertType::InjectionAttempt
+            }
+            crate::api::proto::security_audit::AlertType::RateLimitExceeded => {
+                AlertType::RateLimitExceeded
+            }
+            crate::api::proto::security_audit::AlertType::SuspiciousActivity => {
+                AlertType::SuspiciousActivity
+            }
+            crate::api::proto::security_audit::AlertType::PrivilegeEscalation => {
+                AlertType::PrivilegeEscalation
+            }
+            crate::api::proto::security_audit::AlertType::DataBreachAttempt => {
+                AlertType::DataBreachAttempt
+            }
+            crate::api::proto::security_audit::AlertType::UnauthorizedAccess => {
+                AlertType::UnauthorizedAccess
+            }
+            crate::api::proto::security_audit::AlertType::MalformedRequest => {
+                AlertType::MalformedRequest
+            }
+            crate::api::proto::security_audit::AlertType::BruteForceAttack => {
+                AlertType::BruteForceAttack
+            }
+            crate::api::proto::security_audit::AlertType::SessionHijacking => {
+                AlertType::SessionHijacking
+            }
+            crate::api::proto::security_audit::AlertType::Unspecified => {
+                AlertType::SuspiciousActivity
+            } // Default fallback
         }
     }
 
     pub fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
         match self {
-            AlertType::AuthenticationFailure => crate::api::proto::security_audit::AlertType::AuthenticationFailure,
-            AlertType::InjectionAttempt => crate::api::proto::security_audit::AlertType::InjectionAttempt,
-            AlertType::RateLimitExceeded => crate::api::proto::security_audit::AlertType::RateLimitExceeded,
-            AlertType::SuspiciousActivity => crate::api::proto::security_audit::AlertType::SuspiciousActivity,
-            AlertType::PrivilegeEscalation => crate::api::proto::security_audit::AlertType::PrivilegeEscalation,
-            AlertType::DataBreachAttempt => crate::api::proto::security_audit::AlertType::DataBreachAttempt,
-            AlertType::UnauthorizedAccess => crate::api::proto::security_audit::AlertType::UnauthorizedAccess,
-            AlertType::MalformedRequest => crate::api::proto::security_audit::AlertType::MalformedRequest,
-            AlertType::BruteForceAttack => crate::api::proto::security_audit::AlertType::BruteForceAttack,
-            AlertType::SessionHijacking => crate::api::proto::security_audit::AlertType::SessionHijacking,
+            AlertType::AuthenticationFailure => {
+                crate::api::proto::security_audit::AlertType::AuthenticationFailure
+            }
+            AlertType::InjectionAttempt => {
+                crate::api::proto::security_audit::AlertType::InjectionAttempt
+            }
+            AlertType::RateLimitExceeded => {
+                crate::api::proto::security_audit::AlertType::RateLimitExceeded
+            }
+            AlertType::SuspiciousActivity => {
+                crate::api::proto::security_audit::AlertType::SuspiciousActivity
+            }
+            AlertType::PrivilegeEscalation => {
+                crate::api::proto::security_audit::AlertType::PrivilegeEscalation
+            }
+            AlertType::DataBreachAttempt => {
+                crate::api::proto::security_audit::AlertType::DataBreachAttempt
+            }
+            AlertType::UnauthorizedAccess => {
+                crate::api::proto::security_audit::AlertType::UnauthorizedAccess
+            }
+            AlertType::MalformedRequest => {
+                crate::api::proto::security_audit::AlertType::MalformedRequest
+            }
+            AlertType::BruteForceAttack => {
+                crate::api::proto::security_audit::AlertType::BruteForceAttack
+            }
+            AlertType::SessionHijacking => {
+                crate::api::proto::security_audit::AlertType::SessionHijacking
+            }
         }
     }
 }
@@ -133,7 +175,9 @@ impl AlertSeverity {
         }
     }
 
-    pub fn from_grpc_alert_severity(grpc_severity: crate::api::proto::security_audit::AlertSeverity) -> Self {
+    pub fn from_grpc_alert_severity(
+        grpc_severity: crate::api::proto::security_audit::AlertSeverity,
+    ) -> Self {
         match grpc_severity {
             crate::api::proto::security_audit::AlertSeverity::Low => AlertSeverity::Low,
             crate::api::proto::security_audit::AlertSeverity::Medium => AlertSeverity::Medium,
@@ -206,12 +250,20 @@ impl TryFrom<Object> for SecurityAlertModel {
 
         let alert_type = match val.get("alert_type") {
             Some(Value::Strand(val)) => AlertType::from_str(&val.to_string())?,
-            _ => return Err(Error::Generic("alert_type field is not a valid string".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "alert_type field is not a valid string".to_string(),
+                ))
+            }
         };
 
         let severity = match val.get("severity") {
             Some(Value::Strand(val)) => AlertSeverity::from_str(&val.to_string())?,
-            _ => return Err(Error::Generic("severity field is not a valid string".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "severity field is not a valid string".to_string(),
+                ))
+            }
         };
 
         let message = match val.get("message") {
@@ -227,7 +279,11 @@ impl TryFrom<Object> for SecurityAlertModel {
         let affected_resource = match val.get("affected_resource") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("affected_resource field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "affected_resource field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let metadata = match val.get("metadata") {
@@ -237,9 +293,13 @@ impl TryFrom<Object> for SecurityAlertModel {
                     map.insert(key.clone(), value.clone());
                 }
                 Some(map)
-            },
+            }
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("metadata field is not an object or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "metadata field is not an object or null".to_string(),
+                ))
+            }
         };
 
         let resolved = match val.get("resolved") {
@@ -250,18 +310,30 @@ impl TryFrom<Object> for SecurityAlertModel {
         let resolved_at = match val.get("resolved_at") {
             Some(Value::Datetime(val)) => Some(val.clone()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("resolved_at field is not a datetime or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "resolved_at field is not a datetime or null".to_string(),
+                ))
+            }
         };
 
         let resolved_by = match val.get("resolved_by") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("resolved_by field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "resolved_by field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let created_at = match val.get("created_at") {
             Some(Value::Datetime(val)) => val.clone(),
-            _ => return Err(Error::Generic("created_at field is not a datetime".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "created_at field is not a datetime".to_string(),
+                ))
+            }
         };
 
         Ok(SecurityAlertModel {
@@ -286,7 +358,8 @@ impl SecurityAlertModel {
     pub fn created_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.created_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
-        let duration = system_time.duration_since(SystemTime::UNIX_EPOCH)
+        let duration = system_time
+            .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap_or_default();
 
         Timestamp {
@@ -300,7 +373,8 @@ impl SecurityAlertModel {
         self.resolved_at.as_ref().map(|dt| {
             let chrono_utc = dt.to_utc();
             let system_time = SystemTime::from(chrono_utc);
-            let duration = system_time.duration_since(SystemTime::UNIX_EPOCH)
+            let duration = system_time
+                .duration_since(SystemTime::UNIX_EPOCH)
                 .unwrap_or_default();
 
             Timestamp {
@@ -320,9 +394,7 @@ impl SecurityAlertModel {
         let now = SystemTime::now();
         let chrono_utc = self.created_at.to_utc();
         let created = SystemTime::from(chrono_utc);
-        now.duration_since(created)
-            .unwrap_or_default()
-            .as_secs() as i64
+        now.duration_since(created).unwrap_or_default().as_secs() as i64
     }
 }
 
@@ -369,9 +441,10 @@ impl TryFrom<SecurityAlertModel> for crate::api::proto::security_audit::Security
 
     fn try_from(model: SecurityAlertModel) -> Result<Self> {
         let metadata_json = if let Some(ref metadata) = model.metadata {
-            Some(serde_json::to_string(&metadata).map_err(|e| {
-                Error::Generic(format!("Failed to serialize metadata: {}", e))
-            })?)
+            Some(
+                serde_json::to_string(&metadata)
+                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {}", e)))?,
+            )
         } else {
             None
         };
@@ -405,28 +478,70 @@ mod tests {
     #[test]
     fn test_alert_type_conversions() {
         // Test as_str
-        assert_eq!(AlertType::AuthenticationFailure.as_str(), "authentication_failure");
+        assert_eq!(
+            AlertType::AuthenticationFailure.as_str(),
+            "authentication_failure"
+        );
         assert_eq!(AlertType::InjectionAttempt.as_str(), "injection_attempt");
         assert_eq!(AlertType::RateLimitExceeded.as_str(), "rate_limit_exceeded");
-        assert_eq!(AlertType::SuspiciousActivity.as_str(), "suspicious_activity");
-        assert_eq!(AlertType::PrivilegeEscalation.as_str(), "privilege_escalation");
+        assert_eq!(
+            AlertType::SuspiciousActivity.as_str(),
+            "suspicious_activity"
+        );
+        assert_eq!(
+            AlertType::PrivilegeEscalation.as_str(),
+            "privilege_escalation"
+        );
         assert_eq!(AlertType::DataBreachAttempt.as_str(), "data_breach_attempt");
-        assert_eq!(AlertType::UnauthorizedAccess.as_str(), "unauthorized_access");
+        assert_eq!(
+            AlertType::UnauthorizedAccess.as_str(),
+            "unauthorized_access"
+        );
         assert_eq!(AlertType::MalformedRequest.as_str(), "malformed_request");
         assert_eq!(AlertType::BruteForceAttack.as_str(), "brute_force_attack");
         assert_eq!(AlertType::SessionHijacking.as_str(), "session_hijacking");
 
         // Test from_str
-        assert!(matches!(AlertType::from_str("authentication_failure").unwrap(), AlertType::AuthenticationFailure));
-        assert!(matches!(AlertType::from_str("injection_attempt").unwrap(), AlertType::InjectionAttempt));
-        assert!(matches!(AlertType::from_str("rate_limit_exceeded").unwrap(), AlertType::RateLimitExceeded));
-        assert!(matches!(AlertType::from_str("suspicious_activity").unwrap(), AlertType::SuspiciousActivity));
-        assert!(matches!(AlertType::from_str("privilege_escalation").unwrap(), AlertType::PrivilegeEscalation));
-        assert!(matches!(AlertType::from_str("data_breach_attempt").unwrap(), AlertType::DataBreachAttempt));
-        assert!(matches!(AlertType::from_str("unauthorized_access").unwrap(), AlertType::UnauthorizedAccess));
-        assert!(matches!(AlertType::from_str("malformed_request").unwrap(), AlertType::MalformedRequest));
-        assert!(matches!(AlertType::from_str("brute_force_attack").unwrap(), AlertType::BruteForceAttack));
-        assert!(matches!(AlertType::from_str("session_hijacking").unwrap(), AlertType::SessionHijacking));
+        assert!(matches!(
+            AlertType::from_str("authentication_failure").unwrap(),
+            AlertType::AuthenticationFailure
+        ));
+        assert!(matches!(
+            AlertType::from_str("injection_attempt").unwrap(),
+            AlertType::InjectionAttempt
+        ));
+        assert!(matches!(
+            AlertType::from_str("rate_limit_exceeded").unwrap(),
+            AlertType::RateLimitExceeded
+        ));
+        assert!(matches!(
+            AlertType::from_str("suspicious_activity").unwrap(),
+            AlertType::SuspiciousActivity
+        ));
+        assert!(matches!(
+            AlertType::from_str("privilege_escalation").unwrap(),
+            AlertType::PrivilegeEscalation
+        ));
+        assert!(matches!(
+            AlertType::from_str("data_breach_attempt").unwrap(),
+            AlertType::DataBreachAttempt
+        ));
+        assert!(matches!(
+            AlertType::from_str("unauthorized_access").unwrap(),
+            AlertType::UnauthorizedAccess
+        ));
+        assert!(matches!(
+            AlertType::from_str("malformed_request").unwrap(),
+            AlertType::MalformedRequest
+        ));
+        assert!(matches!(
+            AlertType::from_str("brute_force_attack").unwrap(),
+            AlertType::BruteForceAttack
+        ));
+        assert!(matches!(
+            AlertType::from_str("session_hijacking").unwrap(),
+            AlertType::SessionHijacking
+        ));
 
         // Test invalid string
         assert!(AlertType::from_str("invalid_type").is_err());
@@ -441,10 +556,22 @@ mod tests {
         assert_eq!(AlertSeverity::Critical.as_str(), "critical");
 
         // Test from_str
-        assert!(matches!(AlertSeverity::from_str("low").unwrap(), AlertSeverity::Low));
-        assert!(matches!(AlertSeverity::from_str("medium").unwrap(), AlertSeverity::Medium));
-        assert!(matches!(AlertSeverity::from_str("high").unwrap(), AlertSeverity::High));
-        assert!(matches!(AlertSeverity::from_str("critical").unwrap(), AlertSeverity::Critical));
+        assert!(matches!(
+            AlertSeverity::from_str("low").unwrap(),
+            AlertSeverity::Low
+        ));
+        assert!(matches!(
+            AlertSeverity::from_str("medium").unwrap(),
+            AlertSeverity::Medium
+        ));
+        assert!(matches!(
+            AlertSeverity::from_str("high").unwrap(),
+            AlertSeverity::High
+        ));
+        assert!(matches!(
+            AlertSeverity::from_str("critical").unwrap(),
+            AlertSeverity::Critical
+        ));
 
         // Test invalid string
         assert!(AlertSeverity::from_str("invalid_severity").is_err());

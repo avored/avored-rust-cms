@@ -1,9 +1,9 @@
-use std::collections::BTreeMap;
-use std::time::SystemTime;
-use prost_types::Timestamp;
 use super::{BaseModel, Pagination};
 use crate::error::{Error, Result};
+use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
+use std::collections::BTreeMap;
+use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
@@ -76,42 +76,70 @@ impl TryFrom<Object> for SecurityAuditModel {
 
         let security_audit_id = match val.get("security_audit_id") {
             Some(Value::Strand(val)) => val.to_string(),
-            _ => return Err(Error::Generic("security_audit_id field is not a string".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "security_audit_id field is not a string".to_string(),
+                ))
+            }
         };
 
         let admin_user_id = match val.get("admin_user_id") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("admin_user_id field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "admin_user_id field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let session_id = match val.get("session_id") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("session_id field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "session_id field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let ip_address = match val.get("ip_address") {
             Some(Value::Strand(val)) => val.to_string(),
-            _ => return Err(Error::Generic("ip_address field is not a string".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "ip_address field is not a string".to_string(),
+                ))
+            }
         };
 
         let user_agent = match val.get("user_agent") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("user_agent field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "user_agent field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let endpoint = match val.get("endpoint") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("endpoint field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "endpoint field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let request_method = match val.get("request_method") {
             Some(Value::Strand(val)) => Some(val.to_string()),
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("request_method field is not a string or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "request_method field is not a string or null".to_string(),
+                ))
+            }
         };
 
         let total_authentication_attempts = match val.get("total_authentication_attempts") {
@@ -156,12 +184,20 @@ impl TryFrom<Object> for SecurityAuditModel {
 
         let created_at = match val.get("created_at") {
             Some(Value::Datetime(val)) => val.clone(),
-            _ => return Err(Error::Generic("created_at field is not a datetime".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "created_at field is not a datetime".to_string(),
+                ))
+            }
         };
 
         let updated_at = match val.get("updated_at") {
             Some(Value::Datetime(val)) => val.clone(),
-            _ => return Err(Error::Generic("updated_at field is not a datetime".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "updated_at field is not a datetime".to_string(),
+                ))
+            }
         };
 
         let metadata = match val.get("metadata") {
@@ -171,9 +207,13 @@ impl TryFrom<Object> for SecurityAuditModel {
                     map.insert(key.clone(), value.clone());
                 }
                 Some(map)
-            },
+            }
             Some(Value::None) | None => None,
-            _ => return Err(Error::Generic("metadata field is not an object or null".to_string())),
+            _ => {
+                return Err(Error::Generic(
+                    "metadata field is not an object or null".to_string(),
+                ))
+            }
         };
 
         Ok(SecurityAuditModel {
@@ -206,32 +246,30 @@ impl SecurityAuditModel {
         if ip == "unknown" {
             return true;
         }
-        
+
         // Basic IPv4 validation
         if ip.split('.').count() == 4 {
-            return ip.split('.').all(|part| {
-                part.parse::<u8>().is_ok()
-            });
+            return ip.split('.').all(|part| part.parse::<u8>().is_ok());
         }
-        
+
         // Basic IPv6 validation (simplified)
         if ip.contains(':') {
             return ip.chars().all(|c| c.is_ascii_hexdigit() || c == ':');
         }
-        
+
         false
     }
 
     /// Calculates security health score based on metrics
     pub fn calculate_health_score(&self) -> f64 {
         let mut score = 100.0;
-        
+
         // Deduct points for security issues
         score -= (self.failed_authentication_attempts as f64) * 2.0;
         score -= (self.blocked_injection_attempts as f64) * 5.0;
         score -= (self.suspicious_activities_detected as f64) * 3.0;
         score -= (self.security_violations as f64) * 4.0;
-        
+
         // Ensure score doesn't go below 0
         score.max(0.0).min(100.0)
     }
@@ -240,7 +278,8 @@ impl SecurityAuditModel {
     pub fn created_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.created_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
-        let duration = system_time.duration_since(SystemTime::UNIX_EPOCH)
+        let duration = system_time
+            .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap_or_default();
 
         Timestamp {
@@ -253,7 +292,8 @@ impl SecurityAuditModel {
     pub fn updated_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.updated_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
-        let duration = system_time.duration_since(SystemTime::UNIX_EPOCH)
+        let duration = system_time
+            .duration_since(SystemTime::UNIX_EPOCH)
             .unwrap_or_default();
 
         Timestamp {
@@ -267,7 +307,9 @@ impl CreateSecurityAuditModel {
     /// Validates the create model
     pub fn validate(&self) -> Result<()> {
         if self.security_audit_id.is_empty() {
-            return Err(Error::Generic("security_audit_id cannot be empty".to_string()));
+            return Err(Error::Generic(
+                "security_audit_id cannot be empty".to_string(),
+            ));
         }
 
         if self.ip_address.is_empty() {
@@ -280,7 +322,9 @@ impl CreateSecurityAuditModel {
 
         if let Some(score) = self.security_health_score {
             if score < 0.0 || score > 100.0 {
-                return Err(Error::Generic("security_health_score must be between 0.0 and 100.0".to_string()));
+                return Err(Error::Generic(
+                    "security_health_score must be between 0.0 and 100.0".to_string(),
+                ));
             }
         }
 
@@ -294,9 +338,10 @@ impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::Security
 
     fn try_from(model: SecurityAuditModel) -> Result<Self> {
         let metadata_json = if let Some(ref metadata) = model.metadata {
-            Some(serde_json::to_string(&metadata).map_err(|e| {
-                Error::Generic(format!("Failed to serialize metadata: {}", e))
-            })?)
+            Some(
+                serde_json::to_string(&metadata)
+                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {}", e)))?,
+            )
         } else {
             None
         };
@@ -346,7 +391,9 @@ mod tests {
         assert!(SecurityAuditModel::validate_ip_address("unknown"));
 
         // Valid IPv6 addresses (simplified validation)
-        assert!(SecurityAuditModel::validate_ip_address("2001:0db8:85a3:0000:0000:8a2e:0370:7334"));
+        assert!(SecurityAuditModel::validate_ip_address(
+            "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+        ));
         assert!(SecurityAuditModel::validate_ip_address("::1"));
 
         // Invalid addresses

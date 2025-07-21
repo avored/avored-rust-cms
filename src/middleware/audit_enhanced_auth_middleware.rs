@@ -1,17 +1,17 @@
-use std::env;
-use axum::body::Body;
-use axum::extract::State;
-use axum::http::{StatusCode, Request};
-use axum::response::IntoResponse;
-use axum::{middleware::Next, Json};
-use std::sync::Arc;
 use crate::avored_state::AvoRedState;
+use crate::error::Error;
 use crate::models::token_claim_model::{LoggedInUser, TokenClaims};
 use crate::services::security_audit_service::SecurityEventType;
+use axum::body::Body;
+use axum::extract::State;
+use axum::http::{Request, StatusCode};
+use axum::response::IntoResponse;
+use axum::{middleware::Next, Json};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
+use std::env;
+use std::sync::Arc;
 use tonic::Status;
-use crate::error::Error;
 
 #[derive(Debug, Serialize, Default)]
 pub struct ErrorResponse {
@@ -26,10 +26,11 @@ pub async fn audit_enhanced_jwt_authentication(
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     let start_time = std::time::Instant::now();
-    
+
     // Extract request metadata for audit logging
     let ip_address = extract_client_ip(&req);
-    let user_agent = req.headers()
+    let user_agent = req
+        .headers()
         .get("user-agent")
         .and_then(|h| h.to_str().ok())
         .map(|s| s.to_string());
@@ -52,7 +53,8 @@ pub async fn audit_enhanced_jwt_authentication(
                         Some(method),
                         SecurityEventType::AuthenticationFailure,
                         Some("Invalid authorization header format".to_string()),
-                    ).await;
+                    )
+                    .await;
 
                     let json_error = ErrorResponse {
                         status: false,
@@ -76,7 +78,8 @@ pub async fn audit_enhanced_jwt_authentication(
                         Some(method),
                         SecurityEventType::SecurityViolation,
                         Some("JWT secret configuration missing".to_string()),
-                    ).await;
+                    )
+                    .await;
 
                     let json_error = ErrorResponse {
                         status: false,
@@ -100,7 +103,8 @@ pub async fn audit_enhanced_jwt_authentication(
                         Some(method),
                         SecurityEventType::AuthenticationFailure,
                         Some("Invalid token format - Bearer prefix missing".to_string()),
-                    ).await;
+                    )
+                    .await;
 
                     let json_error = ErrorResponse {
                         status: false,
@@ -121,7 +125,9 @@ pub async fn audit_enhanced_jwt_authentication(
                     let error_message = match jwt_error.kind() {
                         jsonwebtoken::errors::ErrorKind::ExpiredSignature => "Token expired",
                         jsonwebtoken::errors::ErrorKind::InvalidToken => "Invalid token",
-                        jsonwebtoken::errors::ErrorKind::InvalidSignature => "Invalid token signature",
+                        jsonwebtoken::errors::ErrorKind::InvalidSignature => {
+                            "Invalid token signature"
+                        }
                         _ => "Token validation failed",
                     };
 
@@ -135,7 +141,8 @@ pub async fn audit_enhanced_jwt_authentication(
                         Some(method),
                         SecurityEventType::AuthenticationFailure,
                         Some(format!("JWT validation failed: {}", error_message)),
-                    ).await;
+                    )
+                    .await;
 
                     let json_error = ErrorResponse {
                         status: false,
@@ -168,7 +175,8 @@ pub async fn audit_enhanced_jwt_authentication(
                 Some(method),
                 SecurityEventType::AuthenticationSuccess,
                 Some(format!("User {} successfully authenticated", claims.email)),
-            ).await;
+            )
+            .await;
 
             // Add user and session info to request extensions
             req.extensions_mut().insert(logged_in_user);
@@ -191,7 +199,8 @@ pub async fn audit_enhanced_jwt_authentication(
                     None,
                     SecurityEventType::SuspiciousActivity,
                     Some(format!("Slow request detected: {}ms", duration.as_millis())),
-                ).await;
+                )
+                .await;
             }
 
             Ok(response)
@@ -208,7 +217,8 @@ pub async fn audit_enhanced_jwt_authentication(
                 Some(method),
                 SecurityEventType::AuthenticationFailure,
                 Some("No authorization header provided".to_string()),
-            ).await;
+            )
+            .await;
 
             let json_error = ErrorResponse {
                 status: false,
@@ -225,67 +235,66 @@ pub async fn audit_enhanced_grpc_auth(
     mut req: tonic::Request<()>,
 ) -> Result<tonic::Request<()>, Status> {
     let ip_address = extract_grpc_client_ip(&req);
-    let user_agent = req.metadata()
+    let user_agent = req
+        .metadata()
         .get("user-agent")
         .and_then(|h| h.to_str().ok())
         .map(|s| s.to_string());
 
     match req.metadata().get("authorization") {
         Some(auth_header) => {
-            let auth_value = auth_header.to_str()
-                .map_err(|_| {
-                    // Log invalid header format
-                    tokio::spawn(log_authentication_event(
-                        &state,
-                        None,
-                        None,
-                        ip_address.clone(),
-                        user_agent.clone(),
-                        None,
-                        None,
-                        SecurityEventType::AuthenticationFailure,
-                        Some("Invalid gRPC authorization header format".to_string()),
-                    ));
-                    Status::unauthenticated("Invalid authorization header format")
-                })?;
+            let auth_value = auth_header.to_str().map_err(|_| {
+                // Log invalid header format
+                tokio::spawn(log_authentication_event(
+                    &state,
+                    None,
+                    None,
+                    ip_address.clone(),
+                    user_agent.clone(),
+                    None,
+                    None,
+                    SecurityEventType::AuthenticationFailure,
+                    Some("Invalid gRPC authorization header format".to_string()),
+                ));
+                Status::unauthenticated("Invalid authorization header format")
+            })?;
 
-            let jwt_token = env::var("AVORED_JWT_SECRET")
-                .map_err(|_| {
-                    tokio::spawn(log_authentication_event(
-                        &state,
-                        None,
-                        None,
-                        ip_address.clone(),
-                        user_agent.clone(),
-                        None,
-                        None,
-                        SecurityEventType::SecurityViolation,
-                        Some("JWT secret configuration missing in gRPC".to_string()),
-                    ));
-                    Status::internal("Authentication configuration error")
-                })?;
+            let jwt_token = env::var("AVORED_JWT_SECRET").map_err(|_| {
+                tokio::spawn(log_authentication_event(
+                    &state,
+                    None,
+                    None,
+                    ip_address.clone(),
+                    user_agent.clone(),
+                    None,
+                    None,
+                    SecurityEventType::SecurityViolation,
+                    Some("JWT secret configuration missing in gRPC".to_string()),
+                ));
+                Status::internal("Authentication configuration error")
+            })?;
 
-            let token = auth_value.strip_prefix("Bearer ")
-                .ok_or_else(|| {
-                    tokio::spawn(log_authentication_event(
-                        &state,
-                        None,
-                        None,
-                        ip_address.clone(),
-                        user_agent.clone(),
-                        None,
-                        None,
-                        SecurityEventType::AuthenticationFailure,
-                        Some("Invalid gRPC token format - Bearer prefix missing".to_string()),
-                    ));
-                    Status::unauthenticated("Invalid token format")
-                })?;
+            let token = auth_value.strip_prefix("Bearer ").ok_or_else(|| {
+                tokio::spawn(log_authentication_event(
+                    &state,
+                    None,
+                    None,
+                    ip_address.clone(),
+                    user_agent.clone(),
+                    None,
+                    None,
+                    SecurityEventType::AuthenticationFailure,
+                    Some("Invalid gRPC token format - Bearer prefix missing".to_string()),
+                ));
+                Status::unauthenticated("Invalid token format")
+            })?;
 
             let claims = decode::<TokenClaims>(
                 token,
                 &DecodingKey::from_secret(jwt_token.as_ref()),
                 &Validation::default(),
-            ).map_err(|jwt_error| {
+            )
+            .map_err(|jwt_error| {
                 let error_message = match jwt_error.kind() {
                     jsonwebtoken::errors::ErrorKind::ExpiredSignature => "Token expired",
                     jsonwebtoken::errors::ErrorKind::InvalidToken => "Invalid token",
@@ -306,7 +315,8 @@ pub async fn audit_enhanced_grpc_auth(
                 ));
 
                 Status::unauthenticated("Invalid or expired token")
-            })?.claims;
+            })?
+            .claims;
 
             // Log successful gRPC authentication
             tokio::spawn(log_authentication_event(
@@ -318,7 +328,10 @@ pub async fn audit_enhanced_grpc_auth(
                 None,
                 None,
                 SecurityEventType::AuthenticationSuccess,
-                Some(format!("gRPC user {} successfully authenticated", claims.email)),
+                Some(format!(
+                    "gRPC user {} successfully authenticated",
+                    claims.email
+                )),
             ));
 
             req.extensions_mut().insert(claims);
@@ -357,22 +370,28 @@ async fn log_authentication_event(
 ) -> Result<(), Error> {
     let metadata = message.map(|msg| {
         let mut map = std::collections::BTreeMap::new();
-        map.insert("event_message".to_string(), surrealdb::sql::Value::from(msg));
+        map.insert(
+            "event_message".to_string(),
+            surrealdb::sql::Value::from(msg),
+        );
         map
     });
 
-    let _ = state.security_audit_service.log_security_event(
-        &state.db.0,
-        &state.db.1,
-        user_id,
-        session_id,
-        ip_address,
-        user_agent,
-        endpoint,
-        method,
-        event_type,
-        metadata,
-    ).await;
+    let _ = state
+        .security_audit_service
+        .log_security_event(
+            &state.db.0,
+            &state.db.1,
+            user_id,
+            session_id,
+            ip_address,
+            user_agent,
+            endpoint,
+            method,
+            event_type,
+            metadata,
+        )
+        .await;
 
     Ok(())
 }

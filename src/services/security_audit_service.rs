@@ -1,23 +1,23 @@
-
-use std::collections::BTreeMap;
+use crate::api::proto::security_audit::{
+    CreateSecurityAuditRequest, CreateSecurityAuditResponse, DeleteSecurityAuditResponse,
+    GetIpSecuritySummaryResponse, GetSecurityAuditResponse, GetSecurityAuditsByIpResponse,
+    GetSecurityAuditsByUserResponse, GetSecurityAuditsPaginatedResponse, LogSecurityEventRequest,
+    LogSecurityEventResponse, Pagination as GrpcPagination,
+    SecurityAuditModel as GrpcSecurityAuditModel,
+    SecurityAuditPaginationModel as GrpcSecurityAuditPaginationModel,
+    SecurityEventType as GrpcSecurityEventType, SecuritySummary as GrpcSecuritySummary,
+    UpdateSecurityAuditResponse,
+};
 use crate::error::Result;
 use crate::models::security_audit_model::{
-    CreateSecurityAuditModel, SecurityAuditModel, SecurityAuditPaginationModel, UpdateSecurityAuditModel
+    CreateSecurityAuditModel, SecurityAuditModel, SecurityAuditPaginationModel,
+    UpdateSecurityAuditModel,
 };
-use crate::repositories::security_audit_repository::SecurityAuditRepository;
 use crate::providers::avored_database_provider::DB;
-use crate::api::proto::security_audit::{
-    CreateSecurityAuditRequest, CreateSecurityAuditResponse,
-    LogSecurityEventRequest, LogSecurityEventResponse,
-    GetSecurityAuditResponse, GetSecurityAuditsByUserResponse,
-    GetSecurityAuditsByIpResponse, GetSecurityAuditsPaginatedResponse,
-    UpdateSecurityAuditResponse, DeleteSecurityAuditResponse,
-    GetIpSecuritySummaryResponse, SecurityAuditModel as GrpcSecurityAuditModel,
-    SecurityAuditPaginationModel as GrpcSecurityAuditPaginationModel, SecuritySummary as GrpcSecuritySummary, SecurityEventType as GrpcSecurityEventType,
-    Pagination as GrpcPagination,
-};
-use surrealdb::kvs::Datastore;
+use crate::repositories::security_audit_repository::SecurityAuditRepository;
+use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
+use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
 
 #[derive(Clone)]
@@ -59,7 +59,7 @@ impl SecurityAuditService {
         metadata: Option<BTreeMap<String, Value>>,
     ) -> Result<SecurityAuditModel> {
         let security_audit_id = format!("audit_{}", surrealdb::sql::Uuid::new_v4());
-        
+
         let mut create_model = CreateSecurityAuditModel {
             security_audit_id,
             admin_user_id,
@@ -100,7 +100,8 @@ impl SecurityAuditService {
         let health_score = self.calculate_event_health_score(&event_type);
         create_model.security_health_score = Some(health_score);
 
-        self.create_audit(datastore, database_session, create_model).await
+        self.create_audit(datastore, database_session, create_model)
+            .await
     }
 
     /// Get security audit by ID
@@ -152,7 +153,12 @@ impl SecurityAuditService {
         updateable_security_audit_model: UpdateSecurityAuditModel,
     ) -> Result<SecurityAuditModel> {
         self.security_audit_repository
-            .update(datastore, database_session, id, updateable_security_audit_model)
+            .update(
+                datastore,
+                database_session,
+                id,
+                updateable_security_audit_model,
+            )
             .await
     }
 
@@ -165,27 +171,34 @@ impl SecurityAuditService {
         event_type: SecurityEventType,
     ) -> Result<SecurityAuditModel> {
         // First get the current audit record
-        let current_audit = self.get_audit_by_id(datastore, database_session, id).await?;
-        
+        let current_audit = self
+            .get_audit_by_id(datastore, database_session, id)
+            .await?;
+
         let mut update_model = UpdateSecurityAuditModel::default();
-        
+
         // Increment appropriate counters
         match event_type {
             SecurityEventType::AuthenticationSuccess => {
-                update_model.total_authentication_attempts = Some(current_audit.total_authentication_attempts + 1);
+                update_model.total_authentication_attempts =
+                    Some(current_audit.total_authentication_attempts + 1);
             }
             SecurityEventType::AuthenticationFailure => {
-                update_model.total_authentication_attempts = Some(current_audit.total_authentication_attempts + 1);
-                update_model.failed_authentication_attempts = Some(current_audit.failed_authentication_attempts + 1);
+                update_model.total_authentication_attempts =
+                    Some(current_audit.total_authentication_attempts + 1);
+                update_model.failed_authentication_attempts =
+                    Some(current_audit.failed_authentication_attempts + 1);
             }
             SecurityEventType::InjectionAttempt => {
-                update_model.blocked_injection_attempts = Some(current_audit.blocked_injection_attempts + 1);
+                update_model.blocked_injection_attempts =
+                    Some(current_audit.blocked_injection_attempts + 1);
             }
             SecurityEventType::RateLimitExceeded => {
                 update_model.rate_limited_requests = Some(current_audit.rate_limited_requests + 1);
             }
             SecurityEventType::SuspiciousActivity => {
-                update_model.suspicious_activities_detected = Some(current_audit.suspicious_activities_detected + 1);
+                update_model.suspicious_activities_detected =
+                    Some(current_audit.suspicious_activities_detected + 1);
             }
             SecurityEventType::SecurityViolation => {
                 update_model.security_violations = Some(current_audit.security_violations + 1);
@@ -194,18 +207,31 @@ impl SecurityAuditService {
 
         // Recalculate health score based on updated metrics
         let updated_audit = SecurityAuditModel {
-            total_authentication_attempts: update_model.total_authentication_attempts.unwrap_or(current_audit.total_authentication_attempts),
-            failed_authentication_attempts: update_model.failed_authentication_attempts.unwrap_or(current_audit.failed_authentication_attempts),
-            blocked_injection_attempts: update_model.blocked_injection_attempts.unwrap_or(current_audit.blocked_injection_attempts),
-            rate_limited_requests: update_model.rate_limited_requests.unwrap_or(current_audit.rate_limited_requests),
-            suspicious_activities_detected: update_model.suspicious_activities_detected.unwrap_or(current_audit.suspicious_activities_detected),
-            security_violations: update_model.security_violations.unwrap_or(current_audit.security_violations),
+            total_authentication_attempts: update_model
+                .total_authentication_attempts
+                .unwrap_or(current_audit.total_authentication_attempts),
+            failed_authentication_attempts: update_model
+                .failed_authentication_attempts
+                .unwrap_or(current_audit.failed_authentication_attempts),
+            blocked_injection_attempts: update_model
+                .blocked_injection_attempts
+                .unwrap_or(current_audit.blocked_injection_attempts),
+            rate_limited_requests: update_model
+                .rate_limited_requests
+                .unwrap_or(current_audit.rate_limited_requests),
+            suspicious_activities_detected: update_model
+                .suspicious_activities_detected
+                .unwrap_or(current_audit.suspicious_activities_detected),
+            security_violations: update_model
+                .security_violations
+                .unwrap_or(current_audit.security_violations),
             ..current_audit
         };
-        
+
         update_model.security_health_score = Some(updated_audit.calculate_health_score());
 
-        self.update_audit(datastore, database_session, id, update_model).await
+        self.update_audit(datastore, database_session, id, update_model)
+            .await
     }
 
     /// Get paginated security audits
@@ -252,11 +278,13 @@ impl SecurityAuditService {
         database_session: &Session,
         ip_address: &str,
     ) -> Result<SecuritySummary> {
-        let audits = self.get_audits_by_ip_address(datastore, database_session, ip_address, 1, 100).await?;
-        
+        let audits = self
+            .get_audits_by_ip_address(datastore, database_session, ip_address, 1, 100)
+            .await?;
+
         let mut summary = SecuritySummary::default();
         summary.ip_address = ip_address.to_string();
-        
+
         for audit in audits.data {
             summary.total_authentication_attempts += audit.total_authentication_attempts;
             summary.failed_authentication_attempts += audit.failed_authentication_attempts;
@@ -264,12 +292,12 @@ impl SecurityAuditService {
             summary.rate_limited_requests += audit.rate_limited_requests;
             summary.suspicious_activities_detected += audit.suspicious_activities_detected;
             summary.security_violations += audit.security_violations;
-            
+
             if audit.security_health_score < summary.lowest_health_score {
                 summary.lowest_health_score = audit.security_health_score;
             }
         }
-        
+
         summary.total_records = audits.pagination.total;
         Ok(summary)
     }
@@ -322,9 +350,9 @@ impl SecurityAuditService {
         request: CreateSecurityAuditRequest,
         (datastore, database_session): &DB,
     ) -> Result<CreateSecurityAuditResponse> {
-        let audit_data = request.audit.ok_or_else(|| {
-            crate::error::Error::Generic("Missing audit data".to_string())
-        })?;
+        let audit_data = request
+            .audit
+            .ok_or_else(|| crate::error::Error::Generic("Missing audit data".to_string()))?;
 
         let createable_model = CreateSecurityAuditModel {
             security_audit_id: audit_data.security_audit_id,
@@ -349,7 +377,9 @@ impl SecurityAuditService {
             },
         };
 
-        let model = self.create_audit(datastore, database_session, createable_model).await?;
+        let model = self
+            .create_audit(datastore, database_session, createable_model)
+            .await?;
         let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
 
         Ok(CreateSecurityAuditResponse {
@@ -370,18 +400,23 @@ impl SecurityAuditService {
             None
         };
 
-        let model = self.log_security_event(
-            datastore,
-            database_session,
-            request.admin_user_id,
-            request.session_id,
-            request.ip_address,
-            request.user_agent,
-            request.endpoint,
-            request.request_method,
-            convert_grpc_security_event_type(GrpcSecurityEventType::from_i32(request.event_type).unwrap_or(GrpcSecurityEventType::Unspecified)),
-            metadata,
-        ).await?;
+        let model = self
+            .log_security_event(
+                datastore,
+                database_session,
+                request.admin_user_id,
+                request.session_id,
+                request.ip_address,
+                request.user_agent,
+                request.endpoint,
+                request.request_method,
+                convert_grpc_security_event_type(
+                    GrpcSecurityEventType::from_i32(request.event_type)
+                        .unwrap_or(GrpcSecurityEventType::Unspecified),
+                ),
+                metadata,
+            )
+            .await?;
 
         let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
 
@@ -397,7 +432,9 @@ impl SecurityAuditService {
         id: String,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAuditResponse> {
-        let model = self.get_audit_by_id(datastore, database_session, &id).await?;
+        let model = self
+            .get_audit_by_id(datastore, database_session, &id)
+            .await?;
         let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
 
         Ok(GetSecurityAuditResponse {
@@ -414,13 +451,9 @@ impl SecurityAuditService {
         per_page: i64,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAuditsByUserResponse> {
-        let pagination_model = self.get_audits_by_admin_user(
-            datastore,
-            database_session,
-            &admin_user_id,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_audits_by_admin_user(datastore, database_session, &admin_user_id, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
 
@@ -438,13 +471,9 @@ impl SecurityAuditService {
         per_page: i64,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAuditsByIpResponse> {
-        let pagination_model = self.get_audits_by_ip_address(
-            datastore,
-            database_session,
-            &ip_address,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_audits_by_ip_address(datastore, database_session, &ip_address, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
 
@@ -461,12 +490,9 @@ impl SecurityAuditService {
         per_page: i64,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAuditsPaginatedResponse> {
-        let pagination_model = self.get_audits_paginated(
-            datastore,
-            database_session,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_audits_paginated(datastore, database_session, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_pagination_to_grpc(pagination_model)?;
 
@@ -483,9 +509,8 @@ impl SecurityAuditService {
         update_data: Option<crate::api::proto::security_audit::UpdateSecurityAuditModel>,
         (datastore, database_session): &DB,
     ) -> Result<UpdateSecurityAuditResponse> {
-        let update_data = update_data.ok_or_else(|| {
-            crate::error::Error::Generic("Missing update data".to_string())
-        })?;
+        let update_data = update_data
+            .ok_or_else(|| crate::error::Error::Generic("Missing update data".to_string()))?;
 
         let updatable_model = UpdateSecurityAuditModel {
             total_authentication_attempts: update_data.total_authentication_attempts,
@@ -503,7 +528,9 @@ impl SecurityAuditService {
             },
         };
 
-        let model = self.update_audit(datastore, database_session, &id, updatable_model).await?;
+        let model = self
+            .update_audit(datastore, database_session, &id, updatable_model)
+            .await?;
         let grpc_model: GrpcSecurityAuditModel = model.try_into()?;
 
         Ok(UpdateSecurityAuditResponse {
@@ -520,9 +547,7 @@ impl SecurityAuditService {
     ) -> Result<DeleteSecurityAuditResponse> {
         self.delete_audit(datastore, database_session, &id).await?;
 
-        Ok(DeleteSecurityAuditResponse {
-            status: true,
-        })
+        Ok(DeleteSecurityAuditResponse { status: true })
     }
 
     /// Get IP security summary for gRPC
@@ -531,7 +556,9 @@ impl SecurityAuditService {
         ip_address: String,
         (datastore, database_session): &DB,
     ) -> Result<GetIpSecuritySummaryResponse> {
-        let summary = self.get_ip_security_summary(datastore, database_session, &ip_address).await?;
+        let summary = self
+            .get_ip_security_summary(datastore, database_session, &ip_address)
+            .await?;
         let grpc_summary = GrpcSecuritySummary {
             ip_address: summary.ip_address,
             total_records: summary.total_records,
@@ -555,7 +582,9 @@ impl SecurityAuditService {
 fn convert_grpc_security_event_type(grpc_type: GrpcSecurityEventType) -> SecurityEventType {
     match grpc_type {
         GrpcSecurityEventType::AuthenticationSuccess => SecurityEventType::AuthenticationSuccess,
-        GrpcSecurityEventType::AuthenticationFailureEvent => SecurityEventType::AuthenticationFailure,
+        GrpcSecurityEventType::AuthenticationFailureEvent => {
+            SecurityEventType::AuthenticationFailure
+        }
         GrpcSecurityEventType::InjectionAttemptEvent => SecurityEventType::InjectionAttempt,
         GrpcSecurityEventType::RateLimitExceededEvent => SecurityEventType::RateLimitExceeded,
         GrpcSecurityEventType::SuspiciousActivityEvent => SecurityEventType::SuspiciousActivity,
@@ -590,6 +619,4 @@ fn convert_pagination_to_grpc(
         data: grpc_data,
         pagination: Some(grpc_pagination),
     })
-
-
 }

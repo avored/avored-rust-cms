@@ -8,9 +8,9 @@ use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
-use crate::repositories::setting_repository::SettingRepository;
-use crate::repositories::security_audit_repository::SecurityAuditRepository;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
+use crate::repositories::security_audit_repository::SecurityAuditRepository;
+use crate::repositories::setting_repository::SettingRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
@@ -18,9 +18,9 @@ use crate::services::cms_service::CmsService;
 use crate::services::content_service::ContentService;
 use crate::services::general_service::GeneralService;
 use crate::services::misc_service::MiscService;
-use crate::services::setting_service::SettingService;
-use crate::services::security_audit_service::SecurityAuditService;
 use crate::services::security_alert_service::SecurityAlertService;
+use crate::services::security_audit_service::SecurityAuditService;
+use crate::services::setting_service::SettingService;
 
 pub struct AvoRedState {
     pub db: DB,

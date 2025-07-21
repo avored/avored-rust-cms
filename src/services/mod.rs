@@ -10,7 +10,7 @@ pub mod ldap_connection_pool;
 pub mod local_auth_service;
 pub mod misc_service;
 pub mod multi_auth_service;
-pub mod security_audit_service;
 pub mod security_alert_service;
+pub mod security_audit_service;
 pub mod security_monitoring_service;
 pub mod setting_service;

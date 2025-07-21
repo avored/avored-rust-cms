@@ -1,24 +1,24 @@
-use std::collections::BTreeMap;
+use crate::api::proto::security_audit::{
+    AlertSeverity as GrpcAlertSeverity, AlertStatistics as GrpcAlertStatistics,
+    AlertType as GrpcAlertType, CreateSecurityAlertAutoIdRequest,
+    CreateSecurityAlertAutoIdResponse, CreateSecurityAlertRequest, CreateSecurityAlertResponse,
+    DeleteSecurityAlertResponse, GetAlertStatisticsResponse, GetAlertsBySourceResponse,
+    GetAlertsByTypeResponse, GetCriticalUnresolvedAlertsResponse, GetSecurityAlertResponse,
+    GetSecurityAlertsPaginatedResponse, GetUnresolvedAlertsBySeverityResponse,
+    Pagination as GrpcPagination, ResolveSecurityAlertResponse,
+    SecurityAlertModel as GrpcSecurityAlertModel,
+    SecurityAlertPaginationModel as GrpcSecurityAlertPaginationModel,
+};
 use crate::error::Result;
 use crate::models::security_alert_model::{
     AlertSeverity, AlertType, CreateSecurityAlertModel, SecurityAlertModel,
-    SecurityAlertPaginationModel, UpdateSecurityAlertModel
+    SecurityAlertPaginationModel, UpdateSecurityAlertModel,
 };
-use crate::repositories::security_alert_repository::SecurityAlertRepository;
 use crate::providers::avored_database_provider::DB;
-use crate::api::proto::security_audit::{
-    CreateSecurityAlertRequest, CreateSecurityAlertResponse,
-    CreateSecurityAlertAutoIdRequest, CreateSecurityAlertAutoIdResponse,
-    GetSecurityAlertResponse, GetUnresolvedAlertsBySeverityResponse,
-    GetAlertsByTypeResponse, GetAlertsBySourceResponse,
-    ResolveSecurityAlertResponse, GetSecurityAlertsPaginatedResponse,
-    GetCriticalUnresolvedAlertsResponse, DeleteSecurityAlertResponse,
-    GetAlertStatisticsResponse, SecurityAlertModel as GrpcSecurityAlertModel,
-    SecurityAlertPaginationModel as GrpcSecurityAlertPaginationModel, AlertStatistics as GrpcAlertStatistics,
-    Pagination as GrpcPagination, AlertType as GrpcAlertType, AlertSeverity as GrpcAlertSeverity,
-};
-use surrealdb::kvs::Datastore;
+use crate::repositories::security_alert_repository::SecurityAlertRepository;
+use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
+use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
 
 #[derive(Clone)]
@@ -67,7 +67,8 @@ impl SecurityAlertService {
             metadata,
         };
 
-        self.create_alert(datastore, database_session, create_model).await
+        self.create_alert(datastore, database_session, create_model)
+            .await
     }
 
     /// Get security alert by ID
@@ -146,7 +147,12 @@ impl SecurityAlertService {
         updateable_security_alert_model: UpdateSecurityAlertModel,
     ) -> Result<SecurityAlertModel> {
         self.security_alert_repository
-            .update(datastore, database_session, id, updateable_security_alert_model)
+            .update(
+                datastore,
+                database_session,
+                id,
+                updateable_security_alert_model,
+            )
             .await
     }
 
@@ -194,15 +200,21 @@ impl SecurityAlertService {
         event: SecurityAlertEvent,
     ) -> Result<SecurityAlertModel> {
         let (alert_type, severity, message) = self.classify_security_event(&event);
-        
+
         let mut metadata = BTreeMap::new();
-        metadata.insert("event_details".to_string(), Value::from(event.details.clone()));
-        metadata.insert("timestamp".to_string(), Value::from(chrono::Utc::now().to_rfc3339()));
-        
+        metadata.insert(
+            "event_details".to_string(),
+            Value::from(event.details.clone()),
+        );
+        metadata.insert(
+            "timestamp".to_string(),
+            Value::from(chrono::Utc::now().to_rfc3339()),
+        );
+
         if let Some(user_agent) = &event.user_agent {
             metadata.insert("user_agent".to_string(), Value::from(user_agent.clone()));
         }
-        
+
         if let Some(endpoint) = &event.endpoint {
             metadata.insert("endpoint".to_string(), Value::from(endpoint.clone()));
         }
@@ -216,61 +228,74 @@ impl SecurityAlertService {
             event.source,
             event.affected_resource,
             Some(metadata),
-        ).await
+        )
+        .await
     }
 
     /// Classify security event and determine alert type, severity, and message
-    fn classify_security_event(&self, event: &SecurityAlertEvent) -> (AlertType, AlertSeverity, String) {
+    fn classify_security_event(
+        &self,
+        event: &SecurityAlertEvent,
+    ) -> (AlertType, AlertSeverity, String) {
         match event.event_type.as_str() {
             "multiple_failed_logins" => (
                 AlertType::AuthenticationFailure,
                 AlertSeverity::Medium,
-                format!("Multiple failed login attempts detected from {}", event.source)
+                format!(
+                    "Multiple failed login attempts detected from {}",
+                    event.source
+                ),
             ),
             "sql_injection_attempt" => (
                 AlertType::InjectionAttempt,
                 AlertSeverity::High,
-                format!("SQL injection attempt detected from {}", event.source)
+                format!("SQL injection attempt detected from {}", event.source),
             ),
             "rate_limit_exceeded" => (
                 AlertType::RateLimitExceeded,
                 AlertSeverity::Low,
-                format!("Rate limit exceeded for {}", event.source)
+                format!("Rate limit exceeded for {}", event.source),
             ),
             "brute_force_attack" => (
                 AlertType::BruteForceAttack,
                 AlertSeverity::High,
-                format!("Brute force attack detected from {}", event.source)
+                format!("Brute force attack detected from {}", event.source),
             ),
             "privilege_escalation" => (
                 AlertType::PrivilegeEscalation,
                 AlertSeverity::Critical,
-                format!("Privilege escalation attempt detected from {}", event.source)
+                format!(
+                    "Privilege escalation attempt detected from {}",
+                    event.source
+                ),
             ),
             "data_breach_attempt" => (
                 AlertType::DataBreachAttempt,
                 AlertSeverity::Critical,
-                format!("Data breach attempt detected from {}", event.source)
+                format!("Data breach attempt detected from {}", event.source),
             ),
             "unauthorized_access" => (
                 AlertType::UnauthorizedAccess,
                 AlertSeverity::High,
-                format!("Unauthorized access attempt from {}", event.source)
+                format!("Unauthorized access attempt from {}", event.source),
             ),
             "malformed_request" => (
                 AlertType::MalformedRequest,
                 AlertSeverity::Low,
-                format!("Malformed request detected from {}", event.source)
+                format!("Malformed request detected from {}", event.source),
             ),
             "session_hijacking" => (
                 AlertType::SessionHijacking,
                 AlertSeverity::Critical,
-                format!("Session hijacking attempt detected from {}", event.source)
+                format!("Session hijacking attempt detected from {}", event.source),
             ),
             _ => (
                 AlertType::SuspiciousActivity,
                 AlertSeverity::Medium,
-                format!("Suspicious activity detected from {}: {}", event.source, event.details)
+                format!(
+                    "Suspicious activity detected from {}: {}",
+                    event.source, event.details
+                ),
             ),
         }
     }
@@ -282,14 +307,18 @@ impl SecurityAlertService {
         database_session: &Session,
     ) -> Result<AlertStatistics> {
         // Get critical unresolved alerts
-        let critical_alerts = self.get_critical_unresolved_alerts(datastore, database_session).await?;
-        
+        let critical_alerts = self
+            .get_critical_unresolved_alerts(datastore, database_session)
+            .await?;
+
         // Get recent alerts (last 100)
-        let recent_alerts = self.get_alerts_paginated(datastore, database_session, 1, 100).await?;
-        
+        let recent_alerts = self
+            .get_alerts_paginated(datastore, database_session, 1, 100)
+            .await?;
+
         let mut stats = AlertStatistics::default();
         stats.total_critical_unresolved = critical_alerts.len() as i64;
-        
+
         // Calculate statistics from recent alerts
         for alert in recent_alerts.data {
             match alert.severity {
@@ -298,12 +327,12 @@ impl SecurityAlertService {
                 AlertSeverity::High => stats.total_high += 1,
                 AlertSeverity::Critical => stats.total_critical += 1,
             }
-            
+
             if !alert.resolved {
                 stats.total_unresolved += 1;
             }
         }
-        
+
         stats.total_alerts = recent_alerts.pagination.total;
         Ok(stats)
     }
@@ -338,14 +367,20 @@ impl SecurityAlertService {
         request: CreateSecurityAlertRequest,
         (datastore, database_session): &DB,
     ) -> Result<CreateSecurityAlertResponse> {
-        let alert_data = request.alert.ok_or_else(|| {
-            crate::error::Error::Generic("Missing alert data".to_string())
-        })?;
+        let alert_data = request
+            .alert
+            .ok_or_else(|| crate::error::Error::Generic("Missing alert data".to_string()))?;
 
         let createable_model = CreateSecurityAlertModel {
             alert_id: alert_data.alert_id,
-            alert_type: AlertType::from_grpc_alert_type(GrpcAlertType::from_i32(alert_data.alert_type).unwrap_or(GrpcAlertType::Unspecified)),
-            severity: AlertSeverity::from_grpc_alert_severity(GrpcAlertSeverity::from_i32(alert_data.severity).unwrap_or(GrpcAlertSeverity::Unspecified)),
+            alert_type: AlertType::from_grpc_alert_type(
+                GrpcAlertType::from_i32(alert_data.alert_type)
+                    .unwrap_or(GrpcAlertType::Unspecified),
+            ),
+            severity: AlertSeverity::from_grpc_alert_severity(
+                GrpcAlertSeverity::from_i32(alert_data.severity)
+                    .unwrap_or(GrpcAlertSeverity::Unspecified),
+            ),
             message: alert_data.message,
             source: alert_data.source,
             affected_resource: alert_data.affected_resource,
@@ -356,7 +391,9 @@ impl SecurityAlertService {
             },
         };
 
-        let model = self.create_alert(datastore, database_session, createable_model).await?;
+        let model = self
+            .create_alert(datastore, database_session, createable_model)
+            .await?;
         let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
 
         Ok(CreateSecurityAlertResponse {
@@ -371,20 +408,28 @@ impl SecurityAlertService {
         request: CreateSecurityAlertAutoIdRequest,
         (datastore, database_session): &DB,
     ) -> Result<CreateSecurityAlertAutoIdResponse> {
-        let model = self.create_alert_auto_id(
-            datastore,
-            database_session,
-            AlertType::from_grpc_alert_type(GrpcAlertType::from_i32(request.alert_type).unwrap_or(GrpcAlertType::Unspecified)),
-            AlertSeverity::from_grpc_alert_severity(GrpcAlertSeverity::from_i32(request.severity).unwrap_or(GrpcAlertSeverity::Unspecified)),
-            request.message,
-            request.source,
-            request.affected_resource,
-            if let Some(json_str) = request.metadata_json {
-                serde_json::from_str(&json_str).ok()
-            } else {
-                None
-            },
-        ).await?;
+        let model = self
+            .create_alert_auto_id(
+                datastore,
+                database_session,
+                AlertType::from_grpc_alert_type(
+                    GrpcAlertType::from_i32(request.alert_type)
+                        .unwrap_or(GrpcAlertType::Unspecified),
+                ),
+                AlertSeverity::from_grpc_alert_severity(
+                    GrpcAlertSeverity::from_i32(request.severity)
+                        .unwrap_or(GrpcAlertSeverity::Unspecified),
+                ),
+                request.message,
+                request.source,
+                request.affected_resource,
+                if let Some(json_str) = request.metadata_json {
+                    serde_json::from_str(&json_str).ok()
+                } else {
+                    None
+                },
+            )
+            .await?;
 
         let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
 
@@ -400,7 +445,9 @@ impl SecurityAlertService {
         id: String,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAlertResponse> {
-        let model = self.get_alert_by_id(datastore, database_session, &id).await?;
+        let model = self
+            .get_alert_by_id(datastore, database_session, &id)
+            .await?;
         let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
 
         Ok(GetSecurityAlertResponse {
@@ -418,16 +465,18 @@ impl SecurityAlertService {
         (datastore, database_session): &DB,
     ) -> Result<GetUnresolvedAlertsBySeverityResponse> {
         let alert_severity = AlertSeverity::from_grpc_alert_severity(
-            GrpcAlertSeverity::from_i32(severity).unwrap_or(GrpcAlertSeverity::Unspecified)
+            GrpcAlertSeverity::from_i32(severity).unwrap_or(GrpcAlertSeverity::Unspecified),
         );
 
-        let pagination_model = self.get_unresolved_alerts_by_severity(
-            datastore,
-            database_session,
-            alert_severity,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_unresolved_alerts_by_severity(
+                datastore,
+                database_session,
+                alert_severity,
+                page,
+                per_page,
+            )
+            .await?;
 
         let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
 
@@ -446,16 +495,12 @@ impl SecurityAlertService {
         (datastore, database_session): &DB,
     ) -> Result<GetAlertsByTypeResponse> {
         let alert_type = AlertType::from_grpc_alert_type(
-            GrpcAlertType::from_i32(alert_type).unwrap_or(GrpcAlertType::Unspecified)
+            GrpcAlertType::from_i32(alert_type).unwrap_or(GrpcAlertType::Unspecified),
         );
 
-        let pagination_model = self.get_alerts_by_type(
-            datastore,
-            database_session,
-            alert_type,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_alerts_by_type(datastore, database_session, alert_type, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
 
@@ -473,13 +518,9 @@ impl SecurityAlertService {
         per_page: i64,
         (datastore, database_session): &DB,
     ) -> Result<GetAlertsBySourceResponse> {
-        let pagination_model = self.get_alerts_by_source(
-            datastore,
-            database_session,
-            &source,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_alerts_by_source(datastore, database_session, &source, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
 
@@ -496,7 +537,9 @@ impl SecurityAlertService {
         resolved_by: String,
         (datastore, database_session): &DB,
     ) -> Result<ResolveSecurityAlertResponse> {
-        let model = self.resolve_alert(datastore, database_session, &id, &resolved_by).await?;
+        let model = self
+            .resolve_alert(datastore, database_session, &id, &resolved_by)
+            .await?;
         let grpc_model: GrpcSecurityAlertModel = model.try_into()?;
 
         Ok(ResolveSecurityAlertResponse {
@@ -512,12 +555,9 @@ impl SecurityAlertService {
         per_page: i64,
         (datastore, database_session): &DB,
     ) -> Result<GetSecurityAlertsPaginatedResponse> {
-        let pagination_model = self.get_alerts_paginated(
-            datastore,
-            database_session,
-            page,
-            per_page,
-        ).await?;
+        let pagination_model = self
+            .get_alerts_paginated(datastore, database_session, page, per_page)
+            .await?;
 
         let grpc_pagination = convert_alert_pagination_to_grpc(pagination_model)?;
 
@@ -532,7 +572,9 @@ impl SecurityAlertService {
         &self,
         (datastore, database_session): &DB,
     ) -> Result<GetCriticalUnresolvedAlertsResponse> {
-        let models = self.get_critical_unresolved_alerts(datastore, database_session).await?;
+        let models = self
+            .get_critical_unresolved_alerts(datastore, database_session)
+            .await?;
         let mut grpc_models = Vec::new();
 
         for model in models {
@@ -554,9 +596,7 @@ impl SecurityAlertService {
     ) -> Result<DeleteSecurityAlertResponse> {
         self.delete_alert(datastore, database_session, &id).await?;
 
-        Ok(DeleteSecurityAlertResponse {
-            status: true,
-        })
+        Ok(DeleteSecurityAlertResponse { status: true })
     }
 
     /// Get alert statistics for gRPC
@@ -564,7 +604,9 @@ impl SecurityAlertService {
         &self,
         (datastore, database_session): &DB,
     ) -> Result<GetAlertStatisticsResponse> {
-        let stats = self.get_alert_statistics(datastore, database_session).await?;
+        let stats = self
+            .get_alert_statistics(datastore, database_session)
+            .await?;
         let grpc_stats = GrpcAlertStatistics {
             total_alerts: stats.total_alerts,
             total_unresolved: stats.total_unresolved,

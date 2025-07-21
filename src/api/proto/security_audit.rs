@@ -653,10 +653,10 @@ pub mod security_audit_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     /// Services
     #[derive(Debug, Clone)]
     pub struct SecurityAuditClient<T> {
@@ -701,9 +701,8 @@ pub mod security_audit_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             SecurityAuditClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -741,82 +740,58 @@ pub mod security_audit_client {
         pub async fn create_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CreateSecurityAuditResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::CreateSecurityAuditResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/CreateSecurityAudit",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "CreateSecurityAudit",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "CreateSecurityAudit",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn log_security_event(
             &mut self,
             request: impl tonic::IntoRequest<super::LogSecurityEventRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::LogSecurityEventResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::LogSecurityEventResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/LogSecurityEvent",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAudit", "LogSecurityEvent"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "LogSecurityEvent",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAuditResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAuditResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/GetSecurityAudit",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAudit", "GetSecurityAudit"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "GetSecurityAudit",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_audits_by_user(
@@ -826,55 +801,37 @@ pub mod security_audit_client {
             tonic::Response<super::GetSecurityAuditsByUserResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/GetSecurityAuditsByUser",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "GetSecurityAuditsByUser",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "GetSecurityAuditsByUser",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_audits_by_ip(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditsByIpRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAuditsByIpResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAuditsByIpResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/GetSecurityAuditsByIp",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "GetSecurityAuditsByIp",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "GetSecurityAuditsByIp",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_audits_paginated(
@@ -884,113 +841,75 @@ pub mod security_audit_client {
             tonic::Response<super::GetSecurityAuditsPaginatedResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/GetSecurityAuditsPaginated",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "GetSecurityAuditsPaginated",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "GetSecurityAuditsPaginated",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn update_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateSecurityAuditResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::UpdateSecurityAuditResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/UpdateSecurityAudit",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "UpdateSecurityAudit",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "UpdateSecurityAudit",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn delete_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteSecurityAuditResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::DeleteSecurityAuditResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/DeleteSecurityAudit",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "DeleteSecurityAudit",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "DeleteSecurityAudit",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_ip_security_summary(
             &mut self,
             request: impl tonic::IntoRequest<super::GetIpSecuritySummaryRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetIpSecuritySummaryResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetIpSecuritySummaryResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAudit/GetIpSecuritySummary",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAudit",
-                        "GetIpSecuritySummary",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAudit",
+                "GetIpSecuritySummary",
+            ));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -1002,10 +921,10 @@ pub mod security_alert_client {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
-    use tonic::codegen::*;
     use tonic::codegen::http::Uri;
+    use tonic::codegen::*;
     #[derive(Debug, Clone)]
     pub struct SecurityAlertClient<T> {
         inner: tonic::client::Grpc<T>,
@@ -1049,9 +968,8 @@ pub mod security_alert_client {
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
-                http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            <T as tonic::codegen::Service<http::Request<tonic::body::Body>>>::Error:
+                Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             SecurityAlertClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -1089,30 +1007,20 @@ pub mod security_alert_client {
         pub async fn create_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CreateSecurityAlertResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::CreateSecurityAlertResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/CreateSecurityAlert",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "CreateSecurityAlert",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "CreateSecurityAlert",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn create_security_alert_auto_id(
@@ -1122,52 +1030,37 @@ pub mod security_alert_client {
             tonic::Response<super::CreateSecurityAlertAutoIdResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/CreateSecurityAlertAutoId",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "CreateSecurityAlertAutoId",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "CreateSecurityAlertAutoId",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAlertResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAlertResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetSecurityAlert",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAlert", "GetSecurityAlert"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetSecurityAlert",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_unresolved_alerts_by_severity(
@@ -1177,107 +1070,75 @@ pub mod security_alert_client {
             tonic::Response<super::GetUnresolvedAlertsBySeverityResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetUnresolvedAlertsBySeverity",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "GetUnresolvedAlertsBySeverity",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetUnresolvedAlertsBySeverity",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_alerts_by_type(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertsByTypeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertsByTypeResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetAlertsByTypeResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetAlertsByType",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAlert", "GetAlertsByType"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetAlertsByType",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_alerts_by_source(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertsBySourceRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertsBySourceResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetAlertsBySourceResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetAlertsBySource",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAlert", "GetAlertsBySource"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetAlertsBySource",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn resolve_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::ResolveSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ResolveSecurityAlertResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::ResolveSecurityAlertResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/ResolveSecurityAlert",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "ResolveSecurityAlert",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "ResolveSecurityAlert",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_security_alerts_paginated(
@@ -1287,26 +1148,18 @@ pub mod security_alert_client {
             tonic::Response<super::GetSecurityAlertsPaginatedResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetSecurityAlertsPaginated",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "GetSecurityAlertsPaginated",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetSecurityAlertsPaginated",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_critical_unresolved_alerts(
@@ -1316,81 +1169,56 @@ pub mod security_alert_client {
             tonic::Response<super::GetCriticalUnresolvedAlertsResponse>,
             tonic::Status,
         > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetCriticalUnresolvedAlerts",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "GetCriticalUnresolvedAlerts",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetCriticalUnresolvedAlerts",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn delete_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteSecurityAlertResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::DeleteSecurityAlertResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/DeleteSecurityAlert",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new(
-                        "security_audit.SecurityAlert",
-                        "DeleteSecurityAlert",
-                    ),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "DeleteSecurityAlert",
+            ));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_alert_statistics(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertStatisticsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertStatisticsResponse>,
-            tonic::Status,
-        > {
-            self.inner
-                .ready()
-                .await
-                .map_err(|e| {
-                    tonic::Status::unknown(
-                        format!("Service was not ready: {}", e.into()),
-                    )
-                })?;
+        ) -> std::result::Result<tonic::Response<super::GetAlertStatisticsResponse>, tonic::Status>
+        {
+            self.inner.ready().await.map_err(|e| {
+                tonic::Status::unknown(format!("Service was not ready: {}", e.into()))
+            })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
                 "/security_audit.SecurityAlert/GetAlertStatistics",
             );
             let mut req = request.into_request();
-            req.extensions_mut()
-                .insert(
-                    GrpcMethod::new("security_audit.SecurityAlert", "GetAlertStatistics"),
-                );
+            req.extensions_mut().insert(GrpcMethod::new(
+                "security_audit.SecurityAlert",
+                "GetAlertStatistics",
+            ));
             self.inner.unary(req, path, codec).await
         }
     }
@@ -1402,7 +1230,7 @@ pub mod security_audit_server {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with SecurityAuditServer.
@@ -1411,24 +1239,15 @@ pub mod security_audit_server {
         async fn create_security_audit(
             &self,
             request: tonic::Request<super::CreateSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CreateSecurityAuditResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::CreateSecurityAuditResponse>, tonic::Status>;
         async fn log_security_event(
             &self,
             request: tonic::Request<super::LogSecurityEventRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::LogSecurityEventResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::LogSecurityEventResponse>, tonic::Status>;
         async fn get_security_audit(
             &self,
             request: tonic::Request<super::GetSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAuditResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAuditResponse>, tonic::Status>;
         async fn get_security_audits_by_user(
             &self,
             request: tonic::Request<super::GetSecurityAuditsByUserRequest>,
@@ -1439,10 +1258,7 @@ pub mod security_audit_server {
         async fn get_security_audits_by_ip(
             &self,
             request: tonic::Request<super::GetSecurityAuditsByIpRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAuditsByIpResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAuditsByIpResponse>, tonic::Status>;
         async fn get_security_audits_paginated(
             &self,
             request: tonic::Request<super::GetSecurityAuditsPaginatedRequest>,
@@ -1453,24 +1269,15 @@ pub mod security_audit_server {
         async fn update_security_audit(
             &self,
             request: tonic::Request<super::UpdateSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::UpdateSecurityAuditResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::UpdateSecurityAuditResponse>, tonic::Status>;
         async fn delete_security_audit(
             &self,
             request: tonic::Request<super::DeleteSecurityAuditRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteSecurityAuditResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::DeleteSecurityAuditResponse>, tonic::Status>;
         async fn get_ip_security_summary(
             &self,
             request: tonic::Request<super::GetIpSecuritySummaryRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetIpSecuritySummaryResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetIpSecuritySummaryResponse>, tonic::Status>;
     }
     /// Services
     #[derive(Debug)]
@@ -1494,10 +1301,7 @@ pub mod security_audit_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -1552,23 +1356,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/CreateSecurityAudit" => {
                     #[allow(non_camel_case_types)]
                     struct CreateSecurityAuditSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::CreateSecurityAuditRequest>
-                    for CreateSecurityAuditSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::CreateSecurityAuditRequest>
+                        for CreateSecurityAuditSvc<T>
+                    {
                         type Response = super::CreateSecurityAuditResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::CreateSecurityAuditRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::create_security_audit(&inner, request)
-                                    .await
+                                <T as SecurityAudit>::create_security_audit(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1598,23 +1398,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/LogSecurityEvent" => {
                     #[allow(non_camel_case_types)]
                     struct LogSecurityEventSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::LogSecurityEventRequest>
-                    for LogSecurityEventSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::LogSecurityEventRequest>
+                        for LogSecurityEventSvc<T>
+                    {
                         type Response = super::LogSecurityEventResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::LogSecurityEventRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::log_security_event(&inner, request)
-                                    .await
+                                <T as SecurityAudit>::log_security_event(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1644,23 +1440,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/GetSecurityAudit" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAuditSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::GetSecurityAuditRequest>
-                    for GetSecurityAuditSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::GetSecurityAuditRequest>
+                        for GetSecurityAuditSvc<T>
+                    {
                         type Response = super::GetSecurityAuditResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetSecurityAuditRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::get_security_audit(&inner, request)
-                                    .await
+                                <T as SecurityAudit>::get_security_audit(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1690,27 +1482,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/GetSecurityAuditsByUser" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAuditsByUserSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::GetSecurityAuditsByUserRequest>
-                    for GetSecurityAuditsByUserSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::GetSecurityAuditsByUserRequest>
+                        for GetSecurityAuditsByUserSvc<T>
+                    {
                         type Response = super::GetSecurityAuditsByUserResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::GetSecurityAuditsByUserRequest,
-                            >,
+                            request: tonic::Request<super::GetSecurityAuditsByUserRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::get_security_audits_by_user(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as SecurityAudit>::get_security_audits_by_user(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1741,25 +1525,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/GetSecurityAuditsByIp" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAuditsByIpSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::GetSecurityAuditsByIpRequest>
-                    for GetSecurityAuditsByIpSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::GetSecurityAuditsByIpRequest>
+                        for GetSecurityAuditsByIpSvc<T>
+                    {
                         type Response = super::GetSecurityAuditsByIpResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetSecurityAuditsByIpRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::get_security_audits_by_ip(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as SecurityAudit>::get_security_audits_by_ip(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1790,28 +1568,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/GetSecurityAuditsPaginated" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAuditsPaginatedSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<
-                        super::GetSecurityAuditsPaginatedRequest,
-                    > for GetSecurityAuditsPaginatedSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::GetSecurityAuditsPaginatedRequest>
+                        for GetSecurityAuditsPaginatedSvc<T>
+                    {
                         type Response = super::GetSecurityAuditsPaginatedResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::GetSecurityAuditsPaginatedRequest,
-                            >,
+                            request: tonic::Request<super::GetSecurityAuditsPaginatedRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::get_security_audits_paginated(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as SecurityAudit>::get_security_audits_paginated(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -1842,23 +1611,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/UpdateSecurityAudit" => {
                     #[allow(non_camel_case_types)]
                     struct UpdateSecurityAuditSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::UpdateSecurityAuditRequest>
-                    for UpdateSecurityAuditSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::UpdateSecurityAuditRequest>
+                        for UpdateSecurityAuditSvc<T>
+                    {
                         type Response = super::UpdateSecurityAuditResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::UpdateSecurityAuditRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::update_security_audit(&inner, request)
-                                    .await
+                                <T as SecurityAudit>::update_security_audit(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1888,23 +1653,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/DeleteSecurityAudit" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteSecurityAuditSvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::DeleteSecurityAuditRequest>
-                    for DeleteSecurityAuditSvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::DeleteSecurityAuditRequest>
+                        for DeleteSecurityAuditSvc<T>
+                    {
                         type Response = super::DeleteSecurityAuditResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::DeleteSecurityAuditRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::delete_security_audit(&inner, request)
-                                    .await
+                                <T as SecurityAudit>::delete_security_audit(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1934,26 +1695,19 @@ pub mod security_audit_server {
                 "/security_audit.SecurityAudit/GetIpSecuritySummary" => {
                     #[allow(non_camel_case_types)]
                     struct GetIpSecuritySummarySvc<T: SecurityAudit>(pub Arc<T>);
-                    impl<
-                        T: SecurityAudit,
-                    > tonic::server::UnaryService<super::GetIpSecuritySummaryRequest>
-                    for GetIpSecuritySummarySvc<T> {
+                    impl<T: SecurityAudit>
+                        tonic::server::UnaryService<super::GetIpSecuritySummaryRequest>
+                        for GetIpSecuritySummarySvc<T>
+                    {
                         type Response = super::GetIpSecuritySummaryResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetIpSecuritySummaryRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAudit>::get_ip_security_summary(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
+                                <T as SecurityAudit>::get_ip_security_summary(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -1980,25 +1734,19 @@ pub mod security_audit_server {
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        let mut response = http::Response::new(
-                            tonic::body::Body::default(),
-                        );
-                        let headers = response.headers_mut();
-                        headers
-                            .insert(
-                                tonic::Status::GRPC_STATUS,
-                                (tonic::Code::Unimplemented as i32).into(),
-                            );
-                        headers
-                            .insert(
-                                http::header::CONTENT_TYPE,
-                                tonic::metadata::GRPC_CONTENT_TYPE,
-                            );
-                        Ok(response)
-                    })
-                }
+                _ => Box::pin(async move {
+                    let mut response = http::Response::new(tonic::body::Body::default());
+                    let headers = response.headers_mut();
+                    headers.insert(
+                        tonic::Status::GRPC_STATUS,
+                        (tonic::Code::Unimplemented as i32).into(),
+                    );
+                    headers.insert(
+                        http::header::CONTENT_TYPE,
+                        tonic::metadata::GRPC_CONTENT_TYPE,
+                    );
+                    Ok(response)
+                }),
             }
         }
     }
@@ -2027,7 +1775,7 @@ pub mod security_alert_server {
         dead_code,
         missing_docs,
         clippy::wildcard_imports,
-        clippy::let_unit_value,
+        clippy::let_unit_value
     )]
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with SecurityAlertServer.
@@ -2036,10 +1784,7 @@ pub mod security_alert_server {
         async fn create_security_alert(
             &self,
             request: tonic::Request<super::CreateSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::CreateSecurityAlertResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::CreateSecurityAlertResponse>, tonic::Status>;
         async fn create_security_alert_auto_id(
             &self,
             request: tonic::Request<super::CreateSecurityAlertAutoIdRequest>,
@@ -2050,10 +1795,7 @@ pub mod security_alert_server {
         async fn get_security_alert(
             &self,
             request: tonic::Request<super::GetSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetSecurityAlertResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetSecurityAlertResponse>, tonic::Status>;
         async fn get_unresolved_alerts_by_severity(
             &self,
             request: tonic::Request<super::GetUnresolvedAlertsBySeverityRequest>,
@@ -2064,24 +1806,15 @@ pub mod security_alert_server {
         async fn get_alerts_by_type(
             &self,
             request: tonic::Request<super::GetAlertsByTypeRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertsByTypeResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetAlertsByTypeResponse>, tonic::Status>;
         async fn get_alerts_by_source(
             &self,
             request: tonic::Request<super::GetAlertsBySourceRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertsBySourceResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetAlertsBySourceResponse>, tonic::Status>;
         async fn resolve_security_alert(
             &self,
             request: tonic::Request<super::ResolveSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::ResolveSecurityAlertResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::ResolveSecurityAlertResponse>, tonic::Status>;
         async fn get_security_alerts_paginated(
             &self,
             request: tonic::Request<super::GetSecurityAlertsPaginatedRequest>,
@@ -2099,17 +1832,11 @@ pub mod security_alert_server {
         async fn delete_security_alert(
             &self,
             request: tonic::Request<super::DeleteSecurityAlertRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::DeleteSecurityAlertResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::DeleteSecurityAlertResponse>, tonic::Status>;
         async fn get_alert_statistics(
             &self,
             request: tonic::Request<super::GetAlertStatisticsRequest>,
-        ) -> std::result::Result<
-            tonic::Response<super::GetAlertStatisticsResponse>,
-            tonic::Status,
-        >;
+        ) -> std::result::Result<tonic::Response<super::GetAlertStatisticsResponse>, tonic::Status>;
     }
     #[derive(Debug)]
     pub struct SecurityAlertServer<T> {
@@ -2132,10 +1859,7 @@ pub mod security_alert_server {
                 max_encoding_message_size: None,
             }
         }
-        pub fn with_interceptor<F>(
-            inner: T,
-            interceptor: F,
-        ) -> InterceptedService<Self, F>
+        pub fn with_interceptor<F>(inner: T, interceptor: F) -> InterceptedService<Self, F>
         where
             F: tonic::service::Interceptor,
         {
@@ -2190,23 +1914,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/CreateSecurityAlert" => {
                     #[allow(non_camel_case_types)]
                     struct CreateSecurityAlertSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::CreateSecurityAlertRequest>
-                    for CreateSecurityAlertSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::CreateSecurityAlertRequest>
+                        for CreateSecurityAlertSvc<T>
+                    {
                         type Response = super::CreateSecurityAlertResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::CreateSecurityAlertRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::create_security_alert(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::create_security_alert(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2236,28 +1956,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/CreateSecurityAlertAutoId" => {
                     #[allow(non_camel_case_types)]
                     struct CreateSecurityAlertAutoIdSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<
-                        super::CreateSecurityAlertAutoIdRequest,
-                    > for CreateSecurityAlertAutoIdSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::CreateSecurityAlertAutoIdRequest>
+                        for CreateSecurityAlertAutoIdSvc<T>
+                    {
                         type Response = super::CreateSecurityAlertAutoIdResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::CreateSecurityAlertAutoIdRequest,
-                            >,
+                            request: tonic::Request<super::CreateSecurityAlertAutoIdRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::create_security_alert_auto_id(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as SecurityAlert>::create_security_alert_auto_id(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -2288,23 +1999,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetSecurityAlert" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAlertSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::GetSecurityAlertRequest>
-                    for GetSecurityAlertSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetSecurityAlertRequest>
+                        for GetSecurityAlertSvc<T>
+                    {
                         type Response = super::GetSecurityAlertResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetSecurityAlertRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::get_security_alert(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::get_security_alert(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2333,32 +2040,23 @@ pub mod security_alert_server {
                 }
                 "/security_audit.SecurityAlert/GetUnresolvedAlertsBySeverity" => {
                     #[allow(non_camel_case_types)]
-                    struct GetUnresolvedAlertsBySeveritySvc<T: SecurityAlert>(
-                        pub Arc<T>,
-                    );
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<
-                        super::GetUnresolvedAlertsBySeverityRequest,
-                    > for GetUnresolvedAlertsBySeveritySvc<T> {
+                    struct GetUnresolvedAlertsBySeveritySvc<T: SecurityAlert>(pub Arc<T>);
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetUnresolvedAlertsBySeverityRequest>
+                        for GetUnresolvedAlertsBySeveritySvc<T>
+                    {
                         type Response = super::GetUnresolvedAlertsBySeverityResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::GetUnresolvedAlertsBySeverityRequest,
-                            >,
+                            request: tonic::Request<super::GetUnresolvedAlertsBySeverityRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as SecurityAlert>::get_unresolved_alerts_by_severity(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
+                                    &inner, request,
+                                )
+                                .await
                             };
                             Box::pin(fut)
                         }
@@ -2388,23 +2086,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetAlertsByType" => {
                     #[allow(non_camel_case_types)]
                     struct GetAlertsByTypeSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::GetAlertsByTypeRequest>
-                    for GetAlertsByTypeSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetAlertsByTypeRequest>
+                        for GetAlertsByTypeSvc<T>
+                    {
                         type Response = super::GetAlertsByTypeResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetAlertsByTypeRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::get_alerts_by_type(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::get_alerts_by_type(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2434,23 +2128,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetAlertsBySource" => {
                     #[allow(non_camel_case_types)]
                     struct GetAlertsBySourceSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::GetAlertsBySourceRequest>
-                    for GetAlertsBySourceSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetAlertsBySourceRequest>
+                        for GetAlertsBySourceSvc<T>
+                    {
                         type Response = super::GetAlertsBySourceResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetAlertsBySourceRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::get_alerts_by_source(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::get_alerts_by_source(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2480,26 +2170,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/ResolveSecurityAlert" => {
                     #[allow(non_camel_case_types)]
                     struct ResolveSecurityAlertSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::ResolveSecurityAlertRequest>
-                    for ResolveSecurityAlertSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::ResolveSecurityAlertRequest>
+                        for ResolveSecurityAlertSvc<T>
+                    {
                         type Response = super::ResolveSecurityAlertResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::ResolveSecurityAlertRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::resolve_security_alert(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
+                                <T as SecurityAlert>::resolve_security_alert(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2529,28 +2212,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetSecurityAlertsPaginated" => {
                     #[allow(non_camel_case_types)]
                     struct GetSecurityAlertsPaginatedSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<
-                        super::GetSecurityAlertsPaginatedRequest,
-                    > for GetSecurityAlertsPaginatedSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetSecurityAlertsPaginatedRequest>
+                        for GetSecurityAlertsPaginatedSvc<T>
+                    {
                         type Response = super::GetSecurityAlertsPaginatedResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::GetSecurityAlertsPaginatedRequest,
-                            >,
+                            request: tonic::Request<super::GetSecurityAlertsPaginatedRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::get_security_alerts_paginated(
-                                        &inner,
-                                        request,
-                                    )
+                                <T as SecurityAlert>::get_security_alerts_paginated(&inner, request)
                                     .await
                             };
                             Box::pin(fut)
@@ -2581,29 +2255,22 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetCriticalUnresolvedAlerts" => {
                     #[allow(non_camel_case_types)]
                     struct GetCriticalUnresolvedAlertsSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<
-                        super::GetCriticalUnresolvedAlertsRequest,
-                    > for GetCriticalUnresolvedAlertsSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetCriticalUnresolvedAlertsRequest>
+                        for GetCriticalUnresolvedAlertsSvc<T>
+                    {
                         type Response = super::GetCriticalUnresolvedAlertsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
-                            request: tonic::Request<
-                                super::GetCriticalUnresolvedAlertsRequest,
-                            >,
+                            request: tonic::Request<super::GetCriticalUnresolvedAlertsRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
                                 <T as SecurityAlert>::get_critical_unresolved_alerts(
-                                        &inner,
-                                        request,
-                                    )
-                                    .await
+                                    &inner, request,
+                                )
+                                .await
                             };
                             Box::pin(fut)
                         }
@@ -2633,23 +2300,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/DeleteSecurityAlert" => {
                     #[allow(non_camel_case_types)]
                     struct DeleteSecurityAlertSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::DeleteSecurityAlertRequest>
-                    for DeleteSecurityAlertSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::DeleteSecurityAlertRequest>
+                        for DeleteSecurityAlertSvc<T>
+                    {
                         type Response = super::DeleteSecurityAlertResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::DeleteSecurityAlertRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::delete_security_alert(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::delete_security_alert(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2679,23 +2342,19 @@ pub mod security_alert_server {
                 "/security_audit.SecurityAlert/GetAlertStatistics" => {
                     #[allow(non_camel_case_types)]
                     struct GetAlertStatisticsSvc<T: SecurityAlert>(pub Arc<T>);
-                    impl<
-                        T: SecurityAlert,
-                    > tonic::server::UnaryService<super::GetAlertStatisticsRequest>
-                    for GetAlertStatisticsSvc<T> {
+                    impl<T: SecurityAlert>
+                        tonic::server::UnaryService<super::GetAlertStatisticsRequest>
+                        for GetAlertStatisticsSvc<T>
+                    {
                         type Response = super::GetAlertStatisticsResponse;
-                        type Future = BoxFuture<
-                            tonic::Response<Self::Response>,
-                            tonic::Status,
-                        >;
+                        type Future = BoxFuture<tonic::Response<Self::Response>, tonic::Status>;
                         fn call(
                             &mut self,
                             request: tonic::Request<super::GetAlertStatisticsRequest>,
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                <T as SecurityAlert>::get_alert_statistics(&inner, request)
-                                    .await
+                                <T as SecurityAlert>::get_alert_statistics(&inner, request).await
                             };
                             Box::pin(fut)
                         }
@@ -2722,25 +2381,19 @@ pub mod security_alert_server {
                     };
                     Box::pin(fut)
                 }
-                _ => {
-                    Box::pin(async move {
-                        let mut response = http::Response::new(
-                            tonic::body::Body::default(),
-                        );
-                        let headers = response.headers_mut();
-                        headers
-                            .insert(
-                                tonic::Status::GRPC_STATUS,
-                                (tonic::Code::Unimplemented as i32).into(),
-                            );
-                        headers
-                            .insert(
-                                http::header::CONTENT_TYPE,
-                                tonic::metadata::GRPC_CONTENT_TYPE,
-                            );
-                        Ok(response)
-                    })
-                }
+                _ => Box::pin(async move {
+                    let mut response = http::Response::new(tonic::body::Body::default());
+                    let headers = response.headers_mut();
+                    headers.insert(
+                        tonic::Status::GRPC_STATUS,
+                        (tonic::Code::Unimplemented as i32).into(),
+                    );
+                    headers.insert(
+                        http::header::CONTENT_TYPE,
+                        tonic::metadata::GRPC_CONTENT_TYPE,
+                    );
+                    Ok(response)
+                }),
             }
         }
     }

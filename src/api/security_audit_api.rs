@@ -1,21 +1,18 @@
-use std::sync::Arc;
-use tonic::{async_trait, Request, Response, Status};
-use crate::api::proto::security_audit::{
-    CreateSecurityAuditRequest, CreateSecurityAuditResponse,
-    LogSecurityEventRequest, LogSecurityEventResponse,
-    GetSecurityAuditRequest, GetSecurityAuditResponse,
-    GetSecurityAuditsByUserRequest, GetSecurityAuditsByUserResponse,
-    GetSecurityAuditsByIpRequest, GetSecurityAuditsByIpResponse,
-    GetSecurityAuditsPaginatedRequest, GetSecurityAuditsPaginatedResponse,
-    UpdateSecurityAuditRequest, UpdateSecurityAuditResponse,
-    DeleteSecurityAuditRequest, DeleteSecurityAuditResponse,
-    GetIpSecuritySummaryRequest, GetIpSecuritySummaryResponse,
-};
 use crate::api::proto::security_audit::security_audit_server::SecurityAudit;
+use crate::api::proto::security_audit::{
+    CreateSecurityAuditRequest, CreateSecurityAuditResponse, DeleteSecurityAuditRequest,
+    DeleteSecurityAuditResponse, GetIpSecuritySummaryRequest, GetIpSecuritySummaryResponse,
+    GetSecurityAuditRequest, GetSecurityAuditResponse, GetSecurityAuditsByIpRequest,
+    GetSecurityAuditsByIpResponse, GetSecurityAuditsByUserRequest, GetSecurityAuditsByUserResponse,
+    GetSecurityAuditsPaginatedRequest, GetSecurityAuditsPaginatedResponse, LogSecurityEventRequest,
+    LogSecurityEventResponse, UpdateSecurityAuditRequest, UpdateSecurityAuditResponse,
+};
 use crate::avored_state::AvoRedState;
+use crate::error::Error::TonicError;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
-use crate::error::Error::TonicError;
+use std::sync::Arc;
+use tonic::{async_trait, Request, Response, Status};
 
 pub struct SecurityAuditApi {
     pub state: Arc<AvoRedState>,
@@ -27,7 +24,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<CreateSecurityAuditRequest>,
     ) -> Result<Response<CreateSecurityAuditResponse>, Status> {
-        println!("->> {:<12} - create_security_audit", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - create_security_audit",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -57,7 +57,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<LogSecurityEventRequest>,
     ) -> Result<Response<LogSecurityEventResponse>, Status> {
-        println!("->> {:<12} - log_security_event", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - log_security_event",
+            "gRPC_SecurityAudit_Service"
+        );
 
         // Security events can be logged without authentication for system-level events
         let req = request.into_inner();
@@ -79,7 +82,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<GetSecurityAuditRequest>,
     ) -> Result<Response<GetSecurityAuditResponse>, Status> {
-        println!("->> {:<12} - get_security_audit", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - get_security_audit",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -109,7 +115,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<GetSecurityAuditsByUserRequest>,
     ) -> Result<Response<GetSecurityAuditsByUserResponse>, Status> {
-        println!("->> {:<12} - get_security_audits_by_user", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - get_security_audits_by_user",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -124,7 +133,12 @@ impl SecurityAudit for SecurityAuditApi {
         match self
             .state
             .security_audit_service
-            .get_audits_by_admin_user_grpc(req.admin_user_id, req.page, req.per_page, &self.state.db)
+            .get_audits_by_admin_user_grpc(
+                req.admin_user_id,
+                req.page,
+                req.per_page,
+                &self.state.db,
+            )
             .await
         {
             Ok(reply) => Ok(Response::new(reply)),
@@ -139,7 +153,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<GetSecurityAuditsByIpRequest>,
     ) -> Result<Response<GetSecurityAuditsByIpResponse>, Status> {
-        println!("->> {:<12} - get_security_audits_by_ip", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - get_security_audits_by_ip",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -169,7 +186,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<GetSecurityAuditsPaginatedRequest>,
     ) -> Result<Response<GetSecurityAuditsPaginatedResponse>, Status> {
-        println!("->> {:<12} - get_security_audits_paginated", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - get_security_audits_paginated",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -199,7 +219,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<UpdateSecurityAuditRequest>,
     ) -> Result<Response<UpdateSecurityAuditResponse>, Status> {
-        println!("->> {:<12} - update_security_audit", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - update_security_audit",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -229,7 +252,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<DeleteSecurityAuditRequest>,
     ) -> Result<Response<DeleteSecurityAuditResponse>, Status> {
-        println!("->> {:<12} - delete_security_audit", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - delete_security_audit",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
@@ -259,7 +285,10 @@ impl SecurityAudit for SecurityAuditApi {
         &self,
         request: Request<GetIpSecuritySummaryRequest>,
     ) -> Result<Response<GetIpSecuritySummaryResponse>, Status> {
-        println!("->> {:<12} - get_ip_security_summary", "gRPC_SecurityAudit_Service");
+        println!(
+            "->> {:<12} - get_ip_security_summary",
+            "gRPC_SecurityAudit_Service"
+        );
 
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
