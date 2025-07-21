@@ -11,3 +11,5 @@ pub mod cms_api;
 pub mod general_api;
 
 pub mod asset_api;
+pub mod security_alert_api;
+pub mod security_audit_api;

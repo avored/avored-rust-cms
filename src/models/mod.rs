@@ -10,6 +10,8 @@ pub mod content_model;
 pub mod ldap_config_model;
 pub mod password_rest_model;
 pub mod role_model;
+pub mod security_alert_model;
+pub mod security_audit_model;
 pub mod setting_model;
 pub mod token_claim_model;
 pub mod validation_error;

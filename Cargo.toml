@@ -104,7 +104,6 @@ debug = false
 lto = "thin"
 codegen-units = 1
 panic = "abort"
-
 # Security-hardened release profile
 [profile.release-secure]
 inherits = "release"

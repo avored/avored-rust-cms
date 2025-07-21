@@ -13,6 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "cms.proto",
         "general.proto",
         "asset.proto",
+        "security_audit.proto",
     ];
 
     // Tell cargo to rerun this build script only if proto files change

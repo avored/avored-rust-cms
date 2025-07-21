@@ -1,4 +1,5 @@
 pub mod admin_user;
+pub mod asset;
 pub mod auth;
 pub mod cms;
 pub mod content;
@@ -6,6 +7,5 @@ pub mod dashboard;
 pub mod echo;
 pub mod general;
 pub mod misc;
+pub mod security_audit;
 pub mod setting;
-
-pub mod asset;
