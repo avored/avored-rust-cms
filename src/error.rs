@@ -20,6 +20,9 @@ pub enum Error {
     Unauthenticated(String),
     InvalidArgument(String),
     Argon2(Box<argon2::password_hash::Error>),
+    LdapConnectionError(String),
+    LdapAuthenticationError(String),
+    LdapSearchError(String),
 }
 
 impl core::fmt::Display for Error {

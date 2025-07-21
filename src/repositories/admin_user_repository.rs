@@ -1,5 +1,4 @@
 use super::into_iter_objects;
-use crate::error::Error::TonicError;
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{
     AdminUserModel, CreatableAdminUserModel, UpdatableAdminUserModel,
@@ -14,8 +13,6 @@ use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 use tonic::Status;
 use crate::error::Error::Tonic;
-use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-use super::into_iter_objects;
 
 const ADMIN_USER_TABLE: &str = "admin_users";
 const ROLE_TABLE: &str = "roles";

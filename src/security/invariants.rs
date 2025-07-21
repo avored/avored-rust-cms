@@ -143,9 +143,10 @@ impl SecurityInvariantChecker {
     /// Check audit logging invariants
     pub fn check_audit_logging_invariants() -> Result<()> {
         use crate::services::security_audit_service::SecurityAuditService;
+        use crate::repositories::security_audit_repository::SecurityAuditRepository;
 
         // Invariant: Audit service must be properly initialized
-        let _audit_service = SecurityAuditService::new(100);
+        let _audit_service = SecurityAuditService::new(SecurityAuditRepository::new());
         security_invariant!(true, "Audit logging initialization check passed");
 
         Ok(())
@@ -290,10 +291,11 @@ impl SecurityInvariantChecker {
         use crate::services::input_validation_service::InputValidationService;
         use crate::services::ldap_connection_pool::AuthRateLimiter;
         use crate::services::security_audit_service::SecurityAuditService;
+        use crate::repositories::security_audit_repository::SecurityAuditRepository;
 
         // Invariant: All security services must be initializable
         let _input_validator = InputValidationService::validate_username("test");
-        let _audit_service = SecurityAuditService::new(100);
+        let _audit_service = SecurityAuditService::new(SecurityAuditRepository::new());
         let _rate_limiter = AuthRateLimiter::new(5, Duration::from_secs(300));
 
         security_invariant!(true, "All security services initialized successfully");
