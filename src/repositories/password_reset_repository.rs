@@ -70,8 +70,7 @@ impl PasswordResetRepository {
         let result_object = match result_object_option {
             Some(object) => object,
             None => Err(Error::Generic(format!(
-                "no record found to reset password for email {}",
-                email
+                "no record found to reset password for email {email}"
             ))),
         };
         let password_reset_model: crate::error::Result<PasswordResetModel> =

@@ -62,8 +62,8 @@ pub async fn store_asset_api_handler(
                 // creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
 
                 if !file_name.is_empty() {
-                    let file_ext = file_name.split('.').last().unwrap_or(".png");
-                    let new_file_name = format!("{}.{}", s, file_ext);
+                    let file_ext = file_name.split('.').next_back().unwrap_or(".png");
+                    let new_file_name = format!("{s}.{file_ext}");
                     let query_parent_id = query_param.parent_id.clone().unwrap_or_default();
                     let asset_file;
 
@@ -85,7 +85,7 @@ pub async fn store_asset_api_handler(
                     // creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
                     creatable_asset_model.metadata = MetaDataType::default();
 
-                    let full_path = format!("./{}", asset_file);
+                    let full_path = format!("./{asset_file}");
 
                     tokio::fs::write(full_path, data).await?;
                 }

@@ -5,6 +5,7 @@ use crate::models::ldap_config_model::LdapConfig;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::Error::Tonic;
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
@@ -12,7 +13,7 @@ use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::services::ldap_auth_service::LdapAuthService;
 use crate::services::local_auth_service::LocalAuthService;
 use crate::services::multi_auth_service::MultiAuthService;
-use crate::Error::TonicError;
+
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
@@ -75,12 +76,13 @@ impl AuthService {
         let data = ForgotPasswordViewModel { link };
 
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
-        let email_message = Message::builder().build_email_message(
-            &from_address,
-            &to_address,
-            &email_subject,
-            forgot_password_email_content,
-        )?;
+        let email_message = Message::builder()
+            .build_email_message(
+                &from_address,
+                to_address,
+                email_subject,
+                forgot_password_email_content
+            )?;
 
         // Send the email
         match template.mailer.send(email_message).await {
@@ -119,7 +121,7 @@ impl AuthService {
                 };
                 let error_string = serde_json::to_string(&error_response)?;
 
-                return Err(TonicError(Status::invalid_argument(error_string)));
+                return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
             }
         };
 

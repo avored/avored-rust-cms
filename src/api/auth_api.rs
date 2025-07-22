@@ -4,7 +4,7 @@ use crate::api::proto::auth::{
     ResetPasswordRequest, ResetPasswordResponse,
 };
 use crate::avored_state::AvoRedState;
-use crate::error::Error::TonicError;
+use crate::error::Error::Tonic;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
@@ -45,7 +45,7 @@ impl Auth for AuthApi {
                 Ok(Response::new(login_response))
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -81,7 +81,7 @@ impl Auth for AuthApi {
                 Ok(Response::new(forgot_password_response))
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -122,7 +122,7 @@ impl Auth for AuthApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }

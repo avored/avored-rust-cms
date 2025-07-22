@@ -5,7 +5,7 @@ use crate::api::proto::asset::{
     RenameAssetRequest, RenameAssetResponse,
 };
 use crate::avored_state::AvoRedState;
-use crate::error::Error::TonicError;
+use crate::error::Error::Tonic;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
@@ -40,9 +40,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string())),
-            },
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string()))
+            }
         }
     }
 
@@ -75,9 +75,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string())),
-            },
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string()))
+            }
         }
     }
 
@@ -109,9 +109,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string())),
-            },
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string()))
+            }
         }
     }
 
@@ -143,9 +143,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string())),
-            },
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string()))
+            }
         }
     }
 
@@ -178,9 +178,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
-                _ => Err(Status::internal(e.to_string())),
-            },
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string()))
+            }
         }
     }
 }
