@@ -485,7 +485,7 @@ impl AdminUser for AdminUserApi {
                 Ok(res)
             }
             Err(e) => match e {
-                TonicError(status) => Err(status),
+                Tonic(boxed_status) => Err(*boxed_status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }

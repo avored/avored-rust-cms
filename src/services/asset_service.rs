@@ -228,7 +228,9 @@ impl AssetService {
         let new_asset_path = format!("/public/upload/{}", &request.name);
 
         if fs::try_exists(&old_asset_path).await? {
-        Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))                .update_asset_path(
+            fs::rename(&old_asset_path, &format!(".{new_asset_path}")).await?;
+            let updated_asset_model = self.asset_repository
+                .update_asset_path(
                     datastore,
                     database_session,
                     &request.name,
@@ -247,5 +249,5 @@ impl AssetService {
             return Ok(response);
         }
 
-        Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))    }
+        Err(Error::Tonic(Box::new(Status::internal("Unable to rename asset"))))    }
 }
