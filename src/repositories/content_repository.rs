@@ -83,11 +83,10 @@ impl ContentRepository {
             "\
             SELECT * \
             FROM type::table($table) \
-            ORDER {} {}
+            ORDER {order_column} {order_type}
             LIMIT $limit \
             START $start;\
-        ",
-            order_column, order_type
+        "
         );
         let vars = BTreeMap::from([
             ("limit".into(), PER_PAGE.into()),

@@ -14,12 +14,12 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     Generic(String),
     ConfigMissing(String),
-    TonicError(Status),
+    Tonic(Box<Status>),
     BadRequest(ErrorResponse),
     Unauthorizeed(String),
     Unauthenticated(String),
     InvalidArgument(String),
-    Argon2Error(argon2::password_hash::Error),
+    Argon2(Box<argon2::password_hash::Error>),
     LdapConnectionError(String),
     LdapAuthenticationError(String),
     LdapSearchError(String),
@@ -35,7 +35,7 @@ impl std::error::Error for Error {}
 
 impl From<Status> for Error {
     fn from(status: Status) -> Self {
-        Error::TonicError(status)
+        Error::Tonic(Box::new(status))
     }
 }
 
@@ -69,16 +69,21 @@ impl From<serde_json::Error> for Error {
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
         match val {
-            Error::InvalidArgument(error_response) => Self::invalid_argument(error_response),
-            Error::Unauthorizeed(resource_name) => {
-                let error_message = format!(
-                    "unauthorized: you do not have access to access this ({}) resource",
-                    resource_name
-                );
-                Self::permission_denied(error_message)
+            Error::Tonic(boxed_status) => *boxed_status,
+            Error::InvalidArgument(error_response) => {
+                Self::invalid_argument(error_response)
             }
-            Error::Unauthenticated(error_message) => Self::unauthenticated(error_message),
-            _ => Self::invalid_argument("500 Internal server error"),
+            Error::Unauthorizeed(resource_name) => {
+                let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
+                Self::permission_denied(error_message)
+            },
+            Error::Unauthenticated(error_message) => {
+                Self::unauthenticated(error_message)
+            },
+            Error::Argon2(boxed_error) => {
+                Self::internal(format!("Argon2 error: {boxed_error:?}"))
+            },
+            _ => Self::invalid_argument("500 Internal server error")
         }
     }
 }
@@ -121,7 +126,7 @@ impl From<jsonwebtoken::errors::Error> for Error {
 impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
-        Error::Generic("500 internal".to_string())
+        Error::Argon2(Box::new(actual_error))
     }
 }
 
@@ -165,10 +170,7 @@ impl IntoResponse for Error {
         match self {
             Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
             Error::Unauthorizeed(resource_name) => {
-                let error_message = format!(
-                    "unauthorized: you do not have access to access this ({}) resource",
-                    resource_name
-                );
+                let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
                 (StatusCode::UNAUTHORIZED, error_message).into_response()
             }
             _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),

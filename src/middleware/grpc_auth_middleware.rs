@@ -4,6 +4,7 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use std::env;
 use tonic::{Request, Status};
 
+#[allow(clippy::result_large_err)]
 pub fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
     match req.metadata().get("authorization") {
         Some(t) => {

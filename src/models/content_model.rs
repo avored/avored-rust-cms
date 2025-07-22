@@ -61,9 +61,10 @@ pub struct ContentFieldModel {
     pub field_data: Option<ContentFieldData>,
 }
 
-#[derive(Deserialize, Debug, Clone, Serialize)]
+#[derive(Deserialize, Debug, Clone, Serialize, Default)]
 #[serde(untagged)]
 pub enum ContentFieldDataType {
+    #[default]
     Text,
     Int,
     Array,
@@ -148,11 +149,7 @@ pub struct PutContentIdentifierModel {
 
 // region: struct default implementation
 
-impl Default for ContentFieldDataType {
-    fn default() -> ContentFieldDataType {
-        ContentFieldDataType::Text
-    }
-}
+
 
 // endregion: struct default implementation
 
@@ -227,26 +224,22 @@ impl TryFrom<Option<ContentFieldFieldContent>>
     ) -> Result<crate::api::proto::content::ContentFieldFieldContent> {
         let field_content_content_type = match val {
             Some(val) => {
-                let model = crate::api::proto::content::ContentFieldFieldContent {
+                crate::api::proto::content::ContentFieldFieldContent {
                     text_value: Some(val.text_value.unwrap()),
                     int_value: Some(val.int_value.unwrap()),
                     array_value: val.array_value,
                     float_value: val.float_value,
                     bool_value: val.bool_value,
-                };
-
-                model
-            }
+                }
+            },
             None => {
-                let model = crate::api::proto::content::ContentFieldFieldContent {
+                crate::api::proto::content::ContentFieldFieldContent {
                     text_value: None,
                     int_value: None,
                     float_value: None,
                     array_value: vec![],
                     bool_value: None,
-                };
-
-                model
+                }
             }
         };
 
