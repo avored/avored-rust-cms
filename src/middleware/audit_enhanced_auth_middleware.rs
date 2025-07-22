@@ -44,7 +44,7 @@ pub async fn audit_enhanced_jwt_authentication(
                 Err(_) => {
                     // Log failed authentication attempt - invalid header
                     let _ = log_authentication_event(
-                        &state,
+                        state,
                         None,
                         None,
                         ip_address.clone(),
@@ -69,7 +69,7 @@ pub async fn audit_enhanced_jwt_authentication(
                 Err(_) => {
                     // Log configuration error
                     let _ = log_authentication_event(
-                        &state,
+                        state,
                         None,
                         None,
                         ip_address.clone(),
@@ -94,7 +94,7 @@ pub async fn audit_enhanced_jwt_authentication(
                 None => {
                     // Log failed authentication attempt - invalid token format
                     let _ = log_authentication_event(
-                        &state,
+                        state,
                         None,
                         None,
                         ip_address.clone(),
@@ -132,7 +132,7 @@ pub async fn audit_enhanced_jwt_authentication(
                     };
 
                     let _ = log_authentication_event(
-                        &state,
+                        state,
                         None,
                         None,
                         ip_address.clone(),
@@ -166,7 +166,7 @@ pub async fn audit_enhanced_jwt_authentication(
 
             // Log successful authentication
             let _ = log_authentication_event(
-                &state,
+                state.clone(),
                 Some(claims.sub.clone()),
                 Some(session_id.clone()),
                 ip_address.clone(),
@@ -190,7 +190,7 @@ pub async fn audit_enhanced_jwt_authentication(
             if duration.as_millis() > 1000 {
                 // Log slow requests as suspicious activity
                 let _ = log_authentication_event(
-                    &state,
+                    state,
                     Some(claims.sub),
                     None,
                     ip_address,
@@ -208,7 +208,7 @@ pub async fn audit_enhanced_jwt_authentication(
         None => {
             // Log failed authentication attempt - no token provided
             let _ = log_authentication_event(
-                &state,
+                state,
                 None,
                 None,
                 ip_address,
@@ -250,7 +250,7 @@ pub async fn audit_enhanced_grpc_auth(
                 let state_clone = state.clone();
                 tokio::spawn(async move {
                     let _ = log_authentication_event(
-                        &state_clone,
+                        state_clone,
                     None,
                     None,
                     ip_address_clone,
@@ -270,7 +270,7 @@ pub async fn audit_enhanced_grpc_auth(
                 let user_agent_clone2 = user_agent.clone();
                 tokio::spawn(async move {
                     let _ = log_authentication_event(
-                        &state_clone,
+                        state_clone,
                         None,
                         None,
                         ip_address_clone2,
@@ -290,7 +290,7 @@ pub async fn audit_enhanced_grpc_auth(
                 let user_agent_clone3 = user_agent.clone();
                 tokio::spawn(async move {
                     let _ = log_authentication_event(
-                        &state_clone,
+                        state_clone,
                         None,
                         None,
                         ip_address_clone3,
@@ -318,7 +318,7 @@ pub async fn audit_enhanced_grpc_auth(
                 };
 
                 tokio::spawn(log_authentication_event(
-                    &state,
+                    state.clone(),
                     None,
                     None,
                     ip_address.clone(),
@@ -335,7 +335,7 @@ pub async fn audit_enhanced_grpc_auth(
 
             // Log successful gRPC authentication
             tokio::spawn(log_authentication_event(
-                &state,
+                state,
                 Some(claims.sub.clone()),
                 None,
                 ip_address,
@@ -354,7 +354,7 @@ pub async fn audit_enhanced_grpc_auth(
         }
         None => {
             tokio::spawn(log_authentication_event(
-                &state,
+                state,
                 None,
                 None,
                 ip_address,
@@ -373,7 +373,7 @@ pub async fn audit_enhanced_grpc_auth(
 // Helper functions
 
 async fn log_authentication_event(
-    state: &Arc<AvoRedState>,
+    state: Arc<AvoRedState>,
     user_id: Option<String>,
     session_id: Option<String>,
     ip_address: String,
