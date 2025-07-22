@@ -235,57 +235,72 @@ pub async fn audit_enhanced_grpc_auth(
     mut req: tonic::Request<()>,
 ) -> Result<tonic::Request<()>, Status> {
     let ip_address = extract_grpc_client_ip(&req);
+    let ip_address_clone = ip_address.clone();
     let user_agent = req
         .metadata()
         .get("user-agent")
         .and_then(|h| h.to_str().ok())
         .map(|s| s.to_string());
+    let user_agent_clone = user_agent.clone();
 
     match req.metadata().get("authorization") {
         Some(auth_header) => {
             let auth_value = auth_header.to_str().map_err(|_| {
                 // Log invalid header format
-                tokio::spawn(log_authentication_event(
-                    &state,
+                let state_clone = state.clone();
+                tokio::spawn(async move {
+                    let _ = log_authentication_event(
+                        &state_clone,
                     None,
                     None,
-                    ip_address.clone(),
-                    user_agent.clone(),
+                    ip_address_clone,
+                    user_agent_clone,
                     None,
                     None,
-                    SecurityEventType::AuthenticationFailure,
-                    Some("Invalid gRPC authorization header format".to_string()),
-                ));
+                        SecurityEventType::AuthenticationFailure,
+                        Some("Invalid gRPC authorization header format".to_string()),
+                    ).await;
+                });
                 Status::unauthenticated("Invalid authorization header format")
             })?;
 
             let jwt_token = env::var("AVORED_JWT_SECRET").map_err(|_| {
-                tokio::spawn(log_authentication_event(
-                    &state,
+                let state_clone = state.clone();
+                let ip_address_clone2 = ip_address.clone();
+                let user_agent_clone2 = user_agent.clone();
+                tokio::spawn(async move {
+                    let _ = log_authentication_event(
+                        &state_clone,
+                        None,
+                        None,
+                        ip_address_clone2,
+                        user_agent_clone2,
                     None,
                     None,
-                    ip_address.clone(),
-                    user_agent.clone(),
-                    None,
-                    None,
-                    SecurityEventType::SecurityViolation,
-                    Some("JWT secret configuration missing in gRPC".to_string()),
-                ));
+                        SecurityEventType::SecurityViolation,
+                        Some("JWT secret configuration missing in gRPC".to_string()),
+                    ).await;
+                });
                 Status::internal("Authentication configuration error")
             })?;
 
             let token = auth_value.strip_prefix("Bearer ").ok_or_else(|| {
-                tokio::spawn(log_authentication_event(
-                    &state,
+                let state_clone = state.clone();
+                let ip_address_clone3 = ip_address.clone();
+                let user_agent_clone3 = user_agent.clone();
+                tokio::spawn(async move {
+                    let _ = log_authentication_event(
+                        &state_clone,
+                        None,
+                        None,
+                        ip_address_clone3,
+                        user_agent_clone3,
                     None,
                     None,
-                    ip_address.clone(),
-                    user_agent.clone(),
-                    None,
-                    None,
-                    SecurityEventType::AuthenticationFailure,
-                    Some("Invalid gRPC token format - Bearer prefix missing".to_string()),
-                ));
+                        SecurityEventType::AuthenticationFailure,
+                        Some("Invalid gRPC token format - Bearer prefix missing".to_string()),
+                    ).await;
+                });
                 Status::unauthenticated("Invalid token format")
             })?;
 
@@ -435,6 +450,6 @@ fn extract_grpc_client_ip(req: &tonic::Request<()>) -> String {
 
 fn generate_session_id() -> String {
     use rand::Rng;
-    let mut rng = rand::thread_rng();
-    format!("session_{}", rng.gen::<u64>())
+    let mut rng = rand::rng();
+    format!("session_{}", rng.random::<u64>())
 }

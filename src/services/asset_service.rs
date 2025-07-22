@@ -187,7 +187,8 @@ impl AssetService {
             return Ok(res);
         }
 
-        Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))    }
+        Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))
+    }
 
     pub async fn delete_folder(
         &self,
@@ -212,7 +213,8 @@ impl AssetService {
             return Ok(res);
         }
 
-        Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))    }
+        Err(Error::Tonic(Box::new(Status::internal("Unable to delete folder"))))
+    }
 
     pub async fn rename_asset(
         &self,
@@ -249,5 +251,6 @@ impl AssetService {
             return Ok(response);
         }
 
-        Err(Error::Tonic(Box::new(Status::internal("Unable to rename asset"))))    }
+        Err(Error::Tonic(Box::new(Status::internal("Unable to rename asset"))))
+    }
 }

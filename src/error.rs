@@ -69,9 +69,10 @@ impl From<serde_json::Error> for Error {
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
         match val {
-            Error::Tonic(boxed_status) => *boxed_status,
-            Error::InvalidArgument(error_response) => {
-                Self::invalid_argument(error_response)
+            Error::InvalidArgument(error_response) => Self::invalid_argument(error_response),
+            Error::Unauthorizeed(resource_name) => {
+                let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
+                Self::permission_denied(error_message)
             }
             Error::Unauthorizeed(resource_name) => {
                 let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");

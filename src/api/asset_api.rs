@@ -40,7 +40,7 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string()))
             }
         }
@@ -75,7 +75,7 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string()))
             }
         }
@@ -109,9 +109,10 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string()))
-            }        }
+            }
+        }
     }
 
     async fn delete_folder(
@@ -142,9 +143,10 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string()))
-            }        }
+            }
+        }
     }
 
     async fn rename_asset(
@@ -176,8 +178,9 @@ impl Asset for AssetApi {
                 Ok(res)
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string()))
-            }        }
+            }
+        }
     }
 }

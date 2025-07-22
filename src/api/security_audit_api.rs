@@ -47,7 +47,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -72,7 +72,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -105,7 +105,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -143,7 +143,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -176,7 +176,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -209,7 +209,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -242,7 +242,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -275,7 +275,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -308,7 +308,7 @@ impl SecurityAudit for SecurityAuditApi {
         {
             Ok(reply) => Ok(Response::new(reply)),
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }

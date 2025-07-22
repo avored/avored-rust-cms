@@ -45,7 +45,7 @@ impl Auth for AuthApi {
                 Ok(Response::new(login_response))
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -81,7 +81,7 @@ impl Auth for AuthApi {
                 Ok(Response::new(forgot_password_response))
             }
             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
@@ -121,8 +121,8 @@ impl Auth for AuthApi {
 
                 Ok(res)
             }
-             Err(e) => match e {
-                Tonic(boxed_status) => Err(*boxed_status),
+            Err(e) => match e {
+                Tonic(status) => Err(*status),
                 _ => Err(Status::internal(e.to_string())),
             },
         }
