@@ -1,15 +1,18 @@
 use leptos::prelude::*;
+use leptos_router::components::{Route, Router, Routes};
+use leptos_router::path;
+use crate::pages::home_page::HomePage;
+use crate::pages::admin::auth::login_page::LoginPage;
 
 #[component]
 pub fn App() -> impl IntoView {
     view! {
-        <div class="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-            <h1 class="text-4xl font-bold text-primary-700 mb-4">
-                "Avored Rust CMS"
-            </h1>
-            <p class="text-gray-600">
-                "Welcome to the Avored Rust CMS admin panel"
-            </p>
-        </div>
+        <Router>
+            <Routes fallback=|| "Page not found">
+                <Route path=path!("/") view=HomePage />
+                <Route path=path!("/admin/login") view=LoginPage />
+            //     <Route path=path!("/*any") view=|| view! { <h1>"Not Found"</h1> }/>
+            </Routes>
+        </Router>
     }
 }
