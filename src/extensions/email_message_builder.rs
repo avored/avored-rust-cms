@@ -1,7 +1,10 @@
 use lettre::message::{header, MessageBuilder, MultiPart, SinglePart};
 use lettre::Message;
 
+
+/// Trait for building email messages
 pub trait EmailMessageBuilder {
+    /// Builds an email message with the provided parameters.
     fn build_email_message(
         &self,
         from_address: &str,

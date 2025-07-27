@@ -10,11 +10,15 @@ use std::env;
 use tonic::Status;
 
 #[derive(Debug, Serialize, Default)]
+/// error response struct
 pub struct ErrorResponse {
+    /// status of the response
     pub status: bool,
+    /// message of the response
     pub message: String,
 }
 
+/// Middleware to require JWT authentication for incoming requests
 pub async fn require_jwt_authentication(
     mut req: Request<Body>,
     next: Next,
@@ -194,9 +198,10 @@ mod tests {
             .unwrap();
 
         // Create mock next function
-        let next = Next::new(mock_next);
+        let next = mock_next;
 
         // Call the middleware
+        let next = mock_next;
         let result = require_jwt_authentication(req, next).await;
 
         // After the fix, this should return Err with StatusCode::UNAUTHORIZED
@@ -225,7 +230,7 @@ mod tests {
             .unwrap();
 
         // Create mock next function
-        let next = Next::new(mock_next);
+        let next = mock_next;
 
         // Call the middleware
         let result = require_jwt_authentication(req, next).await;

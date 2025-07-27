@@ -5,6 +5,7 @@ use std::env;
 use tonic::{Request, Status};
 
 #[allow(clippy::result_large_err)]
+/// chrck auth middleware
 pub fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
     match req.metadata().get("authorization") {
         Some(t) => {
