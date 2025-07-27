@@ -17,7 +17,9 @@ use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
+/// AvoRed Security Alert API
 pub struct SecurityAlertApi {
+    /// The AvoRed state containing services and configurations
     pub state: Arc<AvoRedState>,
 }
 

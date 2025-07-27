@@ -5,7 +5,7 @@ use crate::models::token_claim_model::TokenClaims;
 use std::sync::Arc;
 use tonic::{async_trait, Response, Status};
 
-// AvoRed General API
+/// AvoRed General API
 pub struct GeneralApi {
     /// The AvoRed state containing services and configurations
     pub state: Arc<AvoRedState>,
