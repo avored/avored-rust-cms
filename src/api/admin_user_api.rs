@@ -19,7 +19,9 @@ use crate::models::role_model::CreatableRole;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
+/// AdminUserApi is the gRPC API for managing admin users and roles.
 pub struct AdminUserApi {
+    /// The shared state of the application, containing services and configurations.
     pub state: Arc<AvoRedState>,
 }
 #[async_trait]

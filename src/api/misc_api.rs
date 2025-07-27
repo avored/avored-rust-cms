@@ -12,7 +12,9 @@ use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
 
+/// AvoRed Miscellaneous API
 pub struct MiscApi {
+    /// The AvoRed state containing services and configurations
     pub state: Arc<AvoRedState>,
 }
 

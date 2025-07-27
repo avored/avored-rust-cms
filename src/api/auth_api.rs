@@ -8,7 +8,10 @@ use crate::error::Error::Tonic;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
+
+/// AuthApi is the gRPC API for managing admin user auth.
 pub struct AuthApi {
+    /// The shared state of the application, containing services and configurations.
     pub state: Arc<AvoRedState>,
 }
 
