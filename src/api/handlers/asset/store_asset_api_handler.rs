@@ -12,6 +12,8 @@ use serde::Serialize;
 
 const ALLOW_TYPES: [&str; 3] = ["image/jpeg", "image/jpg", "image/png"];
 
+
+/// This handler processes the request to store an asset.
 pub async fn store_asset_api_handler(
     Extension(logged_in_user): Extension<LoggedInUser>,
     state: State<Arc<AvoRedState>>,
@@ -118,7 +120,10 @@ pub async fn store_asset_api_handler(
 }
 
 #[derive(Serialize)]
+/// This struct is used to represent the response of the asset creation API.
 pub struct AssetResponseViewModel {
+    /// The asset model that was created.
     pub asset_model: AssetModel,
+    /// Indicates whether the asset creation was successful.
     pub success: bool,
 }
