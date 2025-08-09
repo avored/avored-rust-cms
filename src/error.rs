@@ -8,20 +8,45 @@ use std::num::ParseIntError;
 use tonic::Status;
 use tracing::error;
 
+/// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
 
+
+/// This is the custom error type for the application.
 #[derive(Debug, Clone)]
 pub enum Error {
+
+    /// Generic error with a message.
     Generic(String),
+
+    /// Error when the configuration is missing.
     ConfigMissing(String),
+
+    /// Error when the configuration is invalid.
     Tonic(Box<Status>),
+
+    /// Error when the request is bad.
     BadRequest(ErrorResponse),
+
+    /// Error when the request is unauthorized.
     Unauthorizeed(String),
+
+    /// Error when the request is unauthenticated.
     Unauthenticated(String),
+
+    /// Error when the request is forbidden.
     InvalidArgument(String),
+
+    /// Error when the password encryption has some issue.
     Argon2(Box<argon2::password_hash::Error>),
+
+    /// Error when application has LDAP connection issue.
     LdapConnectionError(String),
+
+    /// Error When application has LDAP authentication issue.
     LdapAuthenticationError(String),
+
+    /// Error when application has LDAP search issue.
     LdapSearchError(String),
 }
 
@@ -74,10 +99,6 @@ impl From<Error> for Status {
                 let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
                 Self::permission_denied(error_message)
             }
-            Error::Unauthorizeed(resource_name) => {
-                let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
-                Self::permission_denied(error_message)
-            },
             Error::Unauthenticated(error_message) => {
                 Self::unauthenticated(error_message)
             },

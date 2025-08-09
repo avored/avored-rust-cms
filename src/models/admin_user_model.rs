@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
+/// Represents an admin user model in the system.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {
     pub id: String,
@@ -144,6 +145,8 @@ impl TryFrom<Object> for AdminUserModel {
 
 // endregion: impl try_from AdminUserModel
 
+
+/// Represents a model for creating an admin user.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableAdminUserModel {
     pub full_name: String,
@@ -155,6 +158,7 @@ pub struct CreatableAdminUserModel {
     // pub role_ids: Vec<String>,
 }
 
+/// Represents a model for updating an admin user.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableAdminUserModel {
     pub id: String,
@@ -171,6 +175,7 @@ pub struct AdminUserPagination {
     pub pagination: Pagination,
 }
 
+/// Extension trait for AdminUserModel to check resource access
 pub trait AdminUserModelExtension {
     async fn check_user_has_resouce_access(
         &self,

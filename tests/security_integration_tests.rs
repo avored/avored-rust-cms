@@ -4,9 +4,8 @@
 use avored_rust_cms::providers::auth_provider::AuthProviderType;
 use avored_rust_cms::services::ldap_connection_pool::{AuthRateLimiter, LdapConnectionPool};
 use avored_rust_cms::services::multi_auth_service::MultiAuthService;
-use avored_rust_cms::services::security_audit_service::{SecurityAuditService, SecurityEvent};
+use avored_rust_cms::services::security_audit_service::{SecurityAuditService, SecurityEventType};
 use avored_rust_cms::services::security_monitoring_service::SecurityMonitoringService;
-use std::net::IpAddr;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 #[cfg(test)]
@@ -18,7 +17,7 @@ mod security_integration_tests {
         let audit_service = SecurityAuditService::new(100);
 
         // Test logging events
-        let event = SecurityEvent::AuthenticationAttempt {
+        let event = SecurityEventType::AuthenticationAttempt {
             username: "test_user".to_string(),
             provider: "local".to_string(),
             success: false,

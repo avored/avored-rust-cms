@@ -6,15 +6,18 @@ use crate::models::setting_model::UpdatableSettingModel;
 use crate::providers::avored_database_provider::DB;
 use crate::{error::Result, repositories::setting_repository::SettingRepository};
 
+/// Setting service 
 pub struct SettingService {
     setting_repository: SettingRepository,
 }
 
 impl SettingService {
+    /// Creates a new instance of `SettingService`
     pub fn new(setting_repository: SettingRepository) -> Result<Self> {
         Ok(Self { setting_repository })
     }
 
+    /// get settings
     pub async fn get_setting(
         &self,
         (datastore, database_session): &DB,
@@ -38,6 +41,7 @@ impl SettingService {
         Ok(res)
     }
 
+    /// store settings
     pub async fn store_setting(
         &self,
         (datastore, database_session): &DB,
@@ -60,4 +64,4 @@ impl SettingService {
         Ok(res)
     }
 }
-impl SettingService {}
+

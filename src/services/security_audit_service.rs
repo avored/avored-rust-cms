@@ -20,6 +20,7 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
 
+/// Service for managing security audit records and events.
 #[derive(Clone)]
 pub struct SecurityAuditService {
     security_audit_repository: SecurityAuditRepository,

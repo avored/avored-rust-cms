@@ -107,13 +107,13 @@ async fn main() -> Result<(), Error> {
                 Ok(report) => {
                     let overall_status = report.overall_status();
                     match overall_status {
-                        crate::security::invariants::SecurityStatus::Healthy => {
+                        security::invariants::SecurityStatus::Healthy => {
                             tracing::debug!("Security health check: All systems healthy");
                         }
-                        crate::security::invariants::SecurityStatus::Warning => {
+                        security::invariants::SecurityStatus::Warning => {
                             tracing::warn!("Security health check: Warning status detected");
                         }
-                        crate::security::invariants::SecurityStatus::Critical => {
+                        security::invariants::SecurityStatus::Critical => {
                             tracing::error!("Security health check: Critical issues detected");
                         }
                     }

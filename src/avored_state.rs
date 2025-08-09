@@ -22,23 +22,51 @@ use crate::services::security_alert_service::SecurityAlertService;
 use crate::services::security_audit_service::SecurityAuditService;
 use crate::services::setting_service::SettingService;
 
+/// AvoRedState holds the global state for the AvoRed application, including configuration,
 pub struct AvoRedState {
+
+    /// database connection, and various services.
     pub db: DB,
+
+    /// Configuration provider for AvoRed.
     pub config: AvoRedConfigProvider,
+
+    /// Template provider for AvoRed, used for rendering views.
     pub template: AvoRedTemplateProvider,
+
+    /// Miscellaneous service for handling non-specific tasks.
     pub misc_service: MiscService,
+
+    /// Authentication service for managing user authentication and authorization.
     pub auth_service: AuthService,
+
+    /// Service for managing admin users, including roles and permissions.
     pub admin_user_service: AdminUserService,
+
+    /// Service for managing content, including collections and individual content items.
     pub content_service: ContentService,
+
+    /// Service for managing assets, such as files and images.
     pub asset_service: AssetService,
+
+    /// Service for managing settings and configurations.
     pub setting_service: SettingService,
+
+    /// Service for managing CMS-related functionalities.
     pub cms_service: CmsService,
+
+    /// General service for handling common operations across the application.
     pub general_service: GeneralService,
+
+    /// Service for handling security audits, logging security-related events.
     pub security_audit_service: SecurityAuditService,
+
+    /// Service for handling security alerts, managing security notifications and responses.
     pub security_alert_service: SecurityAlertService,
 }
 
 impl AvoRedState {
+    /// Creates a new instance of `AvoRedState`, initializing all providers and services.
     pub async fn new() -> Result<AvoRedState> {
         let avored_config_provider = AvoRedConfigProvider::register()?;
         let avored_template_provider =
