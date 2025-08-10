@@ -27,6 +27,8 @@ pub struct SecurityAuditService {
 }
 
 impl SecurityAuditService {
+
+    /// Create a new instance of SecurityAuditService
     pub fn new(security_audit_repository: SecurityAuditRepository) -> Self {
         Self {
             security_audit_repository,
@@ -164,76 +166,77 @@ impl SecurityAuditService {
     }
 
     /// Increment security metrics for an existing audit record
-    pub async fn increment_security_metrics(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        id: &str,
-        event_type: SecurityEventType,
-    ) -> Result<SecurityAuditModel> {
-        // First get the current audit record
-        let current_audit = self
-            .get_audit_by_id(datastore, database_session, id)
-            .await?;
+    // pub async fn increment_security_metrics(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     id: &str,
+    //     event_type: SecurityEventType,
+    // ) -> Result<SecurityAuditModel> {
+    //     // First get the current audit record
+    //     let current_audit = self
+    //         .get_audit_by_id(datastore, database_session, id)
+    //         .await?;
 
-        let mut update_model = UpdateSecurityAuditModel::default();
+    //     let mut update_model = UpdateSecurityAuditModel::default();
 
-        // Increment appropriate counters
-        match event_type {
-            SecurityEventType::AuthenticationSuccess => {
-                update_model.total_authentication_attempts =
-                    Some(current_audit.total_authentication_attempts + 1);
-            }
-            SecurityEventType::AuthenticationFailure => {
-                update_model.total_authentication_attempts =
-                    Some(current_audit.total_authentication_attempts + 1);
-                update_model.failed_authentication_attempts =
-                    Some(current_audit.failed_authentication_attempts + 1);
-            }
-            SecurityEventType::InjectionAttempt => {
-                update_model.blocked_injection_attempts =
-                    Some(current_audit.blocked_injection_attempts + 1);
-            }
-            SecurityEventType::RateLimitExceeded => {
-                update_model.rate_limited_requests = Some(current_audit.rate_limited_requests + 1);
-            }
-            SecurityEventType::SuspiciousActivity => {
-                update_model.suspicious_activities_detected =
-                    Some(current_audit.suspicious_activities_detected + 1);
-            }
-            SecurityEventType::SecurityViolation => {
-                update_model.security_violations = Some(current_audit.security_violations + 1);
-            }
-        }
+    //     // Increment appropriate counters
+    //     match event_type {
+    //         SecurityEventType::AuthenticationSuccess => {
+    //             update_model.total_authentication_attempts =
+    //                 Some(current_audit.total_authentication_attempts + 1);
+    //         }
+    //         SecurityEventType::AuthenticationFailure => {
+    //             update_model.total_authentication_attempts =
+    //                 Some(current_audit.total_authentication_attempts + 1);
+    //             update_model.failed_authentication_attempts =
+    //                 Some(current_audit.failed_authentication_attempts + 1);
+    //         }
+    //         SecurityEventType::InjectionAttempt => {
+    //             update_model.blocked_injection_attempts =
+    //                 Some(current_audit.blocked_injection_attempts + 1);
+    //         }
+    //         SecurityEventType::RateLimitExceeded => {
+    //             update_model.rate_limited_requests = Some(current_audit.rate_limited_requests + 1);
+    //         }
+    //         SecurityEventType::SuspiciousActivity => {
+    //             update_model.suspicious_activities_detected =
+    //                 Some(current_audit.suspicious_activities_detected + 1);
+    //         }
+    //         SecurityEventType::SecurityViolation => {
+    //             update_model.security_violations = Some(current_audit.security_violations + 1);
+    //         }
+    //     }
 
-        // Recalculate health score based on updated metrics
-        let updated_audit = SecurityAuditModel {
-            total_authentication_attempts: update_model
-                .total_authentication_attempts
-                .unwrap_or(current_audit.total_authentication_attempts),
-            failed_authentication_attempts: update_model
-                .failed_authentication_attempts
-                .unwrap_or(current_audit.failed_authentication_attempts),
-            blocked_injection_attempts: update_model
-                .blocked_injection_attempts
-                .unwrap_or(current_audit.blocked_injection_attempts),
-            rate_limited_requests: update_model
-                .rate_limited_requests
-                .unwrap_or(current_audit.rate_limited_requests),
-            suspicious_activities_detected: update_model
-                .suspicious_activities_detected
-                .unwrap_or(current_audit.suspicious_activities_detected),
-            security_violations: update_model
-                .security_violations
-                .unwrap_or(current_audit.security_violations),
-            ..current_audit
-        };
+    //     // Recalculate health score based on updated metrics
+    //     let updated_audit = SecurityAuditModel {
+    //         total_authentication_attempts: update_model
+    //             .total_authentication_attempts
+    //             .unwrap_or(current_audit.total_authentication_attempts),
+    //         failed_authentication_attempts: update_model
+    //             .failed_authentication_attempts
+    //             .unwrap_or(current_audit.failed_authentication_attempts),
+    //         blocked_injection_attempts: update_model
+    //             .blocked_injection_attempts
+    //             .unwrap_or(current_audit.blocked_injection_attempts),
+    //         rate_limited_requests: update_model
+    //             .rate_limited_requests
+    //             .unwrap_or(current_audit.rate_limited_requests),
+    //         suspicious_activities_detected: update_model
+    //             .suspicious_activities_detected
+    //             .unwrap_or(current_audit.suspicious_activities_detected),
+    //         security_violations: update_model
+    //             .security_violations
+    //             .unwrap_or(current_audit.security_violations),
+    //         ..current_audit
+    //     };
 
-        update_model.security_health_score = Some(updated_audit.calculate_health_score());
+    //     let updated_score= updated_audit.calculate_health_score();
+    //     update_model.security_health_score = Some(updated_score);
 
-        self.update_audit(datastore, database_session, id, update_model)
-            .await
-    }
+    //     self.update_audit(datastore, database_session, id, update_model)
+    //         .await
+    // }
 
     /// Get paginated security audits
     pub async fn get_audits_paginated(
@@ -304,26 +307,59 @@ impl SecurityAuditService {
     }
 }
 
+
+//// Security event types
 #[derive(Debug, Clone)]
 pub enum SecurityEventType {
+    /// Authentication was successful
     AuthenticationSuccess,
+
+    /// Authentication failed
     AuthenticationFailure,
+
+    /// SQL or code injection attempt detected
     InjectionAttempt,
+
+    /// Rate limit exceeded for requests
     RateLimitExceeded,
+
+    /// Suspicious activity detected
     SuspiciousActivity,
+
+    /// Security violation detected
     SecurityViolation,
 }
 
+
+/// Security summary for an IP address
 #[derive(Debug, Clone)]
 pub struct SecuritySummary {
+
+    /// The IP address for which the summary is generated
     pub ip_address: String,
+
+    /// Total number of security audit records for this IP
     pub total_records: i64,
+
+    /// Total authentication attempts recorded
     pub total_authentication_attempts: i32,
+
+    /// Total failed authentication attempts recorded
     pub failed_authentication_attempts: i32,
+
+    /// Total blocked injection attempts recorded
     pub blocked_injection_attempts: i32,
+
+    /// Total rate-limited requests recorded
     pub rate_limited_requests: i32,
+
+    /// Total suspicious activities detected
     pub suspicious_activities_detected: i32,
+
+    /// Total security violations recorded
     pub security_violations: i32,
+    
+    /// Lowest security health score recorded for this IP
     pub lowest_health_score: f64,
 }
 

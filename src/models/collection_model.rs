@@ -5,14 +5,29 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object};
 
+/// Represents a collection model in the system.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CollectionModel {
+
+    /// Unique identifier for the collection.
     pub id: String,
+
+    /// Name of the collection.
     pub name: String,
+
+    /// Identifier for the collection, used for unique identification.
     pub identifier: String,
+
+    /// Timestamps for creation and last update.
     pub created_at: Datetime,
+
+    /// Timestamp for the last update of the collection.
     pub updated_at: Datetime,
+
+    /// Username of the user who created the collection.
     pub created_by: String,
+
+    /// Username of the user who last updated the collection.
     pub updated_by: String,
     // pub collection_fields: Vec<CollectionFieldModel>,
 }
@@ -25,16 +40,30 @@ pub struct CollectionModel {
 //     pub field_type: CollectionFieldFieldType,
 // }
 
+
+/// Represents a paginated response for collections.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CollectionPagination {
+
+    /// A vector of collection models.
     pub data: Vec<CollectionModel>,
+
+    /// Pagination information for the collection data.
     pub pagination: Pagination,
 }
 
+
+/// Represents a creatable collection model.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableCollection {
+
+    /// Name of the collection to be created.
     pub name: String,
+
+    /// Unique identifier for the collection.
     pub identifier: String,
+    
+    /// Username of the user creating the collection.
     pub logged_in_username: String,
     // pub collection_fields: Vec<CreatableCollectionField>,
 }
@@ -47,11 +76,20 @@ pub struct CreatableCollection {
 //     pub field_type: CollectionFieldFieldType,
 // }
 
+/// Represents an updatable collection model.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableCollection {
+
+    /// Unique identifier for the collection to be updated.
     pub id: String,
+
+    /// Name of the collection to be updated.
     pub name: String,
+
+    /// Unique identifier for the collection.
     pub identifier: String,
+
+    /// Username of the user updating the collection.
     pub logged_in_username: String,
     // pub collection_fields: Vec<UpdatableCollectionField>,
 }
@@ -64,21 +102,35 @@ pub struct UpdatableCollection {
 //     pub field_type: CollectionFieldFieldType,
 // }
 
+/// Represents a model for updating the collection identifier.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutCollectionIdentifierModel {
+    /// Unique identifier for the collection to be updated.
     pub id: String,
+
+    /// New identifier for the collection.
     pub identifier: String,
+
+    /// Username of the user updating the collection identifier.
     pub logged_in_username: String,
 }
 
+
+
+/// Represents a model for updating the collection name.
 #[derive(Deserialize, Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum CollectionFieldDataType {
+
+    /// Represents a text data type for collection fields.
     Text(String),
 }
 
+/// Represents the field type for collection fields.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum CollectionFieldFieldType {
+
+    /// Represents a text field type for collection fields.
     #[default]
     Text,
 }

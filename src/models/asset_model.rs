@@ -6,38 +6,67 @@ use std::collections::BTreeMap;
 use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
+
+/// AssetModel represents an asset in the system, which can be a file or a folder.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetModel {
+
+    /// Unique identifier for the asset.
     pub id: String,
+
+    /// Identifier of the parent asset, if any.
     pub parent_id: String,
+
+    /// Name of the asset.
     pub name: String,
+
+    /// New path for the asset, used for renaming or moving.
     pub new_path: String,
+
+    /// Type of the asset, e.g., "FILE" or "FOLDER".
     pub asset_type: String,
+
+    /// Metadata associated with the asset, which can vary based on the asset type.
     pub metadata: MetaDataType,
+
+    /// Timestamp when the asset was created.
     pub created_at: Datetime,
+
+    /// Timestamp when the asset was last updated.
     pub updated_at: Datetime,
+
+    /// Username of the user who created the asset.
     pub created_by: String,
+
+    /// Username of the user who last updated the asset.
     pub updated_by: String,
 }
 
+/// FileTypeMetaData and FolderTypeMetaData are used to store specific metadata for files and folders.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FileTypeMetaData {
+    /// Type of the file, e.g., "image/png", "application/pdf".
     pub file_type: String,
 }
 
+/// FolderTypeMetaData is used to store metadata specific to folders, such as color.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FolderTypeMetaData {
+    /// Color associated with the folder, used for visual categorization.
     pub color: String,
 }
 
 // { color: String }
-//FileTypeMetaData { file_type: String }
+///FileTypeMetaData { file_type: String }
+/// 
+/// MetaDataType is a wrapper struct that can hold metadata for both files and folders.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct MetaDataType {
-    // values can be folder color or no of files
+    /// values can be folder color or no of files
     pub file_meta_data: FileTypeMetaData,
     // file type might have a metadata as
     // file_type, file_size
+    /// values can be folder color or no of files
     pub folder_meta_data: FolderTypeMetaData,
 }
 
@@ -62,13 +91,18 @@ pub struct MetaDataType {
 //     }
 // }
 
+/// FileTypeMetaDataStruct and FolderTypeMetaDataStruct are used to deserialize metadata from the database.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct FileTypeMetaDataStruct {
+
+    /// Type of the file, e.g., "image/png", "application/pdf".
     pub file_type: String,
 }
 
+/// FolderTypeMetaDataStruct is used to deserialize folder metadata from the database.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct FolderTypeMetaDataStruct {
+    /// Color associated with the folder, used for visual categorization.
     pub color: String,
 }
 
@@ -251,17 +285,35 @@ impl TryFrom<Object> for FolderTypeMetaDataStruct {
     }
 }
 
+/// AssetPagination is used to paginate a list of assets.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetPagination {
+    /// List of assets in the current page.
     pub data: Vec<AssetModel>,
+
+    /// Pagination information for the asset list.
     pub pagination: Pagination,
 }
 
+
+
+/// CreatableAssetModel is used to create a new asset in the system.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreatableAssetModel {
+
+    /// Unique identifier for the asset.
     pub logged_in_username: String,
+
+    /// Identifier of the parent asset, if any.
     pub parent_id: String,
+
+
+    /// Name of the asset.
     pub name: String,
+
+    /// New path for the asset, used for renaming or moving.
     pub asset_type: String,
+
+    /// Type of the asset, e.g., "FILE" or "FOLDER".
     pub metadata: MetaDataType,
 }

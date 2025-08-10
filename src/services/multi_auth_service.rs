@@ -5,17 +5,21 @@ use crate::providers::avored_database_provider::DB;
 use std::sync::Arc;
 use tracing::{error, info, warn};
 
+/// MultiAuthService manages multiple authentication providers and attempts to authenticate users
 pub struct MultiAuthService {
     providers: Vec<Arc<dyn AuthProvider>>,
 }
 
 impl MultiAuthService {
+
+    /// Creates a new MultiAuthService instance with no providers
     pub fn new() -> Self {
         Self {
             providers: Vec::new(),
         }
     }
 
+    /// addds a new authentication provider to the service 
     pub fn add_provider(&mut self, provider: Arc<dyn AuthProvider>) {
         if provider.is_enabled() {
             info!(
@@ -31,6 +35,7 @@ impl MultiAuthService {
         }
     }
 
+    /// Attempts to authenticate a user with the given username and password
     pub async fn authenticate(
         &self,
         username: &str,
@@ -137,32 +142,34 @@ impl MultiAuthService {
         }
     }
 
-    pub fn get_enabled_providers(&self) -> Vec<&str> {
-        self.providers.iter().map(|p| p.provider_name()).collect()
-    }
 
-    pub fn has_provider(&self, provider_name: &str) -> bool {
-        self.providers
-            .iter()
-            .any(|p| p.provider_name() == provider_name)
-    }
 
-    /// Get provider information with types
-    pub fn get_provider_info(&self) -> Vec<(String, String)> {
-        self.providers
-            .iter()
-            .map(|p| {
-                let provider_type = match p.provider_name() {
-                    "ldap" => AuthProviderType::Ldap,
-                    _ => AuthProviderType::Local,
-                };
-                (
-                    p.provider_name().to_string(),
-                    provider_type.as_str().to_string(),
-                )
-            })
-            .collect()
-    }
+    // pub fn get_enabled_providers(&self) -> Vec<&str> {
+    //     self.providers.iter().map(|p| p.provider_name()).collect()
+    // }
+
+    // pub fn has_provider(&self, provider_name: &str) -> bool {
+    //     self.providers
+    //         .iter()
+    //         .any(|p| p.provider_name() == provider_name)
+    // }
+
+    // /// Get provider information with types
+    // pub fn get_provider_info(&self) -> Vec<(String, String)> {
+    //     self.providers
+    //         .iter()
+    //         .map(|p| {
+    //             let provider_type = match p.provider_name() {
+    //                 "ldap" => AuthProviderType::Ldap,
+    //                 _ => AuthProviderType::Local,
+    //             };
+    //             (
+    //                 p.provider_name().to_string(),
+    //                 provider_type.as_str().to_string(),
+    //             )
+    //         })
+    //         .collect()
+    // }
 }
 
 impl Default for MultiAuthService {

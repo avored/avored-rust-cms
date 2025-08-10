@@ -6,65 +6,150 @@ use std::collections::BTreeMap;
 use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
+
+/// Model representing a security audit entry
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SecurityAuditModel {
+
+    /// Unique identifier for the security audit entry
     pub id: String,
+
+    /// Unique identifier for the security audit
     pub security_audit_id: String,
+
+    /// Optional identifier for the admin user associated with the audit
     pub admin_user_id: Option<String>,
+
+    /// Optional session identifier for the audit
     pub session_id: Option<String>,
+
+    /// IP address from which the request originated
     pub ip_address: String,
+
+    /// Optional user agent string from the request
     pub user_agent: Option<String>,
+
+    /// Optional endpoint that was accessed during the audit
     pub endpoint: Option<String>,
+
+    /// Optional HTTP request method (e.g., GET, POST)
     pub request_method: Option<String>,
+    /// Total number of authentication attempts recorded
     pub total_authentication_attempts: i32,
+
+    /// Number of failed authentication attempts
     pub failed_authentication_attempts: i32,
+
+    /// Number of blocked injection attempts detected
     pub blocked_injection_attempts: i32,
+
+    /// Number of requests that were rate-limited
     pub rate_limited_requests: i32,
+
+    /// Number of suspicious activities detected during the audit
     pub suspicious_activities_detected: i32,
+
+    /// Number of security violations recorded
     pub security_violations: i32,
+
+    /// Uptime in seconds for the system during the audit period
     pub uptime_seconds: i32,
+
+    /// Security health score calculated based on various metrics
     pub security_health_score: f64,
+
+    /// Timestamp when the audit entry was created
     pub created_at: Datetime,
+
+    /// Timestamp when the audit entry was last updated
     pub updated_at: Datetime,
+
+    /// Optional metadata associated with the security audit entry
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
+/// Model for creating a new security audit entry
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreateSecurityAuditModel {
+    /// Unique identifier for the security audit
     pub security_audit_id: String,
+
+    /// Optional identifier for the admin user associated with the audit
     pub admin_user_id: Option<String>,
+
+    /// session identifier for the audit
     pub session_id: Option<String>,
+    /// IP address from which the request originated
     pub ip_address: String,
+
+    /// Optional user agent string from the request
     pub user_agent: Option<String>,
+
+    /// Optional endpoint that was accessed during the audit
     pub endpoint: Option<String>,
+
+    /// Optional HTTP request method (e.g., GET, POST)
     pub request_method: Option<String>,
+
+    /// Total number of authentication attempts recorded
     pub total_authentication_attempts: Option<i32>,
+
+    /// Number of failed authentication attempts
     pub failed_authentication_attempts: Option<i32>,
+
+    /// Number of blocked injection attempts detected
     pub blocked_injection_attempts: Option<i32>,
+
+    /// Number of requests that were rate-limited
     pub rate_limited_requests: Option<i32>,
+
+    /// Number of suspicious activities detected during the audit
     pub suspicious_activities_detected: Option<i32>,
+
+    /// Number of security violations recorded
     pub security_violations: Option<i32>,
+
+    /// Uptime in seconds for the system during the audit period
     pub uptime_seconds: Option<i32>,
+    /// Security health score calculated based on various metrics
     pub security_health_score: Option<f64>,
+
+    /// Timestamp when the audit entry was created   
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
+/// Model for updating an existing security audit entry
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct UpdateSecurityAuditModel {
+    /// Unique identifier for the security audit entry
     pub total_authentication_attempts: Option<i32>,
+    /// Optional identifier for the admin user associated with the audit
     pub failed_authentication_attempts: Option<i32>,
+
+    /// Optional session identifier for the audit
     pub blocked_injection_attempts: Option<i32>,
+
+    /// IP address from which the request originated
     pub rate_limited_requests: Option<i32>,
+    /// Optional user agent string from the request
     pub suspicious_activities_detected: Option<i32>,
+    /// Optional endpoint that was accessed during the audit
     pub security_violations: Option<i32>,
+    /// Optional HTTP request method (e.g., GET, POST)
     pub uptime_seconds: Option<i32>,
+    /// Timestamp when the audit entry was created
     pub security_health_score: Option<f64>,
+    /// Timestamp when the audit entry was last updated
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
+/// Model for paginated security audit results
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SecurityAuditPaginationModel {
+
+    /// List of security audit entries
     pub data: Vec<SecurityAuditModel>,
+    /// Pagination information for the results
     pub pagination: Pagination,
 }
 
@@ -261,18 +346,18 @@ impl SecurityAuditModel {
     }
 
     /// Calculates security health score based on metrics
-    pub fn calculate_health_score(&self) -> f64 {
-        let mut score = 100.0;
+    // pub fn calculate_health_score(&self) -> f64 {
+    //     let mut score = 100.0;
 
-        // Deduct points for security issues
-        score -= (self.failed_authentication_attempts as f64) * 2.0;
-        score -= (self.blocked_injection_attempts as f64) * 5.0;
-        score -= (self.suspicious_activities_detected as f64) * 3.0;
-        score -= (self.security_violations as f64) * 4.0;
+    //     // Deduct points for security issues
+    //     score -= (self.failed_authentication_attempts as f64) * 2.0;
+    //     score -= (self.blocked_injection_attempts as f64) * 5.0;
+    //     score -= (self.suspicious_activities_detected as f64) * 3.0;
+    //     score -= (self.security_violations as f64) * 4.0;
 
-        // Ensure score doesn't go below 0
-        score.max(0.0).min(100.0)
-    }
+    //     // Ensure score doesn't go below 0
+    //     score.max(0.0).min(100.0)
+    // }
 
     /// Converts to protobuf Timestamp
     pub fn created_at_timestamp(&self) -> Timestamp {
@@ -376,8 +461,6 @@ impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::Security
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::BTreeMap;
-    use surrealdb::sql::{Datetime, Object, Value};
 
     #[test]
     fn test_validate_ip_address() {
@@ -403,39 +486,39 @@ mod tests {
         assert!(!SecurityAuditModel::validate_ip_address(""));
     }
 
-    #[test]
-    fn test_calculate_health_score() {
-        let mut audit = SecurityAuditModel {
-            failed_authentication_attempts: 0,
-            blocked_injection_attempts: 0,
-            suspicious_activities_detected: 0,
-            security_violations: 0,
-            ..Default::default()
-        };
+    // #[test]
+    // fn test_calculate_health_score() {
+    //     let mut audit = SecurityAuditModel {
+    //         failed_authentication_attempts: 0,
+    //         blocked_injection_attempts: 0,
+    //         suspicious_activities_detected: 0,
+    //         security_violations: 0,
+    //         ..Default::default()
+    //     };
 
-        // Perfect score
-        assert_eq!(audit.calculate_health_score(), 100.0);
+    //     // Perfect score
+    //     assert_eq!(audit.calculate_health_score(), 100.0);
 
-        // Deduct points for failed auth attempts (2 points each)
-        audit.failed_authentication_attempts = 5;
-        assert_eq!(audit.calculate_health_score(), 90.0);
+    //     // Deduct points for failed auth attempts (2 points each)
+    //     audit.failed_authentication_attempts = 5;
+    //     assert_eq!(audit.calculate_health_score(), 90.0);
 
-        // Deduct points for injection attempts (5 points each)
-        audit.blocked_injection_attempts = 2;
-        assert_eq!(audit.calculate_health_score(), 80.0);
+    //     // Deduct points for injection attempts (5 points each)
+    //     audit.blocked_injection_attempts = 2;
+    //     assert_eq!(audit.calculate_health_score(), 80.0);
 
-        // Deduct points for suspicious activities (3 points each)
-        audit.suspicious_activities_detected = 3;
-        assert_eq!(audit.calculate_health_score(), 71.0);
+    //     // Deduct points for suspicious activities (3 points each)
+    //     audit.suspicious_activities_detected = 3;
+    //     assert_eq!(audit.calculate_health_score(), 71.0);
 
-        // Deduct points for security violations (4 points each)
-        audit.security_violations = 1;
-        assert_eq!(audit.calculate_health_score(), 67.0);
+    //     // Deduct points for security violations (4 points each)
+    //     audit.security_violations = 1;
+    //     assert_eq!(audit.calculate_health_score(), 67.0);
 
-        // Score should not go below 0
-        audit.failed_authentication_attempts = 100;
-        assert_eq!(audit.calculate_health_score(), 0.0);
-    }
+    //     // Score should not go below 0
+    //     audit.failed_authentication_attempts = 100;
+    //     assert_eq!(audit.calculate_health_score(), 0.0);
+    // }
 
     #[test]
     fn test_create_security_audit_model_validation() {

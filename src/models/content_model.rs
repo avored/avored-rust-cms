@@ -8,140 +8,273 @@ use surrealdb::sql::{Datetime, Object, Value};
 
 // region: Struct, Enum Initialization
 
+/// Represents the pagination structure for content models.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentPagination {
+
+    /// total number of content model        
     pub data: Vec<ContentModel>,
+
+    /// total number of content model
     pub pagination: Pagination,
 }
 
+/// Represents the base structure for content models.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentSelectFieldData {
+
+    /// the label of the select field option
     pub label: String,
+
+    /// the value of the select field option
     pub value: String,
 }
 
+/// Represents the base structure for content models.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentCheckboxFieldData {
+
+    /// the label of the checkbox field option
     pub label: String,
+
+    /// the value of the checkbox field option
     pub value: String,
 }
 
+/// Represents the base structure for content models.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentRadioFieldData {
+    /// the label of the radio field option
     pub label: String,
+    /// the value of the radio field option
     pub value: String,
 }
 
+/// Represents the data structure for content fields.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentFieldData {
+    /// options for select field
     pub content_select_field_options: Vec<ContentSelectFieldData>,
+    /// options for checkbox field
     pub content_checkbox_field_data: Vec<ContentCheckboxFieldData>,
+    /// options for radio field
     pub content_radio_field_data: Vec<ContentRadioFieldData>,
 }
 
+/// Represents the content model structure.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentModel {
+    /// unique identifier for the content model
     pub id: String,
+
+    /// name of the content model
     pub name: String,
+
+    /// unique identifier for the content model
     pub identifier: String,
+
+    /// fields associated with the content model
     pub content_fields: Vec<ContentFieldModel>,
+    /// timestamp when the content model was created
     pub created_at: Datetime,
+
+    /// timestamp when the content model was last updated
     pub updated_at: Datetime,
+
+    /// username of the user who created the content model
     pub created_by: String,
+    /// username of the user who last updated the content model
     pub updated_by: String,
 }
 
+
+/// Represents the content field model structure.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ContentFieldModel {
+    /// name of the content field
     pub name: String,
+    /// unique identifier for the content field
     pub identifier: String,
+
+    /// data type of the content field
     pub data_type: ContentFieldDataType,
+    /// type of the content field (e.g., text, textarea, etc.)
     pub field_type: ContentFieldFieldType,
+
+    /// content of the field, which can vary based on the field type
     pub field_content: ContentFieldFieldContent,
+    /// additional data for the field, such as options for select, checkbox, or radio fields
     pub field_data: Option<ContentFieldData>,
 }
 
+
+/// Represents the content field data type.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 #[serde(untagged)]
 pub enum ContentFieldDataType {
+    /// Represents a text data type.
     #[default]
     Text,
+    /// Represents an integer data type.
     Int,
+
+    /// Represents an array data type.
     Array,
+
+    /// Represents a float data type.
     Float,
+
+    /// Represents a boolean data type.
     Bool,
 }
 
+
+/// Represents the type of field in a content model.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub enum ContentFieldFieldType {
+
+    /// Represents a text field.
     #[default]
     Text,
+    /// Represents a textarea field.
     Textarea,
+
+    /// Represents a rich text editor field.
     RichTextEditor,
+
+
+    /// Represents a number text field.
     NumberTextField,
+
+    /// Represents a float text field.
     FloatTextField,
+
+    /// Represents a select field.
     Select,
+
+    /// Represents a checkbox field.
     Checkbox,
+
+    /// Represents a radio field.
     Radio,
+
+    /// Represents a switch field.
     Switch,
+
+    /// Represents a date field.
     Date,
+
+    /// Represents an asset field.
     Asset,
 }
 
+/// Represents the content of a field in a content model.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct ContentFieldFieldContent {
+    /// text value of the field
     pub text_value: Option<String>,
+    /// integer value of the field
     pub int_value: Option<i64>,
+    /// float value of the field
     pub float_value: Option<f64>,
+    /// array value of the field
     pub array_value: Vec<String>,
+    /// boolean value of the field
     pub bool_value: Option<bool>,
 }
 
+/// Represents a creatable content model structure.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableContentModel {
+
+    /// name of the content model
     pub name: String,
+
+    /// unique identifier for the content model
     pub identifier: String,
+
+    /// username of the user who is creating the content model
     pub logged_in_username: String,
+
+    /// content type of the content model
     pub content_type: String,
+
+    /// fields associated with the content model
     pub content_fields: Vec<CreatableContentField>,
 }
 
+/// Represents a creatable content field structure.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableContentField {
+    /// name of the content field
     pub name: String,
+    /// unique identifier for the content field
     pub identifier: String,
+    /// data type of the content field
     pub data_type: ContentFieldDataType,
+    /// type of the content field (e.g., text, textarea, etc.)
     pub field_type: ContentFieldFieldType,
+
+    /// content of the field, which can vary based on the field type
     pub field_content: ContentFieldFieldContent,
+
+    /// additional data for the field, such as options for select, checkbox, or radio fields
     pub field_data: Option<ContentFieldData>,
 }
 
+
+/// Represents an updatable content model structure.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableContentModel {
+
+    /// unique identifier for the content model
     pub id: String,
+
+    /// name of the content model
     pub name: String,
+
+    /// unique identifier for the content model
     pub content_type: String,
+
+    /// unique identifier for the content model
     pub logged_in_username: String,
+    /// unique identifier for the content model
     pub updated_at: Datetime,
+    /// username of the user who is updating the content model
     pub updated_by: String,
+    /// fields associated with the content model
     pub content_fields: Vec<UpdatableContentField>,
 }
 
+/// Represents an updatable content field structure.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableContentField {
+    /// name of the content field
     pub name: String,
+
+    /// unique identifier for the content field
     pub identifier: String,
+    /// data type of the content field
     pub data_type: ContentFieldDataType,
+    /// type of the content field (e.g., text, textarea, etc.)
     pub field_type: ContentFieldFieldType,
+    /// content of the field, which can vary based on the field type
     pub field_content: ContentFieldFieldContent,
+
+    /// additional data for the field, such as options for select, checkbox, or radio fields
     pub field_data: Option<ContentFieldData>,
 }
 
+/// Represents a model for putting a content identifier.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutContentIdentifierModel {
+    /// unique identifier for the content model
     pub id: String,
+    /// name of the content model
     pub identifier: String,
+    /// content type of the content model
     pub content_type: String,
+    /// username of the user who is updating the content model
     pub logged_in_username: String,
 }
 

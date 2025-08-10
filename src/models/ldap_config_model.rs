@@ -4,20 +4,45 @@ use serde::{Deserialize, Serialize};
 use std::env;
 use std::fmt;
 
+
+/// Configuration model for LDAP integration
 #[derive(Clone, Serialize, Deserialize)]
 pub struct LdapConfig {
+
+    /// Whether LDAP integration is enabled
     pub enabled: bool,
+
+    /// LDAP server URL (e.g., "ldaps://localhost")
     pub server: String,
+    /// Port for LDAP server (default is 636 for LDAPS)
     pub port: u16,
+    /// Whether to use TLS for LDAP connection
     pub use_tls: bool,
+
+    /// Base DN for the LDAP directory (e.g., "dc=example,dc=com")
     pub base_dn: String,
+
+    /// DN for binding to the LDAP server (e.g., "cn=admin,dc=example,dc=com")
     pub bind_dn: String,
+
+    /// Password for the bind DN
     pub bind_password: String,
+
+    /// Base DN for user searches (e.g., "ou=users,dc=example,dc=com")
     pub user_search_base: String,
+
+    /// Filter for user searches (e.g., "(uid={username})")
     pub user_search_filter: String,
+
+    /// Attribute name for user email (e.g., "mail")
     pub user_attribute_email: String,
+
+    /// Attribute name for user full name (e.g., "displayName")
     pub user_attribute_name: String,
+    /// Timeout for LDAP connection in seconds
     pub connection_timeout: u64,
+
+    /// Timeout for LDAP search operations in seconds
     pub search_timeout: u64,
 }
 
@@ -42,6 +67,8 @@ impl Default for LdapConfig {
 }
 
 impl LdapConfig {
+
+    /// Creates a new LdapConfig instance from environment variables
     pub fn from_env() -> Result<Self> {
         let enabled = env::var("AVORED_LDAP_ENABLED")
             .unwrap_or_else(|_| "false".to_string())
@@ -117,6 +144,8 @@ impl LdapConfig {
         })
     }
 
+
+    /// Returns the LDAP URL based on the server and port
     pub fn get_ldap_url(&self) -> String {
         if self.use_tls {
             format!(
@@ -133,6 +162,7 @@ impl LdapConfig {
         }
     }
 
+    /// Generates the user search filter with the provided username
     pub fn get_user_search_filter(&self, username: &str) -> Result<String> {
         // Validate and sanitize username to prevent LDAP injection
         let sanitized_username = InputValidationService::sanitize_ldap_value(username)?;
@@ -163,15 +193,26 @@ impl fmt::Debug for LdapConfig {
     }
 }
 
+
+/// Represents a user retrieved from LDAP
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LdapUser {
+    /// Username of the LDAP user
     pub username: String,
+
+    /// Email address of the LDAP user
     pub email: String,
+
+    /// Full name of the LDAP user
     pub full_name: String,
+
+    /// Distinguished Name (DN) of the LDAP user
     pub dn: String,
 }
 
 impl LdapUser {
+
+    /// Creates a new LdapUser instance
     pub fn new(username: String, email: String, full_name: String, dn: String) -> Self {
         Self {
             username,

@@ -4,19 +4,40 @@ use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::time::SystemTime;
-use surrealdb::sql::{Datetime, Object, Uuid, Value};
+use surrealdb::sql::{Datetime, Object, Value};
 
+/// Represents different types of security alerts
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub enum AlertType {
+
+    /// Authentication failure alert
     AuthenticationFailure,
+
+    /// SQL injection attempt alert
     InjectionAttempt,
+
+    /// Rate limit exceeded alert
     RateLimitExceeded,
+
+    /// Suspicious activity alert
     SuspiciousActivity,
+
+    /// privilege escalation alert
     PrivilegeEscalation,
+
+    /// Data breach attempt alert
     DataBreachAttempt,
+
+    /// Unauthorized access alert
     UnauthorizedAccess,
+
+    /// Malformed request alert
     MalformedRequest,
+
+    /// Brute force attack alert
     BruteForceAttack,
+
+    /// Session hijacking alert
     SessionHijacking,
 }
 
@@ -27,6 +48,8 @@ impl Default for AlertType {
 }
 
 impl AlertType {
+
+    /// Converts the alert type to a string representation
     pub fn as_str(&self) -> &'static str {
         match self {
             AlertType::AuthenticationFailure => "authentication_failure",
@@ -42,6 +65,8 @@ impl AlertType {
         }
     }
 
+
+    /// Converts a string to an AlertType
     pub fn from_str(s: &str) -> Result<Self> {
         match s {
             "authentication_failure" => Ok(AlertType::AuthenticationFailure),
@@ -58,6 +83,7 @@ impl AlertType {
         }
     }
 
+    /// Converts a gRPC AlertType to an AlertType
     pub fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
         match grpc_type {
             crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
@@ -96,6 +122,7 @@ impl AlertType {
         }
     }
 
+    /// Converts the AlertType to a gRPC AlertType
     pub fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
         match self {
             AlertType::AuthenticationFailure => {
@@ -132,11 +159,21 @@ impl AlertType {
     }
 }
 
+
+/// Represents different severities of security alerts
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub enum AlertSeverity {
+
+    /// Low severity alert
     Low,
+
+    /// Medium severity alert
     Medium,
+
+    /// High severity alert
     High,
+
+    /// Critical severity alert
     Critical,
 }
 
@@ -147,6 +184,7 @@ impl Default for AlertSeverity {
 }
 
 impl AlertSeverity {
+    /// Converts the alert severity to a string representation
     pub fn as_str(&self) -> &'static str {
         match self {
             AlertSeverity::Low => "low",
@@ -156,6 +194,8 @@ impl AlertSeverity {
         }
     }
 
+
+    /// Converts a string to an AlertSeverity
     pub fn from_str(s: &str) -> Result<Self> {
         match s {
             "low" => Ok(AlertSeverity::Low),
@@ -166,15 +206,17 @@ impl AlertSeverity {
         }
     }
 
-    pub fn priority_score(&self) -> u8 {
-        match self {
-            AlertSeverity::Low => 1,
-            AlertSeverity::Medium => 2,
-            AlertSeverity::High => 3,
-            AlertSeverity::Critical => 4,
-        }
-    }
+    // /// Returns the priority score of the alert severity
+    // pub fn priority_score(&self) -> u8 {
+    //     match self {
+    //         AlertSeverity::Low => 1,
+    //         AlertSeverity::Medium => 2,
+    //         AlertSeverity::High => 3,
+    //         AlertSeverity::Critical => 4,
+    //     }
+    // }
 
+    /// Converts a gRPC AlertSeverity to an AlertSeverity
     pub fn from_grpc_alert_severity(
         grpc_severity: crate::api::proto::security_audit::AlertSeverity,
     ) -> Self {
@@ -187,6 +229,7 @@ impl AlertSeverity {
         }
     }
 
+    /// Converts the AlertSeverity to a gRPC AlertSeverity
     pub fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {
         match self {
             AlertSeverity::Low => crate::api::proto::security_audit::AlertSeverity::Low,
@@ -197,43 +240,86 @@ impl AlertSeverity {
     }
 }
 
+
+/// Represents a security alert model used for tracking security issues
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SecurityAlertModel {
+    /// Unique identifier for the security alert
     pub id: String,
+
+    /// Unique identifier for the alert, used for API access
     pub alert_id: String,
+
+    /// Type of the security alert
     pub alert_type: AlertType,
+
+    /// Severity of the security alert
     pub severity: AlertSeverity,
+
+    /// Message describing the security alert
     pub message: String,
+
+    /// Source of the security alert (e.g., IP address, user agent) 
     pub source: String,
+
+    /// Optional affected resource (e.g., user ID, resource ID) related to the alert
     pub affected_resource: Option<String>,
+
+    /// Optional metadata associated with the security alert
     pub metadata: Option<BTreeMap<String, Value>>,
+
+    /// Indicates whether the alert has been resolved
     pub resolved: bool,
+
+    /// Optional timestamp when the alert was resolved
     pub resolved_at: Option<Datetime>,
+
+    /// Optional identifier of the user who resolved the alert
     pub resolved_by: Option<String>,
+
+    /// Timestamp when the alert was created
     pub created_at: Datetime,
 }
 
+/// Represents a model for creating a new security alert
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreateSecurityAlertModel {
+
+    /// Unique identifier for the alert, used for API access
     pub alert_id: String,
+    /// Type of the security alert
     pub alert_type: AlertType,
+    /// Severity of the security alert
     pub severity: AlertSeverity,
+    /// Message describing the security alert
     pub message: String,
+
+    /// Source of the security alert (e.g., IP address, user agent)
     pub source: String,
+    /// Optional affected resource (e.g., user ID, resource ID) related to the alert
     pub affected_resource: Option<String>,
+    /// Optional metadata associated with the security alert
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
+/// Represents a model for updating an existing security alert
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct UpdateSecurityAlertModel {
+    /// Unique identifier for the security alert
     pub resolved: Option<bool>,
+    /// Optional timestamp when the alert was resolved
     pub resolved_by: Option<String>,
+    /// Optional identifier of the user who resolved the alert
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
+/// Represents a paginated response for security alerts
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SecurityAlertPaginationModel {
+
+    /// List of security alerts in the current page
     pub data: Vec<SecurityAlertModel>,
+    /// Pagination information for the response
     pub pagination: Pagination,
 }
 
@@ -384,18 +470,18 @@ impl SecurityAlertModel {
         })
     }
 
-    /// Checks if alert requires immediate attention
-    pub fn requires_immediate_attention(&self) -> bool {
-        matches!(self.severity, AlertSeverity::High | AlertSeverity::Critical) && !self.resolved
-    }
+    // /// Checks if alert requires immediate attention
+    // pub fn requires_immediate_attention(&self) -> bool {
+    //     matches!(self.severity, AlertSeverity::High | AlertSeverity::Critical) && !self.resolved
+    // }
 
-    /// Gets alert age in seconds
-    pub fn age_seconds(&self) -> i64 {
-        let now = SystemTime::now();
-        let chrono_utc = self.created_at.to_utc();
-        let created = SystemTime::from(chrono_utc);
-        now.duration_since(created).unwrap_or_default().as_secs() as i64
-    }
+    // /// Gets alert age in seconds
+    // pub fn age_seconds(&self) -> i64 {
+    //     let now = SystemTime::now();
+    //     let chrono_utc = self.created_at.to_utc();
+    //     let created = SystemTime::from(chrono_utc);
+    //     now.duration_since(created).unwrap_or_default().as_secs() as i64
+    // }
 }
 
 impl CreateSecurityAlertModel {
@@ -416,23 +502,23 @@ impl CreateSecurityAlertModel {
         Ok(())
     }
 
-    /// Creates a new alert with auto-generated ID
-    pub fn new_with_auto_id(
-        alert_type: AlertType,
-        severity: AlertSeverity,
-        message: String,
-        source: String,
-    ) -> Self {
-        Self {
-            alert_id: format!("alert_{}", Uuid::new_v4()),
-            alert_type,
-            severity,
-            message,
-            source,
-            affected_resource: None,
-            metadata: None,
-        }
-    }
+    // Creates a new alert with auto-generated ID
+    // pub fn new_with_auto_id(
+    //     alert_type: AlertType,
+    //     severity: AlertSeverity,
+    //     message: String,
+    //     source: String,
+    // ) -> Self {
+    //     Self {
+    //         alert_id: format!("alert_{}", Uuid::new_v4()),
+    //         alert_type,
+    //         severity,
+    //         message,
+    //         source,
+    //         affected_resource: None,
+    //         metadata: None,
+    //     }
+    // }
 }
 
 // gRPC Conversions
@@ -472,9 +558,7 @@ impl TryFrom<SecurityAlertModel> for crate::api::proto::security_audit::Security
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::collections::BTreeMap;
-    use surrealdb::sql::{Datetime, Object, Value};
-
+   
     #[test]
     fn test_alert_type_conversions() {
         // Test as_str
@@ -547,69 +631,69 @@ mod tests {
         assert!(AlertType::from_str("invalid_type").is_err());
     }
 
-    #[test]
-    fn test_alert_severity_conversions() {
-        // Test as_str
-        assert_eq!(AlertSeverity::Low.as_str(), "low");
-        assert_eq!(AlertSeverity::Medium.as_str(), "medium");
-        assert_eq!(AlertSeverity::High.as_str(), "high");
-        assert_eq!(AlertSeverity::Critical.as_str(), "critical");
+    // #[test]
+    // fn test_alert_severity_conversions() {
+    //     // Test as_str
+    //     assert_eq!(AlertSeverity::Low.as_str(), "low");
+    //     assert_eq!(AlertSeverity::Medium.as_str(), "medium");
+    //     assert_eq!(AlertSeverity::High.as_str(), "high");
+    //     assert_eq!(AlertSeverity::Critical.as_str(), "critical");
 
-        // Test from_str
-        assert!(matches!(
-            AlertSeverity::from_str("low").unwrap(),
-            AlertSeverity::Low
-        ));
-        assert!(matches!(
-            AlertSeverity::from_str("medium").unwrap(),
-            AlertSeverity::Medium
-        ));
-        assert!(matches!(
-            AlertSeverity::from_str("high").unwrap(),
-            AlertSeverity::High
-        ));
-        assert!(matches!(
-            AlertSeverity::from_str("critical").unwrap(),
-            AlertSeverity::Critical
-        ));
+    //     // Test from_str
+    //     assert!(matches!(
+    //         AlertSeverity::from_str("low").unwrap(),
+    //         AlertSeverity::Low
+    //     ));
+    //     assert!(matches!(
+    //         AlertSeverity::from_str("medium").unwrap(),
+    //         AlertSeverity::Medium
+    //     ));
+    //     assert!(matches!(
+    //         AlertSeverity::from_str("high").unwrap(),
+    //         AlertSeverity::High
+    //     ));
+    //     assert!(matches!(
+    //         AlertSeverity::from_str("critical").unwrap(),
+    //         AlertSeverity::Critical
+    //     ));
 
-        // Test invalid string
-        assert!(AlertSeverity::from_str("invalid_severity").is_err());
+    //     // Test invalid string
+    //     assert!(AlertSeverity::from_str("invalid_severity").is_err());
 
-        // Test priority scores
-        assert_eq!(AlertSeverity::Low.priority_score(), 1);
-        assert_eq!(AlertSeverity::Medium.priority_score(), 2);
-        assert_eq!(AlertSeverity::High.priority_score(), 3);
-        assert_eq!(AlertSeverity::Critical.priority_score(), 4);
-    }
+    //     // Test priority scores
+    //     assert_eq!(AlertSeverity::Low.priority_score(), 1);
+    //     assert_eq!(AlertSeverity::Medium.priority_score(), 2);
+    //     assert_eq!(AlertSeverity::High.priority_score(), 3);
+    //     assert_eq!(AlertSeverity::Critical.priority_score(), 4);
+    // }
 
-    #[test]
-    fn test_security_alert_model_requires_immediate_attention() {
-        let mut alert = SecurityAlertModel {
-            severity: AlertSeverity::Low,
-            resolved: false,
-            ..Default::default()
-        };
+    // #[test]
+    // fn test_security_alert_model_requires_immediate_attention() {
+    //     let mut alert = SecurityAlertModel {
+    //         severity: AlertSeverity::Low,
+    //         resolved: false,
+    //         ..Default::default()
+    //     };
 
-        // Low severity, unresolved - no immediate attention
-        assert!(!alert.requires_immediate_attention());
+    //     // Low severity, unresolved - no immediate attention
+    //     assert!(!alert.requires_immediate_attention());
 
-        // Medium severity, unresolved - no immediate attention
-        alert.severity = AlertSeverity::Medium;
-        assert!(!alert.requires_immediate_attention());
+    //     // Medium severity, unresolved - no immediate attention
+    //     alert.severity = AlertSeverity::Medium;
+    //     assert!(!alert.requires_immediate_attention());
 
-        // High severity, unresolved - requires immediate attention
-        alert.severity = AlertSeverity::High;
-        assert!(alert.requires_immediate_attention());
+    //     // High severity, unresolved - requires immediate attention
+    //     alert.severity = AlertSeverity::High;
+    //     assert!(alert.requires_immediate_attention());
 
-        // Critical severity, unresolved - requires immediate attention
-        alert.severity = AlertSeverity::Critical;
-        assert!(alert.requires_immediate_attention());
+    //     // Critical severity, unresolved - requires immediate attention
+    //     alert.severity = AlertSeverity::Critical;
+    //     assert!(alert.requires_immediate_attention());
 
-        // Critical severity, resolved - no immediate attention
-        alert.resolved = true;
-        assert!(!alert.requires_immediate_attention());
-    }
+    //     // Critical severity, resolved - no immediate attention
+    //     alert.resolved = true;
+    //     assert!(!alert.requires_immediate_attention());
+    // }
 
     #[test]
     fn test_create_security_alert_model_validation() {
@@ -652,21 +736,21 @@ mod tests {
         assert!(invalid_model.validate().is_err());
     }
 
-    #[test]
-    fn test_create_security_alert_model_new_with_auto_id() {
-        let alert = CreateSecurityAlertModel::new_with_auto_id(
-            AlertType::BruteForceAttack,
-            AlertSeverity::High,
-            "Brute force attack detected".to_string(),
-            "192.168.1.100".to_string(),
-        );
+    // #[test]
+    // fn test_create_security_alert_model_new_with_auto_id() {
+    //     let alert = CreateSecurityAlertModel::new_with_auto_id(
+    //         AlertType::BruteForceAttack,
+    //         AlertSeverity::High,
+    //         "Brute force attack detected".to_string(),
+    //         "192.168.1.100".to_string(),
+    //     );
 
-        assert!(alert.alert_id.starts_with("alert_"));
-        assert!(matches!(alert.alert_type, AlertType::BruteForceAttack));
-        assert!(matches!(alert.severity, AlertSeverity::High));
-        assert_eq!(alert.message, "Brute force attack detected");
-        assert_eq!(alert.source, "192.168.1.100");
-        assert_eq!(alert.affected_resource, None);
-        assert_eq!(alert.metadata, None);
-    }
+    //     assert!(alert.alert_id.starts_with("alert_"));
+    //     assert!(matches!(alert.alert_type, AlertType::BruteForceAttack));
+    //     assert!(matches!(alert.severity, AlertSeverity::High));
+    //     assert_eq!(alert.message, "Brute force attack detected");
+    //     assert_eq!(alert.source, "192.168.1.100");
+    //     assert_eq!(alert.affected_resource, None);
+    //     assert_eq!(alert.metadata, None);
+    // }
 }

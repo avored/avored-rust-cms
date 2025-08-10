@@ -13,16 +13,38 @@ use surrealdb::sql::{Datetime, Object, Value};
 /// Represents an admin user model in the system.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserModel {
+
+    /// The unique identifier for the admin user.
     pub id: String,
+
+    /// The full name of the admin user.
     pub full_name: String,
+
+    /// The email address of the admin user.
     pub email: String,
+
+    /// The password of the admin user.
     pub password: String,
+
+    /// The profile image URL of the admin user.
     pub profile_image: String,
+
+    /// Indicates whether the admin user has super admin privileges.
     pub is_super_admin: bool,
+
+    /// The date and time when the admin user was created.
     pub created_at: Datetime,
+
+    /// The date and time when the admin user was last updated.
     pub updated_at: Datetime,
+
+    /// The username of the user who created this admin user.
     pub created_by: String,
+
+    /// The username of the user who last updated this admin user.
     pub updated_by: String,
+
+    /// The roles assigned to the admin user.
     pub roles: Vec<RoleModel>,
 }
 
@@ -149,11 +171,22 @@ impl TryFrom<Object> for AdminUserModel {
 /// Represents a model for creating an admin user.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableAdminUserModel {
+    /// The full name of the admin user.
     pub full_name: String,
+
+    /// The email address of the admin user.
     pub email: String,
+
+    /// The password of the admin user.
     pub password: String,
+
+    /// The profile image URL of the admin user.
     pub profile_image: String,
+
+    /// Indicates whether the admin user has super admin privileges.
     pub is_super_admin: bool,
+
+    /// The username of the user who is creating this admin user.
     pub logged_in_username: String,
     // pub role_ids: Vec<String>,
 }
@@ -161,27 +194,43 @@ pub struct CreatableAdminUserModel {
 /// Represents a model for updating an admin user.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableAdminUserModel {
+    /// The unique identifier for the admin user.
     pub id: String,
+
+    /// The full name of the admin user.
     pub full_name: String,
+
+    /// The email address of the admin user.
     pub profile_image: String,
+    
+    ///  is the admin user has super admin privileges.
     pub is_super_admin: bool,
+
+    /// The username of the user who is updating this admin user.
     pub logged_in_username: String,
+
+    /// The roles assigned to the admin user.
     pub role_ids: Vec<String>,
 }
 
+/// Represents a paginated response for admin users.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AdminUserPagination {
+    /// The list of admin users in the current page.
     pub data: Vec<AdminUserModel>,
+
+    /// The total number of admin users available.
     pub pagination: Pagination,
 }
 
 /// Extension trait for AdminUserModel to check resource access
 pub trait AdminUserModelExtension {
-    async fn check_user_has_resouce_access(
+    /// Checks if the user has access to a specific resource based on the permission identifier.
+    fn check_user_has_resouce_access(
         &self,
         admin_user_service: &AdminUserService,
         permission_identifier: String,
-    ) -> Result<()>;
+    ) -> impl std::future::Future<Output = Result<()>> + Send;
 }
 
 impl AdminUserModelExtension for AdminUserModel {

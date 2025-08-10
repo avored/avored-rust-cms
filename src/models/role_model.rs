@@ -6,21 +6,42 @@ use std::time::SystemTime;
 use surrealdb::sql::Value;
 use surrealdb::sql::{Datetime, Object};
 
+
+/// Represents a role in the system with its associated admin user.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RoleModel {
+
+    /// Unique identifier for the role
     pub id: String,
+
+    /// Name of the role
     pub name: String,
+
+    /// Unique identifier for the role, used for API access
     pub identifier: String,
+
+    /// Timestamps for creation and last update
     pub created_at: Datetime,
+
+    /// Timestamp for the last update of the role
     pub updated_at: Datetime,
+
+    /// Username of the user who created the role
     pub created_by: String,
+
+    /// Username of the user who last updated the role
     pub updated_by: String,
+
+    /// List of permissions associated with the role
     pub permissions: Vec<String>,
 }
 
+/// Represents a role option model used in dropdowns or selection lists.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RoleOptionModel {
+    /// label for the role option
     pub label: String,
+    /// Value associated with the role option, typically the role's identifier
     pub value: String,
 }
 
@@ -89,31 +110,59 @@ impl TryFrom<Object> for RoleModel {
     }
 }
 
+/// Represents a model for creating a new role.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct CreatableRole {
+    /// Name of the role to be created
     pub name: String,
+
+    /// identifier for the role, used for API access
     pub identifier: String,
+
+    /// Username of the user creating the role
     pub logged_in_username: String,
+
+    /// List of permissions to be assigned to the role
     pub permissions: Vec<String>,
 }
 
+
+/// Represents a model for updating an existing role.
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct UpdatableRoleModel {
+
+    /// Unique identifier for the role to be updated
     pub id: String,
+    /// Name of the role to be updated
     pub name: String,
+
+    /// identifier for the role, used for API access
     pub logged_in_username: String,
+
+    /// List of permissions to be assigned to the role
     pub permissions: Vec<String>,
 }
 
+/// Represents a model for updating the identifier of an existing role.
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct PutRoleIdentifierModel {
+    /// Unique identifier for the role to be updated
     pub id: String,
+
+    /// New identifier for the role, used for API access
     pub identifier: String,
+
+    /// Username of the user updating the role identifier
     pub logged_in_username: String,
 }
 
+
+/// Represents a paginated response for roles.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct RolePagination {
+    /// List of roles in the current page
     pub data: Vec<RoleModel>,
+
+    /// Pagination information for the response
     pub pagination: Pagination,
 }

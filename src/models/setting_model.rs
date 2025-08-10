@@ -5,14 +5,29 @@ use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object};
 
+/// Represents a setting in the system
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct SettingModel {
+
+    /// Unique identifier for the setting
     pub id: String,
+
+    /// Identifier for the setting, used to access its value
     pub identifier: String,
+
+    /// Value of the setting, which can be a string representation of any data type
     pub value: String,
+
+    /// Timestamps for creation and last update
     pub created_at: Datetime,
+
+    /// Timestamps for creation and last update
     pub updated_at: Datetime,
+
+    /// Username of the user who created the setting
     pub created_by: String,
+
+    /// Username of the user who last updated the setting
     pub updated_by: String,
 }
 
@@ -67,9 +82,16 @@ impl TryFrom<SettingModel> for crate::api::proto::setting::SettingModel {
 
 //
 
+/// Represents a setting that can be updated by the user
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct UpdatableSettingModel {
+
+    /// Unique identifier for the setting
     pub id: String,
+
+    /// Identifier for the setting, used to access its value
     pub value: String,
+    
+    /// Username of the user who is updating the setting
     pub logged_in_username: String,
 }
