@@ -5,14 +5,17 @@ use std::collections::BTreeMap;
 use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 
+/// setting repository
 #[derive(Clone)]
 pub struct SettingRepository {}
 
 impl SettingRepository {
+    /// new instance
     pub fn new() -> Self {
         SettingRepository {}
     }
 
+    /// all settings
     pub async fn all(
         &self,
         datastore: &Datastore,
@@ -33,6 +36,7 @@ impl SettingRepository {
         Ok(settings_list)
     }
 
+    /// update settings
     pub async fn update_setting(
         &self,
         datastore: &Datastore,

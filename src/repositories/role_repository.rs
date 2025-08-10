@@ -11,14 +11,17 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
+/// role repository
 #[derive(Clone)]
 pub struct RoleRepository {}
 
 impl RoleRepository {
+    /// new role repository
     pub fn new() -> Self {
         RoleRepository {}
     }
 
+    /// paginate
     pub async fn paginate(
         &self,
         datastore: &Datastore,
@@ -55,6 +58,7 @@ impl RoleRepository {
         Ok(role_list)
     }
 
+    /// count of identifier
     pub async fn count_of_identifier(
         &self,
         datastore: &Datastore,
@@ -76,6 +80,7 @@ impl RoleRepository {
         model_count
     }
 
+    /// update role identifier
     pub async fn update_role_identifier(
         &self,
         datastore: &Datastore,
@@ -116,6 +121,7 @@ impl RoleRepository {
         updated_model
     }
 
+    /// all role
     pub async fn all(
         &self,
         datastore: &Datastore,
@@ -135,7 +141,8 @@ impl RoleRepository {
         }
         Ok(role_list)
     }
-    //
+
+    /// create role
     pub async fn create_role(
         &self,
         datastore: &Datastore,
@@ -177,6 +184,7 @@ impl RoleRepository {
         role_model
     }
 
+    /// find by id
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -201,7 +209,8 @@ impl RoleRepository {
 
         role_model
     }
-    //
+    
+    /// update role
     pub async fn update_role(
         &self,
         datastore: &Datastore,
@@ -241,6 +250,7 @@ impl RoleRepository {
         role_model
     }
 
+    /// get total count
     pub async fn get_total_count(
         &self,
         datastore: &Datastore,

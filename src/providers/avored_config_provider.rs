@@ -2,20 +2,39 @@ use crate::error::{Error, Result};
 use dotenvy::dotenv;
 use std::env;
 
+
+/// avored config provider
 #[derive(Debug, Clone)]
 pub struct AvoRedConfigProvider {
+    /// database folder name
     pub database_folder_name: String,
+    /// database namespace 
     pub database_namespace: String,
+    /// database name
     pub database_name: String,
+    /// jwt secret key
     pub jwt_secret_key: String,
+    /// react admin app url
     pub react_admin_app_url: String,
     // pub react_frontend_app_url: String,
     // pub back_end_app_url: String,
+
+    /// cors allowed app url
     pub cors_allowed_app_url: Vec<String>,
+
+    /// password salt
     pub password_salt: String,
+
+    /// smtp host
     pub smtp_host: String,
+
+    /// smtp user name
     pub smtp_username: String,
+
+    /// smtp password
     pub smtp_password: String,
+
+    /// smtp port
     pub smtp_port: u16,
 }
 
@@ -29,6 +48,8 @@ pub struct AvoRedConfigProvider {
 // }
 
 impl AvoRedConfigProvider {
+
+    /// register avored config provider
     pub fn register() -> Result<AvoRedConfigProvider> {
         dotenv()?;
 

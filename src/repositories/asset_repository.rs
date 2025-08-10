@@ -11,14 +11,20 @@ use crate::PER_PAGE;
 use super::into_iter_objects;
 const ASSET_TABLE: &str = "assets";
 
+
+/// asset repository
 #[derive(Clone)]
 pub struct AssetRepository {}
 
 impl AssetRepository {
+
+    /// new instance asset repository
     pub fn new() -> Self {
         AssetRepository {}
     }
 
+
+    /// paginate asset
     pub async fn paginate(
         &self,
         datastore: &Datastore,
@@ -69,6 +75,8 @@ impl AssetRepository {
         Ok(asset_list)
     }
 
+
+    /// get total count
     pub async fn get_total_count(
         &self,
         datastore: &Datastore,
@@ -93,6 +101,8 @@ impl AssetRepository {
         }
     }
 
+
+    /// create asset
     pub async fn create_asset(
         &self,
         datastore: &Datastore,
@@ -136,6 +146,8 @@ impl AssetRepository {
         asset_model
     }
 
+
+    /// create asset folder
     pub async fn create_asset_folder(
         &self,
         datastore: &Datastore,
@@ -178,6 +190,9 @@ impl AssetRepository {
         asset_model
     }
 
+
+
+    /// find by id
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -221,6 +236,8 @@ impl AssetRepository {
         Ok(asset_model)
     }
 
+
+    /// delete by id
     pub async fn delete_by_id(
         &self,
         datastore: &Datastore,
@@ -246,6 +263,8 @@ impl AssetRepository {
         Ok(query_result)
     }
 
+
+    /// update asset
     pub async fn update_asset_path(
         &self,
         datastore: &Datastore,

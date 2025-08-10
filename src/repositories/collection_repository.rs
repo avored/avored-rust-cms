@@ -7,10 +7,14 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
+
+/// collection repository
 #[derive(Clone)]
 pub struct CollectionRepository {}
 
 impl CollectionRepository {
+
+    /// all collection
     pub(crate) async fn all_collection(
         &self,
         datastore: &Datastore,
@@ -33,6 +37,8 @@ impl CollectionRepository {
 }
 
 impl CollectionRepository {
+
+    /// new instance
     pub fn new() -> Self {
         CollectionRepository {}
     }
@@ -92,6 +98,9 @@ impl CollectionRepository {
     //     Ok(paginate_models)
     // }
 
+
+
+    /// find by id
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -177,6 +186,9 @@ impl CollectionRepository {
     //     updated_model
     // }
     //
+
+
+    /// count of identifier
     pub async fn count_of_identifier(
         &self,
         datastore: &Datastore,
@@ -198,6 +210,8 @@ impl CollectionRepository {
         model_count
     }
 
+
+    /// update collection
     pub async fn update_collection(
         &self,
         datastore: &Datastore,
@@ -237,6 +251,9 @@ impl CollectionRepository {
         model
     }
 
+
+
+    /// create collection
     pub async fn create_collection(
         &self,
         datastore: &Datastore,

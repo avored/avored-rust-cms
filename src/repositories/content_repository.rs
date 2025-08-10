@@ -12,10 +12,15 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::{Datetime, Value};
 
+
+
+/// content repository
 #[derive(Clone)]
 pub struct ContentRepository {}
 
 impl ContentRepository {
+
+    /// find by id
     pub(crate) async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -410,6 +415,8 @@ impl ContentRepository {
         updated_model
     }
 
+
+    /// delete content
     pub async fn delete_content(
         &self,
         datastore: &Datastore,
@@ -435,6 +442,8 @@ impl ContentRepository {
         Ok(false)
     }
 
+
+    /// new instance
     pub fn new() -> Self {
         ContentRepository {}
     }

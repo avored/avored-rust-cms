@@ -4,12 +4,20 @@ use handlebars::Handlebars;
 use lettre::transport::smtp::authentication::Credentials;
 use lettre::{AsyncSmtpTransport, Tokio1Executor};
 
+
+/// avored template provider
 pub struct AvoRedTemplateProvider {
+
+    /// handlebar
     pub handlebars: Handlebars<'static>,
+
+    /// async smtp transport
     pub mailer: AsyncSmtpTransport<Tokio1Executor>,
 }
 
 impl AvoRedTemplateProvider {
+
+    /// register avored template provider
     pub async fn register(config: AvoRedConfigProvider) -> Result<AvoRedTemplateProvider> {
         let mut reg = Handlebars::new();
         reg.register_template_file("forgot-password", "./resources/mail/forgot-password.hbs")?;

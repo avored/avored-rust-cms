@@ -8,14 +8,17 @@ use surrealdb::sql::{Datetime, Value};
 
 const PASSWORD_RESET_TABLE: &str = "password_reset";
 
+/// password reset repository
 #[derive(Clone)]
 pub struct PasswordResetRepository {}
 
 impl PasswordResetRepository {
+    /// new instance password repository
     pub fn new() -> Self {
         PasswordResetRepository {}
     }
 
+    /// create password reset
     pub async fn create_password_reset(
         &self,
         datastore: &Datastore,
@@ -48,6 +51,7 @@ impl PasswordResetRepository {
         password_reset_model
     }
 
+    /// get password reset by email and token
     pub async fn get_password_reset_by_email_and_token(
         &self,
         datastore: &Datastore,
@@ -79,6 +83,7 @@ impl PasswordResetRepository {
         password_reset_model
     }
 
+    /// expiry password token by email
     pub async fn expire_password_token_by_email(
         &self,
         datastore: &Datastore,
@@ -111,6 +116,7 @@ impl PasswordResetRepository {
         )))
     }
 
+    /// expiry password token by email and token
     pub async fn expire_password_token_by_email_and_token(
         &self,
         datastore: &Datastore,

@@ -10,10 +10,12 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
 
+/// security alert repository
 #[derive(Clone)]
 pub struct SecurityAlertRepository;
 
 impl SecurityAlertRepository {
+    /// new instance 
     pub fn new() -> Self {
         Self
     }

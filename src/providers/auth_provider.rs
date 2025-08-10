@@ -18,7 +18,7 @@ pub enum AuthenticationResult {
 }
 
 
-///// Trait for authentication providers that can authenticate users.
+/// Trait for authentication providers that can authenticate users.
 #[async_trait]
 pub trait AuthProvider: Send + Sync {
 
