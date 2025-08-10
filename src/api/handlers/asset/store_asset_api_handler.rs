@@ -40,7 +40,7 @@ pub async fn store_asset_api_handler(
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
-        if name.as_ref() == "file" {
+        if name.eq("file") {
             let s: String = rand::rng()
                 .sample_iter(&Alphanumeric)
                 .take(16)

@@ -77,7 +77,7 @@ mod requests;
 mod security;
 mod services;
 
-const PER_PAGE: u64 = 10;
+const PER_PAGE: i64 = 10;
 
 rust_i18n::i18n!("resources/locales");
 

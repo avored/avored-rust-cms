@@ -8,6 +8,7 @@ use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
 use std::env;
 use tonic::Status;
+use std::borrow::ToOwned;
 
 #[derive(Debug, Serialize, Default)]
 /// error response struct
@@ -34,7 +35,7 @@ pub async fn require_jwt_authentication(
             .unwrap();
         let token = auth_value
             .strip_prefix("Bearer ")
-            .map(std::borrow::ToOwned::to_owned);
+            .map(ToOwned::to_owned);
         let claims = match decode::<TokenClaims>(
             &token.unwrap_or_default(),
             &DecodingKey::from_secret(jwt_token.as_ref()),
