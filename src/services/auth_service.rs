@@ -13,8 +13,6 @@ use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::services::ldap_auth_service::LdapAuthService;
 use crate::services::local_auth_service::LocalAuthService;
 use crate::services::multi_auth_service::MultiAuthService;
-
-use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
 use rand::distr::Alphanumeric;
@@ -24,6 +22,8 @@ use std::sync::Arc;
 use tonic::Status;
 use tracing::error;
 
+
+/// auth service
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
     password_reset_repository: PasswordResetRepository,
@@ -31,6 +31,7 @@ pub struct AuthService {
 }
 
 impl AuthService {
+    /// forgot password
     pub async fn forgot_password(
         &self,
         db: &DB,
@@ -93,6 +94,8 @@ impl AuthService {
             }
         }
     }
+
+    /// auth user
     pub(crate) async fn auth_user(
         &self,
         email: &str,
@@ -136,19 +139,21 @@ impl AuthService {
         Ok(token)
     }
 
-    pub fn compare_password(
-        &self,
-        plain_password: &str,
-        encrypted_password: String,
-    ) -> Result<bool> {
-        let argon2 = Argon2::default();
-        let parsed_hash = PasswordHash::new(&encrypted_password)?;
+    // /// compare password
+    // pub fn compare_password(
+    //     &self,
+    //     plain_password: &str,
+    //     encrypted_password: String,
+    // ) -> Result<bool> {
+    //     let argon2 = Argon2::default();
+    //     let parsed_hash = PasswordHash::new(&encrypted_password)?;
 
-        Ok(argon2
-            .verify_password(plain_password.as_bytes(), &parsed_hash)
-            .is_ok())
-    }
+    //     Ok(argon2
+    //         .verify_password(plain_password.as_bytes(), &parsed_hash)
+    //         .is_ok())
+    // }
 
+    /// reset password
     pub(crate) async fn reset_password(
         &self,
         db: &DB,
@@ -191,6 +196,7 @@ impl AuthService {
 }
 
 impl AuthService {
+    /// new instance for auth service
     pub async fn new(
         admin_user_repository: AdminUserRepository,
         password_reset_repository: PasswordResetRepository,

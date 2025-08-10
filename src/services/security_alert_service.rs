@@ -12,7 +12,7 @@ use crate::api::proto::security_audit::{
 use crate::error::Result;
 use crate::models::security_alert_model::{
     AlertSeverity, AlertType, CreateSecurityAlertModel, SecurityAlertModel,
-    SecurityAlertPaginationModel, UpdateSecurityAlertModel,
+    SecurityAlertPaginationModel
 };
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
@@ -21,12 +21,14 @@ use surrealdb::dbs::Session;
 use surrealdb::kvs::Datastore;
 use surrealdb::sql::Value;
 
+/// Security alert service
 #[derive(Clone)]
 pub struct SecurityAlertService {
     security_alert_repository: SecurityAlertRepository,
 }
 
 impl SecurityAlertService {
+    /// initialize security alert service
     pub fn new(security_alert_repository: SecurityAlertRepository) -> Self {
         Self {
             security_alert_repository,
@@ -38,10 +40,10 @@ impl SecurityAlertService {
         &self,
         datastore: &Datastore,
         database_session: &Session,
-        createable_security_alert_model: CreateSecurityAlertModel,
+        creatable_security_alert_model: CreateSecurityAlertModel,
     ) -> Result<SecurityAlertModel> {
         self.security_alert_repository
-            .create(datastore, database_session, createable_security_alert_model)
+            .create(datastore, database_session, creatable_security_alert_model)
             .await
     }
 
@@ -138,23 +140,23 @@ impl SecurityAlertService {
             .await
     }
 
-    /// Update security alert
-    pub async fn update_alert(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        id: &str,
-        updateable_security_alert_model: UpdateSecurityAlertModel,
-    ) -> Result<SecurityAlertModel> {
-        self.security_alert_repository
-            .update(
-                datastore,
-                database_session,
-                id,
-                updateable_security_alert_model,
-            )
-            .await
-    }
+    // /// Update security alert
+    // pub async fn update_alert(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     id: &str,
+    //     updateable_security_alert_model: UpdateSecurityAlertModel,
+    // ) -> Result<SecurityAlertModel> {
+    //     self.security_alert_repository
+    //         .update(
+    //             datastore,
+    //             database_session,
+    //             id,
+    //             updateable_security_alert_model,
+    //         )
+    //         .await
+    // }
 
     /// Get paginated security alerts
     pub async fn get_alerts_paginated(
@@ -192,113 +194,113 @@ impl SecurityAlertService {
             .await
     }
 
-    /// Create alert based on security event
-    pub async fn create_alert_from_event(
-        &self,
-        datastore: &Datastore,
-        database_session: &Session,
-        event: SecurityAlertEvent,
-    ) -> Result<SecurityAlertModel> {
-        let (alert_type, severity, message) = self.classify_security_event(&event);
+    // /// Create alert based on security event
+    // pub async fn create_alert_from_event(
+    //     &self,
+    //     datastore: &Datastore,
+    //     database_session: &Session,
+    //     event: SecurityAlertEvent,
+    // ) -> Result<SecurityAlertModel> {
+    //     let (alert_type, severity, message) = self.classify_security_event(&event);
 
-        let mut metadata = BTreeMap::new();
-        metadata.insert(
-            "event_details".to_string(),
-            Value::from(event.details.clone()),
-        );
-        metadata.insert(
-            "timestamp".to_string(),
-            Value::from(chrono::Utc::now().to_rfc3339()),
-        );
+    //     let mut metadata = BTreeMap::new();
+    //     metadata.insert(
+    //         "event_details".to_string(),
+    //         Value::from(event.details.clone()),
+    //     );
+    //     metadata.insert(
+    //         "timestamp".to_string(),
+    //         Value::from(chrono::Utc::now().to_rfc3339()),
+    //     );
 
-        if let Some(user_agent) = &event.user_agent {
-            metadata.insert("user_agent".to_string(), Value::from(user_agent.clone()));
-        }
+    //     if let Some(user_agent) = &event.user_agent {
+    //         metadata.insert("user_agent".to_string(), Value::from(user_agent.clone()));
+    //     }
 
-        if let Some(endpoint) = &event.endpoint {
-            metadata.insert("endpoint".to_string(), Value::from(endpoint.clone()));
-        }
+    //     if let Some(endpoint) = &event.endpoint {
+    //         metadata.insert("endpoint".to_string(), Value::from(endpoint.clone()));
+    //     }
 
-        self.create_alert_auto_id(
-            datastore,
-            database_session,
-            alert_type,
-            severity,
-            message,
-            event.source,
-            event.affected_resource,
-            Some(metadata),
-        )
-        .await
-    }
+    //     self.create_alert_auto_id(
+    //         datastore,
+    //         database_session,
+    //         alert_type,
+    //         severity,
+    //         message,
+    //         event.source,
+    //         event.affected_resource,
+    //         Some(metadata),
+    //     )
+    //     .await
+    // }
 
-    /// Classify security event and determine alert type, severity, and message
-    fn classify_security_event(
-        &self,
-        event: &SecurityAlertEvent,
-    ) -> (AlertType, AlertSeverity, String) {
-        match event.event_type.as_str() {
-            "multiple_failed_logins" => (
-                AlertType::AuthenticationFailure,
-                AlertSeverity::Medium,
-                format!(
-                    "Multiple failed login attempts detected from {}",
-                    event.source
-                ),
-            ),
-            "sql_injection_attempt" => (
-                AlertType::InjectionAttempt,
-                AlertSeverity::High,
-                format!("SQL injection attempt detected from {}", event.source),
-            ),
-            "rate_limit_exceeded" => (
-                AlertType::RateLimitExceeded,
-                AlertSeverity::Low,
-                format!("Rate limit exceeded for {}", event.source),
-            ),
-            "brute_force_attack" => (
-                AlertType::BruteForceAttack,
-                AlertSeverity::High,
-                format!("Brute force attack detected from {}", event.source),
-            ),
-            "privilege_escalation" => (
-                AlertType::PrivilegeEscalation,
-                AlertSeverity::Critical,
-                format!(
-                    "Privilege escalation attempt detected from {}",
-                    event.source
-                ),
-            ),
-            "data_breach_attempt" => (
-                AlertType::DataBreachAttempt,
-                AlertSeverity::Critical,
-                format!("Data breach attempt detected from {}", event.source),
-            ),
-            "unauthorized_access" => (
-                AlertType::UnauthorizedAccess,
-                AlertSeverity::High,
-                format!("Unauthorized access attempt from {}", event.source),
-            ),
-            "malformed_request" => (
-                AlertType::MalformedRequest,
-                AlertSeverity::Low,
-                format!("Malformed request detected from {}", event.source),
-            ),
-            "session_hijacking" => (
-                AlertType::SessionHijacking,
-                AlertSeverity::Critical,
-                format!("Session hijacking attempt detected from {}", event.source),
-            ),
-            _ => (
-                AlertType::SuspiciousActivity,
-                AlertSeverity::Medium,
-                format!(
-                    "Suspicious activity detected from {}: {}",
-                    event.source, event.details
-                ),
-            ),
-        }
-    }
+    // /// Classify security event and determine alert type, severity, and message
+    // fn classify_security_event(
+    //     &self,
+    //     event: &SecurityAlertEvent,
+    // ) -> (AlertType, AlertSeverity, String) {
+    //     match event.event_type.as_str() {
+    //         "multiple_failed_logins" => (
+    //             AlertType::AuthenticationFailure,
+    //             AlertSeverity::Medium,
+    //             format!(
+    //                 "Multiple failed login attempts detected from {}",
+    //                 event.source
+    //             ),
+    //         ),
+    //         "sql_injection_attempt" => (
+    //             AlertType::InjectionAttempt,
+    //             AlertSeverity::High,
+    //             format!("SQL injection attempt detected from {}", event.source),
+    //         ),
+    //         "rate_limit_exceeded" => (
+    //             AlertType::RateLimitExceeded,
+    //             AlertSeverity::Low,
+    //             format!("Rate limit exceeded for {}", event.source),
+    //         ),
+    //         "brute_force_attack" => (
+    //             AlertType::BruteForceAttack,
+    //             AlertSeverity::High,
+    //             format!("Brute force attack detected from {}", event.source),
+    //         ),
+    //         "privilege_escalation" => (
+    //             AlertType::PrivilegeEscalation,
+    //             AlertSeverity::Critical,
+    //             format!(
+    //                 "Privilege escalation attempt detected from {}",
+    //                 event.source
+    //             ),
+    //         ),
+    //         "data_breach_attempt" => (
+    //             AlertType::DataBreachAttempt,
+    //             AlertSeverity::Critical,
+    //             format!("Data breach attempt detected from {}", event.source),
+    //         ),
+    //         "unauthorized_access" => (
+    //             AlertType::UnauthorizedAccess,
+    //             AlertSeverity::High,
+    //             format!("Unauthorized access attempt from {}", event.source),
+    //         ),
+    //         "malformed_request" => (
+    //             AlertType::MalformedRequest,
+    //             AlertSeverity::Low,
+    //             format!("Malformed request detected from {}", event.source),
+    //         ),
+    //         "session_hijacking" => (
+    //             AlertType::SessionHijacking,
+    //             AlertSeverity::Critical,
+    //             format!("Session hijacking attempt detected from {}", event.source),
+    //         ),
+    //         _ => (
+    //             AlertType::SuspiciousActivity,
+    //             AlertSeverity::Medium,
+    //             format!(
+    //                 "Suspicious activity detected from {}: {}",
+    //                 event.source, event.details
+    //             ),
+    //         ),
+    //     }
+    // }
 
     /// Get alert statistics
     pub async fn get_alert_statistics(
@@ -338,24 +340,39 @@ impl SecurityAlertService {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct SecurityAlertEvent {
-    pub event_type: String,
-    pub source: String,
-    pub details: String,
-    pub affected_resource: Option<String>,
-    pub user_agent: Option<String>,
-    pub endpoint: Option<String>,
-}
+// /// security alert event
+// #[derive(Debug, Clone)]
+// pub struct SecurityAlertEvent {
+//     /// event type
+//     pub event_type: String,
+//     /// source
+//     pub source: String,
+//     /// details
+//     pub details: String,
+//     /// affected resource
+//     pub affected_resource: Option<String>,
+//     /// user agent
+//     pub user_agent: Option<String>,
+//     /// end point
+//     pub endpoint: Option<String>,
+// }
 
+/// alert statistics
 #[derive(Debug, Clone, Default)]
 pub struct AlertStatistics {
+    /// total alerts
     pub total_alerts: i64,
+    /// total unresolved
     pub total_unresolved: i64,
+    /// total critical unresolved
     pub total_critical_unresolved: i64,
+    /// total low
     pub total_low: i64,
+    /// total medium
     pub total_medium: i64,
+    /// total high
     pub total_high: i64,
+    /// total critical
     pub total_critical: i64,
 }
 
@@ -374,11 +391,11 @@ impl SecurityAlertService {
         let createable_model = CreateSecurityAlertModel {
             alert_id: alert_data.alert_id,
             alert_type: AlertType::from_grpc_alert_type(
-                GrpcAlertType::from_i32(alert_data.alert_type)
+                GrpcAlertType::try_from(alert_data.alert_type)
                     .unwrap_or(GrpcAlertType::Unspecified),
             ),
             severity: AlertSeverity::from_grpc_alert_severity(
-                GrpcAlertSeverity::from_i32(alert_data.severity)
+                GrpcAlertSeverity::try_from(alert_data.severity)
                     .unwrap_or(GrpcAlertSeverity::Unspecified),
             ),
             message: alert_data.message,
@@ -413,11 +430,11 @@ impl SecurityAlertService {
                 datastore,
                 database_session,
                 AlertType::from_grpc_alert_type(
-                    GrpcAlertType::from_i32(request.alert_type)
+                    GrpcAlertType::try_from(request.alert_type)
                         .unwrap_or(GrpcAlertType::Unspecified),
                 ),
                 AlertSeverity::from_grpc_alert_severity(
-                    GrpcAlertSeverity::from_i32(request.severity)
+                    GrpcAlertSeverity::try_from(request.severity)
                         .unwrap_or(GrpcAlertSeverity::Unspecified),
                 ),
                 request.message,
@@ -465,7 +482,7 @@ impl SecurityAlertService {
         (datastore, database_session): &DB,
     ) -> Result<GetUnresolvedAlertsBySeverityResponse> {
         let alert_severity = AlertSeverity::from_grpc_alert_severity(
-            GrpcAlertSeverity::from_i32(severity).unwrap_or(GrpcAlertSeverity::Unspecified),
+            GrpcAlertSeverity::try_from(severity).unwrap_or(GrpcAlertSeverity::Unspecified),
         );
 
         let pagination_model = self
@@ -495,7 +512,7 @@ impl SecurityAlertService {
         (datastore, database_session): &DB,
     ) -> Result<GetAlertsByTypeResponse> {
         let alert_type = AlertType::from_grpc_alert_type(
-            GrpcAlertType::from_i32(alert_type).unwrap_or(GrpcAlertType::Unspecified),
+            GrpcAlertType::try_from(alert_type).unwrap_or(GrpcAlertType::Unspecified),
         );
 
         let pagination_model = self

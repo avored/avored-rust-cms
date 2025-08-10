@@ -1,3 +1,4 @@
+//! Property-based security tests to ensure security properties hold under various conditions
 /// Basic security validation test to ensure the security framework is working
 /// This test validates that the core security functions are operational
 
@@ -213,13 +214,13 @@ mod basic_security_tests {
     /// Test security event logging simulation
     #[test]
     fn test_security_event_logging() {
-        use std::time::{SystemTime, UNIX_EPOCH};
+        // use std::time::{SystemTime, UNIX_EPOCH};
 
         #[derive(Debug, Clone)]
         struct SecurityEvent {
             event_type: String,
-            message: String,
-            timestamp: u64,
+            // message: String,
+            // timestamp: u64,
             severity: String,
         }
 
@@ -232,14 +233,14 @@ mod basic_security_tests {
                 Self { events: Vec::new() }
             }
 
-            fn log_event(&mut self, event_type: &str, message: &str, severity: &str) {
+            fn log_event(&mut self, event_type: &str, _message: &str, severity: &str) {
                 let event = SecurityEvent {
                     event_type: event_type.to_string(),
-                    message: message.to_string(),
-                    timestamp: SystemTime::now()
-                        .duration_since(UNIX_EPOCH)
-                        .unwrap()
-                        .as_secs(),
+                    // message: message.to_string(),
+                    // timestamp: SystemTime::now()
+                    //     .duration_since(UNIX_EPOCH)
+                    //     .unwrap()
+                    //     .as_secs(),
                     severity: severity.to_string(),
                 };
                 self.events.push(event);

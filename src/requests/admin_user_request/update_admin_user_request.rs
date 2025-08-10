@@ -3,6 +3,7 @@ use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
 use rust_i18n::t;
 
 impl UpdateAdminUserRequest {
+    /// validate
     pub async fn validate(&self) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;

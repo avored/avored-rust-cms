@@ -2,9 +2,11 @@ use crate::api::proto::admin_user::AdminUserModel as GrpcAdminUserModel;
 use crate::api::proto::general::LoggedInUserResponse;
 use crate::models::token_claim_model::TokenClaims;
 
+/// general service
 pub struct GeneralService {}
 
 impl GeneralService {
+    /// logged in user
     pub async fn logged_in_user(
         &self,
         claims: TokenClaims,
@@ -23,6 +25,7 @@ impl GeneralService {
 }
 
 impl GeneralService {
+    /// new instance for general service
     pub fn new() -> crate::error::Result<GeneralService> {
         Ok(GeneralService {})
     }

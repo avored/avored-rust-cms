@@ -17,14 +17,17 @@ use crate::error::Error::Tonic;
 const ADMIN_USER_TABLE: &str = "admin_users";
 const ROLE_TABLE: &str = "roles";
 
+/// admin user repository
 #[derive(Clone)]
 pub struct AdminUserRepository {}
 
 impl AdminUserRepository {
+    /// new instance for admin user repository
     pub fn new() -> Self {
         AdminUserRepository {}
     }
 
+    /// find by email for admin user repository 
     pub async fn find_by_email(
         &self,
         datastore: &Datastore,
@@ -62,6 +65,8 @@ impl AdminUserRepository {
 
         admin_user_model
     }
+
+    /// find by id admin user 
     pub async fn find_by_id(
         &self,
         datastore: &Datastore,
@@ -87,6 +92,7 @@ impl AdminUserRepository {
         admin_user_model
     }
 
+    /// create admin user
     pub async fn create_admin_user(
         &self,
         datastore: &Datastore,
@@ -139,6 +145,7 @@ impl AdminUserRepository {
         admin_user_model
     }
 
+    /// update admin user
     pub async fn update_admin_user(
         &self,
         datastore: &Datastore,
@@ -184,6 +191,7 @@ impl AdminUserRepository {
         admin_user_model
     }
 
+    /// update password by email
     pub async fn update_password_by_email(
         &self,
         datastore: &Datastore,
@@ -241,6 +249,8 @@ impl AdminUserRepository {
     //     Ok(false)
     // }
 
+
+    /// get total count
     pub async fn get_total_count(
         &self,
         datastore: &Datastore,
@@ -259,6 +269,7 @@ impl AdminUserRepository {
         admin_user_count
     }
 
+    /// admin user paginate
     pub async fn paginate(
         &self,
         datastore: &Datastore,
@@ -298,6 +309,7 @@ impl AdminUserRepository {
         Ok(admin_user_list)
     }
 
+    /// attach admin user with role
     pub async fn attach_admin_user_with_role(
         &self,
         datastore: &Datastore,
@@ -333,6 +345,7 @@ impl AdminUserRepository {
         Ok(true)
     }
 
+    /// detach admin user with role
     pub async fn detach_admin_user_with_role(
         &self,
         datastore: &Datastore,
@@ -357,6 +370,7 @@ impl AdminUserRepository {
         Ok(true)
     }
 
+    /// count of email
     pub async fn count_of_email(
         &self,
         datastore: &Datastore,
@@ -378,6 +392,7 @@ impl AdminUserRepository {
         model_count
     }
 
+    /// delete role
     pub async fn delete_role(
         &self,
         datastore: &Datastore,
@@ -402,6 +417,7 @@ impl AdminUserRepository {
         Ok(false)
     }
 
+    /// delete admin user model
     pub async fn delete_admin_user(
         &self,
         datastore: &Datastore,

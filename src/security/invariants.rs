@@ -355,24 +355,39 @@ impl RuntimeSecurityMonitor {
     }
 }
 
+/// sercurity health report
 #[derive(Debug, Clone)]
 pub struct SecurityHealthReport {
+    /// invariant status
     pub invariants_status: SecurityStatus,
+    /// error handling status
     pub error_handling_status: SecurityStatus,
+    /// configuration status
     pub configuration_status: SecurityStatus,
+    /// services status
     pub services_status: SecurityStatus,
+    /// issues
     pub issues: Vec<String>,
-    pub timestamp: u64,
+    // /// timestamp
+    // pub timestamp: u64,
 }
 
+/// security status
 #[derive(Debug, Clone, PartialEq)]
 pub enum SecurityStatus {
+
+    /// health
     Healthy,
+
+    /// warning
     Warning,
+
+    /// critical
     Critical,
 }
 
 impl SecurityHealthReport {
+    /// new instance for security health report
     fn new() -> Self {
         Self {
             invariants_status: SecurityStatus::Healthy,
@@ -380,13 +395,14 @@ impl SecurityHealthReport {
             configuration_status: SecurityStatus::Healthy,
             services_status: SecurityStatus::Healthy,
             issues: Vec::new(),
-            timestamp: std::time::SystemTime::now()
-                .duration_since(std::time::UNIX_EPOCH)
-                .unwrap()
-                .as_secs(),
+            // timestamp: std::time::SystemTime::now()
+            //     .duration_since(std::time::UNIX_EPOCH)
+            //     .unwrap()
+            //     .as_secs(),
         }
     }
 
+    /// overall status
     pub fn overall_status(&self) -> SecurityStatus {
         let statuses = [
             &self.invariants_status,

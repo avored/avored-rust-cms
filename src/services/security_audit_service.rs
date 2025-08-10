@@ -308,7 +308,7 @@ impl SecurityAuditService {
 }
 
 
-//// Security event types
+/// Security event types
 #[derive(Debug, Clone)]
 pub enum SecurityEventType {
     /// Authentication was successful
@@ -448,7 +448,7 @@ impl SecurityAuditService {
                 request.endpoint,
                 request.request_method,
                 convert_grpc_security_event_type(
-                    GrpcSecurityEventType::from_i32(request.event_type)
+                    GrpcSecurityEventType::try_from(request.event_type)
                         .unwrap_or(GrpcSecurityEventType::Unspecified),
                 ),
                 metadata,

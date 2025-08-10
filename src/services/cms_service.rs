@@ -11,17 +11,21 @@ use lettre::{AsyncTransport, Message};
 use serde::{Deserialize, Serialize};
 use tracing::log::error;
 
+/// cms service
 pub struct CmsService {
     content_repository: ContentRepository,
 }
 
 impl CmsService {
+    /// new instance for cms service
     pub fn new(content_repository: ContentRepository) -> Result<Self> {
         Ok(CmsService { content_repository })
     }
 }
 
 impl CmsService {
+
+    /// sent contact form
     pub async fn sent_contact_form(
         &self,
         template: &AvoRedTemplateProvider,
@@ -66,6 +70,7 @@ impl CmsService {
         }
     }
 
+    /// get cms content
     pub async fn get_cms_content(
         &self,
         request: GetCmsContentRequest,
@@ -90,12 +95,17 @@ impl CmsService {
         Ok(response)
     }
 }
-
+/// sent contact us email request
 #[derive(Deserialize, Debug, Clone, Serialize)]
 pub struct SentContactUsEmailRequest {
+    /// email
     pub email: String,
+    /// first name
     pub first_name: String,
+    /// last name
     pub last_name: String,
+    /// message
     pub message: String,
+    /// phone
     pub phone: String,
 }

@@ -18,12 +18,14 @@ use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
 use std::path::Path;
 
+/// admin user service
 pub struct AdminUserService {
     admin_user_repository: AdminUserRepository,
     role_repository: RoleRepository,
 }
 
 impl AdminUserService {
+    /// new instance for admin user service
     pub fn new(
         admin_user_repository: AdminUserRepository,
         role_repository: RoleRepository,
@@ -34,6 +36,8 @@ impl AdminUserService {
         })
     }
 
+
+    /// paginate admin user 
     pub async fn paginate(
         &self,
         page: i64,
@@ -83,6 +87,7 @@ impl AdminUserService {
         Ok((admin_user_model_count, grpc_admin_users))
     }
 
+    /// store admin user
     pub async fn store(
         &self,
         req: StoreAdminUserRequest,
@@ -128,6 +133,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// find admin user by id
     pub async fn find_admin_user_by_id(
         &self,
         admin_user_id: &str,
@@ -144,6 +150,7 @@ impl AdminUserService {
         Ok(model)
     }
 
+    /// update admin user
     pub async fn update_admin_user(
         &self,
         req: UpdateAdminUserRequest,
@@ -221,6 +228,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// role paginate
     pub async fn role_paginate(
         &self,
         req: RolePaginateRequest,
@@ -279,6 +287,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// role option
     pub async fn role_option(
         &self,
         (datastore, database_session): &DB,
@@ -305,6 +314,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// store role
     pub async fn store_role(
         &self,
         created_role_request: CreatableRole,
@@ -324,6 +334,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// find role by id
     pub async fn find_role_by_id(
         &self,
         req: GetRoleRequest,
@@ -344,6 +355,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// update role
     pub async fn update_role(
         &self,
         req: UpdateRoleRequest,
@@ -371,6 +383,7 @@ impl AdminUserService {
         Ok(res)
     }
 
+    /// put role identifier
     pub async fn put_role_identifier(
         &self,
         req: PutRoleIdentifierRequest,
@@ -477,6 +490,8 @@ impl AdminUserService {
     //         .is_ok())
     // }
     //
+
+    /// has permission
     pub async fn has_permission(
         &self,
         logged_in_user: crate::models::admin_user_model::AdminUserModel,
@@ -726,6 +741,8 @@ impl AdminUserService {
     //     Ok(admin_user_model)
     // }
     //
+
+    /// get password hash from raw password
     pub fn get_password_hash_from_raw_password(
         &self,
         raw_password: &str,
@@ -740,6 +757,8 @@ impl AdminUserService {
         Ok(password_hash)
     }
     //
+
+    /// count of email
     pub async fn count_of_email(
         &self,
         (datastore, database_session): &DB,
@@ -750,6 +769,7 @@ impl AdminUserService {
             .await
     }
 
+    /// count of role identifier
     pub async fn count_of_role_identifier(
         &self,
         (datastore, database_session): &DB,
@@ -760,6 +780,7 @@ impl AdminUserService {
             .await
     }
 
+    /// delete role
     pub async fn delete_role(
         &self,
         request: DeleteRoleRequest,
@@ -777,6 +798,7 @@ impl AdminUserService {
         Ok(response)
     }
 
+    /// delete admin user
     pub async fn delete_admin_user(
         &self,
         request: DeleteAdminUserRequest,

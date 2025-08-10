@@ -5,6 +5,7 @@ use crate::{
 use rust_i18n::t;
 
 impl DeleteAdminUserRequest {
+    /// validate
     pub fn validate(&self) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;

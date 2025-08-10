@@ -58,16 +58,16 @@ pub enum ThreatLevel {
 
 /// Real-time security monitoring service for continuous security validation
 /// This service ensures that security measures are always active and functioning
-#[derive(Debug, Clone)]
-pub struct ThreatDetector {
-    // /// Track failed authentication attempts
-    // pub failed_auth_attempts: HashMap<String, FailedAuthTracker>,
-    // /// Track suspicious patterns such as injection attempts and unusual endpoints
-    // pub suspicious_patterns: HashMap<String, SuspiciousActivityTracker>,
+// #[derive(Debug, Clone)]
+// pub struct ThreatDetector {
+//     // /// Track failed authentication attempts
+//     // pub failed_auth_attempts: HashMap<String, FailedAuthTracker>,
+//     // /// Track suspicious patterns such as injection attempts and unusual endpoints
+//     // pub suspicious_patterns: HashMap<String, SuspiciousActivityTracker>,
 
-    // /// Track rate limiting events
-    // pub rate_limit_tracking: HashMap<String, RateLimitTracker>,
-}
+//     // /// Track rate limiting events
+//     // pub rate_limit_tracking: HashMap<String, RateLimitTracker>,
+// }
 
 // /// Represents an authentication attempt tracker
 // #[derive(Debug, Clone)]
@@ -89,40 +89,40 @@ pub struct ThreatDetector {
 // }
 
 
-/// Represents a tracker for rate limiting events
-#[derive(Debug, Clone)]
-pub struct RateLimitTracker {
-    /// The number of requests made within the rate limit window
-    pub requests: u32,
+// /// Represents a tracker for rate limiting events
+// #[derive(Debug, Clone)]
+// pub struct RateLimitTracker {
+//     /// The number of requests made within the rate limit window
+//     pub requests: u32,
 
-    /// window start  
-    pub window_start: std::time::Instant,
-}
+//     /// window start  
+//     pub window_start: std::time::Instant,
+// }
 
-/// Failed auth tracker
-#[derive(Debug, Clone)]
-pub struct FailedAuthTracker {
-    /// count failed auth tracker
-    pub count: u32,
-    /// first attempt for failed auth tracker
-    pub first_attempt: std::time::Instant,
-    /// last attempt for failed auth tracker
-    pub last_attempt: std::time::Instant,
-}
+// /// Failed auth tracker
+// #[derive(Debug, Clone)]
+// pub struct FailedAuthTracker {
+//     /// count failed auth tracker
+//     pub count: u32,
+//     /// first attempt for failed auth tracker
+//     pub first_attempt: std::time::Instant,
+//     /// last attempt for failed auth tracker
+//     pub last_attempt: std::time::Instant,
+// }
 
 
-/// suspicious activity tracker
-#[derive(Debug, Clone)]
-pub struct SuspiciousActivityTracker {
-    /// injection attempts 
-    pub injection_attempts: u32,
+// /// suspicious activity tracker
+// #[derive(Debug, Clone)]
+// pub struct SuspiciousActivityTracker {
+//     /// injection attempts 
+//     pub injection_attempts: u32,
 
-    /// un usual endpoins 
-    pub unusual_endpoints: Vec<String>,
+//     /// un usual endpoins 
+//     pub unusual_endpoints: Vec<String>,
 
-    /// last activity
-    pub last_activity: std::time::Instant,
-}
+//     /// last activity
+//     pub last_activity: std::time::Instant,
+// }
 
 /// security monitoring services
 #[derive(Debug, Clone)]
@@ -246,16 +246,16 @@ pub enum HealthStatus {
     Unknown,
 }
 
-impl ThreatDetector {
+// impl ThreatDetector {
 
-    /// the threat detector create new instance
-    pub fn new() -> Self {
-        Self {
-            // failed_auth_attempts: HashMap::new(),
-            // suspicious_patterns: HashMap::new(),
-            // rate_limit_tracking: HashMap::new(),
-        }
-    }
+    // /// the threat detector create new instance
+    // pub fn new() -> Self {
+    //     Self {
+    //         // failed_auth_attempts: HashMap::new(),
+    //         // suspicious_patterns: HashMap::new(),
+    //         // rate_limit_tracking: HashMap::new(),
+    //     }
+    // }
 
     // /// Clean up tracking data older than 1 hour
     // pub fn cleanup_old_data(&mut self) {
@@ -270,7 +270,7 @@ impl ThreatDetector {
     //     self.rate_limit_tracking
     //         .retain(|_, tracker| tracker.window_start > one_hour_ago);
     // }
-}
+// }
 
 impl SecurityMonitoringService {
     /// created new instance for Security monitoring service

@@ -15,16 +15,20 @@ use crate::{
 use tokio::fs;
 use tonic::Status;
 
+
+/// asset service
 pub struct AssetService {
     asset_repository: AssetRepository,
 }
 
 impl AssetService {
+    /// new instance for asset service
     pub fn new(asset_repository: AssetRepository) -> Result<Self> {
         Ok(AssetService { asset_repository })
     }
 }
 impl AssetService {
+    /// pagiante assets models
     pub async fn paginate(
         &self,
         req: AssetPaginateRequest,
@@ -95,6 +99,7 @@ impl AssetService {
     //         .await
     // }
 
+    /// create asset
     pub async fn create_asset(
         &self,
         (datastore, database_session): &DB,
@@ -105,6 +110,7 @@ impl AssetService {
             .await
     }
 
+    /// find asset by id
     pub async fn find_by_id(
         &self,
         (datastore, database_session): &DB,
@@ -115,6 +121,7 @@ impl AssetService {
             .await
     }
 
+    /// create asset folder
     pub async fn create_asset_folder(
         &self,
         db: &DB,
@@ -164,6 +171,7 @@ impl AssetService {
         Ok(res)
     }
 
+    /// delete asset
     pub async fn delete_asset(
         &self,
         (datastore, database_session): &DB,
@@ -190,6 +198,7 @@ impl AssetService {
         Err(Error::Tonic(Box::new(Status::internal("Unable to delete asset"))))
     }
 
+    /// delete folder
     pub async fn delete_folder(
         &self,
         (datastore, database_session): &DB,
@@ -216,6 +225,7 @@ impl AssetService {
         Err(Error::Tonic(Box::new(Status::internal("Unable to delete folder"))))
     }
 
+    /// rename assets
     pub async fn rename_asset(
         &self,
         (datastore, database_session): &DB,

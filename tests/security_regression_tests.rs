@@ -1,6 +1,7 @@
+//! Property-based security tests to ensure security properties hold under various conditions
 use avored_rust_cms::services::input_validation_service::InputValidationService;
 use avored_rust_cms::services::ldap_connection_pool::AuthRateLimiter;
-use std::time::{Duration, Instant, UNIX_EPOCH};
+use std::time::{Duration, Instant};
 
 // Security regression tests to ensure that future code changes cannot break security measures
 

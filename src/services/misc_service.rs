@@ -4,7 +4,7 @@ use crate::providers::avored_database_provider::DB;
 use argon2::password_hash::SaltString;
 use argon2::{Argon2, PasswordHasher};
 use std::collections::BTreeMap;
-
+/// misc service
 pub struct MiscService {}
 
 impl MiscService {
@@ -190,7 +190,9 @@ impl MiscService {
     }
 }
 
+
 impl MiscService {
+    /// create misc service instance
     pub async fn new() -> Result<MiscService> {
         Ok(MiscService {})
     }

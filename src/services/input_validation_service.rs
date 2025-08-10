@@ -143,36 +143,36 @@ impl InputValidationService {
         Ok(dn.to_string())
     }
 
-    /// Validate LDAP filter string
-    pub fn validate_ldap_filter(filter: &str) -> Result<String> {
-        if filter.is_empty() {
-            return Err(Error::InvalidArgument(
-                "LDAP filter cannot be empty".to_string(),
-            ));
-        }
+    // /// Validate LDAP filter string
+    // pub fn validate_ldap_filter(filter: &str) -> Result<String> {
+    //     if filter.is_empty() {
+    //         return Err(Error::InvalidArgument(
+    //             "LDAP filter cannot be empty".to_string(),
+    //         ));
+    //     }
 
-        if filter.len() > 512 {
-            return Err(Error::InvalidArgument("LDAP filter too long".to_string()));
-        }
+    //     if filter.len() > 512 {
+    //         return Err(Error::InvalidArgument("LDAP filter too long".to_string()));
+    //     }
 
-        // Check for control characters
-        if filter.chars().any(|c| c.is_control()) {
-            return Err(Error::InvalidArgument(
-                "LDAP filter contains invalid characters".to_string(),
-            ));
-        }
+    //     // Check for control characters
+    //     if filter.chars().any(|c| c.is_control()) {
+    //         return Err(Error::InvalidArgument(
+    //             "LDAP filter contains invalid characters".to_string(),
+    //         ));
+    //     }
 
-        // Basic parentheses balance check
-        let open_count = filter.chars().filter(|&c| c == '(').count();
-        let close_count = filter.chars().filter(|&c| c == ')').count();
-        if open_count != close_count {
-            return Err(Error::InvalidArgument(
-                "Unbalanced parentheses in LDAP filter".to_string(),
-            ));
-        }
+    //     // Basic parentheses balance check
+    //     let open_count = filter.chars().filter(|&c| c == '(').count();
+    //     let close_count = filter.chars().filter(|&c| c == ')').count();
+    //     if open_count != close_count {
+    //         return Err(Error::InvalidArgument(
+    //             "Unbalanced parentheses in LDAP filter".to_string(),
+    //         ));
+    //     }
 
-        Ok(filter.to_string())
-    }
+    //     Ok(filter.to_string())
+    // }
 
     /// Sanitize string for LDAP filter use (escape special characters)
     pub fn sanitize_ldap_value(value: &str) -> Result<String> {
@@ -265,70 +265,70 @@ impl InputValidationService {
         Ok(())
     }
 
-    /// Validate configuration value
-    pub fn validate_config_value(key: &str, value: &str) -> Result<String> {
-        match key {
-            "AVORED_LDAP_SERVER" => Self::validate_server_url(value),
-            "AVORED_LDAP_BASE_DN" | "AVORED_LDAP_BIND_DN" | "AVORED_LDAP_USER_SEARCH_BASE" => {
-                Self::validate_dn(value)
-            }
-            "AVORED_LDAP_USER_SEARCH_FILTER" => Self::validate_ldap_filter(value),
-            "AVORED_LDAP_PORT" => {
-                let port: u16 = value
-                    .parse()
-                    .map_err(|_| Error::InvalidArgument("Invalid port number".to_string()))?;
-                if port == 0 {
-                    return Err(Error::InvalidArgument("Port cannot be zero".to_string()));
-                }
-                Ok(value.to_string())
-            }
-            "AVORED_LDAP_CONNECTION_TIMEOUT" | "AVORED_LDAP_SEARCH_TIMEOUT" => {
-                let timeout: u64 = value
-                    .parse()
-                    .map_err(|_| Error::InvalidArgument("Invalid timeout value".to_string()))?;
-                if timeout == 0 || timeout > 300 {
-                    return Err(Error::InvalidArgument(
-                        "Timeout must be between 1 and 300 seconds".to_string(),
-                    ));
-                }
-                Ok(value.to_string())
-            }
-            "AVORED_LDAP_USE_TLS" | "AVORED_LDAP_ENABLED" => {
-                value
-                    .parse::<bool>()
-                    .map_err(|_| Error::InvalidArgument("Invalid boolean value".to_string()))?;
-                Ok(value.to_string())
-            }
-            _ => {
-                // Generic validation for other config values
-                if value.len() > 1024 {
-                    return Err(Error::InvalidArgument(
-                        "Configuration value too long".to_string(),
-                    ));
-                }
-                if value
-                    .chars()
-                    .any(|c| c.is_control() && c != '\t' && c != '\n' && c != '\r')
-                {
-                    return Err(Error::InvalidArgument(
-                        "Configuration value contains invalid characters".to_string(),
-                    ));
-                }
-                Ok(value.to_string())
-            }
-        }
-    }
+    // /// Validate configuration value
+    // pub fn validate_config_value(key: &str, value: &str) -> Result<String> {
+    //     match key {
+    //         "AVORED_LDAP_SERVER" => Self::validate_server_url(value),
+    //         "AVORED_LDAP_BASE_DN" | "AVORED_LDAP_BIND_DN" | "AVORED_LDAP_USER_SEARCH_BASE" => {
+    //             Self::validate_dn(value)
+    //         }
+    //         "AVORED_LDAP_USER_SEARCH_FILTER" => Self::validate_ldap_filter(value),
+    //         "AVORED_LDAP_PORT" => {
+    //             let port: u16 = value
+    //                 .parse()
+    //                 .map_err(|_| Error::InvalidArgument("Invalid port number".to_string()))?;
+    //             if port == 0 {
+    //                 return Err(Error::InvalidArgument("Port cannot be zero".to_string()));
+    //             }
+    //             Ok(value.to_string())
+    //         }
+    //         "AVORED_LDAP_CONNECTION_TIMEOUT" | "AVORED_LDAP_SEARCH_TIMEOUT" => {
+    //             let timeout: u64 = value
+    //                 .parse()
+    //                 .map_err(|_| Error::InvalidArgument("Invalid timeout value".to_string()))?;
+    //             if timeout == 0 || timeout > 300 {
+    //                 return Err(Error::InvalidArgument(
+    //                     "Timeout must be between 1 and 300 seconds".to_string(),
+    //                 ));
+    //             }
+    //             Ok(value.to_string())
+    //         }
+    //         "AVORED_LDAP_USE_TLS" | "AVORED_LDAP_ENABLED" => {
+    //             value
+    //                 .parse::<bool>()
+    //                 .map_err(|_| Error::InvalidArgument("Invalid boolean value".to_string()))?;
+    //             Ok(value.to_string())
+    //         }
+    //         _ => {
+    //             // Generic validation for other config values
+    //             if value.len() > 1024 {
+    //                 return Err(Error::InvalidArgument(
+    //                     "Configuration value too long".to_string(),
+    //                 ));
+    //             }
+    //             if value
+    //                 .chars()
+    //                 .any(|c| c.is_control() && c != '\t' && c != '\n' && c != '\r')
+    //             {
+    //                 return Err(Error::InvalidArgument(
+    //                     "Configuration value contains invalid characters".to_string(),
+    //                 ));
+    //             }
+    //             Ok(value.to_string())
+    //         }
+    //     }
+    // }
 
-    /// Sanitize log message to prevent log injection
-    pub fn sanitize_log_message(message: &str) -> String {
-        message
-            .chars()
-            .filter(|&c| !c.is_control() || c == ' ')
-            .collect::<String>()
-            .replace('\n', " ")
-            .replace('\r', " ")
-            .replace('\t', " ")
-    }
+    // /// Sanitize log message to prevent log injection
+    // pub fn sanitize_log_message(message: &str) -> String {
+    //     message
+    //         .chars()
+    //         .filter(|&c| !c.is_control() || c == ' ')
+    //         .collect::<String>()
+    //         .replace('\n', " ")
+    //         .replace('\r', " ")
+    //         .replace('\t', " ")
+    // }
 }
 
 #[cfg(test)]

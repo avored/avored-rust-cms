@@ -21,12 +21,14 @@ use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::content_repository::ContentRepository;
 use crate::PER_PAGE;
 
+/// content service
 pub struct ContentService {
     content_repository: ContentRepository,
     collection_repository: CollectionRepository,
 }
 
 impl ContentService {
+    /// collection all for contents
     pub async fn collection_all(
         &self,
         (datastore, database_session): &DB,
@@ -50,6 +52,7 @@ impl ContentService {
         Ok(collection_all_response)
     }
 
+    /// content paginate 
     pub async fn content_paginate(
         &self,
         request: ContentPaginateRequest,
@@ -110,6 +113,7 @@ impl ContentService {
         Ok(content_paginate_response)
     }
 
+    /// store content
     pub async fn store_content(
         &self,
         request: StoreContentRequest,
@@ -150,6 +154,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// get content
     pub async fn get_content(
         &self,
         request: GetContentRequest,
@@ -174,6 +179,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// update content
     pub async fn update_content(
         &self,
         (datastore, database_session): &DB,
@@ -217,6 +223,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// put content identifier
     pub async fn put_content_identifier(
         &self,
         (datastore, database_session): &DB,
@@ -243,6 +250,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// get connections
     pub async fn get_collection(
         &self,
         (datastore, database_session): &DB,
@@ -262,6 +270,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// store collections
     pub async fn store_collection(
         &self,
         (datastore, database_session): &DB,
@@ -288,6 +297,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// update collection
     pub async fn update_collection(
         &self,
         (datastore, database_session): &DB,
@@ -315,6 +325,7 @@ impl ContentService {
         Ok(response)
     }
 
+    /// count of identifier
     pub(crate) async fn count_of_identifier(
         &self,
         (datastore, database_session): &DB,
@@ -326,6 +337,7 @@ impl ContentService {
             .await
     }
 
+    /// count of collection
     pub(crate) async fn count_of_collection(
         &self,
         (datastore, database_session): &DB,
@@ -336,6 +348,7 @@ impl ContentService {
             .await
     }
 
+    /// delete content
     pub(crate) async fn delete_content(
         &self,
         (datastore, database_session): &DB,
@@ -437,6 +450,7 @@ impl ContentService {
     //         })
     //     }
 
+    /// new instance for collection service
     pub fn new(
         content_repository: ContentRepository,
         collection_repository: CollectionRepository,

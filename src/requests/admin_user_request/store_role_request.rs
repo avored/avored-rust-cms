@@ -4,6 +4,7 @@ use crate::models::validation_error::{ErrorMessage, ErrorResponse};
 use rust_i18n::t;
 
 impl StoreRoleRequest {
+    /// validate
     pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;

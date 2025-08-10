@@ -6,11 +6,13 @@ use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use async_trait::async_trait;
 use tracing::{error, info};
 
+/// local auth service
 pub struct LocalAuthService {
     admin_user_repository: AdminUserRepository,
 }
 
 impl LocalAuthService {
+    /// create new instance for local auth service
     pub fn new(admin_user_repository: AdminUserRepository) -> Self {
         Self {
             admin_user_repository,

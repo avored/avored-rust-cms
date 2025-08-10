@@ -12,6 +12,7 @@ use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tracing::{debug, error, info, warn};
 
+/// ldap auth service
 pub struct LdapAuthService {
     config: Arc<LdapConfig>,
     admin_user_repository: AdminUserRepository,
@@ -21,6 +22,7 @@ pub struct LdapAuthService {
 }
 
 impl LdapAuthService {
+    /// new instance ldap auth service
     pub fn new(config: LdapConfig, admin_user_repository: AdminUserRepository) -> Self {
         let config_arc = Arc::new(config);
         let connection_pool = Arc::new(LdapConnectionPool::new((*config_arc).clone(), 10)); // Max 10 connections
@@ -36,36 +38,37 @@ impl LdapAuthService {
         }
     }
 
-    pub async fn create_ldap_connection(&self) -> Result<Ldap> {
-        let ldap_url = self.config.get_ldap_url();
+    // /// create ldap connection
+    // pub async fn create_ldap_connection(&self) -> Result<Ldap> {
+    //     let ldap_url = self.config.get_ldap_url();
 
-        let settings = LdapConnSettings::new()
-            .set_conn_timeout(Duration::from_secs(self.config.connection_timeout));
+    //     let settings = LdapConnSettings::new()
+    //         .set_conn_timeout(Duration::from_secs(self.config.connection_timeout));
 
-        let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
-            .await
-            .map_err(|e| {
-                error!("Failed to connect to LDAP server {}: {}", ldap_url, e);
-                Error::LdapConnectionError(format!("Connection failed: {}", e))
-            })?;
+    //     let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
+    //         .await
+    //         .map_err(|e| {
+    //             error!("Failed to connect to LDAP server {}: {}", ldap_url, e);
+    //             Error::LdapConnectionError(format!("Connection failed: {}", e))
+    //         })?;
 
-        // Start the connection
-        ldap3::drive!(conn);
+    //     // Start the connection
+    //     ldap3::drive!(conn);
 
-        // Bind with service account
-        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password)
-            .await
-            .map_err(|e| {
-                error!(
-                    "Failed to bind to LDAP server with DN {}: {}",
-                    self.config.bind_dn, e
-                );
-                Error::LdapAuthenticationError(format!("Bind failed: {}", e))
-            })?;
+    //     // Bind with service account
+    //     ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password)
+    //         .await
+    //         .map_err(|e| {
+    //             error!(
+    //                 "Failed to bind to LDAP server with DN {}: {}",
+    //                 self.config.bind_dn, e
+    //             );
+    //             Error::LdapAuthenticationError(format!("Bind failed: {}", e))
+    //         })?;
 
-        info!("Successfully connected and bound to LDAP server");
-        Ok(ldap)
-    }
+    //     info!("Successfully connected and bound to LDAP server");
+    //     Ok(ldap)
+    // }
 
     async fn search_user(&self, ldap: &mut Ldap, username: &str) -> Result<Option<LdapUser>> {
         // Validate and sanitize username input

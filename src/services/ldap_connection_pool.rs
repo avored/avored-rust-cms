@@ -12,7 +12,7 @@ pub struct LdapConnectionPool {
     config: Arc<LdapConfig>,
     pool: Arc<Mutex<VecDeque<PooledConnection>>>,
     semaphore: Arc<Semaphore>,
-    max_connections: usize,
+    // max_connections: usize,
     max_idle_time: Duration,
 }
 
@@ -23,12 +23,13 @@ struct PooledConnection {
 }
 
 impl LdapConnectionPool {
+    /// new instance ldap connection pool
     pub fn new(config: LdapConfig, max_connections: usize) -> Self {
         Self {
             config: Arc::new(config),
             pool: Arc::new(Mutex::new(VecDeque::new())),
             semaphore: Arc::new(Semaphore::new(max_connections)),
-            max_connections,
+            // max_connections,
             max_idle_time: Duration::from_secs(300), // 5 minutes
         }
     }
@@ -50,7 +51,7 @@ impl LdapConnectionPool {
             debug!("Reusing pooled LDAP connection");
             return Ok(PooledLdapConnection {
                 connection: pooled_conn.connection,
-                pool: self.pool.clone(),
+                // pool: self.pool.clone(),
                 _permit: permit,
             });
         }
@@ -63,7 +64,7 @@ impl LdapConnectionPool {
 
         Ok(PooledLdapConnection {
             connection,
-            pool: self.pool.clone(),
+            // pool: self.pool.clone(),
             _permit: permit,
         })
     }
@@ -115,21 +116,21 @@ impl LdapConnectionPool {
         }
     }
 
-    /// Get pool statistics for monitoring
-    pub async fn get_stats(&self) -> PoolStats {
-        let pool = self.pool.lock().await;
-        PoolStats {
-            active_connections: self.max_connections - self.semaphore.available_permits(),
-            idle_connections: pool.len(),
-            max_connections: self.max_connections,
-        }
-    }
+    // /// Get pool statistics for monitoring
+    // pub async fn get_stats(&self) -> PoolStats {
+    //     let pool = self.pool.lock().await;
+    //     PoolStats {
+    //         active_connections: self.max_connections - self.semaphore.available_permits(),
+    //         idle_connections: pool.len(),
+    //         max_connections: self.max_connections,
+    //     }
+    // }
 }
 
 /// A connection borrowed from the pool
 pub struct PooledLdapConnection {
     connection: Ldap,
-    pool: Arc<Mutex<VecDeque<PooledConnection>>>,
+    // pool: Arc<Mutex<VecDeque<PooledConnection>>>,
     _permit: tokio::sync::OwnedSemaphorePermit,
 }
 
@@ -139,10 +140,10 @@ impl PooledLdapConnection {
         &mut self.connection
     }
 
-    /// Get pool statistics (for monitoring purposes)
-    pub async fn pool_size(&self) -> usize {
-        self.pool.lock().await.len()
-    }
+    // /// Get pool statistics (for monitoring purposes)
+    // pub async fn pool_size(&self) -> usize {
+    //     self.pool.lock().await.len()
+    // }
 }
 
 impl Drop for PooledLdapConnection {
@@ -154,12 +155,17 @@ impl Drop for PooledLdapConnection {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct PoolStats {
-    pub active_connections: usize,
-    pub idle_connections: usize,
-    pub max_connections: usize,
-}
+
+// /// pool stats
+// #[derive(Debug, Clone)]
+// pub struct PoolStats {
+//     /// active connections
+//     pub active_connections: usize,
+//     /// idle connections
+//     pub idle_connections: usize,
+//     /// max connections
+//     pub max_connections: usize,
+// }
 
 /// Rate limiter for authentication attempts
 pub struct AuthRateLimiter {
@@ -169,6 +175,7 @@ pub struct AuthRateLimiter {
 }
 
 impl AuthRateLimiter {
+    /// new instance for auth rate limiter
     pub fn new(max_attempts: usize, window_duration: Duration) -> Self {
         Self {
             attempts: Arc::new(Mutex::new(std::collections::HashMap::new())),
@@ -201,17 +208,17 @@ impl AuthRateLimiter {
         true
     }
 
-    /// Get remaining attempts for an identifier
-    pub async fn remaining_attempts(&self, identifier: &str) -> usize {
-        let attempts = self.attempts.lock().await;
-        let now = Instant::now();
-        let cutoff = now - self.window_duration;
+    // /// Get remaining attempts for an identifier
+    // pub async fn remaining_attempts(&self, identifier: &str) -> usize {
+    //     let attempts = self.attempts.lock().await;
+    //     let now = Instant::now();
+    //     let cutoff = now - self.window_duration;
 
-        if let Some(user_attempts) = attempts.get(identifier) {
-            let recent_attempts = user_attempts.iter().filter(|&&t| t > cutoff).count();
-            self.max_attempts.saturating_sub(recent_attempts)
-        } else {
-            self.max_attempts
-        }
-    }
+    //     if let Some(user_attempts) = attempts.get(identifier) {
+    //         let recent_attempts = user_attempts.iter().filter(|&&t| t > cutoff).count();
+    //         self.max_attempts.saturating_sub(recent_attempts)
+    //     } else {
+    //         self.max_attempts
+    //     }
+    // }
 }
