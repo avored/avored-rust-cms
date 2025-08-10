@@ -59,8 +59,7 @@ mod security_property_tests {
             let input = format!("test{}user", control_char as char);
             assert!(
                 InputValidationService::validate_username(&input).is_err(),
-                "Control character {} should be rejected",
-                control_char
+                "Control character {control_char} should be rejected"
             );
         }
     }
@@ -79,11 +78,10 @@ mod security_property_tests {
         ];
 
         for pattern in sql_patterns {
-            let input = format!("user{}", pattern);
+            let input = format!("user{pattern}");
             assert!(
                 InputValidationService::validate_username(&input).is_err(),
-                "SQL injection pattern '{}' should be blocked",
-                pattern
+                "SQL injection pattern '{pattern}' should be blocked"
             );
         }
 
@@ -101,11 +99,10 @@ mod security_property_tests {
         ];
 
         for pattern in ldap_patterns {
-            let input = format!("user{}", pattern);
+            let input = format!("user{pattern}");
             assert!(
                 InputValidationService::validate_username(&input).is_err(),
-                "LDAP injection pattern '{}' should be blocked",
-                pattern
+                "LDAP injection pattern '{pattern}' should be blocked"
             );
         }
     }

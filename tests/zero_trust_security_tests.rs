@@ -1,8 +1,8 @@
 //! Crate-level documentation:
-//! This crate contains Zero Trust Security Tests for avored_rust_cms.
+//! This crate contains Zero Trust Security Tests for `avored_rust_cms`.
 //! It validates the "never trust, always verify" principle and ensures all security assumptions are tested and validated.
 //!
-//! NOTE: This file is excluded from CodeQL cleartext-logging analysis
+//! NOTE: This file is excluded from `CodeQL` cleartext-logging analysis
 //! because it intentionally logs test data and mock credentials for
 //! validation purposes. No real sensitive information is logged.
 

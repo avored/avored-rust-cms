@@ -25,17 +25,14 @@ mod input_validation_security_tests {
 
         for input in malicious_inputs {
             let result = InputValidationService::sanitize_ldap_value(input);
-            match result {
-                Ok(sanitized) => {
-                    // Verify that special characters are properly escaped
-                    assert!(!sanitized.contains('*') || sanitized.contains("\\2a"));
-                    assert!(!sanitized.contains('(') || sanitized.contains("\\28"));
-                    assert!(!sanitized.contains(')') || sanitized.contains("\\29"));
-                    assert!(!sanitized.contains('\\') || sanitized.contains("\\5c"));
-                }
-                Err(_) => {
-                    // Input was rejected, which is also acceptable
-                }
+            if let Ok(sanitized) = result {
+                // Verify that special characters are properly escaped
+                assert!(!sanitized.contains('*') || sanitized.contains("\\2a"));
+                assert!(!sanitized.contains('(') || sanitized.contains("\\28"));
+                assert!(!sanitized.contains(')') || sanitized.contains("\\29"));
+                assert!(!sanitized.contains('\\') || sanitized.contains("\\5c"));
+            } else {
+                // Input was rejected, which is also acceptable
             }
         }
     }
@@ -55,8 +52,7 @@ mod input_validation_security_tests {
             let result = InputValidationService::validate_username(payload);
             assert!(
                 result.is_err(),
-                "SQL injection payload should be rejected: {}",
-                payload
+                "SQL injection payload should be rejected: {payload}"
             );
         }
     }
@@ -75,8 +71,7 @@ mod input_validation_security_tests {
             let result = InputValidationService::validate_username(payload);
             assert!(
                 result.is_err(),
-                "XSS payload should be rejected: {}",
-                payload
+                "XSS payload should be rejected: {payload}"
             );
         }
     }
@@ -89,8 +84,7 @@ mod input_validation_security_tests {
             let result = InputValidationService::validate_username(payload);
             assert!(
                 result.is_err(),
-                "Null byte injection should be rejected: {:?}",
-                payload
+                "Null byte injection should be rejected: {payload:?}"
             );
         }
     }
@@ -103,13 +97,12 @@ mod input_validation_security_tests {
                 continue;
             } // Skip tab, LF, CR for some contexts
             let control_char = char::from(i);
-            let payload = format!("admin{}", control_char);
+            let payload = format!("admin{control_char}");
 
             let result = InputValidationService::validate_username(&payload);
             assert!(
                 result.is_err(),
-                "Control character should be rejected: {:?}",
-                control_char
+                "Control character should be rejected: {control_char:?}"
             );
         }
     }
@@ -196,7 +189,7 @@ mod ldap_config_security_tests {
             search_timeout: 30,
         };
 
-        let debug_output = format!("{:?}", config);
+        let debug_output = format!("{config:?}");
 
         // Verify sensitive data is redacted
         assert!(!debug_output.contains("secret-server.com"));
@@ -244,15 +237,12 @@ mod ldap_config_security_tests {
         let malicious_username = "admin)(|(objectClass=*)";
         let result = config.get_user_search_filter(malicious_username);
 
-        match result {
-            Ok(filter) => {
-                // Verify that the filter doesn't contain unescaped special characters
-                assert!(!filter.contains(")(|"));
-                assert!(!filter.contains("objectClass"));
-            }
-            Err(_) => {
-                // Input was rejected, which is acceptable
-            }
+        if let Ok(filter) = result {
+            // Verify that the filter doesn't contain unescaped special characters
+            assert!(!filter.contains(")(|"));
+            assert!(!filter.contains("objectClass"));
+        } else {
+            // Input was rejected, which is acceptable
         }
     }
 }

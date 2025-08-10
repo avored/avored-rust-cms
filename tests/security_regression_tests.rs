@@ -30,8 +30,7 @@ mod security_regression_prevention {
         for injection in critical_injections {
             let result = InputValidationService::validate_username(injection);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: LDAP injection '{}' was not blocked! This indicates the LDAP injection prevention has been disabled or weakened.", 
-                injection);
+                "SECURITY REGRESSION: LDAP injection '{injection}' was not blocked! This indicates the LDAP injection prevention has been disabled or weakened.");
         }
     }
 
@@ -51,8 +50,7 @@ mod security_regression_prevention {
         for injection in sql_injections {
             let result = InputValidationService::validate_username(injection);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: SQL injection '{}' was not blocked! This indicates SQL injection prevention has been disabled or weakened.", 
-                injection);
+                "SECURITY REGRESSION: SQL injection '{injection}' was not blocked! This indicates SQL injection prevention has been disabled or weakened.");
         }
     }
 
@@ -72,8 +70,7 @@ mod security_regression_prevention {
         for payload in xss_payloads {
             let result = InputValidationService::validate_username(payload);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: XSS payload '{}' was not blocked! This indicates XSS prevention has been disabled or weakened.", 
-                payload);
+                "SECURITY REGRESSION: XSS payload '{payload}' was not blocked! This indicates XSS prevention has been disabled or weakened.");
         }
     }
 
@@ -92,8 +89,7 @@ mod security_regression_prevention {
         for traversal in path_traversals {
             let result = InputValidationService::validate_username(traversal);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: Path traversal '{}' was not blocked! This indicates path traversal prevention has been disabled or weakened.", 
-                traversal);
+                "SECURITY REGRESSION: Path traversal '{traversal}' was not blocked! This indicates path traversal prevention has been disabled or weakened.");
         }
     }
 
@@ -114,8 +110,7 @@ mod security_regression_prevention {
         for injection in command_injections {
             let result = InputValidationService::validate_username(injection);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: Command injection '{}' was not blocked! This indicates command injection prevention has been disabled or weakened.", 
-                injection);
+                "SECURITY REGRESSION: Command injection '{injection}' was not blocked! This indicates command injection prevention has been disabled or weakened.");
         }
     }
 
@@ -133,8 +128,7 @@ mod security_regression_prevention {
         for injection in jndi_injections {
             let result = InputValidationService::validate_username(injection);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: JNDI injection '{}' was not blocked! This indicates JNDI injection prevention has been disabled or weakened.", 
-                injection);
+                "SECURITY REGRESSION: JNDI injection '{injection}' was not blocked! This indicates JNDI injection prevention has been disabled or weakened.");
         }
     }
 
@@ -152,8 +146,7 @@ mod security_regression_prevention {
         for injection in null_byte_injections {
             let result = InputValidationService::validate_username(injection);
             assert!(result.is_err(),
-                "SECURITY REGRESSION: Null byte injection '{}' was not blocked! This indicates null byte injection prevention has been disabled or weakened.", 
-                injection);
+                "SECURITY REGRESSION: Null byte injection '{injection}' was not blocked! This indicates null byte injection prevention has been disabled or weakened.");
         }
     }
 
@@ -211,8 +204,7 @@ mod security_regression_prevention {
         // All responses must take at least 100ms to prevent timing attacks
         for (i, timing) in timings.iter().enumerate() {
             assert!(timing >= &Duration::from_millis(100),
-                "SECURITY REGRESSION: Response {} was too fast ({:?}). This indicates timing attack prevention has been disabled or weakened.", 
-                i, timing);
+                "SECURITY REGRESSION: Response {i} was too fast ({timing:?}). This indicates timing attack prevention has been disabled or weakened.");
         }
 
         // Variance should be minimal
@@ -221,8 +213,7 @@ mod security_regression_prevention {
         let variance = max_time.as_millis() - min_time.as_millis();
 
         assert!(variance < 100,
-            "SECURITY REGRESSION: Timing variance is too high ({}ms). This could allow timing attacks and indicates timing consistency has been weakened.", 
-            variance);
+            "SECURITY REGRESSION: Timing variance is too high ({variance}ms). This could allow timing attacks and indicates timing consistency has been weakened.");
     }
 
     // /// Test that security audit logging cannot be disabled

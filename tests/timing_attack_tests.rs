@@ -24,7 +24,7 @@ mod timing_attack_prevention_tests {
 
         for (input, _expected_valid) in test_cases {
             let start = Instant::now();
-            let _result = InputValidationService::validate_username(&input);
+            let _result = InputValidationService::validate_username(input);
             let duration = start.elapsed();
             timings.push(duration);
         }
@@ -38,17 +38,16 @@ mod timing_attack_prevention_tests {
         let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
 
         println!("Timing analysis:");
-        println!("  Min: {:?}", min_time);
-        println!("  Max: {:?}", max_time);
-        println!("  Avg: {:?}", avg_time);
-        println!("  Variance ratio: {:.2}", variance_ratio);
+        println!("  Min: {min_time:?}");
+        println!("  Max: {max_time:?}");
+        println!("  Avg: {avg_time:?}");
+        println!("  Variance ratio: {variance_ratio:.2}");
 
         // In a real implementation, we might want stricter timing consistency
         // For now, we just ensure it's not wildly different
         assert!(
             variance_ratio < 10.0,
-            "Timing variance too high: {:.2}",
-            variance_ratio
+            "Timing variance too high: {variance_ratio:.2}"
         );
     }
 
@@ -70,7 +69,7 @@ mod timing_attack_prevention_tests {
 
         for username in test_usernames {
             let start = Instant::now();
-            let _result = config.get_user_search_filter(&username);
+            let _result = config.get_user_search_filter(username);
             let duration = start.elapsed();
             timings.push(duration);
         }
@@ -81,15 +80,14 @@ mod timing_attack_prevention_tests {
         let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
 
         println!("LDAP filter timing analysis:");
-        println!("  Min: {:?}", min_time);
-        println!("  Max: {:?}", max_time);
-        println!("  Variance ratio: {:.2}", variance_ratio);
+        println!("  Min: {min_time:?}");
+        println!("  Max: {max_time:?}");
+        println!("  Variance ratio: {variance_ratio:.2}");
 
         // Timing should be relatively consistent
         assert!(
             variance_ratio < 5.0,
-            "LDAP filter timing variance too high: {:.2}",
-            variance_ratio
+            "LDAP filter timing variance too high: {variance_ratio:.2}"
         );
     }
 
@@ -130,8 +128,7 @@ mod timing_attack_prevention_tests {
         for timing in &timings {
             assert!(
                 timing >= &Duration::from_millis(100),
-                "Response time too fast: {:?}",
-                timing
+                "Response time too fast: {timing:?}"
             );
         }
 
@@ -141,15 +138,14 @@ mod timing_attack_prevention_tests {
         let variance = max_time.as_millis() - min_time.as_millis();
 
         println!("Authentication timing analysis:");
-        println!("  Min: {:?}", min_time);
-        println!("  Max: {:?}", max_time);
-        println!("  Variance: {}ms", variance);
+        println!("  Min: {min_time:?}");
+        println!("  Max: {max_time:?}");
+        println!("  Variance: {variance}ms");
 
         // Variance should be small (within 50ms)
         assert!(
             variance < 50,
-            "Authentication timing variance too high: {}ms",
-            variance
+            "Authentication timing variance too high: {variance}ms"
         );
     }
 
@@ -169,7 +165,7 @@ mod timing_attack_prevention_tests {
 
         for input in error_scenarios {
             let start = Instant::now();
-            let _result = InputValidationService::validate_username(&input);
+            let _result = InputValidationService::validate_username(input);
             let duration = start.elapsed();
             timings.push(duration);
         }
@@ -180,15 +176,14 @@ mod timing_attack_prevention_tests {
         let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
 
         println!("Error message timing analysis:");
-        println!("  Min: {:?}", min_time);
-        println!("  Max: {:?}", max_time);
-        println!("  Variance ratio: {:.2}", variance_ratio);
+        println!("  Min: {min_time:?}");
+        println!("  Max: {max_time:?}");
+        println!("  Variance ratio: {variance_ratio:.2}");
 
         // Error generation should be consistent
         assert!(
             variance_ratio < 3.0,
-            "Error message timing variance too high: {:.2}",
-            variance_ratio
+            "Error message timing variance too high: {variance_ratio:.2}"
         );
     }
 
@@ -261,7 +256,7 @@ mod side_channel_attack_prevention_tests {
                 let duration = start.elapsed();
 
                 timings_by_type
-                    .entry(input_type.to_string())
+                    .entry((*input_type).to_string())
                     .or_insert_with(Vec::new)
                     .push(duration);
             }
@@ -272,7 +267,7 @@ mod side_channel_attack_prevention_tests {
         for (input_type, timings) in timings_by_type {
             let avg: Duration = timings.iter().sum::<Duration>() / timings.len() as u32;
             avg_timings.push((input_type.clone(), avg));
-            println!("Average timing for {}: {:?}", input_type, avg);
+            println!("Average timing for {input_type}: {avg:?}");
         }
 
         // Verify that timing differences between input types are minimal
@@ -280,13 +275,12 @@ mod side_channel_attack_prevention_tests {
         let max_avg = avg_timings.iter().map(|(_, t)| t).max().unwrap();
         let variance_ratio = max_avg.as_nanos() as f64 / min_avg.as_nanos() as f64;
 
-        println!("Overall timing variance ratio: {:.2}", variance_ratio);
+        println!("Overall timing variance ratio: {variance_ratio:.2}");
 
         // Different validation failures should not have significantly different timings
         assert!(
             variance_ratio < 5.0,
-            "Timing variance between input types too high: {:.2}",
-            variance_ratio
+            "Timing variance between input types too high: {variance_ratio:.2}"
         );
     }
 
@@ -319,13 +313,12 @@ mod side_channel_attack_prevention_tests {
         let max_time = timings.iter().max().unwrap();
         let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
 
-        println!("String validation timing variance: {:.2}", variance_ratio);
+        println!("String validation timing variance: {variance_ratio:.2}");
 
         // Should not leak information about validation progress
         assert!(
             variance_ratio < 3.0,
-            "String validation timing variance too high: {:.2}",
-            variance_ratio
+            "String validation timing variance too high: {variance_ratio:.2}"
         );
     }
 }

@@ -33,20 +33,18 @@ mod basic_security_tests {
                 || null_byte_pattern.is_match(input)
                 || jndi_injection_pattern.is_match(input);
 
-            assert!(is_malicious, "Failed to detect malicious input: {}", input);
+            assert!(is_malicious, "Failed to detect malicious input: {input}");
         }
     }
 
     /// Test that valid inputs are not flagged as malicious
     #[test]
     fn test_valid_input_acceptance() {
-        let valid_inputs = vec![
-            "admin",
+        let valid_inputs = ["admin",
             "user123",
             "test@example.com",
             "ValidPassword123!",
-            "normal_username",
-        ];
+            "normal_username"];
 
         // These patterns should be more restrictive for valid input
         let valid_username_pattern = Regex::new(r"^[a-zA-Z0-9_.-]+$").unwrap();
@@ -58,14 +56,12 @@ mod basic_security_tests {
             if input.contains('@') {
                 assert!(
                     valid_email_pattern.is_match(input),
-                    "Valid email rejected: {}",
-                    input
+                    "Valid email rejected: {input}"
                 );
             } else {
                 assert!(
                     valid_username_pattern.is_match(input),
-                    "Valid username rejected: {}",
-                    input
+                    "Valid username rejected: {input}"
                 );
             }
         }
@@ -103,7 +99,7 @@ mod basic_security_tests {
 
         // All timings should be at least the minimum duration
         for timing in &timings {
-            assert!(timing >= &min_duration, "Timing too fast: {:?}", timing);
+            assert!(timing >= &min_duration, "Timing too fast: {timing:?}");
         }
 
         // Variance should be minimal
@@ -111,7 +107,7 @@ mod basic_security_tests {
         let max_time = timings.iter().max().unwrap();
         let variance = max_time.as_millis() - min_time.as_millis();
 
-        assert!(variance < 50, "Timing variance too high: {}ms", variance);
+        assert!(variance < 50, "Timing variance too high: {variance}ms");
     }
 
     /// Simulate input validation
@@ -178,7 +174,7 @@ mod basic_security_tests {
                 let attempts = self
                     .attempts
                     .entry(identifier.to_string())
-                    .or_insert_with(Vec::new);
+                    .or_default();
 
                 // Remove old attempts
                 attempts.retain(|&timestamp| now - timestamp < self.window_seconds);
@@ -303,24 +299,19 @@ mod basic_security_tests {
                 for term in forbidden_terms {
                     assert!(
                         !error_message.to_lowercase().contains(&term.to_lowercase()),
-                        "Error message for {} leaks detection info: contains '{}'",
-                        attack_type,
-                        term
+                        "Error message for {attack_type} leaks detection info: contains '{term}'"
                     );
                 }
 
                 // Error message should be one of the expected generic messages
-                let allowed_messages = vec![
-                    "Invalid input detected",
+                let allowed_messages = ["Invalid input detected",
                     "Input cannot be empty",
-                    "Input too long",
-                ];
+                    "Input too long"];
                 assert!(
                     allowed_messages
                         .iter()
                         .any(|&allowed| error_message.contains(allowed)),
-                    "Error message is not generic enough: {}",
-                    error_message
+                    "Error message is not generic enough: {error_message}"
                 );
             }
         }
