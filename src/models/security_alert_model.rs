@@ -43,116 +43,116 @@ pub enum AlertType {
 
 impl Default for AlertType {
     fn default() -> Self {
-        AlertType::SuspiciousActivity
+        Self::SuspiciousActivity
     }
 }
 
 impl AlertType {
 
     /// Converts the alert type to a string representation
-    pub fn as_str(&self) -> &'static str {
+    pub const fn as_str(&self) -> &'static str {
         match self {
-            AlertType::AuthenticationFailure => "authentication_failure",
-            AlertType::InjectionAttempt => "injection_attempt",
-            AlertType::RateLimitExceeded => "rate_limit_exceeded",
-            AlertType::SuspiciousActivity => "suspicious_activity",
-            AlertType::PrivilegeEscalation => "privilege_escalation",
-            AlertType::DataBreachAttempt => "data_breach_attempt",
-            AlertType::UnauthorizedAccess => "unauthorized_access",
-            AlertType::MalformedRequest => "malformed_request",
-            AlertType::BruteForceAttack => "brute_force_attack",
-            AlertType::SessionHijacking => "session_hijacking",
+            Self::AuthenticationFailure => "authentication_failure",
+            Self::InjectionAttempt => "injection_attempt",
+            Self::RateLimitExceeded => "rate_limit_exceeded",
+            Self::SuspiciousActivity => "suspicious_activity",
+            Self::PrivilegeEscalation => "privilege_escalation",
+            Self::DataBreachAttempt => "data_breach_attempt",
+            Self::UnauthorizedAccess => "unauthorized_access",
+            Self::MalformedRequest => "malformed_request",
+            Self::BruteForceAttack => "brute_force_attack",
+            Self::SessionHijacking => "session_hijacking",
         }
     }
 
 
-    /// Converts a string to an AlertType
+    /// Converts a string to an `AlertType`
     pub fn from_str(s: &str) -> Result<Self> {
         match s {
-            "authentication_failure" => Ok(AlertType::AuthenticationFailure),
-            "injection_attempt" => Ok(AlertType::InjectionAttempt),
-            "rate_limit_exceeded" => Ok(AlertType::RateLimitExceeded),
-            "suspicious_activity" => Ok(AlertType::SuspiciousActivity),
-            "privilege_escalation" => Ok(AlertType::PrivilegeEscalation),
-            "data_breach_attempt" => Ok(AlertType::DataBreachAttempt),
-            "unauthorized_access" => Ok(AlertType::UnauthorizedAccess),
-            "malformed_request" => Ok(AlertType::MalformedRequest),
-            "brute_force_attack" => Ok(AlertType::BruteForceAttack),
-            "session_hijacking" => Ok(AlertType::SessionHijacking),
-            _ => Err(Error::Generic(format!("Invalid alert type: {}", s))),
+            "authentication_failure" => Ok(Self::AuthenticationFailure),
+            "injection_attempt" => Ok(Self::InjectionAttempt),
+            "rate_limit_exceeded" => Ok(Self::RateLimitExceeded),
+            "suspicious_activity" => Ok(Self::SuspiciousActivity),
+            "privilege_escalation" => Ok(Self::PrivilegeEscalation),
+            "data_breach_attempt" => Ok(Self::DataBreachAttempt),
+            "unauthorized_access" => Ok(Self::UnauthorizedAccess),
+            "malformed_request" => Ok(Self::MalformedRequest),
+            "brute_force_attack" => Ok(Self::BruteForceAttack),
+            "session_hijacking" => Ok(Self::SessionHijacking),
+            _ => Err(Error::Generic(format!("Invalid alert type: {s}"))),
         }
     }
 
-    /// Converts a gRPC AlertType to an AlertType
-    pub fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
+    /// Converts a gRPC `AlertType` to an `AlertType`
+    pub const fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
         match grpc_type {
             crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
-                AlertType::AuthenticationFailure
+                Self::AuthenticationFailure
             }
             crate::api::proto::security_audit::AlertType::InjectionAttempt => {
-                AlertType::InjectionAttempt
+                Self::InjectionAttempt
             }
             crate::api::proto::security_audit::AlertType::RateLimitExceeded => {
-                AlertType::RateLimitExceeded
+                Self::RateLimitExceeded
             }
             crate::api::proto::security_audit::AlertType::SuspiciousActivity => {
-                AlertType::SuspiciousActivity
+                Self::SuspiciousActivity
             }
             crate::api::proto::security_audit::AlertType::PrivilegeEscalation => {
-                AlertType::PrivilegeEscalation
+                Self::PrivilegeEscalation
             }
             crate::api::proto::security_audit::AlertType::DataBreachAttempt => {
-                AlertType::DataBreachAttempt
+                Self::DataBreachAttempt
             }
             crate::api::proto::security_audit::AlertType::UnauthorizedAccess => {
-                AlertType::UnauthorizedAccess
+                Self::UnauthorizedAccess
             }
             crate::api::proto::security_audit::AlertType::MalformedRequest => {
-                AlertType::MalformedRequest
+                Self::MalformedRequest
             }
             crate::api::proto::security_audit::AlertType::BruteForceAttack => {
-                AlertType::BruteForceAttack
+                Self::BruteForceAttack
             }
             crate::api::proto::security_audit::AlertType::SessionHijacking => {
-                AlertType::SessionHijacking
+                Self::SessionHijacking
             }
             crate::api::proto::security_audit::AlertType::Unspecified => {
-                AlertType::SuspiciousActivity
+                Self::SuspiciousActivity
             } // Default fallback
         }
     }
 
-    /// Converts the AlertType to a gRPC AlertType
-    pub fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
+    /// Converts the `AlertType` to a gRPC `AlertType`
+    pub const fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
         match self {
-            AlertType::AuthenticationFailure => {
+            Self::AuthenticationFailure => {
                 crate::api::proto::security_audit::AlertType::AuthenticationFailure
             }
-            AlertType::InjectionAttempt => {
+            Self::InjectionAttempt => {
                 crate::api::proto::security_audit::AlertType::InjectionAttempt
             }
-            AlertType::RateLimitExceeded => {
+            Self::RateLimitExceeded => {
                 crate::api::proto::security_audit::AlertType::RateLimitExceeded
             }
-            AlertType::SuspiciousActivity => {
+            Self::SuspiciousActivity => {
                 crate::api::proto::security_audit::AlertType::SuspiciousActivity
             }
-            AlertType::PrivilegeEscalation => {
+            Self::PrivilegeEscalation => {
                 crate::api::proto::security_audit::AlertType::PrivilegeEscalation
             }
-            AlertType::DataBreachAttempt => {
+            Self::DataBreachAttempt => {
                 crate::api::proto::security_audit::AlertType::DataBreachAttempt
             }
-            AlertType::UnauthorizedAccess => {
+            Self::UnauthorizedAccess => {
                 crate::api::proto::security_audit::AlertType::UnauthorizedAccess
             }
-            AlertType::MalformedRequest => {
+            Self::MalformedRequest => {
                 crate::api::proto::security_audit::AlertType::MalformedRequest
             }
-            AlertType::BruteForceAttack => {
+            Self::BruteForceAttack => {
                 crate::api::proto::security_audit::AlertType::BruteForceAttack
             }
-            AlertType::SessionHijacking => {
+            Self::SessionHijacking => {
                 crate::api::proto::security_audit::AlertType::SessionHijacking
             }
         }
@@ -179,30 +179,30 @@ pub enum AlertSeverity {
 
 impl Default for AlertSeverity {
     fn default() -> Self {
-        AlertSeverity::Medium
+        Self::Medium
     }
 }
 
 impl AlertSeverity {
     /// Converts the alert severity to a string representation
-    pub fn as_str(&self) -> &'static str {
+    pub const fn as_str(&self) -> &'static str {
         match self {
-            AlertSeverity::Low => "low",
-            AlertSeverity::Medium => "medium",
-            AlertSeverity::High => "high",
-            AlertSeverity::Critical => "critical",
+            Self::Low => "low",
+            Self::Medium => "medium",
+            Self::High => "high",
+            Self::Critical => "critical",
         }
     }
 
 
-    /// Converts a string to an AlertSeverity
+    /// Converts a string to an `AlertSeverity`
     pub fn from_str(s: &str) -> Result<Self> {
         match s {
-            "low" => Ok(AlertSeverity::Low),
-            "medium" => Ok(AlertSeverity::Medium),
-            "high" => Ok(AlertSeverity::High),
-            "critical" => Ok(AlertSeverity::Critical),
-            _ => Err(Error::Generic(format!("Invalid alert severity: {}", s))),
+            "low" => Ok(Self::Low),
+            "medium" => Ok(Self::Medium),
+            "high" => Ok(Self::High),
+            "critical" => Ok(Self::Critical),
+            _ => Err(Error::Generic(format!("Invalid alert severity: {s}"))),
         }
     }
 
@@ -216,26 +216,26 @@ impl AlertSeverity {
     //     }
     // }
 
-    /// Converts a gRPC AlertSeverity to an AlertSeverity
-    pub fn from_grpc_alert_severity(
+    /// Converts a gRPC `AlertSeverity` to an `AlertSeverity`
+    pub const fn from_grpc_alert_severity(
         grpc_severity: crate::api::proto::security_audit::AlertSeverity,
     ) -> Self {
         match grpc_severity {
-            crate::api::proto::security_audit::AlertSeverity::Low => AlertSeverity::Low,
-            crate::api::proto::security_audit::AlertSeverity::Medium => AlertSeverity::Medium,
-            crate::api::proto::security_audit::AlertSeverity::High => AlertSeverity::High,
-            crate::api::proto::security_audit::AlertSeverity::Critical => AlertSeverity::Critical,
-            crate::api::proto::security_audit::AlertSeverity::Unspecified => AlertSeverity::Medium, // Default fallback
+            crate::api::proto::security_audit::AlertSeverity::Low => Self::Low,
+            crate::api::proto::security_audit::AlertSeverity::Medium => Self::Medium,
+            crate::api::proto::security_audit::AlertSeverity::High => Self::High,
+            crate::api::proto::security_audit::AlertSeverity::Critical => Self::Critical,
+            crate::api::proto::security_audit::AlertSeverity::Unspecified => Self::Medium, // Default fallback
         }
     }
 
-    /// Converts the AlertSeverity to a gRPC AlertSeverity
-    pub fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {
+    /// Converts the `AlertSeverity` to a gRPC `AlertSeverity`
+    pub const fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {
         match self {
-            AlertSeverity::Low => crate::api::proto::security_audit::AlertSeverity::Low,
-            AlertSeverity::Medium => crate::api::proto::security_audit::AlertSeverity::Medium,
-            AlertSeverity::High => crate::api::proto::security_audit::AlertSeverity::High,
-            AlertSeverity::Critical => crate::api::proto::security_audit::AlertSeverity::Critical,
+            Self::Low => crate::api::proto::security_audit::AlertSeverity::Low,
+            Self::Medium => crate::api::proto::security_audit::AlertSeverity::Medium,
+            Self::High => crate::api::proto::security_audit::AlertSeverity::High,
+            Self::Critical => crate::api::proto::security_audit::AlertSeverity::Critical,
         }
     }
 }
@@ -326,7 +326,7 @@ pub struct SecurityAlertPaginationModel {
 impl TryFrom<Object> for SecurityAlertModel {
     type Error = Error;
 
-    fn try_from(val: Object) -> Result<SecurityAlertModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
 
         let alert_id = match val.get("alert_id") {
@@ -422,7 +422,7 @@ impl TryFrom<Object> for SecurityAlertModel {
             }
         };
 
-        Ok(SecurityAlertModel {
+        Ok(Self {
             id,
             alert_id,
             alert_type,
@@ -441,7 +441,7 @@ impl TryFrom<Object> for SecurityAlertModel {
 
 impl SecurityAlertModel {
     /// Converts to protobuf Timestamp
-    pub fn created_at_timestamp(&self) -> Timestamp {
+    #[must_use] pub fn created_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.created_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
         let duration = system_time
@@ -454,8 +454,8 @@ impl SecurityAlertModel {
         }
     }
 
-    /// Converts resolved_at to protobuf Timestamp
-    pub fn resolved_at_timestamp(&self) -> Option<Timestamp> {
+    /// Converts `resolved_at` to protobuf Timestamp
+    #[must_use] pub fn resolved_at_timestamp(&self) -> Option<Timestamp> {
         self.resolved_at.as_ref().map(|dt| {
             let chrono_utc = dt.to_utc();
             let system_time = SystemTime::from(chrono_utc);
@@ -529,7 +529,7 @@ impl TryFrom<SecurityAlertModel> for crate::api::proto::security_audit::Security
         let metadata_json = if let Some(ref metadata) = model.metadata {
             Some(
                 serde_json::to_string(&metadata)
-                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {}", e)))?,
+                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {e}")))?,
             )
         } else {
             None

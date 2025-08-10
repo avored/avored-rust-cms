@@ -52,11 +52,11 @@ pub struct AdminUserModel {
 impl TryFrom<AdminUserModel> for TokenClaims {
     type Error = Error;
 
-    fn try_from(val: AdminUserModel) -> Result<TokenClaims> {
+    fn try_from(val: AdminUserModel) -> Result<Self> {
         let now = chrono::Utc::now();
         let iat = now.timestamp() as usize;
         let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
-        let claims: TokenClaims = TokenClaims {
+        let claims: Self = Self {
             sub: val.clone().id,
             name: val.clone().full_name,
             email: val.clone().email,
@@ -72,7 +72,7 @@ impl TryFrom<AdminUserModel> for TokenClaims {
 impl TryFrom<AdminUserModel> for GrpcAdminUserModel {
     type Error = Error;
 
-    fn try_from(val: AdminUserModel) -> Result<GrpcAdminUserModel> {
+    fn try_from(val: AdminUserModel) -> Result<Self> {
         let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -88,7 +88,7 @@ impl TryFrom<AdminUserModel> for GrpcAdminUserModel {
             grpc_roles.push(grpc_role);
         }
 
-        let model: GrpcAdminUserModel = GrpcAdminUserModel {
+        let model: Self = Self {
             id: val.id,
             full_name: val.full_name,
             email: val.email,
@@ -107,7 +107,7 @@ impl TryFrom<AdminUserModel> for GrpcAdminUserModel {
 
 impl TryFrom<Object> for AdminUserModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<AdminUserModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let full_name = val.get("full_name").get_string()?;
         let email = val.get("email").get_string()?;
@@ -127,7 +127,7 @@ impl TryFrom<Object> for AdminUserModel {
                 Value::Array(v) => {
                     let mut arr = Vec::new();
 
-                    for array in v.into_iter() {
+                    for array in v {
                         let object = match array.clone() {
                             Value::Object(v) => v,
                             _ => Object::default(),
@@ -135,7 +135,7 @@ impl TryFrom<Object> for AdminUserModel {
 
                         let role_model: RoleModel = object.try_into()?;
 
-                        arr.push(role_model)
+                        arr.push(role_model);
                     }
                     arr
                 }
@@ -149,7 +149,7 @@ impl TryFrom<Object> for AdminUserModel {
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
 
-        Ok(AdminUserModel {
+        Ok(Self {
             id,
             full_name,
             email,
@@ -223,7 +223,7 @@ pub struct AdminUserPagination {
     pub pagination: Pagination,
 }
 
-/// Extension trait for AdminUserModel to check resource access
+/// Extension trait for `AdminUserModel` to check resource access
 pub trait AdminUserModelExtension {
     /// Checks if the user has access to a specific resource based on the permission identifier.
     fn check_user_has_resouce_access(

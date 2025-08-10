@@ -136,15 +136,15 @@ pub enum CollectionFieldFieldType {
 }
 
 impl Default for CollectionFieldDataType {
-    fn default() -> CollectionFieldDataType {
-        CollectionFieldDataType::Text("Text".to_string())
+    fn default() -> Self {
+        Self::Text("Text".to_string())
     }
 }
 
 impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
     type Error = Error;
 
-    fn try_from(val: CollectionModel) -> Result<crate::api::proto::content::CollectionModel> {
+    fn try_from(val: CollectionModel) -> Result<Self> {
         let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -153,7 +153,7 @@ impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
-        let model = crate::api::proto::content::CollectionModel {
+        let model = Self {
             id: val.id,
             name: val.name,
             identifier: val.identifier,
@@ -169,7 +169,7 @@ impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
 
 impl TryFrom<Object> for CollectionModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<CollectionModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
@@ -200,7 +200,7 @@ impl TryFrom<Object> for CollectionModel {
         //     None => Vec::new(),
         // };
 
-        Ok(CollectionModel {
+        Ok(Self {
             id,
             name,
             identifier,

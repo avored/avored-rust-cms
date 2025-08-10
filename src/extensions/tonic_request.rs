@@ -2,7 +2,7 @@ use crate::error::Error;
 use crate::models::token_claim_model::TokenClaims;
 use tonic::Request;
 
-/// tonic_request
+/// `tonic_request`
 pub trait TonicRequest {
     /// The error type returned by the trait methods.
     type Error;

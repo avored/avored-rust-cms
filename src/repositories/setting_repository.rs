@@ -9,10 +9,16 @@ use surrealdb::kvs::Datastore;
 #[derive(Clone)]
 pub struct SettingRepository {}
 
+impl Default for SettingRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SettingRepository {
     /// new instance
-    pub fn new() -> Self {
-        SettingRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
     /// all settings

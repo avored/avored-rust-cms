@@ -5,15 +5,15 @@ use crate::providers::avored_database_provider::DB;
 use std::sync::Arc;
 use tracing::{error, info, warn};
 
-/// MultiAuthService manages multiple authentication providers and attempts to authenticate users
+/// `MultiAuthService` manages multiple authentication providers and attempts to authenticate users
 pub struct MultiAuthService {
     providers: Vec<Arc<dyn AuthProvider>>,
 }
 
 impl MultiAuthService {
 
-    /// Creates a new MultiAuthService instance with no providers
-    pub fn new() -> Self {
+    /// Creates a new `MultiAuthService` instance with no providers
+    #[must_use] pub fn new() -> Self {
         Self {
             providers: Vec::new(),
         }

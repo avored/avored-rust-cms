@@ -11,7 +11,7 @@ use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
-/// AssetApi is the gRPC API for managing assets and folders.
+/// `AssetApi` is the gRPC API for managing assets and folders.
 pub struct AssetApi {
     /// The shared state of the application, containing services and configurations.
     pub state: Arc<AvoRedState>,

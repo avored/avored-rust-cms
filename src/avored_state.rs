@@ -22,16 +22,16 @@ use crate::services::security_alert_service::SecurityAlertService;
 use crate::services::security_audit_service::SecurityAuditService;
 use crate::services::setting_service::SettingService;
 
-/// AvoRedState holds the global state for the AvoRed application, including configuration,
+/// `AvoRedState` holds the global state for the `AvoRed` application, including configuration,
 pub struct AvoRedState {
 
     /// database connection, and various services.
     pub db: DB,
 
-    /// Configuration provider for AvoRed.
+    /// Configuration provider for `AvoRed`.
     pub config: AvoRedConfigProvider,
 
-    /// Template provider for AvoRed, used for rendering views.
+    /// Template provider for `AvoRed`, used for rendering views.
     pub template: AvoRedTemplateProvider,
 
     /// Miscellaneous service for handling non-specific tasks.
@@ -67,7 +67,7 @@ pub struct AvoRedState {
 
 impl AvoRedState {
     /// Creates a new instance of `AvoRedState`, initializing all providers and services.
-    pub async fn new() -> Result<AvoRedState> {
+    pub async fn new() -> Result<Self> {
         let avored_config_provider = AvoRedConfigProvider::register()?;
         let avored_template_provider =
             AvoRedTemplateProvider::register(avored_config_provider.clone()).await?;
@@ -97,7 +97,7 @@ impl AvoRedState {
         let security_audit_service = SecurityAuditService::new(security_audit_repository);
         let security_alert_service = SecurityAlertService::new(security_alert_repository);
 
-        Ok(AvoRedState {
+        Ok(Self {
             config: avored_config_provider,
             template: avored_template_provider,
             db: avored_database_provider.db,

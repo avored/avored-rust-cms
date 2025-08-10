@@ -313,41 +313,41 @@ impl RuntimeSecurityMonitor {
 
         // Check all invariants
         match SecurityInvariantChecker::check_all_invariants() {
-            Ok(_) => report.invariants_status = SecurityStatus::Healthy,
+            Ok(()) => report.invariants_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.invariants_status = SecurityStatus::Critical;
-                report.issues.push(format!("Invariant violation: {:?}", e));
+                report.issues.push(format!("Invariant violation: {e:?}"));
             }
         }
 
         // Check error message security
         match SecurityInvariantChecker::check_error_message_security() {
-            Ok(_) => report.error_handling_status = SecurityStatus::Healthy,
+            Ok(()) => report.error_handling_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.error_handling_status = SecurityStatus::Critical;
                 report
                     .issues
-                    .push(format!("Error message security issue: {:?}", e));
+                    .push(format!("Error message security issue: {e:?}"));
             }
         }
 
         // Check security configuration
         match SecurityInvariantChecker::check_security_configuration() {
-            Ok(_) => report.configuration_status = SecurityStatus::Healthy,
+            Ok(()) => report.configuration_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.configuration_status = SecurityStatus::Warning;
-                report.issues.push(format!("Configuration issue: {:?}", e));
+                report.issues.push(format!("Configuration issue: {e:?}"));
             }
         }
 
         // Check services initialization
         match SecurityInvariantChecker::check_security_services_initialization() {
-            Ok(_) => report.services_status = SecurityStatus::Healthy,
+            Ok(()) => report.services_status = SecurityStatus::Healthy,
             Err(e) => {
                 report.services_status = SecurityStatus::Critical;
                 report
                     .issues
-                    .push(format!("Service initialization issue: {:?}", e));
+                    .push(format!("Service initialization issue: {e:?}"));
             }
         }
 
@@ -373,7 +373,7 @@ pub struct SecurityHealthReport {
 }
 
 /// security status
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum SecurityStatus {
 
     /// health
@@ -388,7 +388,7 @@ pub enum SecurityStatus {
 
 impl SecurityHealthReport {
     /// new instance for security health report
-    fn new() -> Self {
+    const fn new() -> Self {
         Self {
             invariants_status: SecurityStatus::Healthy,
             error_handling_status: SecurityStatus::Healthy,
@@ -403,7 +403,7 @@ impl SecurityHealthReport {
     }
 
     /// overall status
-    pub fn overall_status(&self) -> SecurityStatus {
+    #[must_use] pub fn overall_status(&self) -> SecurityStatus {
         let statuses = [
             &self.invariants_status,
             &self.error_handling_status,
@@ -411,9 +411,9 @@ impl SecurityHealthReport {
             &self.services_status,
         ];
 
-        if statuses.iter().any(|&s| s == &SecurityStatus::Critical) {
+        if statuses.contains(&(&SecurityStatus::Critical)) {
             SecurityStatus::Critical
-        } else if statuses.iter().any(|&s| s == &SecurityStatus::Warning) {
+        } else if statuses.contains(&(&SecurityStatus::Warning)) {
             SecurityStatus::Warning
         } else {
             SecurityStatus::Healthy

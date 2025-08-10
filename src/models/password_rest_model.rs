@@ -33,7 +33,7 @@ pub struct ForgotPasswordViewModel {
 
 
 /// Represents the status of a password reset token
-#[derive(Serialize, Debug, Deserialize, Clone, PartialEq, Default)]
+#[derive(Serialize, Debug, Deserialize, Clone, PartialEq, Eq, Default)]
 pub enum PasswordResetTokenStatus {
 
     /// Indicates that the password reset token is currently active
@@ -46,7 +46,7 @@ pub enum PasswordResetTokenStatus {
 
 impl TryFrom<Object> for PasswordResetModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<PasswordResetModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let email = val.get("email").get_string()?;
         let token = val.get("token").get_string()?;
@@ -57,12 +57,12 @@ impl TryFrom<Object> for PasswordResetModel {
             _ => PasswordResetTokenStatus::Expire,
         };
 
-        Ok(PasswordResetModel {
+        Ok(Self {
             id,
             email,
             token,
-            created_at,
             status,
+            created_at,
         })
     }
 }

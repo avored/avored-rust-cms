@@ -48,7 +48,7 @@ pub struct RoleOptionModel {
 impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
     type Error = Error;
 
-    fn try_from(val: RoleModel) -> Result<crate::api::proto::admin_user::RoleModel> {
+    fn try_from(val: RoleModel) -> Result<Self> {
         let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -57,8 +57,8 @@ impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
-        let model: crate::api::proto::admin_user::RoleModel =
-            crate::api::proto::admin_user::RoleModel {
+        let model: Self =
+            Self {
                 id: val.id,
                 name: val.name,
                 identifier: val.identifier,
@@ -74,7 +74,7 @@ impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
 }
 impl TryFrom<Object> for RoleModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<RoleModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let name = val.get("name").get_string()?;
         let identifier = val.get("identifier").get_string()?;
@@ -87,8 +87,8 @@ impl TryFrom<Object> for RoleModel {
                 Value::Array(v) => {
                     let mut arr = Vec::new();
 
-                    for array in v.into_iter() {
-                        arr.push(array.as_string())
+                    for array in v {
+                        arr.push(array.as_string());
                     }
                     arr
                 }
@@ -97,7 +97,7 @@ impl TryFrom<Object> for RoleModel {
             None => Vec::new(),
         };
 
-        Ok(RoleModel {
+        Ok(Self {
             id,
             name,
             identifier,

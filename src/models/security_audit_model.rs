@@ -156,7 +156,7 @@ pub struct SecurityAuditPaginationModel {
 impl TryFrom<Object> for SecurityAuditModel {
     type Error = Error;
 
-    fn try_from(val: Object) -> Result<SecurityAuditModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
 
         let security_audit_id = match val.get("security_audit_id") {
@@ -301,7 +301,7 @@ impl TryFrom<Object> for SecurityAuditModel {
             }
         };
 
-        Ok(SecurityAuditModel {
+        Ok(Self {
             id,
             security_audit_id,
             admin_user_id,
@@ -327,7 +327,7 @@ impl TryFrom<Object> for SecurityAuditModel {
 
 impl SecurityAuditModel {
     /// Validates IP address format
-    pub fn validate_ip_address(ip: &str) -> bool {
+    #[must_use] pub fn validate_ip_address(ip: &str) -> bool {
         if ip == "unknown" {
             return true;
         }
@@ -360,7 +360,7 @@ impl SecurityAuditModel {
     // }
 
     /// Converts to protobuf Timestamp
-    pub fn created_at_timestamp(&self) -> Timestamp {
+    #[must_use] pub fn created_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.created_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
         let duration = system_time
@@ -374,7 +374,7 @@ impl SecurityAuditModel {
     }
 
     /// Converts to protobuf Timestamp
-    pub fn updated_at_timestamp(&self) -> Timestamp {
+    #[must_use] pub fn updated_at_timestamp(&self) -> Timestamp {
         let chrono_utc = self.updated_at.to_utc();
         let system_time = SystemTime::from(chrono_utc);
         let duration = system_time
@@ -406,7 +406,7 @@ impl CreateSecurityAuditModel {
         }
 
         if let Some(score) = self.security_health_score {
-            if score < 0.0 || score > 100.0 {
+            if !(0.0..=100.0).contains(&score) {
                 return Err(Error::Generic(
                     "security_health_score must be between 0.0 and 100.0".to_string(),
                 ));
@@ -425,7 +425,7 @@ impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::Security
         let metadata_json = if let Some(ref metadata) = model.metadata {
             Some(
                 serde_json::to_string(&metadata)
-                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {}", e)))?,
+                    .map_err(|e| Error::Generic(format!("Failed to serialize metadata: {e}")))?,
             )
         } else {
             None

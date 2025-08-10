@@ -18,7 +18,7 @@ pub struct AvoRedTemplateProvider {
 impl AvoRedTemplateProvider {
 
     /// register avored template provider
-    pub async fn register(config: AvoRedConfigProvider) -> Result<AvoRedTemplateProvider> {
+    pub async fn register(config: AvoRedConfigProvider) -> Result<Self> {
         let mut reg = Handlebars::new();
         reg.register_template_file("forgot-password", "./resources/mail/forgot-password.hbs")?;
         reg.register_template_file("contact-us-email", "./resources/mail/contact-us-email.hbs")?;
@@ -32,7 +32,7 @@ impl AvoRedTemplateProvider {
                 .credentials(creds)
                 .build();
 
-        Ok(AvoRedTemplateProvider {
+        Ok(Self {
             handlebars: reg,
             mailer,
         })

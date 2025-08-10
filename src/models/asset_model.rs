@@ -7,7 +7,7 @@ use std::time::SystemTime;
 use surrealdb::sql::{Datetime, Object, Value};
 
 
-/// AssetModel represents an asset in the system, which can be a file or a folder.
+/// `AssetModel` represents an asset in the system, which can be a file or a folder.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetModel {
 
@@ -42,14 +42,14 @@ pub struct AssetModel {
     pub updated_by: String,
 }
 
-/// FileTypeMetaData and FolderTypeMetaData are used to store specific metadata for files and folders.
+/// `FileTypeMetaData` and `FolderTypeMetaData` are used to store specific metadata for files and folders.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FileTypeMetaData {
     /// Type of the file, e.g., "image/png", "application/pdf".
     pub file_type: String,
 }
 
-/// FolderTypeMetaData is used to store metadata specific to folders, such as color.
+/// `FolderTypeMetaData` is used to store metadata specific to folders, such as color.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct FolderTypeMetaData {
     /// Color associated with the folder, used for visual categorization.
@@ -57,9 +57,9 @@ pub struct FolderTypeMetaData {
 }
 
 // { color: String }
-///FileTypeMetaData { file_type: String }
+///`FileTypeMetaData` { `file_type`: String }
 /// 
-/// MetaDataType is a wrapper struct that can hold metadata for both files and folders.
+/// `MetaDataType` is a wrapper struct that can hold metadata for both files and folders.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct MetaDataType {
     /// values can be folder color or no of files
@@ -91,7 +91,7 @@ pub struct MetaDataType {
 //     }
 // }
 
-/// FileTypeMetaDataStruct and FolderTypeMetaDataStruct are used to deserialize metadata from the database.
+/// `FileTypeMetaDataStruct` and `FolderTypeMetaDataStruct` are used to deserialize metadata from the database.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct FileTypeMetaDataStruct {
 
@@ -99,7 +99,7 @@ pub struct FileTypeMetaDataStruct {
     pub file_type: String,
 }
 
-/// FolderTypeMetaDataStruct is used to deserialize folder metadata from the database.
+/// `FolderTypeMetaDataStruct` is used to deserialize folder metadata from the database.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
 pub struct FolderTypeMetaDataStruct {
     /// Color associated with the folder, used for visual categorization.
@@ -116,7 +116,7 @@ pub struct FolderTypeMetaDataStruct {
 
 impl TryFrom<Object> for AssetModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<AssetModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let parent_id = val.get("parent_id").get_string()?;
         let name = val.get("name").get_string()?;
@@ -158,9 +158,9 @@ impl TryFrom<Object> for AssetModel {
         //     },
         // };
 
-        let new_path = String::from("");
+        let new_path = String::new();
 
-        Ok(AssetModel {
+        Ok(Self {
             id,
             parent_id,
             name,
@@ -178,7 +178,7 @@ impl TryFrom<Object> for AssetModel {
 impl TryFrom<AssetModel> for crate::api::proto::asset::AssetModel {
     type Error = Error;
 
-    fn try_from(val: AssetModel) -> Result<crate::api::proto::asset::AssetModel> {
+    fn try_from(val: AssetModel) -> Result<Self> {
         let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -189,7 +189,7 @@ impl TryFrom<AssetModel> for crate::api::proto::asset::AssetModel {
 
         let metadata = val.metadata.try_into()?;
 
-        let model: crate::api::proto::asset::AssetModel = crate::api::proto::asset::AssetModel {
+        let model: Self = Self {
             id: val.id,
             name: val.name,
             new_path: val.new_path,
@@ -208,9 +208,9 @@ impl TryFrom<AssetModel> for crate::api::proto::asset::AssetModel {
 
 impl TryFrom<FileTypeMetaData> for crate::api::proto::asset::FileTypeMetaData {
     type Error = Error;
-    fn try_from(val: FileTypeMetaData) -> Result<crate::api::proto::asset::FileTypeMetaData> {
-        let model: crate::api::proto::asset::FileTypeMetaData =
-            crate::api::proto::asset::FileTypeMetaData {
+    fn try_from(val: FileTypeMetaData) -> Result<Self> {
+        let model: Self =
+            Self {
                 file_type: val.file_type,
             };
         Ok(model)
@@ -219,18 +219,18 @@ impl TryFrom<FileTypeMetaData> for crate::api::proto::asset::FileTypeMetaData {
 
 impl TryFrom<FolderTypeMetaData> for crate::api::proto::asset::FolderTypeMetaData {
     type Error = Error;
-    fn try_from(val: FolderTypeMetaData) -> Result<crate::api::proto::asset::FolderTypeMetaData> {
-        let model: crate::api::proto::asset::FolderTypeMetaData =
-            crate::api::proto::asset::FolderTypeMetaData { color: val.color };
+    fn try_from(val: FolderTypeMetaData) -> Result<Self> {
+        let model: Self =
+            Self { color: val.color };
         Ok(model)
     }
 }
 
 impl TryFrom<MetaDataType> for crate::api::proto::asset::MetaDataType {
     type Error = Error;
-    fn try_from(val: MetaDataType) -> Result<crate::api::proto::asset::MetaDataType> {
-        let model: crate::api::proto::asset::MetaDataType =
-            crate::api::proto::asset::MetaDataType {
+    fn try_from(val: MetaDataType) -> Result<Self> {
+        let model: Self =
+            Self {
                 file_meta_data: Some(val.file_meta_data.try_into()?),
                 folder_meta_data: Some(val.folder_meta_data.try_into()?),
             };
@@ -240,8 +240,8 @@ impl TryFrom<MetaDataType> for crate::api::proto::asset::MetaDataType {
 
 impl TryFrom<FolderTypeMetaData> for Value {
     type Error = Error;
-    fn try_from(val: FolderTypeMetaData) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> = [("color".into(), val.color.into())].into();
+    fn try_from(val: FolderTypeMetaData) -> Result<Self> {
+        let val_val: BTreeMap<String, Self> = [("color".into(), val.color.into())].into();
 
         Ok(val_val.into())
     }
@@ -249,8 +249,8 @@ impl TryFrom<FolderTypeMetaData> for Value {
 
 impl TryFrom<FileTypeMetaData> for Value {
     type Error = Error;
-    fn try_from(val: FileTypeMetaData) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> = [("file_type".into(), val.file_type.into())].into();
+    fn try_from(val: FileTypeMetaData) -> Result<Self> {
+        let val_val: BTreeMap<String, Self> = [("file_type".into(), val.file_type.into())].into();
 
         Ok(val_val.into())
     }
@@ -258,8 +258,8 @@ impl TryFrom<FileTypeMetaData> for Value {
 
 impl TryFrom<MetaDataType> for Value {
     type Error = Error;
-    fn try_from(val: MetaDataType) -> Result<Value> {
-        let val_val: BTreeMap<String, Value> = [
+    fn try_from(val: MetaDataType) -> Result<Self> {
+        let val_val: BTreeMap<String, Self> = [
             ("folder_meta_data".into(), val.folder_meta_data.try_into()?),
             ("file_meta_data".into(), val.file_meta_data.try_into()?),
         ]
@@ -271,21 +271,21 @@ impl TryFrom<MetaDataType> for Value {
 
 impl TryFrom<Object> for FileTypeMetaDataStruct {
     type Error = Error;
-    fn try_from(val: Object) -> Result<FileTypeMetaDataStruct> {
+    fn try_from(val: Object) -> Result<Self> {
         let file_type = val.get("file_type").get_string()?;
-        Ok(FileTypeMetaDataStruct { file_type })
+        Ok(Self { file_type })
     }
 }
 
 impl TryFrom<Object> for FolderTypeMetaDataStruct {
     type Error = Error;
-    fn try_from(val: Object) -> Result<FolderTypeMetaDataStruct> {
+    fn try_from(val: Object) -> Result<Self> {
         let color = val.get("color").get_string()?;
-        Ok(FolderTypeMetaDataStruct { color })
+        Ok(Self { color })
     }
 }
 
-/// AssetPagination is used to paginate a list of assets.
+/// `AssetPagination` is used to paginate a list of assets.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct AssetPagination {
     /// List of assets in the current page.
@@ -297,7 +297,7 @@ pub struct AssetPagination {
 
 
 
-/// CreatableAssetModel is used to create a new asset in the system.
+/// `CreatableAssetModel` is used to create a new asset in the system.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreatableAssetModel {
 

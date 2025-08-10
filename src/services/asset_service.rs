@@ -23,8 +23,8 @@ pub struct AssetService {
 
 impl AssetService {
     /// new instance for asset service
-    pub fn new(asset_repository: AssetRepository) -> Result<Self> {
-        Ok(AssetService { asset_repository })
+    pub const fn new(asset_repository: AssetRepository) -> Result<Self> {
+        Ok(Self { asset_repository })
     }
 }
 impl AssetService {
@@ -36,10 +36,10 @@ impl AssetService {
     ) -> Result<AssetPaginateResponse> {
         let asset_model_count = self
             .asset_repository
-            .get_total_count(datastore, database_session, "".to_string())
+            .get_total_count(datastore, database_session, String::new())
             .await?;
 
-        let per_page: i64 = PER_PAGE as i64;
+        let per_page: i64 = PER_PAGE;
         let current_page = req.page.unwrap_or(0);
         let order = req.order.unwrap_or_default();
 
@@ -60,18 +60,18 @@ impl AssetService {
                 datastore,
                 database_session,
                 start,
-                "".to_string(),
+                String::new(),
                 order_column.to_string(),
                 order_type.to_string(),
             )
             .await?;
 
         let mut grpc_assets = vec![];
-        assets.iter().for_each(|asset| {
+        for asset in assets.iter() {
             let model: crate::api::proto::asset::AssetModel = asset.clone().try_into().unwrap();
 
             grpc_assets.push(model);
-        });
+        }
 
         let pagination = AssetPagination {
             total: asset_model_count.total,

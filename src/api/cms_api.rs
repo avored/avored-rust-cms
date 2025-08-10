@@ -6,9 +6,9 @@ use crate::avored_state::AvoRedState;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
-/// AvoRed CMS API
+/// `AvoRed` CMS API
 pub struct CmsApi {
-    /// The AvoRed state containing services and configurations
+    /// The `AvoRed` state containing services and configurations
     pub state: Arc<AvoRedState>,
 }
 

@@ -13,7 +13,7 @@ pub struct LocalAuthService {
 
 impl LocalAuthService {
     /// create new instance for local auth service
-    pub fn new(admin_user_repository: AdminUserRepository) -> Self {
+    pub const fn new(admin_user_repository: AdminUserRepository) -> Self {
         Self {
             admin_user_repository,
         }
@@ -44,16 +44,12 @@ impl AuthProvider for LocalAuthService {
         }
 
         // Find user by email (username is email in local auth)
-        let admin_user_model = match self
+        let admin_user_model = if let Ok(user) = self
             .admin_user_repository
             .find_by_email(&db.0, &db.1, username)
-            .await
-        {
-            Ok(user) => user,
-            Err(_) => {
-                info!("Local user not found: {}", username);
-                return Ok(AuthenticationResult::UserNotFound);
-            }
+            .await { user } else {
+            info!("Local user not found: {}", username);
+            return Ok(AuthenticationResult::UserNotFound);
         };
 
         // Verify password

@@ -128,7 +128,7 @@ impl AuthService {
             }
         };
 
-        let claims: TokenClaims = admin_user_model.clone().try_into()?;
+        let claims: TokenClaims = admin_user_model.try_into()?;
 
         let token = encode(
             &Header::default(),
@@ -200,7 +200,7 @@ impl AuthService {
     pub async fn new(
         admin_user_repository: AdminUserRepository,
         password_reset_repository: PasswordResetRepository,
-    ) -> Result<AuthService> {
+    ) -> Result<Self> {
         // Initialize multi-provider authentication system
         let mut multi_auth_service = MultiAuthService::new();
 
@@ -223,7 +223,7 @@ impl AuthService {
             }
         }
 
-        Ok(AuthService {
+        Ok(Self {
             admin_user_repository,
             password_reset_repository,
             multi_auth_service,

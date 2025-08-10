@@ -16,11 +16,17 @@ const ASSET_TABLE: &str = "assets";
 #[derive(Clone)]
 pub struct AssetRepository {}
 
+impl Default for AssetRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AssetRepository {
 
     /// new instance asset repository
-    pub fn new() -> Self {
-        AssetRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
 
@@ -254,7 +260,7 @@ impl AssetRepository {
         // find a way to get a response from query
         let responses = datastore.execute(sql, database_session, Some(vars)).await?;
 
-        let response = responses.into_iter().next().map(|rp| rp.output());
+        let response = responses.into_iter().next().map(surrealdb::dbs::Response::output);
         let query_result = match response {
             Some(object) => object.is_ok(),
             None => false,

@@ -28,8 +28,8 @@ pub struct SecurityAuditService {
 
 impl SecurityAuditService {
 
-    /// Create a new instance of SecurityAuditService
-    pub fn new(security_audit_repository: SecurityAuditRepository) -> Self {
+    /// Create a new instance of `SecurityAuditService`
+    pub const fn new(security_audit_repository: SecurityAuditRepository) -> Self {
         Self {
             security_audit_repository,
         }
@@ -264,7 +264,7 @@ impl SecurityAuditService {
     }
 
     /// Calculate health score based on security event type
-    fn calculate_event_health_score(&self, event_type: &SecurityEventType) -> f64 {
+    const fn calculate_event_health_score(&self, event_type: &SecurityEventType) -> f64 {
         match event_type {
             SecurityEventType::AuthenticationSuccess => 100.0,
             SecurityEventType::AuthenticationFailure => 98.0,
@@ -616,7 +616,7 @@ impl SecurityAuditService {
 }
 
 /// Helper function to convert grpc security event type to local enum
-fn convert_grpc_security_event_type(grpc_type: GrpcSecurityEventType) -> SecurityEventType {
+const fn convert_grpc_security_event_type(grpc_type: GrpcSecurityEventType) -> SecurityEventType {
     match grpc_type {
         GrpcSecurityEventType::AuthenticationSuccess => SecurityEventType::AuthenticationSuccess,
         GrpcSecurityEventType::AuthenticationFailureEvent => {

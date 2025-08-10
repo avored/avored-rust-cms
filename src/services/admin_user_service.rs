@@ -26,11 +26,11 @@ pub struct AdminUserService {
 
 impl AdminUserService {
     /// new instance for admin user service
-    pub fn new(
+    pub const fn new(
         admin_user_repository: AdminUserRepository,
         role_repository: RoleRepository,
     ) -> Result<Self> {
-        Ok(AdminUserService {
+        Ok(Self {
             admin_user_repository,
             role_repository,
         })
@@ -52,7 +52,7 @@ impl AdminUserService {
             .get_total_count(datastore, database_session)
             .await?;
 
-        let per_page: i64 = PER_PAGE as i64;
+        let per_page: i64 = PER_PAGE;
         let current_page = page;
 
         let start = current_page * per_page;
@@ -78,11 +78,11 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_admin_users = vec![];
-        admin_users.iter().for_each(|admin_user| {
+        for admin_user in admin_users.iter() {
             let model: crate::api::proto::admin_user::AdminUserModel =
                 admin_user.clone().try_into().unwrap();
             grpc_admin_users.push(model);
-        });
+        }
 
         Ok((admin_user_model_count, grpc_admin_users))
     }
@@ -102,7 +102,7 @@ impl AdminUserService {
             full_name: req.full_name,
             email: req.email,
             password: password_hash,
-            profile_image: String::from(""),
+            profile_image: String::new(),
             is_super_admin: req.is_super_admin,
             logged_in_username,
         };
@@ -124,7 +124,7 @@ impl AdminUserService {
             .await?;
 
         let model: crate::api::proto::admin_user::AdminUserModel =
-            admin_user_model.clone().try_into().unwrap();
+            admin_user_model.try_into().unwrap();
 
         let res = StoreAdminUserResponse {
             status: true,
@@ -160,7 +160,7 @@ impl AdminUserService {
         let mut updatable_admin_user_model = UpdatableAdminUserModel {
             id: req.admin_user_id,
             full_name: req.full_name,
-            profile_image: String::from(""),
+            profile_image: String::new(),
             is_super_admin: req.is_super_admin,
             logged_in_username: logged_in_username.clone(),
             role_ids: req.role_ids,
@@ -239,7 +239,7 @@ impl AdminUserService {
             .get_total_count(datastore, database_session)
             .await?;
 
-        let per_page: i64 = PER_PAGE as i64;
+        let per_page: i64 = PER_PAGE;
         let current_page = req.page.unwrap_or(0);
         let order = req.order.unwrap_or_default();
 
@@ -266,10 +266,10 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_roles = vec![];
-        roles.iter().for_each(|role| {
+        for role in roles.iter() {
             let model: RoleModel = role.clone().try_into().unwrap();
             grpc_roles.push(model);
-        });
+        }
 
         let pagination = RolePagination {
             total: role_model_count.total,
@@ -298,13 +298,13 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_role_options = vec![];
-        roles.iter().for_each(|role| {
+        for role in roles.iter() {
             let model = RoleOptionModel {
                 value: role.id.clone(),
                 label: role.name.clone(),
             };
             grpc_role_options.push(model);
-        });
+        }
 
         let res = RoleOptionResponse {
             status: true,
@@ -325,7 +325,7 @@ impl AdminUserService {
             .create_role(datastore, database_session, created_role_request)
             .await?;
 
-        let model: RoleModel = admin_user_model.clone().try_into().unwrap();
+        let model: RoleModel = admin_user_model.try_into().unwrap();
 
         let res = StoreRoleResponse {
             status: true,
@@ -374,7 +374,7 @@ impl AdminUserService {
             .update_role(datastore, database_session, updatable_role_model.clone())
             .await?;
 
-        let model: RoleModel = role_model.clone().try_into().unwrap();
+        let model: RoleModel = role_model.try_into().unwrap();
 
         let res = UpdateRoleResponse {
             status: true,
@@ -401,7 +401,7 @@ impl AdminUserService {
             .update_role_identifier(datastore, database_session, updatable_role_model.clone())
             .await?;
 
-        let model: RoleModel = role_model.clone().try_into().unwrap();
+        let model: RoleModel = role_model.try_into().unwrap();
 
         let res = PutRoleIdentifierResponse {
             status: true,

@@ -12,7 +12,7 @@ pub struct LdapConfig {
     /// Whether LDAP integration is enabled
     pub enabled: bool,
 
-    /// LDAP server URL (e.g., "ldaps://localhost")
+    /// LDAP server URL (e.g., "<ldaps://localhost>")
     pub server: String,
     /// Port for LDAP server (default is 636 for LDAPS)
     pub port: u16,
@@ -68,7 +68,7 @@ impl Default for LdapConfig {
 
 impl LdapConfig {
 
-    /// Creates a new LdapConfig instance from environment variables
+    /// Creates a new `LdapConfig` instance from environment variables
     pub fn from_env() -> Result<Self> {
         let enabled = env::var("AVORED_LDAP_ENABLED")
             .unwrap_or_else(|_| "false".to_string())
@@ -146,7 +146,7 @@ impl LdapConfig {
 
 
     /// Returns the LDAP URL based on the server and port
-    pub fn get_ldap_url(&self) -> String {
+    #[must_use] pub fn get_ldap_url(&self) -> String {
         if self.use_tls {
             format!(
                 "ldaps://{}:{}",
@@ -212,8 +212,8 @@ pub struct LdapUser {
 
 impl LdapUser {
 
-    /// Creates a new LdapUser instance
-    pub fn new(username: String, email: String, full_name: String, dn: String) -> Self {
+    /// Creates a new `LdapUser` instance
+    pub const fn new(username: String, email: String, full_name: String, dn: String) -> Self {
         Self {
             username,
             email,

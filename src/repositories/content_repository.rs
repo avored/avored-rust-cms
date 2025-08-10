@@ -132,6 +132,12 @@ impl ContentRepository {
     }
 }
 
+impl Default for ContentRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl ContentRepository {
     pub(crate) async fn create_content(
         &self,
@@ -444,7 +450,7 @@ impl ContentRepository {
 
 
     /// new instance
-    pub fn new() -> Self {
-        ContentRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 }

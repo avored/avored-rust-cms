@@ -123,7 +123,7 @@ impl InputValidationService {
         }
 
         // Check for control characters
-        if dn.chars().any(|c| c.is_control()) {
+        if dn.chars().any(char::is_control) {
             return Err(Error::InvalidArgument(
                 "DN contains invalid characters".to_string(),
             ));
@@ -185,7 +185,7 @@ impl InputValidationService {
         }
 
         // Check for null bytes and control characters
-        if value.contains('\0') || value.chars().any(|c| c.is_control()) {
+        if value.contains('\0') || value.chars().any(char::is_control) {
             return Err(Error::InvalidArgument(
                 "Value contains invalid characters".to_string(),
             ));
@@ -227,7 +227,7 @@ impl InputValidationService {
         }
 
         // Check for control characters
-        if url.chars().any(|c| c.is_control()) {
+        if url.chars().any(char::is_control) {
             return Err(Error::InvalidArgument(
                 "URL contains invalid characters".to_string(),
             ));

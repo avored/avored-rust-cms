@@ -7,7 +7,7 @@
 /// api module
 pub mod api;
 
-/// avored_state module
+/// `avored_state` module
 pub mod avored_state;
 
 /// error module

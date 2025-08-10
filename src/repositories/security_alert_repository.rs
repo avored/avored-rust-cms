@@ -14,9 +14,15 @@ use surrealdb::sql::Value;
 #[derive(Clone)]
 pub struct SecurityAlertRepository;
 
+impl Default for SecurityAlertRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SecurityAlertRepository {
     /// new instance 
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self
     }
 
@@ -30,7 +36,7 @@ impl SecurityAlertRepository {
         // Validate the input
         createable_security_alert_model.validate()?;
 
-        let sql = r#"
+        let sql = r"
             CREATE security_alerts CONTENT {
                 alert_id: $alert_id,
                 alert_type: $alert_type,
@@ -44,7 +50,7 @@ impl SecurityAlertRepository {
                 resolved_by: NONE,
                 created_at: time::now()
             };
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             (
@@ -137,13 +143,13 @@ impl SecurityAlertRepository {
     ) -> Result<SecurityAlertPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_alerts 
             WHERE severity = $severity AND resolved = false 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("severity".into(), severity.as_str().into()),
@@ -208,13 +214,13 @@ impl SecurityAlertRepository {
     ) -> Result<SecurityAlertPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_alerts 
             WHERE alert_type = $alert_type 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("alert_type".into(), alert_type.as_str().into()),
@@ -280,13 +286,13 @@ impl SecurityAlertRepository {
     ) -> Result<SecurityAlertPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_alerts 
             WHERE source = $source 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("source".into(), source.into()),
@@ -438,12 +444,12 @@ impl SecurityAlertRepository {
     ) -> Result<SecurityAlertPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_alerts 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("per_page".into(), per_page.into()),
@@ -498,11 +504,11 @@ impl SecurityAlertRepository {
         datastore: &Datastore,
         database_session: &Session,
     ) -> Result<Vec<SecurityAlertModel>> {
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_alerts 
             WHERE severity IN ['high', 'critical'] AND resolved = false 
             ORDER BY created_at DESC;
-        "#;
+        ";
 
         let responses = datastore.execute(sql, database_session, None).await?;
 

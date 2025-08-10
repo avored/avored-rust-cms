@@ -8,20 +8,20 @@ pub mod content_api;
 pub mod dashboard_api;
 /// handlers module
 pub mod handlers;
-/// misc_api;
+/// `misc_api`;
 pub mod misc_api;
 /// proto module
 pub mod proto;
-/// setting_api
+/// `setting_api`
 pub mod setting_api;
 
-/// cms_api
+/// `cms_api`
 pub mod cms_api;
-/// general_api
+/// `general_api`
 pub mod general_api;
-/// asset_api
+/// `asset_api`
 pub mod asset_api;
-/// security_api;
+/// `security_api`;
 pub mod security_alert_api;
-/// security_audit_api;
+/// `security_audit_api`;
 pub mod security_audit_api;

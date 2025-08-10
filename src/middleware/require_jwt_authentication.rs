@@ -35,7 +35,7 @@ pub async fn require_jwt_authentication(
                 .unwrap();
             let token = auth_value
                 .strip_prefix("Bearer ")
-                .map(|auth| auth.to_owned());
+                .map(std::borrow::ToOwned::to_owned);
             let claims = match decode::<TokenClaims>(
                 &token.unwrap_or_default(),
                 &DecodingKey::from_secret(jwt_token.as_ref()),
@@ -52,7 +52,7 @@ pub async fn require_jwt_authentication(
 
                     let json_error = ErrorResponse {
                         status: false,
-                        message: format!("Authentication failed: {}", error_message),
+                        message: format!("Authentication failed: {error_message}"),
                     };
                     return Err((StatusCode::UNAUTHORIZED, Json(json_error)));
                 }

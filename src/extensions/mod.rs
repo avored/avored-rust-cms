@@ -1,8 +1,8 @@
-/// email_message_builder
+/// `email_message_builder`
 pub mod email_message_builder;
 
-/// string_extension
+/// `string_extension`
 pub mod string_extension;
 
-/// tonic_request
+/// `tonic_request`
 pub mod tonic_request;

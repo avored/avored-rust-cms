@@ -193,7 +193,7 @@ impl MiscService {
 
 impl MiscService {
     /// create misc service instance
-    pub async fn new() -> Result<MiscService> {
-        Ok(MiscService {})
+    pub async fn new() -> Result<Self> {
+        Ok(Self {})
     }
 }

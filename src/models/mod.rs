@@ -72,7 +72,7 @@ pub struct Pagination {
     pub previous_page_number: i64,
 }
 
-/// ModelCount struct
+/// `ModelCount` struct
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct ModelCount {
 
@@ -80,7 +80,7 @@ pub struct ModelCount {
     pub total: i64,
 }
 
-/// BaseModel trait
+/// `BaseModel` trait
 pub trait BaseModel {
     /// get ID from Value
     fn get_id(&self) -> Result<String>;
@@ -111,9 +111,9 @@ impl BaseModel for Option<&Value> {
                     let id = v.id;
                     id.to_string()
                 }
-                _ => String::from(""),
+                _ => String::new(),
             },
-            None => String::from(""),
+            None => String::new(),
         };
 
         Ok(value)
@@ -122,9 +122,9 @@ impl BaseModel for Option<&Value> {
         let value = match self.to_owned() {
             Some(val) => match val.clone() {
                 Value::Strand(v) => v.as_string(),
-                _ => String::from(""),
+                _ => String::new(),
             },
-            None => String::from(""),
+            None => String::new(),
         };
 
         Ok(value)
@@ -205,7 +205,7 @@ impl BaseModel for Option<&Value> {
 
 impl TryFrom<Object> for ModelCount {
     type Error = Error;
-    fn try_from(val: Object) -> Result<ModelCount> {
+    fn try_from(val: Object) -> Result<Self> {
         let count = match val.get("count") {
             Some(val) => match val.clone() {
                 Number(v) => v,
@@ -216,6 +216,6 @@ impl TryFrom<Object> for ModelCount {
 
         let count = count.as_int();
 
-        Ok(ModelCount { total: count })
+        Ok(Self { total: count })
     }
 }

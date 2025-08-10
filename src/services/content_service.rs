@@ -63,7 +63,7 @@ impl ContentService {
             .get_total_count(datastore, database_session, &request.content_type)
             .await?;
 
-        let per_page: i64 = PER_PAGE as i64;
+        let per_page: i64 = PER_PAGE;
         let current_page = request.page.unwrap_or(0);
         let order = request.order.unwrap_or_default();
 
@@ -205,7 +205,7 @@ impl ContentService {
             logged_in_username: logged_in_username.to_string(),
             updated_at: Default::default(),
             content_type: request.content_type,
-            updated_by: "".to_string(),
+            updated_by: String::new(),
             content_fields: content_field_models,
         };
 
@@ -451,11 +451,11 @@ impl ContentService {
     //     }
 
     /// new instance for collection service
-    pub fn new(
+    pub const fn new(
         content_repository: ContentRepository,
         collection_repository: CollectionRepository,
     ) -> Result<Self> {
-        Ok(ContentService {
+        Ok(Self {
             content_repository,
             collection_repository,
         })

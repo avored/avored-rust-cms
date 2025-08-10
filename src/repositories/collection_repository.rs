@@ -36,11 +36,17 @@ impl CollectionRepository {
     }
 }
 
+impl Default for CollectionRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl CollectionRepository {
 
     /// new instance
-    pub fn new() -> Self {
-        CollectionRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
     // pub async fn get_total_count(

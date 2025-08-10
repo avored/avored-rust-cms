@@ -19,7 +19,7 @@ pub struct AvoRedDatabaseProvider {
 impl AvoRedDatabaseProvider {
 
     /// register avored database provider
-    pub async fn register(config: AvoRedConfigProvider) -> Result<AvoRedDatabaseProvider> {
+    pub async fn register(config: AvoRedConfigProvider) -> Result<Self> {
         let folder_name = config.database_folder_name;
         let datastore = Datastore::new(&folder_name)
             .await
@@ -36,6 +36,6 @@ impl AvoRedDatabaseProvider {
 
         let db = (datastore, database_session);
 
-        Ok(AvoRedDatabaseProvider { db })
+        Ok(Self { db })
     }
 }

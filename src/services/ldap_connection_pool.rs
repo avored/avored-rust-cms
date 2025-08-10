@@ -24,7 +24,7 @@ struct PooledConnection {
 
 impl LdapConnectionPool {
     /// new instance ldap connection pool
-    pub fn new(config: LdapConfig, max_connections: usize) -> Self {
+    #[must_use] pub fn new(config: LdapConfig, max_connections: usize) -> Self {
         Self {
             config: Arc::new(config),
             pool: Arc::new(Mutex::new(VecDeque::new())),
@@ -176,7 +176,7 @@ pub struct AuthRateLimiter {
 
 impl AuthRateLimiter {
     /// new instance for auth rate limiter
-    pub fn new(max_attempts: usize, window_duration: Duration) -> Self {
+    #[must_use] pub fn new(max_attempts: usize, window_duration: Duration) -> Self {
         Self {
             attempts: Arc::new(Mutex::new(std::collections::HashMap::new())),
             max_attempts,
@@ -190,7 +190,7 @@ impl AuthRateLimiter {
         let now = Instant::now();
 
         // Clean up old attempts
-        let cutoff = now - self.window_duration;
+        let cutoff = now.checked_sub(self.window_duration).unwrap();
 
         let user_attempts = attempts
             .entry(identifier.to_string())

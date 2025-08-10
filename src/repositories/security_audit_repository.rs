@@ -14,9 +14,15 @@ use surrealdb::sql::Value;
 #[derive(Clone)]
 pub struct SecurityAuditRepository;
 
+impl Default for SecurityAuditRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SecurityAuditRepository {
     /// new instance
-    pub fn new() -> Self {
+    pub const fn new() -> Self {
         Self
     }
 
@@ -30,7 +36,7 @@ impl SecurityAuditRepository {
         // Validate the input
         createable_security_audit_model.validate()?;
 
-        let sql = r#"
+        let sql = r"
             CREATE security_audits CONTENT {
                 security_audit_id: $security_audit_id,
                 admin_user_id: $admin_user_id,
@@ -51,7 +57,7 @@ impl SecurityAuditRepository {
                 created_at: time::now(),
                 updated_at: time::now()
             };
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             (
@@ -216,13 +222,13 @@ impl SecurityAuditRepository {
     ) -> Result<SecurityAuditPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_audits 
             WHERE admin_user_id = $admin_user_id 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("admin_user_id".into(), admin_user_id.into()),
@@ -288,13 +294,13 @@ impl SecurityAuditRepository {
     ) -> Result<SecurityAuditPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_audits 
             WHERE ip_address = $ip_address 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("ip_address".into(), ip_address.into()),
@@ -356,7 +362,7 @@ impl SecurityAuditRepository {
         id: &str,
         updateable_security_audit_model: UpdateSecurityAuditModel,
     ) -> Result<SecurityAuditModel> {
-        let sql = r#"
+        let sql = r"
             UPDATE type::thing('security_audits', $id) MERGE {
                 total_authentication_attempts: $total_authentication_attempts,
                 failed_authentication_attempts: $failed_authentication_attempts,
@@ -369,7 +375,7 @@ impl SecurityAuditRepository {
                 metadata: $metadata,
                 updated_at: time::now()
             };
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("id".into(), id.into()),
@@ -479,12 +485,12 @@ impl SecurityAuditRepository {
     ) -> Result<SecurityAuditPaginationModel> {
         let offset = (page - 1) * per_page;
 
-        let sql = r#"
+        let sql = r"
             SELECT * FROM security_audits 
             ORDER BY created_at DESC 
             LIMIT $per_page 
             START $offset;
-        "#;
+        ";
 
         let vars: BTreeMap<String, Value> = [
             ("per_page".into(), per_page.into()),

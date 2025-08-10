@@ -26,7 +26,7 @@ impl GeneralService {
 
 impl GeneralService {
     /// new instance for general service
-    pub fn new() -> crate::error::Result<GeneralService> {
-        Ok(GeneralService {})
+    pub const fn new() -> crate::error::Result<Self> {
+        Ok(Self {})
     }
 }

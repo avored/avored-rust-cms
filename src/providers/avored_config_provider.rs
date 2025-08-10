@@ -50,7 +50,7 @@ pub struct AvoRedConfigProvider {
 impl AvoRedConfigProvider {
 
     /// register avored config provider
-    pub fn register() -> Result<AvoRedConfigProvider> {
+    pub fn register() -> Result<Self> {
         dotenv()?;
 
         match get_env("APP_ENV")?.as_str() {
@@ -64,9 +64,9 @@ impl AvoRedConfigProvider {
 
         let env_str_allowed_cors = get_env("AVORED_CORS_ALLOWED_APP_URL")?;
         let vec_cors_urls = env_str_allowed_cors.split(',').collect::<Vec<&str>>();
-        let cors_urls = vec_cors_urls.iter().map(|url| url.to_string()).collect();
+        let cors_urls = vec_cors_urls.iter().map(|url| (*url).to_string()).collect();
 
-        Ok(AvoRedConfigProvider {
+        Ok(Self {
             database_folder_name: get_env("AVORED_DATABASE_FOLDER_NAME")?,
             database_namespace: get_env("AVORED_DATABASE_NAMESPACE")?,
             database_name: get_env("AVORED_DATABASE_NAME")?,

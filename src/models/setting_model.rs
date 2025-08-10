@@ -33,7 +33,7 @@ pub struct SettingModel {
 
 impl TryFrom<Object> for SettingModel {
     type Error = Error;
-    fn try_from(val: Object) -> Result<SettingModel> {
+    fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
         let identifier = val.get("identifier").get_string()?;
         let value = val.get("value").get_string()?;
@@ -42,7 +42,7 @@ impl TryFrom<Object> for SettingModel {
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
 
-        Ok(SettingModel {
+        Ok(Self {
             id,
             identifier,
             value,
@@ -57,7 +57,7 @@ impl TryFrom<Object> for SettingModel {
 impl TryFrom<SettingModel> for crate::api::proto::setting::SettingModel {
     type Error = Error;
 
-    fn try_from(val: SettingModel) -> Result<crate::api::proto::setting::SettingModel> {
+    fn try_from(val: SettingModel) -> Result<Self> {
         let chrono_utc_created_at = val.created_at.to_utc();
         let system_time_created_at = SystemTime::from(chrono_utc_created_at);
         let created_at = Timestamp::from(system_time_created_at);
@@ -66,7 +66,7 @@ impl TryFrom<SettingModel> for crate::api::proto::setting::SettingModel {
         let system_time_updated_at = SystemTime::from(chrono_utc_updated_at);
         let updated_at = Timestamp::from(system_time_updated_at);
 
-        let model = crate::api::proto::setting::SettingModel {
+        let model = Self {
             id: val.id,
             value: val.value,
             identifier: val.identifier,

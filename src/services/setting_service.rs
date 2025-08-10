@@ -13,7 +13,7 @@ pub struct SettingService {
 
 impl SettingService {
     /// Creates a new instance of `SettingService`
-    pub fn new(setting_repository: SettingRepository) -> Result<Self> {
+    pub const fn new(setting_repository: SettingRepository) -> Result<Self> {
         Ok(Self { setting_repository })
     }
 

@@ -23,7 +23,7 @@ pub struct LdapAuthService {
 
 impl LdapAuthService {
     /// new instance ldap auth service
-    pub fn new(config: LdapConfig, admin_user_repository: AdminUserRepository) -> Self {
+    #[must_use] pub fn new(config: LdapConfig, admin_user_repository: AdminUserRepository) -> Self {
         let config_arc = Arc::new(config);
         let connection_pool = Arc::new(LdapConnectionPool::new((*config_arc).clone(), 10)); // Max 10 connections
         let rate_limiter = Arc::new(AuthRateLimiter::new(5, Duration::from_secs(300))); // 5 attempts per 5 minutes
@@ -124,14 +124,13 @@ impl LdapAuthService {
         let email = entry
             .attrs
             .get(&self.config.user_attribute_email)
-            .and_then(|v| v.first())
-            .map(|e| e.clone())
+            .and_then(|v| v.first()).cloned()
             .unwrap_or_else(|| {
                 // Create a valid email from username if no email attribute found
                 if username.contains('@') {
                     username.to_string()
                 } else {
-                    format!("{}@ldap.local", username)
+                    format!("{username}@ldap.local")
                 }
             });
 
@@ -175,15 +174,12 @@ impl LdapAuthService {
         ldap3::drive!(conn);
 
         // Try to bind with user credentials
-        let auth_result = match ldap.simple_bind(&ldap_user.dn, password).await {
-            Ok(_) => {
-                debug!("User authenticated successfully via LDAP");
-                true
-            }
-            Err(_) => {
-                debug!("LDAP authentication failed");
-                false
-            }
+        let auth_result = if let Ok(_) = ldap.simple_bind(&ldap_user.dn, password).await {
+            debug!("User authenticated successfully via LDAP");
+            true
+        } else {
+            debug!("LDAP authentication failed");
+            false
         };
 
         // Prevent timing attacks by ensuring consistent response time
@@ -214,8 +210,8 @@ impl LdapAuthService {
                 let creatable_user = CreatableAdminUserModel {
                     full_name: ldap_user.full_name.clone(),
                     email: ldap_user.email.clone(),
-                    password: "".to_string(), // Empty password for LDAP users
-                    profile_image: "".to_string(),
+                    password: String::new(), // Empty password for LDAP users
+                    profile_image: String::new(),
                     is_super_admin: false, // LDAP users are not super admins by default
                     logged_in_username: "system".to_string(),
                 };

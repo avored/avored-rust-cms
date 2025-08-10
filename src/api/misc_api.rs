@@ -12,9 +12,9 @@ use tokio::fs::File;
 use tokio::io::AsyncWriteExt;
 use tonic::{async_trait, Request, Response, Status};
 
-/// AvoRed Miscellaneous API
+/// `AvoRed` Miscellaneous API
 pub struct MiscApi {
-    /// The AvoRed state containing services and configurations
+    /// The `AvoRed` state containing services and configurations
     pub state: Arc<AvoRedState>,
 }
 
@@ -377,7 +377,7 @@ impl Misc for MiscApi {
             confirm_password: "admin123".to_string(),
             is_super_admin: false,
             profile_image_content: vec![],
-            profile_image_file_name: "".to_string(),
+            profile_image_file_name: String::new(),
         };
 
         let created_admin_user = self

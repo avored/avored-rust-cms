@@ -60,34 +60,34 @@ impl std::error::Error for Error {}
 
 impl From<Status> for Error {
     fn from(status: Status) -> Self {
-        Error::Tonic(Box::new(status))
+        Self::Tonic(Box::new(status))
     }
 }
 
 impl From<String> for Error {
     fn from(s: String) -> Self {
-        Error::Generic(s)
+        Self::Generic(s)
     }
 }
 
 impl From<dotenvy::Error> for Error {
     fn from(val: dotenvy::Error) -> Self {
         error!("there is an issue with loading env file: {val:?}");
-        Error::Generic("there is an issue with loading env file".to_string())
+        Self::Generic("there is an issue with loading env file".to_string())
     }
 }
 
 impl From<std::io::Error> for Error {
     fn from(val: std::io::Error) -> Self {
         error!("there is an issue with creating io error: {val:?}");
-        Error::Generic("tokio file create folder error ".to_string())
+        Self::Generic("tokio file create folder error ".to_string())
     }
 }
 
 impl From<serde_json::Error> for Error {
     fn from(val: serde_json::Error) -> Self {
         error!("serde json error: {val:?}");
-        Error::Generic("serde json error".to_string())
+        Self::Generic("serde json error".to_string())
     }
 }
 
@@ -113,85 +113,85 @@ impl From<Error> for Status {
 impl From<ParseIntError> for Error {
     fn from(actual_error: ParseIntError) -> Self {
         error!("there is an issue while parsing the env from string to u16: {actual_error:?}");
-        Error::Generic("parse int error".to_string())
+        Self::Generic("parse int error".to_string())
     }
 }
 
 impl From<AddrParseError> for Error {
     fn from(actual_error: AddrParseError) -> Self {
         error!("there is an issue while parsing email address: {actual_error:?}");
-        Error::Generic("500 internal".to_string())
+        Self::Generic("500 internal".to_string())
     }
 }
 
 impl From<tonic::transport::Error> for Error {
     fn from(actual_error: tonic::transport::Error) -> Self {
         error!("there is an issue while parsing email address: {actual_error:?}");
-        Error::Generic("500 internal".to_string())
+        Self::Generic("500 internal".to_string())
     }
 }
 
 impl From<surrealdb::error::Db> for Error {
     fn from(actual_error: surrealdb::error::Db) -> Self {
         error!("Surreal DB error: {actual_error:?}");
-        Error::Generic("500 internal".to_string())
+        Self::Generic("500 internal".to_string())
     }
 }
 
 impl From<jsonwebtoken::errors::Error> for Error {
     fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
         error!("Json web token error: {actual_error:?}");
-        Error::Generic("500 internal".to_string())
+        Self::Generic("500 internal".to_string())
     }
 }
 
 impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
-        Error::Argon2(Box::new(actual_error))
+        Self::Argon2(Box::new(actual_error))
     }
 }
 
 impl From<lettre::error::Error> for Error {
     fn from(actual_error: lettre::error::Error) -> Self {
         error!("there is an issue lettre error: {actual_error:?}");
-        Error::Generic("lettre error".to_string())
+        Self::Generic("lettre error".to_string())
     }
 }
 
 impl From<TemplateError> for Error {
     fn from(actual_error: TemplateError) -> Self {
         error!("there is an issue while registering the handlebar template with avored: {actual_error:?}");
-        Error::Generic("handlebar template error".to_string())
+        Self::Generic("handlebar template error".to_string())
     }
 }
 
 impl From<RenderError> for Error {
     fn from(actual_error: RenderError) -> Self {
         error!("there is an issue while rendering the handlebar template: {actual_error:?}");
-        Error::Generic("handlebar error".to_string())
+        Self::Generic("handlebar error".to_string())
     }
 }
 
 impl From<AddressError> for Error {
     fn from(actual_error: AddressError) -> Self {
         error!("there is an issue while parsing email address: {actual_error:?}");
-        Error::Generic("parse lettre address parsing error".to_string())
+        Self::Generic("parse lettre address parsing error".to_string())
     }
 }
 
 impl From<ldap3::LdapError> for Error {
     fn from(actual_error: ldap3::LdapError) -> Self {
         error!("LDAP error: {actual_error:?}");
-        Error::Generic("LDAP operation failed".to_string())
+        Self::Generic("LDAP operation failed".to_string())
     }
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            Error::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            Error::Unauthorizeed(resource_name) => {
+            Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
+            Self::Unauthorizeed(resource_name) => {
                 let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
                 (StatusCode::UNAUTHORIZED, error_message).into_response()
             }

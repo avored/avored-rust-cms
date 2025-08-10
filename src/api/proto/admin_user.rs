@@ -22,7 +22,7 @@ pub struct AdminUserModel {
     #[prost(message, repeated, tag = "10")]
     pub roles: ::prost::alloc::vec::Vec<RoleModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct RoleModel {
     #[prost(string, tag = "1")]
     pub id: ::prost::alloc::string::String,
@@ -41,7 +41,7 @@ pub struct RoleModel {
     #[prost(string, tag = "9")]
     pub updated_by: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct RoleOptionModel {
     #[prost(string, tag = "1")]
     pub label: ::prost::alloc::string::String,
@@ -49,7 +49,7 @@ pub struct RoleOptionModel {
     pub value: ::prost::alloc::string::String,
 }
 /// Admin user paginate API
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct AdminUserPaginateRequest {
     #[prost(int64, optional, tag = "1")]
     pub page: ::core::option::Option<i64>,
@@ -65,7 +65,7 @@ pub struct AdminUserPaginateResponse {
 }
 /// Nested message and enum types in `AdminUserPaginateResponse`.
 pub mod admin_user_paginate_response {
-    #[derive(Clone, Copy, PartialEq, ::prost::Message)]
+    #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
     pub struct AdminUserPagination {
         #[prost(int64, tag = "1")]
         pub total: i64,
@@ -78,7 +78,7 @@ pub mod admin_user_paginate_response {
         pub data: ::prost::alloc::vec::Vec<super::AdminUserModel>,
     }
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct StoreAdminUserRequest {
     #[prost(string, tag = "1")]
     pub full_name: ::prost::alloc::string::String,
@@ -102,7 +102,7 @@ pub struct StoreAdminUserResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<AdminUserModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetAdminUserRequest {
     #[prost(string, tag = "1")]
     pub admin_user_id: ::prost::alloc::string::String,
@@ -114,7 +114,7 @@ pub struct GetAdminUserResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<AdminUserModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct UpdateAdminUserRequest {
     #[prost(string, tag = "1")]
     pub admin_user_id: ::prost::alloc::string::String,
@@ -136,7 +136,7 @@ pub struct UpdateAdminUserResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<AdminUserModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct RolePaginateRequest {
     #[prost(int64, optional, tag = "1")]
     pub page: ::core::option::Option<i64>,
@@ -152,7 +152,7 @@ pub struct RolePaginateResponse {
 }
 /// Nested message and enum types in `RolePaginateResponse`.
 pub mod role_paginate_response {
-    #[derive(Clone, Copy, PartialEq, ::prost::Message)]
+    #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
     pub struct RolePagination {
         #[prost(int64, tag = "1")]
         pub total: i64,
@@ -172,7 +172,7 @@ pub struct RoleOptionResponse {
     #[prost(message, repeated, tag = "2")]
     pub data: ::prost::alloc::vec::Vec<RoleOptionModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct StoreRoleRequest {
     #[prost(string, tag = "1")]
     pub name: ::prost::alloc::string::String,
@@ -188,7 +188,7 @@ pub struct StoreRoleResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<RoleModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetRoleRequest {
     #[prost(string, tag = "1")]
     pub role_id: ::prost::alloc::string::String,
@@ -200,7 +200,7 @@ pub struct GetRoleResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<RoleModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct UpdateRoleRequest {
     #[prost(string, tag = "1")]
     pub role_id: ::prost::alloc::string::String,
@@ -216,7 +216,7 @@ pub struct UpdateRoleResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<RoleModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct PutRoleIdentifierRequest {
     #[prost(string, tag = "1")]
     pub role_id: ::prost::alloc::string::String,
@@ -230,27 +230,27 @@ pub struct PutRoleIdentifierResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<RoleModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct DeleteRoleRequest {
     #[prost(string, tag = "1")]
     pub role_id: ::prost::alloc::string::String,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct DeleteRoleResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct DeleteAdminUserRequest {
     #[prost(string, tag = "1")]
     pub admin_user_id: ::prost::alloc::string::String,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct DeleteAdminUserResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct RoleOptionRequest {}
 /// Generated client implementations.
 pub mod admin_user_client {
@@ -619,7 +619,7 @@ pub mod admin_user_server {
         ///
         /// Default: `4MB`
         #[must_use]
-        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_decoding_message_size(mut self, limit: usize) -> Self {
             self.max_decoding_message_size = Some(limit);
             self
         }
@@ -627,7 +627,7 @@ pub mod admin_user_server {
         ///
         /// Default: `usize::MAX`
         #[must_use]
-        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_encoding_message_size(mut self, limit: usize) -> Self {
             self.max_encoding_message_size = Some(limit);
             self
         }

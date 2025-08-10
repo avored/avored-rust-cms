@@ -21,10 +21,16 @@ const ROLE_TABLE: &str = "roles";
 #[derive(Clone)]
 pub struct AdminUserRepository {}
 
+impl Default for AdminUserRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AdminUserRepository {
     /// new instance for admin user repository
-    pub fn new() -> Self {
-        AdminUserRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
     /// find by email for admin user repository 
@@ -41,25 +47,22 @@ impl AdminUserRepository {
         let responses = datastore.execute(sql, database_session, Some(data)).await?;
 
         let result_object_option = into_iter_objects(responses)?.next();
-        let result_object = match result_object_option {
-            Some(object) => object,
-            None => {
-                // Somehow we need to log the user not found error too.
-                // maybe we create a MODEL_NOT_FOUND then handle the error in error.rs
-                let mut errors: Vec<ErrorMessage> = vec![];
-                let error_message = ErrorMessage {
-                    key: String::from("email"),
-                    message: t!("email_address_password_not_match").to_string(),
-                };
+        let result_object = if let Some(object) = result_object_option { object } else {
+            // Somehow we need to log the user not found error too.
+            // maybe we create a MODEL_NOT_FOUND then handle the error in error.rs
+            let mut errors: Vec<ErrorMessage> = vec![];
+            let error_message = ErrorMessage {
+                key: String::from("email"),
+                message: t!("email_address_password_not_match").to_string(),
+            };
 
-                errors.push(error_message);
-                let error_response = ErrorResponse {
-                    status: false,
-                    errors,
-                };
-                let error_string = serde_json::to_string(&error_response)?;
-                return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
-            },
+            errors.push(error_message);
+            let error_response = ErrorResponse {
+                status: false,
+                errors,
+            };
+            let error_string = serde_json::to_string(&error_response)?;
+            return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
         };
         let admin_user_model: Result<AdminUserModel> = result_object?.try_into();
 

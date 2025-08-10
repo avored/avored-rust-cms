@@ -69,7 +69,9 @@ pub async fn store_asset_api_handler(
                     let query_parent_id = query_param.parent_id.clone().unwrap_or_default();
                     let asset_file;
 
-                    if !query_parent_id.is_empty() {
+                    if query_parent_id.is_empty() {
+                        asset_file = format!("/public/upload/{}", new_file_name.clone());
+                    } else {
                         let parent_asset = &state
                             .asset_service
                             .find_by_id(&state.db, &query_parent_id)
@@ -78,8 +80,6 @@ pub async fn store_asset_api_handler(
                         creatable_asset_model.parent_id = query_parent_id;
                         asset_file =
                             format!("/{}/{}", parent_asset.new_path, new_file_name.clone());
-                    } else {
-                        asset_file = format!("/public/upload/{}", new_file_name.clone());
                     }
 
                     creatable_asset_model.name = new_file_name.clone();

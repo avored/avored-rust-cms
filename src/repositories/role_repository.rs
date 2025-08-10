@@ -15,10 +15,16 @@ use surrealdb::sql::{Datetime, Value};
 #[derive(Clone)]
 pub struct RoleRepository {}
 
+impl Default for RoleRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl RoleRepository {
     /// new role repository
-    pub fn new() -> Self {
-        RoleRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
     /// paginate

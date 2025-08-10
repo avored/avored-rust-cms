@@ -12,10 +12,16 @@ const PASSWORD_RESET_TABLE: &str = "password_reset";
 #[derive(Clone)]
 pub struct PasswordResetRepository {}
 
+impl Default for PasswordResetRepository {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PasswordResetRepository {
     /// new instance password repository
-    pub fn new() -> Self {
-        PasswordResetRepository {}
+    pub const fn new() -> Self {
+        Self {}
     }
 
     /// create password reset

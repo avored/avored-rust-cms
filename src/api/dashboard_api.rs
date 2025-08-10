@@ -6,9 +6,9 @@ use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
-/// AvoRed Dashboard API
+/// `AvoRed` Dashboard API
 pub struct DashboardApi {
-    /// The AvoRed state containing services and configurations
+    /// The `AvoRed` state containing services and configurations
     pub state: Arc<AvoRedState>,
 }
 

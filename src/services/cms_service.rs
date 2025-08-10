@@ -18,8 +18,8 @@ pub struct CmsService {
 
 impl CmsService {
     /// new instance for cms service
-    pub fn new(content_repository: ContentRepository) -> Result<Self> {
-        Ok(CmsService { content_repository })
+    pub const fn new(content_repository: ContentRepository) -> Result<Self> {
+        Ok(Self { content_repository })
     }
 }
 

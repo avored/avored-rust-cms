@@ -17,7 +17,7 @@ pub fn check_auth(mut req: Request<()>) -> Result<Request<()>, Status> {
                 .map_err(|_| Error::ConfigMissing("AVORED_JWT_SECRET".to_string()))?;
             let token = auth_value
                 .strip_prefix("Bearer ")
-                .map(|auth| auth.to_owned());
+                .map(std::borrow::ToOwned::to_owned);
             let claims = decode::<TokenClaims>(
                 &token.unwrap_or_default(),
                 &DecodingKey::from_secret(jwt_token.as_ref()),

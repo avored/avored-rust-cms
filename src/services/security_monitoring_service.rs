@@ -234,7 +234,7 @@ pub enum AlertSeverity {
 }
 
 /// health status
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub enum HealthStatus {
     /// healthy heath status
     Healthy,
@@ -274,7 +274,7 @@ pub enum HealthStatus {
 
 impl SecurityMonitoringService {
     /// created new instance for Security monitoring service
-    pub fn new() -> Self {
+    #[must_use] pub fn new() -> Self {
         Self {
             metrics: Arc::new(Mutex::new(SecurityMetrics::new())),
             alerts: Arc::new(Mutex::new(Vec::new())),
@@ -347,7 +347,7 @@ impl SecurityMonitoringService {
         self.create_alert(
             SecurityAlertType::RateLimitExceeded,
             AlertSeverity::Medium,
-            format!("Rate limit exceeded for identifier: {}", identifier),
+            format!("Rate limit exceeded for identifier: {identifier}"),
             "rate_limiter",
             HashMap::from([("identifier".to_string(), identifier.to_string())]),
         )
