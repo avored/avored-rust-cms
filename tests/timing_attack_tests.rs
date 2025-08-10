@@ -55,13 +55,14 @@ mod timing_attack_prevention_tests {
     fn test_ldap_filter_generation_timing() {
         let config = LdapConfig::default();
 
+        let binding = "a".repeat(100);
         let test_usernames = vec![
             "normaluser",
             "admin)(|(objectClass=*)", // Injection attempt
             "user*with*wildcards",
             "user(with)parens",
             "user\\with\\backslashes",
-            &"a".repeat(100), // Long username
+            &binding, // Long username
         ];
 
         let mut timings = Vec::new();
@@ -153,9 +154,10 @@ mod timing_attack_prevention_tests {
 
     #[test]
     fn test_error_message_generation_timing() {
+        let binding = "a".repeat(300);
         let error_scenarios = vec![
             "",
-            &"a".repeat(300),
+            &binding,
             "admin'; DROP TABLE users; --",
             "admin)(|(objectClass=*)",
             "user\0null",
@@ -191,13 +193,14 @@ mod timing_attack_prevention_tests {
 
     #[test]
     fn test_log_sanitization_timing() {
+        let binding = ("Very long log message: ".to_string() + &"a".repeat(1000));
         let log_messages = vec![
             "Normal log message",
             "Log with\nnewline injection\nFAKE: Admin logged in",
             "Log with\rcarriage return\rFAKE: System compromised",
             "Log with\ttab\tcharacters",
             "Log with\x01control\x02characters\x03",
-            &("Very long log message: ".to_string() + &"a".repeat(1000)),
+            &binding,
         ];
 
         let mut timings = Vec::new();
@@ -235,9 +238,10 @@ mod side_channel_attack_prevention_tests {
     #[test]
     fn test_no_information_leakage_through_timing() {
         // Test that different types of invalid inputs don't reveal information through timing
+        let binding = "a".repeat(300);
         let invalid_inputs = vec![
             ("", "empty"),
-            (&"a".repeat(300), "too_long"),
+            (&binding, "too_long"),
             ("admin'; DROP TABLE users; --", "sql_injection"),
             ("admin)(|(objectClass=*)", "ldap_injection"),
             ("user\0null", "null_byte"),
@@ -266,7 +270,7 @@ mod side_channel_attack_prevention_tests {
         let mut avg_timings = Vec::new();
         for (input_type, timings) in timings_by_type {
             let avg: Duration = timings.iter().sum::<Duration>() / timings.len() as u32;
-            avg_timings.push((input_type, avg));
+            avg_timings.push((input_type.clone(), avg));
             println!("Average timing for {}: {:?}", input_type, avg);
         }
 

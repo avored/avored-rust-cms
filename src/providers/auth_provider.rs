@@ -40,23 +40,23 @@ pub trait AuthProvider: Send + Sync {
 }
 
 
-/// Enum representing the type of authentication provider.
-#[derive(Debug, Clone)]
-pub enum AuthProviderType {
+// /// Enum representing the type of authentication provider.
+// #[derive(Debug, Clone)]
+// pub enum AuthProviderType {
 
-    /// Represents a local authentication provider.
-    Local,
+//     /// Represents a local authentication provider.
+//     Local,
 
-    /// Represents an LDAP authentication provider.
-    Ldap,
-}
+//     /// Represents an LDAP authentication provider.
+//     Ldap,
+// }
 
-impl AuthProviderType {
-    /// Returns the string representation of the authentication provider type.
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            AuthProviderType::Local => "local",
-            AuthProviderType::Ldap => "ldap",
-        }
-    }
-}
+// impl AuthProviderType {
+//     /// Returns the string representation of the authentication provider type.
+//     pub fn as_str(&self) -> &'static str {
+//         match self {
+//             AuthProviderType::Local => "local",
+//             AuthProviderType::Ldap => "ldap",
+//         }
+//     }
+// }

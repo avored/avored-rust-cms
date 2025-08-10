@@ -1,6 +1,6 @@
 use crate::error::Result;
 use crate::models::admin_user_model::AdminUserModel;
-use crate::providers::auth_provider::{AuthProvider, AuthProviderType, AuthenticationResult};
+use crate::providers::auth_provider::{AuthProvider, AuthenticationResult};
 use crate::providers::avored_database_provider::DB;
 use std::sync::Arc;
 use tracing::{error, info, warn};

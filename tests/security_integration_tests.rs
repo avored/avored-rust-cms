@@ -1,12 +1,12 @@
 //! Integration tests for security services to ensure all methods are properly tested
 //! This resolves dead code warnings by actually using all security monitoring methods
 
-use avored_rust_cms::providers::auth_provider::AuthProviderType;
+// use avored_rust_cms::providers::auth_provider::AuthProviderType;
 
 
 #[cfg(test)]
 mod security_integration_tests {
-    use super::*;
+    // use super::*;
 
     // #[tokio::test]
     // async fn test_security_audit_service_integration() {
@@ -131,21 +131,21 @@ mod security_integration_tests {
     //     assert_eq!(remaining_after, 2);
     // }
 
-    #[test]
-    fn test_auth_provider_type_usage() {
-        // Test AuthProviderType enum usage
-        let local_type = AuthProviderType::Local;
-        let ldap_type = AuthProviderType::Ldap;
+    // #[test]
+    // fn test_auth_provider_type_usage() {
+    //     // Test AuthProviderType enum usage
+    //     let local_type = AuthProviderType::Local;
+    //     let ldap_type = AuthProviderType::Ldap;
 
-        assert_eq!(local_type.as_str(), "local");
-        assert_eq!(ldap_type.as_str(), "ldap");
+    //     assert_eq!(local_type.as_str(), "local");
+    //     assert_eq!(ldap_type.as_str(), "ldap");
 
-        // Test in match statement
-        let provider_name = match local_type {
-            AuthProviderType::Local => "Local Authentication",
-            AuthProviderType::Ldap => "LDAP Authentication",
-        };
+    //     // Test in match statement
+    //     let provider_name = match local_type {
+    //         AuthProviderType::Local => "Local Authentication",
+    //         AuthProviderType::Ldap => "LDAP Authentication",
+    //     };
 
-        assert_eq!(provider_name, "Local Authentication");
-    }
+    //     assert_eq!(provider_name, "Local Authentication");
+    // }
 }
