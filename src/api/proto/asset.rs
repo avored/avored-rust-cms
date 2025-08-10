@@ -9,7 +9,7 @@ pub struct FileTypeMetaData {
     #[prost(string, tag = "1")]
     pub file_type: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct MetaDataType {
     #[prost(message, optional, tag = "1")]
     pub file_meta_data: ::core::option::Option<FileTypeMetaData>,

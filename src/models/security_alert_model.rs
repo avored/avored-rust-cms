@@ -50,7 +50,7 @@ impl Default for AlertType {
 impl AlertType {
 
     /// Converts the alert type to a string representation
-    pub const fn as_str(&self) -> &'static str {
+    #[must_use] pub const fn as_str(&self) -> &'static str {
         match self {
             Self::AuthenticationFailure => "authentication_failure",
             Self::InjectionAttempt => "injection_attempt",
@@ -84,7 +84,7 @@ impl AlertType {
     }
 
     /// Converts a gRPC `AlertType` to an `AlertType`
-    pub const fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
+    #[must_use] pub const fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
         match grpc_type {
             crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
                 Self::AuthenticationFailure
@@ -123,7 +123,7 @@ impl AlertType {
     }
 
     /// Converts the `AlertType` to a gRPC `AlertType`
-    pub const fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
+    #[must_use] pub const fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
         match self {
             Self::AuthenticationFailure => {
                 crate::api::proto::security_audit::AlertType::AuthenticationFailure
@@ -185,7 +185,7 @@ impl Default for AlertSeverity {
 
 impl AlertSeverity {
     /// Converts the alert severity to a string representation
-    pub const fn as_str(&self) -> &'static str {
+    #[must_use] pub const fn as_str(&self) -> &'static str {
         match self {
             Self::Low => "low",
             Self::Medium => "medium",
@@ -217,7 +217,7 @@ impl AlertSeverity {
     // }
 
     /// Converts a gRPC `AlertSeverity` to an `AlertSeverity`
-    pub const fn from_grpc_alert_severity(
+    #[must_use] pub const fn from_grpc_alert_severity(
         grpc_severity: crate::api::proto::security_audit::AlertSeverity,
     ) -> Self {
         match grpc_severity {
@@ -230,7 +230,7 @@ impl AlertSeverity {
     }
 
     /// Converts the `AlertSeverity` to a gRPC `AlertSeverity`
-    pub const fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {
+    #[must_use] pub const fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {
         match self {
             Self::Low => crate::api::proto::security_audit::AlertSeverity::Low,
             Self::Medium => crate::api::proto::security_audit::AlertSeverity::Medium,

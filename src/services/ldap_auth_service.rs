@@ -194,36 +194,32 @@ impl LdapAuthService {
 
     async fn sync_user_to_local_db(&self, ldap_user: &LdapUser, db: &DB) -> Result<AdminUserModel> {
         // First, try to find existing user by email
-        match self
+        if let Ok(existing_user) = self
             .admin_user_repository
             .find_by_email(&db.0, &db.1, &ldap_user.email)
-            .await
-        {
-            Ok(existing_user) => {
-                info!("Found existing local user for LDAP authentication");
-                Ok(existing_user)
-            }
-            Err(_) => {
-                // User doesn't exist locally, create new user
-                info!("Creating new local user for LDAP authentication");
+            .await {
+            info!("Found existing local user for LDAP authentication");
+            Ok(existing_user)
+        } else {
+            // User doesn't exist locally, create new user
+            info!("Creating new local user for LDAP authentication");
 
-                let creatable_user = CreatableAdminUserModel {
-                    full_name: ldap_user.full_name.clone(),
-                    email: ldap_user.email.clone(),
-                    password: String::new(), // Empty password for LDAP users
-                    profile_image: String::new(),
-                    is_super_admin: false, // LDAP users are not super admins by default
-                    logged_in_username: "system".to_string(),
-                };
+            let creatable_user = CreatableAdminUserModel {
+                full_name: ldap_user.full_name.clone(),
+                email: ldap_user.email.clone(),
+                password: String::new(), // Empty password for LDAP users
+                profile_image: String::new(),
+                is_super_admin: false, // LDAP users are not super admins by default
+                logged_in_username: "system".to_string(),
+            };
 
-                self.admin_user_repository
-                    .create_admin_user(&db.0, &db.1, creatable_user)
-                    .await
-                    .map_err(|e| {
-                        error!("Failed to create local user for LDAP authentication: {}", e);
-                        e
-                    })
-            }
+            self.admin_user_repository
+                .create_admin_user(&db.0, &db.1, creatable_user)
+                .await
+                .map_err(|e| {
+                    error!("Failed to create local user for LDAP authentication: {}", e);
+                    e
+                })
         }
     }
 }

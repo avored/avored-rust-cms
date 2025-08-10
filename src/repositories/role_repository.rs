@@ -23,7 +23,7 @@ impl Default for RoleRepository {
 
 impl RoleRepository {
     /// new role repository
-    pub const fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {}
     }
 

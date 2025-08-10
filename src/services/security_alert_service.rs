@@ -29,7 +29,7 @@ pub struct SecurityAlertService {
 
 impl SecurityAlertService {
     /// initialize security alert service
-    pub const fn new(security_alert_repository: SecurityAlertRepository) -> Self {
+    #[must_use] pub const fn new(security_alert_repository: SecurityAlertRepository) -> Self {
         Self {
             security_alert_repository,
         }

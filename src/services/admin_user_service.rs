@@ -78,7 +78,7 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_admin_users = vec![];
-        for admin_user in admin_users.iter() {
+        for admin_user in &admin_users {
             let model: crate::api::proto::admin_user::AdminUserModel =
                 admin_user.clone().try_into().unwrap();
             grpc_admin_users.push(model);
@@ -266,7 +266,7 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_roles = vec![];
-        for role in roles.iter() {
+        for role in &roles {
             let model: RoleModel = role.clone().try_into().unwrap();
             grpc_roles.push(model);
         }
@@ -298,7 +298,7 @@ impl AdminUserService {
             .await?;
 
         let mut grpc_role_options = vec![];
-        for role in roles.iter() {
+        for role in &roles {
             let model = RoleOptionModel {
                 value: role.id.clone(),
                 label: role.name.clone(),

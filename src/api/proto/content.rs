@@ -21,7 +21,7 @@ pub struct GetCollectionRequest {
     #[prost(string, tag = "1")]
     pub collection_id: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetCollectionResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -35,7 +35,7 @@ pub struct StoreCollectionRequest {
     #[prost(string, tag = "2")]
     pub identifier: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct StoreCollectionResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -51,7 +51,7 @@ pub struct UpdateCollectionRequest {
     #[prost(string, tag = "3")]
     pub identifier: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct UpdateCollectionResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -92,7 +92,7 @@ pub struct ContentSelectFieldData {
     #[prost(string, tag = "2")]
     pub value: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct ContentFieldData {
     #[prost(message, repeated, tag = "1")]
     pub content_select_field_options: ::prost::alloc::vec::Vec<ContentSelectFieldData>,
@@ -137,7 +137,7 @@ pub struct ContentModel {
 }
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct CollectionAllRequest {}
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct CollectionAllResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,

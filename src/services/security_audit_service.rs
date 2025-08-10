@@ -29,7 +29,7 @@ pub struct SecurityAuditService {
 impl SecurityAuditService {
 
     /// Create a new instance of `SecurityAuditService`
-    pub const fn new(security_audit_repository: SecurityAuditRepository) -> Self {
+    #[must_use] pub const fn new(security_audit_repository: SecurityAuditRepository) -> Self {
         Self {
             security_audit_repository,
         }

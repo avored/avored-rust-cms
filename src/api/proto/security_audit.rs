@@ -186,7 +186,7 @@ pub struct SecurityAuditPaginationModel {
     #[prost(message, optional, tag = "2")]
     pub pagination: ::core::option::Option<Pagination>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct SecurityAlertPaginationModel {
     #[prost(message, repeated, tag = "1")]
     pub data: ::prost::alloc::vec::Vec<SecurityAlertModel>,
@@ -366,12 +366,12 @@ pub struct GetIpSecuritySummaryResponse {
     pub data: ::core::option::Option<SecuritySummary>,
 }
 /// Security Alert Service Requests/Responses
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct CreateSecurityAlertRequest {
     #[prost(message, optional, tag = "1")]
     pub alert: ::core::option::Option<CreateSecurityAlertModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct CreateSecurityAlertResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -393,7 +393,7 @@ pub struct CreateSecurityAlertAutoIdRequest {
     #[prost(string, optional, tag = "6")]
     pub metadata_json: ::core::option::Option<::prost::alloc::string::String>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct CreateSecurityAlertAutoIdResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -405,7 +405,7 @@ pub struct GetSecurityAlertRequest {
     #[prost(string, tag = "1")]
     pub id: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetSecurityAlertResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -467,7 +467,7 @@ pub struct ResolveSecurityAlertRequest {
     #[prost(string, tag = "2")]
     pub resolved_by: ::prost::alloc::string::String,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct ResolveSecurityAlertResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -490,7 +490,7 @@ pub struct GetSecurityAlertsPaginatedResponse {
 }
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct GetCriticalUnresolvedAlertsRequest {}
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetCriticalUnresolvedAlertsResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -509,7 +509,7 @@ pub struct DeleteSecurityAlertResponse {
 }
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct GetAlertStatisticsRequest {}
-#[derive(Clone, Copy, PartialEq, ::prost::Message)]
+#[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct GetAlertStatisticsResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -537,7 +537,7 @@ impl AlertType {
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the `ProtoBuf` definition does not change) and safe for programmatic use.
-    pub const fn as_str_name(&self) -> &'static str {
+    #[must_use] pub const fn as_str_name(&self) -> &'static str {
         match self {
             Self::Unspecified => "ALERT_TYPE_UNSPECIFIED",
             Self::AuthenticationFailure => "AUTHENTICATION_FAILURE",
@@ -584,7 +584,7 @@ impl AlertSeverity {
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the `ProtoBuf` definition does not change) and safe for programmatic use.
-    pub const fn as_str_name(&self) -> &'static str {
+    #[must_use] pub const fn as_str_name(&self) -> &'static str {
         match self {
             Self::Unspecified => "ALERT_SEVERITY_UNSPECIFIED",
             Self::Low => "LOW",
@@ -621,7 +621,7 @@ impl SecurityEventType {
     ///
     /// The values are not transformed in any way and thus are considered stable
     /// (if the `ProtoBuf` definition does not change) and safe for programmatic use.
-    pub const fn as_str_name(&self) -> &'static str {
+    #[must_use] pub const fn as_str_name(&self) -> &'static str {
         match self {
             Self::Unspecified => "SECURITY_EVENT_TYPE_UNSPECIFIED",
             Self::AuthenticationSuccess => "AUTHENTICATION_SUCCESS",

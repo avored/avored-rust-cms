@@ -40,59 +40,56 @@ pub async fn store_asset_api_handler(
 
     while let Some(field) = multipart.next_field().await.unwrap() {
         let name = field.name().unwrap().to_string();
-        match name.as_ref() {
-            "file" => {
-                let s: String = rand::rng()
-                    .sample_iter(&Alphanumeric)
-                    .take(16)
-                    .map(char::from)
-                    .collect();
+        if name.as_ref() == "file" {
+            let s: String = rand::rng()
+                .sample_iter(&Alphanumeric)
+                .take(16)
+                .map(char::from)
+                .collect();
 
-                let file_type = field.content_type().unwrap().to_string();
+            let file_type = field.content_type().unwrap().to_string();
 
-                // file type should be part of metadata
-                // creatable_asset_model.file_type = field.content_type().unwrap().to_string();
+            // file type should be part of metadata
+            // creatable_asset_model.file_type = field.content_type().unwrap().to_string();
 
-                is_allow_file_type = ALLOW_TYPES.contains(&file_type.as_str());
+            is_allow_file_type = ALLOW_TYPES.contains(&file_type.as_str());
 
-                if !is_allow_file_type {
-                    continue;
-                }
-                let file_name = field.file_name().unwrap().to_string();
-                let data = field.bytes().await.unwrap();
-                // file size should be part of metadata
-                // creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
-
-                if !file_name.is_empty() {
-                    let file_ext = file_name.split('.').next_back().unwrap_or(".png");
-                    let new_file_name = format!("{s}.{file_ext}");
-                    let query_parent_id = query_param.parent_id.clone().unwrap_or_default();
-                    let asset_file;
-
-                    if query_parent_id.is_empty() {
-                        asset_file = format!("/public/upload/{}", new_file_name.clone());
-                    } else {
-                        let parent_asset = &state
-                            .asset_service
-                            .find_by_id(&state.db, &query_parent_id)
-                            .await?;
-
-                        creatable_asset_model.parent_id = query_parent_id;
-                        asset_file =
-                            format!("/{}/{}", parent_asset.new_path, new_file_name.clone());
-                    }
-
-                    creatable_asset_model.name = new_file_name.clone();
-                    creatable_asset_model.asset_type = String::from("FILE");
-                    // creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
-                    creatable_asset_model.metadata = MetaDataType::default();
-
-                    let full_path = format!("./{asset_file}");
-
-                    tokio::fs::write(full_path, data).await?;
-                }
+            if !is_allow_file_type {
+                continue;
             }
-            &_ => {}
+            let file_name = field.file_name().unwrap().to_string();
+            let data = field.bytes().await.unwrap();
+            // file size should be part of metadata
+            // creatable_asset_model.file_size = i64::try_from(data.len()).unwrap_or(0);
+
+            if !file_name.is_empty() {
+                let file_ext = file_name.split('.').next_back().unwrap_or(".png");
+                let new_file_name = format!("{s}.{file_ext}");
+                let query_parent_id = query_param.parent_id.clone().unwrap_or_default();
+                let asset_file;
+
+                if query_parent_id.is_empty() {
+                    asset_file = format!("/public/upload/{}", new_file_name.clone());
+                } else {
+                    let parent_asset = &state
+                        .asset_service
+                        .find_by_id(&state.db, &query_parent_id)
+                        .await?;
+
+                    creatable_asset_model.parent_id = query_parent_id;
+                    asset_file =
+                        format!("/{}/{}", parent_asset.new_path, new_file_name.clone());
+                }
+
+                creatable_asset_model.name = new_file_name.clone();
+                creatable_asset_model.asset_type = String::from("FILE");
+                // creatable_asset_model.metadata = MetaDataType::FileTypeMetaData { file_type };
+                creatable_asset_model.metadata = MetaDataType::default();
+
+                let full_path = format!("./{asset_file}");
+
+                tokio::fs::write(full_path, data).await?;
+            }
         }
     }
 

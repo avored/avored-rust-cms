@@ -28,14 +28,14 @@ pub struct SettingSaveModel {
 /// Setting services
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct GetSettingRequest {}
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct GetSettingResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
     #[prost(message, repeated, tag = "2")]
     pub data: ::prost::alloc::vec::Vec<SettingModel>,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct StoreSettingRequest {
     #[prost(message, repeated, tag = "1")]
     pub data: ::prost::alloc::vec::Vec<SettingSaveModel>,

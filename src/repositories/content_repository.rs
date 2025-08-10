@@ -450,7 +450,7 @@ impl ContentRepository {
 
 
     /// new instance
-    pub const fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {}
     }
 }

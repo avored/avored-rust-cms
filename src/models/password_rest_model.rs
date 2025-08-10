@@ -5,7 +5,7 @@ use surrealdb::sql::{Datetime, Object};
 
 
 /// Represents a password reset request model
-#[derive(Serialize, Debug, Deserialize, Clone, Default, PartialEq)]
+#[derive(Serialize, Debug, Deserialize, Clone, Default, PartialEq, Eq)]
 pub struct PasswordResetModel {
 
     /// ID of the password reset model

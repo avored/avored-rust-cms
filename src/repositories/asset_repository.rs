@@ -25,7 +25,7 @@ impl Default for AssetRepository {
 impl AssetRepository {
 
     /// new instance asset repository
-    pub const fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {}
     }
 

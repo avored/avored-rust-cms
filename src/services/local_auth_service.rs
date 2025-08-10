@@ -13,7 +13,7 @@ pub struct LocalAuthService {
 
 impl LocalAuthService {
     /// create new instance for local auth service
-    pub const fn new(admin_user_repository: AdminUserRepository) -> Self {
+    #[must_use] pub const fn new(admin_user_repository: AdminUserRepository) -> Self {
         Self {
             admin_user_repository,
         }

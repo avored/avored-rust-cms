@@ -29,7 +29,7 @@ impl Default for AdminUserRepository {
 
 impl AdminUserRepository {
     /// new instance for admin user repository
-    pub const fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {}
     }
 

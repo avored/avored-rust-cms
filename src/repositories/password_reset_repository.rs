@@ -20,7 +20,7 @@ impl Default for PasswordResetRepository {
 
 impl PasswordResetRepository {
     /// new instance password repository
-    pub const fn new() -> Self {
+    #[must_use] pub const fn new() -> Self {
         Self {}
     }
 

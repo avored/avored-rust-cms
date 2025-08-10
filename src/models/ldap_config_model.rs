@@ -213,7 +213,7 @@ pub struct LdapUser {
 impl LdapUser {
 
     /// Creates a new `LdapUser` instance
-    pub const fn new(username: String, email: String, full_name: String, dn: String) -> Self {
+    #[must_use] pub const fn new(username: String, email: String, full_name: String, dn: String) -> Self {
         Self {
             username,
             email,

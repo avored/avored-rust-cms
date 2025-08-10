@@ -67,7 +67,7 @@ impl AssetService {
             .await?;
 
         let mut grpc_assets = vec![];
-        for asset in assets.iter() {
+        for asset in &assets {
             let model: crate::api::proto::asset::AssetModel = asset.clone().try_into().unwrap();
 
             grpc_assets.push(model);
