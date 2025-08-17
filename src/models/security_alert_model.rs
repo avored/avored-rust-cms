@@ -329,48 +329,17 @@ impl TryFrom<Object> for SecurityAlertModel {
     fn try_from(val: Object) -> Result<Self> {
         let id = val.get("id").get_id()?;
 
-        let alert_id = match val.get("alert_id") {
-            Some(Value::Strand(val)) => val.to_string(),
-            _ => return Err(Error::Generic("alert_id field is not a string".to_string())),
-        };
+        let alert_id = val.get("alert_id").get_string()?;
+        let alert_type_str = val.get("alert_type").get_string()?;
+        let alert_type = AlertType::from_str(&alert_type_str)?;
 
-        let alert_type = match val.get("alert_type") {
-            Some(Value::Strand(val)) => AlertType::from_str(&val.to_string())?,
-            _ => {
-                return Err(Error::Generic(
-                    "alert_type field is not a valid string".to_string(),
-                ))
-            }
-        };
+        let severity_str = val.get("severity").get_string()?;
+        let severity = AlertSeverity::from_str(&severity_str)?;
 
-        let severity = match val.get("severity") {
-            Some(Value::Strand(val)) => AlertSeverity::from_str(&val.to_string())?,
-            _ => {
-                return Err(Error::Generic(
-                    "severity field is not a valid string".to_string(),
-                ))
-            }
-        };
-
-        let message = match val.get("message") {
-            Some(Value::Strand(val)) => val.to_string(),
-            _ => return Err(Error::Generic("message field is not a string".to_string())),
-        };
-
-        let source = match val.get("source") {
-            Some(Value::Strand(val)) => val.to_string(),
-            _ => return Err(Error::Generic("source field is not a string".to_string())),
-        };
-
-        let affected_resource = match val.get("affected_resource") {
-            Some(Value::Strand(val)) => Some(val.to_string()),
-            Some(Value::None) | None => None,
-            _ => {
-                return Err(Error::Generic(
-                    "affected_resource field is not a string or null".to_string(),
-                ))
-            }
-        };
+        let message = val.get("message").get_string()?;
+        let source = val.get("source").get_string()?;
+        let affected_resource = Some(val.get("affected_resource").get_string()?);
+        
 
         let metadata = match val.get("metadata") {
             Some(Value::Object(obj)) => {
@@ -388,39 +357,10 @@ impl TryFrom<Object> for SecurityAlertModel {
             }
         };
 
-        let resolved = match val.get("resolved") {
-            Some(Value::Bool(val)) => *val,
-            _ => false,
-        };
-
-        let resolved_at = match val.get("resolved_at") {
-            Some(Value::Datetime(val)) => Some(val.clone()),
-            Some(Value::None) | None => None,
-            _ => {
-                return Err(Error::Generic(
-                    "resolved_at field is not a datetime or null".to_string(),
-                ))
-            }
-        };
-
-        let resolved_by = match val.get("resolved_by") {
-            Some(Value::Strand(val)) => Some(val.to_string()),
-            Some(Value::None) | None => None,
-            _ => {
-                return Err(Error::Generic(
-                    "resolved_by field is not a string or null".to_string(),
-                ))
-            }
-        };
-
-        let created_at = match val.get("created_at") {
-            Some(Value::Datetime(val)) => val.clone(),
-            _ => {
-                return Err(Error::Generic(
-                    "created_at field is not a datetime".to_string(),
-                ))
-            }
-        };
+        let resolved = val.get("resolved").get_bool()?;
+        let resolved_at = Some(val.get("resolved_at").get_datetime()?);
+        let resolved_by = Some(val.get("resolved_by").get_string()?);
+        let created_at = val.get("created_at").get_datetime()?;
 
         Ok(Self {
             id,

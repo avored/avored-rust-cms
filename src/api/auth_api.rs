@@ -5,6 +5,7 @@ use crate::api::proto::auth::{
 };
 use crate::avored_state::AvoRedState;
 use crate::error::Error::Tonic;
+use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
@@ -23,6 +24,8 @@ impl Auth for AuthApi {
     ) -> Result<Response<LoginResponse>, Status> {
         println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
 
+        let remote_address_sock = request.remote_addr().unwrap_or(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 80));
+        let remote_address = remote_address_sock.to_string();
         let req = request.into_inner();
         let (valid, error_messages) = req.validate()?;
         if !valid {
@@ -37,6 +40,7 @@ impl Auth for AuthApi {
                 &req.password,
                 &self.state.db,
                 &self.state.config.jwt_secret_key,
+                remote_address   
             )
             .await
         {

@@ -1,7 +1,12 @@
 import logo from "../assets/logo_only.svg";
 import {ChevronRightIcon} from "@heroicons/react/24/solid";
+import { HealthCheckRequest } from "../grpc_generated/misc_pb";
+import { useHealthCheckHook } from "../hooks/misc/UseHealthCheckHook";
 
 export const HomePage = (() => {
+    const request = new HealthCheckRequest()
+    const response = useHealthCheckHook(request)
+    console.log(response.data?.getStatus())
     return (
         <>
             <div

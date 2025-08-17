@@ -41,6 +41,14 @@ impl Misc for MiscApi {
         &self,
         _request: Request<HealthCheckRequest>,
     ) -> Result<Response<HealthCheckResponse>, Status> {
+        println!(
+            "->> {:<12} - health_check",
+            "gRPC_Misc_Api"
+        );
+
+        // let test = "test";
+        // println!(" Test Local: {:?}, remote address: {:?}", request.local_addr(), request.remote_addr());
+
         let reply = HealthCheckResponse { status: true };
 
         // let file = Path::new("public/backup.sql");

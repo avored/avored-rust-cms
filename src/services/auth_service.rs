@@ -3,16 +3,18 @@ use crate::extensions::email_message_builder::EmailMessageBuilder;
 use crate::extensions::string_extension::StringExtension;
 use crate::models::ldap_config_model::LdapConfig;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
+use crate::models::security_alert_model::{AlertSeverity, AlertType, CreateSecurityAlertModel};
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
-use crate::Error::Tonic;
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
+use crate::repositories::security_alert_repository::SecurityAlertRepository;
 use crate::services::ldap_auth_service::LdapAuthService;
 use crate::services::local_auth_service::LocalAuthService;
 use crate::services::multi_auth_service::MultiAuthService;
+use crate::Error::Tonic;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
 use rand::distr::Alphanumeric;
@@ -22,12 +24,12 @@ use std::sync::Arc;
 use tonic::Status;
 use tracing::error;
 
-
 /// auth service
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
     password_reset_repository: PasswordResetRepository,
     multi_auth_service: MultiAuthService,
+    security_alert_repository: SecurityAlertRepository
 }
 
 impl AuthService {
@@ -77,13 +79,12 @@ impl AuthService {
         let data = ForgotPasswordViewModel { link };
 
         let forgot_password_email_content = template.handlebars.render("forgot-password", &data)?;
-        let email_message = Message::builder()
-            .build_email_message(
-                &from_address,
-                to_address,
-                email_subject,
-                forgot_password_email_content
-            )?;
+        let email_message = Message::builder().build_email_message(
+            &from_address,
+            to_address,
+            email_subject,
+            forgot_password_email_content,
+        )?;
 
         // Send the email
         match template.mailer.send(email_message).await {
@@ -102,6 +103,7 @@ impl AuthService {
         password: &str,
         db: &DB,
         jwt_secret_key: &str,
+        remote_address: String
     ) -> Result<String> {
         // Use multi-provider authentication
         let admin_user_model = match self
@@ -111,6 +113,32 @@ impl AuthService {
         {
             Ok(user) => user,
             Err(_e) => {
+
+                let alert_id = rand::rng()
+                    .sample_iter(&Alphanumeric)
+                    .take(16)
+                    .map(char::from)
+                    .collect();
+                
+                let affected_resource = String::from("user email goes here");
+                let created_security_alert = CreateSecurityAlertModel {
+                    alert_id,
+                    alert_type: AlertType::AuthenticationFailure,
+                    severity: AlertSeverity::Low,
+                    message: String::from("User not able to auth"),
+                    // @todo need to test this in remote server as in local it always returns none
+                    source: remote_address,
+                    affected_resource: Some(affected_resource),
+                    metadata: None,
+                };
+
+                let (datastore, database_session) = db;
+
+                self
+                    .security_alert_repository
+                    .create(datastore, database_session, created_security_alert)
+                    .await?;
+
                 let mut errors: Vec<ErrorMessage> = vec![];
                 let error_message = ErrorMessage {
                     key: String::from("email"),
@@ -200,6 +228,7 @@ impl AuthService {
     pub async fn new(
         admin_user_repository: AdminUserRepository,
         password_reset_repository: PasswordResetRepository,
+        security_alert_repository: SecurityAlertRepository,
     ) -> Result<Self> {
         // Initialize multi-provider authentication system
         let mut multi_auth_service = MultiAuthService::new();
@@ -227,6 +256,7 @@ impl AuthService {
             admin_user_repository,
             password_reset_repository,
             multi_auth_service,
+            security_alert_repository
         })
     }
 }
