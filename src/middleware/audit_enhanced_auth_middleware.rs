@@ -1,15 +1,15 @@
-use serde::Serialize;
+// use serde::Serialize;
 
 
-#[derive(Debug, Serialize, Default)]
-/// error response
-pub struct ErrorResponse {
-    /// status of the response
-    pub status: bool,
+// #[derive(Debug, Serialize, Default)]
+// /// error response
+// pub struct ErrorResponse {
+//     /// status of the response
+//     pub status: bool,
 
-    /// message of the response
-    pub message: String,
-}
+//     /// message of the response
+//     pub message: String,
+// }
 
 // Enhanced JWT authentication middleware with comprehensive audit logging
 // pub async fn audit_enhanced_jwt_authentication(

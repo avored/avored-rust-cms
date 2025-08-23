@@ -1,0 +1,2 @@
+REMOVE TABLE assets;
+DEFINE TABLE assets;

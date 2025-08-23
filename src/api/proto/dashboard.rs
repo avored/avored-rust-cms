@@ -3,8 +3,10 @@
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
 pub struct DashboardRequest {}
 #[derive(Clone, Copy, PartialEq, Eq, ::prost::Message)]
+/// dashboard response
 pub struct DashboardResponse {
     #[prost(bool, tag = "1")]
+    /// status
     pub status: bool,
 }
 /// Generated client implementations.

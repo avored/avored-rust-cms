@@ -117,14 +117,14 @@ pub struct PutCollectionIdentifierModel {
 
 
 
-/// Represents a model for updating the collection name.
-#[derive(Deserialize, Debug, Clone, Serialize)]
-#[serde(untagged)]
-pub enum CollectionFieldDataType {
+// #[derive(Deserialize, Debug, Clone, Serialize)]
+// #[serde(untagged)]
+// /// Represents a model for updating the collection name.
+// pub enum CollectionFieldDataType {
 
-    /// Represents a text data type for collection fields.
-    Text(String),
-}
+//     /// Represents a text data type for collection fields.
+//     Text(String),
+// }
 
 /// Represents the field type for collection fields.
 #[derive(Deserialize, Debug, Clone, Serialize, Default)]
@@ -135,11 +135,11 @@ pub enum CollectionFieldFieldType {
     Text,
 }
 
-impl Default for CollectionFieldDataType {
-    fn default() -> Self {
-        Self::Text("Text".to_string())
-    }
-}
+// impl Default for CollectionFieldDataType {
+//     fn default() -> Self {
+//         Self::Text("Text".to_string())
+//     }
+// }
 
 impl TryFrom<CollectionModel> for crate::api::proto::content::CollectionModel {
     type Error = Error;

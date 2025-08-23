@@ -25,6 +25,7 @@ pub struct SecurityAlertApi {
 
 #[async_trait]
 impl SecurityAlert for SecurityAlertApi {
+    
     async fn create_security_alert(
         &self,
         request: Request<CreateSecurityAlertRequest>,
