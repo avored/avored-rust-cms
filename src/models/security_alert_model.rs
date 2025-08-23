@@ -84,43 +84,43 @@ impl AlertType {
     }
 
     /// Converts a gRPC `AlertType` to an `AlertType`
-    #[must_use] pub const fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
-        match grpc_type {
-            crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
-                Self::AuthenticationFailure
-            }
-            crate::api::proto::security_audit::AlertType::InjectionAttempt => {
-                Self::InjectionAttempt
-            }
-            crate::api::proto::security_audit::AlertType::RateLimitExceeded => {
-                Self::RateLimitExceeded
-            }
-            crate::api::proto::security_audit::AlertType::SuspiciousActivity => {
-                Self::SuspiciousActivity
-            }
-            crate::api::proto::security_audit::AlertType::PrivilegeEscalation => {
-                Self::PrivilegeEscalation
-            }
-            crate::api::proto::security_audit::AlertType::DataBreachAttempt => {
-                Self::DataBreachAttempt
-            }
-            crate::api::proto::security_audit::AlertType::UnauthorizedAccess => {
-                Self::UnauthorizedAccess
-            }
-            crate::api::proto::security_audit::AlertType::MalformedRequest => {
-                Self::MalformedRequest
-            }
-            crate::api::proto::security_audit::AlertType::BruteForceAttack => {
-                Self::BruteForceAttack
-            }
-            crate::api::proto::security_audit::AlertType::SessionHijacking => {
-                Self::SessionHijacking
-            }
-            crate::api::proto::security_audit::AlertType::Unspecified => {
-                Self::SuspiciousActivity
-            } // Default fallback
-        }
-    }
+    // #[must_use] pub const fn from_grpc_alert_type(grpc_type: crate::api::proto::security_audit::AlertType) -> Self {
+    //     match grpc_type {
+    //         crate::api::proto::security_audit::AlertType::AuthenticationFailure => {
+    //             Self::AuthenticationFailure
+    //         }
+    //         crate::api::proto::security_audit::AlertType::InjectionAttempt => {
+    //             Self::InjectionAttempt
+    //         }
+    //         crate::api::proto::security_audit::AlertType::RateLimitExceeded => {
+    //             Self::RateLimitExceeded
+    //         }
+    //         crate::api::proto::security_audit::AlertType::SuspiciousActivity => {
+    //             Self::SuspiciousActivity
+    //         }
+    //         crate::api::proto::security_audit::AlertType::PrivilegeEscalation => {
+    //             Self::PrivilegeEscalation
+    //         }
+    //         crate::api::proto::security_audit::AlertType::DataBreachAttempt => {
+    //             Self::DataBreachAttempt
+    //         }
+    //         crate::api::proto::security_audit::AlertType::UnauthorizedAccess => {
+    //             Self::UnauthorizedAccess
+    //         }
+    //         crate::api::proto::security_audit::AlertType::MalformedRequest => {
+    //             Self::MalformedRequest
+    //         }
+    //         crate::api::proto::security_audit::AlertType::BruteForceAttack => {
+    //             Self::BruteForceAttack
+    //         }
+    //         crate::api::proto::security_audit::AlertType::SessionHijacking => {
+    //             Self::SessionHijacking
+    //         }
+    //         crate::api::proto::security_audit::AlertType::Unspecified => {
+    //             Self::SuspiciousActivity
+    //         } // Default fallback
+    //     }
+    // }
 
     /// Converts the `AlertType` to a gRPC `AlertType`
     #[must_use] pub const fn to_grpc_alert_type(&self) -> crate::api::proto::security_audit::AlertType {
@@ -216,18 +216,18 @@ impl AlertSeverity {
     //     }
     // }
 
-    /// Converts a gRPC `AlertSeverity` to an `AlertSeverity`
-    #[must_use] pub const fn from_grpc_alert_severity(
-        grpc_severity: crate::api::proto::security_audit::AlertSeverity,
-    ) -> Self {
-        match grpc_severity {
-            crate::api::proto::security_audit::AlertSeverity::Low => Self::Low,
-            crate::api::proto::security_audit::AlertSeverity::Medium => Self::Medium,
-            crate::api::proto::security_audit::AlertSeverity::High => Self::High,
-            crate::api::proto::security_audit::AlertSeverity::Critical => Self::Critical,
-            crate::api::proto::security_audit::AlertSeverity::Unspecified => Self::Medium, // Default fallback
-        }
-    }
+    // /// Converts a gRPC `AlertSeverity` to an `AlertSeverity`
+    // #[must_use] pub const fn from_grpc_alert_severity(
+    //     grpc_severity: crate::api::proto::security_audit::AlertSeverity,
+    // ) -> Self {
+    //     match grpc_severity {
+    //         crate::api::proto::security_audit::AlertSeverity::Low => Self::Low,
+    //         crate::api::proto::security_audit::AlertSeverity::Medium => Self::Medium,
+    //         crate::api::proto::security_audit::AlertSeverity::High => Self::High,
+    //         crate::api::proto::security_audit::AlertSeverity::Critical => Self::Critical,
+    //         crate::api::proto::security_audit::AlertSeverity::Unspecified => Self::Medium, // Default fallback
+    //     }
+    // }
 
     /// Converts the `AlertSeverity` to a gRPC `AlertSeverity`
     #[must_use] pub const fn to_grpc_alert_severity(&self) -> crate::api::proto::security_audit::AlertSeverity {

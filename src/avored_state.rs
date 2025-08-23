@@ -9,7 +9,7 @@ use crate::repositories::content_repository::ContentRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
-use crate::repositories::security_audit_repository::SecurityAuditRepository;
+// use crate::repositories::security_audit_repository::SecurityAuditRepository;
 use crate::repositories::setting_repository::SettingRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::asset_service::AssetService;
@@ -18,8 +18,8 @@ use crate::services::cms_service::CmsService;
 use crate::services::content_service::ContentService;
 use crate::services::general_service::GeneralService;
 use crate::services::misc_service::MiscService;
-use crate::services::security_alert_service::SecurityAlertService;
-use crate::services::security_audit_service::SecurityAuditService;
+// use crate::services::security_alert_service::SecurityAlertService;
+// use crate::services::security_audit_service::SecurityAuditService;
 use crate::services::setting_service::SettingService;
 
 /// `AvoRedState` holds the global state for the `AvoRed` application, including configuration,
@@ -58,11 +58,11 @@ pub struct AvoRedState {
     /// General service for handling common operations across the application.
     pub general_service: GeneralService,
 
-    /// Service for handling security audits, logging security-related events.
-    pub security_audit_service: SecurityAuditService,
+    ///// Service for handling security audits, logging security-related events.
+    // pub security_audit_service: SecurityAuditService,
 
-    /// Service for handling security alerts, managing security notifications and responses.
-    pub security_alert_service: SecurityAlertService,
+    ///// Service for handling security alerts, managing security notifications and responses.
+    // pub security_alert_service: SecurityAlertService,
 }
 
 impl AvoRedState {
@@ -81,7 +81,7 @@ impl AvoRedState {
         let asset_repository = AssetRepository::new();
         let password_reset_repository = PasswordResetRepository::new();
         let setting_repository = SettingRepository::new();
-        let security_audit_repository = SecurityAuditRepository::new();
+        // let security_audit_repository = SecurityAuditRepository::new();
         let security_alert_repository = SecurityAlertRepository::new();
 
         let misc_service = MiscService::new().await?;
@@ -94,8 +94,8 @@ impl AvoRedState {
         let setting_service = SettingService::new(setting_repository)?;
         let cms_service = CmsService::new(content_repository)?;
         let general_service = GeneralService::new()?;
-        let security_audit_service = SecurityAuditService::new(security_audit_repository);
-        let security_alert_service = SecurityAlertService::new(security_alert_repository);
+        // let security_audit_service = SecurityAuditService::new(security_audit_repository);
+        // let security_alert_service = SecurityAlertService::new(security_alert_repository);
 
         Ok(Self {
             config: avored_config_provider,
@@ -109,8 +109,8 @@ impl AvoRedState {
             setting_service,
             cms_service,
             general_service,
-            security_audit_service,
-            security_alert_service,
+            // security_audit_service,
+            // security_alert_service,
         })
     }
 }

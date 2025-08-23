@@ -326,24 +326,24 @@ impl TryFrom<Object> for SecurityAuditModel {
 }
 
 impl SecurityAuditModel {
-    /// Validates IP address format
-    #[must_use] pub fn validate_ip_address(ip: &str) -> bool {
-        if ip == "unknown" {
-            return true;
-        }
+    // /// Validates IP address format
+    // #[must_use] pub fn validate_ip_address(ip: &str) -> bool {
+    //     if ip == "unknown" {
+    //         return true;
+    //     }
 
-        // Basic IPv4 validation
-        if ip.split('.').count() == 4 {
-            return ip.split('.').all(|part| part.parse::<u8>().is_ok());
-        }
+    //     // Basic IPv4 validation
+    //     if ip.split('.').count() == 4 {
+    //         return ip.split('.').all(|part| part.parse::<u8>().is_ok());
+    //     }
 
-        // Basic IPv6 validation (simplified)
-        if ip.contains(':') {
-            return ip.chars().all(|c| c.is_ascii_hexdigit() || c == ':');
-        }
+    //     // Basic IPv6 validation (simplified)
+    //     if ip.contains(':') {
+    //         return ip.chars().all(|c| c.is_ascii_hexdigit() || c == ':');
+    //     }
 
-        false
-    }
+    //     false
+    // }
 
     /// Calculates security health score based on metrics
     // pub fn calculate_health_score(&self) -> f64 {
@@ -389,32 +389,32 @@ impl SecurityAuditModel {
 }
 
 impl CreateSecurityAuditModel {
-    /// Validates the create model
-    pub fn validate(&self) -> Result<()> {
-        if self.security_audit_id.is_empty() {
-            return Err(Error::Generic(
-                "security_audit_id cannot be empty".to_string(),
-            ));
-        }
+    // /// Validates the create model
+    // pub fn validate(&self) -> Result<()> {
+    //     if self.security_audit_id.is_empty() {
+    //         return Err(Error::Generic(
+    //             "security_audit_id cannot be empty".to_string(),
+    //         ));
+    //     }
 
-        if self.ip_address.is_empty() {
-            return Err(Error::Generic("ip_address cannot be empty".to_string()));
-        }
+    //     if self.ip_address.is_empty() {
+    //         return Err(Error::Generic("ip_address cannot be empty".to_string()));
+    //     }
 
-        if !SecurityAuditModel::validate_ip_address(&self.ip_address) {
-            return Err(Error::Generic("invalid ip_address format".to_string()));
-        }
+    //     if !SecurityAuditModel::validate_ip_address(&self.ip_address) {
+    //         return Err(Error::Generic("invalid ip_address format".to_string()));
+    //     }
 
-        if let Some(score) = self.security_health_score {
-            if !(0.0..=100.0).contains(&score) {
-                return Err(Error::Generic(
-                    "security_health_score must be between 0.0 and 100.0".to_string(),
-                ));
-            }
-        }
+    //     if let Some(score) = self.security_health_score {
+    //         if !(0.0..=100.0).contains(&score) {
+    //             return Err(Error::Generic(
+    //                 "security_health_score must be between 0.0 and 100.0".to_string(),
+    //             ));
+    //         }
+    //     }
 
-        Ok(())
-    }
+    //     Ok(())
+    // }
 }
 
 // gRPC Conversions
@@ -460,31 +460,31 @@ impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::Security
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    // use super::*;
 
-    #[test]
-    fn test_validate_ip_address() {
-        // Valid IPv4 addresses
-        assert!(SecurityAuditModel::validate_ip_address("192.168.1.1"));
-        assert!(SecurityAuditModel::validate_ip_address("127.0.0.1"));
-        assert!(SecurityAuditModel::validate_ip_address("255.255.255.255"));
-        assert!(SecurityAuditModel::validate_ip_address("0.0.0.0"));
+    // #[test]
+    // fn test_validate_ip_address() {
+    //     // Valid IPv4 addresses
+    //     assert!(SecurityAuditModel::validate_ip_address("192.168.1.1"));
+    //     assert!(SecurityAuditModel::validate_ip_address("127.0.0.1"));
+    //     assert!(SecurityAuditModel::validate_ip_address("255.255.255.255"));
+    //     assert!(SecurityAuditModel::validate_ip_address("0.0.0.0"));
 
-        // Valid special case
-        assert!(SecurityAuditModel::validate_ip_address("unknown"));
+    //     // Valid special case
+    //     assert!(SecurityAuditModel::validate_ip_address("unknown"));
 
-        // Valid IPv6 addresses (simplified validation)
-        assert!(SecurityAuditModel::validate_ip_address(
-            "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
-        ));
-        assert!(SecurityAuditModel::validate_ip_address("::1"));
+    //     // Valid IPv6 addresses (simplified validation)
+    //     assert!(SecurityAuditModel::validate_ip_address(
+    //         "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+    //     ));
+    //     assert!(SecurityAuditModel::validate_ip_address("::1"));
 
-        // Invalid addresses
-        assert!(!SecurityAuditModel::validate_ip_address("256.1.1.1"));
-        assert!(!SecurityAuditModel::validate_ip_address("192.168.1"));
-        assert!(!SecurityAuditModel::validate_ip_address("invalid"));
-        assert!(!SecurityAuditModel::validate_ip_address(""));
-    }
+    //     // Invalid addresses
+    //     assert!(!SecurityAuditModel::validate_ip_address("256.1.1.1"));
+    //     assert!(!SecurityAuditModel::validate_ip_address("192.168.1"));
+    //     assert!(!SecurityAuditModel::validate_ip_address("invalid"));
+    //     assert!(!SecurityAuditModel::validate_ip_address(""));
+    // }
 
     // #[test]
     // fn test_calculate_health_score() {
@@ -520,57 +520,57 @@ mod tests {
     //     assert_eq!(audit.calculate_health_score(), 0.0);
     // }
 
-    #[test]
-    fn test_create_security_audit_model_validation() {
-        // Valid model
-        let valid_model = CreateSecurityAuditModel {
-            security_audit_id: "audit_123".to_string(),
-            ip_address: "192.168.1.1".to_string(),
-            security_health_score: Some(85.5),
-            ..Default::default()
-        };
-        assert!(valid_model.validate().is_ok());
+    // #[test]
+    // fn test_create_security_audit_model_validation() {
+    //     // Valid model
+    //     let valid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "audit_123".to_string(),
+    //         ip_address: "192.168.1.1".to_string(),
+    //         security_health_score: Some(85.5),
+    //         ..Default::default()
+    //     };
+    //     assert!(valid_model.validate().is_ok());
 
-        // Empty security_audit_id
-        let invalid_model = CreateSecurityAuditModel {
-            security_audit_id: "".to_string(),
-            ip_address: "192.168.1.1".to_string(),
-            ..Default::default()
-        };
-        assert!(invalid_model.validate().is_err());
+    //     // Empty security_audit_id
+    //     let invalid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "".to_string(),
+    //         ip_address: "192.168.1.1".to_string(),
+    //         ..Default::default()
+    //     };
+    //     assert!(invalid_model.validate().is_err());
 
-        // Empty ip_address
-        let invalid_model = CreateSecurityAuditModel {
-            security_audit_id: "audit_123".to_string(),
-            ip_address: "".to_string(),
-            ..Default::default()
-        };
-        assert!(invalid_model.validate().is_err());
+    //     // Empty ip_address
+    //     let invalid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "audit_123".to_string(),
+    //         ip_address: "".to_string(),
+    //         ..Default::default()
+    //     };
+    //     assert!(invalid_model.validate().is_err());
 
-        // Invalid ip_address
-        let invalid_model = CreateSecurityAuditModel {
-            security_audit_id: "audit_123".to_string(),
-            ip_address: "invalid_ip".to_string(),
-            ..Default::default()
-        };
-        assert!(invalid_model.validate().is_err());
+    //     // Invalid ip_address
+    //     let invalid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "audit_123".to_string(),
+    //         ip_address: "invalid_ip".to_string(),
+    //         ..Default::default()
+    //     };
+    //     assert!(invalid_model.validate().is_err());
 
-        // Invalid security_health_score (too high)
-        let invalid_model = CreateSecurityAuditModel {
-            security_audit_id: "audit_123".to_string(),
-            ip_address: "192.168.1.1".to_string(),
-            security_health_score: Some(150.0),
-            ..Default::default()
-        };
-        assert!(invalid_model.validate().is_err());
+    //     // Invalid security_health_score (too high)
+    //     let invalid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "audit_123".to_string(),
+    //         ip_address: "192.168.1.1".to_string(),
+    //         security_health_score: Some(150.0),
+    //         ..Default::default()
+    //     };
+    //     assert!(invalid_model.validate().is_err());
 
-        // Invalid security_health_score (negative)
-        let invalid_model = CreateSecurityAuditModel {
-            security_audit_id: "audit_123".to_string(),
-            ip_address: "192.168.1.1".to_string(),
-            security_health_score: Some(-10.0),
-            ..Default::default()
-        };
-        assert!(invalid_model.validate().is_err());
-    }
+    //     // Invalid security_health_score (negative)
+    //     let invalid_model = CreateSecurityAuditModel {
+    //         security_audit_id: "audit_123".to_string(),
+    //         ip_address: "192.168.1.1".to_string(),
+    //         security_health_score: Some(-10.0),
+    //         ..Default::default()
+    //     };
+    //     assert!(invalid_model.validate().is_err());
+    // }
 }
