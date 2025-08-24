@@ -16,7 +16,7 @@ import InputField from "../../components/InputField";
 import React from "react";
 import slug from "slug";
 import _ from "lodash";
-import { PlusIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { MinusIcon } from "@heroicons/react/16/solid";
 
 type ContentFieldProps = {
@@ -606,165 +606,211 @@ export const ContentFieldModal = ({
                         </div>
 
                         <div className="ml-auto">
-                            <div className="w-64 border-l p-3 mr-auto">
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.TEXT,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("text_field")}
-                                </div>
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.TEXTAREA,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXTAREA ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("textarea")}
+                            <div className="w-72  p-3 mr-auto">
+                                <div className="flex justify-between items-center mb-3">
+                                    <div className="w-1/2">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.TEXT,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXT ? "bg-primary-200" : "bg-gray-300"} 
+                                                        ring-1 text-xs ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("text_field")}
+                                        </div>
+
+                                    </div>
+                                    <div className="w-1/2 ml-3">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.TEXTAREA,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.TEXTAREA ? "bg-primary-200" : "bg-gray-300"} 
+                                                    ring-1 text-xs ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("textarea")}
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.RICH_TEXT_EDITOR,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.RICH_TEXT_EDITOR ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("rich_text_editor")}
+                                <div className="mt-3 flex justify-between items-center mb-3">
+                                    <div className="w-1/2">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.RICH_TEXT_EDITOR,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.RICH_TEXT_EDITOR ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 text-xs ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("rich_text_editor")}
+                                        </div>
+
+                                    </div>
+                                    <div className="w-1/2 ml-3">
+
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.NUMBER_TEXT_FIELD,
+                                                    ContentFieldDataType.INT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.NUMBER_TEXT_FIELD ? "bg-primary-200" : "bg-gray-300"} 
+                                                    ring-1 text-xs ring-gray-300 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("number_text_field")}
+                                        </div>
+
+                                    </div>
                                 </div>
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.NUMBER_TEXT_FIELD,
-                                            ContentFieldDataType.INT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.NUMBER_TEXT_FIELD ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("number_text_field")}
-                                </div>
+                                <div className="mt-3 flex justify-between items-center mb-3">
+                                    <div className="w-1/2">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.FLOAT_TEXT_FIELD,
+                                                    ContentFieldDataType.FLOAT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.FLOAT_TEXT_FIELD ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 text-xs ring-gray-300  hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("float_text_field")}
+                                        </div>
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.FLOAT_TEXT_FIELD,
-                                            ContentFieldDataType.FLOAT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.FLOAT_TEXT_FIELD ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("float_text_field")}
-                                </div>
+                                    </div>
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.SELECT,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.SELECT ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("select_field")}
-                                </div>
+                                    <div className="w-1/2 ml-3">
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.Checkbox,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Checkbox ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("checkbox_field")}
-                                </div>
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.SELECT,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.SELECT ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("select_field")}
+                                        </div>
 
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.Radio,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Radio ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("radio_field")}
-                                </div>
-
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.Switch,
-                                            ContentFieldDataType.Bool
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Switch ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("switch_field")}
-                                </div>
-
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.Date,
-                                            ContentFieldDataType.INT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Date ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("date_field")}
-                                </div>
-
-                                <div
-                                    onClick={() =>
-                                        onContentFieldChange(
-                                            currentIndex,
-                                            ContentFieldFieldType.Asset,
-                                            ContentFieldDataType.TEXT
-                                        )
-                                    }
-                                    className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Asset ? "bg-primary-200" : "bg-gray-300"} 
-                        ring-1 ring-gray-300 mt-3 hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
-                                >
-                                    {t("asset_field")}
+                                    </div>
                                 </div>
 
 
+                                <div className="mt-3 flex justify-between items-center mb-3">
+                                    <div className="w-1/2">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.Checkbox,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Checkbox ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("checkbox_field")}
+                                        </div>
+                                    </div>
+
+                                    <div className="w-1/2 ml-3">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.Radio,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Radio ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("radio_field")}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="mt-3 flex justify-between items-center mb-3">
+                                    <div className="w-1/2">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.Switch,
+                                                    ContentFieldDataType.Bool
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Switch ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("switch_field")}
+                                        </div>
+                                    </div>
+
+                                    <div className="w-1/2 ml-3">
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.Date,
+                                                    ContentFieldDataType.INT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Date ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("date_field")}
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div className="mt-3 flex justify-between items-center mb-3">
+                                    <div className="w-1/2"> 
+                                        <div
+                                            onClick={() =>
+                                                onContentFieldChange(
+                                                    currentIndex,
+                                                    ContentFieldFieldType.Asset,
+                                                    ContentFieldDataType.TEXT
+                                                )
+                                            }
+                                            className={`${getValues(`content_fields.${currentIndex}.field_type`) === ContentFieldFieldType.Asset ? "bg-primary-200" : "bg-gray-300"} 
+                                                ring-1 ring-gray-300 text-xs hover:cursor-pointer hover:ring-primary-300 p-3 rounded`}
+                                        >
+                                            {t("asset_field")}
+                                        </div>
+                                    </div>
+
+                                    <div className="w-1/2 ml-3"> 
+                                        {/* Next field goes here */}
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <hr className="mt-3" />
+                    <hr className="mt-3 text-gray-200" />
                     <div className="mt-3">
                         <div className="flex">
                             <div>
@@ -784,7 +830,16 @@ export const ContentFieldModal = ({
                     </div>
                 </div>
             }
-            modal_header={`${t(collectionType)} ${t("content_field")}`}
+            modal_header={
+                <div className="flex items-center text-lg font-semibold border-b border-gray-200 text-gray-600 pb-1">
+                    <div>
+                        {t(collectionType).toUpperCase()} {t("content_field").toUpperCase()}
+                    </div>
+                    <div onClick={() => setIsOpen(false)} className="ml-auto text-gray-400 text-sm">
+                        <XMarkIcon className="w-6 h-6 p-1 hover:cursor-pointer hover:bg-gray-300 rounded-xl  hover:text-gray-600" />
+                    </div>
+                </div>
+            }
             isOpen={isOpen}
         ></AvoredModal>
     );
