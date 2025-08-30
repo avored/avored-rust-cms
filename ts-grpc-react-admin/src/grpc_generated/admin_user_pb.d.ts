@@ -813,6 +813,50 @@ export namespace DeleteAdminUserResponse {
   }
 }
 
+export class ChangeAdminUserPasswordRequest extends jspb.Message {
+  getPassword(): string;
+  setPassword(value: string): ChangeAdminUserPasswordRequest;
+
+  getNewPassword(): string;
+  setNewPassword(value: string): ChangeAdminUserPasswordRequest;
+
+  getConfirmPassword(): string;
+  setConfirmPassword(value: string): ChangeAdminUserPasswordRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ChangeAdminUserPasswordRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: ChangeAdminUserPasswordRequest): ChangeAdminUserPasswordRequest.AsObject;
+  static serializeBinaryToWriter(message: ChangeAdminUserPasswordRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ChangeAdminUserPasswordRequest;
+  static deserializeBinaryFromReader(message: ChangeAdminUserPasswordRequest, reader: jspb.BinaryReader): ChangeAdminUserPasswordRequest;
+}
+
+export namespace ChangeAdminUserPasswordRequest {
+  export type AsObject = {
+    password: string,
+    newPassword: string,
+    confirmPassword: string,
+  }
+}
+
+export class ChangeAdminUserPasswordResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): ChangeAdminUserPasswordResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): ChangeAdminUserPasswordResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: ChangeAdminUserPasswordResponse): ChangeAdminUserPasswordResponse.AsObject;
+  static serializeBinaryToWriter(message: ChangeAdminUserPasswordResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): ChangeAdminUserPasswordResponse;
+  static deserializeBinaryFromReader(message: ChangeAdminUserPasswordResponse, reader: jspb.BinaryReader): ChangeAdminUserPasswordResponse;
+}
+
+export namespace ChangeAdminUserPasswordResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+
 export class RoleOptionRequest extends jspb.Message {
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): RoleOptionRequest.AsObject;

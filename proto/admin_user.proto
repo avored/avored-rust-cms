@@ -186,6 +186,15 @@ message DeleteAdminUserResponse {
   bool status = 1;
 }
 
+message ChangeAdminUserPasswordRequest {
+  string password = 1;
+  string new_password = 2;
+  string confirm_password = 3;
+}
+message ChangeAdminUserPasswordResponse {
+  bool status = 1;
+}
+
 message RoleOptionRequest {}
 
 service AdminUser {
@@ -201,4 +210,5 @@ service AdminUser {
   rpc PutRoleIdentifier(PutRoleIdentifierRequest) returns (PutRoleIdentifierResponse);
   rpc DeleteRole(DeleteRoleRequest) returns (DeleteRoleResponse);
   rpc DeleteAdminUser(DeleteAdminUserRequest) returns (DeleteAdminUserResponse);
+  rpc ChangeAdminUserPassword(ChangeAdminUserPasswordRequest) returns (ChangeAdminUserPasswordResponse);
 }

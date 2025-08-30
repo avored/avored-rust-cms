@@ -161,6 +161,7 @@
   "put_role_identifier": "Put role identifier",
   "get_role": "Get role",
   "asset_field": "Asset Field",
+  "confirm_password": "Confirm Password",
   "locales": {
     "en_label": "English",
     "fr_label": "French"

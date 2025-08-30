@@ -1,10 +1,6 @@
 use crate::api::proto::admin_user::role_paginate_response::{RolePaginateData, RolePagination};
 use crate::api::proto::admin_user::{
-    DeleteAdminUserRequest, DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse,
-    GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse,
-    RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse,
-    StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest,
-    UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse,
+    ChangeAdminUserPasswordRequest, ChangeAdminUserPasswordResponse, DeleteAdminUserRequest, DeleteAdminUserResponse, DeleteRoleRequest, DeleteRoleResponse, GetRoleRequest, GetRoleResponse, PutRoleIdentifierRequest, PutRoleIdentifierResponse, RoleModel, RoleOptionModel, RoleOptionResponse, RolePaginateRequest, RolePaginateResponse, StoreAdminUserRequest, StoreAdminUserResponse, StoreRoleResponse, UpdateAdminUserRequest, UpdateAdminUserResponse, UpdateRoleRequest, UpdateRoleResponse
 };
 use crate::models::admin_user_model::{CreatableAdminUserModel, UpdatableAdminUserModel};
 use crate::models::role_model::{CreatableRole, PutRoleIdentifierModel, UpdatableRoleModel};
@@ -15,7 +11,8 @@ use crate::{
     repositories::admin_user_repository::AdminUserRepository, PER_PAGE,
 };
 use argon2::password_hash::SaltString;
-use argon2::{Argon2, PasswordHasher};
+use argon2::{Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use tracing::info;
 use std::path::Path;
 
 /// admin user service
@@ -35,7 +32,6 @@ impl AdminUserService {
             role_repository,
         })
     }
-
 
     /// paginate admin user 
     pub async fn paginate(
@@ -476,19 +472,21 @@ impl AdminUserService {
     //     }
     // }
     //
-    // pub fn compare_password(
-    //     &self,
-    //     plain_password: String,
-    //     encrypted_password: String,
-    // ) -> Result<bool> {
-    //     let argon2 = Argon2::default();
-    //
-    //     let parsed_hash = PasswordHash::new(&encrypted_password)?;
-    //
-    //     Ok(argon2
-    //         .verify_password(plain_password.as_bytes(), &parsed_hash)
-    //         .is_ok())
-    // }
+
+    /// compare password
+    pub fn compare_password(
+        &self,
+        plain_password: String,
+        encrypted_password: String,
+    ) -> Result<bool> {
+        let argon2 = Argon2::default();
+    
+        let parsed_hash = PasswordHash::new(&encrypted_password)?;
+    
+        Ok(argon2
+            .verify_password(plain_password.as_bytes(), &parsed_hash)
+            .is_ok())
+    }
     //
 
     /// has permission
@@ -816,18 +814,44 @@ impl AdminUserService {
         Ok(response)
     }
 
-    //count_of_identifier
+    /// change Password
+    pub async fn change_password(
+        &self,
+        request: ChangeAdminUserPasswordRequest,
+        email: &str,
+        password_salt: &str,
+        (datastore, database_session): &DB,
+    ) -> Result<ChangeAdminUserPasswordResponse> {
 
-    //
-    // pub async fn reset_password(
-    //     &self,
-    //     password: &str,
-    //     password_salt: &str,
-    // ) -> Result<()> {
-    //
-    //     let password_hash =
-    //         self.get_password_hash_from_raw_password(password, password_salt)?;
-    //
-    //     Ok(())
-    // }
+        let admin_user_model = self
+            .admin_user_repository
+            .find_by_email(datastore, database_session, email)
+            .await?;
+
+        let is_password_match: bool = self
+            .compare_password(request.password.clone(), admin_user_model.password.clone())?;
+
+        
+        if !is_password_match  {
+             let res = ChangeAdminUserPasswordResponse {
+                    status: false,
+                };
+            return Ok(res)
+        }
+
+        let password_hash = self.get_password_hash_from_raw_password(&request.new_password, password_salt)?;
+        
+        info!("password hash : {}", password_hash);
+        
+        let status = self
+            .admin_user_repository
+            .update_password_by_email(datastore, database_session, email, password_hash)
+            .await?;
+
+        Ok(ChangeAdminUserPasswordResponse { status  })
+
+        // println!("{:?}, token {} salt : {}", request, logged_in_username, password_salt);
+       
+    }
+
 }

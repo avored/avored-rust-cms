@@ -10,3 +10,5 @@ pub mod store_role_request;
 pub mod update_admin_user_request;
 /// update tole request
 pub mod update_role_request;
+/// change admin user password request
+pub mod change_admin_user_password_request;

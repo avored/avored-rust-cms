@@ -32,6 +32,12 @@ export type EditAdminUserType = {
     isSuperAdmin: boolean;
 }
 
+export type ChangePasswordType = {
+    password: string;
+    new_password: string;
+    confirm_password: string;
+}
+
 export type RoleOptionType = {
     label: string;
     value: string;
