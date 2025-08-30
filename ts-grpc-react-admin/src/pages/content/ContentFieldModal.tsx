@@ -16,7 +16,7 @@ import InputField from "../../components/InputField";
 import React from "react";
 import slug from "slug";
 import _ from "lodash";
-import { PlusIcon, XCircleIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { PlusIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { MinusIcon } from "@heroicons/react/16/solid";
 
 type ContentFieldProps = {

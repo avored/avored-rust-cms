@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { UseChangePasswordAdminUserSchema } from "../../schemas/admin_user/UseChangePasswordAdminUserSchema";
 import { useTranslation } from "react-i18next";
 import { ChangePasswordType } from "../../types/admin_user/AdminUserType";
@@ -8,7 +7,7 @@ import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import { Link } from "react-router-dom";
 import { UseChangePasswordHook } from "../../hooks/admin_user/UseChangePasswordHook";
-import { ChangeAdminUserPasswordRequest } from "../../grpc_generated/admin_user_pb";
+// import { ChangeAdminUserPasswordRequest } from "../../grpc_generated/admin_user_pb";
 
 export const AdminUserChangePasswordPage = () => {
     
@@ -23,12 +22,12 @@ export const AdminUserChangePasswordPage = () => {
     const {mutate, error} = UseChangePasswordHook();
 
     const submitHandler = async (data: any) => {
-        const request = new ChangeAdminUserPasswordRequest()
-        request.setPassword(data.password)
-        request.setNewPassword(data.new_password)
-        request.setConfirmPassword(data.confirm_password)
+        // const request = new ChangeAdminUserPasswordRequest()
+        // request.setPassword(data.password)
+        // request.setNewPassword(data.new_password)
+        // request.setConfirmPassword(data.confirm_password)
 
-        mutate(request);
+        // mutate(request);
     };
 
     return (
