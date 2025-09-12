@@ -1,0 +1,12 @@
+{
+    "name": "grpc-avored",
+    "private": true,
+    "version": "0.1.0",
+    "type": "commonjs",
+    "main": "index.ts",
+    "dependencies": {
+        "@types/google-protobuf": "^3.15.12",
+        "google-protobuf": "^4.0.0",
+        "grpc-web": "^2.0.1"
+    }
+}
