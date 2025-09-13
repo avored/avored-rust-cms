@@ -4,7 +4,7 @@ import { CmsClient } from "grpc-avored/CmsServiceClientPb";
 import {useNavigate} from "react-router-dom";
 
 export const useContactUsForm = () => {
-    const backend_url: string = "http://localhost:50051";
+    const backend_url: string = import.meta.env.VITE_BACKEND_BASE_URL ??  "http://localhost:50051";
     const client = new CmsClient(backend_url);
     const redirect = useNavigate();
 
