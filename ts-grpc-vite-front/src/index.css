@@ -1,68 +1,15 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+@theme {
+    --color-primary-50: oklch(0.977 0.017 320.058);
+    --color-primary-100: oklch(0.952 0.037 318.852);
+    --color-primary-200: oklch(0.903 0.076 319.62);
+    --color-primary-300: oklch(0.833 0.145 321.434);
+    --color-primary-400: oklch(0.74 0.238 322.16);
+    --color-primary-500: oklch(0.667 0.295 322.15);
+    --color-primary-600: oklch(0.591 0.293 322.896);
+    --color-primary-700: oklch(0.518 0.253 323.949);
+    --color-primary-800: oklch(0.452 0.211 324.591);
+    --color-primary-900: oklch(0.401 0.17 325.612);
+    --color-primary-950: oklch(0.293 0.136 325.661);
 }
