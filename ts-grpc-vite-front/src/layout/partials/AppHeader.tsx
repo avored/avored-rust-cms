@@ -5,7 +5,7 @@ const AppHeader = (() => {
     
 
     return (
-        <div className="flex bg-white-500 px-5 py-3">
+        <div className="border-b border-gray-200 flex bg-white-500 px-5 py-3">
             <div className='flex justify-center align-middle'>
                 <Link className="flex items-center" to="/">
                     <img src={avoredLogo} className="w-8 h-8" alt="AvoRed CMS" />
