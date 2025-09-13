@@ -137,7 +137,7 @@ async fn main() -> Result<(), Error> {
     //     ["x-grpc-web", "content-type", "x-user-agent", "grpc-timeout", "authorization"];
 
     let cors = CorsLayer::new()
-        .allow_origin(Any) // Allow all origins for local development
+        .allow_origin(origins) // Allow all origins for local development
         .allow_headers(Any) // Allow all headers
         .allow_methods(Any) // Allow all methods
         .expose_headers(Any); // Expose all headers
