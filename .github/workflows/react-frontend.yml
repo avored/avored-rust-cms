@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-22.04
     defaults:
           run:
-            working-directory: 'ts-grpc-react-front'
+            working-directory: 'ts-grpc-vite-front'
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -42,5 +42,5 @@ jobs:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_KEY }}
-        source: "./ts-grpc-react-front/build"
+        source: "./ts-grpc-vite-front/dist"
         target: ${{ secrets.REACT_DEMO_TARGET_PATH }}
