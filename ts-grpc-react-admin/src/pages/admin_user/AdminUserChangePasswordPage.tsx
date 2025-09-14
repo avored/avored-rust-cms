@@ -6,7 +6,7 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import InputField from "../../components/InputField";
 import ErrorMessage from "../../components/ErrorMessage";
 import { Link } from "react-router-dom";
-import { UseChangePasswordHook } from "../../hooks/admin_user/UseChangePasswordHook";
+// import { UseChangePasswordHook } from "../../hooks/admin_user/UseChangePasswordHook";
 // import { ChangeAdminUserPasswordRequest } from "../../grpc_generated/admin_user_pb";
 
 export const AdminUserChangePasswordPage = () => {
@@ -19,7 +19,7 @@ export const AdminUserChangePasswordPage = () => {
     } = useForm<ChangePasswordType>({
         resolver: joiResolver(UseChangePasswordAdminUserSchema(), {allowUnknown: true}),
     })
-    const {mutate, error} = UseChangePasswordHook();
+    // const {mutate, error} = UseChangePasswordHook();
 
     const submitHandler = async (data: any) => {
         // const request = new ChangeAdminUserPasswordRequest()
