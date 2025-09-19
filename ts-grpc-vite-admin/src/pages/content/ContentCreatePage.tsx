@@ -250,7 +250,7 @@ export const ContentCreatePage = () => {
                                     </label>
                                     <div className="relative">
 
-                                        {field.field_data?.content_checkbox_field_data?.map((option, option_index) => {
+                                        {field.field_data?.content_checkbox_field_data?.map((option) => {
                                             return (
                                                 <Field className="flex items-center gap-2">
                                                     <Checkbox
@@ -294,7 +294,7 @@ export const ContentCreatePage = () => {
                                             value={getRadioFieldCurrentValue(index)}
                                             onChange={value => setRadioCheckedStatus(value, index)}
                                             className="flex items-center gap-2">
-                                            {field.field_data?.content_radio_field_data?.map((option, option_index) => {
+                                            {field.field_data?.content_radio_field_data?.map((option) => {
                                                 return (
                                                     <Field key={option.value} className="flex items-center gap-2">
                                                         <Radio

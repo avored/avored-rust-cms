@@ -18,6 +18,7 @@ export const UseStoreAssetHook = (parent_id: string) => {
             });
         },
         onSuccess: (res) => {
+            console.log("res", res)
             queryClient.invalidateQueries({ queryKey: ["asset-table"] });
         },
     });

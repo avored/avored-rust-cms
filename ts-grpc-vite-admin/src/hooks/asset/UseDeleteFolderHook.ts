@@ -14,6 +14,7 @@ export const UseDeleteFolderHook = () => {
             });
         },
         onSuccess: (res) => {
+            console.log("res", res)
             queryClient.invalidateQueries({ queryKey: ["asset-table"] });
         },
     });

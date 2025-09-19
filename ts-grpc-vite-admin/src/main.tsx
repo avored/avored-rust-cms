@@ -13,12 +13,12 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 const queryClient = new QueryClient({
 
     queryCache : new QueryCache({
-        onError: (error: Error, query) => {
+        onError: (error: Error) => {
             handleError(error);
         }
     }),
     mutationCache: new MutationCache({
-        onError: (error: Error, mutation) => {
+        onError: (error: Error) => {
             handleError(error);
         }
     })

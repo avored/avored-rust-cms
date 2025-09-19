@@ -1,6 +1,5 @@
 import InputField from "../../components/InputField";
 import AvoredModal from "../../components/AvoredModal";
-import React from "react";
 import {useTranslation} from "react-i18next";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {joiResolver} from "@hookform/resolvers/joi";

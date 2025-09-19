@@ -10,7 +10,7 @@ export const UseChangePasswordHook = () => {
 
     return useMutation({
         mutationFn: (request: any) => {
-
+            console.log("request", request)
             const req = new GetAdminUserRequest();
             req.setAdminUserId("resrees");
 

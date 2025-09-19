@@ -34,7 +34,7 @@ function AppHeader() {
   };
 
   const changeLocale = ((test: any, test1: any) => {
-
+    console.log("test", test, test1)
   })
 
   return (
@@ -81,7 +81,7 @@ function AppHeader() {
               <MenuItem
                 as="div"
                 className="cursor-pointer"
-                onClick={(e) => changeLocale(i18n, "en")}
+                onClick={() => changeLocale(i18n, "en")}
               >
                 <span className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50">
                   {t("english")}
@@ -90,7 +90,7 @@ function AppHeader() {
               <MenuItem
                 as="div"
                 className="cursor-pointer"
-                onClick={(e) => changeLocale(i18n, "fr")}
+                onClick={() => changeLocale(i18n, "fr")}
               >
                 <span className="flex items-center text-sm py-1.5 px-4 text-gray-600 hover:text-primary-500 hover:bg-gray-50">
                   {t("french")}

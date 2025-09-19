@@ -1,5 +1,4 @@
 import _ from "lodash";
-import React from "react";
 
 type AvoRedTextareaFieldProps = {
     name?: string;

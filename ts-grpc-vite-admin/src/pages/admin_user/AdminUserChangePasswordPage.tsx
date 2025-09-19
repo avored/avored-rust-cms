@@ -22,6 +22,7 @@ export const AdminUserChangePasswordPage = () => {
     const {error} = UseChangePasswordHook();
 
     const submitHandler = async (data: any) => {
+        console.log("data", data)
         // const request = new ChangeAdminUserPasswordRequest()
         // request.setPassword(data.password)
         // request.setNewPassword(data.new_password)

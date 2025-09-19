@@ -116,7 +116,7 @@ export const RoleEditPage = () => {
             <Controller
                 control={control}
                 name="permissions"
-                render={({field}) => {
+                render={() => {
                     return (
                         <>
                             <div className="mb-4 flex items-center">
@@ -128,7 +128,7 @@ export const RoleEditPage = () => {
                                 </label>
                                 <Switch
                                     checked={permissionAllowed('setting')}
-                                    onChange={(e) => switchOnChange(switchKey)}
+                                    onChange={() => switchOnChange(switchKey)}
                                     id={switchKey}
                                     className={`${
                                         permissionAllowed(switchKey)

@@ -15,6 +15,7 @@ export const UseCreateFolderHook = () => {
             return await client.post("/create-folder", data);
         },
         onSuccess: (res) => {
+            console.log("res", res)
             queryClient.invalidateQueries({ queryKey: ["asset-table"] });
         },
     });

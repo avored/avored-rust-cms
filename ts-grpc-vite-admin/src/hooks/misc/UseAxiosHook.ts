@@ -22,8 +22,13 @@ export const UseAxiosHook = () => {
         const reqInterceptor = client.interceptors.request.use(
             config => {
                 const token = localStorage.getItem("token");
-                if (!_.isEmpty(token) && !config.headers['Authorization']) {
-                    config.headers['Authorization'] = `Bearer ${token}` 
+                if (!_.isEmpty(token)) {
+                    if (!config.headers) {
+                        config.headers = {};
+                    }
+                    if (!config.headers['Authorization']) {
+                        config.headers['Authorization'] = `Bearer ${token}`;
+                    }
                 }
 
                 return config;

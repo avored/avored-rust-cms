@@ -59,7 +59,7 @@ export const RoleCreatePage = () => {
             <Controller
                 control={control}
                 name="permissions"
-                render={({field}) => {
+                render={() => {
                     return (
                         <>
                             <div className="mb-4 flex items-center">
@@ -71,7 +71,7 @@ export const RoleCreatePage = () => {
                                 </label>
                                 <Switch
                                     checked={permissionAllowed('setting')}
-                                    onChange={(e) => switchOnChange(switchKey)}
+                                    onChange={() => switchOnChange(switchKey)}
                                     id="dashboard_permission"
                                     className={`${
                                         permissionAllowed(switchKey)

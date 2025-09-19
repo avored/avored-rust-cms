@@ -14,6 +14,7 @@ export const UseDeleteAssetHook = () => {
             });
         },
         onSuccess: (res) => {
+            console.log("res", res)
             queryClient.invalidateQueries({ queryKey: ["asset-table"] });
         },
     });

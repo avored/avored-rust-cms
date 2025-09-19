@@ -1,4 +1,4 @@
-import React, {Fragment} from "react";
+import {Fragment} from "react";
 import {Label, Listbox, ListboxButton, ListboxOption, ListboxOptions, Transition} from "@headlessui/react";
 import {CheckIcon, ChevronUpDownIcon} from "@heroicons/react/20/solid";
 
@@ -56,7 +56,7 @@ const AvoRedMultiSelectField = ({
                                 })}
                                 value={option.value}
                             >
-                                {({selected, active}) => (
+                                {({selected}) => (
                                     <>
                                       <span
                                           className={`block truncate ${
