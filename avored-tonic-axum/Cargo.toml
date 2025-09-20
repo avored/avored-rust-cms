@@ -1,0 +1,12 @@
+[package]
+name = "avored-tonic-axum"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.4"
+futures = "0.3.31"
+http-body = "1.0.1"
+hyper = "1.7.0"
+tonic = "0.14.2"
+tower = { version = "0.5.2", features = ["make"] }

@@ -29,9 +29,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let should_compile = !Path::new(proto_out_dir).exists()
         || std::fs::read_dir(proto_out_dir)?.count() < proto_files.len();
 
-    if should_compile {
+    if should_compile || true {
         println!("cargo:warning=Compiling protobuf files...");
-        tonic_build::configure()
+        tonic_prost_build::configure()
             .out_dir(proto_out_dir)
             .build_server(true)
             .compile_protos(proto_files, &[proto_root])?;
