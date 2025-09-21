@@ -62,33 +62,25 @@ pub struct RoleModel {
     pub updated_by: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// role option model
 pub struct RoleOptionModel {
     #[prost(string, tag = "1")]
-    /// label
     pub label: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// value
     pub value: ::prost::alloc::string::String,
 }
 /// Admin user paginate API
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct AdminUserPaginateRequest {
     #[prost(int64, optional, tag = "1")]
-    /// page
     pub page: ::core::option::Option<i64>,
     #[prost(string, optional, tag = "2")]
-    /// order
     pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// admin user paginate response
 pub struct AdminUserPaginateResponse {
     #[prost(bool, tag = "1")]
-    /// bool
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<
         admin_user_paginate_response::AdminUserPaginateData,
     >,
@@ -96,290 +88,205 @@ pub struct AdminUserPaginateResponse {
 /// Nested message and enum types in `AdminUserPaginateResponse`.
 pub mod admin_user_paginate_response {
     #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-    /// admin user pagination
     pub struct AdminUserPagination {
         #[prost(int64, tag = "1")]
-        /// total
         pub total: i64,
     }
     #[derive(Clone, PartialEq, ::prost::Message)]
-    /// admin user paginate data
     pub struct AdminUserPaginateData {
         #[prost(message, optional, tag = "1")]
-        /// pagination
         pub pagination: ::core::option::Option<AdminUserPagination>,
         #[prost(message, repeated, tag = "2")]
-        /// data
         pub data: ::prost::alloc::vec::Vec<super::AdminUserModel>,
     }
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// store admin user request
 pub struct StoreAdminUserRequest {
     #[prost(string, tag = "1")]
-    /// full name
     pub full_name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// email
     pub email: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    /// password
     pub password: ::prost::alloc::string::String,
     #[prost(string, tag = "4")]
-    /// confirm password
     pub confirm_password: ::prost::alloc::string::String,
     #[prost(bool, tag = "5")]
-    /// is super admin
     pub is_super_admin: bool,
     #[prost(bytes = "vec", tag = "6")]
-    /// profile image content
     pub profile_image_content: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag = "7")]
-    /// profile image file name
     pub profile_image_file_name: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// store admin user response
 pub struct StoreAdminUserResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<AdminUserModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// get admin user request
 pub struct GetAdminUserRequest {
     #[prost(string, tag = "1")]
-    /// admin user id
     pub admin_user_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// get admin user response
 pub struct GetAdminUserResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<AdminUserModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// update admin user request
 pub struct UpdateAdminUserRequest {
     #[prost(string, tag = "1")]
-    /// admin user id
     pub admin_user_id: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// full name
     pub full_name: ::prost::alloc::string::String,
     #[prost(bytes = "vec", tag = "3")]
-    /// profile image content
     pub profile_image_content: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag = "4")]
-    /// profile image file name
     pub profile_image_file_name: ::prost::alloc::string::String,
     #[prost(string, repeated, tag = "5")]
-    /// role ids
     pub role_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(bool, tag = "6")]
-    /// is super admin
     pub is_super_admin: bool,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// update admin user response
 pub struct UpdateAdminUserResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<AdminUserModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// role paginate request
 pub struct RolePaginateRequest {
     #[prost(int64, optional, tag = "1")]
-    /// page
     pub page: ::core::option::Option<i64>,
     #[prost(string, optional, tag = "2")]
-    /// order
     pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// role paginate response
 pub struct RolePaginateResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<role_paginate_response::RolePaginateData>,
 }
 /// Nested message and enum types in `RolePaginateResponse`.
 pub mod role_paginate_response {
     #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-    /// role pagination
     pub struct RolePagination {
         #[prost(int64, tag = "1")]
-        /// total
         pub total: i64,
     }
     #[derive(Clone, PartialEq, ::prost::Message)]
-    /// role paginate data
     pub struct RolePaginateData {
         #[prost(message, optional, tag = "1")]
-        /// pagination
         pub pagination: ::core::option::Option<RolePagination>,
         #[prost(message, repeated, tag = "2")]
-        /// data
         pub data: ::prost::alloc::vec::Vec<super::RoleModel>,
     }
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
-/// role options response
 pub struct RoleOptionResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, repeated, tag = "2")]
-    /// data
     pub data: ::prost::alloc::vec::Vec<RoleOptionModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// store role request
 pub struct StoreRoleRequest {
     #[prost(string, tag = "1")]
-    /// name
     pub name: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// identifier
     pub identifier: ::prost::alloc::string::String,
     #[prost(string, repeated, tag = "3")]
-    /// permissions
     pub permissions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// store role response
 pub struct StoreRoleResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<RoleModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// get role request
 pub struct GetRoleRequest {
     #[prost(string, tag = "1")]
-    /// role id
     pub role_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// get role response
 pub struct GetRoleResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<RoleModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// update role request
 pub struct UpdateRoleRequest {
     #[prost(string, tag = "1")]
-    /// role id
     pub role_id: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// name
     pub name: ::prost::alloc::string::String,
     #[prost(string, repeated, tag = "3")]
-    /// permissions
     pub permissions: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// update role request
 pub struct UpdateRoleResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<RoleModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// put role identifier request
 pub struct PutRoleIdentifierRequest {
     #[prost(string, tag = "1")]
-    /// role id
     pub role_id: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// identifier
     pub identifier: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// put role identifier response
 pub struct PutRoleIdentifierResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
     #[prost(message, optional, tag = "2")]
-    /// data
     pub data: ::core::option::Option<RoleModel>,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// delete role request
 pub struct DeleteRoleRequest {
     #[prost(string, tag = "1")]
-    /// role id
     pub role_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-/// delete role response
 pub struct DeleteRoleResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// delete admin user request
 pub struct DeleteAdminUserRequest {
     #[prost(string, tag = "1")]
-    /// admin user id
     pub admin_user_id: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-/// delete admin user response
 pub struct DeleteAdminUserResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
-/// change admin user password request
 pub struct ChangeAdminUserPasswordRequest {
     #[prost(string, tag = "1")]
-    /// password
     pub password: ::prost::alloc::string::String,
     #[prost(string, tag = "2")]
-    /// new password
     pub new_password: ::prost::alloc::string::String,
     #[prost(string, tag = "3")]
-    /// confirm password
     pub confirm_password: ::prost::alloc::string::String,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-/// change admin user password response
 pub struct ChangeAdminUserPasswordResponse {
     #[prost(bool, tag = "1")]
-    /// status
     pub status: bool,
 }
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-/// role option request
 pub struct RoleOptionRequest {}
 /// Generated client implementations.
 pub mod admin_user_client {
@@ -411,8 +318,8 @@ pub mod admin_user_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -429,15 +336,15 @@ pub mod admin_user_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             AdminUserClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -475,7 +382,7 @@ pub mod admin_user_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AdminUserPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AdminUserPaginateResponse>,
             tonic::Status,
         > {
@@ -499,7 +406,7 @@ pub mod admin_user_client {
         pub async fn store_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreAdminUserResponse>,
             tonic::Status,
         > {
@@ -523,7 +430,7 @@ pub mod admin_user_client {
         pub async fn get_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetAdminUserResponse>,
             tonic::Status,
         > {
@@ -547,7 +454,7 @@ pub mod admin_user_client {
         pub async fn update_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateAdminUserResponse>,
             tonic::Status,
         > {
@@ -571,7 +478,7 @@ pub mod admin_user_client {
         pub async fn role_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::RolePaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RolePaginateResponse>,
             tonic::Status,
         > {
@@ -595,7 +502,7 @@ pub mod admin_user_client {
         pub async fn role_option(
             &mut self,
             request: impl tonic::IntoRequest<super::RoleOptionRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RoleOptionResponse>,
             tonic::Status,
         > {
@@ -619,7 +526,7 @@ pub mod admin_user_client {
         pub async fn store_role(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreRoleResponse>,
             tonic::Status,
         > {
@@ -643,7 +550,7 @@ pub mod admin_user_client {
         pub async fn get_role(
             &mut self,
             request: impl tonic::IntoRequest<super::GetRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetRoleResponse>,
             tonic::Status,
         > {
@@ -667,7 +574,7 @@ pub mod admin_user_client {
         pub async fn update_role(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateRoleResponse>,
             tonic::Status,
         > {
@@ -691,7 +598,7 @@ pub mod admin_user_client {
         pub async fn put_role_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutRoleIdentifierRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::PutRoleIdentifierResponse>,
             tonic::Status,
         > {
@@ -715,7 +622,7 @@ pub mod admin_user_client {
         pub async fn delete_role(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         > {
@@ -739,7 +646,7 @@ pub mod admin_user_client {
         pub async fn delete_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAdminUserResponse>,
             tonic::Status,
         > {
@@ -763,7 +670,7 @@ pub mod admin_user_client {
         pub async fn change_admin_user_password(
             &mut self,
             request: impl tonic::IntoRequest<super::ChangeAdminUserPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ChangeAdminUserPasswordResponse>,
             tonic::Status,
         > {
@@ -800,92 +707,92 @@ pub mod admin_user_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AdminUserServer.
     #[async_trait]
-    pub trait AdminUser: Send + Sync + 'static {
+    pub trait AdminUser: std::marker::Send + std::marker::Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AdminUserPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AdminUserPaginateResponse>,
             tonic::Status,
         >;
         async fn store_admin_user(
             &self,
             request: tonic::Request<super::StoreAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreAdminUserResponse>,
             tonic::Status,
         >;
         async fn get_admin_user(
             &self,
             request: tonic::Request<super::GetAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetAdminUserResponse>,
             tonic::Status,
         >;
         async fn update_admin_user(
             &self,
             request: tonic::Request<super::UpdateAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateAdminUserResponse>,
             tonic::Status,
         >;
         async fn role_paginate(
             &self,
             request: tonic::Request<super::RolePaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RolePaginateResponse>,
             tonic::Status,
         >;
         async fn role_option(
             &self,
             request: tonic::Request<super::RoleOptionRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RoleOptionResponse>,
             tonic::Status,
         >;
         async fn store_role(
             &self,
             request: tonic::Request<super::StoreRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreRoleResponse>,
             tonic::Status,
         >;
         async fn get_role(
             &self,
             request: tonic::Request<super::GetRoleRequest>,
-        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
         async fn update_role(
             &self,
             request: tonic::Request<super::UpdateRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateRoleResponse>,
             tonic::Status,
         >;
         async fn put_role_identifier(
             &self,
             request: tonic::Request<super::PutRoleIdentifierRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::PutRoleIdentifierResponse>,
             tonic::Status,
         >;
         async fn delete_role(
             &self,
             request: tonic::Request<super::DeleteRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         >;
         async fn delete_admin_user(
             &self,
             request: tonic::Request<super::DeleteAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAdminUserResponse>,
             tonic::Status,
         >;
         async fn change_admin_user_password(
             &self,
             request: tonic::Request<super::ChangeAdminUserPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ChangeAdminUserPasswordResponse>,
             tonic::Status,
         >;
@@ -949,11 +856,11 @@ pub mod admin_user_server {
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for AdminUserServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AdminUserServer<T>
     where
         T: AdminUser,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -961,7 +868,7 @@ pub mod admin_user_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
