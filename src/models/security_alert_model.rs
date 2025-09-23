@@ -1,4 +1,4 @@
-use super::{BaseModel, Pagination};
+use super::BaseModel;
 use crate::error::{Error, Result};
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -302,26 +302,26 @@ pub struct CreateSecurityAlertModel {
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
-/// Represents a model for updating an existing security alert
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct UpdateSecurityAlertModel {
-    /// Unique identifier for the security alert
-    pub resolved: Option<bool>,
-    /// Optional timestamp when the alert was resolved
-    pub resolved_by: Option<String>,
-    /// Optional identifier of the user who resolved the alert
-    pub metadata: Option<BTreeMap<String, Value>>,
-}
+// /// Represents a model for updating an existing security alert
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct UpdateSecurityAlertModel {
+//     /// Unique identifier for the security alert
+//     pub resolved: Option<bool>,
+//     /// Optional timestamp when the alert was resolved
+//     pub resolved_by: Option<String>,
+//     /// Optional identifier of the user who resolved the alert
+//     pub metadata: Option<BTreeMap<String, Value>>,
+// }
 
-/// Represents a paginated response for security alerts
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct SecurityAlertPaginationModel {
+// /// Represents a paginated response for security alerts
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct SecurityAlertPaginationModel {
 
-    /// List of security alerts in the current page
-    pub data: Vec<SecurityAlertModel>,
-    /// Pagination information for the response
-    pub pagination: Pagination,
-}
+//     /// List of security alerts in the current page
+//     pub data: Vec<SecurityAlertModel>,
+//     /// Pagination information for the response
+//     pub pagination: Pagination,
+// }
 
 impl TryFrom<Object> for SecurityAlertModel {
     type Error = Error;

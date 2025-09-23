@@ -1,4 +1,4 @@
-use super::{BaseModel, Pagination};
+use super::BaseModel;
 use crate::api::proto::admin_user::AdminUserModel as GrpcAdminUserModel;
 use crate::api::proto::admin_user::RoleModel as GrpcRoleModel;
 use crate::error::{Error, Result};
@@ -213,15 +213,15 @@ pub struct UpdatableAdminUserModel {
     pub role_ids: Vec<String>,
 }
 
-/// Represents a paginated response for admin users.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct AdminUserPagination {
-    /// The list of admin users in the current page.
-    pub data: Vec<AdminUserModel>,
+// /// Represents a paginated response for admin users.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct AdminUserPagination {
+//     /// The list of admin users in the current page.
+//     pub data: Vec<AdminUserModel>,
 
-    /// The total number of admin users available.
-    pub pagination: Pagination,
-}
+//     /// The total number of admin users available.
+//     pub pagination: Pagination,
+// }
 
 /// Extension trait for `AdminUserModel` to check resource access
 pub trait AdminUserModelExtension {

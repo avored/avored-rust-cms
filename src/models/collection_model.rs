@@ -1,5 +1,5 @@
 use crate::error::{Error, Result};
-use crate::models::{BaseModel, Pagination};
+use crate::models::BaseModel;
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use std::time::SystemTime;
@@ -41,16 +41,16 @@ pub struct CollectionModel {
 // }
 
 
-/// Represents a paginated response for collections.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct CollectionPagination {
+// /// Represents a paginated response for collections.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct CollectionPagination {
 
-    /// A vector of collection models.
-    pub data: Vec<CollectionModel>,
+//     /// A vector of collection models.
+//     pub data: Vec<CollectionModel>,
 
-    /// Pagination information for the collection data.
-    pub pagination: Pagination,
-}
+//     /// Pagination information for the collection data.
+//     pub pagination: Pagination,
+// }
 
 
 /// Represents a creatable collection model.
@@ -102,18 +102,18 @@ pub struct UpdatableCollection {
 //     pub field_type: CollectionFieldFieldType,
 // }
 
-/// Represents a model for updating the collection identifier.
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct PutCollectionIdentifierModel {
-    /// Unique identifier for the collection to be updated.
-    pub id: String,
+// /// Represents a model for updating the collection identifier.
+// #[derive(Serialize, Deserialize, Debug, Clone)]
+// pub struct PutCollectionIdentifierModel {
+//     /// Unique identifier for the collection to be updated.
+//     pub id: String,
 
-    /// New identifier for the collection.
-    pub identifier: String,
+//     /// New identifier for the collection.
+//     pub identifier: String,
 
-    /// Username of the user updating the collection identifier.
-    pub logged_in_username: String,
-}
+//     /// Username of the user updating the collection identifier.
+//     pub logged_in_username: String,
+// }
 
 
 
@@ -126,14 +126,14 @@ pub struct PutCollectionIdentifierModel {
 //     Text(String),
 // }
 
-/// Represents the field type for collection fields.
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub enum CollectionFieldFieldType {
+// /// Represents the field type for collection fields.
+// #[derive(Deserialize, Debug, Clone, Serialize, Default)]
+// pub enum CollectionFieldFieldType {
 
-    /// Represents a text field type for collection fields.
-    #[default]
-    Text,
-}
+//     /// Represents a text field type for collection fields.
+//     #[default]
+//     Text,
+// }
 
 // impl Default for CollectionFieldDataType {
 //     fn default() -> Self {

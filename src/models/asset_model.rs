@@ -1,4 +1,4 @@
-use super::{BaseModel, Pagination};
+use super::BaseModel;
 use crate::error::{Error, Result};
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -91,20 +91,20 @@ pub struct MetaDataType {
 //     }
 // }
 
-/// `FileTypeMetaDataStruct` and `FolderTypeMetaDataStruct` are used to deserialize metadata from the database.
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub struct FileTypeMetaDataStruct {
+// /// `FileTypeMetaDataStruct` and `FolderTypeMetaDataStruct` are used to deserialize metadata from the database.
+// #[derive(Deserialize, Debug, Clone, Serialize, Default)]
+// pub struct FileTypeMetaDataStruct {
 
-    /// Type of the file, e.g., "image/png", "application/pdf".
-    pub file_type: String,
-}
+//     /// Type of the file, e.g., "image/png", "application/pdf".
+//     pub file_type: String,
+// }
 
-/// `FolderTypeMetaDataStruct` is used to deserialize folder metadata from the database.
-#[derive(Deserialize, Debug, Clone, Serialize, Default)]
-pub struct FolderTypeMetaDataStruct {
-    /// Color associated with the folder, used for visual categorization.
-    pub color: String,
-}
+// /// `FolderTypeMetaDataStruct` is used to deserialize folder metadata from the database.
+// #[derive(Deserialize, Debug, Clone, Serialize, Default)]
+// pub struct FolderTypeMetaDataStruct {
+//     /// Color associated with the folder, used for visual categorization.
+//     pub color: String,
+// }
 
 // impl Default for MetaDataType {
 //     fn default() -> MetaDataType {
@@ -269,31 +269,31 @@ impl TryFrom<MetaDataType> for Value {
     }
 }
 
-impl TryFrom<Object> for FileTypeMetaDataStruct {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<Self> {
-        let file_type = val.get("file_type").get_string()?;
-        Ok(Self { file_type })
-    }
-}
+// impl TryFrom<Object> for FileTypeMetaDataStruct {
+//     type Error = Error;
+//     fn try_from(val: Object) -> Result<Self> {
+//         let file_type = val.get("file_type").get_string()?;
+//         Ok(Self { file_type })
+//     }
+// }
 
-impl TryFrom<Object> for FolderTypeMetaDataStruct {
-    type Error = Error;
-    fn try_from(val: Object) -> Result<Self> {
-        let color = val.get("color").get_string()?;
-        Ok(Self { color })
-    }
-}
+// impl TryFrom<Object> for FolderTypeMetaDataStruct {
+//     type Error = Error;
+//     fn try_from(val: Object) -> Result<Self> {
+//         let color = val.get("color").get_string()?;
+//         Ok(Self { color })
+//     }
+// }
 
-/// `AssetPagination` is used to paginate a list of assets.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct AssetPagination {
-    /// List of assets in the current page.
-    pub data: Vec<AssetModel>,
+// /// `AssetPagination` is used to paginate a list of assets.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct AssetPagination {
+//     /// List of assets in the current page.
+//     pub data: Vec<AssetModel>,
 
-    /// Pagination information for the asset list.
-    pub pagination: Pagination,
-}
+//     /// Pagination information for the asset list.
+//     pub pagination: Pagination,
+// }
 
 
 

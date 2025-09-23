@@ -6,55 +6,55 @@ use tokio::sync::Mutex;
 use tracing::{error, info, warn};
 
 
-/// Represents the result of a health check
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct HealthCheckResult {
-    /// The status of the health check
-    pub status: HealthStatus,
-    /// A message describing the result of the health check
-    pub message: String,
+// /// Represents the result of a health check
+// #[derive(Debug, Clone, Serialize, Deserialize)]
+// pub struct HealthCheckResult {
+//     /// The status of the health check
+//     pub status: HealthStatus,
+//     /// A message describing the result of the health check
+//     pub message: String,
 
-    /// The timestamp of when the health check was performed
-    pub timestamp: u64,
+//     /// The timestamp of when the health check was performed
+//     pub timestamp: u64,
 
-    /// The name of the health check
-    pub check_name: String,
+//     /// The name of the health check
+//     pub check_name: String,
 
-    /// The last time the health check was performed
-    pub last_check: u64,
+//     /// The last time the health check was performed
+//     pub last_check: u64,
 
-    /// An optional error message if the health check failed
-    pub error_message: Option<String>,
+//     /// An optional error message if the health check failed
+//     pub error_message: Option<String>,
 
-    /// The duration of the health check in milliseconds
-    pub check_duration_ms: u64,
-}
+//     /// The duration of the health check in milliseconds
+//     pub check_duration_ms: u64,
+// }
 
-/// Represents the result of a threat assessment
-#[derive(Debug, Serialize, Deserialize)]
-pub struct ThreatAssessment {
-    /// The identifier for the threat assessment
-    pub threat_level: ThreatLevel,
-    /// The risk score associated with the threat
-    pub risk_score: u8,
-    /// A description of the threat
-    pub recommended_actions: Vec<String>,
-    /// Actions recommended to mitigate the threat
-    pub affected_resources: Vec<String>,
-}
+// /// Represents the result of a threat assessment
+// #[derive(Debug, Serialize, Deserialize)]
+// pub struct ThreatAssessment {
+//     /// The identifier for the threat assessment
+//     pub threat_level: ThreatLevel,
+//     /// The risk score associated with the threat
+//     pub risk_score: u8,
+//     /// A description of the threat
+//     pub recommended_actions: Vec<String>,
+//     /// Actions recommended to mitigate the threat
+//     pub affected_resources: Vec<String>,
+// }
 
-/// Represents the level of threat
-#[derive(Debug, Serialize, Deserialize)]
-pub enum ThreatLevel {
-    /// No threat detected
-    Low,
-    /// Potential threat detected
-    Medium,
-    /// Significant threat detected
-    High,
-    /// Critical threat detected
-    Critical,
-}
+// /// Represents the level of threat
+// #[derive(Debug, Serialize, Deserialize)]
+// pub enum ThreatLevel {
+//     /// No threat detected
+//     Low,
+//     /// Potential threat detected
+//     Medium,
+//     /// Significant threat detected
+//     High,
+//     /// Critical threat detected
+//     Critical,
+// }
 
 /// Real-time security monitoring service for continuous security validation
 /// This service ensures that security measures are always active and functioning
@@ -233,18 +233,18 @@ pub enum AlertSeverity {
     Critical,
 }
 
-/// health status
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub enum HealthStatus {
-    /// healthy heath status
-    Healthy,
-    /// warning heath status
-    Warning,
-    /// critical heath status
-    Critical,
-    /// unknown heath status
-    Unknown,
-}
+// /// health status
+// #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+// pub enum HealthStatus {
+//     /// healthy heath status
+//     Healthy,
+//     /// warning heath status
+//     Warning,
+//     /// critical heath status
+//     Critical,
+//     /// unknown heath status
+//     Unknown,
+// }
 
 // impl ThreatDetector {
 

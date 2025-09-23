@@ -41,36 +41,36 @@ pub mod token_claim_model;
 pub mod validation_error;
 
 
-/// Pagination struct
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct Pagination {
-    /// The total number of items in the collection
-    pub total: i64,
+// /// Pagination struct
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct Pagination {
+//     /// The total number of items in the collection
+//     pub total: i64,
 
-    /// The number of items per page
-    pub per_page: i64,
+//     /// The number of items per page
+//     pub per_page: i64,
 
-    /// The current page number
-    pub current_page: i64,
+//     /// The current page number
+//     pub current_page: i64,
 
-    /// The from number of collection
-    pub from: i64,
+//     /// The from number of collection
+//     pub from: i64,
 
-    /// The to number of collection
-    pub to: i64,
+//     /// The to number of collection
+//     pub to: i64,
 
-    /// Whether there is a next page
-    pub has_next_page: bool,
+//     /// Whether there is a next page
+//     pub has_next_page: bool,
 
-    /// Whether there is a previous page
-    pub has_previous_page: bool,
+//     /// Whether there is a previous page
+//     pub has_previous_page: bool,
 
-    /// The next page number
-    pub next_page_number: i64,
+//     /// The next page number
+//     pub next_page_number: i64,
 
-    /// The previous page number
-    pub previous_page_number: i64,
-}
+//     /// The previous page number
+//     pub previous_page_number: i64,
+// }
 
 /// `ModelCount` struct
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]

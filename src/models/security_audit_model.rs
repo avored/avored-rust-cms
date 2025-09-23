@@ -1,4 +1,4 @@
-use super::{BaseModel, Pagination};
+use super::BaseModel;
 use crate::error::{Error, Result};
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -68,90 +68,90 @@ pub struct SecurityAuditModel {
     pub metadata: Option<BTreeMap<String, Value>>,
 }
 
-/// Model for creating a new security audit entry
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct CreateSecurityAuditModel {
-    /// Unique identifier for the security audit
-    pub security_audit_id: String,
+// /// Model for creating a new security audit entry
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct CreateSecurityAuditModel {
+//     /// Unique identifier for the security audit
+//     pub security_audit_id: String,
 
-    /// Optional identifier for the admin user associated with the audit
-    pub admin_user_id: Option<String>,
+//     /// Optional identifier for the admin user associated with the audit
+//     pub admin_user_id: Option<String>,
 
-    /// session identifier for the audit
-    pub session_id: Option<String>,
-    /// IP address from which the request originated
-    pub ip_address: String,
+//     /// session identifier for the audit
+//     pub session_id: Option<String>,
+//     /// IP address from which the request originated
+//     pub ip_address: String,
 
-    /// Optional user agent string from the request
-    pub user_agent: Option<String>,
+//     /// Optional user agent string from the request
+//     pub user_agent: Option<String>,
 
-    /// Optional endpoint that was accessed during the audit
-    pub endpoint: Option<String>,
+//     /// Optional endpoint that was accessed during the audit
+//     pub endpoint: Option<String>,
 
-    /// Optional HTTP request method (e.g., GET, POST)
-    pub request_method: Option<String>,
+//     /// Optional HTTP request method (e.g., GET, POST)
+//     pub request_method: Option<String>,
 
-    /// Total number of authentication attempts recorded
-    pub total_authentication_attempts: Option<i32>,
+//     /// Total number of authentication attempts recorded
+//     pub total_authentication_attempts: Option<i32>,
 
-    /// Number of failed authentication attempts
-    pub failed_authentication_attempts: Option<i32>,
+//     /// Number of failed authentication attempts
+//     pub failed_authentication_attempts: Option<i32>,
 
-    /// Number of blocked injection attempts detected
-    pub blocked_injection_attempts: Option<i32>,
+//     /// Number of blocked injection attempts detected
+//     pub blocked_injection_attempts: Option<i32>,
 
-    /// Number of requests that were rate-limited
-    pub rate_limited_requests: Option<i32>,
+//     /// Number of requests that were rate-limited
+//     pub rate_limited_requests: Option<i32>,
 
-    /// Number of suspicious activities detected during the audit
-    pub suspicious_activities_detected: Option<i32>,
+//     /// Number of suspicious activities detected during the audit
+//     pub suspicious_activities_detected: Option<i32>,
 
-    /// Number of security violations recorded
-    pub security_violations: Option<i32>,
+//     /// Number of security violations recorded
+//     pub security_violations: Option<i32>,
 
-    /// Uptime in seconds for the system during the audit period
-    pub uptime_seconds: Option<i32>,
-    /// Security health score calculated based on various metrics
-    pub security_health_score: Option<f64>,
+//     /// Uptime in seconds for the system during the audit period
+//     pub uptime_seconds: Option<i32>,
+//     /// Security health score calculated based on various metrics
+//     pub security_health_score: Option<f64>,
 
-    /// Timestamp when the audit entry was created   
-    pub metadata: Option<BTreeMap<String, Value>>,
-}
+//     /// Timestamp when the audit entry was created   
+//     pub metadata: Option<BTreeMap<String, Value>>,
+// }
 
-/// Model for updating an existing security audit entry
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct UpdateSecurityAuditModel {
-    /// Unique identifier for the security audit entry
-    pub total_authentication_attempts: Option<i32>,
-    /// Optional identifier for the admin user associated with the audit
-    pub failed_authentication_attempts: Option<i32>,
+// /// Model for updating an existing security audit entry
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct UpdateSecurityAuditModel {
+//     /// Unique identifier for the security audit entry
+//     pub total_authentication_attempts: Option<i32>,
+//     /// Optional identifier for the admin user associated with the audit
+//     pub failed_authentication_attempts: Option<i32>,
 
-    /// Optional session identifier for the audit
-    pub blocked_injection_attempts: Option<i32>,
+//     /// Optional session identifier for the audit
+//     pub blocked_injection_attempts: Option<i32>,
 
-    /// IP address from which the request originated
-    pub rate_limited_requests: Option<i32>,
-    /// Optional user agent string from the request
-    pub suspicious_activities_detected: Option<i32>,
-    /// Optional endpoint that was accessed during the audit
-    pub security_violations: Option<i32>,
-    /// Optional HTTP request method (e.g., GET, POST)
-    pub uptime_seconds: Option<i32>,
-    /// Timestamp when the audit entry was created
-    pub security_health_score: Option<f64>,
-    /// Timestamp when the audit entry was last updated
-    pub metadata: Option<BTreeMap<String, Value>>,
-}
+//     /// IP address from which the request originated
+//     pub rate_limited_requests: Option<i32>,
+//     /// Optional user agent string from the request
+//     pub suspicious_activities_detected: Option<i32>,
+//     /// Optional endpoint that was accessed during the audit
+//     pub security_violations: Option<i32>,
+//     /// Optional HTTP request method (e.g., GET, POST)
+//     pub uptime_seconds: Option<i32>,
+//     /// Timestamp when the audit entry was created
+//     pub security_health_score: Option<f64>,
+//     /// Timestamp when the audit entry was last updated
+//     pub metadata: Option<BTreeMap<String, Value>>,
+// }
 
-/// Model for paginated security audit results
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct SecurityAuditPaginationModel {
+// /// Model for paginated security audit results
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct SecurityAuditPaginationModel {
 
-    /// List of security audit entries
-    pub data: Vec<SecurityAuditModel>,
-    /// Pagination information for the results
-    pub pagination: Pagination,
-}
+//     /// List of security audit entries
+//     pub data: Vec<SecurityAuditModel>,
+//     /// Pagination information for the results
+//     pub pagination: Pagination,
+// }
 
 impl TryFrom<Object> for SecurityAuditModel {
     type Error = Error;
@@ -388,7 +388,7 @@ impl SecurityAuditModel {
     }
 }
 
-impl CreateSecurityAuditModel {
+// impl CreateSecurityAuditModel {
     // /// Validates the create model
     // pub fn validate(&self) -> Result<()> {
     //     if self.security_audit_id.is_empty() {
@@ -415,7 +415,7 @@ impl CreateSecurityAuditModel {
 
     //     Ok(())
     // }
-}
+// }
 
 // gRPC Conversions
 impl TryFrom<SecurityAuditModel> for crate::api::proto::security_audit::SecurityAuditModel {

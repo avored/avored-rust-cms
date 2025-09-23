@@ -1,4 +1,4 @@
-use super::{BaseModel, Pagination};
+use super::BaseModel;
 use crate::error::{Error, Result};
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
@@ -36,14 +36,14 @@ pub struct RoleModel {
     pub permissions: Vec<String>,
 }
 
-/// Represents a role option model used in dropdowns or selection lists.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct RoleOptionModel {
-    /// label for the role option
-    pub label: String,
-    /// Value associated with the role option, typically the role's identifier
-    pub value: String,
-}
+// /// Represents a role option model used in dropdowns or selection lists.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct RoleOptionModel {
+//     /// label for the role option
+//     pub label: String,
+//     /// Value associated with the role option, typically the role's identifier
+//     pub value: String,
+// }
 
 impl TryFrom<RoleModel> for crate::api::proto::admin_user::RoleModel {
     type Error = Error;
@@ -157,12 +157,12 @@ pub struct PutRoleIdentifierModel {
 }
 
 
-/// Represents a paginated response for roles.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct RolePagination {
-    /// List of roles in the current page
-    pub data: Vec<RoleModel>,
+// /// Represents a paginated response for roles.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct RolePagination {
+//     /// List of roles in the current page
+//     pub data: Vec<RoleModel>,
 
-    /// Pagination information for the response
-    pub pagination: Pagination,
-}
+//     /// Pagination information for the response
+//     pub pagination: Pagination,
+// }

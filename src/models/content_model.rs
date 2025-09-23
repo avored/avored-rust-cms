@@ -1,5 +1,5 @@
 use crate::error::{Error, Result};
-use crate::models::{BaseModel, Pagination};
+use crate::models::BaseModel;
 use prost_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
@@ -8,16 +8,16 @@ use surrealdb::sql::{Datetime, Object, Value};
 
 // region: Struct, Enum Initialization
 
-/// Represents the pagination structure for content models.
-#[derive(Serialize, Debug, Deserialize, Clone, Default)]
-pub struct ContentPagination {
+// /// Represents the pagination structure for content models.
+// #[derive(Serialize, Debug, Deserialize, Clone, Default)]
+// pub struct ContentPagination {
 
-    /// total number of content model        
-    pub data: Vec<ContentModel>,
+//     /// total number of content model        
+//     pub data: Vec<ContentModel>,
 
-    /// total number of content model
-    pub pagination: Pagination,
-}
+//     /// total number of content model
+//     pub pagination: Pagination,
+// }
 
 /// Represents the base structure for content models.
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
