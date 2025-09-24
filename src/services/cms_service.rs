@@ -76,6 +76,8 @@ impl CmsService {
         request: GetCmsContentRequest,
         (datastore, database_session): &DB,
     ) -> Result<GetCmsContentResponse> {
+        //@todo create a visitor record
+        println!("request: {:?}", request);
         let content_model = self
             .content_repository
             .find_by_identifier(

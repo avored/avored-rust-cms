@@ -3,6 +3,7 @@ use crate::api::proto::cms::{
     GetCmsContentRequest, GetCmsContentResponse, SentContactFormRequest, SentContactFormResponse,
 };
 use crate::avored_state::AvoRedState;
+use std::net::SocketAddr;
 use std::sync::Arc;
 use tonic::{async_trait, Request, Response, Status};
 
@@ -31,6 +32,16 @@ impl Cms for CmsApi {
         //     let status = Status::permission_denied("You don't have permission to access this resource");
         //     return Err(status);
         // }
+
+        // let headers = request.g
+        let remote_addr: Option<SocketAddr> = request.remote_addr();
+
+        // Log or use the remote address as needed
+        if let Some(addr) = remote_addr {
+            println!("Request from: {}", addr);
+        } else {
+            println!("Could not determine remote address.");
+        }
 
         let req = request.into_inner();
 

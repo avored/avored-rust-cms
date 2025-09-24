@@ -20,13 +20,13 @@ export const DocsPage = (() => {
     
     return(
         <>
-        <div className="flex w-full">
+        <div className="flex mt-5 w-full">
             <div className="p-5 bg-gray-200 rounded-lg w-48">
                 <Link to={`/docs`}>
                     Installation
                 </Link>
             </div>
-            <div className="p-5 flex-1 markdown-body">
+            <div className="p-5 flex-1 markdown-body prose prose-slate">
                 <Markdown>{GetElementValue(content_content_field_list, 'docs-page-content')}</Markdown>
             </div>
             <div className="p-5 w-64">
