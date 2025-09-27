@@ -36,19 +36,12 @@ impl Cms for CmsApi {
         // let headers = request.g
         let remote_addr: Option<SocketAddr> = request.remote_addr();
 
-        // Log or use the remote address as needed
-        if let Some(addr) = remote_addr {
-            println!("Request from: {}", addr);
-        } else {
-            println!("Could not determine remote address.");
-        }
-
         let req = request.into_inner();
 
         match self
             .state
             .cms_service
-            .get_cms_content(req, &self.state.db)
+            .get_cms_content(req, remote_addr, &self.state.db)
             .await
         {
             Ok(reply) => Ok(Response::new(reply)),

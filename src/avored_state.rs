@@ -11,6 +11,7 @@ use crate::repositories::role_repository::RoleRepository;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
 // use crate::repositories::security_audit_repository::SecurityAuditRepository;
 use crate::repositories::setting_repository::SettingRepository;
+use crate::repositories::visitor_log_repository::VisitorLogRepository;
 use crate::services::admin_user_service::AdminUserService;
 use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
@@ -83,6 +84,7 @@ impl AvoRedState {
         let setting_repository = SettingRepository::new();
         // let security_audit_repository = SecurityAuditRepository::new();
         let security_alert_repository = SecurityAlertRepository::new();
+        let visitor_log_repository = VisitorLogRepository::new();
 
         let misc_service = MiscService::new().await?;
         let auth_service =
@@ -92,7 +94,7 @@ impl AvoRedState {
             ContentService::new(content_repository.clone(), collection_repository)?;
         let asset_service = AssetService::new(asset_repository)?;
         let setting_service = SettingService::new(setting_repository)?;
-        let cms_service = CmsService::new(content_repository)?;
+        let cms_service = CmsService::new(content_repository, visitor_log_repository)?;
         let general_service = GeneralService::new()?;
         // let security_audit_service = SecurityAuditService::new(security_audit_repository);
         // let security_alert_service = SecurityAlertService::new(security_alert_repository);

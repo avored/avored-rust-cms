@@ -40,6 +40,8 @@ pub mod token_claim_model;
 /// validation module
 pub mod validation_error;
 
+/// visitor log module
+pub mod visitor_log_model;
 
 // /// Pagination struct
 // #[derive(Serialize, Debug, Deserialize, Clone, Default)]

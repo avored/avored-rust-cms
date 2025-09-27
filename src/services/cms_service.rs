@@ -1,12 +1,16 @@
+use std::net::SocketAddr;
+
 use crate::api::proto::cms::{
     GetCmsContentRequest, GetCmsContentResponse, SentContactFormRequest, SentContactFormResponse,
 };
 use crate::api::proto::content::ContentModel;
 use crate::error::{Error, Result};
 use crate::extensions::email_message_builder::EmailMessageBuilder;
+use crate::models::visitor_log_model::CreatableVisitorLogModel;
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::content_repository::ContentRepository;
+use crate::repositories::visitor_log_repository::VisitorLogRepository;
 use lettre::{AsyncTransport, Message};
 use serde::{Deserialize, Serialize};
 use tracing::log::error;
@@ -14,12 +18,13 @@ use tracing::log::error;
 /// cms service
 pub struct CmsService {
     content_repository: ContentRepository,
+    visitor_log_repository: VisitorLogRepository
 }
 
 impl CmsService {
     /// new instance for cms service
-    pub const fn new(content_repository: ContentRepository) -> Result<Self> {
-        Ok(Self { content_repository })
+    pub const fn new(content_repository: ContentRepository, visitor_log_repository: VisitorLogRepository) -> Result<Self> {
+        Ok(Self { content_repository, visitor_log_repository })
     }
 }
 
@@ -74,10 +79,10 @@ impl CmsService {
     pub async fn get_cms_content(
         &self,
         request: GetCmsContentRequest,
+        remote_addr: Option<SocketAddr>,
         (datastore, database_session): &DB,
     ) -> Result<GetCmsContentResponse> {
-        //@todo create a visitor record
-        println!("request: {:?}", request);
+
         let content_model = self
             .content_repository
             .find_by_identifier(
@@ -88,6 +93,23 @@ impl CmsService {
             )
             .await?;
         let grpc_model: ContentModel = content_model.try_into()?;
+
+        let ip_address = match remote_addr {
+            Some(ip) => ip.ip().to_string(),
+            None => String::from("")
+        };
+
+        let creatable_visitor_log = CreatableVisitorLogModel {
+            content_type: request.content_type.clone(),
+            content_id: grpc_model.id.clone(),
+            ip_address: Some(ip_address)
+        };
+
+        self.visitor_log_repository.create(
+            datastore,
+            database_session,
+            creatable_visitor_log
+        ).await?;
 
         let response = GetCmsContentResponse {
             status: true,
