@@ -37,8 +37,8 @@ pub mod dashboard_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -55,15 +55,15 @@ pub mod dashboard_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
+            <T as Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             DashboardClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -101,7 +101,7 @@ pub mod dashboard_client {
         pub async fn dashboard(
             &mut self,
             request: impl tonic::IntoRequest<super::DashboardRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DashboardResponse>,
             tonic::Status,
         > {
@@ -136,11 +136,11 @@ pub mod dashboard_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with DashboardServer.
     #[async_trait]
-    pub trait Dashboard: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Dashboard: Send + Sync + 'static {
         async fn dashboard(
             &self,
             request: tonic::Request<super::DashboardRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DashboardResponse>,
             tonic::Status,
         >;
@@ -204,11 +204,11 @@ pub mod dashboard_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for DashboardServer<T>
+    impl<T, B> Service<http::Request<B>> for DashboardServer<T>
     where
         T: Dashboard,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -216,7 +216,7 @@ pub mod dashboard_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

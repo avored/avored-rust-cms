@@ -677,8 +677,8 @@ pub mod security_audit_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -695,15 +695,15 @@ pub mod security_audit_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
+            <T as Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             SecurityAuditClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -741,7 +741,7 @@ pub mod security_audit_client {
         pub async fn create_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAuditResponse>,
             tonic::Status,
         > {
@@ -770,7 +770,7 @@ pub mod security_audit_client {
         pub async fn log_security_event(
             &mut self,
             request: impl tonic::IntoRequest<super::LogSecurityEventRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::LogSecurityEventResponse>,
             tonic::Status,
         > {
@@ -796,7 +796,7 @@ pub mod security_audit_client {
         pub async fn get_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditResponse>,
             tonic::Status,
         > {
@@ -822,7 +822,7 @@ pub mod security_audit_client {
         pub async fn get_security_audits_by_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditsByUserRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsByUserResponse>,
             tonic::Status,
         > {
@@ -851,7 +851,7 @@ pub mod security_audit_client {
         pub async fn get_security_audits_by_ip(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditsByIpRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsByIpResponse>,
             tonic::Status,
         > {
@@ -880,7 +880,7 @@ pub mod security_audit_client {
         pub async fn get_security_audits_paginated(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAuditsPaginatedRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsPaginatedResponse>,
             tonic::Status,
         > {
@@ -909,7 +909,7 @@ pub mod security_audit_client {
         pub async fn update_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::UpdateSecurityAuditResponse>,
             tonic::Status,
         > {
@@ -938,7 +938,7 @@ pub mod security_audit_client {
         pub async fn delete_security_audit(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DeleteSecurityAuditResponse>,
             tonic::Status,
         > {
@@ -967,7 +967,7 @@ pub mod security_audit_client {
         pub async fn get_ip_security_summary(
             &mut self,
             request: impl tonic::IntoRequest<super::GetIpSecuritySummaryRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetIpSecuritySummaryResponse>,
             tonic::Status,
         > {
@@ -1007,67 +1007,67 @@ pub mod security_audit_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with SecurityAuditServer.
     #[async_trait]
-    pub trait SecurityAudit: std::marker::Send + std::marker::Sync + 'static {
+    pub trait SecurityAudit: Send + Sync + 'static {
         async fn create_security_audit(
             &self,
             request: tonic::Request<super::CreateSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAuditResponse>,
             tonic::Status,
         >;
         async fn log_security_event(
             &self,
             request: tonic::Request<super::LogSecurityEventRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::LogSecurityEventResponse>,
             tonic::Status,
         >;
         async fn get_security_audit(
             &self,
             request: tonic::Request<super::GetSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditResponse>,
             tonic::Status,
         >;
         async fn get_security_audits_by_user(
             &self,
             request: tonic::Request<super::GetSecurityAuditsByUserRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsByUserResponse>,
             tonic::Status,
         >;
         async fn get_security_audits_by_ip(
             &self,
             request: tonic::Request<super::GetSecurityAuditsByIpRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsByIpResponse>,
             tonic::Status,
         >;
         async fn get_security_audits_paginated(
             &self,
             request: tonic::Request<super::GetSecurityAuditsPaginatedRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAuditsPaginatedResponse>,
             tonic::Status,
         >;
         async fn update_security_audit(
             &self,
             request: tonic::Request<super::UpdateSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::UpdateSecurityAuditResponse>,
             tonic::Status,
         >;
         async fn delete_security_audit(
             &self,
             request: tonic::Request<super::DeleteSecurityAuditRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DeleteSecurityAuditResponse>,
             tonic::Status,
         >;
         async fn get_ip_security_summary(
             &self,
             request: tonic::Request<super::GetIpSecuritySummaryRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetIpSecuritySummaryResponse>,
             tonic::Status,
         >;
@@ -1132,11 +1132,11 @@ pub mod security_audit_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for SecurityAuditServer<T>
+    impl<T, B> Service<http::Request<B>> for SecurityAuditServer<T>
     where
         T: SecurityAudit,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -1144,7 +1144,7 @@ pub mod security_audit_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -1650,8 +1650,8 @@ pub mod security_alert_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -1668,15 +1668,15 @@ pub mod security_alert_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
+            <T as Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             SecurityAlertClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -1714,7 +1714,7 @@ pub mod security_alert_client {
         pub async fn create_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAlertResponse>,
             tonic::Status,
         > {
@@ -1743,7 +1743,7 @@ pub mod security_alert_client {
         pub async fn create_security_alert_auto_id(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateSecurityAlertAutoIdRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAlertAutoIdResponse>,
             tonic::Status,
         > {
@@ -1772,7 +1772,7 @@ pub mod security_alert_client {
         pub async fn get_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAlertResponse>,
             tonic::Status,
         > {
@@ -1798,7 +1798,7 @@ pub mod security_alert_client {
         pub async fn get_unresolved_alerts_by_severity(
             &mut self,
             request: impl tonic::IntoRequest<super::GetUnresolvedAlertsBySeverityRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetUnresolvedAlertsBySeverityResponse>,
             tonic::Status,
         > {
@@ -1827,7 +1827,7 @@ pub mod security_alert_client {
         pub async fn get_alerts_by_type(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertsByTypeRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertsByTypeResponse>,
             tonic::Status,
         > {
@@ -1853,7 +1853,7 @@ pub mod security_alert_client {
         pub async fn get_alerts_by_source(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertsBySourceRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertsBySourceResponse>,
             tonic::Status,
         > {
@@ -1879,7 +1879,7 @@ pub mod security_alert_client {
         pub async fn resolve_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::ResolveSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::ResolveSecurityAlertResponse>,
             tonic::Status,
         > {
@@ -1908,7 +1908,7 @@ pub mod security_alert_client {
         pub async fn get_security_alerts_paginated(
             &mut self,
             request: impl tonic::IntoRequest<super::GetSecurityAlertsPaginatedRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAlertsPaginatedResponse>,
             tonic::Status,
         > {
@@ -1937,7 +1937,7 @@ pub mod security_alert_client {
         pub async fn get_critical_unresolved_alerts(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCriticalUnresolvedAlertsRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetCriticalUnresolvedAlertsResponse>,
             tonic::Status,
         > {
@@ -1966,7 +1966,7 @@ pub mod security_alert_client {
         pub async fn delete_security_alert(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DeleteSecurityAlertResponse>,
             tonic::Status,
         > {
@@ -1995,7 +1995,7 @@ pub mod security_alert_client {
         pub async fn get_alert_statistics(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAlertStatisticsRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertStatisticsResponse>,
             tonic::Status,
         > {
@@ -2032,81 +2032,81 @@ pub mod security_alert_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with SecurityAlertServer.
     #[async_trait]
-    pub trait SecurityAlert: std::marker::Send + std::marker::Sync + 'static {
+    pub trait SecurityAlert: Send + Sync + 'static {
         async fn create_security_alert(
             &self,
             request: tonic::Request<super::CreateSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAlertResponse>,
             tonic::Status,
         >;
         async fn create_security_alert_auto_id(
             &self,
             request: tonic::Request<super::CreateSecurityAlertAutoIdRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::CreateSecurityAlertAutoIdResponse>,
             tonic::Status,
         >;
         async fn get_security_alert(
             &self,
             request: tonic::Request<super::GetSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAlertResponse>,
             tonic::Status,
         >;
         async fn get_unresolved_alerts_by_severity(
             &self,
             request: tonic::Request<super::GetUnresolvedAlertsBySeverityRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetUnresolvedAlertsBySeverityResponse>,
             tonic::Status,
         >;
         async fn get_alerts_by_type(
             &self,
             request: tonic::Request<super::GetAlertsByTypeRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertsByTypeResponse>,
             tonic::Status,
         >;
         async fn get_alerts_by_source(
             &self,
             request: tonic::Request<super::GetAlertsBySourceRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertsBySourceResponse>,
             tonic::Status,
         >;
         async fn resolve_security_alert(
             &self,
             request: tonic::Request<super::ResolveSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::ResolveSecurityAlertResponse>,
             tonic::Status,
         >;
         async fn get_security_alerts_paginated(
             &self,
             request: tonic::Request<super::GetSecurityAlertsPaginatedRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetSecurityAlertsPaginatedResponse>,
             tonic::Status,
         >;
         async fn get_critical_unresolved_alerts(
             &self,
             request: tonic::Request<super::GetCriticalUnresolvedAlertsRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetCriticalUnresolvedAlertsResponse>,
             tonic::Status,
         >;
         async fn delete_security_alert(
             &self,
             request: tonic::Request<super::DeleteSecurityAlertRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DeleteSecurityAlertResponse>,
             tonic::Status,
         >;
         async fn get_alert_statistics(
             &self,
             request: tonic::Request<super::GetAlertStatisticsRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetAlertStatisticsResponse>,
             tonic::Status,
         >;
@@ -2170,11 +2170,11 @@ pub mod security_alert_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for SecurityAlertServer<T>
+    impl<T, B> Service<http::Request<B>> for SecurityAlertServer<T>
     where
         T: SecurityAlert,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -2182,7 +2182,7 @@ pub mod security_alert_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
