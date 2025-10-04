@@ -2,7 +2,8 @@ use serde::{Deserialize, Serialize};
 use surrealdb::sql::{Datetime, Object};
 use crate::error::{Error, Result};
 use super::BaseModel;
-
+use crate::api::proto::dashboard::VisitByYear as GrpcVisitByYear;
+use crate::api::proto::dashboard::VisitByContentType as GrpcVisitByContentType;
 
 // region: Struct initialze
 
@@ -39,6 +40,35 @@ pub struct CreatableVisitorLogModel {
     pub ip_address: Option<String>,
 }
 
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+/// Visit by year
+pub struct VisitByYear {
+
+    /// The unique identifier for the visitor log.
+    pub visits: i64,
+
+    /// The content tpye of the visitor log.
+    pub month: String,
+
+    /// The content id of the visitor log.
+    pub month_number: i64,
+}
+
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+/// Visit by year
+pub struct VisitByContentType {
+
+    /// The unique identifier for the visitor log.
+    pub visits: i64,
+
+    /// The content tpye of the visitor log.
+    pub month: String,
+
+    /// The content id of the visitor log.
+    pub month_number: i64,
+}
+
+
 // endregion: Struct initialize
 
 
@@ -63,6 +93,72 @@ impl TryFrom<Object> for VistitorLogModel {
             ip_address: Some(ip_address),
             created_at,
         })
+    }
+}
+
+
+
+impl TryFrom<Object> for VisitByYear {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<Self> {
+        
+        let visits = val.get("visits").get_int()?;
+        let month: String = val.get("month").get_string()?;
+        let month_number = val.get("month_number").get_int()?;
+
+        Ok(Self {
+            visits,
+            month,
+            month_number
+        })
+    }
+}
+
+
+
+impl TryFrom<Object> for VisitByContentType {
+    type Error = Error;
+    fn try_from(val: Object) -> Result<Self> {
+        
+        let visits = val.get("visits").get_int()?;
+        let month: String = val.get("month").get_string()?;
+        let month_number = val.get("month_number").get_int()?;
+
+        Ok(Self {
+            visits,
+            month,
+            month_number
+        })
+    }
+}
+
+
+impl TryFrom<VisitByYear> for GrpcVisitByYear {
+    type Error = Error;
+
+    fn try_from(val: VisitByYear) -> Result<Self> {
+
+        let model: Self = Self {
+            visits: val.visits,
+            month: val.month
+        };
+
+        Ok(model)
+    }
+}
+
+impl TryFrom<VisitByContentType> for GrpcVisitByContentType {
+    type Error = Error;
+
+    fn try_from(val: VisitByContentType) -> Result<Self> {
+
+        let model: Self = Self {
+            visits: val.visits,
+            month: val.month,
+            content_type: String::from(""),
+        };
+
+        Ok(model)
     }
 }
 

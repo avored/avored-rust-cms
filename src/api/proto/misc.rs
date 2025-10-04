@@ -58,8 +58,8 @@ pub mod misc_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -76,15 +76,15 @@ pub mod misc_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             MiscClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -122,7 +122,7 @@ pub mod misc_client {
         pub async fn setup(
             &mut self,
             request: impl tonic::IntoRequest<super::SetupRequest>,
-        ) -> Result<tonic::Response<super::SetupResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::SetupResponse>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -140,7 +140,7 @@ pub mod misc_client {
         pub async fn health_check(
             &mut self,
             request: impl tonic::IntoRequest<super::HealthCheckRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::HealthCheckResponse>,
             tonic::Status,
         > {
@@ -161,7 +161,7 @@ pub mod misc_client {
         pub async fn install_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::InstallDemoDataRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::InstallDemoDataResponse>,
             tonic::Status,
         > {
@@ -184,7 +184,7 @@ pub mod misc_client {
         pub async fn delete_demo_data(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteDemoDataRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteDemoDataResponse>,
             tonic::Status,
         > {
@@ -216,29 +216,29 @@ pub mod misc_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with MiscServer.
     #[async_trait]
-    pub trait Misc: Send + Sync + 'static {
+    pub trait Misc: std::marker::Send + std::marker::Sync + 'static {
         async fn setup(
             &self,
             request: tonic::Request<super::SetupRequest>,
-        ) -> Result<tonic::Response<super::SetupResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::SetupResponse>, tonic::Status>;
         async fn health_check(
             &self,
             request: tonic::Request<super::HealthCheckRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::HealthCheckResponse>,
             tonic::Status,
         >;
         async fn install_demo_data(
             &self,
             request: tonic::Request<super::InstallDemoDataRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::InstallDemoDataResponse>,
             tonic::Status,
         >;
         async fn delete_demo_data(
             &self,
             request: tonic::Request<super::DeleteDemoDataRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteDemoDataResponse>,
             tonic::Status,
         >;
@@ -302,11 +302,11 @@ pub mod misc_server {
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for MiscServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for MiscServer<T>
     where
         T: Misc,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -314,7 +314,7 @@ pub mod misc_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

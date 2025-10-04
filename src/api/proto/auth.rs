@@ -70,8 +70,8 @@ pub mod auth_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -88,15 +88,15 @@ pub mod auth_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             AuthClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -134,7 +134,7 @@ pub mod auth_client {
         pub async fn login(
             &mut self,
             request: impl tonic::IntoRequest<super::LoginRequest>,
-        ) -> Result<tonic::Response<super::LoginResponse>, tonic::Status> {
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status> {
             self.inner
                 .ready()
                 .await
@@ -152,7 +152,7 @@ pub mod auth_client {
         pub async fn forgot_password(
             &mut self,
             request: impl tonic::IntoRequest<super::ForgotPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ForgotPasswordResponse>,
             tonic::Status,
         > {
@@ -173,7 +173,7 @@ pub mod auth_client {
         pub async fn reset_password(
             &mut self,
             request: impl tonic::IntoRequest<super::ResetPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ResetPasswordResponse>,
             tonic::Status,
         > {
@@ -205,22 +205,22 @@ pub mod auth_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AuthServer.
     #[async_trait]
-    pub trait Auth: Send + Sync + 'static {
+    pub trait Auth: std::marker::Send + std::marker::Sync + 'static {
         async fn login(
             &self,
             request: tonic::Request<super::LoginRequest>,
-        ) -> Result<tonic::Response<super::LoginResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::LoginResponse>, tonic::Status>;
         async fn forgot_password(
             &self,
             request: tonic::Request<super::ForgotPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ForgotPasswordResponse>,
             tonic::Status,
         >;
         async fn reset_password(
             &self,
             request: tonic::Request<super::ResetPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ResetPasswordResponse>,
             tonic::Status,
         >;
@@ -284,11 +284,11 @@ pub mod auth_server {
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for AuthServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AuthServer<T>
     where
         T: Auth,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -296,7 +296,7 @@ pub mod auth_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

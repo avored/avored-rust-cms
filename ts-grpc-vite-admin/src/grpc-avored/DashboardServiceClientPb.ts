@@ -82,5 +82,91 @@ export class DashboardClient {
     this.methodDescriptorDashboard);
   }
 
+  methodDescriptorGetVisitByYear = new grpcWeb.MethodDescriptor(
+    '/dashboard.Dashboard/GetVisitByYear',
+    grpcWeb.MethodType.UNARY,
+    dashboard_pb.VisitByYearRequest,
+    dashboard_pb.VisitByYearResponse,
+    (request: dashboard_pb.VisitByYearRequest) => {
+      return request.serializeBinary();
+    },
+    dashboard_pb.VisitByYearResponse.deserializeBinary
+  );
+
+  getVisitByYear(
+    request: dashboard_pb.VisitByYearRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<dashboard_pb.VisitByYearResponse>;
+
+  getVisitByYear(
+    request: dashboard_pb.VisitByYearRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: dashboard_pb.VisitByYearResponse) => void): grpcWeb.ClientReadableStream<dashboard_pb.VisitByYearResponse>;
+
+  getVisitByYear(
+    request: dashboard_pb.VisitByYearRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: dashboard_pb.VisitByYearResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/dashboard.Dashboard/GetVisitByYear',
+        request,
+        metadata || {},
+        this.methodDescriptorGetVisitByYear,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/dashboard.Dashboard/GetVisitByYear',
+    request,
+    metadata || {},
+    this.methodDescriptorGetVisitByYear);
+  }
+
+  methodDescriptorGetVisitByContentType = new grpcWeb.MethodDescriptor(
+    '/dashboard.Dashboard/GetVisitByContentType',
+    grpcWeb.MethodType.UNARY,
+    dashboard_pb.VisitByContentTypeRequest,
+    dashboard_pb.VisitByContentTypeResponse,
+    (request: dashboard_pb.VisitByContentTypeRequest) => {
+      return request.serializeBinary();
+    },
+    dashboard_pb.VisitByContentTypeResponse.deserializeBinary
+  );
+
+  getVisitByContentType(
+    request: dashboard_pb.VisitByContentTypeRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<dashboard_pb.VisitByContentTypeResponse>;
+
+  getVisitByContentType(
+    request: dashboard_pb.VisitByContentTypeRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: dashboard_pb.VisitByContentTypeResponse) => void): grpcWeb.ClientReadableStream<dashboard_pb.VisitByContentTypeResponse>;
+
+  getVisitByContentType(
+    request: dashboard_pb.VisitByContentTypeRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: dashboard_pb.VisitByContentTypeResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/dashboard.Dashboard/GetVisitByContentType',
+        request,
+        metadata || {},
+        this.methodDescriptorGetVisitByContentType,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/dashboard.Dashboard/GetVisitByContentType',
+    request,
+    metadata || {},
+    this.methodDescriptorGetVisitByContentType);
+  }
+
 }
 

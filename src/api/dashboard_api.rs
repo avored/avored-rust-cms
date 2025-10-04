@@ -1,5 +1,5 @@
 use crate::api::proto::dashboard::dashboard_server::Dashboard;
-use crate::api::proto::dashboard::{DashboardRequest, DashboardResponse};
+use crate::api::proto::dashboard::{DashboardRequest, DashboardResponse, VisitByContentTypeRequest, VisitByContentTypeResponse, VisitByYearRequest, VisitByYearResponse};
 use crate::avored_state::AvoRedState;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
@@ -30,6 +30,56 @@ impl Dashboard for DashboardApi {
             .await?;
 
         let reply = DashboardResponse { status: true };
+        Ok(Response::new(reply))
+    }
+    
+    async fn get_visit_by_year(
+        &self,
+        request: Request<VisitByYearRequest>,
+    ) -> Result<Response<VisitByYearResponse>, Status> {
+        println!("->> {:<12} - get_visit_by_year", "gRPC_Dashboard_Api_Service");
+
+        let claims = request.get_token_claim()?;
+        let req = request.into_inner();
+        
+        let _logged_in_user = claims.admin_user_model;
+        let visit_result =self
+            .state
+            .general_service
+            .get_visit_by_year(
+                &self.state.db,
+                req.year,
+            )
+            .await?;
+
+        let reply = VisitByYearResponse { status: true, data: visit_result };
+
+        Ok(Response::new(reply))
+    }
+
+    async fn get_visit_by_content_type(
+        &self,
+        request: Request<VisitByContentTypeRequest>,
+    ) -> Result<Response<VisitByContentTypeResponse>, Status> {
+        println!("->> {:<12} - get_visit_by_year", "gRPC_Dashboard_Api_Service");
+
+        let claims = request.get_token_claim()?;
+        let req = request.into_inner();
+        
+        let _logged_in_user = claims.admin_user_model;
+        let visit_result =self
+            .state
+            .general_service
+            .get_visit_by_content_type(
+                &self.state.db,
+                req.content_type,
+                req.year,
+            )
+            .await?;
+
+        let reply = VisitByContentTypeResponse { status: true, data: visit_result };
+
+
         Ok(Response::new(reply))
     }
 }

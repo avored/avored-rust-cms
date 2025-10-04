@@ -298,8 +298,8 @@ pub mod admin_user_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -316,15 +316,15 @@ pub mod admin_user_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             AdminUserClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -362,7 +362,7 @@ pub mod admin_user_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AdminUserPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AdminUserPaginateResponse>,
             tonic::Status,
         > {
@@ -386,7 +386,7 @@ pub mod admin_user_client {
         pub async fn store_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreAdminUserResponse>,
             tonic::Status,
         > {
@@ -410,7 +410,7 @@ pub mod admin_user_client {
         pub async fn get_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::GetAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetAdminUserResponse>,
             tonic::Status,
         > {
@@ -434,7 +434,7 @@ pub mod admin_user_client {
         pub async fn update_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateAdminUserResponse>,
             tonic::Status,
         > {
@@ -458,7 +458,7 @@ pub mod admin_user_client {
         pub async fn role_paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::RolePaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RolePaginateResponse>,
             tonic::Status,
         > {
@@ -482,7 +482,7 @@ pub mod admin_user_client {
         pub async fn role_option(
             &mut self,
             request: impl tonic::IntoRequest<super::RoleOptionRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RoleOptionResponse>,
             tonic::Status,
         > {
@@ -506,7 +506,7 @@ pub mod admin_user_client {
         pub async fn store_role(
             &mut self,
             request: impl tonic::IntoRequest<super::StoreRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreRoleResponse>,
             tonic::Status,
         > {
@@ -530,7 +530,7 @@ pub mod admin_user_client {
         pub async fn get_role(
             &mut self,
             request: impl tonic::IntoRequest<super::GetRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetRoleResponse>,
             tonic::Status,
         > {
@@ -554,7 +554,7 @@ pub mod admin_user_client {
         pub async fn update_role(
             &mut self,
             request: impl tonic::IntoRequest<super::UpdateRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateRoleResponse>,
             tonic::Status,
         > {
@@ -578,7 +578,7 @@ pub mod admin_user_client {
         pub async fn put_role_identifier(
             &mut self,
             request: impl tonic::IntoRequest<super::PutRoleIdentifierRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::PutRoleIdentifierResponse>,
             tonic::Status,
         > {
@@ -602,7 +602,7 @@ pub mod admin_user_client {
         pub async fn delete_role(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         > {
@@ -626,7 +626,7 @@ pub mod admin_user_client {
         pub async fn delete_admin_user(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAdminUserResponse>,
             tonic::Status,
         > {
@@ -650,7 +650,7 @@ pub mod admin_user_client {
         pub async fn change_admin_user_password(
             &mut self,
             request: impl tonic::IntoRequest<super::ChangeAdminUserPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ChangeAdminUserPasswordResponse>,
             tonic::Status,
         > {
@@ -687,92 +687,92 @@ pub mod admin_user_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with AdminUserServer.
     #[async_trait]
-    pub trait AdminUser: Send + Sync + 'static {
+    pub trait AdminUser: std::marker::Send + std::marker::Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AdminUserPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AdminUserPaginateResponse>,
             tonic::Status,
         >;
         async fn store_admin_user(
             &self,
             request: tonic::Request<super::StoreAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreAdminUserResponse>,
             tonic::Status,
         >;
         async fn get_admin_user(
             &self,
             request: tonic::Request<super::GetAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::GetAdminUserResponse>,
             tonic::Status,
         >;
         async fn update_admin_user(
             &self,
             request: tonic::Request<super::UpdateAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateAdminUserResponse>,
             tonic::Status,
         >;
         async fn role_paginate(
             &self,
             request: tonic::Request<super::RolePaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RolePaginateResponse>,
             tonic::Status,
         >;
         async fn role_option(
             &self,
             request: tonic::Request<super::RoleOptionRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RoleOptionResponse>,
             tonic::Status,
         >;
         async fn store_role(
             &self,
             request: tonic::Request<super::StoreRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::StoreRoleResponse>,
             tonic::Status,
         >;
         async fn get_role(
             &self,
             request: tonic::Request<super::GetRoleRequest>,
-        ) -> Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
+        ) -> std::result::Result<tonic::Response<super::GetRoleResponse>, tonic::Status>;
         async fn update_role(
             &self,
             request: tonic::Request<super::UpdateRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::UpdateRoleResponse>,
             tonic::Status,
         >;
         async fn put_role_identifier(
             &self,
             request: tonic::Request<super::PutRoleIdentifierRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::PutRoleIdentifierResponse>,
             tonic::Status,
         >;
         async fn delete_role(
             &self,
             request: tonic::Request<super::DeleteRoleRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteRoleResponse>,
             tonic::Status,
         >;
         async fn delete_admin_user(
             &self,
             request: tonic::Request<super::DeleteAdminUserRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAdminUserResponse>,
             tonic::Status,
         >;
         async fn change_admin_user_password(
             &self,
             request: tonic::Request<super::ChangeAdminUserPasswordRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::ChangeAdminUserPasswordResponse>,
             tonic::Status,
         >;
@@ -836,11 +836,11 @@ pub mod admin_user_server {
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for AdminUserServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AdminUserServer<T>
     where
         T: AdminUser,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -848,7 +848,7 @@ pub mod admin_user_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

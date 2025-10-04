@@ -7,6 +7,49 @@ pub struct DashboardResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
+/// Get visits by year
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VisitByYear {
+    #[prost(int64, tag = "1")]
+    pub visits: i64,
+    #[prost(string, tag = "2")]
+    pub month: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VisitByContentType {
+    #[prost(int64, tag = "1")]
+    pub visits: i64,
+    #[prost(string, tag = "2")]
+    pub month: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub content_type: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VisitByYearRequest {
+    #[prost(int64, tag = "1")]
+    pub year: i64,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VisitByYearResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, repeated, tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<VisitByYear>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct VisitByContentTypeRequest {
+    #[prost(string, tag = "1")]
+    pub content_type: ::prost::alloc::string::String,
+    #[prost(int64, tag = "2")]
+    pub year: i64,
+}
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct VisitByContentTypeResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, repeated, tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<VisitByContentType>,
+}
 /// Generated client implementations.
 pub mod dashboard_client {
     #![allow(
@@ -37,8 +80,8 @@ pub mod dashboard_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -55,15 +98,15 @@ pub mod dashboard_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             DashboardClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -101,7 +144,7 @@ pub mod dashboard_client {
         pub async fn dashboard(
             &mut self,
             request: impl tonic::IntoRequest<super::DashboardRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DashboardResponse>,
             tonic::Status,
         > {
@@ -122,6 +165,54 @@ pub mod dashboard_client {
                 .insert(GrpcMethod::new("dashboard.Dashboard", "Dashboard"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_visit_by_year(
+            &mut self,
+            request: impl tonic::IntoRequest<super::VisitByYearRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VisitByYearResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/dashboard.Dashboard/GetVisitByYear",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("dashboard.Dashboard", "GetVisitByYear"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn get_visit_by_content_type(
+            &mut self,
+            request: impl tonic::IntoRequest<super::VisitByContentTypeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VisitByContentTypeResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/dashboard.Dashboard/GetVisitByContentType",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("dashboard.Dashboard", "GetVisitByContentType"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -136,12 +227,26 @@ pub mod dashboard_server {
     use tonic::codegen::*;
     /// Generated trait containing gRPC methods that should be implemented for use with DashboardServer.
     #[async_trait]
-    pub trait Dashboard: Send + Sync + 'static {
+    pub trait Dashboard: std::marker::Send + std::marker::Sync + 'static {
         async fn dashboard(
             &self,
             request: tonic::Request<super::DashboardRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DashboardResponse>,
+            tonic::Status,
+        >;
+        async fn get_visit_by_year(
+            &self,
+            request: tonic::Request<super::VisitByYearRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VisitByYearResponse>,
+            tonic::Status,
+        >;
+        async fn get_visit_by_content_type(
+            &self,
+            request: tonic::Request<super::VisitByContentTypeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::VisitByContentTypeResponse>,
             tonic::Status,
         >;
     }
@@ -204,11 +309,11 @@ pub mod dashboard_server {
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for DashboardServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for DashboardServer<T>
     where
         T: Dashboard,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -216,7 +321,7 @@ pub mod dashboard_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
@@ -251,6 +356,97 @@ pub mod dashboard_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = DashboardSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/dashboard.Dashboard/GetVisitByYear" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetVisitByYearSvc<T: Dashboard>(pub Arc<T>);
+                    impl<
+                        T: Dashboard,
+                    > tonic::server::UnaryService<super::VisitByYearRequest>
+                    for GetVisitByYearSvc<T> {
+                        type Response = super::VisitByYearResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::VisitByYearRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Dashboard>::get_visit_by_year(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetVisitByYearSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/dashboard.Dashboard/GetVisitByContentType" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetVisitByContentTypeSvc<T: Dashboard>(pub Arc<T>);
+                    impl<
+                        T: Dashboard,
+                    > tonic::server::UnaryService<super::VisitByContentTypeRequest>
+                    for GetVisitByContentTypeSvc<T> {
+                        type Response = super::VisitByContentTypeResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::VisitByContentTypeRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as Dashboard>::get_visit_by_content_type(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetVisitByContentTypeSvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

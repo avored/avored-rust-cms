@@ -8,6 +8,38 @@ message DashboardResponse {
   bool status = 1;
 }
 
+// Get visits by year
+message VisitByYear {
+  int64 visits = 1;
+  string month = 2;
+}
+message VisitByContentType {
+  int64 visits = 1;
+  string month = 2;
+  string content_type = 3;
+}
+
+message VisitByYearRequest {
+  int64 year = 1;
+}
+message VisitByYearResponse {
+  bool status = 1;
+  repeated VisitByYear data = 2;
+}
+
+
+
+message VisitByContentTypeRequest {
+  string content_type = 1;
+  int64 year = 2;
+}
+message VisitByContentTypeResponse {
+  bool status = 1;
+  repeated VisitByContentType data = 2;
+}
+
 service Dashboard {
   rpc Dashboard(DashboardRequest) returns (DashboardResponse);
+  rpc GetVisitByYear(VisitByYearRequest) returns (VisitByYearResponse);
+  rpc GetVisitByContentType(VisitByContentTypeRequest) returns (VisitByContentTypeResponse);
 }
