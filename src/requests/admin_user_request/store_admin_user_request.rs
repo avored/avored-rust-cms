@@ -2,6 +2,7 @@ use crate::api::proto::admin_user::StoreAdminUserRequest;
 use crate::avored_state::AvoRedState;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse, Validate};
 use rust_i18n::t;
+use std::path::Path;
 
 impl StoreAdminUserRequest {
     /// validate
@@ -61,6 +62,20 @@ impl StoreAdminUserRequest {
 
             valid = false;
             errors.push(error_message);
+        }
+
+        // Validate locale if provided (strict validation)
+        if !self.locale.is_empty() {
+            let locale_path = Path::new("resources/locales").join(format!("{}.json", self.locale));
+            if !locale_path.exists() {
+                let error_message = ErrorMessage {
+                    key: String::from("locale"),
+                    message: t!("validation_invalid", attribute = t!("locale")).to_string(),
+                };
+
+                valid = false;
+                errors.push(error_message);
+            }
         }
 
         if !valid {

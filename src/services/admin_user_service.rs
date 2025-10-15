@@ -94,6 +94,14 @@ impl AdminUserService {
         let password_hash =
             self.get_password_hash_from_raw_password(&req.password, password_salt)?;
 
+        // Use provided locale or default to "en" if empty
+        // Request layer already validated that locale exists
+        let locale = if req.locale.is_empty() {
+            String::from("en")
+        } else {
+            req.locale.clone()
+        };
+
         let mut created_admin_user_model = CreatableAdminUserModel {
             full_name: req.full_name,
             email: req.email,
@@ -101,6 +109,7 @@ impl AdminUserService {
             profile_image: String::new(),
             is_super_admin: req.is_super_admin,
             logged_in_username,
+            locale,
         };
 
         if !req.profile_image_file_name.is_empty() {
@@ -153,6 +162,15 @@ impl AdminUserService {
         logged_in_username: String,
         (datastore, database_session): &DB,
     ) -> Result<UpdateAdminUserResponse> {
+
+        // Use provided locale or default to "en" if empty
+        // Request layer already validated that locale exists
+        let locale = if req.locale.is_empty() {
+            String::from("en")
+        } else {
+            req.locale.clone()
+        };
+
         let mut updatable_admin_user_model = UpdatableAdminUserModel {
             id: req.admin_user_id,
             full_name: req.full_name,
@@ -160,6 +178,7 @@ impl AdminUserService {
             is_super_admin: req.is_super_admin,
             logged_in_username: logged_in_username.clone(),
             role_ids: req.role_ids,
+            locale,
         };
 
         if !req.profile_image_file_name.is_empty() {

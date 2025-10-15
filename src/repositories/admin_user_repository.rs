@@ -123,6 +123,10 @@ impl AdminUserRepository {
                 creatable_admin_user_model.is_super_admin.into(),
             ),
             (
+                "locale".into(),
+                creatable_admin_user_model.locale.into(),
+            ),
+            (
                 "created_by".into(),
                 creatable_admin_user_model.logged_in_username.clone().into(),
             ),
@@ -160,6 +164,7 @@ impl AdminUserRepository {
                 full_name: $full_name,
                 profile_image: $profile_image,
                 is_super_admin: $is_super_admin,
+                locale: $locale,
                 updated_by: $logged_in_user_name,
                 updated_at: time::now()
             };";
@@ -178,6 +183,7 @@ impl AdminUserRepository {
                 "is_super_admin".into(),
                 updatable_admin_user.is_super_admin.into(),
             ),
+            ("locale".into(), updatable_admin_user.locale.into()),
             ("id".into(), updatable_admin_user.id.into()),
             ("table".into(), ADMIN_USER_TABLE.into()),
         ]);
