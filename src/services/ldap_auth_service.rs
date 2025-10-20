@@ -211,6 +211,7 @@ impl LdapAuthService {
                 profile_image: String::new(),
                 is_super_admin: false, // LDAP users are not super admins by default
                 logged_in_username: "system".to_string(),
+                locale: String::from("en"),
             };
 
             self.admin_user_repository

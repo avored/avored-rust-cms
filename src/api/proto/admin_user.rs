@@ -21,6 +21,8 @@ pub struct AdminUserModel {
     pub updated_by: ::prost::alloc::string::String,
     #[prost(message, repeated, tag = "10")]
     pub roles: ::prost::alloc::vec::Vec<RoleModel>,
+    #[prost(string, tag = "11")]
+    pub locale: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct RoleModel {
@@ -96,6 +98,8 @@ pub struct StoreAdminUserRequest {
     pub profile_image_content: ::prost::alloc::vec::Vec<u8>,
     #[prost(string, tag = "7")]
     pub profile_image_file_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "8")]
+    pub locale: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct StoreAdminUserResponse {
@@ -130,6 +134,8 @@ pub struct UpdateAdminUserRequest {
     pub role_ids: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(bool, tag = "6")]
     pub is_super_admin: bool,
+    #[prost(string, tag = "7")]
+    pub locale: ::prost::alloc::string::String,
 }
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct UpdateAdminUserResponse {
