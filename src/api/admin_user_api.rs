@@ -97,8 +97,6 @@ impl AdminUser for AdminUserApi {
         let request_data = request.into_inner();
         request_data.validate(&self.state).await?;
 
-        // DEBUG: Log locale being stored
-        println!("✅ DEBUG CREATE: Storing admin user with locale: '{}'", request_data.locale);
 
         match self
             .state
@@ -147,11 +145,6 @@ impl AdminUser for AdminUserApi {
             .await
         {
             Ok(admin_user_model) => {
-                // DEBUG: Log locale retrieved from database
-                println!("🔍 DEBUG GET: User '{}' has locale: '{}'",
-                         admin_user_model.email,
-                         admin_user_model.locale);
-
                 let get_admin_user_response = GetAdminUserResponse {
                     status: true,
                     data: Some(admin_user_model),
@@ -187,9 +180,6 @@ impl AdminUser for AdminUserApi {
 
         let req = request.into_inner();
         req.validate().await?;
-
-        // DEBUG: Log locale being updated
-        println!("✅ DEBUG UPDATE: Updating admin user with locale: '{}'", req.locale);
 
         match self
             .state

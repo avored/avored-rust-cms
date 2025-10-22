@@ -92,12 +92,6 @@ export const AdminUserEditPage = () => {
 
     const submitHandler = async (data: EditAdminUserType) => {
         const update_admin_user = new UpdateAdminUserRequest();
-        console.log("🔍 UpdateAdminUserRequest constructor:", UpdateAdminUserRequest);
-        console.log("🔍 update_admin_user instance:", update_admin_user);
-        console.log("🔍 update_admin_user.constructor.name:", update_admin_user.constructor.name);
-        console.log("🔍 typeof setLocale:", typeof update_admin_user.setLocale);
-        console.log("🔍 setLocale exists?:", 'setLocale' in update_admin_user);
-        console.log("🔍 All methods:", Object.getOwnPropertyNames(Object.getPrototypeOf(update_admin_user)));
         update_admin_user.setFullName(data.fullName);
         update_admin_user.setAdminUserId(params.admin_user_id ?? '');
         update_admin_user.setRoleIdsList(selectedOption);
