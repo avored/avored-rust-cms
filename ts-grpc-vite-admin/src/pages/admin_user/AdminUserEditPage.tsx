@@ -3,6 +3,7 @@ import {useTranslation} from "react-i18next";
 import {UseGetAdminUserHook} from "../../hooks/admin_user/UseGetAdminUserHook";
 import {EditAdminUserType, RoleOptionType, RoleType} from "../../types/admin_user/AdminUserType";
 import InputField from "../../components/InputField";
+import SelectField from "../../components/SelectField";
 import {UseAdminUserEditSchema} from "../../schemas/admin_user/UseAdminUserEditSchema";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {Controller, useForm} from "react-hook-form";
@@ -37,7 +38,9 @@ export const AdminUserEditPage = () => {
 
     const values: EditAdminUserType = data?.data as unknown as EditAdminUserType;
     const admin_user_role_list = data?.data?.rolesList ?? [];
+
     if (values) {
+        values.locale = values.locale || "en";
         values.roles = admin_user_role_list as Array<unknown> as RoleType[];
         values.roles = _.uniqBy(values.roles, 'id')
 
@@ -93,6 +96,7 @@ export const AdminUserEditPage = () => {
         update_admin_user.setAdminUserId(params.admin_user_id ?? '');
         update_admin_user.setRoleIdsList(selectedOption);
         update_admin_user.setIsSuperAdmin(data.isSuperAdmin)
+        update_admin_user.setLocale(data.locale || "en")
 
         var profile_image_file_name = ""
         const file: File = data.profile_image[0];
@@ -145,6 +149,18 @@ export const AdminUserEditPage = () => {
                                     disabled={true}
                                     register={register("email")}
                                 />
+                            </div>
+
+                            <div className="mb-4">
+                                <SelectField
+                                    label={t("locale")}
+                                    name="locale"
+                                    register={register("locale")}
+                                >
+                                    <option value="en">English</option>
+                                    <option value="fr">Français</option>
+                                </SelectField>
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="locale" />
                             </div>
 
                             <Controller

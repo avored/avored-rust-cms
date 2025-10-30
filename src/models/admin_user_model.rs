@@ -46,6 +46,9 @@ pub struct AdminUserModel {
 
     /// The roles assigned to the admin user.
     pub roles: Vec<RoleModel>,
+
+    /// The preferred locale/language for the admin user.
+    pub locale: String,
 }
 
 // region: impl try_from AdminUserModel
@@ -99,6 +102,7 @@ impl TryFrom<AdminUserModel> for GrpcAdminUserModel {
             created_by: val.created_by,
             updated_by: val.updated_by,
             roles: grpc_roles,
+            locale: val.locale,
         };
 
         Ok(model)
@@ -148,6 +152,7 @@ impl TryFrom<Object> for AdminUserModel {
         let updated_at = val.get("updated_at").get_datetime()?;
         let created_by = val.get("created_by").get_string()?;
         let updated_by = val.get("updated_by").get_string()?;
+        let locale = val.get("locale").get_string().unwrap_or_else(|_| String::from("en"));
 
         Ok(Self {
             id,
@@ -161,6 +166,7 @@ impl TryFrom<Object> for AdminUserModel {
             created_by,
             updated_by,
             roles,
+            locale,
         })
     }
 }
@@ -188,6 +194,9 @@ pub struct CreatableAdminUserModel {
 
     /// The username of the user who is creating this admin user.
     pub logged_in_username: String,
+
+    /// The preferred locale/language for the admin user.
+    pub locale: String,
     // pub role_ids: Vec<String>,
 }
 
@@ -202,7 +211,7 @@ pub struct UpdatableAdminUserModel {
 
     /// The email address of the admin user.
     pub profile_image: String,
-    
+
     ///  is the admin user has super admin privileges.
     pub is_super_admin: bool,
 
@@ -211,6 +220,9 @@ pub struct UpdatableAdminUserModel {
 
     /// The roles assigned to the admin user.
     pub role_ids: Vec<String>,
+
+    /// The preferred locale/language for the admin user.
+    pub locale: String,
 }
 
 // /// Represents a paginated response for admin users.

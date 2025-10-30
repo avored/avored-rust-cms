@@ -97,6 +97,7 @@ impl AdminUser for AdminUserApi {
         let request_data = request.into_inner();
         request_data.validate(&self.state).await?;
 
+
         match self
             .state
             .admin_user_service

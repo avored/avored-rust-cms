@@ -386,6 +386,7 @@ impl Misc for MiscApi {
             is_super_admin: false,
             profile_image_content: vec![],
             profile_image_file_name: String::new(),
+            locale: String::from("en"),
         };
 
         let created_admin_user = self

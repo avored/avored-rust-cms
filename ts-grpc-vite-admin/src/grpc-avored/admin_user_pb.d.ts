@@ -40,6 +40,9 @@ export class AdminUserModel extends jspb.Message {
   clearRolesList(): AdminUserModel;
   addRoles(value?: RoleModel, index?: number): RoleModel;
 
+  getLocale(): string;
+  setLocale(value: string): AdminUserModel;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): AdminUserModel.AsObject;
   static toObject(includeInstance: boolean, msg: AdminUserModel): AdminUserModel.AsObject;
@@ -60,6 +63,7 @@ export namespace AdminUserModel {
     createdBy: string,
     updatedBy: string,
     rolesList: Array<RoleModel.AsObject>,
+    locale: string,
   }
 }
 
@@ -267,6 +271,9 @@ export class StoreAdminUserRequest extends jspb.Message {
   getProfileImageFileName(): string;
   setProfileImageFileName(value: string): StoreAdminUserRequest;
 
+  getLocale(): string;
+  setLocale(value: string): StoreAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): StoreAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: StoreAdminUserRequest): StoreAdminUserRequest.AsObject;
@@ -284,6 +291,7 @@ export namespace StoreAdminUserRequest {
     isSuperAdmin: boolean,
     profileImageContent: Uint8Array | string,
     profileImageFileName: string,
+    locale: string,
   }
 }
 
@@ -376,6 +384,9 @@ export class UpdateAdminUserRequest extends jspb.Message {
   getIsSuperAdmin(): boolean;
   setIsSuperAdmin(value: boolean): UpdateAdminUserRequest;
 
+  getLocale(): string;
+  setLocale(value: string): UpdateAdminUserRequest;
+
   serializeBinary(): Uint8Array;
   toObject(includeInstance?: boolean): UpdateAdminUserRequest.AsObject;
   static toObject(includeInstance: boolean, msg: UpdateAdminUserRequest): UpdateAdminUserRequest.AsObject;
@@ -392,6 +403,7 @@ export namespace UpdateAdminUserRequest {
     profileImageFileName: string,
     roleIdsList: Array<string>,
     isSuperAdmin: boolean,
+    locale: string,
   }
 }
 

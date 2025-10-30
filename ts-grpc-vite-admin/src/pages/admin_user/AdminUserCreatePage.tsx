@@ -1,4 +1,5 @@
 import InputField from "../../components/InputField";
+import SelectField from "../../components/SelectField";
 import {useTranslation} from "react-i18next";
 import ErrorMessage from "../../components/ErrorMessage";
 import {Link} from "react-router-dom";
@@ -47,6 +48,7 @@ export const AdminUserCreatePage = () => {
                 store_admin_user.setPassword(data.password);
                 store_admin_user.setConfirmPassword(data.confirmation_password)
                 store_admin_user.setIsSuperAdmin(false)
+                store_admin_user.setLocale(data.locale || "en")
 
                 store_admin_user.setProfileImageFileName(profile_image_file_name)
 
@@ -59,6 +61,7 @@ export const AdminUserCreatePage = () => {
             store_admin_user.setPassword(data.password);
             store_admin_user.setConfirmPassword(data.confirmation_password)
             store_admin_user.setIsSuperAdmin(false)
+            store_admin_user.setLocale(data.locale || "en")
 
             mutate(store_admin_user)
         }
@@ -111,6 +114,18 @@ export const AdminUserCreatePage = () => {
                                     register={register("confirmation_password")}
                                 />
                                 <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="confirmation_password" />
+                            </div>
+
+                            <div className="mb-4">
+                                <SelectField
+                                    label={t("locale")}
+                                    name="locale"
+                                    register={register("locale")}
+                                >
+                                    <option value="en">English</option>
+                                    <option value="fr">Français</option>
+                                </SelectField>
+                                <ErrorMessage frontendErrors={errors} backendErrors={error} identifier="locale" />
                             </div>
 
                             {/*<Controller*/}

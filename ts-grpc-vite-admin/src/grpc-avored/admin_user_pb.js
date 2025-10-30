@@ -798,7 +798,8 @@ updatedAt: (f = msg.getUpdatedAt()) && google_protobuf_timestamp_pb.Timestamp.to
 createdBy: jspb.Message.getFieldWithDefault(msg, 8, ""),
 updatedBy: jspb.Message.getFieldWithDefault(msg, 9, ""),
 rolesList: jspb.Message.toObjectList(msg.getRolesList(),
-    proto.admin_user.RoleModel.toObject, includeInstance)
+    proto.admin_user.RoleModel.toObject, includeInstance),
+locale: jspb.Message.getFieldWithDefault(msg, 11, "")
   };
 
   if (includeInstance) {
@@ -877,6 +878,10 @@ proto.admin_user.AdminUserModel.deserializeBinaryFromReader = function(msg, read
       var value = new proto.admin_user.RoleModel;
       reader.readMessage(value,proto.admin_user.RoleModel.deserializeBinaryFromReader);
       msg.addRoles(value);
+      break;
+    case 11:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLocale(value);
       break;
     default:
       reader.skipField();
@@ -978,6 +983,13 @@ proto.admin_user.AdminUserModel.serializeBinaryToWriter = function(message, writ
       10,
       f,
       proto.admin_user.RoleModel.serializeBinaryToWriter
+    );
+  }
+  f = message.getLocale();
+  if (f.length > 0) {
+    writer.writeString(
+      11,
+      f
     );
   }
 };
@@ -1218,6 +1230,24 @@ proto.admin_user.AdminUserModel.prototype.addRoles = function(opt_value, opt_ind
  */
 proto.admin_user.AdminUserModel.prototype.clearRolesList = function() {
   return this.setRolesList([]);
+};
+
+
+/**
+ * optional string locale = 11;
+ * @return {string}
+ */
+proto.admin_user.AdminUserModel.prototype.getLocale = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 11, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.AdminUserModel} returns this
+ */
+proto.admin_user.AdminUserModel.prototype.setLocale = function(value) {
+  return jspb.Message.setProto3StringField(this, 11, value);
 };
 
 
@@ -2545,7 +2575,8 @@ password: jspb.Message.getFieldWithDefault(msg, 3, ""),
 confirmPassword: jspb.Message.getFieldWithDefault(msg, 4, ""),
 isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
 profileImageContent: msg.getProfileImageContent_asB64(),
-profileImageFileName: jspb.Message.getFieldWithDefault(msg, 7, "")
+profileImageFileName: jspb.Message.getFieldWithDefault(msg, 7, ""),
+locale: jspb.Message.getFieldWithDefault(msg, 8, "")
   };
 
   if (includeInstance) {
@@ -2609,6 +2640,10 @@ proto.admin_user.StoreAdminUserRequest.deserializeBinaryFromReader = function(ms
     case 7:
       var value = /** @type {string} */ (reader.readString());
       msg.setProfileImageFileName(value);
+      break;
+    case 8:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLocale(value);
       break;
     default:
       reader.skipField();
@@ -2685,6 +2720,13 @@ proto.admin_user.StoreAdminUserRequest.serializeBinaryToWriter = function(messag
   if (f.length > 0) {
     writer.writeString(
       7,
+      f
+    );
+  }
+  f = message.getLocale();
+  if (f.length > 0) {
+    writer.writeString(
+      8,
       f
     );
   }
@@ -2838,6 +2880,24 @@ proto.admin_user.StoreAdminUserRequest.prototype.getProfileImageFileName = funct
  */
 proto.admin_user.StoreAdminUserRequest.prototype.setProfileImageFileName = function(value) {
   return jspb.Message.setProto3StringField(this, 7, value);
+};
+
+
+/**
+ * optional string locale = 8;
+ * @return {string}
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.getLocale = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.StoreAdminUserRequest} returns this
+ */
+proto.admin_user.StoreAdminUserRequest.prototype.setLocale = function(value) {
+  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
@@ -3377,7 +3437,8 @@ fullName: jspb.Message.getFieldWithDefault(msg, 2, ""),
 profileImageContent: msg.getProfileImageContent_asB64(),
 profileImageFileName: jspb.Message.getFieldWithDefault(msg, 4, ""),
 roleIdsList: (f = jspb.Message.getRepeatedField(msg, 5)) == null ? undefined : f,
-isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 6, false)
+isSuperAdmin: jspb.Message.getBooleanFieldWithDefault(msg, 6, false),
+locale: jspb.Message.getFieldWithDefault(msg, 7, "")
   };
 
   if (includeInstance) {
@@ -3437,6 +3498,10 @@ proto.admin_user.UpdateAdminUserRequest.deserializeBinaryFromReader = function(m
     case 6:
       var value = /** @type {boolean} */ (reader.readBool());
       msg.setIsSuperAdmin(value);
+      break;
+    case 7:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setLocale(value);
       break;
     default:
       reader.skipField();
@@ -3506,6 +3571,13 @@ proto.admin_user.UpdateAdminUserRequest.serializeBinaryToWriter = function(messa
   if (f) {
     writer.writeBool(
       6,
+      f
+    );
+  }
+  f = message.getLocale();
+  if (f.length > 0) {
+    writer.writeString(
+      7,
       f
     );
   }
@@ -3660,6 +3732,24 @@ proto.admin_user.UpdateAdminUserRequest.prototype.getIsSuperAdmin = function() {
  */
 proto.admin_user.UpdateAdminUserRequest.prototype.setIsSuperAdmin = function(value) {
   return jspb.Message.setProto3BooleanField(this, 6, value);
+};
+
+
+/**
+ * optional string locale = 7;
+ * @return {string}
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.getLocale = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 7, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.admin_user.UpdateAdminUserRequest} returns this
+ */
+proto.admin_user.UpdateAdminUserRequest.prototype.setLocale = function(value) {
+  return jspb.Message.setProto3StringField(this, 7, value);
 };
 
 

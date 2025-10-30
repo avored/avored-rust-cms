@@ -20,6 +20,7 @@ export type CreateAdminUserType = {
     password: string;
     confirmation_password: string;
     profile_image: FileList;
+    locale: string;
 }
 
 export type EditAdminUserType = {
@@ -30,6 +31,7 @@ export type EditAdminUserType = {
     profile_image: FileList;
     roles: Array<RoleType>;
     isSuperAdmin: boolean;
+    locale: string;
 }
 
 export type ChangePasswordType = {
