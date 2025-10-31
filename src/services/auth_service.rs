@@ -1,11 +1,11 @@
 use crate::error::{Error, Result};
 use crate::extensions::email_message_builder::EmailMessageBuilder;
 use crate::extensions::string_extension::StringExtension;
-use crate::models::ldap_config_model::LdapConfig;
 use crate::models::password_rest_model::{CreatablePasswordResetModel, ForgotPasswordViewModel};
 use crate::models::security_alert_model::{AlertSeverity, AlertType, CreateSecurityAlertModel};
 use crate::models::token_claim_model::TokenClaims;
 use crate::models::validation_error::{ErrorMessage, ErrorResponse};
+use crate::providers::auth_provider::{AuthProvider, AuthenticationResult};
 use crate::providers::avored_database_provider::DB;
 use crate::providers::avored_template_provider::AvoRedTemplateProvider;
 use crate::repositories::admin_user_repository::AdminUserRepository;
@@ -13,14 +13,12 @@ use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
 use crate::services::ldap_auth_service::LdapAuthService;
 use crate::services::local_auth_service::LocalAuthService;
-use crate::services::multi_auth_service::MultiAuthService;
 use crate::Error::Tonic;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use lettre::{AsyncTransport, Message};
 use rand::distr::Alphanumeric;
 use rand::Rng;
 use rust_i18n::t;
-use std::sync::Arc;
 use tonic::Status;
 use tracing::error;
 
@@ -28,7 +26,7 @@ use tracing::error;
 pub struct AuthService {
     admin_user_repository: AdminUserRepository,
     password_reset_repository: PasswordResetRepository,
-    multi_auth_service: MultiAuthService,
+    // multi_auth_service: MultiAuthService,
     security_alert_repository: SecurityAlertRepository
 }
 
@@ -103,68 +101,180 @@ impl AuthService {
         password: &str,
         db: &DB,
         jwt_secret_key: &str,
-        remote_address: String
+        remote_address: String,
+        config: &crate::providers::avored_config_provider::AvoRedConfigProvider,
     ) -> Result<String> {
-        // Use multi-provider authentication
-        let admin_user_model = match self
-            .multi_auth_service
-            .authenticate(email, password, db, None)
-            .await
-        {
-            Ok(user) => user,
-            Err(_e) => {
 
-                let alert_id = rand::rng()
-                    .sample_iter(&Alphanumeric)
-                    .take(16)
-                    .map(char::from)
-                    .collect();
-                
-                let affected_resource = String::from("user email goes here");
-                let created_security_alert = CreateSecurityAlertModel {
-                    alert_id,
-                    alert_type: AlertType::AuthenticationFailure,
-                    severity: AlertSeverity::Low,
-                    message: String::from("User not able to auth"),
-                    // @todo need to test this in remote server as in local it always returns none
-                    source: remote_address,
-                    affected_resource: Some(affected_resource),
-                    metadata: None,
-                };
+        // Re write this method/
+        //  Try to login with local auth provider
+        // Try to login with LDAP auth provider
+        
+        let local_auth_service = LocalAuthService::new(self.admin_user_repository.clone());
 
-                let (datastore, database_session) = db;
 
-                self
-                    .security_alert_repository
-                    .create(datastore, database_session, created_security_alert)
-                    .await?;
+        let local_auth_result = local_auth_service
+            .authenticate(email, password, db)
+            .await?;
 
-                let mut errors: Vec<ErrorMessage> = vec![];
-                let error_message = ErrorMessage {
-                    key: String::from("email"),
-                    message: t!("email_address_password_not_match").to_string(),
-                };
+        let token = match local_auth_result.clone() {
+            AuthenticationResult::Success(admin_user_model) => {
+                let claims: TokenClaims = admin_user_model.try_into()?;
 
-                errors.push(error_message);
-                let error_response = ErrorResponse {
-                    status: false,
-                    errors,
-                };
-                let error_string = serde_json::to_string(&error_response)?;
+                encode(
+                    &Header::default(),
+                    &claims,
+                    &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+                )?
+            },
+            _ => String::new(),
+         };
 
-                return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
+        if !token.is_empty() {
+            return Ok(token);
+        }
+
+        // try to perform LDAP AUTH if enabled
+
+        if config.ldap_enabled {
+            // let ldap_config = LdapConfig::from_env()?;
+            let ldap_auth_service =
+                LdapAuthService::new(config.clone(), self.admin_user_repository.clone());
+
+            let ldap_auth_result = ldap_auth_service
+                .authenticate(email, password, db)
+                .await?;
+
+            let token = match ldap_auth_result {
+                AuthenticationResult::Success(admin_user_model) => {
+                    let claims: TokenClaims = admin_user_model.try_into()?;
+
+                    encode(
+                        &Header::default(),
+                        &claims,
+                        &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+                    )?
+                },
+                _ => String::new(),
+             };
+
+            if !token.is_empty() {
+                return Ok(token);
+            }
+        }
+
+        let message = match local_auth_result {
+            AuthenticationResult::Failed(err_message) => {
+                err_message  
+            },
+            _ => {
+                String::from("Authentication failed")
             }
         };
+        // store the invalid login attempt as security alert
 
-        let claims: TokenClaims = admin_user_model.try_into()?;
+        let alert_id = rand::rng()
+            .sample_iter(&Alphanumeric)
+            .take(16)
+            .map(char::from)
+            .collect();
+        
+        let affected_resource = String::from("user email goes here");
+        let created_security_alert = CreateSecurityAlertModel {
+            alert_id,
+            alert_type: AlertType::AuthenticationFailure,
+            severity: AlertSeverity::Low,
+            message: message,
+            // @todo need to test this in remote server as in local it always returns none
+            source: remote_address,
+            affected_resource: Some(affected_resource),
+            metadata: None,
+        };
 
-        let token = encode(
-            &Header::default(),
-            &claims,
-            &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
-        )?;
+        let (datastore, database_session) = db;
 
-        Ok(token)
+        self
+            .security_alert_repository
+            .create(datastore, database_session, created_security_alert)
+            .await?;
+
+        let mut errors: Vec<ErrorMessage> = vec![];
+        let error_message = ErrorMessage {
+            key: String::from("email"),
+            message: t!("email_address_password_not_match").to_string(),
+        };
+
+        errors.push(error_message);
+        let error_response = ErrorResponse {
+            status: false,
+            errors,
+        };
+        let error_string = serde_json::to_string(&error_response)?;
+
+        return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
+
+
+
+
+        // // Use multi-provider authentication
+        // let admin_user_model = match self
+        //     .multi_auth_service
+        //     .authenticate(email, password, db, None)
+        //     .await
+        // {
+        //     Ok(user) => user,
+        //     Err(_e) => {
+
+        //         let alert_id = rand::rng()
+        //             .sample_iter(&Alphanumeric)
+        //             .take(16)
+        //             .map(char::from)
+        //             .collect();
+                
+        //         let affected_resource = String::from("user email goes here");
+        //         let created_security_alert = CreateSecurityAlertModel {
+        //             alert_id,
+        //             alert_type: AlertType::AuthenticationFailure,
+        //             severity: AlertSeverity::Low,
+        //             message: String::from("User not able to auth"),
+        //             // @todo need to test this in remote server as in local it always returns none
+        //             source: remote_address,
+        //             affected_resource: Some(affected_resource),
+        //             metadata: None,
+        //         };
+
+        //         let (datastore, database_session) = db;
+
+        //         self
+        //             .security_alert_repository
+        //             .create(datastore, database_session, created_security_alert)
+        //             .await?;
+
+        //         let mut errors: Vec<ErrorMessage> = vec![];
+        //         let error_message = ErrorMessage {
+        //             key: String::from("email"),
+        //             message: t!("email_address_password_not_match").to_string(),
+        //         };
+
+        //         errors.push(error_message);
+        //         let error_response = ErrorResponse {
+        //             status: false,
+        //             errors,
+        //         };
+        //         let error_string = serde_json::to_string(&error_response)?;
+
+        //         return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
+        //     }
+        // };
+
+        // let claims: TokenClaims = admin_user_model.try_into()?;
+
+        // let token = encode(
+        //     &Header::default(),
+        //     &claims,
+        //     &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+        // )?;
+
+        // Ok(token)
     }
 
     // /// compare password
@@ -221,6 +331,18 @@ impl AuthService {
             Err(_) => Ok(false),
         }
     }
+
+    // pub (crate) fn get_active_auth_providers(&self) -> Result<()> {
+    //     let mut providers = vec![];
+
+    //     let local_auth_service = LocalAuthService::new(self.admin_user_repository.clone());
+    //     providers.push(local_auth_service);
+
+
+
+
+    //     Ok(())
+    // }
 }
 
 impl AuthService {
@@ -231,31 +353,31 @@ impl AuthService {
         security_alert_repository: SecurityAlertRepository,
     ) -> Result<Self> {
         // Initialize multi-provider authentication system
-        let mut multi_auth_service = MultiAuthService::new();
+        // let mut multi_auth_service = MultiAuthService::new();
 
         // Add local authentication provider (always enabled)
-        let local_auth_service = LocalAuthService::new(admin_user_repository.clone());
-        multi_auth_service.add_provider(Arc::new(local_auth_service));
+        // let local_auth_service = LocalAuthService::new(admin_user_repository.clone());
+        // multi_auth_service.add_provider(Arc::new(local_auth_service));
 
         // Add LDAP authentication provider if enabled
-        match LdapConfig::from_env() {
-            Ok(ldap_config) => {
-                if ldap_config.enabled {
-                    let ldap_auth_service =
-                        LdapAuthService::new(ldap_config, admin_user_repository.clone());
-                    multi_auth_service.add_provider(Arc::new(ldap_auth_service));
-                }
-            }
-            Err(e) => {
-                error!("Failed to load LDAP configuration: {}", e);
-                // Continue without LDAP authentication
-            }
-        }
+        // match LdapConfig::from_env() {
+        //     Ok(ldap_config) => {
+        //         if ldap_config.enabled {
+        //             let ldap_auth_service =
+        //                 LdapAuthService::new(ldap_config, admin_user_repository.clone());
+        //             multi_auth_service.add_provider(Arc::new(ldap_auth_service));
+        //         }
+        //     }
+        //     Err(e) => {
+        //         error!("Failed to load LDAP configuration: {}", e);
+        //         // Continue without LDAP authentication
+        //     }
+        // }
 
         Ok(Self {
             admin_user_repository,
             password_reset_repository,
-            multi_auth_service,
+            // multi_auth_service,
             security_alert_repository
         })
     }

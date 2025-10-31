@@ -1,7 +1,8 @@
 use crate::error::{Error, Result};
 use crate::models::admin_user_model::{AdminUserModel, CreatableAdminUserModel};
-use crate::models::ldap_config_model::{LdapConfig, LdapUser};
+use crate::models::ldap_config_model::LdapUser;
 use crate::providers::auth_provider::{AuthProvider, AuthenticationResult};
+use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use crate::providers::avored_database_provider::DB;
 use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::services::ldap_connection_pool::{AuthRateLimiter, LdapConnectionPool};
@@ -14,7 +15,7 @@ use tracing::{debug, error, info, warn};
 
 /// ldap auth service
 pub struct LdapAuthService {
-    config: Arc<LdapConfig>,
+    config: AvoRedConfigProvider,
     admin_user_repository: AdminUserRepository,
     connection_pool: Arc<LdapConnectionPool>,
     rate_limiter: Arc<AuthRateLimiter>,
@@ -23,14 +24,14 @@ pub struct LdapAuthService {
 
 impl LdapAuthService {
     /// new instance ldap auth service
-    #[must_use] pub fn new(config: LdapConfig, admin_user_repository: AdminUserRepository) -> Self {
-        let config_arc = Arc::new(config);
-        let connection_pool = Arc::new(LdapConnectionPool::new((*config_arc).clone(), 10)); // Max 10 connections
+    #[must_use] pub fn new(config: AvoRedConfigProvider, admin_user_repository: AdminUserRepository) -> Self {
+        // let config_arc = Arc::new(config);
+        let connection_pool = Arc::new(LdapConnectionPool::new((config.clone()).clone(), 10)); // Max 10 connections
         let rate_limiter = Arc::new(AuthRateLimiter::new(5, Duration::from_secs(300))); // 5 attempts per 5 minutes
         let security_monitor = Arc::new(SecurityMonitoringService::new());
 
         Self {
-            config: config_arc,
+            config: config,
             admin_user_repository,
             connection_pool,
             rate_limiter,
@@ -78,8 +79,8 @@ impl LdapAuthService {
             ));
         }
 
-        let search_filter = self.config.get_user_search_filter(username)?;
-        let search_base = &self.config.user_search_base;
+        let search_filter = self.config.get_user_search_filter(username, self.config.ldap_user_search_filter.clone())?;
+        let search_base = &self.config.ldap_user_search_base;
 
         debug!("Searching for user in LDAP directory"); // Don't log username or filter for security
 
@@ -89,8 +90,8 @@ impl LdapAuthService {
                 Scope::Subtree,
                 &search_filter,
                 vec![
-                    &self.config.user_attribute_email,
-                    &self.config.user_attribute_name,
+                    &self.config.ldap_user_attribute_email,
+                    &self.config.ldap_user_attribute_name,
                     "uid",
                     "cn",
                     "sAMAccountName", // For Active Directory
@@ -123,7 +124,7 @@ impl LdapAuthService {
         // Extract email with validation
         let email = entry
             .attrs
-            .get(&self.config.user_attribute_email)
+            .get(&self.config.ldap_user_attribute_email)
             .and_then(|v| v.first()).cloned()
             .unwrap_or_else(|| {
                 // Create a valid email from username if no email attribute found
@@ -137,7 +138,7 @@ impl LdapAuthService {
         // Extract full name
         let full_name = entry
             .attrs
-            .get(&self.config.user_attribute_name)
+            .get(&self.config.ldap_user_attribute_name)
             .and_then(|v| v.first())
             .or_else(|| entry.attrs.get("cn").and_then(|v| v.first()))
             .unwrap_or(&username.to_string())
@@ -159,7 +160,7 @@ impl LdapAuthService {
         let ldap_url = self.config.get_ldap_url();
 
         let settings = LdapConnSettings::new()
-            .set_conn_timeout(Duration::from_secs(self.config.connection_timeout));
+            .set_conn_timeout(Duration::from_secs(self.config.ldap_user_connection_timeout));
 
         let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
             .await
@@ -235,7 +236,7 @@ impl AuthProvider for LdapAuthService {
     ) -> Result<AuthenticationResult> {
         let start_time = Instant::now();
 
-        if !self.config.enabled {
+        if !self.config.ldap_enabled {
             return Ok(AuthenticationResult::Failed(
                 "LDAP authentication is disabled".to_string(),
             ));
@@ -338,11 +339,11 @@ impl AuthProvider for LdapAuthService {
         }
     }
 
-    fn provider_name(&self) -> &'static str {
-        "ldap"
-    }
+    // fn provider_name(&self) -> &'static str {
+    //     "ldap"
+    // }
 
-    fn is_enabled(&self) -> bool {
-        self.config.enabled
-    }
+    // fn is_enabled(&self) -> bool {
+    //     self.config.ldap_enabled
+    // }
 }

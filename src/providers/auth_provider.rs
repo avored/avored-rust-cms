@@ -32,11 +32,11 @@ pub trait AuthProvider: Send + Sync {
 
 
     
-    /// Returns the type of the authentication provider.
-    fn provider_name(&self) -> &'static str;
+    // /// Returns the type of the authentication provider.
+    // fn provider_name(&self) -> &'static str;
 
-    /// Returns the type of the authentication provider as an enum.
-    fn is_enabled(&self) -> bool;
+    // /// Returns the type of the authentication provider as an enum.
+    // fn is_enabled(&self) -> bool;
 }
 
 

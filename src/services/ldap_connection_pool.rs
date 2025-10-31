@@ -1,5 +1,5 @@
 use crate::error::{Error, Result};
-use crate::models::ldap_config_model::LdapConfig;
+use crate::providers::avored_config_provider::AvoRedConfigProvider;
 use ldap3::{Ldap, LdapConnAsync, LdapConnSettings};
 use std::collections::VecDeque;
 use std::sync::Arc;
@@ -9,7 +9,7 @@ use tracing::{debug, error, info, warn};
 
 /// LDAP Connection Pool for efficient connection management
 pub struct LdapConnectionPool {
-    config: Arc<LdapConfig>,
+    config: Arc<AvoRedConfigProvider>,
     pool: Arc<Mutex<VecDeque<PooledConnection>>>,
     semaphore: Arc<Semaphore>,
     // max_connections: usize,
@@ -24,7 +24,7 @@ struct PooledConnection {
 
 impl LdapConnectionPool {
     /// new instance ldap connection pool
-    #[must_use] pub fn new(config: LdapConfig, max_connections: usize) -> Self {
+    #[must_use] pub fn new(config: AvoRedConfigProvider, max_connections: usize) -> Self {
         Self {
             config: Arc::new(config),
             pool: Arc::new(Mutex::new(VecDeque::new())),
@@ -73,8 +73,8 @@ impl LdapConnectionPool {
         let ldap_url = self.config.get_ldap_url();
 
         let settings = LdapConnSettings::new()
-            .set_conn_timeout(Duration::from_secs(self.config.connection_timeout))
-            .set_starttls(self.config.use_tls);
+            .set_conn_timeout(Duration::from_secs(self.config.ldap_user_connection_timeout))
+            .set_starttls(self.config.ldap_use_tls);
 
         let (conn, mut ldap) = LdapConnAsync::with_settings(settings, &ldap_url)
             .await
@@ -87,7 +87,7 @@ impl LdapConnectionPool {
         ldap3::drive!(conn);
 
         // Bind with service account
-        ldap.simple_bind(&self.config.bind_dn, &self.config.bind_password)
+        ldap.simple_bind(&self.config.ldap_bind_dn, &self.config.ldap_bind_password)
             .await
             .map_err(|e| {
                 error!("Failed to bind to LDAP server: {}", e);

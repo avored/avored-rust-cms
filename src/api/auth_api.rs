@@ -40,7 +40,8 @@ impl Auth for AuthApi {
                 &req.password,
                 &self.state.db,
                 &self.state.config.jwt_secret_key,
-                remote_address   
+                remote_address,
+                &self.state.config,
             )
             .await
         {

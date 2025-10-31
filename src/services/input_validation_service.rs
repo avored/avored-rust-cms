@@ -112,36 +112,36 @@ impl InputValidationService {
         Ok(email.to_lowercase())
     }
 
-    /// Validate LDAP Distinguished Name (DN)
-    pub fn validate_dn(dn: &str) -> Result<String> {
-        if dn.is_empty() {
-            return Err(Error::InvalidArgument("DN cannot be empty".to_string()));
-        }
+    // /// Validate LDAP Distinguished Name (DN)
+    // pub fn validate_dn(dn: &str) -> Result<String> {
+    //     if dn.is_empty() {
+    //         return Err(Error::InvalidArgument("DN cannot be empty".to_string()));
+    //     }
 
-        if dn.len() > 1024 {
-            return Err(Error::InvalidArgument("DN too long".to_string()));
-        }
+    //     if dn.len() > 1024 {
+    //         return Err(Error::InvalidArgument("DN too long".to_string()));
+    //     }
 
-        // Check for control characters
-        if dn.chars().any(char::is_control) {
-            return Err(Error::InvalidArgument(
-                "DN contains invalid characters".to_string(),
-            ));
-        }
+    //     // Check for control characters
+    //     if dn.chars().any(char::is_control) {
+    //         return Err(Error::InvalidArgument(
+    //             "DN contains invalid characters".to_string(),
+    //         ));
+    //     }
 
-        // Basic DN format validation
-        let components: Vec<&str> = dn.split(',').collect();
-        for component in components {
-            let trimmed = component.trim();
-            if !DN_COMPONENT_REGEX.is_match(trimmed) {
-                return Err(Error::InvalidArgument(
-                    "Invalid DN component format".to_string(),
-                ));
-            }
-        }
+    //     // Basic DN format validation
+    //     let components: Vec<&str> = dn.split(',').collect();
+    //     for component in components {
+    //         let trimmed = component.trim();
+    //         if !DN_COMPONENT_REGEX.is_match(trimmed) {
+    //             return Err(Error::InvalidArgument(
+    //                 "Invalid DN component format".to_string(),
+    //             ));
+    //         }
+    //     }
 
-        Ok(dn.to_string())
-    }
+    //     Ok(dn.to_string())
+    // }
 
     // /// Validate LDAP filter string
     // pub fn validate_ldap_filter(filter: &str) -> Result<String> {
@@ -207,40 +207,40 @@ impl InputValidationService {
         Ok(escaped)
     }
 
-    /// Validate server URL format
-    pub fn validate_server_url(url: &str) -> Result<String> {
-        if url.is_empty() {
-            return Err(Error::InvalidArgument(
-                "Server URL cannot be empty".to_string(),
-            ));
-        }
+    // /// Validate server URL format
+    // pub fn validate_server_url(url: &str) -> Result<String> {
+    //     if url.is_empty() {
+    //         return Err(Error::InvalidArgument(
+    //             "Server URL cannot be empty".to_string(),
+    //         ));
+    //     }
 
-        if url.len() > 512 {
-            return Err(Error::InvalidArgument("Server URL too long".to_string()));
-        }
+    //     if url.len() > 512 {
+    //         return Err(Error::InvalidArgument("Server URL too long".to_string()));
+    //     }
 
-        // Check for valid schemes
-        if !url.starts_with("ldap://") && !url.starts_with("ldaps://") {
-            return Err(Error::InvalidArgument(
-                "Invalid URL scheme. Must be ldap:// or ldaps://".to_string(),
-            ));
-        }
+    //     // Check for valid schemes
+    //     if !url.starts_with("ldap://") && !url.starts_with("ldaps://") {
+    //         return Err(Error::InvalidArgument(
+    //             "Invalid URL scheme. Must be ldap:// or ldaps://".to_string(),
+    //         ));
+    //     }
 
-        // Check for control characters
-        if url.chars().any(char::is_control) {
-            return Err(Error::InvalidArgument(
-                "URL contains invalid characters".to_string(),
-            ));
-        }
+    //     // Check for control characters
+    //     if url.chars().any(char::is_control) {
+    //         return Err(Error::InvalidArgument(
+    //             "URL contains invalid characters".to_string(),
+    //         ));
+    //     }
 
-        // Basic URL validation - should contain hostname
-        let without_scheme = url.replace("ldap://", "").replace("ldaps://", "");
-        if without_scheme.is_empty() || without_scheme.starts_with(':') {
-            return Err(Error::InvalidArgument("Invalid URL format".to_string()));
-        }
+    //     // Basic URL validation - should contain hostname
+    //     let without_scheme = url.replace("ldap://", "").replace("ldaps://", "");
+    //     if without_scheme.is_empty() || without_scheme.starts_with(':') {
+    //         return Err(Error::InvalidArgument("Invalid URL format".to_string()));
+    //     }
 
-        Ok(url.to_string())
-    }
+    //     Ok(url.to_string())
+    // }
 
     /// Check for common injection attack patterns
     fn check_injection_patterns(input: &str) -> Result<()> {

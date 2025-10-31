@@ -33,8 +33,8 @@ pub mod local_auth_service;
 /// misc service modules
 pub mod misc_service;
 
-///multi-auth service modules
-pub mod multi_auth_service;
+// ///multi-auth service modules
+// pub mod multi_auth_service;
 
 /// sercurity alternative service modules
 pub mod security_alert_service;

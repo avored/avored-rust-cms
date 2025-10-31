@@ -5,6 +5,7 @@ use handlebars::{RenderError, TemplateError};
 use lettre::address::AddressError;
 use std::net::AddrParseError;
 use std::num::ParseIntError;
+use std::str::ParseBoolError;
 use tonic::Status;
 use tracing::error;
 
@@ -112,8 +113,15 @@ impl From<Error> for Status {
 
 impl From<ParseIntError> for Error {
     fn from(actual_error: ParseIntError) -> Self {
-        error!("there is an issue while parsing the env from string to u16: {actual_error:?}");
+        error!("there is an issue while parsing the env value: string to u16: {actual_error:?}");
         Self::Generic("parse int error".to_string())
+    }
+}
+
+impl From<ParseBoolError> for Error {
+    fn from(actual_error: ParseBoolError) -> Self {
+        error!("there is an issue while parsing the env value: string to bool: {actual_error:?}");
+        Self::Generic("parse bool error".to_string())
     }
 }
 

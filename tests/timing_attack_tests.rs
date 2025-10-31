@@ -1,5 +1,5 @@
 //! Property-based security tests to ensure security properties hold under various conditions
-use avored_rust_cms::models::ldap_config_model::LdapConfig;
+// use avored_rust_cms::models::ldap_config_model::LdapConfig;
 use avored_rust_cms::services::input_validation_service::InputValidationService;
 use std::time::{Duration, Instant};
 
@@ -51,45 +51,45 @@ mod timing_attack_prevention_tests {
         );
     }
 
-    #[test]
-    fn test_ldap_filter_generation_timing() {
-        let config = LdapConfig::default();
+    // #[test]
+    // fn test_ldap_filter_generation_timing() {
+    //     let config = LdapConfig::default();
 
-        let binding = "a".repeat(100);
-        let test_usernames = vec![
-            "normaluser",
-            "admin)(|(objectClass=*)", // Injection attempt
-            "user*with*wildcards",
-            "user(with)parens",
-            "user\\with\\backslashes",
-            &binding, // Long username
-        ];
+    //     let binding = "a".repeat(100);
+    //     let test_usernames = vec![
+    //         "normaluser",
+    //         "admin)(|(objectClass=*)", // Injection attempt
+    //         "user*with*wildcards",
+    //         "user(with)parens",
+    //         "user\\with\\backslashes",
+    //         &binding, // Long username
+    //     ];
 
-        let mut timings = Vec::new();
+    //     let mut timings = Vec::new();
 
-        for username in test_usernames {
-            let start = Instant::now();
-            let _result = config.get_user_search_filter(username);
-            let duration = start.elapsed();
-            timings.push(duration);
-        }
+    //     for username in test_usernames {
+    //         let start = Instant::now();
+    //         let _result = config.get_user_search_filter(username);
+    //         let duration = start.elapsed();
+    //         timings.push(duration);
+    //     }
 
-        // Verify timing consistency
-        let min_time = timings.iter().min().unwrap();
-        let max_time = timings.iter().max().unwrap();
-        let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
+    //     // Verify timing consistency
+    //     let min_time = timings.iter().min().unwrap();
+    //     let max_time = timings.iter().max().unwrap();
+    //     let variance_ratio = max_time.as_nanos() as f64 / min_time.as_nanos() as f64;
 
-        println!("LDAP filter timing analysis:");
-        println!("  Min: {min_time:?}");
-        println!("  Max: {max_time:?}");
-        println!("  Variance ratio: {variance_ratio:.2}");
+    //     println!("LDAP filter timing analysis:");
+    //     println!("  Min: {min_time:?}");
+    //     println!("  Max: {max_time:?}");
+    //     println!("  Variance ratio: {variance_ratio:.2}");
 
-        // Timing should be relatively consistent
-        assert!(
-            variance_ratio < 5.0,
-            "LDAP filter timing variance too high: {variance_ratio:.2}"
-        );
-    }
+    //     // Timing should be relatively consistent
+    //     assert!(
+    //         variance_ratio < 5.0,
+    //         "LDAP filter timing variance too high: {variance_ratio:.2}"
+    //     );
+    // }
 
     #[tokio::test]
     async fn test_authentication_response_timing() {

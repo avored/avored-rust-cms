@@ -74,11 +74,11 @@ impl AuthProvider for LocalAuthService {
         Ok(AuthenticationResult::Success(admin_user_model))
     }
 
-    fn provider_name(&self) -> &'static str {
-        "local"
-    }
+    // fn provider_name(&self) -> &'static str {
+    //     "local"
+    // }
 
-    fn is_enabled(&self) -> bool {
-        true // Local authentication is always enabled
-    }
+    // fn is_enabled(&self) -> bool {
+    //     true // Local authentication is always enabled
+    // }
 }
