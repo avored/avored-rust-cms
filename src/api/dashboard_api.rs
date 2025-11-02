@@ -40,9 +40,15 @@ impl Dashboard for DashboardApi {
         println!("->> {:<12} - get_visit_by_year", "gRPC_Dashboard_Api_Service");
 
         let claims = request.get_token_claim()?;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("dashboard"),
+            )
+            .await?;
+
         let req = request.into_inner();
-        
-        let _logged_in_user = claims.admin_user_model;
         let visit_result =self
             .state
             .general_service
@@ -66,7 +72,14 @@ impl Dashboard for DashboardApi {
         let claims = request.get_token_claim()?;
         let req = request.into_inner();
         
-        let _logged_in_user = claims.admin_user_model;
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("dashboard"),
+            )
+            .await?;
+        
         let visit_result =self
             .state
             .general_service

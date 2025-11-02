@@ -170,7 +170,7 @@ impl Content for ContentApi {
         logged_in_user
             .check_user_has_resouce_access(
                 &self.state.admin_user_service,
-                String::from("update_content"),
+                String::from("content_edit"),
             )
             .await?;
 
@@ -350,7 +350,7 @@ impl Content for ContentApi {
         logged_in_user
             .check_user_has_resouce_access(
                 &self.state.admin_user_service,
-                String::from("delete_content"),
+                String::from("content_delete"),
             )
             .await?;
 

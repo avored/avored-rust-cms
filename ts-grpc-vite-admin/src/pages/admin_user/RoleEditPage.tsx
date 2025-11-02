@@ -240,6 +240,7 @@ export const RoleEditPage = () => {
                                             {renderSwitch('content_paginate')}
                                             {renderSwitch('store_content')}
                                             {renderSwitch('content_edit')}
+                                            {renderSwitch('put_content_identifier')}
                                             {renderSwitch('content_delete')}
                                             {renderSwitch('get_content')}
                                             {renderSwitch('collection_all')}
