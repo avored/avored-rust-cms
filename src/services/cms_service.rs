@@ -96,7 +96,7 @@ impl CmsService {
 
         let ip_address = match remote_addr {
             Some(ip) => ip.ip().to_string(),
-            None => String::from("")
+            None => String::new()
         };
 
         let creatable_visitor_log = CreatableVisitorLogModel {

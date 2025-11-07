@@ -183,7 +183,7 @@ impl AuthService {
             alert_id,
             alert_type: AlertType::AuthenticationFailure,
             severity: AlertSeverity::Low,
-            message: message,
+            message,
             // @todo need to test this in remote server as in local it always returns none
             source: remote_address,
             affected_resource: Some(affected_resource),
@@ -210,7 +210,7 @@ impl AuthService {
         };
         let error_string = serde_json::to_string(&error_response)?;
 
-        return Err(Tonic(Box::new(Status::invalid_argument(error_string))));
+        Err(Tonic(Box::new(Status::invalid_argument(error_string))))
 
 
 

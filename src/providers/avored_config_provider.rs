@@ -46,7 +46,7 @@ pub struct AvoRedConfigProvider {
     /// ldap port
     pub ldap_port: u16,
     
-    /// ldalp use_tls
+    /// ldalp `use_tls`
     pub ldap_use_tls: bool,
 
     // /// ldalp base dn
@@ -55,7 +55,7 @@ pub struct AvoRedConfigProvider {
     /// ldalp bind dn
     pub ldap_bind_dn: String,
 
-    /// ldalp bind_password
+    /// ldalp `bind_password`
     pub ldap_bind_password: String,
 
     /// ldalp user search base

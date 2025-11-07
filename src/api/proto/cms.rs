@@ -61,8 +61,8 @@ pub mod cms_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -79,15 +79,15 @@ pub mod cms_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
+            <T as Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             CmsClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -125,7 +125,7 @@ pub mod cms_client {
         pub async fn get_cms_content(
             &mut self,
             request: impl tonic::IntoRequest<super::GetCmsContentRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetCmsContentResponse>,
             tonic::Status,
         > {
@@ -146,7 +146,7 @@ pub mod cms_client {
         pub async fn sent_contact_form(
             &mut self,
             request: impl tonic::IntoRequest<super::SentContactFormRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::SentContactFormResponse>,
             tonic::Status,
         > {
@@ -176,20 +176,20 @@ pub mod cms_server {
         clippy::let_unit_value,
     )]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with CmsServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with `CmsServer`.
     #[async_trait]
-    pub trait Cms: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Cms: Send + Sync + 'static {
         async fn get_cms_content(
             &self,
             request: tonic::Request<super::GetCmsContentRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::GetCmsContentResponse>,
             tonic::Status,
         >;
         async fn sent_contact_form(
             &self,
             request: tonic::Request<super::SentContactFormRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::SentContactFormResponse>,
             tonic::Status,
         >;
@@ -240,7 +240,7 @@ pub mod cms_server {
         ///
         /// Default: `4MB`
         #[must_use]
-        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_decoding_message_size(mut self, limit: usize) -> Self {
             self.max_decoding_message_size = Some(limit);
             self
         }
@@ -248,16 +248,16 @@ pub mod cms_server {
         ///
         /// Default: `usize::MAX`
         #[must_use]
-        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_encoding_message_size(mut self, limit: usize) -> Self {
             self.max_encoding_message_size = Some(limit);
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for CmsServer<T>
+    impl<T, B> Service<http::Request<B>> for CmsServer<T>
     where
         T: Cms,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -265,7 +265,7 @@ pub mod cms_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

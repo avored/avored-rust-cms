@@ -53,34 +53,30 @@ impl GeneralService {
         
 
         for number in 1..=12 {
-            match visits_by_year_list.clone().iter().find(|x| x.month_number == number) {
-                Some(visit) => {
-                    let model: GrpcVisitByYear = visit.clone().try_into().unwrap();
-                    grpc_visits_by_year_list.push(model);
-                },
-                None => {
-                    let month_name = match number {
-                        1 => "Jan",
-                        2 => "Feb",
-                        3 => "Mar",
-                        4 => "Apr",
-                        5 => "May",
-                        6 => "Jun",
-                        7 => "Jul",
-                        8 => "Aug",
-                        9 => "Sep",
-                        10 => "Oct",
-                        11 => "Nov",
-                        12 => "Dec",
-                        _ => "",
-                    };
-                    let empty_model = GrpcVisitByYear {
-                        visits: 0,
-                        month: month_name.to_string()
-                    };
-                    grpc_visits_by_year_list.push(empty_model);
-                }
-                
+            if let Some(visit) = visits_by_year_list.clone().iter().find(|x| x.month_number == number) {
+                let model: GrpcVisitByYear = visit.clone().try_into().unwrap();
+                grpc_visits_by_year_list.push(model);
+            } else {
+                let month_name = match number {
+                    1 => "Jan",
+                    2 => "Feb",
+                    3 => "Mar",
+                    4 => "Apr",
+                    5 => "May",
+                    6 => "Jun",
+                    7 => "Jul",
+                    8 => "Aug",
+                    9 => "Sep",
+                    10 => "Oct",
+                    11 => "Nov",
+                    12 => "Dec",
+                    _ => "",
+                };
+                let empty_model = GrpcVisitByYear {
+                    visits: 0,
+                    month: month_name.to_string()
+                };
+                grpc_visits_by_year_list.push(empty_model);
             }
         }
 
@@ -104,36 +100,32 @@ impl GeneralService {
         
 
         for number in 1..=12 {
-            match visits_by_content_type_list.clone().iter().find(|x| x.month_number == number) {
-                Some(visit) => {
-                    let mut model: GrpcVisitByContentType = visit.clone().try_into().unwrap();
-                    model.content_type = content_type.clone();
-                    grpc_visits_by_content_type_list.push(model);
-                },
-                None => {
-                    let month_name = match number {
-                        1 => "Jan",
-                        2 => "Feb",
-                        3 => "Mar",
-                        4 => "Apr",
-                        5 => "May",
-                        6 => "Jun",
-                        7 => "Jul",
-                        8 => "Aug",
-                        9 => "Sep",
-                        10 => "Oct",
-                        11 => "Nov",
-                        12 => "Dec",
-                        _ => "",
-                    };
-                    let empty_model = GrpcVisitByContentType {
-                        visits: 0,
-                        month: month_name.to_string(),
-                        content_type: content_type.clone()
-                    };
-                    grpc_visits_by_content_type_list.push(empty_model);
-                }
-                
+            if let Some(visit) = visits_by_content_type_list.clone().iter().find(|x| x.month_number == number) {
+                let mut model: GrpcVisitByContentType = visit.clone().try_into().unwrap();
+                model.content_type = content_type.clone();
+                grpc_visits_by_content_type_list.push(model);
+            } else {
+                let month_name = match number {
+                    1 => "Jan",
+                    2 => "Feb",
+                    3 => "Mar",
+                    4 => "Apr",
+                    5 => "May",
+                    6 => "Jun",
+                    7 => "Jul",
+                    8 => "Aug",
+                    9 => "Sep",
+                    10 => "Oct",
+                    11 => "Nov",
+                    12 => "Dec",
+                    _ => "",
+                };
+                let empty_model = GrpcVisitByContentType {
+                    visits: 0,
+                    month: month_name.to_string(),
+                    content_type: content_type.clone()
+                };
+                grpc_visits_by_content_type_list.push(empty_model);
             }
         }
 

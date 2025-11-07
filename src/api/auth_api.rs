@@ -24,7 +24,7 @@ impl Auth for AuthApi {
     ) -> Result<Response<LoginResponse>, Status> {
         println!("->> {:<12} - login", "GRPC_Auth_API_SERVICE");
 
-        let remote_address_sock = request.remote_addr().unwrap_or(SocketAddr::new(IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)), 80));
+        let remote_address_sock = request.remote_addr().unwrap_or(SocketAddr::new(IpAddr::V4(Ipv4Addr::LOCALHOST), 80));
         let remote_address = remote_address_sock.to_string();
         let req = request.into_inner();
         let (valid, error_messages) = req.validate()?;

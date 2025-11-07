@@ -1,4 +1,4 @@
-//! # AvoRed Rust CMS
+//! # `AvoRed` Rust CMS
 //!
 //! A secure, high-performance Content Management System built with Rust.
 //!
@@ -91,7 +91,7 @@ async fn main() -> Result<(), Error> {
 
     // Perform security invariant checks at startup
     if let Err(e) = SecurityInvariantChecker::check_all_invariants() {
-        eprintln!("Security invariant check failed: {}", e);
+        eprintln!("Security invariant check failed: {e}");
         return Err(e);
     }
     println!("✅ Security invariant checks passed");

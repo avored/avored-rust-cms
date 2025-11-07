@@ -22,14 +22,14 @@ impl MiscService {
         while let Some(entry) = entries.next_entry().await? {
             let path = entry.path();
             if path.is_file() {
-                println!("Reading file: {:?}", path);
+                println!("Reading file: {path:?}");
                 let sql = fs::read_to_string(&path).await?;
 
                 let responses = ds.execute(&sql, ses, None).await.unwrap();
 
-                println!("Content of {:?}:\n{:?}", path, responses);
+                println!("Content of {path:?}:\n{responses:?}");
             } else if path.is_dir() {
-                println!("Found directory: {:?}", path);
+                println!("Found directory: {path:?}");
                 // You could recursively call a function here to read subdirectories
             }
         }

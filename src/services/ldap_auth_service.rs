@@ -26,12 +26,12 @@ impl LdapAuthService {
     /// new instance ldap auth service
     #[must_use] pub fn new(config: AvoRedConfigProvider, admin_user_repository: AdminUserRepository) -> Self {
         // let config_arc = Arc::new(config);
-        let connection_pool = Arc::new(LdapConnectionPool::new((config.clone()).clone(), 10)); // Max 10 connections
+        let connection_pool = Arc::new(LdapConnectionPool::new(config.clone(), 10)); // Max 10 connections
         let rate_limiter = Arc::new(AuthRateLimiter::new(5, Duration::from_secs(300))); // 5 attempts per 5 minutes
         let security_monitor = Arc::new(SecurityMonitoringService::new());
 
         Self {
-            config: config,
+            config,
             admin_user_repository,
             connection_pool,
             rate_limiter,

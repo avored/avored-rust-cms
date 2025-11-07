@@ -29,7 +29,7 @@ pub struct VisitByYearRequest {
     #[prost(int64, tag = "1")]
     pub year: i64,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct VisitByYearResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -43,7 +43,7 @@ pub struct VisitByContentTypeRequest {
     #[prost(int64, tag = "2")]
     pub year: i64,
 }
-#[derive(Clone, PartialEq, ::prost::Message)]
+#[derive(Clone, PartialEq, Eq, ::prost::Message)]
 pub struct VisitByContentTypeResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -80,8 +80,8 @@ pub mod dashboard_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
+        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -98,15 +98,15 @@ pub mod dashboard_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: tonic::codegen::Service<
+            T: Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as tonic::codegen::Service<
+            <T as Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
+            >>::Error: Into<StdError> + Send + Sync,
         {
             DashboardClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -144,7 +144,7 @@ pub mod dashboard_client {
         pub async fn dashboard(
             &mut self,
             request: impl tonic::IntoRequest<super::DashboardRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DashboardResponse>,
             tonic::Status,
         > {
@@ -168,7 +168,7 @@ pub mod dashboard_client {
         pub async fn get_visit_by_year(
             &mut self,
             request: impl tonic::IntoRequest<super::VisitByYearRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::VisitByYearResponse>,
             tonic::Status,
         > {
@@ -192,7 +192,7 @@ pub mod dashboard_client {
         pub async fn get_visit_by_content_type(
             &mut self,
             request: impl tonic::IntoRequest<super::VisitByContentTypeRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::VisitByContentTypeResponse>,
             tonic::Status,
         > {
@@ -225,27 +225,27 @@ pub mod dashboard_server {
         clippy::let_unit_value,
     )]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with DashboardServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with `DashboardServer`.
     #[async_trait]
-    pub trait Dashboard: std::marker::Send + std::marker::Sync + 'static {
+    pub trait Dashboard: Send + Sync + 'static {
         async fn dashboard(
             &self,
             request: tonic::Request<super::DashboardRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::DashboardResponse>,
             tonic::Status,
         >;
         async fn get_visit_by_year(
             &self,
             request: tonic::Request<super::VisitByYearRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::VisitByYearResponse>,
             tonic::Status,
         >;
         async fn get_visit_by_content_type(
             &self,
             request: tonic::Request<super::VisitByContentTypeRequest>,
-        ) -> std::result::Result<
+        ) -> Result<
             tonic::Response<super::VisitByContentTypeResponse>,
             tonic::Status,
         >;
@@ -296,7 +296,7 @@ pub mod dashboard_server {
         ///
         /// Default: `4MB`
         #[must_use]
-        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_decoding_message_size(mut self, limit: usize) -> Self {
             self.max_decoding_message_size = Some(limit);
             self
         }
@@ -304,16 +304,16 @@ pub mod dashboard_server {
         ///
         /// Default: `usize::MAX`
         #[must_use]
-        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
+        pub const fn max_encoding_message_size(mut self, limit: usize) -> Self {
             self.max_encoding_message_size = Some(limit);
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for DashboardServer<T>
+    impl<T, B> Service<http::Request<B>> for DashboardServer<T>
     where
         T: Dashboard,
-        B: Body + std::marker::Send + 'static,
-        B::Error: Into<StdError> + std::marker::Send + 'static,
+        B: Body + Send + 'static,
+        B::Error: Into<StdError> + Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -321,7 +321,7 @@ pub mod dashboard_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<std::result::Result<(), Self::Error>> {
+        ) -> Poll<Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

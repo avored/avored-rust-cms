@@ -72,7 +72,7 @@ impl VisitorLogRepository {
         year: i64
     ) -> Result<Vec<VisitByYear>> {
 
-        println!("get_visit_by_year for year: {}", year);
+        println!("get_visit_by_year for year: {year}");
 
 
         let sql: &'static str = "
@@ -104,7 +104,7 @@ impl VisitorLogRepository {
             visit_by_year_list.push(visit_by_year_model?);
         }
 
-        println!("visit_by_year_list: {:?}", visit_by_year_list);
+        println!("visit_by_year_list: {visit_by_year_list:?}");
         // let visitor_log_model: Result<VistitorLogModel> = result_object?.try_into();
         
         Ok(visit_by_year_list)

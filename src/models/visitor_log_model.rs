@@ -155,7 +155,7 @@ impl TryFrom<VisitByContentType> for GrpcVisitByContentType {
         let model: Self = Self {
             visits: val.visits,
             month: val.month,
-            content_type: String::from(""),
+            content_type: String::new(),
         };
 
         Ok(model)

@@ -108,7 +108,7 @@ impl Misc for MiscApi {
         &self,
         _request: Request<InstallDemoDataRequest>,
     ) -> Result<Response<InstallDemoDataResponse>, Status> {
-        println!("request: {:?}", _request);
+        println!("request: {_request:?}");
 
         let sql = "
         CREATE pages:wvb4100904eaf3ykz64c CONTENT {
@@ -400,11 +400,11 @@ impl Misc for MiscApi {
             )
             .await?;
 
-        println!("Created admin user: {:?}", created_admin_user);
+        println!("Created admin user: {created_admin_user:?}");
 
         let reply = InstallDemoDataResponse {};
 
-        println!("response: {:?}", reply);
+        println!("response: {reply:?}");
         Ok(Response::new(reply))
     }
 
@@ -430,7 +430,7 @@ impl Misc for MiscApi {
         tokio::fs::remove_file("public/install_demo").await?;
         let reply = DeleteDemoDataResponse {};
 
-        println!("response: {:?}", reply);
+        println!("response: {reply:?}");
         Ok(Response::new(reply))
     }
 }
