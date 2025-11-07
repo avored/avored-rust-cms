@@ -34,7 +34,7 @@ surrealdb = { version = "2.3.10", features = ["kv-rocksdb", "kv-mem"] }
 
 # Additional dependencies not in workspace
 argon2 = "0.5.3"
-jsonwebtoken = "10.2.0"
+jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"]}
 chrono = { version = "0.4.42", features = [] }
 email_address = "0.2.9"
 rust-i18n = "3.1.5"
