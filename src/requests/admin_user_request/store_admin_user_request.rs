@@ -6,14 +6,14 @@ use std::path::Path;
 
 impl StoreAdminUserRequest {
     /// validate
-    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<()> {
+    pub async fn validate(&self, state: &AvoRedState, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if !self.email.required()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_required", attribute = t!("email")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("email", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -22,7 +22,7 @@ impl StoreAdminUserRequest {
         if !self.email.validate_email()? {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("email_address_not_valid").to_string(),
+                message: t!("email_address_not_valid", locale = locale).to_string(),
             };
 
             valid = false;
@@ -37,7 +37,7 @@ impl StoreAdminUserRequest {
         if admin_user_model.total > 0 {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_count", attribute = t!("email")).to_string(),
+                message: t!("validation_count", locale = locale, attribute = t!("email", locale = locale)).to_string(),
             };
 
             errors.push(error_message);
@@ -47,7 +47,7 @@ impl StoreAdminUserRequest {
         if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: t!("validation_required", attribute = t!("password")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("password", locale = locale)).to_string(),
             };
 
             valid = false;
@@ -57,7 +57,7 @@ impl StoreAdminUserRequest {
         if self.password != self.confirm_password {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: t!("password_match_error").to_string(),
+                message: t!("password_match_error", locale = locale).to_string(),
             };
 
             valid = false;
@@ -70,7 +70,7 @@ impl StoreAdminUserRequest {
             if !locale_path.exists() {
                 let error_message = ErrorMessage {
                     key: String::from("locale"),
-                    message: t!("validation_invalid", attribute = t!("locale")).to_string(),
+                    message: t!("validation_invalid", locale = locale , attribute = t!("locale", locale = locale)).to_string(),
                 };
 
                 valid = false;

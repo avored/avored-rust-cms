@@ -5,14 +5,14 @@ use rust_i18n::t;
 
 impl PutRoleIdentifierRequest {
     /// validate
-    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<()> {
+    pub async fn validate(&self, state: &AvoRedState, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if self.identifier.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_required", attribute = t!("identifier")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
             };
 
             valid = false;
@@ -27,7 +27,7 @@ impl PutRoleIdentifierRequest {
         if role_identifier_count.total > 0 {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_count", attribute = t!("email")).to_string(),
+                message: t!("validation_count", locale = locale, attribute = t!("email", locale = locale)).to_string(),
             };
 
             valid = false;

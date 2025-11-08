@@ -6,14 +6,14 @@ use rust_i18n::t;
 
 impl DeleteRoleRequest {
     /// validate
-    pub fn validate(&self) -> crate::error::Result<()> {
+    pub fn validate(&self, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if !self.role_id.required()? {
             let error_message = ErrorMessage {
                 key: String::from("role_id"),
-                message: t!("validation_required", attribute = t!("role_id")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("role_id", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);

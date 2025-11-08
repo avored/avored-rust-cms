@@ -12,3 +12,6 @@ pub mod update_admin_user_request;
 pub mod update_role_request;
 /// change admin user password request
 pub mod change_admin_user_password_request;
+
+/// delete role request
+pub mod delete_role_request;

@@ -1,5 +1,3 @@
-/// delete role request
-pub mod delete_role_request;
 /// forgot password request
 pub mod forgot_password_request;
 /// login request

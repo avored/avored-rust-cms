@@ -4,14 +4,14 @@ use rust_i18n::t;
 
 impl UpdateRoleRequest {
     /// validate
-    pub fn validate(&self) -> crate::error::Result<()> {
+    pub fn validate(&self, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if self.name.is_empty() {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("name", locale = locale)).to_string(),
             };
 
             valid = false;
