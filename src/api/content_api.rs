@@ -104,8 +104,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate(&self.state).await?;
+        req.validate(&self.state, user_locale).await?;
 
         match self
             .state
@@ -174,8 +175,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate().await?;
+        req.validate(user_locale).await?;
 
         match self
             .state
@@ -213,8 +215,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate(&self.state).await?;
+        req.validate(&self.state, user_locale).await?;
 
         match self
             .state
@@ -282,8 +285,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate(&self.state).await?;
+        req.validate(&self.state, user_locale).await?;
 
         match self
             .state
@@ -318,8 +322,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate()?;
+        req.validate(user_locale)?;
 
         match self
             .state
@@ -354,8 +359,9 @@ impl Content for ContentApi {
             )
             .await?;
 
+        let user_locale = logged_in_user.locale.clone();
         let req = request.into_inner();
-        req.validate()?;
+        req.validate(user_locale)?;
 
         match self
             .state

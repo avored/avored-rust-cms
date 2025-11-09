@@ -6,14 +6,14 @@ use rust_i18n::t;
 
 impl ChangeAdminUserPasswordRequest {
     /// validate
-    pub fn validate(&self) -> crate::error::Result<()> {
+    pub fn validate(&self, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if !self.password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("password"),
-                message: t!("validation_required", attribute = t!("password")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("password", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -22,7 +22,7 @@ impl ChangeAdminUserPasswordRequest {
         if !self.new_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("new_password"),
-                message: t!("validation_required", attribute = t!("new_password")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("new_password", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -31,7 +31,7 @@ impl ChangeAdminUserPasswordRequest {
         if !self.confirm_password.required()? {
             let error_message = ErrorMessage {
                 key: String::from("confirm_password"),
-                message: t!("validation_required", attribute = t!("confirm_password")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("confirm_password", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -40,7 +40,7 @@ impl ChangeAdminUserPasswordRequest {
         if self.new_password != self.confirm_password {
             let error_message = ErrorMessage {
                 key: String::from("confirm_password"),
-                message: t!("validation_confirmed", attribute = t!("confirm_password")).to_string(),
+                message: t!("validation_confirmed", locale = locale, attribute = t!("confirm_password", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);

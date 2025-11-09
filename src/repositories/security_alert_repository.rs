@@ -32,6 +32,7 @@ impl SecurityAlertRepository {
         createable_security_alert_model: CreateSecurityAlertModel,
     ) -> Result<SecurityAlertModel> {
         // Validate the input
+        
         createable_security_alert_model.validate()?;
 
         let sql = r"

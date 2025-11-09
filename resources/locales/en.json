@@ -20,5 +20,6 @@
     "validation_required": "%{attribute} is a required field.",
     "validation_count": "The given %{attribute} has to be unique.",
     "email_password_not_matched": "Email and Password did not match.",
+    "validation_invalid_local": "The given %{provided_locale} is not valid locale. System is not supported for this locale.",
     "admin_user_forbidden": "You are not allowed to perform this request. Please check with your administrator."
 }
