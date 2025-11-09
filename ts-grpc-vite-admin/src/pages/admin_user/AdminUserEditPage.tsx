@@ -99,9 +99,9 @@ export const AdminUserEditPage = () => {
         update_admin_user.setLocale(data.locale || "en")
 
         var profile_image_file_name = ""
-        const file: File = data.profile_image[0];
+        const file: File | undefined = _.get(data, 'profile_image.0', undefined);
 
-        if (file) {
+        if (file instanceof File) {
             profile_image_file_name = _.get(data, "profile_image.0.name", "user_profile_image_name.jpg");
 
             const reader = new FileReader()
@@ -117,7 +117,6 @@ export const AdminUserEditPage = () => {
             }
             reader.readAsArrayBuffer(file)
         } else {
-
             mutate(update_admin_user)
         }
 

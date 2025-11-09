@@ -1,3 +1,5 @@
 {
-    "name": "french"
+    "name": "french",
+    "email_address_not_valid": "french Email address is not valid",
+    "validation_required": "french %{attribute} is a required field."
 }

@@ -5,14 +5,14 @@ use rust_i18n::t;
 
 impl StoreContentRequest {
     /// validate
-    pub async fn validate(&self, state: &AvoRedState) -> crate::error::Result<()> {
+    pub async fn validate(&self, state: &AvoRedState, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if !self.name.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("name")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("name", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -26,7 +26,7 @@ impl StoreContentRequest {
         if model_counte.total > 0 {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_count", attribute = t!("identifier")).to_string(),
+                message: t!("validation_count", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
             };
 
             errors.push(error_message);
@@ -36,7 +36,7 @@ impl StoreContentRequest {
         if !self.identifier.required()? {
             let error_message = ErrorMessage {
                 key: String::from("identifier"),
-                message: t!("validation_required", attribute = t!("identifier")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
             };
 
             valid = false;

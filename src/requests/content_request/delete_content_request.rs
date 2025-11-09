@@ -4,14 +4,14 @@ use rust_i18n::t;
 
 impl DeleteContentRequest {
     /// validate
-    pub fn validate(&self) -> crate::error::Result<()> {
+    pub fn validate(&self, locale: String) -> crate::error::Result<()> {
         let mut errors: Vec<ErrorMessage> = vec![];
         let mut valid = true;
 
         if !self.content_id.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("content_id")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("content_id", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);
@@ -20,7 +20,7 @@ impl DeleteContentRequest {
         if !self.content_type.required()? {
             let error_message = ErrorMessage {
                 key: String::from("name"),
-                message: t!("validation_required", attribute = t!("content_type")).to_string(),
+                message: t!("validation_required", locale = locale, attribute = t!("content_type", locale = locale)).to_string(),
             };
             valid = false;
             errors.push(error_message);

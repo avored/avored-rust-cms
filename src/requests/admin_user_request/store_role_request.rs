@@ -37,7 +37,7 @@ impl StoreRoleRequest {
         if role_identifier_count.total > 0 {
             let error_message = ErrorMessage {
                 key: String::from("email"),
-                message: t!("validation_count", locale = locale ,attribute = t!("email", locale = locale)).to_string(),
+                message: t!("validation_count", locale = locale, attribute = t!("email", locale = locale)).to_string(),
             };
 
             valid = false;
