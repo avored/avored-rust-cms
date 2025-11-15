@@ -20,7 +20,7 @@ license-check = true
 
 
 [dependencies]
-axum = { version = "0.8.6", features = ["multipart", "http2"] }
+axum = { version = "0.8.7", features = ["multipart", "http2"] }
 tonic-prost = "0.14.2"
 avored-tonic-axum ={ path = "./avored-tonic-axum"}
 prost ={ version = "0.14.1"}
