@@ -25,3 +25,9 @@ pub mod asset_api;
 pub mod security_alert_api;
 /// `security_audit_api`;
 pub mod security_audit_api;
+
+/// web_event_api
+pub mod web_event_api;
+
+/// entity api
+pub mod entity_api;

@@ -98,6 +98,16 @@ function AppSidebar() {
                                         </Link>
                                     )}
                                 </MenuItem>
+                                <MenuItem as="li">
+                                    {() => (
+                                        <Link
+                                            to={`/admin/entity`}
+                                            className={`flex items-center w-full py-1 px-2 rounded relative hover:text-white hover:bg-gray-700`}
+                                        >
+                                            <div>{t("sidebar.entity")}</div>
+                                        </Link>
+                                    )}
+                                </MenuItem>
                                 <MenuItem>
                                     {() => (
                                         <Link

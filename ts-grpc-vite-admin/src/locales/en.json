@@ -170,6 +170,7 @@
   "get_role": "Get role",
   "asset_field": "Asset Field",
   "confirm_password": "Confirm Password",
+  "entities": "Entities",
   "locales": {
     "en_label": "English",
     "fr_label": "French"
@@ -182,6 +183,7 @@
     "team": "Team",
     "admin_user": "Admin User",
     "role": "Role",
-    "setting": "Setting"
+    "setting": "Setting",
+    "entity": "Entity"
   }
 }

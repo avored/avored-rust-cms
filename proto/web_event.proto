@@ -1,0 +1,21 @@
+syntax = "proto3";
+package web_event;
+
+
+// import "google/protobuf/timestamp.proto";
+
+message WebEventRequest {
+    string id = 1;          
+    string source = 2;
+    string payload = 3;
+}
+
+// Response from server after receiving a webhook
+message WebEventResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+service WebEvent {
+    rpc SendEvent(WebEventRequest) returns (WebEventResponse);
+}

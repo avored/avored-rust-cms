@@ -75,6 +75,7 @@ pub struct ContentModel {
 
     /// fields associated with the content model
     pub content_fields: Vec<ContentFieldModel>,
+    
     /// timestamp when the content model was created
     pub created_at: Datetime,
 
@@ -83,6 +84,7 @@ pub struct ContentModel {
 
     /// username of the user who created the content model
     pub created_by: String,
+
     /// username of the user who last updated the content model
     pub updated_by: String,
 }

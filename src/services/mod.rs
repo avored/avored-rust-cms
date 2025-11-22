@@ -47,3 +47,10 @@ pub mod security_monitoring_service;
 
 /// setting service modules
 pub mod setting_service;
+
+/// web event service
+pub mod web_event_service;
+
+
+/// entity Service module
+pub mod entity_service;

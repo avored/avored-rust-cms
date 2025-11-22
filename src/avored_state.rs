@@ -6,6 +6,7 @@ use crate::repositories::admin_user_repository::AdminUserRepository;
 use crate::repositories::asset_repository::AssetRepository;
 use crate::repositories::collection_repository::CollectionRepository;
 use crate::repositories::content_repository::ContentRepository;
+use crate::repositories::entity_repository::EntityRepository;
 use crate::repositories::password_reset_repository::PasswordResetRepository;
 use crate::repositories::role_repository::RoleRepository;
 use crate::repositories::security_alert_repository::SecurityAlertRepository;
@@ -17,11 +18,13 @@ use crate::services::asset_service::AssetService;
 use crate::services::auth_service::AuthService;
 use crate::services::cms_service::CmsService;
 use crate::services::content_service::ContentService;
+use crate::services::entity_service::EntityService;
 use crate::services::general_service::GeneralService;
 use crate::services::misc_service::MiscService;
 // use crate::services::security_alert_service::SecurityAlertService;
 // use crate::services::security_audit_service::SecurityAuditService;
 use crate::services::setting_service::SettingService;
+use crate::services::web_event_service::WebEventService;
 
 /// `AvoRedState` holds the global state for the `AvoRed` application, including configuration,
 pub struct AvoRedState {
@@ -59,6 +62,12 @@ pub struct AvoRedState {
     /// General service for handling common operations across the application.
     pub general_service: GeneralService,
 
+    /// Web Event service.
+    pub web_event_service: WebEventService,
+
+    /// Entity service.
+    pub entity_service: EntityService,
+
     ///// Service for handling security audits, logging security-related events.
     // pub security_audit_service: SecurityAuditService,
 
@@ -85,6 +94,7 @@ impl AvoRedState {
         // let security_audit_repository = SecurityAuditRepository::new();
         let security_alert_repository = SecurityAlertRepository::new();
         let visitor_log_repository = VisitorLogRepository::new();
+        let entity_repository = EntityRepository::new();
 
         let misc_service = MiscService::new().await?;
         let auth_service =
@@ -96,6 +106,9 @@ impl AvoRedState {
         let setting_service = SettingService::new(setting_repository)?;
         let cms_service = CmsService::new(content_repository, visitor_log_repository.clone())?;
         let general_service = GeneralService::new(visitor_log_repository)?;
+        let web_event_service = WebEventService::new()?;
+        let entity_service = EntityService::new(entity_repository)?;
+    
         // let security_audit_service = SecurityAuditService::new(security_audit_repository);
         // let security_alert_service = SecurityAlertService::new(security_alert_repository);
 
@@ -111,6 +124,8 @@ impl AvoRedState {
             setting_service,
             cms_service,
             general_service,
+            web_event_service,
+            entity_service,
             // security_audit_service,
             // security_alert_service,
         })

@@ -14,6 +14,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "general.proto",
         "asset.proto",
         "security_audit.proto",
+        "entity.proto",
+        "web_event.proto",
     ];
 
     // Tell cargo to rerun this build script only if proto files change
@@ -29,7 +31,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let should_compile = !Path::new(proto_out_dir).exists()
         || std::fs::read_dir(proto_out_dir)?.count() < proto_files.len();
 
-    if should_compile {
+    if should_compile || true {
         println!("cargo:warning=Compiling protobuf files...");
         tonic_prost_build::configure()
             .out_dir(proto_out_dir)

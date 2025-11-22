@@ -46,7 +46,7 @@ pub struct AssetPaginateRequest {
     #[prost(string, optional, tag = "2")]
     pub order: ::core::option::Option<::prost::alloc::string::String>,
 }
-#[derive(Clone, PartialEq, Eq, ::prost::Message)]
+#[derive(Clone, PartialEq, ::prost::Message)]
 pub struct AssetPaginateResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
@@ -60,7 +60,7 @@ pub mod asset_paginate_response {
         #[prost(int64, tag = "1")]
         pub total: i64,
     }
-    #[derive(Clone, PartialEq, Eq, ::prost::Message)]
+    #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct AssetPaginateData {
         #[prost(message, optional, tag = "1")]
         pub pagination: ::core::option::Option<AssetPagination>,
@@ -146,8 +146,8 @@ pub mod asset_client {
     where
         T: tonic::client::GrpcService<tonic::body::Body>,
         T::Error: Into<StdError>,
-        T::ResponseBody: Body<Data = Bytes> + Send + 'static,
-        <T::ResponseBody as Body>::Error: Into<StdError> + Send,
+        T::ResponseBody: Body<Data = Bytes> + std::marker::Send + 'static,
+        <T::ResponseBody as Body>::Error: Into<StdError> + std::marker::Send,
     {
         pub fn new(inner: T) -> Self {
             let inner = tonic::client::Grpc::new(inner);
@@ -164,15 +164,15 @@ pub mod asset_client {
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
-            T: Service<
+            T: tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
                 Response = http::Response<
                     <T as tonic::client::GrpcService<tonic::body::Body>>::ResponseBody,
                 >,
             >,
-            <T as Service<
+            <T as tonic::codegen::Service<
                 http::Request<tonic::body::Body>,
-            >>::Error: Into<StdError> + Send + Sync,
+            >>::Error: Into<StdError> + std::marker::Send + std::marker::Sync,
         {
             AssetClient::new(InterceptedService::new(inner, interceptor))
         }
@@ -210,7 +210,7 @@ pub mod asset_client {
         pub async fn paginate(
             &mut self,
             request: impl tonic::IntoRequest<super::AssetPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AssetPaginateResponse>,
             tonic::Status,
         > {
@@ -231,7 +231,7 @@ pub mod asset_client {
         pub async fn create_folder(
             &mut self,
             request: impl tonic::IntoRequest<super::CreateFolderRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::CreateFolderResponse>,
             tonic::Status,
         > {
@@ -252,7 +252,7 @@ pub mod asset_client {
         pub async fn delete_asset(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteAssetRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAssetResponse>,
             tonic::Status,
         > {
@@ -273,7 +273,7 @@ pub mod asset_client {
         pub async fn delete_folder(
             &mut self,
             request: impl tonic::IntoRequest<super::DeleteFolderRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteFolderResponse>,
             tonic::Status,
         > {
@@ -294,7 +294,7 @@ pub mod asset_client {
         pub async fn rename_asset(
             &mut self,
             request: impl tonic::IntoRequest<super::RenameAssetRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RenameAssetResponse>,
             tonic::Status,
         > {
@@ -324,41 +324,41 @@ pub mod asset_server {
         clippy::let_unit_value,
     )]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with `AssetServer`.
+    /// Generated trait containing gRPC methods that should be implemented for use with AssetServer.
     #[async_trait]
-    pub trait Asset: Send + Sync + 'static {
+    pub trait Asset: std::marker::Send + std::marker::Sync + 'static {
         async fn paginate(
             &self,
             request: tonic::Request<super::AssetPaginateRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::AssetPaginateResponse>,
             tonic::Status,
         >;
         async fn create_folder(
             &self,
             request: tonic::Request<super::CreateFolderRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::CreateFolderResponse>,
             tonic::Status,
         >;
         async fn delete_asset(
             &self,
             request: tonic::Request<super::DeleteAssetRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteAssetResponse>,
             tonic::Status,
         >;
         async fn delete_folder(
             &self,
             request: tonic::Request<super::DeleteFolderRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::DeleteFolderResponse>,
             tonic::Status,
         >;
         async fn rename_asset(
             &self,
             request: tonic::Request<super::RenameAssetRequest>,
-        ) -> Result<
+        ) -> std::result::Result<
             tonic::Response<super::RenameAssetResponse>,
             tonic::Status,
         >;
@@ -409,7 +409,7 @@ pub mod asset_server {
         ///
         /// Default: `4MB`
         #[must_use]
-        pub const fn max_decoding_message_size(mut self, limit: usize) -> Self {
+        pub fn max_decoding_message_size(mut self, limit: usize) -> Self {
             self.max_decoding_message_size = Some(limit);
             self
         }
@@ -417,16 +417,16 @@ pub mod asset_server {
         ///
         /// Default: `usize::MAX`
         #[must_use]
-        pub const fn max_encoding_message_size(mut self, limit: usize) -> Self {
+        pub fn max_encoding_message_size(mut self, limit: usize) -> Self {
             self.max_encoding_message_size = Some(limit);
             self
         }
     }
-    impl<T, B> Service<http::Request<B>> for AssetServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for AssetServer<T>
     where
         T: Asset,
-        B: Body + Send + 'static,
-        B::Error: Into<StdError> + Send + 'static,
+        B: Body + std::marker::Send + 'static,
+        B::Error: Into<StdError> + std::marker::Send + 'static,
     {
         type Response = http::Response<tonic::body::Body>;
         type Error = std::convert::Infallible;
@@ -434,7 +434,7 @@ pub mod asset_server {
         fn poll_ready(
             &mut self,
             _cx: &mut Context<'_>,
-        ) -> Poll<Result<(), Self::Error>> {
+        ) -> Poll<std::result::Result<(), Self::Error>> {
             Poll::Ready(Ok(()))
         }
         fn call(&mut self, req: http::Request<B>) -> Self::Future {

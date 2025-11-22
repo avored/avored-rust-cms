@@ -36,6 +36,9 @@ pub mod setting_repository;
 /// visitor log repository module
 pub mod visitor_log_repository;
 
+/// entity repository module
+pub mod entity_repository;
+
 
 /// into iter object
 pub fn into_iter_objects(responses: Vec<Response>) -> Result<impl Iterator<Item = Result<Object>>> {

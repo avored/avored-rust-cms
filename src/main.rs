@@ -31,6 +31,7 @@ use crate::api::auth_api::AuthApi;
 use crate::api::cms_api::CmsApi;
 use crate::api::content_api::ContentApi;
 use crate::api::dashboard_api::DashboardApi;
+use crate::api::entity_api::EntityApi;
 use crate::api::general_api::GeneralApi;
 use crate::api::handlers::asset::store_asset_api_handler::store_asset_api_handler;
 use crate::api::misc_api::MiscApi;
@@ -43,7 +44,10 @@ use crate::api::proto::dashboard::dashboard_server::DashboardServer;
 use crate::api::proto::general::general_service_server::GeneralServiceServer;
 use crate::api::proto::misc::misc_server::MiscServer;
 use crate::api::proto::setting::setting_server::SettingServer;
+use crate::api::proto::web_event::web_event_server::WebEventServer;
+use crate::api::proto::entity::entty_service_server::EnttyServiceServer;
 use crate::api::setting_api::SettingApi;
+use crate::api::web_event_api::WebEventApi;
 use crate::avored_state::AvoRedState;
 use crate::error::Error;
 use crate::middleware::grpc_auth_middleware::check_auth;
@@ -187,6 +191,16 @@ async fn main() -> Result<(), Error> {
     };
     let asset_server = AssetServer::with_interceptor(asset_api, check_auth);
 
+    let entity_api = EntityApi {
+        state: state.clone(),
+    };
+    let entity_service_server = EnttyServiceServer::with_interceptor(entity_api, check_auth);
+
+    let web_event_api = WebEventApi {
+        state: state.clone(),
+    };
+    let web_event_server = WebEventServer::with_interceptor(web_event_api, check_auth);
+
     let grpc_router = Router::new()
         .nest_tonic(misc_server)
         .nest_tonic(auth_server)
@@ -195,6 +209,8 @@ async fn main() -> Result<(), Error> {
         .nest_tonic(content_server)
         .nest_tonic(setting_server)
         .nest_tonic(general_server)
+        .nest_tonic(entity_service_server)
+        .nest_tonic(web_event_server)
         .nest_tonic(asset_server)
         .nest_tonic(cms_server)
         .layer(cors.clone())

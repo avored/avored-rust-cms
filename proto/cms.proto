@@ -26,6 +26,8 @@ message SentContactFormResponse {
   bool status = 1;
 }
 
+
+
 service Cms {
   rpc GetCmsContent(GetCmsContentRequest) returns (GetCmsContentResponse);
   rpc SentContactForm(SentContactFormRequest) returns (SentContactFormResponse);

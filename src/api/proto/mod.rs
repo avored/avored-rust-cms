@@ -26,3 +26,10 @@ pub mod security_audit;
 
 /// setting
 pub mod setting;
+
+
+/// web event
+pub mod web_event;
+
+/// entity module
+pub mod entity;

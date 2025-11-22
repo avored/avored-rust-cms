@@ -1,0 +1,54 @@
+syntax = "proto3";
+package entity;
+
+
+import "google/protobuf/timestamp.proto";
+
+
+message EntityModel {
+    string id = 1;
+    string name = 2;
+    string identifier = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+    string created_by = 6;
+    string updated_by = 7;
+}
+
+message StoreEntityRequest {
+    string name = 1;
+    string identifier = 2;
+}
+
+
+message StoreEntityResponse {
+    bool status = 1;
+    EntityModel data = 2;
+}
+
+// entity paginate API
+message EntityPaginateRequest {
+  optional int64 page = 1;
+  optional string order = 2;
+}
+
+message EntityPaginateResponse {
+  bool status = 1;
+
+  message EntityPagination {
+    int64 total = 1;
+  }
+
+  message EntityPaginateData {
+    EntityPagination pagination = 1;
+    repeated EntityModel data = 2;
+  }
+
+  EntityPaginateData data = 2;
+}
+
+
+service EnttyService {
+    rpc Paginate(EntityPaginateRequest) returns (EntityPaginateResponse);
+    rpc StoreEntity(StoreEntityRequest) returns (StoreEntityResponse);
+}

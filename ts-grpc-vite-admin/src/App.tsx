@@ -19,6 +19,8 @@ import {ResetPasswordPage} from "./pages/auth/ResetPasswordPage";
 import {SettingPage} from "./pages/setting/SettingPage";
 import {LogoutPage} from "./pages/auth/LogoutPage";
 import { AdminUserChangePasswordPage } from './pages/admin_user/AdminUserChangePasswordPage';
+import { EntityTablePage } from "./pages/entity/EntityTablePage";
+import { EntityCreatePage } from "./pages/entity/EntityCreatePage";
 
 function App() {
 
@@ -42,6 +44,10 @@ function App() {
                     <Route path="/admin/role" element={<RoleTablePage />} />
                     <Route path="/admin/role-create" element={<RoleCreatePage />} />
                     <Route path="/admin/role-edit/:role_id" element={<RoleEditPage />} />
+
+                    <Route path="/admin/entity" element={<EntityTablePage />} />
+                    <Route path="/admin/entity-create" element={<EntityCreatePage />} />
+
 
                     <Route path="/admin/content" element={<ContentTablePage />} />
                     <Route path="/admin/content-create"   element={<ContentCreatePage />} />

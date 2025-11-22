@@ -43,6 +43,13 @@ pub mod validation_error;
 /// visitor log module
 pub mod visitor_log_model;
 
+/// web event module
+pub mod web_event_model;
+
+
+/// entity module
+pub mod entity_model;
+
 // /// Pagination struct
 // #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 // pub struct Pagination {
