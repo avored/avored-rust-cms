@@ -60,6 +60,18 @@ pub mod entity_paginate_response {
         pub data: ::prost::alloc::vec::Vec<super::EntityModel>,
     }
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetEntityRequest {
+    #[prost(string, tag = "1")]
+    pub entity_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct GetEntityResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<EntityModel>,
+}
 /// Generated client implementations.
 pub mod entty_service_client {
     #![allow(
@@ -199,6 +211,30 @@ pub mod entty_service_client {
                 .insert(GrpcMethod::new("entity.EnttyService", "StoreEntity"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn get_entity(
+            &mut self,
+            request: impl tonic::IntoRequest<super::GetEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetEntityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/entity.EnttyService/GetEntity",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("entity.EnttyService", "GetEntity"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -226,6 +262,13 @@ pub mod entty_service_server {
             request: tonic::Request<super::StoreEntityRequest>,
         ) -> std::result::Result<
             tonic::Response<super::StoreEntityResponse>,
+            tonic::Status,
+        >;
+        async fn get_entity(
+            &self,
+            request: tonic::Request<super::GetEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::GetEntityResponse>,
             tonic::Status,
         >;
     }
@@ -380,6 +423,51 @@ pub mod entty_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = StoreEntitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/entity.EnttyService/GetEntity" => {
+                    #[allow(non_camel_case_types)]
+                    struct GetEntitySvc<T: EnttyService>(pub Arc<T>);
+                    impl<
+                        T: EnttyService,
+                    > tonic::server::UnaryService<super::GetEntityRequest>
+                    for GetEntitySvc<T> {
+                        type Response = super::GetEntityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::GetEntityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as EnttyService>::get_entity(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = GetEntitySvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

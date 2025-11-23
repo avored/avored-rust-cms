@@ -48,7 +48,19 @@ message EntityPaginateResponse {
 }
 
 
+message GetEntityRequest {
+  string entity_id = 1;
+}
+
+
+message GetEntityResponse {
+  bool status = 1;
+  EntityModel data = 2;
+}
+
+
 service EnttyService {
     rpc Paginate(EntityPaginateRequest) returns (EntityPaginateResponse);
     rpc StoreEntity(StoreEntityRequest) returns (StoreEntityResponse);
+    rpc GetEntity(GetEntityRequest) returns(GetEntityResponse);
 }

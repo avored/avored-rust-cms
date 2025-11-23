@@ -1,5 +1,5 @@
 use crate::PER_PAGE;
-use crate::api::proto::entity::{StoreEntityRequest, StoreEntityResponse};
+use crate::api::proto::entity::{GetEntityRequest, StoreEntityRequest, StoreEntityResponse};
 use crate::models::ModelCount;
 use crate::models::entity_model::CreatableEntityModel;
 use crate::providers::avored_database_provider::DB;
@@ -104,4 +104,23 @@ impl EntityService {
         };
         Ok(res)
     }
+
+
+    /// find entity by id
+    pub async fn find_entity_by_id(
+        &self,
+        request: GetEntityRequest,
+        (datastore, database_session): &DB,
+    ) -> Result<crate::api::proto::entity::EntityModel> {
+        let entity_model = self
+            .entity_repository
+            .find_by_id(datastore, database_session, &request.entity_id)
+            .await?;
+
+        let model: crate::api::proto::entity::EntityModel =
+            entity_model.try_into().unwrap();
+
+        Ok(model)
+    }
+
 }

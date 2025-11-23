@@ -1,14 +1,16 @@
 use crate::api::proto::entity::entity_paginate_response::{EntityPaginateData, EntityPagination};
 use crate::api::proto::entity::entty_service_server::EnttyService;
-use crate::api::proto::entity::{EntityPaginateRequest, EntityPaginateResponse, StoreEntityRequest, StoreEntityResponse};
+use crate::api::proto::entity::{
+    EntityPaginateRequest, EntityPaginateResponse, GetEntityRequest, GetEntityResponse,
+    StoreEntityRequest, StoreEntityResponse,
+};
 use crate::avored_state::AvoRedState;
+use crate::error::Error::Tonic;
 use crate::extensions::tonic_request::TonicRequest;
 use crate::models::admin_user_model::AdminUserModelExtension;
 use std::sync::Arc;
-use tonic::{async_trait, Response, Status};
 use tonic::Request;
-use crate::error::Error::Tonic;
-
+use tonic::{async_trait, Response, Status};
 
 /// `AvoRed` Setting API
 pub struct EntityApi {
@@ -24,18 +26,15 @@ impl EnttyService for EntityApi {
     ) -> Result<Response<StoreEntityResponse>, Status> {
         println!("->> {:<12} - store_entity", "gRPC_Entity_Service");
 
-        
         let claims = request.get_token_claim()?;
         let logged_in_user = claims.admin_user_model;
         let req = request.into_inner();
 
         let res = self
             .state
-            .entity_service.store(
-                req,
-                logged_in_user.email,
-                &self.state.db,
-            ).await?;
+            .entity_service
+            .store(req, logged_in_user.email, &self.state.db)
+            .await?;
         let res = Response::new(res);
 
         Ok(res)
@@ -46,8 +45,8 @@ impl EnttyService for EntityApi {
         request: Request<EntityPaginateRequest>,
     ) -> Result<Response<EntityPaginateResponse>, Status> {
         println!("->> {:<12} - paginate", "gRPC_Entity_Service");
-        
-         let claims = request.get_token_claim()?;
+
+        let claims = request.get_token_claim()?;
 
         let logged_in_user = claims.admin_user_model;
         logged_in_user
@@ -83,6 +82,45 @@ impl EnttyService for EntityApi {
                 };
 
                 Ok(Response::new(entity_paginate_response))
+            }
+            Err(e) => match e {
+                Tonic(status) => Err(*status),
+                _ => Err(Status::internal(e.to_string())),
+            },
+        }
+    }
+
+    async fn get_entity(
+        &self,
+        request: Request<GetEntityRequest>,
+    ) -> Result<Response<GetEntityResponse>, Status> {
+        println!("->> {:<12} - get_entity", "gRPC_Entity_Service");
+
+        let claims = request.get_token_claim()?;
+
+        let logged_in_user = claims.admin_user_model;
+        logged_in_user
+            .check_user_has_resouce_access(
+                &self.state.admin_user_service,
+                String::from("get_entity"),
+            )
+            .await?;
+
+        let req = request.into_inner();
+
+        match self
+            .state
+            .entity_service
+            .find_entity_by_id(req, &self.state.db)
+            .await
+        {
+            Ok(entity_model) => {
+                let get_admin_user_response = GetEntityResponse {
+                    status: true,
+                    data: Some(entity_model),
+                };
+                let res = Response::new(get_admin_user_response);
+                Ok(res)
             }
             Err(e) => match e {
                 Tonic(status) => Err(*status),
