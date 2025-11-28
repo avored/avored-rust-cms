@@ -15,3 +15,13 @@ export type CreateEntityType = {
     name: string;
     identifier: string;
 }
+
+export type EditEntityType = {
+    id: string;
+    name: string;
+    identifier: string;
+}
+
+export type PutEntityIdentifierType = {
+    identifier: String;
+}

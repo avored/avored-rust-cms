@@ -58,9 +58,39 @@ message GetEntityResponse {
   EntityModel data = 2;
 }
 
+message UpdateEntityRequest {
+  string entity_id = 1;
+  string name = 2;
+}
+
+message UpdateEntityResponse {
+  bool status = 1;
+  EntityModel data = 2;
+}
+
+message PutEntityIdentifierRequest {
+  string entity_id = 1;
+  string identifier = 2;
+}
+
+message PutEntityIdentifierResponse {
+  bool status = 1;
+  EntityModel data = 2;
+}
+
+message DeleteEntityRequest {
+  string entity_id = 1;
+}
+
+message DeleteEntityResponse {
+  bool status = 1;
+}
 
 service EnttyService {
     rpc Paginate(EntityPaginateRequest) returns (EntityPaginateResponse);
     rpc StoreEntity(StoreEntityRequest) returns (StoreEntityResponse);
     rpc GetEntity(GetEntityRequest) returns(GetEntityResponse);
+    rpc UpdateEntity(UpdateEntityRequest) returns(UpdateEntityResponse);
+    rpc PutEntityIdentifier(PutEntityIdentifierRequest) returns (PutEntityIdentifierResponse);
+    rpc DeleteEntity(DeleteEntityRequest) returns (DeleteEntityResponse);
 }

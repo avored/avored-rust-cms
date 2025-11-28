@@ -201,3 +201,173 @@ export namespace EntityPaginateResponse {
 
 }
 
+export class GetEntityRequest extends jspb.Message {
+  getEntityId(): string;
+  setEntityId(value: string): GetEntityRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetEntityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: GetEntityRequest): GetEntityRequest.AsObject;
+  static serializeBinaryToWriter(message: GetEntityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetEntityRequest;
+  static deserializeBinaryFromReader(message: GetEntityRequest, reader: jspb.BinaryReader): GetEntityRequest;
+}
+
+export namespace GetEntityRequest {
+  export type AsObject = {
+    entityId: string,
+  }
+}
+
+export class GetEntityResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): GetEntityResponse;
+
+  getData(): EntityModel | undefined;
+  setData(value?: EntityModel): GetEntityResponse;
+  hasData(): boolean;
+  clearData(): GetEntityResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): GetEntityResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: GetEntityResponse): GetEntityResponse.AsObject;
+  static serializeBinaryToWriter(message: GetEntityResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): GetEntityResponse;
+  static deserializeBinaryFromReader(message: GetEntityResponse, reader: jspb.BinaryReader): GetEntityResponse;
+}
+
+export namespace GetEntityResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: EntityModel.AsObject,
+  }
+}
+
+export class UpdateEntityRequest extends jspb.Message {
+  getEntityId(): string;
+  setEntityId(value: string): UpdateEntityRequest;
+
+  getName(): string;
+  setName(value: string): UpdateEntityRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateEntityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateEntityRequest): UpdateEntityRequest.AsObject;
+  static serializeBinaryToWriter(message: UpdateEntityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateEntityRequest;
+  static deserializeBinaryFromReader(message: UpdateEntityRequest, reader: jspb.BinaryReader): UpdateEntityRequest;
+}
+
+export namespace UpdateEntityRequest {
+  export type AsObject = {
+    entityId: string,
+    name: string,
+  }
+}
+
+export class UpdateEntityResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): UpdateEntityResponse;
+
+  getData(): EntityModel | undefined;
+  setData(value?: EntityModel): UpdateEntityResponse;
+  hasData(): boolean;
+  clearData(): UpdateEntityResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): UpdateEntityResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: UpdateEntityResponse): UpdateEntityResponse.AsObject;
+  static serializeBinaryToWriter(message: UpdateEntityResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): UpdateEntityResponse;
+  static deserializeBinaryFromReader(message: UpdateEntityResponse, reader: jspb.BinaryReader): UpdateEntityResponse;
+}
+
+export namespace UpdateEntityResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: EntityModel.AsObject,
+  }
+}
+
+export class PutEntityIdentifierRequest extends jspb.Message {
+  getEntityId(): string;
+  setEntityId(value: string): PutEntityIdentifierRequest;
+
+  getIdentifier(): string;
+  setIdentifier(value: string): PutEntityIdentifierRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutEntityIdentifierRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: PutEntityIdentifierRequest): PutEntityIdentifierRequest.AsObject;
+  static serializeBinaryToWriter(message: PutEntityIdentifierRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutEntityIdentifierRequest;
+  static deserializeBinaryFromReader(message: PutEntityIdentifierRequest, reader: jspb.BinaryReader): PutEntityIdentifierRequest;
+}
+
+export namespace PutEntityIdentifierRequest {
+  export type AsObject = {
+    entityId: string,
+    identifier: string,
+  }
+}
+
+export class PutEntityIdentifierResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): PutEntityIdentifierResponse;
+
+  getData(): EntityModel | undefined;
+  setData(value?: EntityModel): PutEntityIdentifierResponse;
+  hasData(): boolean;
+  clearData(): PutEntityIdentifierResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): PutEntityIdentifierResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: PutEntityIdentifierResponse): PutEntityIdentifierResponse.AsObject;
+  static serializeBinaryToWriter(message: PutEntityIdentifierResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): PutEntityIdentifierResponse;
+  static deserializeBinaryFromReader(message: PutEntityIdentifierResponse, reader: jspb.BinaryReader): PutEntityIdentifierResponse;
+}
+
+export namespace PutEntityIdentifierResponse {
+  export type AsObject = {
+    status: boolean,
+    data?: EntityModel.AsObject,
+  }
+}
+
+export class DeleteEntityRequest extends jspb.Message {
+  getEntityId(): string;
+  setEntityId(value: string): DeleteEntityRequest;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteEntityRequest.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteEntityRequest): DeleteEntityRequest.AsObject;
+  static serializeBinaryToWriter(message: DeleteEntityRequest, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteEntityRequest;
+  static deserializeBinaryFromReader(message: DeleteEntityRequest, reader: jspb.BinaryReader): DeleteEntityRequest;
+}
+
+export namespace DeleteEntityRequest {
+  export type AsObject = {
+    entityId: string,
+  }
+}
+
+export class DeleteEntityResponse extends jspb.Message {
+  getStatus(): boolean;
+  setStatus(value: boolean): DeleteEntityResponse;
+
+  serializeBinary(): Uint8Array;
+  toObject(includeInstance?: boolean): DeleteEntityResponse.AsObject;
+  static toObject(includeInstance: boolean, msg: DeleteEntityResponse): DeleteEntityResponse.AsObject;
+  static serializeBinaryToWriter(message: DeleteEntityResponse, writer: jspb.BinaryWriter): void;
+  static deserializeBinary(bytes: Uint8Array): DeleteEntityResponse;
+  static deserializeBinaryFromReader(message: DeleteEntityResponse, reader: jspb.BinaryReader): DeleteEntityResponse;
+}
+
+export namespace DeleteEntityResponse {
+  export type AsObject = {
+    status: boolean,
+  }
+}
+

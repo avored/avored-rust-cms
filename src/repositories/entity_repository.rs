@@ -5,7 +5,7 @@ use surrealdb::kvs::Datastore;
 use crate::PER_PAGE;
 use crate::error::{Error, Result};
 use crate::models::ModelCount;
-use crate::models::entity_model::{CreatableEntityModel, EntityModel};
+use crate::models::entity_model::{CreatableEntityModel, EntityModel, PutEntityIdentifierModel, UpdatableEntityModel};
 use crate::repositories::into_iter_objects;
 
 
@@ -156,5 +156,130 @@ impl EntityRepository {
 
         model
     }
+
+    /// update entity
+    pub async fn update_entity(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        updatable_model: UpdatableEntityModel,
+    ) -> Result<EntityModel> {
+        let sql = "
+            UPDATE type::thing($table, $id) MERGE {
+                name: $name,
+                updated_by: $logged_in_user_name,
+                updated_at: time::now()
+            };";
+
+        let vars = BTreeMap::from([
+            ("name".into(), updatable_model.name.into()),
+            (
+                "logged_in_user_name".into(),
+                updatable_model.logged_in_username.into(),
+            ),
+            ("id".into(), updatable_model.id.into()),
+            ("table".into(), ENTITY_TABLE.into()),
+        ]);
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let admin_user_model: Result<EntityModel> = result_object?.try_into();
+
+        admin_user_model
+    }
+
+    /// update entity identifier
+    pub async fn update_entity_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        put_role_identifier_model: PutEntityIdentifierModel,
+    ) -> Result<EntityModel> {
+        let sql = "UPDATE type::thing($table, $id)
+                    SET
+                        identifier = $identifier,
+                        updated_at = $updated_at,
+                        updated_by = $updated_by
+                    ;
+        ";
+
+        let vars: BTreeMap<String, Value> = [
+            (
+                "identifier".into(),
+                put_role_identifier_model.identifier.into(),
+            ),
+            ("table".into(), ENTITY_TABLE.into()),
+            ("updated_at".into(), Datetime::default().into()),
+            (
+                "updated_by".into(),
+                put_role_identifier_model.logged_in_username.into(),
+            ),
+            ("id".into(), put_role_identifier_model.id.into()),
+        ]
+        .into();
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let updated_model: Result<EntityModel> = result_object?.try_into();
+
+        updated_model
+    }
+
+    /// count of identifier
+    pub async fn count_of_identifier(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        identifier: &str,
+    ) -> Result<ModelCount> {
+        let sql = format!("SELECT count(identifier=$identifier) FROM {} GROUP ALL", ENTITY_TABLE);
+
+        let vars: BTreeMap<String, Value> = [("identifier".into(), identifier.into())].into();
+        let responses = datastore.execute(&sql, database_session, Some(vars)).await?;
+
+        let result_object_option = into_iter_objects(responses)?.next();
+        let result_object = match result_object_option {
+            Some(object) => object,
+            None => Err(Error::Generic("no record found".to_string())),
+        };
+        let model_count: Result<ModelCount> = result_object?.try_into();
+
+        model_count
+    }
+
+    /// delete entity
+    pub async fn delete_entity(
+        &self,
+        datastore: &Datastore,
+        database_session: &Session,
+        entity_id: &str,
+    ) -> Result<bool> {
+        let sql = "
+            DELETE type::thing($table, $id);";
+
+        let vars: BTreeMap<String, Value> = [
+            ("id".into(), entity_id.into()),
+            ("table".into(), ENTITY_TABLE.into()),
+        ]
+        .into();
+
+        let responses = datastore.execute(sql, database_session, Some(vars)).await?;
+        let response = responses.into_iter().next().map(|rp| rp.result).transpose();
+        if response.is_ok() {
+            return Ok(true);
+        }
+
+        Ok(false)
+    }
+
     
 }

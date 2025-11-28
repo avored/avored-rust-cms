@@ -6,3 +6,7 @@ pub mod auth_request;
 pub mod content_request;
 /// misc request
 pub mod misc_request;
+
+
+/// entity request
+pub mod entity_request;

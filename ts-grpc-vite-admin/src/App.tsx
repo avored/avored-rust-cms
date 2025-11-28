@@ -21,6 +21,7 @@ import {LogoutPage} from "./pages/auth/LogoutPage";
 import { AdminUserChangePasswordPage } from './pages/admin_user/AdminUserChangePasswordPage';
 import { EntityTablePage } from "./pages/entity/EntityTablePage";
 import { EntityCreatePage } from "./pages/entity/EntityCreatePage";
+import { EntityEditPage } from "./pages/entity/EntityEditPage";
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
 
                     <Route path="/admin/entity" element={<EntityTablePage />} />
                     <Route path="/admin/entity-create" element={<EntityCreatePage />} />
+                    <Route path="/admin/entity-edit/:entity_id" element={<EntityEditPage />} />
 
 
                     <Route path="/admin/content" element={<ContentTablePage />} />

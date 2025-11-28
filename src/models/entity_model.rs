@@ -1,7 +1,7 @@
 use std::time::SystemTime;
 
 use serde::{Deserialize, Serialize};
-use surrealdb::sql::{Datetime, Object, Value};
+use surrealdb::sql::{Datetime, Object};
 use crate::error::{Error, Result};
 use crate::api::proto::entity::EntityModel as GrpcEntityModel;
 use crate::models::BaseModel;
@@ -35,10 +35,43 @@ pub struct EntityModel {
 
 }
 
+/// Model for creating a new entity
 #[derive(Serialize, Debug, Deserialize, Clone, Default)]
 pub struct CreatableEntityModel {
+    /// The name of the entity
     pub name: String,
+
+    /// The identifier of the entity
     pub identifier: String,
+
+    /// The username of the logged-in user creating the entity
+    pub logged_in_username: String,
+}
+
+/// Model for updating an entity
+#[derive(Serialize, Debug, Deserialize, Clone, Default)]
+pub struct UpdatableEntityModel {
+    /// The unique identifier of the entity to be updated
+    pub id: String,
+
+    /// The name of the entity
+    pub name: String,
+
+    /// The identifier of the entity
+    pub logged_in_username: String,
+}
+
+
+/// Represents a model for updating the identifier of an existing entity.
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct PutEntityIdentifierModel {
+    /// Unique identifier for the entity to be updated
+    pub id: String,
+
+    /// New identifier for the entity, used for API access
+    pub identifier: String,
+
+    /// Username of the user updating the entity identifier
     pub logged_in_username: String,
 }
 

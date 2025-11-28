@@ -72,6 +72,44 @@ pub struct GetEntityResponse {
     #[prost(message, optional, tag = "2")]
     pub data: ::core::option::Option<EntityModel>,
 }
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateEntityRequest {
+    #[prost(string, tag = "1")]
+    pub entity_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub name: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct UpdateEntityResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<EntityModel>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PutEntityIdentifierRequest {
+    #[prost(string, tag = "1")]
+    pub entity_id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub identifier: ::prost::alloc::string::String,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct PutEntityIdentifierResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+    #[prost(message, optional, tag = "2")]
+    pub data: ::core::option::Option<EntityModel>,
+}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteEntityRequest {
+    #[prost(string, tag = "1")]
+    pub entity_id: ::prost::alloc::string::String,
+}
+#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct DeleteEntityResponse {
+    #[prost(bool, tag = "1")]
+    pub status: bool,
+}
 /// Generated client implementations.
 pub mod entty_service_client {
     #![allow(
@@ -235,6 +273,78 @@ pub mod entty_service_client {
                 .insert(GrpcMethod::new("entity.EnttyService", "GetEntity"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn update_entity(
+            &mut self,
+            request: impl tonic::IntoRequest<super::UpdateEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateEntityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/entity.EnttyService/UpdateEntity",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("entity.EnttyService", "UpdateEntity"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn put_entity_identifier(
+            &mut self,
+            request: impl tonic::IntoRequest<super::PutEntityIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutEntityIdentifierResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/entity.EnttyService/PutEntityIdentifier",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("entity.EnttyService", "PutEntityIdentifier"));
+            self.inner.unary(req, path, codec).await
+        }
+        pub async fn delete_entity(
+            &mut self,
+            request: impl tonic::IntoRequest<super::DeleteEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteEntityResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::unknown(
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic_prost::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/entity.EnttyService/DeleteEntity",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("entity.EnttyService", "DeleteEntity"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -269,6 +379,27 @@ pub mod entty_service_server {
             request: tonic::Request<super::GetEntityRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetEntityResponse>,
+            tonic::Status,
+        >;
+        async fn update_entity(
+            &self,
+            request: tonic::Request<super::UpdateEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::UpdateEntityResponse>,
+            tonic::Status,
+        >;
+        async fn put_entity_identifier(
+            &self,
+            request: tonic::Request<super::PutEntityIdentifierRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::PutEntityIdentifierResponse>,
+            tonic::Status,
+        >;
+        async fn delete_entity(
+            &self,
+            request: tonic::Request<super::DeleteEntityRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::DeleteEntityResponse>,
             tonic::Status,
         >;
     }
@@ -468,6 +599,142 @@ pub mod entty_service_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let method = GetEntitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/entity.EnttyService/UpdateEntity" => {
+                    #[allow(non_camel_case_types)]
+                    struct UpdateEntitySvc<T: EnttyService>(pub Arc<T>);
+                    impl<
+                        T: EnttyService,
+                    > tonic::server::UnaryService<super::UpdateEntityRequest>
+                    for UpdateEntitySvc<T> {
+                        type Response = super::UpdateEntityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::UpdateEntityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as EnttyService>::update_entity(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = UpdateEntitySvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/entity.EnttyService/PutEntityIdentifier" => {
+                    #[allow(non_camel_case_types)]
+                    struct PutEntityIdentifierSvc<T: EnttyService>(pub Arc<T>);
+                    impl<
+                        T: EnttyService,
+                    > tonic::server::UnaryService<super::PutEntityIdentifierRequest>
+                    for PutEntityIdentifierSvc<T> {
+                        type Response = super::PutEntityIdentifierResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::PutEntityIdentifierRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as EnttyService>::put_entity_identifier(&inner, request)
+                                    .await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = PutEntityIdentifierSvc(inner);
+                        let codec = tonic_prost::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/entity.EnttyService/DeleteEntity" => {
+                    #[allow(non_camel_case_types)]
+                    struct DeleteEntitySvc<T: EnttyService>(pub Arc<T>);
+                    impl<
+                        T: EnttyService,
+                    > tonic::server::UnaryService<super::DeleteEntityRequest>
+                    for DeleteEntitySvc<T> {
+                        type Response = super::DeleteEntityResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::DeleteEntityRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                <T as EnttyService>::delete_entity(&inner, request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let method = DeleteEntitySvc(inner);
                         let codec = tonic_prost::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

@@ -125,5 +125,177 @@ export class EnttyServiceClient {
     this.methodDescriptorStoreEntity);
   }
 
+  methodDescriptorGetEntity = new grpcWeb.MethodDescriptor(
+    '/entity.EnttyService/GetEntity',
+    grpcWeb.MethodType.UNARY,
+    entity_pb.GetEntityRequest,
+    entity_pb.GetEntityResponse,
+    (request: entity_pb.GetEntityRequest) => {
+      return request.serializeBinary();
+    },
+    entity_pb.GetEntityResponse.deserializeBinary
+  );
+
+  getEntity(
+    request: entity_pb.GetEntityRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<entity_pb.GetEntityResponse>;
+
+  getEntity(
+    request: entity_pb.GetEntityRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: entity_pb.GetEntityResponse) => void): grpcWeb.ClientReadableStream<entity_pb.GetEntityResponse>;
+
+  getEntity(
+    request: entity_pb.GetEntityRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: entity_pb.GetEntityResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/entity.EnttyService/GetEntity',
+        request,
+        metadata || {},
+        this.methodDescriptorGetEntity,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/entity.EnttyService/GetEntity',
+    request,
+    metadata || {},
+    this.methodDescriptorGetEntity);
+  }
+
+  methodDescriptorUpdateEntity = new grpcWeb.MethodDescriptor(
+    '/entity.EnttyService/UpdateEntity',
+    grpcWeb.MethodType.UNARY,
+    entity_pb.UpdateEntityRequest,
+    entity_pb.UpdateEntityResponse,
+    (request: entity_pb.UpdateEntityRequest) => {
+      return request.serializeBinary();
+    },
+    entity_pb.UpdateEntityResponse.deserializeBinary
+  );
+
+  updateEntity(
+    request: entity_pb.UpdateEntityRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<entity_pb.UpdateEntityResponse>;
+
+  updateEntity(
+    request: entity_pb.UpdateEntityRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: entity_pb.UpdateEntityResponse) => void): grpcWeb.ClientReadableStream<entity_pb.UpdateEntityResponse>;
+
+  updateEntity(
+    request: entity_pb.UpdateEntityRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: entity_pb.UpdateEntityResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/entity.EnttyService/UpdateEntity',
+        request,
+        metadata || {},
+        this.methodDescriptorUpdateEntity,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/entity.EnttyService/UpdateEntity',
+    request,
+    metadata || {},
+    this.methodDescriptorUpdateEntity);
+  }
+
+  methodDescriptorPutEntityIdentifier = new grpcWeb.MethodDescriptor(
+    '/entity.EnttyService/PutEntityIdentifier',
+    grpcWeb.MethodType.UNARY,
+    entity_pb.PutEntityIdentifierRequest,
+    entity_pb.PutEntityIdentifierResponse,
+    (request: entity_pb.PutEntityIdentifierRequest) => {
+      return request.serializeBinary();
+    },
+    entity_pb.PutEntityIdentifierResponse.deserializeBinary
+  );
+
+  putEntityIdentifier(
+    request: entity_pb.PutEntityIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<entity_pb.PutEntityIdentifierResponse>;
+
+  putEntityIdentifier(
+    request: entity_pb.PutEntityIdentifierRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: entity_pb.PutEntityIdentifierResponse) => void): grpcWeb.ClientReadableStream<entity_pb.PutEntityIdentifierResponse>;
+
+  putEntityIdentifier(
+    request: entity_pb.PutEntityIdentifierRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: entity_pb.PutEntityIdentifierResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/entity.EnttyService/PutEntityIdentifier',
+        request,
+        metadata || {},
+        this.methodDescriptorPutEntityIdentifier,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/entity.EnttyService/PutEntityIdentifier',
+    request,
+    metadata || {},
+    this.methodDescriptorPutEntityIdentifier);
+  }
+
+  methodDescriptorDeleteEntity = new grpcWeb.MethodDescriptor(
+    '/entity.EnttyService/DeleteEntity',
+    grpcWeb.MethodType.UNARY,
+    entity_pb.DeleteEntityRequest,
+    entity_pb.DeleteEntityResponse,
+    (request: entity_pb.DeleteEntityRequest) => {
+      return request.serializeBinary();
+    },
+    entity_pb.DeleteEntityResponse.deserializeBinary
+  );
+
+  deleteEntity(
+    request: entity_pb.DeleteEntityRequest,
+    metadata?: grpcWeb.Metadata | null): Promise<entity_pb.DeleteEntityResponse>;
+
+  deleteEntity(
+    request: entity_pb.DeleteEntityRequest,
+    metadata: grpcWeb.Metadata | null,
+    callback: (err: grpcWeb.RpcError,
+               response: entity_pb.DeleteEntityResponse) => void): grpcWeb.ClientReadableStream<entity_pb.DeleteEntityResponse>;
+
+  deleteEntity(
+    request: entity_pb.DeleteEntityRequest,
+    metadata?: grpcWeb.Metadata | null,
+    callback?: (err: grpcWeb.RpcError,
+               response: entity_pb.DeleteEntityResponse) => void) {
+    if (callback !== undefined) {
+      return this.client_.rpcCall(
+        this.hostname_ +
+          '/entity.EnttyService/DeleteEntity',
+        request,
+        metadata || {},
+        this.methodDescriptorDeleteEntity,
+        callback);
+    }
+    return this.client_.unaryCall(
+    this.hostname_ +
+      '/entity.EnttyService/DeleteEntity',
+    request,
+    metadata || {},
+    this.methodDescriptorDeleteEntity);
+  }
+
 }
 
