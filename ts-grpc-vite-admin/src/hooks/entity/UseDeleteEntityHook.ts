@@ -17,7 +17,7 @@ export const UseDeleteEntityHook = () => {
         onSuccess: (res) => {
             if (res.getStatus()) {
                 // localStorage.setItem("token", token);
-                redirect("/admin/role");
+                redirect("/admin/entity");
             }
         }
     })
