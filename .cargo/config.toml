@@ -4,6 +4,7 @@ jobs = 8
 # Use sccache for distributed caching (only if available)
 # rustc-wrapper = "sccache"  # Commented out to avoid CI failures when sccache is not available
 # Additional optimization flags
+[target.'cfg(not(target_arch = "wasm32"))']
 rustflags = ["-C", "target-cpu=native"]
 
 [profile.dev]
