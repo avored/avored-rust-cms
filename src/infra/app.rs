@@ -16,12 +16,17 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     // Generate the list of routes in your Leptos App
     let routes = generate_route_list(App);
 
-    let greeter = crate::grpc_server::MyGreeter::default();
-    let grpc_service =
-        crate::grpc_server::helloworld::greeter_server::GreeterServer::new(greeter);
+    let my_hello_server = crate::grpc_server::MyGreeter::default();
+    let my_hello_service =
+        crate::infra::grpc::helloworld::greeter_server::GreeterServer::new(my_hello_server);
+
+    let my_misc_server = crate::infra::grpc::misc_server::MyMisc::default();
+    let my_misc_service =
+        crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
 
     let router = Router::<AppState>::new()
-        .route_service("/helloworld.Greeter/SayHello", grpc_service)
+        .route_service("/helloworld.Greeter/SayHello", my_hello_service)
+        .route_service("/misc.Misc/HealthCheck", my_misc_service)
         .leptos_routes_with_context(
             &state,
             routes,

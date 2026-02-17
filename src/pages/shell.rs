@@ -48,8 +48,8 @@ pub fn Shell() -> impl IntoView {
             <body>
                 <App/>
                 <script type="module">
-                    {r#"import init, { hydrate } from '/pkg/new-avored.js';
-                    init('/pkg/new-avored.wasm').then(hydrate);"#}
+                    {r#"import init, { hydrate } from '/pkg/avored-rust-cms.js';
+                    init('/pkg/avored-rust-cms.wasm').then(hydrate);"#}
                 </script>
             </body>
         </html>

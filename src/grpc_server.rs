@@ -1,12 +1,10 @@
 #[cfg(feature = "ssr")]
 use tonic::{Request, Response, Status};
 
-pub mod helloworld {
-    tonic::include_proto!("helloworld");
-}
+use crate::infra::grpc::helloworld::{HelloReply, HelloRequest, greeter_server::Greeter};
 
-use helloworld::greeter_server::Greeter;
-use helloworld::{HelloReply, HelloRequest};
+
+
 
 #[derive(Debug, Default)]
 pub struct MyGreeter {}

@@ -1,5 +1,5 @@
 use leptos::{prelude::*};
-use leptos_meta::{provide_meta_context, Stylesheet, Title};
+use leptos_meta::{provide_meta_context, Title};
 use leptos_router::{
     components::{Route, Router, Routes},
     StaticSegment,
@@ -16,8 +16,7 @@ pub fn App() -> impl IntoView {
     view! {
         // injects a stylesheet into the document <head>
         // id=leptos means cargo-leptos will hot-reload this stylesheet
-        <Stylesheet id="leptos" href="/pkg/new-avored.css"/>
-
+        
         // sets the document title
         <Title text="Welcome to Leptos"/>
 

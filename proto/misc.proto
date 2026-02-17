@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package misc;
+
+
+message HealthCheckRequest {
+}
+
+message HealthCheckResponse {
+    bool status = 1;
+}
+
+
+// Misc is a simple service that provides miscellaneous RPC methods.
+service Misc {
+    // HealthCheck is a simple RPC method that can be used to check the health of the service.
+    rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+}
