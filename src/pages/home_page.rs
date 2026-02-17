@@ -1,6 +1,38 @@
 use leptos::prelude::*;
 
 
+
+
+#[server]
+pub async fn setup_grpc() -> Result<bool, ServerFnError> {
+    #[cfg(feature = "ssr")]
+    {
+        use crate::infra::grpc::misc::{SetupRequest, misc_client::MiscClient};
+
+        let mut client: MiscClient<tonic::transport::Channel> =
+            MiscClient::connect("http://127.0.0.1:3000")
+                .await
+                .map_err(|e| ServerFnError::new(format!("Connection failed: {}", e)))?;
+
+        let request = tonic::Request::new(SetupRequest {  });
+
+        let response = client
+            .setup(request)
+            .await
+            .map_err(|e| ServerFnError::new(format!("gRPC call failed: {}", e)))?;
+
+        Ok(response.into_inner().status)
+    }
+    #[cfg(not(feature = "ssr"))]
+    {
+        let _ = name;
+        Err(ServerFnError::new(
+            "Server function body should not be called on client",
+        ))
+    }
+}
+
+
 #[server]
 pub async fn health_check_grpc() -> Result<bool, ServerFnError> {
     #[cfg(feature = "ssr")]
@@ -79,6 +111,9 @@ pub fn HomePage() -> impl IntoView {
     let misc_action = ServerAction::<HealthCheckGrpc>::new();
     let misc_result = misc_action.value();
 
+    let setup_action = ServerAction::<SetupGrpc>::new();
+    let setup_result = setup_action.value();
+
     view! {
         <h1>"Welcome to Leptos!"</h1>
         <button on:click=on_click>"Click Me: " {count}</button>
@@ -135,6 +170,30 @@ pub fn HomePage() -> impl IntoView {
                         "Health Check Passed".to_string()
                     } else {
                         "Health Check Failed".to_string()
+                    }
+                },
+                Some(Err(err)) => format!("Error: {}", err),
+            }}
+        </p>
+
+        <div>
+            "New Setup Request"
+            <ActionForm action=setup_action>
+
+            <button type="submit">
+                "Call gRPC Setup"
+            </button>
+
+        </ActionForm>
+        </div>
+        <p>
+            {move || match setup_result.get() {
+                None => "".to_string(),
+                Some(Ok(msg)) => {
+                    if msg {
+                        "Setup Passed".to_string()
+                    } else {
+                        "Setup Failed".to_string()
                     }
                 },
                 Some(Err(err)) => format!("Error: {}", err),

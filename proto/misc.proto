@@ -10,9 +10,19 @@ message HealthCheckResponse {
     bool status = 1;
 }
 
+message SetupRequest {
+}
 
-// Misc is a simple service that provides miscellaneous RPC methods.
+message SetupResponse {
+    bool status = 1;
+}
+
+
+/// Misc is a simple service that provides miscellaneous RPC methods.
 service Misc {
-    // HealthCheck is a simple RPC method that can be used to check the health of the service.
+    /// HealthCheck is a simple RPC method that can be used to check the health of the service.
     rpc HealthCheck(HealthCheckRequest) returns (HealthCheckResponse);
+
+    /// Setup is a simple RPC method that can be used to setup the service.
+    rpc Setup(SetupRequest) returns (SetupResponse);
 }

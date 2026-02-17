@@ -1,16 +1,15 @@
-use axum::Router;
+use crate::infra::setup::AppState;
+use crate::pages::app::App;
+use crate::pages::shell::Shell;
 use axum::response::IntoResponse;
+use axum::Router;
 use leptos::config::LeptosOptions;
 use leptos::prelude::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
-use crate::infra::setup::AppState;
-use crate::pages::app::App;
-use crate::pages::shell::Shell;
 
 pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
-
     let leptos_options = state.leptos_options.clone();
     // let leptos_options = state.leptos_options;
     // Generate the list of routes in your Leptos App
@@ -21,12 +20,12 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
         crate::infra::grpc::helloworld::greeter_server::GreeterServer::new(my_hello_server);
 
     let my_misc_server = crate::infra::grpc::misc_server::MyMisc::default();
-    let my_misc_service =
-        crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
+    let my_misc_service = crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
 
     let router = Router::<AppState>::new()
         .route_service("/helloworld.Greeter/SayHello", my_hello_service)
-        .route_service("/misc.Misc/HealthCheck", my_misc_service)
+        .route_service("/misc.Misc/HealthCheck", my_misc_service.clone())
+        .route_service("/misc.Misc/Setup", my_misc_service)
         .leptos_routes_with_context(
             &state,
             routes,
@@ -43,14 +42,10 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
             ServeDir::new(std::path::Path::new(&*leptos_options.site_root).join("pkg")),
         )
         .nest_service("/public", ServeDir::new(std::path::Path::new("public")))
-        
-        .fallback(file_and_error_handler)
-        ;
+        .fallback(file_and_error_handler);
 
     Ok(router.with_state(state))
-    
 }
-
 
 pub async fn file_and_error_handler(
     uri: axum::http::Uri,
@@ -68,7 +63,6 @@ pub async fn file_and_error_handler(
         handler(req).await.into_response()
     }
 }
-
 
 pub async fn get_static_file(
     uri: axum::http::Uri,

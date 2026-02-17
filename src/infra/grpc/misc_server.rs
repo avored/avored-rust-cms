@@ -1,7 +1,7 @@
 #[cfg(feature = "ssr")]
 use tonic::{Request, Response, Status};
 
-use crate::infra::grpc::misc::{HealthCheckRequest, HealthCheckResponse, misc_server::Misc};
+use crate::infra::grpc::misc::{HealthCheckRequest, HealthCheckResponse, SetupRequest, SetupResponse, misc_server::Misc};
 
 
 
@@ -18,6 +18,19 @@ impl Misc for MyMisc {
         println!("Got a request: {:?}", request);
 
         let request = HealthCheckResponse {
+            status: true,
+        };
+
+        Ok(Response::new(request))
+    }
+
+    async fn setup (
+        &self,
+        request: Request<SetupRequest>,
+    ) -> Result<Response<SetupResponse>, Status> {
+        println!("Got a setup request: {:?}", request);
+
+        let request = SetupResponse {
             status: true,
         };
 
