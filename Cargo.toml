@@ -1,178 +1,117 @@
 [package]
-name = "avored-rust-cms"
+name = "new-avored"
 version = "0.1.0"
 edition = "2021"
-authors = ["AvoRed Team <team@avored.com>"]
-description = "Enterprise-grade CMS with LDAP authentication and security hardening"
-license = "MIT"
-repository = "https://github.com/avored/avored-rust-cms"
-keywords = ["cms", "ldap", "security", "authentication", "enterprise"]
-categories = ["web-programming", "authentication"]
-readme = "README.md"
-rust-version = "1.70"
 
-# Security metadata
-[package.metadata.security]
-audit = true
-vulnerability-scan = true
-dependency-check = true
-license-check = true
-
+[lib]
+crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-axum = { version = "0.8.7", features = ["multipart", "http2"] }
-tonic-prost = "0.14.2"
-avored-tonic-axum ={ path = "./avored-tonic-axum"}
-prost ={ version = "0.14.1"}
-tokio = { version = "1.46.1", features = ["macros", "rt-multi-thread", "net", "fs", "io-util"] }
-tonic = { version = "0.14.2" }
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
-serde = { version = "1.0.225", features = ["derive"] }
-serde_json = "1.0.145"
-surrealdb = { version = "2.3.10", features = ["kv-rocksdb", "kv-mem"] }
-
-# Additional dependencies not in workspace
-argon2 = "0.5.3"
-jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"]}
-chrono = { version = "0.4.42", features = [] }
-email_address = "0.2.9"
-rust-i18n = "3.1.5"
-rand = "0.9.2"
-dotenvy = "0.15.7"
-tower-http = { version = "0.6.6", features = ["fs", "cors"] }
-tower = { version = "0.5.2", features = ["util"] }
-lettre = { version = "0.11.18", features = ["tokio1-native-tls"] }
-handlebars = "6.3.2"
-ldap3 = { version = "0.12.1", features = ["tls"] }
-async-trait = "0.1.89"
-regex = "1.11.2"
-lazy_static = "1.5.0"
-
-# Security-focused dependencies (optional for features)
-secrecy = { version = "0.10", features = ["serde"], optional = true }
-zeroize = { version = "1.7", features = ["zeroize_derive"], optional = true }
-constant_time_eq = { version = "0.4", optional = true }
-ring = { version = "0.17", optional = true }
-rustls = { version = "0.23.32", optional = true }
-rustls-webpki = { version = "0.103.6", optional = true }
-webpki-roots = { version = "1.0", optional = true }
-x509-parser = { version = "0.18", optional = true }
-sha2 = { version = "0.10", optional = true }
-hmac = { version = "0.12", optional = true }
-subtle = { version = "2.5", optional = true }
-getrandom = { version = "0.3", features = ["std"] }
-uuid = { version = "1.18.1", features = ["v4", "serde"] }
-thiserror = "2.0.17"
-
-# Explicit dependencies to resolve version conflicts and reduce duplicates
-base64 = "0.22.1"  # Force newer version (was conflicting 0.21.7 vs 0.22.1)
-hashbrown = "0.16.0"  # Force latest version (was multiple: 0.12.3, 0.14.5, 0.15.4)
-itertools = "0.14.0"  # Force latest version (was multiple: 0.10.5, 0.11.0, 0.12.1, 0.13.0, 0.14.0)
-prost-types = "0.14.1"
+leptos = { version = "0.8.0" }
+leptos_router = { version = "0.8.0" }
+log = "0.4"
+axum = { version = "0.8.0", optional = true, features = ["macros"] }
+console_error_panic_hook = { version = "0.1", optional = true }
+tower = { version = "0.5.2", optional = true }
+tower-http = { version = "0.6.8", features = ["fs", "cors"], optional = true }
+leptos_axum = { version = "0.8.0", optional = true }
+leptos_meta = { version = "0.8.0" }
+tokio = { version = "1.49", features = ["full"], optional = true }
+wasm-bindgen = { version = "0.2.106", optional = true }
+tonic = { version = "0.14", optional = true }
+prost = { version = "0.14", optional = true }
+tonic-prost = { version = "0.14", optional = true }
+tracing = { version = "0.1", optional = true }
 
 
 [build-dependencies]
-tonic-prost-build = { version = "0.14.2" }
+tonic-prost-build = "0.14"
 
-[dev-dependencies]
-tokio-test = "0.4"
-proptest = "1.8.0"
-arbitrary = { version = "1.4.2", features = ["derive"] }
-quickcheck = "1.0"
-criterion = "0.7"
 
-# Security testing dependencies (installed globally via cargo install)
-# cargo-audit = "0.20"
-# cargo-deny = "0.14"
-# cargo-outdated = "0.15"
-# cargo-geiger = "0.11"
-semver-parser = "0.10"
-tempfile = "3.22.0"
-wiremock = "0.6.5"
-mockall = "0.13"
-
-[profile.dev-fast]
-inherits = "dev"
-opt-level = 1
-debug = false
-incremental = true
-codegen-units = 256
-
-[profile.release-fast]
-inherits = "release"
-opt-level = 2
-debug = false
-lto = "thin"
-codegen-units = 1
-panic = "abort"
-# Security-hardened release profile
-[profile.release-secure]
-inherits = "release"
-opt-level = 3
-debug = false
-lto = "fat"
-codegen-units = 1
-panic = "abort"
-overflow-checks = true
-debug-assertions = false
-rpath = false
-strip = "symbols"
-
-# Security-focused development profile
-[profile.dev-secure]
-inherits = "dev"
-opt-level = 1
-debug = true
-overflow-checks = true
-debug-assertions = true
-incremental = false
-
-# Security features configuration
 [features]
-default = ["security-hardened", "ldap-auth"]
-security-hardened = ["dep:secrecy", "dep:zeroize", "dep:constant_time_eq", "dep:ring"]
-ldap-auth = ["dep:rustls"]
-crypto-secure = ["dep:ring", "dep:sha2", "dep:hmac", "dep:subtle"]
-timing-safe = ["dep:constant_time_eq", "dep:subtle"]
-memory-safe = ["dep:zeroize", "dep:secrecy"]
-tls-secure = ["dep:rustls", "dep:rustls-webpki", "dep:webpki-roots"]
+default = ["ssr"]
+hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen"]
+ssr = [
+    "dep:axum",
+    "dep:tokio",
+    "dep:leptos_axum",
+    "dep:tonic",
+    "dep:prost",
+    "dep:tonic-prost",
+    "dep:tracing",
+    "dep:tower",
+    "dep:tower-http",
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+]
 
-# Security lints and checks
-[lints.rust]
-unsafe_code = "forbid"
-missing_docs = "warn"
-unused_extern_crates = "warn"
-unused_import_braces = "warn"
-unused_qualifications = "warn"
-variant_size_differences = "warn"
+# Defines a size-optimized profile for the WASM bundle in release mode
+[profile.wasm-release]
+inherits = "release"
+opt-level = 'z'
+lto = true
+codegen-units = 1
+panic = "abort"
 
+[package.metadata.leptos]
+# The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
+output-name = "new-avored"
 
+# The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
+site-root = "target/site"
 
-[lints.clippy]
-all = "warn"
-pedantic = "warn"
-nursery = "warn"
-cargo = "warn"
-# Security-focused lints
-arithmetic_side_effects = "warn"
-panic = "warn"
-unwrap_used = "warn"
-expect_used = "warn"
-indexing_slicing = "warn"
-integer_division = "warn"
-modulo_arithmetic = "warn"
-as_conversions = "warn"
-cast_lossless = "warn"
-cast_possible_truncation = "warn"
-cast_possible_wrap = "warn"
-cast_precision_loss = "warn"
-cast_sign_loss = "warn"
-float_arithmetic = "warn"
-lossy_float_literal = "warn"
-imprecise_flops = "warn"
-suboptimal_flops = "warn"
+# The site-root relative folder where all compiled output (JS, WASM and CSS) is written
+# Defaults to pkg
+site-pkg-dir = "pkg"
 
-# Dependency resolution to reduce duplicates
-# Note: Most duplicates come from surrealdb transitive dependencies
-# We'll add explicit version constraints for commonly duplicated crates
+# [Optional] The source CSS file. If it ends with .sass or .scss then it will be compiled by dart-sass into CSS. The CSS is optimized by Lightning CSS before being written to <site-root>/<site-pkg>/app.css
+style-file = "style/main.scss"
+# Assets source dir. All files found here will be copied and synchronized to site-root.
+# The assets-dir cannot have a sub directory with the same name/path as site-pkg-dir.
+#
+# Optional. Env: LEPTOS_ASSETS_DIR.
+assets-dir = "public"
+
+# The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
+site-addr = "127.0.0.1:3000"
+
+# The port to use for automatic reload monitoring
+reload-port = 3001
+
+# [Optional] Command to use when running end2end tests. It will run in the end2end dir.
+#   [Windows] for non-WSL use "npx.cmd playwright test"
+#   This binary name can be checked in Powershell with Get-Command npx
+end2end-cmd = "npx playwright test"
+end2end-dir = "end2end"
+
+#  The browserlist query used for optimizing the CSS.
+browserquery = "defaults"
+
+# The environment Leptos will run in, usually either "DEV" or "PROD"
+env = "DEV"
+
+# The features to use when compiling the bin target
+#
+# Optional. Can be over-ridden with the command line parameter --bin-features
+bin-features = ["ssr"]
+
+# If the --no-default-features flag should be used when compiling the bin target
+#
+# Optional. Defaults to false.
+bin-default-features = false
+
+# The features to use when compiling the lib target
+#
+# Optional. Can be over-ridden with the command line parameter --lib-features
+lib-features = ["hydrate"]
+
+# If the --no-default-features flag should be used when compiling the lib target
+#
+# Optional. Defaults to false.
+lib-default-features = false
+
+# The profile to use for the lib target when compiling for release
+#
+# Optional. Defaults to "release".
+lib-profile-release = "wasm-release"
