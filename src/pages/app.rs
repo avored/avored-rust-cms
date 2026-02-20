@@ -6,6 +6,7 @@ use leptos_router::{
 };
 
 use crate::pages::home_page::HomePage;
+use crate::pages::auth::login_page::LoginPage;
 
 
 #[component]
@@ -25,6 +26,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=StaticSegment("") view=HomePage/>
+                    <Route path=StaticSegment("/login") view=LoginPage/>
                 </Routes>
             </main>
         </Router>
