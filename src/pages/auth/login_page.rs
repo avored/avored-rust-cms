@@ -1,4 +1,5 @@
 use leptos::prelude::*;
+use rust_i18n::t;
 
 #[component]
 pub fn LoginPage() -> impl IntoView {
@@ -10,7 +11,7 @@ pub fn LoginPage() -> impl IntoView {
 
                 <div class="sm:mx-auto sm:w-full sm:max-w-md">
                     <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-                        {"sign_into_your_account"}
+                        {t!("sign_into_your_account")}
                     </h2>
                 </div>
                 <div></div>
@@ -20,8 +21,11 @@ pub fn LoginPage() -> impl IntoView {
                     <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
                         <form class="space-y-5">
                             <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1" for="email">
+                                    {t!("email_address")}
+                                </label>
                                 <input
-                                    label="email"
+                                    id="email"
                                     type="text"
                                     name="email"
                                     autoFocus
@@ -34,8 +38,11 @@ pub fn LoginPage() -> impl IntoView {
                                 />
                             </div>
                             <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1" for="password">
+                                    {t!("password")}
+                                </label>
                                 <input
-                                    label="password"
+                                    id="password"
                                     type="password"
                                     class="appearance-none rounded-md ring-1 ring-gray-400
                                             relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
@@ -52,7 +59,7 @@ pub fn LoginPage() -> impl IntoView {
                                         href="/admin/forgot-password"
                                         class="font-medium text-primary-600 hover:text-primary-500"
                                     >
-                                        "forgot_your_password"
+                                        {t!("forgot_your_password")}
                                     </a>
                                 </div>
                             </div>
@@ -61,7 +68,7 @@ pub fn LoginPage() -> impl IntoView {
                                 <button
                                     class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 hover:bg-primary-500 focus:ring-primary-500"
                                 >
-                                    "sign_in"
+                                    {t!("sign_in")}
                                 </button>
                             </div>
 

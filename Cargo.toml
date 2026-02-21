@@ -11,7 +11,7 @@ leptos = { version = "0.8.0" }
 leptos_router = { version = "0.8.0" }
 leptos_meta = { version = "0.8.0" }
 log = "0.4"
-
+rust-i18n = "3.1.5"
 
 
 ## Optional

@@ -1,6 +1,8 @@
 pub mod pages;
 
 
+rust_i18n::i18n!("resources/locales");
+
 
 #[cfg(feature = "ssr")]
 pub mod error;

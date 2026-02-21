@@ -1,12 +1,7 @@
 {
-    "setup_avored_ecommerce": "Setup Avored E-Commerce",
-    "login_avored_ecommerce": "Login to Avored E-Commerce",
-    "full_name": "Full Name",
-    "full_name_placeholder": "Enter your full name",
-    "email_address": "Email Address",
+    "sign_into_your_account": "Sign into your account",
+    "email_address": "Email address",
     "password": "Password",
-    "validation_required": "This %{attribute} is required",
-    "validation_email": "Please enter a valid email address",
-    "unique_validation": "This %{attribute} has to be unique",
-    "email_address_not_valid": "The email address is not valid format."
+    "forgot_your_password": "Forgot your password?",
+    "sign_in": "Sign in"
 }
