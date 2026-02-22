@@ -27,6 +27,7 @@ prost = { version = "0.14", optional = true }
 tonic-prost = { version = "0.14", optional = true }
 tracing = { version = "0.1", optional = true }
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
+surrealdb = { version = "3.0.0", features = ["kv-rocksdb", "kv-mem"], optional = true }
 
 
 [build-dependencies]
@@ -50,6 +51,7 @@ ssr = [
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",
+    "dep:surrealdb",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode

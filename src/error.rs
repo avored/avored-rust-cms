@@ -25,4 +25,11 @@ impl From<LeptosConfigError> for Error {
     }
 }
 
+impl From<surrealdb::Error> for Error {
+    fn from(actual_error: surrealdb::Error) -> Self {
+        error!("Surreal DB error: {actual_error:?}");
+        Self::Generic("500 internal".to_string())
+    }
+}
+
 //LeptosConfigError
