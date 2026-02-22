@@ -1,3 +1,4 @@
 pub mod app;
-pub mod setup;
 pub mod grpc;
+pub mod repositories;
+pub mod setup;

@@ -1,8 +1,12 @@
 pub mod pages;
-
-
 rust_i18n::i18n!("resources/locales");
 
+
+#[cfg(feature = "ssr")]
+pub mod application;
+
+#[cfg(feature = "ssr")]
+pub mod domain;
 
 #[cfg(feature = "ssr")]
 pub mod error;
@@ -10,6 +14,9 @@ pub mod error;
 #[cfg(feature = "ssr")]
 pub mod infra;
 
+/// It will hold the adapter implementations for the domain layer.
+#[cfg(feature = "ssr")]
+pub mod adapters;
 
 #[cfg(feature = "ssr")]
 pub mod grpc_server;

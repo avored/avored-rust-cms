@@ -2949,6 +2949,7 @@ dependencies = [
 name = "new-avored"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
  "axum",
  "console_error_panic_hook",
  "leptos",
@@ -2958,6 +2959,7 @@ dependencies = [
  "log",
  "prost",
  "rust-i18n",
+ "serde",
  "surrealdb",
  "tokio",
  "tonic",

@@ -4,7 +4,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let proto_files = &[
         "helloworld.proto",
         "misc.proto",
-        // "auth.proto",
+        "auth_user.proto",
         // "dashboard.proto",
         // "admin_user.proto",
         // "content.proto",

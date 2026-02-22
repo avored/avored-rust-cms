@@ -1,3 +1,3 @@
 pub mod misc;
-pub mod misc_server;
 pub mod helloworld;
+pub mod auth_user;

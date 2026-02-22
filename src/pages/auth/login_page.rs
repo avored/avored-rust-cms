@@ -3,6 +3,10 @@ use rust_i18n::t;
 
 #[component]
 pub fn LoginPage() -> impl IntoView {
+
+    
+
+
     view! {
         <div class="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
                 <div class="flex justify-center">

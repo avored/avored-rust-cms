@@ -19,13 +19,26 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     let my_hello_service =
         crate::infra::grpc::helloworld::greeter_server::GreeterServer::new(my_hello_server);
 
-    let my_misc_server = crate::infra::grpc::misc_server::MyMisc::default();
+    let my_misc_server = crate::adapters::grpc_api::misc_api::MyMisc::default();
     let my_misc_service = crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
+
+    let user_repository = std::sync::Arc::new(
+        crate::infra::repositories::surreal_user_repository::SurrealUserRepository::new(
+            state.db.clone(),
+        ),
+    );
+    let login_user_use_case =
+        crate::application::use_cases::login_user::LoginUserUseCase::new(user_repository);
+    let auth_user_server =
+        crate::adapters::grpc_api::auth_user_api::AuthUserGrpcApi::new(login_user_use_case);
+    let auth_user_service =
+        crate::infra::grpc::auth_user::auth_server::AuthServer::new(auth_user_server);
 
     let router = Router::<AppState>::new()
         .route_service("/helloworld.Greeter/SayHello", my_hello_service)
         .route_service("/misc.Misc/HealthCheck", my_misc_service.clone())
         .route_service("/misc.Misc/Setup", my_misc_service)
+        .route_service("/auth_user.Auth/LoginUser", auth_user_service)
         .leptos_routes_with_context(
             &state,
             routes,
