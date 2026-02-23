@@ -14,6 +14,8 @@ impl LoginUserUseCase {
         if let Some(user) = self.user_repository.find_by_email(email).await {
             // In a real app, you would check the password hash here
             // For now, let's just compare (demo purpose)
+
+            println!("User found: {:?}", user);
             return user.password_hash == password;
         }
         false

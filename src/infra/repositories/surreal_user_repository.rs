@@ -2,6 +2,7 @@ use crate::domain::models::user::User;
 use crate::domain::repositories::user_repository::UserRepository;
 use crate::infra::setup::DB;
 use async_trait::async_trait;
+use surrealdb::types::Value;
 
 pub struct SurrealUserRepository {
     pub db: DB,
@@ -16,21 +17,25 @@ impl SurrealUserRepository {
 #[async_trait]
 impl UserRepository for SurrealUserRepository {
     async fn find_by_email(&self, email: &str) -> Option<User> {
-        // let mut response = self
-        //     .db
-        //     .query("SELECT * FROM user WHERE email = $email LIMIT 1")
-        //     .bind(("email", email))
-        //     .await
-        //     .ok()?;
+        let mut response = self
+            .db
+            .query("SELECT * FROM users WHERE email = $email")
+            .bind(("email", email.to_string()))
+            .await
+            .ok()?;
 
-        // let mut users: Vec<User> = response.take(0).ok()?;
-        // users.pop()
+        // let object = response
+        let results = response.take::<Vec<Value>>(0).ok()?;
 
-        let user = User {
-            id: "id".to_string(),
-            email: email.to_string(),
-            password_hash: "admin123".to_string()
+        println!("Results: {:#?}", results);
+
+        let user = match results.first() {
+            Some(value) => {
+                value
+            },
+            None => return None,
         };
+        let user: User = user.try_into().unwrap();        
 
         Some(user)
     }

@@ -14,6 +14,7 @@ log = "0.4"
 rust-i18n = "3.1.5"
 serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1"
+serde_json = "1.0"
 
 
 ## Optional
@@ -28,8 +29,14 @@ tonic = { version = "0.14", optional = true }
 prost = { version = "0.14", optional = true }
 tonic-prost = { version = "0.14", optional = true }
 tracing = { version = "0.1", optional = true }
-tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"], optional = true }
-surrealdb = { version = "3.0.0", features = ["kv-rocksdb", "kv-mem"], optional = true }
+tracing-subscriber = { version = "0.3.20", features = [
+    "env-filter",
+    "fmt",
+], optional = true }
+surrealdb = { version = "3.0.0", features = [
+    "kv-rocksdb",
+    "kv-mem",
+], optional = true }
 
 
 [build-dependencies]

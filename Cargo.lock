@@ -2960,6 +2960,7 @@ dependencies = [
  "prost",
  "rust-i18n",
  "serde",
+ "serde_json",
  "surrealdb",
  "tokio",
  "tonic",
