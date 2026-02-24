@@ -1,3 +1,6 @@
+use std::sync::Arc;
+
+use crate::infra::repositories::surreal_user_repository::SurrealUserRepository;
 use crate::infra::setup::AppState;
 use crate::pages::app::App;
 use crate::pages::shell::Shell;
@@ -8,6 +11,11 @@ use leptos::prelude::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower::ServiceExt;
 use tower_http::services::ServeDir;
+use surrealdb::engine::local::{Db, RocksDb};
+use surrealdb::Surreal;
+
+
+pub type DB = Surreal<Db>;
 
 pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     let leptos_options = state.leptos_options.clone();
@@ -22,15 +30,33 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     let my_misc_server = crate::adapters::grpc_api::misc_api::MyMisc::default();
     let my_misc_service = crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
 
-    let user_repository = std::sync::Arc::new(
-        crate::infra::repositories::surreal_user_repository::SurrealUserRepository::new(
-            state.db.clone(),
-        ),
-    );
+    let db = init_database().await?;
+    let surreal_repository = Arc::new(SurrealUserRepository::new(db));
+
+
+
+    // pub fn new(file_repository: Arc<dyn FileRepository>) -> Self {
+    //     Self { file_repository }
+    // }
+
+    // let user_repository = std::sync::Arc::new(
+    //     crate::infra::repositories::surreal_user_repository::SurrealUserRepository::new(
+    //         db.clone(),
+    //     ),
+    // );
+
+    // let user_repository = std::sync::Arc::new(
+    //     <dyn crate::infra::repositories::user_repository::UserRepository>::new(
+    //         surreal_repository.clone(),
+    //     ),
+    // );
+
     let login_user_use_case =
-        crate::application::use_cases::login_user::LoginUserUseCase::new(user_repository);
+        crate::application::use_cases::login_user::LoginUserUseCase::new(surreal_repository.clone());
+
     let auth_user_server =
         crate::adapters::grpc_api::auth_user_api::AuthUserGrpcApi::new(login_user_use_case);
+
     let auth_user_service =
         crate::infra::grpc::auth_user::auth_server::AuthServer::new(auth_user_server);
 
@@ -58,6 +84,17 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
         .fallback(file_and_error_handler);
 
     Ok(router.with_state(state))
+}
+
+async fn init_database() -> crate::error::Result<DB> {
+    let db_path = "data/avored.db";
+    let db = Surreal::new::<RocksDb>(db_path).await?;
+
+    db.use_ns("public").use_db("avored").await?;
+
+    println!("connected to surrealdb at: {}", db_path);
+
+    Ok(db)
 }
 
 pub async fn file_and_error_handler(

@@ -5,15 +5,13 @@ use std::env;
 use std::fs::File;
 use std::path::Path;
 use std::sync::Arc;
-use surrealdb::engine::local::{Db, RocksDb};
-use surrealdb::Surreal;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{filter, Layer};
 
 pub async fn init_app_state() -> Result<AppState> {
     init_log();
-    let db = init_database().await?;
+    // let db = init_database().await?;
     // rust_i18n::i18n!("resources/locales");
 
     let conf = get_configuration(None)?;
@@ -21,33 +19,20 @@ pub async fn init_app_state() -> Result<AppState> {
 
     Ok(AppState {
         leptos_options: conf.leptos_options,
-        db,
+        // db,
     })
 }
-
-pub type DB = Surreal<Db>;
 
 #[derive(Clone)]
 pub struct AppState {
     pub leptos_options: LeptosOptions,
-    pub db: DB,
+    // pub db: DB,
 }
 
 impl FromRef<AppState> for LeptosOptions {
     fn from_ref(app_state: &AppState) -> Self {
         app_state.leptos_options.clone()
     }
-}
-
-async fn init_database() -> Result<DB> {
-    let db_path = "data/avored.db";
-    let db = Surreal::new::<RocksDb>(db_path).await?;
-
-    db.use_ns("public").use_db("avored").await?;
-
-    println!("connected to surrealdb at: {}", db_path);
-
-    Ok(db)
 }
 
 fn init_log() {

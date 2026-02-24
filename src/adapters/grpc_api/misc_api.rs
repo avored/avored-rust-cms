@@ -7,7 +7,9 @@ use crate::infra::grpc::misc::{HealthCheckRequest, HealthCheckResponse, SetupReq
 
 
 #[derive(Debug, Default)]
-pub struct MyMisc {}
+pub struct MyMisc {
+    
+}
 
 #[tonic::async_trait]
 impl Misc for MyMisc {

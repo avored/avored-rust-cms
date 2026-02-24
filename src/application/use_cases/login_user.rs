@@ -1,5 +1,5 @@
-use crate::domain::repositories::user_repository::UserRepository;
 use std::sync::Arc;
+use crate::infra::repositories::user_repository::UserRepository;
 
 pub struct LoginUserUseCase {
     pub user_repository: Arc<dyn UserRepository>,
