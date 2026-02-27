@@ -27,13 +27,16 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     let my_hello_service =
         crate::infra::grpc::helloworld::greeter_server::GreeterServer::new(my_hello_server);
 
-    let my_misc_server = crate::adapters::grpc_api::misc_api::MyMisc::default();
-    let my_misc_service = crate::infra::grpc::misc::misc_server::MiscServer::new(my_misc_server);
-
+        
     let db = init_database().await?;
     let surreal_repository = Arc::new(SurrealUserRepository::new(db));
+    
+    
+    let misc_use_case =
+        crate::application::use_cases::misc_use_case::MiscUseCase::new(surreal_repository.clone());
 
-
+    let misc_grpc_api = crate::adapters::grpc_api::misc_api::MiscGrpcApi::new(misc_use_case);
+    let misc_service = crate::infra::grpc::misc::misc_server::MiscServer::new(misc_grpc_api);
 
     // pub fn new(file_repository: Arc<dyn FileRepository>) -> Self {
     //     Self { file_repository }
@@ -52,7 +55,7 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
     // );
 
     let login_user_use_case =
-        crate::application::use_cases::login_user::LoginUserUseCase::new(surreal_repository.clone());
+        crate::application::use_cases::login_user_use_case::LoginUserUseCase::new(surreal_repository.clone());
 
     let auth_user_server =
         crate::adapters::grpc_api::auth_user_api::AuthUserGrpcApi::new(login_user_use_case);
@@ -62,8 +65,8 @@ pub async fn create_app(state: AppState) -> crate::error::Result<Router> {
 
     let router = Router::<AppState>::new()
         .route_service("/helloworld.Greeter/SayHello", my_hello_service)
-        .route_service("/misc.Misc/HealthCheck", my_misc_service.clone())
-        .route_service("/misc.Misc/Setup", my_misc_service)
+        .route_service("/misc.Misc/HealthCheck", misc_service.clone())
+        .route_service("/misc.Misc/Setup", misc_service)
         .route_service("/auth_user.Auth/LoginUser", auth_user_service)
         .leptos_routes_with_context(
             &state,

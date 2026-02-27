@@ -1,4 +1,4 @@
-use crate::application::use_cases::login_user::LoginUserUseCase;
+use crate::application::use_cases::login_user_use_case::LoginUserUseCase;
 use crate::infra::grpc::auth_user::{auth_server::Auth, LoginRequest, LoginResponse};
 use tonic::{Request, Response, Status};
 
