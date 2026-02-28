@@ -2,10 +2,9 @@
 use tonic::{Request, Response, Status};
 
 use crate::{
-    application::use_cases::misc_use_case::MiscUseCase,
-    infra::grpc::misc::{
-        misc_server::Misc, HealthCheckRequest, HealthCheckResponse, SetupRequest, SetupResponse,
-    },
+    application::use_cases::misc_use_case::MiscUseCase, domain::models::admin_user::StorableAdminUser, infra::grpc::misc::{
+        HealthCheckRequest, HealthCheckResponse, SetupRequest, SetupResponse, misc_server::Misc
+    }
 };
 
 
@@ -32,19 +31,33 @@ impl Misc for MiscGrpcApi {
     ) -> Result<Response<HealthCheckResponse>, Status> {
         println!("Got a request: {:?}", request);
 
-        let request = HealthCheckResponse { status: true };
+        let response = HealthCheckResponse { status: true };
 
-        Ok(Response::new(request))
+        Ok(Response::new(response))
     }
 
     async fn setup(
         &self,
         request: Request<SetupRequest>,
     ) -> Result<Response<SetupResponse>, Status> {
-        println!("Got a setup request: {:?}", request);
+        let request = request.into_inner();
+
+        // validate the request and convert it to a storable admin user
+
+        let mut storable_admin_user: StorableAdminUser = match request.try_into() {
+            Ok(req) => req,
+            Err(e) => return Err(Status::invalid_argument(e.to_string())),
+        };
+
+        storable_admin_user.logged_in_user = "ApplicationSetupProcess".to_string();
+        storable_admin_user.is_super_admin = true;
+
+        // @todo hash the password
+        
+        println!("Got a setup request: {:?}", storable_admin_user);
 
         // Think of implementing a generic result handler
-        let setup_result = match  self.misc_use_case.setup().await {
+        let setup_result = match  self.misc_use_case.setup(storable_admin_user).await {
             Ok(result) => result,
             Err(e) => return Err(Status::internal(e.to_string())),
         };

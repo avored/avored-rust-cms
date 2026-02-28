@@ -7,16 +7,14 @@ pub type Result<T> = core::result::Result<T, Error>;
 /// This is the custom error type for the application.
 #[derive(Debug, Clone)]
 pub enum Error {
-    Generic(String)
+    Generic(String),
 }
-
 
 impl core::fmt::Display for Error {
     fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::result::Result<(), core::fmt::Error> {
         write!(fmt, "{self:?}")
     }
 }
-
 
 impl From<LeptosConfigError> for Error {
     fn from(val: LeptosConfigError) -> Self {
@@ -29,6 +27,13 @@ impl From<surrealdb::Error> for Error {
     fn from(actual_error: surrealdb::Error) -> Self {
         error!("Surreal DB error: {actual_error:?}");
         Self::Generic("500 internal".to_string())
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(error: std::io::Error) -> Self {
+        error!("IO error: {error:?}");
+        Self::Generic(format!("IO error: {error}"))
     }
 }
 

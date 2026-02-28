@@ -6,8 +6,15 @@ pub struct HealthCheckResponse {
     #[prost(bool, tag = "1")]
     pub status: bool,
 }
-#[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
-pub struct SetupRequest {}
+#[derive(Clone, PartialEq, Eq, Hash, ::prost::Message)]
+pub struct SetupRequest {
+    #[prost(string, tag = "1")]
+    pub full_name: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub email: ::prost::alloc::string::String,
+    #[prost(string, tag = "3")]
+    pub password: ::prost::alloc::string::String,
+}
 #[derive(Clone, Copy, PartialEq, Eq, Hash, ::prost::Message)]
 pub struct SetupResponse {
     #[prost(bool, tag = "1")]

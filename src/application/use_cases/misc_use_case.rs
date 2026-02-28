@@ -1,4 +1,5 @@
 use std::sync::Arc;
+use crate::domain::models::admin_user::StorableAdminUser;
 use crate::error::Result;
 use crate::infra::repositories::misc_repository::MiscRepository;
 
@@ -12,7 +13,7 @@ impl MiscUseCase {
         Self { misc_repository }
     }
 
-    pub async fn setup(&self) -> Result<bool> {
-        self.misc_repository.setup().await
+    pub async fn setup(&self, storable_admin_user: StorableAdminUser) -> Result<bool> {
+        self.misc_repository.setup(storable_admin_user).await
     }
 }
