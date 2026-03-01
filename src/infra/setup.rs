@@ -8,9 +8,12 @@ use std::sync::Arc;
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{filter, Layer};
+use crate::error::Error;
 
 pub async fn init_app_state() -> Result<AppState> {
     init_log();
+
+    load_env()?;
     // let db = init_database().await?;
     // rust_i18n::i18n!("resources/locales");
 
@@ -33,6 +36,27 @@ impl FromRef<AppState> for LeptosOptions {
     fn from_ref(app_state: &AppState) -> Self {
         app_state.leptos_options.clone()
     }
+}
+
+
+fn load_env() -> Result<()>{
+    dotenvy::dotenv()?;
+
+    println!("here");
+    match get_env("APP_ENV")?.as_str() {
+        "prod" => dotenvy::from_filename_override(".env.prod")?,
+        "stag" => dotenvy::from_filename_override(".env.stag")?,
+        "test" => dotenvy::from_filename_override(".env.test")?,
+        "dev" => dotenvy::from_filename_override(".env.dev")?,
+        // as if it won't match any we load dev as default
+        _ => dotenvy::from_filename_override(".env")?,
+    };
+
+    Ok(())
+}
+
+pub fn get_env(name: &'static str) -> Result<String> {
+    env::var(name).map_err(|_| Error::Generic(format!("environment variable {} is not set", name)))
 }
 
 fn init_log() {

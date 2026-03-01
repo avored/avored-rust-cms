@@ -1,8 +1,9 @@
+
 #[cfg(feature = "ssr")]
 use tonic::{Request, Response, Status};
-
+use crate::infra::setup::get_env;
 use crate::{
-    application::use_cases::misc_use_case::MiscUseCase, domain::models::admin_user::StorableAdminUser, infra::grpc::misc::{
+    application::{extensions::string_extension::StringExtension, use_cases::misc_use_case::MiscUseCase}, domain::models::admin_user::StorableAdminUser, infra::grpc::misc::{
         HealthCheckRequest, HealthCheckResponse, SetupRequest, SetupResponse, misc_server::Misc
     }
 };
@@ -49,11 +50,17 @@ impl Misc for MiscGrpcApi {
             Err(e) => return Err(Status::invalid_argument(e.to_string())),
         };
 
+        
+        let password_salt = get_env("AVORED_PASSWORD_SALT")?;
+
+        println!("Pass salt: {}", password_salt);
+
+        let password_hash = storable_admin_user.password_hash.get_password_hash(&password_salt)?;
+        
         storable_admin_user.logged_in_user = "ApplicationSetupProcess".to_string();
         storable_admin_user.is_super_admin = true;
+        storable_admin_user.password_hash = password_hash;
 
-        // @todo hash the password
-        
         println!("Got a setup request: {:?}", storable_admin_user);
 
         // Think of implementing a generic result handler
