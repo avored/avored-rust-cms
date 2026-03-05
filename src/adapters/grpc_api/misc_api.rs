@@ -54,9 +54,10 @@ impl Misc for MiscGrpcApi {
         let password_salt = get_env("AVORED_PASSWORD_SALT")?;
 
         println!("Pass salt: {}", password_salt);
-
+        
         let password_hash = storable_admin_user.password_hash.get_password_hash(&password_salt)?;
         
+        println!("Pass hash: {}", password_hash);
         storable_admin_user.logged_in_user = "ApplicationSetupProcess".to_string();
         storable_admin_user.is_super_admin = true;
         storable_admin_user.password_hash = password_hash;

@@ -30,6 +30,8 @@ leptos_axum = { version = "0.8.0", optional = true }
 tokio = { version = "1.49", features = ["full"], optional = true }
 wasm-bindgen = { version = "0.2.106", optional = true }
 tonic = { version = "0.14", optional = true }
+jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"], optional = true }
+chrono = { version = "0.4.42", features = [], optional = true }
 prost = { version = "0.14", optional = true }
 tonic-prost = { version = "0.14", optional = true }
 tracing = { version = "0.1", optional = true }
@@ -65,6 +67,8 @@ ssr = [
     "leptos_meta/ssr",
     "leptos_router/ssr",
     "dep:surrealdb",
+    "dep:jsonwebtoken",
+    "dep:chrono"
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode

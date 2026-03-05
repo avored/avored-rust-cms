@@ -49,6 +49,15 @@ impl From<dotenvy::Error> for Error {
     }
 }
 
+impl From<jsonwebtoken::errors::Error> for Error {
+    fn from(val: jsonwebtoken::errors::Error) -> Self {
+        error!("there is an issue with JSON Web token: {val:?}");
+        Self::Generic("there is an issue with JSON Web token".to_string())
+    }
+}
+
+// 
+
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
         match val {

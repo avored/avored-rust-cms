@@ -22,18 +22,14 @@ impl Auth for AuthUserGrpcApi {
     ) -> Result<Response<LoginResponse>, Status> {
         let req = request.into_inner();
 
-        let status = self
+        let token = self
             .login_user_use_case
             .execute(&req.email, &req.password)
-            .await;
+            .await?;
 
         let response = LoginResponse {
-            status,
-            data: if status {
-                "Login successful".to_string()
-            } else {
-                "Invalid credentials".to_string()
-            },
+            status: true,
+            data: token,
         };
 
         Ok(Response::new(response))

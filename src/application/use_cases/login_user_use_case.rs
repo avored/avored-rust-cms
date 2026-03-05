@@ -1,5 +1,12 @@
+use crate::domain::models::admin_user::TokenClaims;
+use crate::error::Result;
+use crate::infra::setup::get_env;
+use crate::{
+    application::extensions::string_extension::StringExtension,
+    infra::repositories::user_repository::UserRepository,
+};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use std::sync::Arc;
-use crate::infra::repositories::user_repository::UserRepository;
 
 pub struct LoginUserUseCase {
     pub user_repository: Arc<dyn UserRepository>,
@@ -10,14 +17,25 @@ impl LoginUserUseCase {
         Self { user_repository }
     }
 
-    pub async fn execute(&self, email: &str, password: &str) -> bool {
-        if let Some(user) = self.user_repository.find_by_email(email).await {
-            // In a real app, you would check the password hash here
-            // For now, let's just compare (demo purpose)
+    pub async fn execute(&self, email: &str, password: &str) -> Result<String> {
+        if let Some(admin_user_model) = self.user_repository.find_by_email(email).await {
+            let raw_password = String::from(password);
+            let is_valid = raw_password.verify_password_hash(&admin_user_model.password_hash)?;
 
-            println!("User found: {:?}", user);
-            return user.password_hash == password;
+            if is_valid {
+                let jwt_secret_key = get_env("AVORED_JWT_SECRET")?;
+
+                let claims: TokenClaims = admin_user_model.try_into()?;
+
+                let token = encode(
+                    &Header::default(),
+                    &claims,
+                    &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+                )?;
+
+                return Ok(token);
+            }
         }
-        false
+        Ok(String::from(""))
     }
 }
