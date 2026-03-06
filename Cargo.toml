@@ -1,5 +1,5 @@
 [package]
-name = "new-avored"
+name = "avored-rust-cms"
 version = "0.1.0"
 edition = "2021"
 
@@ -43,6 +43,7 @@ surrealdb = { version = "3.0.0", features = [
     "kv-rocksdb",
     "kv-mem",
 ], optional = true }
+web-sys = { version = "0.3.77", features = ["Window", "Storage"], optional = true }
 
 
 [build-dependencies]
@@ -51,7 +52,7 @@ tonic-prost-build = "0.14"
 
 [features]
 default = ["ssr"]
-hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen"]
+hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen", "dep:web-sys"]
 ssr = [
     "dep:axum",
     "dep:tokio",

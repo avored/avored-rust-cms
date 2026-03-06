@@ -1,11 +1,77 @@
 use leptos::prelude::*;
 use rust_i18n::t;
 
+#[cfg(feature = "ssr")]
+pub mod ssr {
+    use crate::infra::grpc::auth_user::{auth_client::AuthClient, LoginRequest};
+    use leptos::prelude::ServerFnError;
+
+    pub async fn login_user_grpc(email: String, password: String) -> Result<String, ServerFnError> {
+        let mut client = AuthClient::connect("http://127.0.0.1:3000")
+            .await
+            .map_err(|e| ServerFnError::new(format!("Connection failed: {}", e)))?;
+
+        let request = tonic::Request::new(LoginRequest { email, password });
+
+        let response = client
+            .login_user(request)
+            .await
+            .map_err(|e| ServerFnError::new(format!("gRPC error: {}", e)))?;
+
+        let inner = response.into_inner();
+        if inner.status {
+            Ok(inner.data)
+        } else {
+            Err(ServerFnError::new(inner.data))
+        }
+    }
+}
+
+#[server(endpoint = "login-user")]
+pub async fn login_user(email: String, password: String) -> Result<String, ServerFnError> {
+    self::ssr::login_user_grpc(email, password).await
+}
+
 #[component]
 pub fn LoginPage() -> impl IntoView {
+    let login_action = ServerAction::<LoginUser>::new();
+    let email = RwSignal::new(String::new());
+    let password = RwSignal::new(String::new());
 
-    
+    let on_submit = move |ev: leptos::ev::SubmitEvent| {
+        ev.prevent_default();
+        login_action.dispatch(LoginUser {
+            email: email.get(),
+            password: password.get(),
+        });
+    };
 
+    let login_result = login_action.value();
+
+    Effect::new(move |_| {
+        if let Some(Ok(token)) = login_result.get() {
+            if !token.is_empty() {
+                #[cfg(feature = "hydrate")]
+                let window = web_sys::window().expect("should have a window");
+
+                #[cfg(feature = "hydrate")]
+                let local_storage = window
+                    .local_storage()
+                    .expect("should have local storage")
+                    .expect("local storage should be available");
+
+                #[cfg(feature = "hydrate")]
+                local_storage
+                    .set_item("avored_admin_token", &token)
+                    .expect("should be able to set item in local storage");
+
+                #[cfg(feature = "hydrate")]
+                let navigate = leptos_router::hooks::use_navigate();
+                #[cfg(feature = "hydrate")]
+                navigate("/", Default::default());
+            }
+        }
+    });
 
     view! {
         <div class="min-h-screen bg-slate-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -18,12 +84,13 @@ pub fn LoginPage() -> impl IntoView {
                         {t!("sign_into_your_account")}
                     </h2>
                 </div>
+                /*** empty div for spacing ***/
                 <div></div>
 
 
                 <div class="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
                     <div class="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-                        <form class="space-y-5">
+                        <form class="space-y-5" on:submit=on_submit>
                             <div>
                                 <label class="block text-sm font-medium text-gray-500 mb-1" for="email">
                                     {t!("email_address")}
@@ -32,7 +99,9 @@ pub fn LoginPage() -> impl IntoView {
                                     id="email"
                                     type="text"
                                     name="email"
-                                    autoFocus
+                                    autofocus=true
+                                    on:input=move |ev| email.set(event_target_value(&ev))
+                                    prop:value=email
                                     class="appearance-none rounded-md ring-1 ring-gray-400
                                             relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
                                             active::ring-primary-500
@@ -48,6 +117,8 @@ pub fn LoginPage() -> impl IntoView {
                                 <input
                                     id="password"
                                     type="password"
+                                    on:input=move |ev| password.set(event_target_value(&ev))
+                                    prop:value=password
                                     class="appearance-none rounded-md ring-1 ring-gray-400
                                             relative border-0 block w-full px-3 py-2 placeholder-gray-500 text-gray-900
                                             active::ring-primary-500
@@ -70,21 +141,32 @@ pub fn LoginPage() -> impl IntoView {
 
                             <div>
                                 <button
+                                    type="submit"
+                                    disabled=login_action.pending().get()
                                     class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 hover:bg-primary-500 focus:ring-primary-500"
                                 >
-                                    {t!("sign_in")}
+                                    {move || if login_action.pending().get() {
+                                        t!("signing_in")
+                                    } else {
+                                        t!("sign_in")
+                                    }}
                                 </button>
                             </div>
 
-                            // <div class="text-gray-600 text-center text-sm">
-                            //     "need_to_change_language"
-                            //     <select
-                            //         class="outline-none border-none appearance-none pr-8"
-                            //     >
-                            //         <option>"en"</option>
-                            //         <option>{t('fr')}</option>
-                            //     </select>
-                            // </div>
+                            <Suspense>
+                                {move || login_result.get().map(|res| match res {
+                                    Ok(token) => view! {
+                                        <div class="text-green-600 text-sm mt-2">
+                                            {format!("Login successful! Token: {}", token)}
+                                        </div>
+                                    }.into_any(),
+                                    Err(e) => view! {
+                                        <div class="text-red-600 text-sm mt-2">
+                                            {format!("Error: {}", e)}
+                                        </div>
+                                    }.into_any(),
+                                })}
+                            </Suspense>
                         </form>
                     </div>
                 </div>

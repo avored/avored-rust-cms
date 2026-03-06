@@ -1,9 +1,9 @@
 #[cfg(feature = "ssr")]
-use new_avored::error::Result;
+use avored_rust_cms::error::Result;
 #[cfg(feature = "ssr")]
-use new_avored::infra::app::create_app;
+use avored_rust_cms::infra::app::create_app;
 #[cfg(feature = "ssr")]
-use new_avored::infra::setup::init_app_state;
+use avored_rust_cms::infra::setup::init_app_state;
 
 #[cfg(feature = "ssr")]
 #[tokio::main]

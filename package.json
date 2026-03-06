@@ -32,6 +32,7 @@
     "vite": "^7.3.1"
   },
   "dependencies": {
-    "axios": "^1.13.2"
+    "axios": "^1.13.2",
+    "grpc-web": "^2.0.2"
   }
 }
