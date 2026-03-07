@@ -149,7 +149,7 @@ pub fn LoginPage() -> impl IntoView {
                             <div>
                                 <button
                                     type="submit"
-                                    disabled=login_action.pending().get()
+                                    disabled=move || login_action.pending().get()
                                     class="w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 bg-primary-600 hover:bg-primary-500 focus:ring-primary-500"
                                 >
                                     {move || if login_action.pending().get() {
