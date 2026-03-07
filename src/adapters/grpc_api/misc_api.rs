@@ -53,16 +53,16 @@ impl Misc for MiscGrpcApi {
         
         let password_salt = get_env("AVORED_PASSWORD_SALT")?;
 
-        println!("Pass salt: {}", password_salt);
+        // println!("Pass salt: {}", password_salt);
         
         let password_hash = storable_admin_user.password_hash.get_password_hash(&password_salt)?;
         
-        println!("Pass hash: {}", password_hash);
+        // println!("Pass hash: {}", password_hash);
         storable_admin_user.logged_in_user = "ApplicationSetupProcess".to_string();
         storable_admin_user.is_super_admin = true;
         storable_admin_user.password_hash = password_hash;
 
-        println!("Got a setup request: {:?}", storable_admin_user);
+        // println!("Got a setup request: {:?}", storable_admin_user);
 
         // Think of implementing a generic result handler
         let setup_result = match  self.misc_use_case.setup(storable_admin_user).await {

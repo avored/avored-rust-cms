@@ -23,7 +23,7 @@ impl UserRepository for SurrealUserRepository {
         // let object = response
         let results = response.take::<Vec<Value>>(0).ok()?;
 
-        println!("Results: {:#?}", results);
+        // println!("Results: {:#?}", results);
 
         let user = match results.first() {
             Some(value) => value,

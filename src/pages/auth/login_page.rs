@@ -63,10 +63,15 @@ pub fn LoginPage() -> impl IntoView {
             if !token.is_empty() {
                 #[cfg(target_arch = "wasm32")]
                 {
+                    use crate::pages::protected_routes::AuthData;
                     use gloo_storage::{LocalStorage, Storage};
                     let _ = LocalStorage::set("avored_admin_token", token.clone());
-                    auth_context.auth_token.set(token);
-                    auth_context.is_logged_in.set(true);
+                    if let Ok(auth_data) = serde_json::from_str::<AuthData>(&token) {
+                        auth_context.auth_token.set(auth_data.token);
+                        auth_context.is_logged_in.set(true);
+                        auth_context.full_name.set(auth_data.admin_user.full_name);
+                        auth_context.is_super_admin.set(auth_data.admin_user.is_super_admin);
+                    }
 
                     let navigate = leptos_router::hooks::use_navigate();
                     navigate("/admin/dashboard", Default::default());

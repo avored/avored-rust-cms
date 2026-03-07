@@ -42,7 +42,7 @@ impl FromRef<AppState> for LeptosOptions {
 fn load_env() -> Result<()>{
     dotenvy::dotenv()?;
 
-    println!("here");
+    // println!("here");
     match get_env("APP_ENV")?.as_str() {
         "prod" => dotenvy::from_filename_override(".env.prod")?,
         "stag" => dotenvy::from_filename_override(".env.stag")?,
