@@ -3,10 +3,13 @@ use rust_i18n::t;
 #[cfg(target_arch = "wasm32")]
 use crate::pages::protected_routes::AuthContext;
 
+
+
 #[cfg(feature = "ssr")]
 pub mod ssr {
     use crate::infra::grpc::auth_user::{auth_client::AuthClient, LoginRequest};
     use leptos::prelude::ServerFnError;
+
 
     pub async fn login_user_grpc(email: String, password: String) -> Result<String, ServerFnError> {
         let mut client = AuthClient::connect("http://127.0.0.1:3000")
@@ -22,9 +25,11 @@ pub mod ssr {
 
         let inner = response.into_inner();
         if inner.status {
-            Ok(inner.data)
+            let grpc_login_user_response = inner.data.unwrap_or_default();
+            let json = serde_json::to_string(&grpc_login_user_response).map_err(|e| ServerFnError::new(format!("JSON error: {}", e)))?;
+            Ok(json)
         } else {
-            Err(ServerFnError::new(inner.data))
+            Err(ServerFnError::new("Login failed: invalid response status"))
         }
     }
 }

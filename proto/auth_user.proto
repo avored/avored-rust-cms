@@ -1,15 +1,22 @@
 syntax = "proto3";
 package auth_user;
 
+import "admin_user_message.proto";
 
 // Login Service
 message LoginRequest {
   string email = 1;
   string password = 2;
 }
+
+message LoginResponseData {
+    admin_user_message.AdminUserMessage admin_user = 1;
+    string token = 2;
+}
+
 message LoginResponse {
   bool status = 1;
-  string data = 2;
+  LoginResponseData data = 2;
 }
 
 service Auth {

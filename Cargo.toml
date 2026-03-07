@@ -33,6 +33,7 @@ tonic = { version = "0.14", optional = true }
 jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"], optional = true }
 chrono = { version = "0.4.42", features = [], optional = true }
 prost = { version = "0.14", optional = true }
+prost-types = { version = "0.14", optional = true }
 tonic-prost = { version = "0.14", optional = true }
 tracing = { version = "0.1", optional = true }
 gloo-storage = "0.3.0"
@@ -44,7 +45,11 @@ surrealdb = { version = "3.0.0", features = [
     "kv-rocksdb",
     "kv-mem",
 ], optional = true }
-web-sys = { version = "0.3.77", features = ["Window", "Storage"], optional = true }
+web-sys = { version = "0.3.77", features = [
+    "Window",
+    "Storage",
+], optional = true }
+pbjson-types = { version = "0.9.0", optional = false }
 
 
 [build-dependencies]
@@ -53,13 +58,19 @@ tonic-prost-build = "0.14"
 
 [features]
 default = ["ssr"]
-hydrate = ["leptos/hydrate", "dep:console_error_panic_hook", "dep:wasm-bindgen", "dep:web-sys"]
+hydrate = [
+    "leptos/hydrate",
+    "dep:console_error_panic_hook",
+    "dep:wasm-bindgen",
+    "dep:web-sys",
+]
 ssr = [
     "dep:axum",
     "dep:tokio",
     "dep:leptos_axum",
     "dep:tonic",
     "dep:prost",
+    "dep:prost-types",
     "dep:tonic-prost",
     "dep:tracing",
     "dep:tracing-subscriber",
@@ -70,7 +81,7 @@ ssr = [
     "leptos_router/ssr",
     "dep:surrealdb",
     "dep:jsonwebtoken",
-    "dep:chrono"
+    "dep:chrono",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode

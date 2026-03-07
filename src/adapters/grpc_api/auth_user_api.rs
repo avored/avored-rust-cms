@@ -22,14 +22,14 @@ impl Auth for AuthUserGrpcApi {
     ) -> Result<Response<LoginResponse>, Status> {
         let req = request.into_inner();
 
-        let token = self
+        let login_response_data = self
             .login_user_use_case
             .execute(&req.email, &req.password)
             .await?;
 
         let response = LoginResponse {
             status: true,
-            data: token,
+            data: Some(login_response_data),
         };
 
         Ok(Response::new(response))

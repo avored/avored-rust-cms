@@ -1,0 +1,19 @@
+syntax = "proto3";
+package admin_user_message;
+
+
+import "google/protobuf/timestamp.proto";
+
+
+
+message AdminUserMessage {
+    string full_name = 1;
+    string email = 2;
+    // password_hash is not included in the message for now
+    string profile_image = 3;
+    bool is_super_admin = 4;
+    string created_by = 5;
+    string updated_by = 6;
+    google.protobuf.Timestamp created_at = 7;
+    google.protobuf.Timestamp updated_at = 8;
+}

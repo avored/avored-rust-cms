@@ -1,5 +1,7 @@
 use crate::domain::models::BaseModel;
 use crate::error::{Error, Result};
+use crate::infra::grpc::admin_user_message::AdminUserMessage;
+use pbjson_types::Timestamp;
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
 use surrealdb::types::Value;
@@ -107,5 +109,29 @@ impl TryFrom<AdminUserModel> for TokenClaims {
         };
 
         Ok(claims)
+    }
+}
+
+
+
+impl TryFrom<AdminUserModel> for AdminUserMessage {
+    type Error = Error;
+
+    fn try_from(val: AdminUserModel) -> Result<Self> {
+        let created_at = Timestamp::from(val.created_at.to_utc());
+        let updated_at = Timestamp::from(val.updated_at.to_utc());
+        
+        let admin_user_message: Self = Self {
+            full_name: val.full_name,
+            email: val.email,
+            profile_image: val.profile_image,
+            is_super_admin: val.is_super_admin,
+            created_by: val.created_by,
+            updated_by: val.updated_by,
+            created_at: Some(created_at),
+            updated_at: Some(updated_at),
+        };
+
+        Ok(admin_user_message)
     }
 }
