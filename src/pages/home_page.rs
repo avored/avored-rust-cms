@@ -123,7 +123,7 @@ pub fn HomePage() -> impl IntoView {
                     <div class="mt-16">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                             <a
-                                href="/login"
+                                href="/auth/login"
                                 class="scale-100 p-6 bg-white rounded-lg shadow-2xl shadow-gray-500/20 flex focus:outline-primary-500"
                             >
                             <div>

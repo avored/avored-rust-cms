@@ -13,7 +13,7 @@ window.axios = axios
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 window.axios.interceptors.request.use(function (config: InternalAxiosRequestConfig) {
-  const token = localStorage.getItem("auth_token");
+  const token = localStorage.getItem("avored_admin_token");
   const token_without_quote = token?.replaceAll("\"", '');
   if (token) {
     config.headers.Authorization = `Bearer ${token_without_quote}`;

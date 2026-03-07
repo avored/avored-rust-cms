@@ -1,5 +1,7 @@
 use leptos::prelude::*;
 use rust_i18n::t;
+#[cfg(target_arch = "wasm32")]
+use crate::pages::protected_routes::AuthContext;
 
 #[cfg(feature = "ssr")]
 pub mod ssr {
@@ -48,27 +50,22 @@ pub fn LoginPage() -> impl IntoView {
 
     let login_result = login_action.value();
 
+    #[cfg(target_arch = "wasm32")]
+    let auth_context = use_context::<AuthContext>().expect("AuthContext should be provided");
+
     Effect::new(move |_| {
         if let Some(Ok(token)) = login_result.get() {
             if !token.is_empty() {
-                #[cfg(feature = "hydrate")]
-                let window = web_sys::window().expect("should have a window");
+                #[cfg(target_arch = "wasm32")]
+                {
+                    use gloo_storage::{LocalStorage, Storage};
+                    let _ = LocalStorage::set("avored_admin_token", token.clone());
+                    auth_context.auth_token.set(token);
+                    auth_context.is_logged_in.set(true);
 
-                #[cfg(feature = "hydrate")]
-                let local_storage = window
-                    .local_storage()
-                    .expect("should have local storage")
-                    .expect("local storage should be available");
-
-                #[cfg(feature = "hydrate")]
-                local_storage
-                    .set_item("avored_admin_token", &token)
-                    .expect("should be able to set item in local storage");
-
-                #[cfg(feature = "hydrate")]
-                let navigate = leptos_router::hooks::use_navigate();
-                #[cfg(feature = "hydrate")]
-                navigate("/", Default::default());
+                    let navigate = leptos_router::hooks::use_navigate();
+                    navigate("/admin/dashboard", Default::default());
+                }
             }
         }
     });
