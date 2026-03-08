@@ -1,6 +1,12 @@
-use leptos::{config::errors::LeptosConfigError};
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
+use leptos::config::errors::LeptosConfigError;
 use tonic::Status;
 use tracing::error;
+
+use crate::domain::models::validation_error::ErrorResponse;
 
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
@@ -13,6 +19,11 @@ pub enum Error {
     /// Error when the password encryption has some issue.
     Argon2(Box<argon2::password_hash::Error>),
 
+    /// Error when the request is bad.
+    BadRequest(ErrorResponse),
+
+    /// Error when the request is forbidden.
+    InvalidArgument(String),
 }
 
 impl core::fmt::Display for Error {
@@ -56,7 +67,24 @@ impl From<jsonwebtoken::errors::Error> for Error {
     }
 }
 
+impl From<std::io::Error> for Error {
+    fn from(error: std::io::Error) -> Self {
+        error!("IO error: {error:?}");
+        Self::Generic(format!("IO error: {error}"))
+    }
+}
+
+impl From<serde_json::Error> for Error {
+    fn from(error: serde_json::Error) -> Self {
+        error!("serde_json error: {error:?}");
+        Self::Generic(format!("serde_json error: {error}"))
+    }
+}
+
 // 
+
+
+//
 
 impl From<Error> for Status {
     fn from(val: Error) -> Self {
@@ -69,19 +97,29 @@ impl From<Error> for Status {
             // Error::Unauthenticated(error_message) => {
             //     Self::unauthenticated(error_message)
             // },
-            Error::Argon2(boxed_error) => {
-                Self::internal(format!("Argon2 error: {boxed_error:?}"))
-            },
-            _ => Self::invalid_argument("500 Internal server error")
+            Error::Argon2(boxed_error) => Self::internal(format!("Argon2 error: {boxed_error:?}")),
+            Error::InvalidArgument(error_response) => Self::invalid_argument(error_response),
+            Error::BadRequest(str) => {
+                let validation_errors = match serde_json::to_string(&str) {
+                    Ok(str) => str,
+                    _ => "validation error 400.".to_string(),
+                };
+
+                Self::invalid_argument(validation_errors)
+            }
+            _ => Self::internal("500 Internal server error"),
         }
     }
 }
 
+impl IntoResponse for ErrorResponse {
+    fn into_response(self) -> Response {
+        let validation_errors = match serde_json::to_string(&self) {
+            Ok(str) => str,
+            _ => "validation error 400.".to_string(),
+        };
 
-impl From<std::io::Error> for Error {
-    fn from(error: std::io::Error) -> Self {
-        error!("IO error: {error:?}");
-        Self::Generic(format!("IO error: {error}"))
+        (StatusCode::BAD_REQUEST, validation_errors).into_response()
     }
 }
 

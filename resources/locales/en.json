@@ -3,5 +3,6 @@
     "email_address": "Email address",
     "password": "Password",
     "forgot_your_password": "Forgot your password?",
-    "sign_in": "Sign in"
+    "sign_in": "Sign in",
+    "validation_required": "%{attribute} is required"
 }

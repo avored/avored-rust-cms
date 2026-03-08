@@ -32,6 +32,7 @@ wasm-bindgen = { version = "0.2.106", optional = true }
 tonic = { version = "0.14", optional = true }
 jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"], optional = true }
 chrono = { version = "0.4.42", features = [], optional = true }
+email_address = { version = "0.2.9", optional = false}
 prost = { version = "0.14", optional = true }
 prost-types = { version = "0.14", optional = true }
 tonic-prost = { version = "0.14", optional = true }

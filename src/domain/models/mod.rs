@@ -4,6 +4,7 @@ use surrealdb::types::{Datetime, RecordIdKey, Value};
 
 pub mod user;
 pub mod admin_user;
+pub mod validation_error;
 
 
 
