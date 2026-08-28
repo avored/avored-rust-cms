@@ -1,39 +1,29 @@
+use avored_rust_cms::{api::rest_api_routes::rest_api_routes, avored_state::AppState, error};
 
-#[cfg(feature = "ssr")]
+
 #[tokio::main]
-async fn main() {
-    use axum::Router;
-    use leptos::logging::log;
-    use leptos::prelude::*;
-    use leptos_axum::{generate_route_list, LeptosRoutes};
-    use avored_rust_cms::app::*;
-
-    let conf = get_configuration(None).unwrap();
-    let addr = conf.leptos_options.site_addr;
+async fn main() -> error::Result<()> {
+    let conf = leptos::config::get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
-    // Generate the list of routes in your Leptos App
-    let routes = generate_route_list(App);
 
-    let app = Router::new()
-        .leptos_routes(&leptos_options, routes, {
-            let leptos_options = leptos_options.clone();
-            move || shell(leptos_options.clone())
-        })
-        .fallback(leptos_axum::file_and_error_handler(shell))
-        .with_state(leptos_options);
+    let state = AppState {
+        leptos_options,
+    };
 
-    // run our app with hyper
-    // `axum::Server` is a re-export of `hyper::Server`
-    log!("listening on http://{}", &addr);
-    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
+    let app: axum::Router = rest_api_routes(state)?;
+
+    println!("listening on http://{}", 3000);
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     axum::serve(listener, app.into_make_service())
         .await
         .unwrap();
+
+    Ok(())
 }
 
 #[cfg(not(feature = "ssr"))]
 pub fn main() {
     // no client-side main function
-    // unless we want this to work with e.g., Trunk for pure client-side testing
+    // unless we want this to work with e.g., trunk for a purely client-side app
     // see lib.rs for hydration function instead
 }
