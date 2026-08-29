@@ -30,8 +30,8 @@ impl AvoRedDatabaseProvider {
 
         println!(
             "ns:{} db: {}",
-            database_namespace.clone(),
-            database_name.clone()
+            database_namespace,
+            database_name
         );
         let database_session = Session::owner()
             .with_ns(&database_namespace)

@@ -1,4 +1,3 @@
-use std::sync::Arc;
 use axum::Router;
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};

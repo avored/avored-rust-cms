@@ -8,7 +8,7 @@ pub fn HomePage() -> impl IntoView {
     let on_click = move |_| *count.write() += 1;
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
+        <h1 class="text-2xl font-bold">"Avored CMS!"</h1>
         <button on:click=on_click>"Click Me: " {count}</button>
     }
 }

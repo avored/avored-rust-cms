@@ -1,0 +1,39 @@
+{
+  "name": "avored-rust-cms",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "vite": "vite",
+    "build": "vite build",
+    "leptos": "cargo leptos watch",
+    "dev": "concurrently \"npm run vite\" \"npm run leptos\""
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@alpinejs/focus": "^3.15.4",
+    "@tailwindcss/cli": "^4.2.2",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@tailwindcss/typography": "^0.5.19",
+    "@tailwindcss/vite": "^4.2.2",
+    "@types/alpinejs": "^3.13.11",
+    "@types/alpinejs__focus": "^3.13.4",
+    "@types/async-alpine": "^2.0.0",
+    "@types/node": "^25.0.10",
+    "alpinejs": "^3.15.4",
+    "async-alpine": "^2.0.3",
+    "concurrently": "^9.2.1",
+    "i": "^0.3.7",
+    "install": "^0.13.0",
+    "npm": "^11.8.0",
+    "postcss": "^8.5.6",
+    "slugify": "^1.6.8",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0"
+  },
+  "dependencies": {
+    "easymde": "^2.21.0"
+  }
+}

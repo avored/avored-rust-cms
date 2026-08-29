@@ -1,9 +1,11 @@
 use leptos::prelude::*;
-use leptos_meta::{Stylesheet, Title, provide_meta_context};
-use leptos_router::{StaticSegment, components::{Route, Router, Routes}};
-
+use leptos_meta::{provide_meta_context, Stylesheet, Title};
+use leptos_router::{
+    StaticSegment, components::{ParentRoute, Route, Router, Routes}, path,
+};
+use crate::pages::protected_routes::ProtectedRoute;
 use crate::pages::home_page::HomePage;
-
+use crate::pages::layouts::app_layout::AppLayout;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -22,7 +24,14 @@ pub fn App() -> impl IntoView {
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
-                    <Route path=StaticSegment("") view=HomePage/>
+                    <ParentRoute path=path!("/admin") view= move || view! {
+                    <ProtectedRoute
+                        fallback=|| view! { "Redirecting..." }.into_any()
+                        children=|| vec![view! { <AppLayout/> }.into_any()]
+                    />
+                }>
+                        <Route path=StaticSegment("") view=HomePage/>
+                </ParentRoute>
                 </Routes>
             </main>
         </Router>

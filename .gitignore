@@ -89,3 +89,10 @@ release/
 # Local development
 .local/
 .cache/
+
+/node_modules
+.DS_Store
+/public/upload
+/assets/upload
+/assets/documents
+/docs

@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+    --color-primary-50: oklch(0.977 0.017 320.058);
+    --color-primary-100: oklch(0.952 0.037 318.852);
+    --color-primary-200: oklch(0.903 0.076 319.62);
+    --color-primary-300: oklch(0.833 0.145 321.434);
+    --color-primary-400: oklch(0.74 0.238 322.16);
+    --color-primary-500: oklch(0.667 0.295 322.15);
+    --color-primary-600: oklch(0.591 0.293 322.896);
+    --color-primary-700: oklch(0.518 0.253 323.949);
+    --color-primary-800: oklch(0.452 0.211 324.591);
+    --color-primary-900: oklch(0.401 0.17 325.612);
+    --color-primary-950: oklch(0.293 0.136 325.661);
+}
+
+.EasyMDEContainer {
+  @apply border border-gray-300 rounded-lg overflow-hidden flex flex-col;
+}
+
+.editor-toolbar {
+  @apply bg-gray-50 border-b border-gray-300 p-2 flex flex-wrap gap-1;
+}
+
+.editor-toolbar button {
+  @apply text-gray-700 hover:text-gray-900 hover:bg-gray-200 rounded p-1 transition;
+}
+
+.CodeMirror {
+  @apply font-mono text-sm p-4 bg-white text-gray-800 min-h-50;
+}
+
+/* Custom preview container styled using Tailwind Typography */
+.editor-preview {
+  @apply prose prose-slate p-6 bg-gray-50;
+}
+
+@utility form-input {
+  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-800 leading-tight focus:outline-none;
+}
+

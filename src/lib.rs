@@ -14,6 +14,8 @@ pub mod providers;
 pub mod avored_state;
 
 
+rust_i18n::i18n!("resources/locales");
+
 
 #[cfg(feature = "hydrate")]
 #[wasm_bindgen::prelude::wasm_bindgen]

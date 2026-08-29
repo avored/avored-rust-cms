@@ -25,6 +25,11 @@ dotenvy = { version = "0.15.7", optional = true }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
 chrono = { version = "0.4.42", features = ["serde"] }
+rust-i18n = "4.1.0"
+gloo-storage = "0.4.0"
+gloo-net = "0.7"
+console_log = "1"
+log = "0.4"
 
 [features]
 default = ["ssr"]
