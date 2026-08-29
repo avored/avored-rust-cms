@@ -3,35 +3,35 @@ use leptos_meta::{provide_meta_context, Stylesheet, Title};
 use leptos_router::{
     StaticSegment, components::{ParentRoute, Route, Router, Routes}, path,
 };
-use crate::pages::protected_routes::ProtectedRoute;
-use crate::pages::home_page::HomePage;
-use crate::pages::layouts::app_layout::AppLayout;
+use crate::pages::{
+    home_page::DashboardPage,
+    layouts::app_layout::AppLayout,
+    login_page::LoginPage,
+    protected_routes::{provide_auth_context, ProtectedRoute},
+};
 
 #[component]
 pub fn App() -> impl IntoView {
-    // Provides context that manages stylesheets, titles, meta tags, etc.
+    provide_auth_context();
     provide_meta_context();
 
     view! {
-        // injects a stylesheet into the document <head>
-        // id=leptos means cargo-leptos will hot-reload this stylesheet
         <Stylesheet id="leptos" href="/public/pkg/avored-rust-cms.css"/>
+        <Title text="Avored CMS"/>
 
-        // sets the document title
-        <Title text="Welcome to Leptos"/>
-
-        // content for this welcome page
         <Router>
             <main>
                 <Routes fallback=|| "Page not found.".into_view()>
+                    <Route path=path!("/auth/login") view=LoginPage/>
+
                     <ParentRoute path=path!("/admin") view= move || view! {
-                    <ProtectedRoute
-                        fallback=|| view! { "Redirecting..." }.into_any()
-                        children=|| vec![view! { <AppLayout/> }.into_any()]
-                    />
-                }>
-                        <Route path=StaticSegment("") view=HomePage/>
-                </ParentRoute>
+                        <ProtectedRoute
+                            fallback=|| view! { "Redirecting..." }.into_any()
+                            children=|| vec![view! { <AppLayout/> }.into_any()]
+                        />
+                    }>
+                        <Route path=StaticSegment("") view=DashboardPage/>
+                    </ParentRoute>
                 </Routes>
             </main>
         </Router>

@@ -25,3 +25,12 @@ impl From<dotenvy::Error> for Error {
         Self::Generic("there is an issue with loading env file".to_string())
     }
 }
+
+
+impl From<serde_json::Error> for Error {
+    fn from(val: serde_json::Error) -> Self {
+        error!("there is an issue with parsing json: {val:?}");
+        Self::Generic("there is an issue with parsing json".to_string())
+    }
+}
+    

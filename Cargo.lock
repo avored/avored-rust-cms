@@ -418,6 +418,8 @@ dependencies = [
  "leptos_router",
  "log",
  "rust-i18n",
+ "serde",
+ "serde_json",
  "surrealdb",
  "surrealdb-core",
  "tokio",

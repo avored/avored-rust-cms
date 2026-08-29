@@ -18,59 +18,47 @@ pub struct AuthContext {
     pub is_logged_in: RwSignal<bool>,
     pub auth_token: RwSignal<String>,
     pub logged_in_user: RwSignal<Option<LoggedInUser>>,
+    pub auth_ready: RwSignal<bool>,
 }
 
 // Function to provide the AuthContext
 pub fn provide_auth_context() {
-    let is_logged_in = RwSignal::new(false);
+    let is_logged_in: RwSignal<bool> = RwSignal::new(false);
     let auth_token = RwSignal::new(String::new());
     let logged_in_user = RwSignal::new(None);
+    let auth_ready = RwSignal::new(false);
 
-    // On the client, read from local storage
+    log::info!("AUTH READY: logged_in={}", is_logged_in.get());
+
     #[cfg(target_arch = "wasm32")]
     {
-        Effect::new(move |_| {
-            if let Ok(token) = gloo_storage::LocalStorage::get::<String>("auth_token") {
+        let storage_token = gloo_storage::LocalStorage::get::<String>("auth_token").ok();
+
+        match storage_token {
+            Some(token) if !token.trim().is_empty() => {
                 auth_token.set(token.clone());
-                is_logged_in.set(!token.trim().is_empty());
-
-                if !token.trim().is_empty() {
-                    let token_for_request = token.clone();
-                    let _logged_in_user_signal = logged_in_user;
-
-                    leptos::task::spawn_local(async move {
-                        let request = gloo_net::http::Request::get("/api/admin/profile")
-                            .header("Authorization", format!("Bearer {}", token_for_request).as_str());
-
-                        match request.send().await {
-                            Ok(response) if response.ok() => {
-                                // if let Ok(profile_response) = response.json::<GetProfileResponse>().await {
-                                //     logged_in_user_signal.set(Some(LoggedInUser {
-                                //         id: profile_response.data.id.to_string(),
-                                //         name: profile_response.data.name,
-                                //         email: profile_response.data.email,
-                                //     }));
-                                // }
-                            }
-                            Ok(_) => {}
-                            Err(err) => {
-                                log::warn!("Failed to fetch logged-in profile: {:?}", err);
-                            }
-                        }
-                    });
-                } else {
-                    logged_in_user.set(None);
-                }
-            } else {
-                logged_in_user.set(None);
+                is_logged_in.set(true);
+                logged_in_user.set(Some(LoggedInUser {
+                    id: "demo-user-id".to_string(),
+                    name: "Demo User".to_string(),
+                    email: "demo@avored.local".to_string(),
+                }));
+                log::info!("AUTH INIT: token found, value={}", token);
             }
-        });
+            _ => {
+                log::info!("AUTH INIT: no token found in localStorage");
+            }
+        }
     }
+
+    auth_ready.set(true);
+    log::info!("AUTH READY: logged_in={}", is_logged_in.get());
 
     provide_context(AuthContext {
         is_logged_in,
         auth_token,
         logged_in_user,
+        auth_ready,
     });
 }
 
@@ -82,20 +70,25 @@ where
 {
     let auth_context = use_context::<AuthContext>().expect("AuthContext should be provided");
     let is_logged_in = auth_context.is_logged_in;
+    let auth_ready = auth_context.auth_ready;
     let navigate = use_navigate();
 
     Effect::new(move |_| {
-        if !is_logged_in.get() {
-            // Use navigate for client-side redirection
+        let ready = auth_ready.get();
+        let logged_in = is_logged_in.get();
+
+        log::info!("PROTECTED ROUTE CHECK: ready={}, logged_in={}", ready, logged_in);
+
+        if ready && !logged_in {
+            log::info!("PROTECTED ROUTE: redirecting to /auth/login");
             navigate("/auth/login", Default::default());
         }
     });
 
     move || {
-        if is_logged_in.get() {
+        if auth_ready.get() && is_logged_in.get() {
             children().into_any()
         } else {
-            // Render a fallback on the server or while waiting for client-side check
             fallback().into_any()
         }
     }

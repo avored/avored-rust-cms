@@ -20,8 +20,8 @@ pub fn Shell() -> impl IntoView {
                 <App/>
                 <script type="module" src={format!("/assets/js/app.js?v={}", chrono::Utc::now().timestamp())}></script>
                 <script type="module">
-                    {r#"import init, { hydrate } from '/assets/pkg/avored-rust-cms.js';
-                    await init('/assets/pkg/avored-rust-cms.wasm').then(hydrate);
+                    {r#"import init, { hydrate } from '/public/pkg/avored-rust-cms.js';
+                    await init('/public/pkg/avored-rust-cms.wasm').then(hydrate);
                     window.leptos_hydrated = true;
                     console.log('Leptos hydrated');
                     window.dispatchEvent(new CustomEvent('leptos-hydrated'));"#}
