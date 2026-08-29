@@ -17,3 +17,4 @@
 - **Design:** Modern, polished aesthetic with smooth borders (`rounded-lg`/`rounded-xl`, `shadow-sm`).
 - **Dark Mode:** Always include dark mode variants (`dark:...` for bg, text, borders).
 - **Interactions:** Responsive layouts (`flex`/`grid`) with fluid hover/focus transitions (`transition-all duration-200`).
+- **Color:** Use primary colors defined in the theme.

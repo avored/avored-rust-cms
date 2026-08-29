@@ -3,12 +3,8 @@ use leptos::prelude::*;
 /// Renders the dashboard page of the application.
 #[component]
 pub fn DashboardPage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let count = RwSignal::new(0);
-    let on_click = move |_| *count.write() += 1;
-
+    
     view! {
-        <h1 class="text-2xl font-bold">"Avored CMS!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
+        <h1 class="text-2xl font-bold text-primary-500">"Avored CMS!"</h1>
     }
 }

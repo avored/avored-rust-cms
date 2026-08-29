@@ -26,8 +26,8 @@ rust_i18n::i18n!("resources/locales");
 #[wasm_bindgen::prelude::wasm_bindgen]
 pub fn hydrate() {
     
-    use crate::pages::app::App;
+    use crate::interfaces::web::web_routes::WebApp;
 
     console_error_panic_hook::set_once();
-    leptos::mount::hydrate_body(App);
+    leptos::mount::hydrate_body(WebApp);
 }

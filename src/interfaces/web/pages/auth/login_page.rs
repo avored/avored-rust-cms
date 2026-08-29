@@ -28,7 +28,7 @@ pub struct LoginUser {
 #[component]
 pub fn LoginPage() -> impl IntoView {
     let email = RwSignal::new("demo@avored.local".to_string());
-    let password = RwSignal::new("password".to_string());
+    let password = RwSignal::new("password1234".to_string());
     let error = RwSignal::new(String::new());
     let submitting = RwSignal::new(false);
     let auth_context = use_context::<AuthContext>().expect("AuthContext should be provided");
@@ -116,7 +116,7 @@ pub fn LoginPage() -> impl IntoView {
                             type="email"
                             prop:value=move || email.get()
                             on:input=move |ev| email.set(event_target_value(&ev))
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-blue-500"
+                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
                             placeholder="demo@avored.local"
                         />
                     </div>
@@ -127,13 +127,13 @@ pub fn LoginPage() -> impl IntoView {
                             type="password"
                             prop:value=move || password.get()
                             on:input=move |ev| password.set(event_target_value(&ev))
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-blue-500"
+                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
                             placeholder="password"
                         />
                     </div>
 
                     <div class="rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-600">
-                        "Use demo@avored.local / password to sign in."
+                        "Use demo@avored.local / password1234 to sign in."
                     </div>
 
                     {move || {
@@ -152,7 +152,7 @@ pub fn LoginPage() -> impl IntoView {
                     <button
                         type="submit"
                         disabled=move || submitting.get()
-                        class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-400"
+                        class="w-full rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-primary-300"
                     >
                         {move || if submitting.get() { "Signing in..." } else { "Sign in" }}
                     </button>

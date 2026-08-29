@@ -1,3 +1,5 @@
+use crate::error::Result;
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct LoginResponse {
     pub token: String,
@@ -24,8 +26,8 @@ pub fn build_demo_login_response() -> LoginResponse {
     }
 }
 
-pub async fn handle_login() -> axum::Json<LoginResponse> {
-    axum::Json(build_demo_login_response())
+pub async fn login_handler() -> Result<axum::Json<LoginResponse>> {
+    Ok(axum::Json(build_demo_login_response()))
 }
 
 #[cfg(test)]
