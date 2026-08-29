@@ -82,14 +82,11 @@ assets-dir = "public"
 # The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
 site-addr = "127.0.0.1:3000"
 
-# The port to use for automatic reload monitoring
-reload-port = 3001
+# The port to use for automatic reload monitoring. 3001 is commonly occupied by another process.
+reload-port = 3002
 
 #  The browserlist query used for optimizing the CSS.
 browserquery = "defaults"
-
-# The environment Leptos will run in, usually either "DEV" or "PROD"
-env = "DEV"
 
 # The features to use when compiling the bin target
 #

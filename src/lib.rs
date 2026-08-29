@@ -1,3 +1,12 @@
+
+pub mod core;
+
+#[cfg(feature = "ssr")]
+pub mod infrastructure;
+
+#[cfg(feature = "ssr")]
+pub mod interfaces;
+
 pub mod pages;
 
 #[cfg(feature = "ssr")]
@@ -8,7 +17,6 @@ pub mod api;
 
 #[cfg(feature = "ssr")]
 pub mod providers;
-
 
 #[cfg(feature = "ssr")]
 pub mod avored_state;
