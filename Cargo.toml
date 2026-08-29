@@ -32,6 +32,7 @@ gloo-storage = "0.4.0"
 gloo-net = "0.7"
 console_log = "1"
 log = "0.4"
+async-trait = "0.1"
 
 [features]
 default = ["ssr"]

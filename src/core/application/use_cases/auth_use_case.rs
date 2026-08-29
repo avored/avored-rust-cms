@@ -19,16 +19,25 @@ where
         Self { repository }
     }
 
-    pub fn auth(&self, command: LoginCommand) -> LoginResult {
+    pub async fn auth(&self, command: LoginCommand) -> LoginResult {
         let user = self
             .repository
             .authenticate(&command.email, &command.password)
-            .unwrap_or_else(|| User::new("", "", ""));
+            .await;
+
+        let user = match user {
+            Some(user) => user,
+            None => return LoginResult {
+                token: String::new(),
+                user: User::default(),
+                authenticated: false,
+            },
+        };
 
         if user.email.is_empty() {
             return LoginResult {
                 token: String::new(),
-                user: User::new("", "", ""),
+                user: User::default(),
                 authenticated: false,
             };
         }

@@ -1,24 +1,22 @@
 use crate::error::Result;
-use surrealdb_core::kvs::Datastore;
 use surrealdb_core::dbs::Session;
-
-
-
+use surrealdb_core::kvs::Datastore;
 
 /// database dn type
 pub type DB = (Datastore, Session);
 
-
 /// avored database provider
 pub struct AvoRedDatabaseProvider {
-
     pub db: DB,
 }
 
 impl AvoRedDatabaseProvider {
-
     /// register avored database provider
-    pub async fn register(database_folder_name: &str, database_namespace: &str, database_name: &str) -> Result<Self> {
+    pub async fn register(
+        database_folder_name: &str,
+        database_namespace: &str,
+        database_name: &str,
+    ) -> Result<Self> {
         let folder_name = database_folder_name;
 
         //  let db = Surreal::new::<RocksDb>("path/to/database-folder").await?;
@@ -28,11 +26,17 @@ impl AvoRedDatabaseProvider {
             .await
             .expect("there is issue with connecting with data/avored.db storage");
 
-        println!(
-            "ns:{} db: {}",
-            database_namespace,
-            database_name
-        );
+        // 1. Ensure Namespace exists (Root/Owner level session)
+        let root_session = Session::owner();
+        let define_ns_sql = format!("DEFINE NAMESPACE IF NOT EXISTS `{}`;", database_namespace);
+        datastore
+            .execute(&define_ns_sql, &root_session, None)
+            .await?;
+        // 2. Ensure Database exists within Namespace
+        let ns_session = Session::owner().with_ns(database_namespace);
+        let define_db_sql = format!("DEFINE DATABASE IF NOT EXISTS `{}`;", database_name);
+        datastore.execute(&define_db_sql, &ns_session, None).await?;
+
         let database_session = Session::owner()
             .with_ns(&database_namespace)
             .with_db(&database_name);

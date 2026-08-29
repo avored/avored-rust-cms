@@ -10,7 +10,7 @@ pub async fn login_handler(
     State(state): State<AppState>,
     Json(payload): Json<LoginCommand>,
 ) -> axum::response::Response {
-    let result = state.auth_use_case.auth(payload);
+    let result = state.auth_use_case.auth(payload).await;
 
     if !result.authenticated {
         return (

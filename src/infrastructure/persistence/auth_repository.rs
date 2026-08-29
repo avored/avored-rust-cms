@@ -1,5 +1,10 @@
+use surrealdb::types::Value;
+
 use crate::core::domain::{entities::User, repositories::AuthRepository};
+use crate::infrastructure::persistence::into_iter_objects;
+
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 #[derive(Clone)]
@@ -13,14 +18,36 @@ impl AuthRepositoryImpl {
     }
 }
 
+#[async_trait::async_trait]
 impl AuthRepository for AuthRepositoryImpl {
-    fn authenticate(&self, email: &str, _password: &str) -> Option<User> {
-        // Flow / TODO checklist:
-        // 1. Query SurrealDB users table by email (e.g. `SELECT * FROM user WHERE email = $email LIMIT 1`).
-        // 2. Extract user record from SurrealDB result.
-        // 3. Verify the hashed password with argon2/bcrypt against provided plain password.
-        // 4. Map the SurrealDB user record into domain entity `User`.
-        // 5. Return `Some(User)` on successful verification or `None` on failure.
-        todo!("AuthRepositoryImpl::authenticate - implement SurrealDB query and password check for email: {}", email);
+    async fn authenticate(&self, email: &str, password: &str) -> Option<User> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = "SELECT * FROM users WHERE email=$email AND password=$password;";
+        let data: BTreeMap<String, Value> = [
+            ("email".into(), Value::String(email.into())),
+            ("password".into(), Value::String(password.into())),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(sql, database_session, Some(data.into()))
+            .await
+            .ok()?;
+
+        
+        let result_object = into_iter_objects(responses).ok()?.next()?.ok()?;
+        
+        // println!("from admin user: {:#?}", result_object);
+
+        let admin_user: User = result_object.try_into().ok()?;
+
+        println!("Admin user: {:?}", admin_user);
+
+
+
+        // TODO: check/verify hashed password with `password` before returning user
+        Some(admin_user)
     }
 }
+

@@ -1,5 +1,8 @@
 use crate::core::domain::entities::User;
 
-pub trait AuthRepository {
-    fn authenticate(&self, email: &str, password: &str) -> Option<User>;
+#[async_trait::async_trait]
+pub trait AuthRepository: Send + Sync {
+    async fn authenticate(&self, email: &str, password: &str) -> Option<User>;
 }
+
+

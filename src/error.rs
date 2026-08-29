@@ -34,7 +34,14 @@ impl From<serde_json::Error> for Error {
         Self::Generic("there is an issue with parsing json".to_string())
     }
 }
-    
+ 
+impl From<surrealdb::Error> for Error {
+    fn from(val: surrealdb::Error) -> Self {
+        error!("there is an issue with surreal db: {val:?}");
+        Self::Generic("there is an issue with surreal db".to_string())
+    }
+}
+ 
 
 
 impl IntoResponse for Error {
