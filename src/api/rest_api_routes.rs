@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use axum::Router;
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
@@ -25,5 +26,6 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         )
         .nest_service("/public", ServeDir::new(std::path::Path::new("target").join("site")))
         .nest_service("/assets", ServeDir::new(std::path::Path::new("assets")));
+
     Ok(router.with_state(state))
 }

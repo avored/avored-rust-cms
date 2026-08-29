@@ -1,5 +1,6 @@
 use crate::error::Result;
-use surrealdb_core::db::{Datastore, Session};
+use surrealdb_core::kvs::Datastore;
+use surrealdb_core::dbs::Session;
 
 
 
@@ -32,7 +33,7 @@ impl AvoRedDatabaseProvider {
             database_namespace.clone(),
             database_name.clone()
         );
-        let database_session = Session::default()
+        let database_session = Session::owner()
             .with_ns(&database_namespace)
             .with_db(&database_name);
 
