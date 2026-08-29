@@ -1,13 +1,14 @@
 
+
+pub mod interfaces;
+
+pub mod pages;
+
+#[cfg(feature = "ssr")]
 pub mod core;
 
 #[cfg(feature = "ssr")]
 pub mod infrastructure;
-
-#[cfg(feature = "ssr")]
-pub mod interfaces;
-
-pub mod pages;
 
 #[cfg(feature = "ssr")]
 pub mod error;

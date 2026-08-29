@@ -1,5 +1,5 @@
 pub mod app;
-pub mod home_page;
+pub mod dashboard_page;
 pub mod layouts;
 pub mod login_page;
 // pub mod not_found;
