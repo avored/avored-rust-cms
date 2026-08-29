@@ -1,6 +1,6 @@
 use leptos::component;
 
-use crate::pages::protected_routes::AuthContext;
+use crate::interfaces::web::protected_routes::AuthContext;
 use leptos::ev::MouseEvent;
 use leptos::prelude::*;
 use leptos_router::components::Outlet;

@@ -4,12 +4,11 @@ use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower_http::services::ServeDir;
 
 use crate::{
-    avored_state::AppState,
-    pages::{app::App, shell::Shell},
+    avored_state::AppState, interfaces::web::{shell::Shell, web_routes::WebApp},
 };
 
 pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
-    let routes = generate_route_list(App);
+    let routes = generate_route_list(WebApp);
 
     let router = Router::<AppState>::new()
         .route(

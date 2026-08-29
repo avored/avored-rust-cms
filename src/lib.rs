@@ -1,8 +1,4 @@
-
-
 pub mod interfaces;
-
-pub mod pages;
 
 #[cfg(feature = "ssr")]
 pub mod core;

@@ -1,20 +1,18 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
-use leptos_router::{
-    StaticSegment, components::{ParentRoute, Route, Router, Routes}, path,
-};
-use crate::pages::{
-    dashboard_page::DashboardPage,
+use crate::interfaces::web::pages::{
+    auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,
     layouts::app_layout::AppLayout,
-    login_page::LoginPage,
-    protected_routes::{provide_auth_context, ProtectedRoute},
 };
-
-use crate::interfaces::web::pages::home_page::HomePage;
+use crate::interfaces::web::protected_routes::{provide_auth_context, ProtectedRoute};
+use leptos_router::{
+    components::{ParentRoute, Route, Router, Routes},
+    path, StaticSegment,
+};
 
 #[component]
-pub fn App() -> impl IntoView {
+pub fn WebApp() -> impl IntoView {
     provide_auth_context();
     provide_meta_context();
 

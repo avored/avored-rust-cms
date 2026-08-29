@@ -3,7 +3,7 @@ use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use serde::{Deserialize, Serialize};
 
-use crate::pages::protected_routes::{AuthContext, LoggedInUser};
+use crate::interfaces::web::protected_routes::{AuthContext, LoggedInUser};
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct LoginRequest {

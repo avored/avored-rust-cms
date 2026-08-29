@@ -1,4 +1,4 @@
-use crate::pages::app::App;
+use crate::interfaces::web::web_routes::WebApp;
 use leptos::prelude::*;
 use leptos_meta::*;
 
@@ -17,7 +17,7 @@ pub fn Shell() -> impl IntoView {
                 <MetaTags/>
             </head>
             <body>
-                <App/>
+                <WebApp/>
                 <script type="module" src={format!("/assets/js/app.js?v={}", chrono::Utc::now().timestamp())}></script>
                 <script type="module">
                     {r#"import init, { hydrate } from '/public/pkg/avored-rust-cms.js';
