@@ -1,9 +1,12 @@
-#[derive(Debug, Clone, PartialEq, Eq)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     pub id: String,
     pub name: String,
     pub email: String,
 }
+
 
 impl User {
     pub fn new(id: impl Into<String>, name: impl Into<String>, email: impl Into<String>) -> Self {

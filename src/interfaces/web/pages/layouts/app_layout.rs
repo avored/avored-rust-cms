@@ -59,8 +59,9 @@ pub fn AppLayout() -> impl IntoView {
         <div class="flex h-screen bg-gray-100">
             <aside class="hidden w-64 flex-col bg-white shadow-md md:flex">
                 <div class="h-16 border-b border-gray-300 text-center">
-                    <h1 class="mt-3 text-2xl font-bold text-primary-800">
-                        {t!("brand")}
+                    <h1 class="mt-3 text-2xl ml-4 px-3 font-bold flex text-primary-800">
+                        <img src="/assets/images/avored.svg" class="h-8 w-8" /> 
+                        <span class="text-primary-500 font-semibold ml-1">"Avored"</span>
                     </h1>
                 </div>
 

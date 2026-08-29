@@ -5,7 +5,7 @@ use crate::interfaces::web::pages::{
     auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,
     layouts::app_layout::AppLayout,
 };
-use crate::interfaces::web::protected_routes::{provide_auth_context, ProtectedRoute};
+use crate::interfaces::web::protected_routes::provide_auth_context;
 use leptos_router::{
     components::{ParentRoute, Route, Router, Routes},
     path, StaticSegment,

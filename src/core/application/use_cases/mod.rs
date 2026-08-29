@@ -1,3 +1,3 @@
-pub mod login_user;
+pub mod auth_use_case;
 
-pub use login_user::LoginUser;
+pub use auth_use_case::AuthUseCase;

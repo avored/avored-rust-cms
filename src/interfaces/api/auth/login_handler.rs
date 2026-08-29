@@ -1,16 +1,16 @@
-use axum::{http::StatusCode, response::IntoResponse, Json};
+use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 
 use crate::{
-    core::{
-        application::{dtos::LoginCommand, use_cases::LoginUser},
-    },
-    infrastructure::auth::DemoAuthRepository,
+    avored_state::AppState,
+    core::application::dtos::LoginCommand,
 };
 
-pub async fn login_handler(Json(payload): Json<LoginCommand>) -> impl IntoResponse {
-    let repository = DemoAuthRepository;
-    let use_case = LoginUser::new(repository);
-    let result = use_case.execute(payload);
+#[axum::debug_handler(state = AppState)]
+pub async fn login_handler(
+    State(state): State<AppState>,
+    Json(payload): Json<LoginCommand>,
+) -> axum::response::Response {
+    let result = state.auth_use_case.auth(payload);
 
     if !result.authenticated {
         return (
@@ -18,7 +18,8 @@ pub async fn login_handler(Json(payload): Json<LoginCommand>) -> impl IntoRespon
             Json(serde_json::json!({
                 "message": "Invalid credentials"
             })),
-        );
+        )
+            .into_response();
     }
 
     (
@@ -33,4 +34,5 @@ pub async fn login_handler(Json(payload): Json<LoginCommand>) -> impl IntoRespon
             "authenticated": true,
         })),
     )
+        .into_response()
 }

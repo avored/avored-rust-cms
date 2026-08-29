@@ -1,3 +1,3 @@
-// Persistence adapters live here.
+pub mod auth_repository;
 
-
+pub use auth_repository::AuthRepositoryImpl;

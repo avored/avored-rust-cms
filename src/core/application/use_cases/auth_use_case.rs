@@ -3,14 +3,15 @@ use crate::core::{
     domain::{entities::User, repositories::AuthRepository},
 };
 
-pub struct LoginUser<R>
+#[derive(Clone)]
+pub struct AuthUseCase<R>
 where
     R: AuthRepository,
 {
     repository: R,
 }
 
-impl<R> LoginUser<R>
+impl<R> AuthUseCase<R>
 where
     R: AuthRepository,
 {
@@ -18,7 +19,7 @@ where
         Self { repository }
     }
 
-    pub fn execute(&self, command: LoginCommand) -> LoginResult {
+    pub fn auth(&self, command: LoginCommand) -> LoginResult {
         let user = self
             .repository
             .authenticate(&command.email, &command.password)

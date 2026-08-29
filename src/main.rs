@@ -1,13 +1,7 @@
-use std::sync::Arc;
-
 use avored_rust_cms::{
     api::rest_api_routes::rest_api_routes,
     avored_state::AppState,
     error,
-    providers::{
-        avored_config_provider::AvoRedConfigProvider,
-        avored_database_provider::AvoRedDatabaseProvider,
-    },
 };
 
 #[tokio::main]
@@ -15,23 +9,7 @@ async fn main() -> error::Result<()> {
     let conf = leptos::config::get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
 
-    let config = AvoRedConfigProvider::new()?;
-
-    let _avored_database_provider = AvoRedDatabaseProvider::register(
-        &config.database_folder,
-        &config.database_namespace,
-        &config.database_name,
-    )
-    .await?;
-
-    // build our application with a route
-    // let avored_state = Arc::new(AvoRedState::new(leptos_options.clone()).await?);
-    // let database_provider = AvoRedDatabaseProvider::new(config.database_url.clone()).await?;
-
-    let state = AppState {
-        leptos_options,
-        config: Arc::new(config),
-    };
+    let state = AppState::new(leptos_options).await?;
 
     let app: axum::Router = rest_api_routes(state)?;
 

@@ -13,7 +13,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
     let router = Router::<AppState>::new()
         .route(
             "/api/auth/login",
-            axum::routing::post(crate::api::auth::login_handler::login_handler),
+            axum::routing::post(crate::interfaces::api::auth::login_handler),
         )
         .leptos_routes_with_context(
             &state,
