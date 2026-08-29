@@ -16,9 +16,14 @@ console_error_panic_hook = { version = "0.1", optional = true }
 leptos_axum = { version = "0.8.0", optional = true }
 leptos_meta = { version = "0.8.0" }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
+surrealdb = { version = "3.2.4", features = ["kv-rocksdb", "kv-mem"], optional = true }
+surrealdb-core = { version = "3.2.4", optional = true }
 # Keep the wasm-bindgen version aligned with cargo-leptos; otherwise the generated JS/WASM
 # will fail at runtime with the missing __wbindgen_externref_table_alloc symbol.
 wasm-bindgen = { version = "0.2.127", optional = true }
+dotenvy = { version = "0.15.7", optional = true }
+tracing = "0.1.41"
+tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
 chrono = { version = "0.4.42", features = ["serde"] }
 
 [features]
@@ -35,6 +40,9 @@ ssr = [
     "dep:leptos_axum",
     "dep:tower",
     "dep:tower-http",
+    "dep:surrealdb",
+    "dep:surrealdb-core",
+    "dep:dotenvy",
     "leptos/ssr",
     "leptos_meta/ssr",
     "leptos_router/ssr",

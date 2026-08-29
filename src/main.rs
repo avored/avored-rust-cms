@@ -1,14 +1,19 @@
-use avored_rust_cms::{api::rest_api_routes::rest_api_routes, avored_state::AppState, error};
-
+use avored_rust_cms::{
+    api::rest_api_routes::rest_api_routes, avored_state::AppState, error,
+    providers::avored_config_provider::AvoRedConfigProvider,
+};
 
 #[tokio::main]
 async fn main() -> error::Result<()> {
     let conf = leptos::config::get_configuration(None).unwrap();
     let leptos_options = conf.leptos_options;
 
-    let state = AppState {
-        leptos_options,
-    };
+    let config = AvoRedConfigProvider::new()?;
+    // build our application with a route
+    // let avored_state = Arc::new(AvoRedState::new(leptos_options.clone()).await?);
+    // let database_provider = AvoRedDatabaseProvider::new(config.database_url.clone()).await?;
+
+    let state = AppState { leptos_options };
 
     let app: axum::Router = rest_api_routes(state)?;
 

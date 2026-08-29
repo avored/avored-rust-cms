@@ -6,6 +6,9 @@ pub mod error;
 #[cfg(feature = "ssr")]
 pub mod api;
 
+#[cfg(feature = "ssr")]
+pub mod providers;
+
 
 #[cfg(feature = "ssr")]
 pub mod avored_state;
