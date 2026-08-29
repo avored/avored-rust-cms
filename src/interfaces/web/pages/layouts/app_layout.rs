@@ -10,6 +10,18 @@ use rust_i18n::t;
 pub fn AppLayout() -> impl IntoView {
     let auth_context = use_context::<AuthContext>().expect("AuthContext should be provided");
     let is_menu_open = RwSignal::new(false);
+    let navigate = leptos_router::hooks::use_navigate();
+
+    let is_logged_in = auth_context.is_logged_in;
+    let auth_ready = auth_context.auth_ready;
+
+    Effect::new(move |_| {
+        let ready = auth_ready.get();
+        let logged_in = is_logged_in.get();
+        if ready && !logged_in {
+            navigate("/auth/login", Default::default());
+        }
+    });
 
     let user_name = move || {
         auth_context

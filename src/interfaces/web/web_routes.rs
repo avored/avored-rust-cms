@@ -26,12 +26,7 @@ pub fn WebApp() -> impl IntoView {
                     <Route path=path!("") view=HomePage/>
                     <Route path=path!("/auth/login") view=LoginPage/>
 
-                    <ParentRoute path=path!("/admin") view= move || view! {
-                        <ProtectedRoute
-                            fallback=|| view! { "Redirecting..." }.into_any()
-                            children=|| vec![view! { <AppLayout/> }.into_any()]
-                        />
-                    }>
+                    <ParentRoute path=path!("/admin") view=AppLayout>
                         <Route path=StaticSegment("") view=DashboardPage/>
                     </ParentRoute>
                 </Routes>

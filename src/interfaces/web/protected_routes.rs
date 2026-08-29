@@ -23,36 +23,32 @@ pub struct AuthContext {
 
 // Function to provide the AuthContext
 pub fn provide_auth_context() {
-    let is_logged_in: RwSignal<bool> = RwSignal::new(false);
-    let auth_token = RwSignal::new(String::new());
-    let logged_in_user = RwSignal::new(None);
-    let auth_ready = RwSignal::new(false);
-
-    log::info!("AUTH READY: logged_in={}", is_logged_in.get());
-
     #[cfg(target_arch = "wasm32")]
-    {
+    let (initial_logged_in, initial_token, initial_user) = {
         let storage_token = gloo_storage::LocalStorage::get::<String>("auth_token").ok();
-
         match storage_token {
-            Some(token) if !token.trim().is_empty() => {
-                auth_token.set(token.clone());
-                is_logged_in.set(true);
-                logged_in_user.set(Some(LoggedInUser {
+            Some(token) if !token.trim().is_empty() => (
+                true,
+                token,
+                Some(LoggedInUser {
                     id: "demo-user-id".to_string(),
                     name: "Demo User".to_string(),
                     email: "demo@avored.local".to_string(),
-                }));
-                log::info!("AUTH INIT: token found, value={}", token);
-            }
-            _ => {
-                log::info!("AUTH INIT: no token found in localStorage");
-            }
+                }),
+            ),
+            _ => (false, String::new(), None),
         }
-    }
+    };
 
-    auth_ready.set(true);
-    log::info!("AUTH READY: logged_in={}", is_logged_in.get());
+    #[cfg(not(target_arch = "wasm32"))]
+    let (initial_logged_in, initial_token, initial_user) = (false, String::new(), None);
+
+    let is_logged_in: RwSignal<bool> = RwSignal::new(initial_logged_in);
+    let auth_token = RwSignal::new(initial_token);
+    let logged_in_user = RwSignal::new(initial_user);
+    let auth_ready = RwSignal::new(true);
+
+    log::info!("AUTH INIT: logged_in={}", initial_logged_in);
 
     provide_context(AuthContext {
         is_logged_in,
@@ -85,11 +81,13 @@ where
         }
     });
 
-    move || {
-        if auth_ready.get() && is_logged_in.get() {
-            children().into_any()
-        } else {
-            fallback().into_any()
-        }
+    view! {
+        {move || {
+            if auth_ready.get() && is_logged_in.get() {
+                children().into_any()
+            } else {
+                fallback().into_any()
+            }
+        }}
     }
 }
