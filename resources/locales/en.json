@@ -1,3 +1,12 @@
 {
-
+    "welcome_avored": "Welcome to Avored",
+    "login": "Login",
+    "profile": "Profile",
+    "logout": "Logout",
+    "email": "Email",
+    "email_address": "Email adresss",
+    "password": "Password",
+    "remember_me": "Remember me",
+    "sign_in": "Sign in",
+    "signing_in": "Signing in..."
 }

@@ -1,6 +1,7 @@
 use gloo_storage::{LocalStorage, Storage};
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
+use rust_i18n::t;
 use serde::{Deserialize, Serialize};
 
 use crate::interfaces::web::protected_routes::{AuthContext, LoggedInUser};
@@ -105,36 +106,38 @@ pub fn LoginPage() -> impl IntoView {
         <div class="flex min-h-screen items-center justify-center bg-slate-100 px-4">
             <div class="w-full max-w-md rounded-lg border border-slate-200 bg-white p-8 shadow-lg">
                 <div class="mb-6 text-center">
-                    <h1 class="text-3xl font-bold text-slate-800">"Welcome back"</h1>
-                    <p class="mt-2 text-sm text-slate-500">"Demo admin login"</p>
+                    <h1 class="text-3xl font-bold text-slate-800">
+                        { t!("welcome_avored") }
+                    </h1>
                 </div>
 
                 <form on:submit=on_submit class="space-y-4">
                     <div>
-                        <label class="mb-1 block text-sm font-medium text-slate-700">"Email"</label>
+                        <label class="mb-1 block text-sm font-medium text-slate-700">
+                            { t!("email") }
+                        </label>
                         <input
                             type="email"
                             prop:value=move || email.get()
                             on:input=move |ev| email.set(event_target_value(&ev))
                             class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
-                            placeholder="demo@avored.local"
+                            placeholder={t!("email_address")}
                         />
                     </div>
 
                     <div>
-                        <label class="mb-1 block text-sm font-medium text-slate-700">"Password"</label>
+                        <label class="mb-1 block text-sm font-medium text-slate-700">
+                            { t!("password") }
+                        </label>
                         <input
                             type="password"
                             prop:value=move || password.get()
                             on:input=move |ev| password.set(event_target_value(&ev))
                             class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
-                            placeholder="password"
+                            placeholder={t!("password")}
                         />
                     </div>
 
-                    <div class="rounded-md bg-slate-100 px-3 py-2 text-xs text-slate-600">
-                        "Use demo@avored.local / password1234 to sign in."
-                    </div>
 
                     {move || {
                         if !error.get().is_empty() {
@@ -148,13 +151,13 @@ pub fn LoginPage() -> impl IntoView {
                             ().into_view().into_any()
                         }
                     }}
-
+                    
                     <button
                         type="submit"
                         disabled=move || submitting.get()
                         class="w-full rounded-md bg-primary-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-primary-600 disabled:cursor-not-allowed disabled:bg-primary-300"
                     >
-                        {move || if submitting.get() { "Signing in..." } else { "Sign in" }}
+                        {move || if submitting.get() { t!("signing_in") } else { t!("sign_in") }}
                     </button>
                 </form>
             </div>

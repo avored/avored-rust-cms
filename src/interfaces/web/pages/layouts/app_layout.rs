@@ -154,11 +154,11 @@ pub fn AppLayout() -> impl IntoView {
                                             </div>
 
                                             <a href="/admin/profile" class="block px-4 py-2 text-sm font-medium text-gray-800 transition duration-150 ease-in-out hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none dark:text-gray-200">
-                                                {t!("admin.layout.header.profile_link")}
+                                                {t!("profile")}
                                             </a>
 
                                             <a href="#" on:click=on_logout_click class="block px-4 py-2 text-sm font-medium text-gray-800 transition duration-150 ease-in-out hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none dark:text-gray-200">
-                                                {t!("admin.layout.header.logout_link")}
+                                                {t!("logout")}
                                             </a>
                                         </div>
                                     </div>
