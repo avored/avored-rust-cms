@@ -15,6 +15,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/auth/login",
             axum::routing::post(crate::interfaces::api::auth::login_handler),
         )
+        .route(
+            "/api/misc/setup",
+            axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
+        )
         .leptos_routes_with_context(
             &state,
             routes,

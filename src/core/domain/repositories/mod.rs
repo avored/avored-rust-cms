@@ -3,3 +3,7 @@
 pub mod auth_repository;
 
 pub use auth_repository::AuthRepository;
+
+pub mod misc_repository;
+
+pub use misc_repository::MiscRepository;

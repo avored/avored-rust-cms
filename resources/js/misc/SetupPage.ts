@@ -18,7 +18,7 @@ export function setupPage() {
             this.submitting = true;
             this.errorMessage = '';
 
-            const res = await http.post('/api/setup', {
+            const res = await http.post('/api/misc/setup', {
                 name: this.name,
                 email: this.email,
                 password: this.password,
@@ -28,7 +28,7 @@ export function setupPage() {
             this.submitting = false;
 
             if (res.ok) {
-                window.location.href = '/admin/login';
+                window.location.href = '/auth/login';
             } else {
                 this.errorMessage = res.error || 'Setup failed';
             }

@@ -1,6 +1,8 @@
 use crate::error::{Result, Error};
 pub mod auth_repository;
 
+pub mod misc_repository;
+
 
 pub use auth_repository::AuthRepositoryImpl;
 use surrealdb::types::{Object, Value};

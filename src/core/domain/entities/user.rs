@@ -9,6 +9,16 @@ pub struct User {
 }
 
 
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct StorableUser {
+    pub name: String,
+    pub email: String,
+    pub password: String
+}
+
+
+
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for User {
     type Error = crate::error::Error;

@@ -4,9 +4,7 @@ use axum::extract::FromRef;
 use leptos::config::LeptosOptions;
 
 use crate::{
-    core::application::use_cases::AuthUseCase,
-    infrastructure::persistence::AuthRepositoryImpl,
-    providers::{
+    core::application::use_cases::{AuthUseCase, MiscUseCase}, infrastructure::persistence::{AuthRepositoryImpl, misc_repository::MiscRepositoryImpl}, providers::{
         avored_config_provider::AvoRedConfigProvider,
         avored_database_provider::AvoRedDatabaseProvider,
     },
@@ -18,6 +16,9 @@ pub struct AppState {
 
     /// Auth use case with SurrealDB persistence repository
     pub auth_use_case: AuthUseCase<AuthRepositoryImpl>,
+
+
+    pub misc_use_case: MiscUseCase<MiscRepositoryImpl>,
 
     /// Database provider for `AvoRed` (SurrealDB).
     pub database_provider: Arc<AvoRedDatabaseProvider>,
@@ -41,11 +42,16 @@ impl AppState {
         let auth_repository = AuthRepositoryImpl::new(avored_database_provider.clone());
         let auth_use_case = AuthUseCase::new(auth_repository);
 
+        let misc_repository = MiscRepositoryImpl::new(avored_database_provider.clone());
+        let misc_use_case = MiscUseCase::new(misc_repository);
+
+
         Ok(Self {
             leptos_options,
-            auth_use_case,
             database_provider: avored_database_provider,
             config: Arc::new(config),
+            auth_use_case,
+            misc_use_case
         })
     }
 }
