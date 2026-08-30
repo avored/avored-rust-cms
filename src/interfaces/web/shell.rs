@@ -11,7 +11,7 @@ pub fn Shell() -> impl IntoView {
         <html lang="en">
             <head>
                 <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico"/>
-                <Stylesheet id="leptos" href="/assets/css/app.css"/>
+                <Stylesheet id="leptos" href={format!("/assets/css/app.css?v={}", chrono::Utc::now().timestamp())} />
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
                 <MetaTags/>

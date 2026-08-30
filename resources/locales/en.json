@@ -8,5 +8,9 @@
     "password": "Password",
     "remember_me": "Remember me",
     "sign_in": "Sign in",
-    "signing_in": "Signing in..."
+    "signing_in": "Signing in...",
+    "setup": "Setup",
+    "setup_avored": "Setup Avored",
+    "name": "Name",
+    "confirm_password": "Confirm Password"
 }

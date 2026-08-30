@@ -1,6 +1,7 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
+use crate::interfaces::web::pages::misc::setup_page::SetupPage;
 use crate::interfaces::web::pages::{
     auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,
     layouts::app_layout::AppLayout,
@@ -25,6 +26,7 @@ pub fn WebApp() -> impl IntoView {
             <Routes fallback=|| "Page not found.".into_view()>
                     <Route path=path!("") view=HomePage/>
                     <Route path=path!("/auth/login") view=LoginPage/>
+                    <Route path=path!("/setup") view=SetupPage/>
 
                     <ParentRoute path=path!("/admin") view=AppLayout>
                         <Route path=StaticSegment("") view=DashboardPage/>

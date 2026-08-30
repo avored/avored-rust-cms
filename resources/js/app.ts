@@ -1,6 +1,18 @@
 import "../css/app.css";
 
 import "./init";
+import { setupPage } from "./misc/SetupPage";
+
+declare global {
+  interface Window {
+    setupPage: typeof setupPage;
+  }
+}
+
+window.setupPage = setupPage;
+if (window.Alpine) {
+  window.Alpine.data("setupPage", setupPage);
+}
 
 const initApp = () => {
   if (window.Alpine) {
