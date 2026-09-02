@@ -3,6 +3,7 @@ use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use rust_i18n::t;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::interfaces::web::protected_routes::{AuthContext, LoggedInUser};
 
@@ -26,11 +27,25 @@ pub struct LoginUser {
     pub email: String,
 }
 
+/// Matches the backend `{ status: false, errors: [{key, message}] }` shape.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ApiValidationResponse {
+    pub status: bool,
+    pub errors: Option<Vec<ApiValidationError>>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ApiValidationError {
+    pub key: String,
+    pub message: String,
+}
+
 #[component]
 pub fn LoginPage() -> impl IntoView {
     let email = RwSignal::new("demo@avored.local".to_string());
     let password = RwSignal::new("password1234".to_string());
     let error = RwSignal::new(String::new());
+    let field_errors = RwSignal::new(HashMap::<String, String>::new());
     let submitting = RwSignal::new(false);
     let auth_context = use_context::<AuthContext>().expect("AuthContext should be provided");
     let navigate = use_navigate();
@@ -49,6 +64,7 @@ pub fn LoginPage() -> impl IntoView {
 
         submitting.set(true);
         error.set(String::new());
+        field_errors.set(HashMap::new());
 
         leptos::task::spawn_local(async move {
             let request_body = serde_json::to_string(&LoginRequest {
@@ -82,7 +98,7 @@ pub fn LoginPage() -> impl IntoView {
                             log::info!("Login successful, redirecting to /admin");
                             navigate("/admin", Default::default());
                         } else {
-                            error.set("Demo login failed.".to_string());
+                            error.set("Login failed.".to_string());
                         }
                     }
                     Err(err) => {
@@ -90,8 +106,27 @@ pub fn LoginPage() -> impl IntoView {
                     }
                 },
                 Ok(response) => {
-                    let payload = response.text().await.unwrap_or_default();
-                    error.set(format!("Login failed: {payload}"));
+                    // Try to parse as a structured validation error response
+                    match response.json::<ApiValidationResponse>().await {
+                        Ok(api_err) => {
+                            if let Some(errs) = api_err.errors {
+                                if !errs.is_empty() {
+                                    let map: HashMap<String, String> = errs
+                                        .into_iter()
+                                        .map(|e| (e.key, e.message))
+                                        .collect();
+                                    field_errors.set(map);
+                                } else {
+                                    error.set("Login failed.".to_string());
+                                }
+                            } else {
+                                error.set("Login failed.".to_string());
+                            }
+                        }
+                        Err(_) => {
+                            error.set("Login failed.".to_string());
+                        }
+                    }
                 }
                 Err(err) => {
                     error.set(format!("Unable to reach login API: {err}"));
@@ -111,6 +146,20 @@ pub fn LoginPage() -> impl IntoView {
                     </h1>
                 </div>
 
+                // General error banner (invalid credentials, network errors, etc.)
+                {move || {
+                    if !error.get().is_empty() {
+                        view! {
+                            <div class="mb-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700" role="alert">
+                                {error.get()}
+                            </div>
+                        }
+                        .into_any()
+                    } else {
+                        ().into_view().into_any()
+                    }
+                }}
+
                 <form on:submit=on_submit class="space-y-4">
                     <div>
                         <label class="mb-1 block text-sm font-medium text-slate-700">
@@ -120,9 +169,21 @@ pub fn LoginPage() -> impl IntoView {
                             type="email"
                             prop:value=move || email.get()
                             on:input=move |ev| email.set(event_target_value(&ev))
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
+                            class=move || {
+                                let base = "w-full rounded-md border px-3 py-2 outline-none ring-0 transition focus:border-primary-500";
+                                if field_errors.get().contains_key("email") {
+                                    format!("{base} border-red-400 focus:border-red-500")
+                                } else {
+                                    format!("{base} border-slate-300")
+                                }
+                            }
                             placeholder={t!("email_address")}
                         />
+                        {move || {
+                            field_errors.get().get("email").cloned().map(|msg| view! {
+                                <p class="mt-1 text-xs text-red-600">{msg}</p>
+                            })
+                        }}
                     </div>
 
                     <div>
@@ -133,25 +194,23 @@ pub fn LoginPage() -> impl IntoView {
                             type="password"
                             prop:value=move || password.get()
                             on:input=move |ev| password.set(event_target_value(&ev))
-                            class="w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500"
+                            class=move || {
+                                let base = "w-full rounded-md border px-3 py-2 outline-none ring-0 transition focus:border-primary-500";
+                                if field_errors.get().contains_key("password") {
+                                    format!("{base} border-red-400 focus:border-red-500")
+                                } else {
+                                    format!("{base} border-slate-300")
+                                }
+                            }
                             placeholder={t!("password")}
                         />
+                        {move || {
+                            field_errors.get().get("password").cloned().map(|msg| view! {
+                                <p class="mt-1 text-xs text-red-600">{msg}</p>
+                            })
+                        }}
                     </div>
 
-
-                    {move || {
-                        if !error.get().is_empty() {
-                            view! {
-                                <div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                                    {error.get()}
-                                </div>
-                            }
-                            .into_any()
-                        } else {
-                            ().into_view().into_any()
-                        }
-                    }}
-                    
                     <button
                         type="submit"
                         disabled=move || submitting.get()
