@@ -3,15 +3,16 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
     headers?: Record<string, string>;
 }
 
-export interface ApiResponse<T = any> {
-    data: T | null;
-    error: string | null;
+/**
+ * Thrown by the http utility for any non-2xx response.
+ * Carry the parsed JSON body so callers (e.g. formErrorsMixin.applyApiErrors)
+ * can inspect structured error payloads like:
+ *   { status: false, errors: [{ key: "name", message: "validation_required" }] }
+ */
+export class HttpError extends Error {
+    /** HTTP status code (e.g. 400, 401, 422, 500) */
     status: number;
-    ok: boolean;
-}
-
-class HttpError extends Error {
-    status: number;
+    /** Parsed JSON body of the error response, or null for non-JSON responses */
     data: any;
 
     constructor(message: string, status: number, data: any = null) {
@@ -38,12 +39,23 @@ function buildUrl(url: string, params?: Record<string, string | number | boolean
     return url.includes('?') ? `${url}&${queryString}` : `${url}?${queryString}`;
 }
 
+/**
+ * Core fetch wrapper.
+ *
+ * - Returns the parsed response body `T` on success (2xx).
+ * - Throws `HttpError` on any non-2xx HTTP response, with `err.status` and
+ *   `err.data` set to the parsed response body.
+ * - Throws a plain `Error` on network failures (no response at all).
+ *
+ * This means callers never need to check `res.ok`; all error paths go through
+ * the catch block, which is consistent with the native Fetch API convention.
+ */
 async function request<T = any>(
     url: string,
     method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE',
     body?: any,
     options: RequestOptions = {}
-): Promise<ApiResponse<T>> {
+): Promise<T> {
     const { params, headers = {}, ...customConfig } = options;
 
     const defaultHeaders: Record<string, string> = {
@@ -91,35 +103,20 @@ async function request<T = any>(
 
     const finalUrl = buildUrl(url, params);
 
-    try {
-        const response = await fetch(finalUrl, config);
-        const isJson = response.headers.get('content-type')?.includes('application/json');
-        const data = isJson ? await response.json() : await response.text();
+    const response = await fetch(finalUrl, config);
+    const isJson = response.headers.get('content-type')?.includes('application/json');
+    const data = isJson ? await response.json() : await response.text();
 
-        if (!response.ok) {
-            const errorMessage = (typeof data === 'object' && data?.message) || response.statusText || 'Request failed';
-            return {
-                data: null,
-                error: errorMessage,
-                status: response.status,
-                ok: false,
-            };
-        }
-
-        return {
-            data: data as T,
-            error: null,
-            status: response.status,
-            ok: true,
-        };
-    } catch (err: any) {
-        return {
-            data: null,
-            error: err.message || 'Network error occurred',
-            status: 0,
-            ok: false,
-        };
+    if (!response.ok) {
+        // Prefer a `message` field in the JSON body, fall back to HTTP statusText
+        const errorMessage =
+            (typeof data === 'object' && data?.message) ||
+            response.statusText ||
+            'Request failed';
+        throw new HttpError(errorMessage, response.status, data);
     }
+
+    return data as T;
 }
 
 export const http = {

@@ -1,13 +1,15 @@
-import http from '../utils/http';
+import http, { HttpError } from '../utils/http';
+import { formErrorsMixin } from '../utils/formErrors';
 
 export function setupPage() {
     return {
+        ...formErrorsMixin(),
+
         name: '',
         email: '',
         password: '',
         confirmPassword: '',
         submitting: false,
-        errorMessage: '',
 
         async handleSubmit() {
             if (this.password !== this.confirmPassword) {
@@ -16,21 +18,21 @@ export function setupPage() {
             }
 
             this.submitting = true;
-            this.errorMessage = '';
+            this.clearErrors();
 
-            const res = await http.post('/api/misc/setup', {
-                name: this.name,
-                email: this.email,
-                password: this.password,
-                confirm_password: this.confirmPassword,
-            });
+            try {
+                await http.post('/api/misc/setup', {
+                    name: this.name,
+                    email: this.email,
+                    password: this.password,
+                    confirm_password: this.confirmPassword,
+                });
 
-            this.submitting = false;
-
-            if (res.ok) {
                 window.location.href = '/auth/login';
-            } else {
-                this.errorMessage = res.error || 'Setup failed';
+            } catch (err: any) {
+                this.applyApiErrors(err);
+            } finally {
+                this.submitting = false;
             }
         },
     };

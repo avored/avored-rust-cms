@@ -1,4 +1,4 @@
-use crate::core::domain::{entities::{User, user::StorableUser}, repositories::MiscRepository};
+use crate::core::domain::{entities::user::StorableUser, repositories::MiscRepository};
 
 #[derive(Clone)]
 pub struct MiscUseCase<R>
@@ -16,9 +16,12 @@ where
         Self { repository }
     }
 
-    pub async fn setup(&self, storable_user: StorableUser) -> crate::error::Result<User> {
+    pub async fn setup(&self, storable_user: StorableUser) -> crate::error::Result<bool> {
         println!("->> {:<12} - setup", "MISC_USE_CASE");
 
-        self.repository.create_user(storable_user).await
+        match self.repository.create_user(storable_user).await {
+            Ok(_) => Ok(true),
+            Err(e) => Err(e),
+        }
     }
 }

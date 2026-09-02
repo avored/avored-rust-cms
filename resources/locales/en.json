@@ -12,5 +12,6 @@
     "setup": "Setup",
     "setup_avored": "Setup Avored",
     "name": "Name",
-    "confirm_password": "Confirm Password"
+    "confirm_password": "Confirm Password",
+    "required": "The :attribute is required."
 }

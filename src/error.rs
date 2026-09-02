@@ -2,6 +2,8 @@ use tracing::error;
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 
+use crate::core::domain::entities::error_message::ErrorResponse;
+
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
 
@@ -10,6 +12,7 @@ pub type Result<T> = core::result::Result<T, Error>;
 pub enum Error {
     Generic(String),
     ConfigMissing(String),
+    BadRequest(ErrorResponse),
 }
 
 impl std::error::Error for Error {}
@@ -47,7 +50,7 @@ impl From<surrealdb::Error> for Error {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            // Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
+            Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
             // Self::Unauthorizeed(resource_name) => {
                 // let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
                 // (StatusCode::UNAUTHORIZED, error_message).into_response()
@@ -57,13 +60,14 @@ impl IntoResponse for Error {
     }
 }
 
-// impl IntoResponse for ErrorResponse {
-//     fn into_response(self) -> Response {
-//         let validation_errors = match serde_json::to_string(&self) {
-//             Ok(str) => str,
-//             _ => "validation error 400.".to_string(),
-//         };
 
-//         (StatusCode::BAD_REQUEST, validation_errors).into_response()
-//     }
-// }
+impl IntoResponse for ErrorResponse {
+    fn into_response(self) -> Response {
+        let validation_errors = match serde_json::to_string(&self) {
+            Ok(str) => str,
+            _ => "validation error 400.".to_string(),
+        };
+
+        (StatusCode::BAD_REQUEST, validation_errors).into_response()
+    }
+}
