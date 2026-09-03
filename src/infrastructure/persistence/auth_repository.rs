@@ -51,3 +51,22 @@ impl AuthRepository for AuthRepositoryImpl {
     }
 }
 
+
+
+pub async fn test_auth_repository() -> AuthRepositoryImpl {
+    let provider = AvoRedDatabaseProvider::register("mem://", "test", "auth")
+        .await
+        .expect("in-memory database should initialize");
+
+    let (datastore, session) = &provider.db;
+    datastore
+        .execute(
+            "CREATE users:test_user SET name = 'Test User', email = 'test@example.com', password = 'secret';",
+            session,
+            None,
+        )
+        .await
+        .expect("test user should be created");
+
+    AuthRepositoryImpl::new(Arc::new(provider))
+}
