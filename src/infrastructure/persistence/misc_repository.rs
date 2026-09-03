@@ -47,3 +47,10 @@ impl MiscRepository for MiscRepositoryImpl {
     }
 }
 
+pub async fn test_misc_repository() -> MiscRepositoryImpl {
+    let provider = AvoRedDatabaseProvider::register("mem://", "test", "auth")
+        .await
+        .expect("in-memory database should initialize");
+
+    MiscRepositoryImpl::new(Arc::new(provider))
+}
