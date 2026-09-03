@@ -34,6 +34,10 @@ console_log = "1"
 log = "0.4"
 async-trait = "0.1"
 
+[dev-dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tower = { version = "0.5.2", features = ["util"] }
+
 [features]
 default = ["ssr"]
 
