@@ -5,7 +5,6 @@ pub struct EntityModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
     pub created_at: String,
     pub updated_at: String,
     pub deleted_at: Option<String>,
@@ -15,7 +14,6 @@ pub struct EntityModel {
 pub struct StorableEntity {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
 }
 
 #[cfg(feature = "ssr")]
@@ -42,11 +40,6 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
             _ => String::new(),
         };
 
-        let data_type = match obj.remove("data_type") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
         let created_at = match obj.remove("created_at") {
             Some(surrealdb::types::Value::Datetime(v)) => v.to_string(),
             Some(surrealdb::types::Value::String(v)) => v,
@@ -69,7 +62,6 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
             id,
             name,
             identifier,
-            data_type,
             created_at,
             updated_at,
             deleted_at,

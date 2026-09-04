@@ -25,16 +25,12 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "CREATE entities SET name=$name, identifier=$identifier, data_type=$data_type, created_at=time::now(), updated_at=time::now(), deleted_at=NONE;";
+        let sql = "CREATE entities SET name=$name, identifier=$identifier, created_at=time::now(), updated_at=time::now(), deleted_at=NONE;";
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_entity.name.into())),
             (
                 "identifier".into(),
                 Value::String(storable_entity.identifier.into()),
-            ),
-            (
-                "data_type".into(),
-                Value::String(storable_entity.data_type.into()),
             ),
         ]
         .into();
@@ -138,17 +134,13 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
-        let sql = "UPDATE entities SET name=$name, identifier=$identifier, data_type=$data_type, updated_at=time::now() WHERE id = $id AND deleted_at = NONE;";
+        let sql = "UPDATE entities SET name=$name, identifier=$identifier, updated_at=time::now() WHERE id = $id AND deleted_at = NONE;";
         let data: BTreeMap<String, Value> = [
             ("id".into(), Value::RecordId(target_record)),
             ("name".into(), Value::String(storable_entity.name.into())),
             (
                 "identifier".into(),
                 Value::String(storable_entity.identifier.into()),
-            ),
-            (
-                "data_type".into(),
-                Value::String(storable_entity.data_type.into()),
             ),
         ]
         .into();

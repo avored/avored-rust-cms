@@ -16,7 +16,6 @@ pub struct PaginateEntityCommand {
 pub struct CreateEntityCommand {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
 }
 
 impl CreateEntityCommand {
@@ -24,7 +23,6 @@ impl CreateEntityCommand {
         StorableEntity {
             name: self.name.clone(),
             identifier: self.identifier.clone(),
-            data_type: self.data_type.clone(),
         }
     }
 
@@ -44,14 +42,6 @@ impl CreateEntityCommand {
             errors.push(ErrorMessageResponse {
                 key: String::from("identifier"),
                 message: t!("required", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
-            });
-            valid = false;
-        }
-
-        if !self.data_type.is_required()? {
-            errors.push(ErrorMessageResponse {
-                key: String::from("data_type"),
-                message: t!("required", locale = locale, attribute = t!("data_type", locale = locale)).to_string(),
             });
             valid = false;
         }
@@ -71,7 +61,6 @@ impl CreateEntityCommand {
 pub struct UpdateEntityCommand {
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
 }
 
 impl UpdateEntityCommand {
@@ -79,7 +68,6 @@ impl UpdateEntityCommand {
         StorableEntity {
             name: self.name.clone(),
             identifier: self.identifier.clone(),
-            data_type: self.data_type.clone(),
         }
     }
 
@@ -99,14 +87,6 @@ impl UpdateEntityCommand {
             errors.push(ErrorMessageResponse {
                 key: String::from("identifier"),
                 message: t!("required", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
-            });
-            valid = false;
-        }
-
-        if !self.data_type.is_required()? {
-            errors.push(ErrorMessageResponse {
-                key: String::from("data_type"),
-                message: t!("required", locale = locale, attribute = t!("data_type", locale = locale)).to_string(),
             });
             valid = false;
         }
@@ -127,7 +107,6 @@ pub struct EntityResponse {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub data_type: String,
     pub created_at: String,
     pub updated_at: String,
     pub deleted_at: Option<String>,
@@ -139,7 +118,6 @@ impl From<EntityModel> for EntityResponse {
             id: model.id,
             name: model.name,
             identifier: model.identifier,
-            data_type: model.data_type,
             created_at: model.created_at,
             updated_at: model.updated_at,
             deleted_at: model.deleted_at,

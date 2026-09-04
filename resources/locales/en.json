@@ -17,6 +17,5 @@
     "entities": "Entities",
     "create_entity": "Create Entity",
     "edit_entity": "Edit Entity",
-    "identifier": "Identifier",
-    "data_type": "Data Type"
+    "identifier": "Identifier"
 }

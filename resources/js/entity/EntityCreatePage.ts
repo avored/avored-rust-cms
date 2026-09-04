@@ -7,7 +7,6 @@ export function entityCreatePage() {
 
         name: '',
         identifier: '',
-        data_type: 'TEXT',
         submitting: false,
         identifierTouched: false,
 
@@ -29,10 +28,9 @@ export function entityCreatePage() {
             this.clearErrors();
 
             try {
-                await http.post('/api/entity', {
+                await http.post('/api/entities', {
                     name: this.name,
                     identifier: this.identifier,
-                    data_type: this.data_type,
                 });
 
                 window.location.href = '/admin/entity';

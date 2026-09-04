@@ -31,7 +31,6 @@ async fn test_entity_repository_crud_lifecycle() {
     let storable = StorableEntity {
         name: "Page Entity".to_string(),
         identifier: "page".to_string(),
-        data_type: "PAGE".to_string(),
     };
     let created = repo.create(storable).await.expect("create entity failed");
     assert_eq!(created.name, "Page Entity");
@@ -58,7 +57,6 @@ async fn test_entity_repository_crud_lifecycle() {
             StorableEntity {
                 name: "Updated Page".to_string(),
                 identifier: "page_v2".to_string(),
-                data_type: "PAGE".to_string(),
             },
         )
         .await
@@ -107,7 +105,7 @@ async fn test_entity_rest_api_endpoints() {
         .uri("/api/entity")
         .header("content-type", "application/json")
         .body(Body::from(
-            r#"{"name":"Product Entity","identifier":"product","data_type":"PRODUCT"}"#,
+            r#"{"name":"Product Entity","identifier":"product"}"#,
         ))
         .unwrap();
 
@@ -153,7 +151,7 @@ async fn test_entity_rest_api_endpoints() {
         .uri(format!("/api/entity/{}", entity_id))
         .header("content-type", "application/json")
         .body(Body::from(
-            r#"{"name":"Product Updated","identifier":"product_updated","data_type":"PRODUCT"}"#,
+            r#"{"name":"Product Updated","identifier":"product_updated"}"#,
         ))
         .unwrap();
 

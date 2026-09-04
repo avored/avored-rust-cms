@@ -1,6 +1,10 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+[x-cloak] {
+  display: none !important;
+}
+
 @theme {
     --color-primary-50: oklch(0 0 0);
     --color-primary-100: oklch(0 0 0);

@@ -9,7 +9,6 @@ export function entityEditPage(entityId: string) {
         id: entityId,
         name: '',
         identifier: '',
-        data_type: 'TEXT',
         loading: false,
         submitting: false,
 
@@ -21,10 +20,9 @@ export function entityEditPage(entityId: string) {
             this.loading = true;
             this.clearErrors();
             try {
-                const entity = await http.get<EntityInterface>(`/api/entity/${this.id}`);
+                const entity = await http.get<EntityInterface>(`/api/entities/${this.id}`);
                 this.name = entity.name || '';
                 this.identifier = entity.identifier || '';
-                this.data_type = entity.data_type || 'TEXT';
             } catch (err: any) {
                 this.applyApiErrors(err);
             } finally {
@@ -37,10 +35,9 @@ export function entityEditPage(entityId: string) {
             this.clearErrors();
 
             try {
-                await http.put(`/api/entity/${this.id}`, {
+                await http.put(`/api/entities/${this.id}`, {
                     name: this.name,
                     identifier: this.identifier,
-                    data_type: this.data_type,
                 });
 
                 window.location.href = '/admin/entity';
