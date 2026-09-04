@@ -2,9 +2,10 @@ use crate::error::{Result, Error};
 pub mod auth_repository;
 
 pub mod misc_repository;
-
+pub mod entity_repository;
 
 pub use auth_repository::AuthRepositoryImpl;
+pub use entity_repository::EntityRepositoryImpl;
 use surrealdb::types::{Object, Value};
 use surrealdb_core::dbs::QueryResult;
 
@@ -19,9 +20,9 @@ pub fn into_iter_objects(responses: Vec<QueryResult>) -> Result<impl Iterator<It
 
     match response {
         Some(Value::Array(arr)) => {
-            let it = arr.into_iter().map(|v| match v {
-                Value::Object(object) => Ok(object),
-                _ => Err(Error::Generic("empty object".to_string())),
+            let it = arr.into_iter().filter_map(|v| match v {
+                Value::Object(object) => Some(Ok(object)),
+                _ => None,
             });
 
             Ok(it)

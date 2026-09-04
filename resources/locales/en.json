@@ -13,5 +13,10 @@
     "setup_avored": "Setup Avored",
     "name": "Name",
     "confirm_password": "Confirm Password",
-    "required": "The :attribute is required."
+    "required": "The :attribute is required.",
+    "entities": "Entities",
+    "create_entity": "Create Entity",
+    "edit_entity": "Edit Entity",
+    "identifier": "Identifier",
+    "data_type": "Data Type"
 }

@@ -7,3 +7,7 @@ pub use auth_repository::AuthRepository;
 pub mod misc_repository;
 
 pub use misc_repository::MiscRepository;
+
+pub mod entity_repository;
+
+pub use entity_repository::EntityRepository;

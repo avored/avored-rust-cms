@@ -8,3 +8,5 @@ pub mod auth;
 pub mod layouts;
 
 pub mod misc;
+
+pub mod admin;

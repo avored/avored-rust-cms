@@ -4,8 +4,11 @@ use axum::extract::FromRef;
 use leptos::config::LeptosOptions;
 
 use crate::{
-    core::application::use_cases::{AuthUseCase, MiscUseCase},
-    infrastructure::persistence::{misc_repository::MiscRepositoryImpl, AuthRepositoryImpl},
+    core::application::use_cases::{AuthUseCase, EntityUseCase, MiscUseCase},
+    infrastructure::persistence::{
+        entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
+        AuthRepositoryImpl,
+    },
     providers::{
         avored_config_provider::AvoRedConfigProvider,
         avored_database_provider::AvoRedDatabaseProvider,
@@ -20,6 +23,8 @@ pub struct AppState {
     pub auth_use_case: AuthUseCase<AuthRepositoryImpl>,
 
     pub misc_use_case: MiscUseCase<MiscRepositoryImpl>,
+
+    pub entity_use_case: EntityUseCase<EntityRepositoryImpl>,
 
     /// Database provider for `AvoRed` (SurrealDB).
     pub database_provider: Arc<AvoRedDatabaseProvider>,
@@ -47,12 +52,16 @@ impl AppState {
         let misc_repository = MiscRepositoryImpl::new(avored_database_provider.clone());
         let misc_use_case = MiscUseCase::new(misc_repository);
 
+        let entity_repository = EntityRepositoryImpl::new(avored_database_provider.clone());
+        let entity_use_case = EntityUseCase::new(entity_repository);
+
         Ok(Self {
             leptos_options,
             database_provider: avored_database_provider,
             config: Arc::new(config),
             auth_use_case,
             misc_use_case,
+            entity_use_case,
         })
     }
 }
@@ -70,6 +79,7 @@ pub async fn test_avored_state() -> AppState {
         crate::infrastructure::persistence::auth_repository::test_auth_repository().await;
     let database_provider = auth_repository.database_provider.clone();
     let misc_repository = MiscRepositoryImpl::new(database_provider.clone());
+    let entity_repository = EntityRepositoryImpl::new(database_provider.clone());
 
     AppState {
         leptos_options: leptos::config::LeptosOptions::builder()
@@ -77,6 +87,7 @@ pub async fn test_avored_state() -> AppState {
             .build(),
         auth_use_case: AuthUseCase::new(auth_repository),
         misc_use_case: MiscUseCase::new(misc_repository),
+        entity_use_case: EntityUseCase::new(entity_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {
             database_folder: "mem://".to_string(),

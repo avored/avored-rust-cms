@@ -41,6 +41,13 @@ impl AvoRedDatabaseProvider {
             .with_ns(&database_namespace)
             .with_db(&database_name);
 
+        // 3. Ensure essential tables exist
+        let define_tables_sql = "
+            DEFINE TABLE IF NOT EXISTS users SCHEMALESS;
+            DEFINE TABLE IF NOT EXISTS entities SCHEMALESS;
+        ";
+        datastore.execute(define_tables_sql, &database_session, None).await?;
+
         let db = (datastore, database_session);
 
         Ok(Self { db })

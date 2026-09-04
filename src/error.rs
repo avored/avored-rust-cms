@@ -41,7 +41,7 @@ impl From<serde_json::Error> for Error {
 impl From<surrealdb::Error> for Error {
     fn from(val: surrealdb::Error) -> Self {
         error!("there is an issue with surreal db: {val:?}");
-        Self::Generic("there is an issue with surreal db".to_string())
+        Self::Generic(format!("there is an issue with surreal db: {val:?}"))
     }
 }
  
@@ -51,11 +51,7 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
             Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            // Self::Unauthorizeed(resource_name) => {
-                // let error_message = format!("unauthorized: you do not have access to access this ({resource_name}) resource");
-                // (StatusCode::UNAUTHORIZED, error_message).into_response()
-            // }
-            _ => (StatusCode::INTERNAL_SERVER_ERROR, "test 500").into_response(),
+            err => (StatusCode::INTERNAL_SERVER_ERROR, format!("error 500: {:?}", err)).into_response(),
         }
     }
 }

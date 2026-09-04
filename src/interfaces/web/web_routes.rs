@@ -1,6 +1,9 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
+use crate::interfaces::web::pages::admin::entity::{
+    EntityCreatePage, EntityEditPage, EntityIndexPage,
+};
 use crate::interfaces::web::pages::misc::setup_page::SetupPage;
 use crate::interfaces::web::pages::{
     auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,
@@ -30,6 +33,9 @@ pub fn WebApp() -> impl IntoView {
 
                     <ParentRoute path=path!("/admin") view=AppLayout>
                         <Route path=StaticSegment("") view=DashboardPage/>
+                        <Route path=path!("entity") view=EntityIndexPage/>
+                        <Route path=path!("entity/create") view=EntityCreatePage/>
+                        <Route path=path!("entity/:id/edit") view=EntityEditPage/>
                     </ParentRoute>
                 </Routes>
             </main>

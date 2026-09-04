@@ -19,6 +19,17 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/misc/setup",
             axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
         )
+        .route(
+            "/api/entities",
+            axum::routing::post(crate::interfaces::api::entity::create_entity_handler)
+                .get(crate::interfaces::api::entity::paginate_entities_handler),
+        )
+        .route(
+            "/api/entities/{id}",
+            axum::routing::get(crate::interfaces::api::entity::fetch_entity_handler)
+                .put(crate::interfaces::api::entity::update_entity_handler)
+                .delete(crate::interfaces::api::entity::delete_entity_handler),
+        )
         .leptos_routes_with_context(
             &state,
             routes,

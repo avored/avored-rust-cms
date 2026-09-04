@@ -79,6 +79,15 @@ pub fn AppLayout() -> impl IntoView {
                         <span class="ml-2">{t!("dashboard")}</span>
                     </a>
 
+                    <a href="/admin/entity" class="group flex items-center rounded-md px-4 py-2 text-gray-700 transition hover:bg-gray-100" active-class="bg-blue-50 text-blue-600 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={class}>
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        <span class="ml-2">{t!("entities")}</span>
+                    </a>
+
                     <a href="/admin/category" class="group flex items-center rounded-md px-4 py-2 text-gray-700 transition hover:bg-gray-100" active-class="bg-blue-50 text-blue-600 font-medium">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={class}>
                             <circle cx="12" cy="12" r="10"></circle>

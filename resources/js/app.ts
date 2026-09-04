@@ -2,16 +2,29 @@ import "../css/app.css";
 
 import "./init";
 import { setupPage } from "./misc/SetupPage";
+import { entityIndexPage } from "./entity/EntityIndexPage";
+import { entityCreatePage } from "./entity/EntityCreatePage";
+import { entityEditPage } from "./entity/EntityEditPage";
 
 declare global {
   interface Window {
     setupPage: typeof setupPage;
+    entityIndexPage: typeof entityIndexPage;
+    entityCreatePage: typeof entityCreatePage;
+    entityEditPage: typeof entityEditPage;
   }
 }
 
 window.setupPage = setupPage;
+window.entityIndexPage = entityIndexPage;
+window.entityCreatePage = entityCreatePage;
+window.entityEditPage = entityEditPage;
+
 if (window.Alpine) {
   window.Alpine.data("setupPage", setupPage);
+  window.Alpine.data("entityIndexPage", entityIndexPage);
+  window.Alpine.data("entityCreatePage", entityCreatePage);
+  window.Alpine.data("entityEditPage", entityEditPage);
 }
 
 const initApp = () => {
