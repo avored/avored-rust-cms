@@ -53,6 +53,22 @@ impl From<argon2::password_hash::Error> for Error {
     }
 }
 
+impl From<argon2::password_hash::phc::Error> for Error {
+    fn from(actual_error: argon2::password_hash::phc::Error
+) -> Self {
+        error!("argon2 password hash error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with password hashing"))
+    }
+}
+
+
+impl From<jsonwebtoken::errors::Error> for Error {
+    fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
+        error!("jsonwebtoken error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with generating jwt token"))
+    }
+}
+
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {

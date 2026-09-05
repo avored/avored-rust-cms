@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
+use crate::error::Result;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct EntityModel {
@@ -24,7 +25,7 @@ pub struct StorableEntity {
 impl TryFrom<surrealdb::types::Object> for EntityModel {
     type Error = crate::error::Error;
 
-    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self, Self::Error> {
+    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self> {
         let id = match obj.remove("id") {
             Some(surrealdb::types::Value::RecordId(v)) => match v.key {
                 surrealdb::types::RecordIdKey::String(k) => format!("{}:{}", v.table, k),

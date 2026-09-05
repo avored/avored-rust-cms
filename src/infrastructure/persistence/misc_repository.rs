@@ -25,7 +25,7 @@ impl MiscRepository for MiscRepositoryImpl {
     async fn create_user(&self, storable_user: StorableUser) -> Result<UserModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "CREATE users SET name=$name, email=$email, password=$password;, created_at=now(), updated_at=now(), created_by=$performing_user, updated_by=$performing_user;";
+        let sql = "CREATE users SET name=$name, email=$email, password=$password, created_at=time::now(), updated_at=time::now(), created_by=$performing_user, updated_by=$performing_user;";
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_user.name.into())),
             ("email".into(), Value::String(storable_user.email.into())),

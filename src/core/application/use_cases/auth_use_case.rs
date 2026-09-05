@@ -1,6 +1,7 @@
+use jsonwebtoken::{EncodingKey, Header, encode};
+
 use crate::core::{
-    application::dtos::{LoginCommand, LoginResult},
-    domain::{extensions::string_extension::StringExtension, repositories::AuthRepository},
+    application::dtos::{LoginCommand, LoginResult}, domain::{entities::user::TokenClaims, extensions::string_extension::StringExtension, repositories::AuthRepository},
 };
 use crate::error::Result;
 
@@ -20,7 +21,7 @@ where
         Self { repository }
     }
 
-    pub async fn auth(&self, command: LoginCommand) -> Result<LoginResult> {
+    pub async fn auth(&self, command: LoginCommand, jwt_secret_key: String) -> Result<LoginResult> {
         let user = self.repository.authenticate(&command.email).await?;
 
         let password = command.password.clone();
@@ -32,9 +33,18 @@ where
             ));
         }
 
+
+        let claims: TokenClaims = user.clone().try_into()?;
+
+        let token = encode(
+            &Header::default(),
+            &claims,
+            &EncodingKey::from_secret(jwt_secret_key.as_bytes()),
+        )?;
+
         Ok(LoginResult {
-            token: format!("demo-token-for-{}", user.id),
-            user,
+            token: token,
+            user: user,
             authenticated: true,
         })
     }

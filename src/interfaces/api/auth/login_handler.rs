@@ -40,7 +40,9 @@ pub async fn login_handler(
     let locale = "en";
     payload.validate(locale)?;
 
-    let result = state.auth_use_case.auth(payload).await?;
+    let jwt = state.config.jwt_secret_key.clone();
+
+    let result = state.auth_use_case.auth(payload, jwt).await?;
 
     if !result.authenticated {
         return Ok((

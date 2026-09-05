@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
+use crate::error::Result;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct UserModel {
@@ -30,7 +31,7 @@ pub struct StorableUser {
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for UserModel {
     type Error = crate::error::Error;
-    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self, Self::Error> {
+    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self> {
         let id = match obj.remove("id") {
             Some(surrealdb::types::Value::RecordId(v)) => match v.key {
                 surrealdb::types::RecordIdKey::String(k) => format!("{}:{}", v.table, k),
@@ -76,5 +77,39 @@ impl TryFrom<surrealdb::types::Object> for UserModel {
             _ => None,
         };
         Ok(UserModel { id, name, email, password, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by })
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
+pub struct TokenClaims {
+    
+    pub sub: String,
+
+    pub name: String,
+
+    pub email: String,
+    
+    pub iat: usize,
+
+    pub exp: usize,
+}
+
+// region: impl try_from UserModel for TokenClaims
+impl TryFrom<UserModel> for TokenClaims {
+    type Error = crate::error::Error;
+
+    fn try_from(val: UserModel) -> Result<Self> {
+        let now = chrono::Utc::now();
+        let iat = now.timestamp() as usize;
+        let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
+        let claims: Self = Self {
+            sub: val.clone().id,
+            name: val.clone().name,
+            email: val.clone().email,
+            exp,
+            iat,
+        };
+
+        Ok(claims)
     }
 }

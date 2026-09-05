@@ -1,4 +1,4 @@
-use argon2::{Argon2, PasswordHasher, PasswordVerifier, password_hash::SaltString};
+use argon2::{Argon2, PasswordHasher, PasswordVerifier};
 
 use crate::error::Result;
 
@@ -20,10 +20,10 @@ impl StringExtension for String {
 
     fn get_password_hash(&self, password_salt: &str) -> crate::error::Result<String> {
         let password = self.as_bytes();
-        let salt = SaltString::from_b64(password_salt)?;
+        let salt = password_salt.as_bytes();
 
         let argon2 = Argon2::default();
-        let password_hash = argon2.hash_password(password, &salt)?.to_string();
+        let password_hash = argon2.hash_password_with_salt(password, salt)?.to_string();
 
         Ok(password_hash)
     }
