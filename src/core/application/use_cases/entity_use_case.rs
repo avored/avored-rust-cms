@@ -2,6 +2,7 @@ use crate::core::application::dtos::entity_dto::{
     CreateEntityCommand, EntityPaginationResponse, EntityResponse, PaginateEntityCommand, UpdateEntityCommand,
 };
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
+use crate::core::domain::entities::StorableEntity;
 use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::{Error, Result};
@@ -22,21 +23,9 @@ where
         Self { repository }
     }
 
-    pub async fn create(&self, command: CreateEntityCommand) -> Result<EntityResponse> {
-        // Check uniqueness of identifier
-        if let Some(_) = self.repository.find_by_identifier(&command.identifier).await? {
-            let error_response = ErrorResponse {
-                status: false,
-                errors: vec![ErrorMessageResponse {
-                    key: "identifier".to_string(),
-                    message: format!("Identifier '{}' already exists", command.identifier),
-                }],
-            };
-            return Err(Error::BadRequest(error_response));
-        }
+    pub async fn create(&self, storable_entity: StorableEntity) -> Result<EntityResponse> {
 
-        let storable = command.to_storable();
-        let entity = self.repository.create(storable).await?;
+        let entity = self.repository.create(storable_entity).await?;
         Ok(entity.into())
     }
 
@@ -55,30 +44,14 @@ where
         Ok(EntityPaginationResponse { data, total: modal_count.total })
     }
 
-    pub async fn update(&self, id: &str, command: UpdateEntityCommand) -> Result<EntityResponse> {
+    pub async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityResponse> {
         // Verify existence
         let existing = self.repository.find_by_id(id).await?;
         if existing.is_none() {
             return Err(Error::Generic(format!("Entity with id '{}' not found", id)));
         }
 
-        // Verify identifier uniqueness if changed
-        if let Some(by_identifier) = self.repository.find_by_identifier(&command.identifier).await? {
-            let existing_id = existing.unwrap().id;
-            if by_identifier.id != existing_id {
-                let error_response = ErrorResponse {
-                    status: false,
-                    errors: vec![ErrorMessageResponse {
-                        key: "identifier".to_string(),
-                        message: format!("Identifier '{}' is already in use", command.identifier),
-                    }],
-                };
-                return Err(Error::BadRequest(error_response));
-            }
-        }
-
-        let storable = command.to_storable();
-        let updated = self.repository.update(id, storable).await?;
+        let updated = self.repository.update(id, storable_entity).await?;
         Ok(updated.into())
     }
 
@@ -90,4 +63,19 @@ where
 
         self.repository.delete(id).await
     }
+
+    pub async fn get_by_identifier(&self, identifier: &str) -> Result<EntityResponse> {
+        let entity = self.repository.find_by_identifier(identifier).await?;
+        Ok(entity.into())
+    }
+
+    pub async fn entity_count_by_identifier(&self, identifier: &str) -> Result<u64> {
+        let entity = self.repository.find_by_identifier(identifier).await;
+        match entity {
+            Ok(_) => Ok(1),
+            Err(Error::NotFound(_)) => Ok(0),
+            Err(e) => Err(e),
+        }
+    }
+
 }

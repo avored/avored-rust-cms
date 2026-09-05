@@ -1,9 +1,11 @@
 use serde::{Deserialize, Serialize};
 use rust_i18n::t;
 use surrealdb::types::Datetime;
+use crate::core::application::use_cases::EntityUseCase;
 use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::entities::entity::{EntityModel, StorableEntity};
 use crate::core::domain::extensions::string_extension::StringExtension;
+use crate::core::domain::repositories::EntityRepository;
 use crate::error::Result;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -20,14 +22,15 @@ pub struct CreateEntityCommand {
 }
 
 impl CreateEntityCommand {
-    pub fn to_storable(&self) -> StorableEntity {
+    pub fn to_storable(&self, logged_in_user_email: String) -> StorableEntity {
         StorableEntity {
             name: self.name.clone(),
             identifier: self.identifier.clone(),
+            logged_in_user_email
         }
     }
 
-    pub fn validate(&self, locale: &str) -> Result<Vec<ErrorMessageResponse>> {
+    pub async fn validate(&self, locale: &str, entity_usecase: &EntityUseCase<impl EntityRepository>) -> Result<Vec<ErrorMessageResponse>> {
         let mut errors: Vec<ErrorMessageResponse> = vec![];
         let mut valid = true;
 
@@ -46,6 +49,18 @@ impl CreateEntityCommand {
             });
             valid = false;
         }
+
+
+        let identifier_count = entity_usecase.entity_count_by_identifier(&self.identifier).await?;
+
+        if identifier_count > 0 {
+            errors.push(ErrorMessageResponse {
+                key: String::from("identifier"),
+                message: t!("unique", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
+            });
+            valid = false;
+        }
+
 
         if !valid {
             return Err(crate::error::Error::BadRequest(ErrorResponse {
@@ -65,14 +80,17 @@ pub struct UpdateEntityCommand {
 }
 
 impl UpdateEntityCommand {
-    pub fn to_storable(&self) -> StorableEntity {
+    
+    pub fn to_storable(&self, logged_in_user_email: String) -> StorableEntity {
         StorableEntity {
             name: self.name.clone(),
             identifier: self.identifier.clone(),
+            logged_in_user_email,
         }
     }
 
-    pub fn validate(&self, locale: &str) -> Result<Vec<ErrorMessageResponse>> {
+    pub async fn validate(&self, locale: &str, entity_usecase: &EntityUseCase<impl EntityRepository>) -> Result<Vec<ErrorMessageResponse>> {
+
         let mut errors: Vec<ErrorMessageResponse> = vec![];
         let mut valid = true;
 
@@ -92,6 +110,16 @@ impl UpdateEntityCommand {
             valid = false;
         }
 
+        let identifier_count = entity_usecase.entity_count_by_identifier(&self.identifier).await?;
+
+        if identifier_count > 0 {
+            errors.push(ErrorMessageResponse {
+                key: String::from("identifier"),
+                message: t!("unique", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
+            });
+            valid = false;
+        }
+
         if !valid {
             return Err(crate::error::Error::BadRequest(ErrorResponse {
                 status: false,
@@ -101,6 +129,7 @@ impl UpdateEntityCommand {
 
         Ok(errors)
     }
+
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]

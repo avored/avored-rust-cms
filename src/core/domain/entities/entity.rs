@@ -19,6 +19,7 @@ pub struct EntityModel {
 pub struct StorableEntity {
     pub name: String,
     pub identifier: String,
+    pub logged_in_user_email: String,
 }
 
 #[cfg(feature = "ssr")]

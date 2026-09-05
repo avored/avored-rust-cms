@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
+use log::LevelFilter::Error;
 use surrealdb::types::{Number, Value};
 
 use crate::core::domain::entities::entity::{EntityModel, StorableEntity};
@@ -73,7 +74,7 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(None)
     }
 
-    async fn find_by_identifier(&self, identifier: &str) -> Result<Option<EntityModel>> {
+    async fn find_by_identifier(&self, identifier: &str) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
         let sql = "SELECT * FROM entities WHERE identifier=$identifier AND deleted_at = NONE;";
@@ -88,10 +89,13 @@ impl EntityRepository for EntityRepositoryImpl {
         if let Some(obj_res) = it.next() {
             let obj = obj_res?;
             let model: EntityModel = obj.try_into()?;
-            return Ok(Some(model));
+            return Ok(model);
         }
 
-        Ok(None)
+        Err(crate::error::Error::NotFound(format!(
+            "Entity with identifier '{}' not found",
+            identifier
+        )))
     }
 
     async fn paginate(&self, page: u64, page_size: u64) -> Result<Vec<EntityModel>> {

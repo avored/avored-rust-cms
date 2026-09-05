@@ -15,7 +15,8 @@ pub enum Error {
     Generic(String),
     ConfigMissing(String),
     BadRequest(ErrorResponse),
-    Authentication
+    Authentication,
+    NotFound(String),
 }
 
 impl std::error::Error for Error {}
