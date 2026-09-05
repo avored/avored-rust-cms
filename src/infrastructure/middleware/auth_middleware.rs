@@ -1,5 +1,6 @@
 use crate::core::domain::entities::user::TokenClaims;
 use crate::error::Error;
+use crate::avored_state::AppState;
 use axum::body::Body;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -7,7 +8,6 @@ use axum::{http::Request, middleware::Next, Json};
 use jsonwebtoken::{decode, DecodingKey, Validation};
 use serde::Serialize;
 use std::borrow::ToOwned;
-use std::env;
 
 #[derive(Debug, Serialize, Default)]
 /// error response struct
@@ -20,15 +20,14 @@ pub struct ErrorResponse {
 
 /// Middleware to require JWT authentication for incoming requests
 pub async fn check_auth(
+    axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
         let auth_value = t.to_str().map_err(|_e| Error::Authentication).unwrap();
 
-        let jwt_token = &env::var("AVORED_JWT_SECRET")
-            .map_err(|_| Error::ConfigMissing("AVORED_JWT_SECRET".to_string()))
-            .unwrap();
+        let jwt_token = &state.config.jwt_secret_key;
         let token = auth_value.strip_prefix("Bearer ").map(ToOwned::to_owned);
         let claims = match decode::<TokenClaims>(
             &token.unwrap_or_default(),
@@ -66,15 +65,14 @@ pub async fn check_auth(
 
 /// Middleware to require Customer JWT authentication for incoming requests
 pub async fn check_customer_auth(
+    axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
         let auth_value = t.to_str().map_err(|_e| Error::Authentication).unwrap();
 
-        let jwt_token = &env::var("AVORED_JWT_SECRET")
-            .map_err(|_| Error::ConfigMissing("AVORED_JWT_SECRET".to_string()))
-            .unwrap();
+        let jwt_token = &state.config.jwt_secret_key;
         let token = auth_value.strip_prefix("Bearer ").map(ToOwned::to_owned);
         let claims = match decode::<TokenClaims>(
             &token.unwrap_or_default(),

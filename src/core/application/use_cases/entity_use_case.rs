@@ -1,9 +1,9 @@
+use crate::core::application::dtos::EntityPaginationResponse;
 use crate::core::application::dtos::entity_dto::{
-    CreateEntityCommand, EntityPaginationResponse, EntityResponse, PaginateEntityCommand, UpdateEntityCommand,
+    EntityResponse, PaginateEntityCommand,
 };
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::StorableEntity;
-use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::{Error, Result};
 

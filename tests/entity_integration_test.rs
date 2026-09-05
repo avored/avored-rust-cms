@@ -7,6 +7,7 @@ use avored_rust_cms::{
         repositories::EntityRepository,
     },
     infrastructure::persistence::entity_repository::test_entity_repository,
+    infrastructure::middleware::auth_middleware,
     interfaces::api::entity::{
         create_entity_handler, delete_entity_handler, fetch_entity_handler,
         paginate_entities_handler, update_entity_handler,
@@ -16,8 +17,12 @@ use axum::{
     body::{to_bytes, Body},
     http::{Request, StatusCode},
     routing::{get, post},
+    middleware,
     Router,
 };
+use chrono::Utc;
+use jsonwebtoken::{encode, EncodingKey, Header};
+use avored_rust_cms::core::domain::entities::user::TokenClaims;
 use tower::ServiceExt;
 
 #[tokio::test]
@@ -31,6 +36,7 @@ async fn test_entity_repository_crud_lifecycle() {
     let storable = StorableEntity {
         name: "Page Entity".to_string(),
         identifier: "page".to_string(),
+        logged_in_user_email: "test@example.com".to_string()
     };
     let created = repo.create(storable).await.expect("create entity failed");
     assert_eq!(created.name, "Page Entity");
@@ -44,7 +50,7 @@ async fn test_entity_repository_crud_lifecycle() {
 
     // 3. Find by identifier
     let found_ident = repo.find_by_identifier("page").await.expect("find by identifier failed");
-    assert!(found_ident.is_some());
+    assert!(found_ident.identifier == "page");
 
     // 4. Paginate
     let list = repo.paginate(0, 10).await.expect("paginate failed");
@@ -57,6 +63,7 @@ async fn test_entity_repository_crud_lifecycle() {
             StorableEntity {
                 name: "Updated Page".to_string(),
                 identifier: "page_v2".to_string(),
+                logged_in_user_email: "test@example.com".to_string()
             },
         )
         .await
@@ -80,15 +87,34 @@ async fn test_entity_repository_crud_lifecycle() {
 async fn test_entity_rest_api_endpoints() {
     let state = test_avored_state().await;
 
-    let app = Router::new()
-        .route("/api/entity", post(create_entity_handler).get(paginate_entities_handler))
-        .route("/api/entity/{id}", get(fetch_entity_handler).put(update_entity_handler).delete(delete_entity_handler))
-        .with_state(state);
+    let now = Utc::now().timestamp() as usize;
+    let token = encode(
+        &Header::default(),
+        &TokenClaims {
+            sub: "users:test_user".to_string(),
+            name: "Test User".to_string(),
+            email: "test@example.com".to_string(),
+            iat: now,
+            exp: now + 3600,
+        },
+        &EncodingKey::from_secret(state.config.jwt_secret_key.as_bytes()),
+    )
+    .unwrap();
+
+    let protected_routes = Router::new()
+        .route("/api/entities", post(create_entity_handler).get(paginate_entities_handler))
+        .route("/api/entities/{id}", get(fetch_entity_handler).put(update_entity_handler).delete(delete_entity_handler))
+        .layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth_middleware::check_auth,
+        ));
+    let app = protected_routes.with_state(state);
 
     // 1. GET /api/entity with no records
     let empty_list_req = Request::builder()
         .method("GET")
-        .uri("/api/entity")
+        .uri("/api/entities")
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::empty())
         .unwrap();
 
@@ -102,7 +128,8 @@ async fn test_entity_rest_api_endpoints() {
     // 2. POST /api/entity
     let create_req = Request::builder()
         .method("POST")
-        .uri("/api/entity")
+        .uri("/api/entities")
+        .header("authorization", format!("Bearer {}", token))
         .header("content-type", "application/json")
         .body(Body::from(
             r#"{"name":"Product Entity","identifier":"product"}"#,
@@ -125,7 +152,8 @@ async fn test_entity_rest_api_endpoints() {
     // 3. GET /api/entity
     let list_req = Request::builder()
         .method("GET")
-        .uri("/api/entity")
+        .uri("/api/entities")
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::empty())
         .unwrap();
 
@@ -138,7 +166,8 @@ async fn test_entity_rest_api_endpoints() {
     // 4. GET /api/entity/{id}
     let fetch_req = Request::builder()
         .method("GET")
-        .uri(format!("/api/entity/{}", entity_id))
+        .uri(format!("/api/entities/{}", entity_id))
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::empty())
         .unwrap();
 
@@ -148,8 +177,9 @@ async fn test_entity_rest_api_endpoints() {
     // 5. PUT /api/entity/{id}
     let update_req = Request::builder()
         .method("PUT")
-        .uri(format!("/api/entity/{}", entity_id))
+        .uri(format!("/api/entities/{}", entity_id))
         .header("content-type", "application/json")
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::from(
             r#"{"name":"Product Updated","identifier":"product_updated"}"#,
         ))
@@ -164,7 +194,8 @@ async fn test_entity_rest_api_endpoints() {
     // 6. DELETE /api/entity/{id}
     let delete_req = Request::builder()
         .method("DELETE")
-        .uri(format!("/api/entity/{}", entity_id))
+        .uri(format!("/api/entities/{}", entity_id))
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::empty())
         .unwrap();
 
@@ -174,7 +205,8 @@ async fn test_entity_rest_api_endpoints() {
     // 6. Verify GET /api/entity/{id} returns 404 after soft delete
     let fetch_deleted_req = Request::builder()
         .method("GET")
-        .uri(format!("/api/entity/{}", entity_id))
+        .uri(format!("/api/entities/{}", entity_id))
+        .header("authorization", format!("Bearer {}", token))
         .body(Body::empty())
         .unwrap();
 
