@@ -1,11 +1,18 @@
 use serde::{Deserialize, Serialize};
+use surrealdb::types::Datetime;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
-pub struct User {
+pub struct UserModel {
     pub id: String,
     pub name: String,
     pub email: String,
-    pub password: String
+    pub password: String,
+    pub created_at: Datetime,
+    pub created_by: String,
+    pub updated_at: Datetime,
+    pub updated_by: String,
+    pub deleted_at: Option<Datetime>,
+    pub deleted_by: Option<String>,
 }
 
 
@@ -14,13 +21,14 @@ pub struct User {
 pub struct StorableUser {
     pub name: String,
     pub email: String,
-    pub password: String
+    pub password: String,
+    pub processing_user: String,
 }
 
 
 
 #[cfg(feature = "ssr")]
-impl TryFrom<surrealdb::types::Object> for User {
+impl TryFrom<surrealdb::types::Object> for UserModel {
     type Error = crate::error::Error;
     fn try_from(mut obj: surrealdb::types::Object) -> Result<Self, Self::Error> {
         let id = match obj.remove("id") {
@@ -43,7 +51,30 @@ impl TryFrom<surrealdb::types::Object> for User {
             Some(surrealdb::types::Value::String(v)) => v,
             _ => String::new(),
         };
-        Ok(User { id, name, email, password })
+        let created_at = match obj.remove("created_at") {
+            Some(surrealdb::types::Value::Datetime(v)) => v,
+            _ => Datetime::default(),
+        };
+        let created_by = match obj.remove("created_by") {
+            Some(surrealdb::types::Value::String(v)) => v,
+            _ => String::new(),
+        };
+        let updated_at = match obj.remove("updated_at") {
+            Some(surrealdb::types::Value::Datetime(v)) => v,
+            _ => Datetime::default(),
+        };
+        let updated_by = match obj.remove("updated_by") {
+            Some(surrealdb::types::Value::String(v)) => v,
+            _ => String::new(),
+        };
+        let deleted_at = match obj.remove("deleted_at") {
+            Some(surrealdb::types::Value::Datetime(v)) => Some(v),
+            _ => None,
+        };
+        let deleted_by = match obj.remove("deleted_by") {
+            Some(surrealdb::types::Value::String(v)) => Some(v),
+            _ => None,
+        };
+        Ok(UserModel { id, name, email, password, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by })
     }
 }
-

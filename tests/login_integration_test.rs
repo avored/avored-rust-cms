@@ -1,3 +1,5 @@
+#![recursion_limit = "256"]
+
 use avored_rust_cms::{
     avored_state::test_avored_state,
     infrastructure::persistence::auth_repository::test_auth_repository,
@@ -17,7 +19,7 @@ async fn authenticates_a_user_from_an_in_memory_database() {
     let repository = test_auth_repository().await;
 
     let user = repository
-        .authenticate("test@example.com", "secret")
+        .authenticate("test@example.com")
         .await
         .expect("valid credentials should return a user");
 
@@ -30,9 +32,9 @@ async fn rejects_invalid_credentials_in_an_in_memory_database() {
     let repository = test_auth_repository().await;
 
     assert!(repository
-        .authenticate("test@example.com", "wrong-password")
+        .authenticate("test@example.com")
         .await
-        .is_none());
+        .is_err());
 }
 
 #[tokio::test]

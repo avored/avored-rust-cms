@@ -40,7 +40,7 @@ pub async fn login_handler(
     let locale = "en";
     payload.validate(locale)?;
 
-    let result = state.auth_use_case.auth(payload).await;
+    let result = state.auth_use_case.auth(payload).await?;
 
     if !result.authenticated {
         return Ok((

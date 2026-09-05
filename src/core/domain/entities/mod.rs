@@ -1,6 +1,6 @@
 pub mod user;
 
-pub use user::User;
+pub use user::UserModel;
 
 pub mod error_message;
 

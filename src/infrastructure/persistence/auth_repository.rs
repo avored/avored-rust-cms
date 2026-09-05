@@ -1,11 +1,12 @@
 use surrealdb::types::Value;
 
-use crate::core::domain::{entities::User, repositories::AuthRepository};
+use crate::core::domain::{entities::UserModel, repositories::AuthRepository};
 use crate::infrastructure::persistence::into_iter_objects;
 
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
 use std::collections::BTreeMap;
 use std::sync::Arc;
+use crate::error::Result;
 
 #[derive(Clone)]
 pub struct AuthRepositoryImpl {
@@ -20,34 +21,26 @@ impl AuthRepositoryImpl {
 
 #[async_trait::async_trait]
 impl AuthRepository for AuthRepositoryImpl {
-    async fn authenticate(&self, email: &str, password: &str) -> Option<User> {
+    async fn authenticate(&self, email: &str) -> Result<UserModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "SELECT * FROM users WHERE email=$email AND password=$password;";
+        let sql = "SELECT * FROM users WHERE email=$email;";
         let data: BTreeMap<String, Value> = [
             ("email".into(), Value::String(email.into())),
-            ("password".into(), Value::String(password.into())),
         ]
         .into();
 
         let responses = datastore
             .execute(sql, database_session, Some(data.into()))
-            .await
-            .ok()?;
+            .await?;
 
-        
-        let result_object = into_iter_objects(responses).ok()?.next()?.ok()?;
-        
-        // println!("from admin user: {:#?}", result_object);
+        let result_object = into_iter_objects(responses)?
+            .next()
+            .ok_or_else(|| crate::error::Error::Generic("No user returned from insert".to_string()))??;
 
-        let admin_user: User = result_object.try_into().ok()?;
+        let user: UserModel = result_object.try_into()?;
 
-        println!("Admin user: {:?}", admin_user);
-
-
-
-        // TODO: check/verify hashed password with `password` before returning user
-        Some(admin_user)
+        Ok(user)
     }
 }
 

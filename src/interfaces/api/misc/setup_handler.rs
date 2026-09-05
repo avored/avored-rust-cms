@@ -16,7 +16,7 @@ pub async fn setup_handler(
     let locale = "en";
 
     payload.validate(locale)?;
-    let storable_user = SetupCommand::from(&payload);
+    let storable_user = SetupCommand::from(&payload, &state.config.password_salt)?;
     
     let result = state.misc_use_case.setup(storable_user).await?;
 
@@ -43,12 +43,14 @@ pub struct SetupResponse {
 }
 
 impl SetupCommand {
-    fn from(&self) -> StorableUser {
-        StorableUser {
+    fn from(&self, password_salt: &str) -> Result<StorableUser> {
+        let password_hash = self.password.get_password_hash(password_salt)?;
+        Ok(StorableUser {
             name: self.name.clone(),
             email: self.email.clone(),
-            password: self.password.clone()
-        }    
+            password: password_hash,
+            processing_user: "SetupProcess".to_string(),
+        })
     }
 }
 
@@ -96,4 +98,3 @@ impl SetupCommand {
 
     }
 }
-

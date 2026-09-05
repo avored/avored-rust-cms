@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use rust_i18n::t;
+use surrealdb::types::Datetime;
 use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::entities::entity::{EntityModel, StorableEntity};
 use crate::core::domain::extensions::string_extension::StringExtension;
@@ -107,9 +108,12 @@ pub struct EntityResponse {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub created_at: String,
-    pub updated_at: String,
-    pub deleted_at: Option<String>,
+    pub created_at: Datetime,
+    pub created_by: String,
+    pub updated_at: Datetime,
+    pub updated_by: String,
+    pub deleted_at: Option<Datetime>,
+    pub deleted_by: Option<String>,
 }
 
 impl From<EntityModel> for EntityResponse {
@@ -119,8 +123,11 @@ impl From<EntityModel> for EntityResponse {
             name: model.name,
             identifier: model.identifier,
             created_at: model.created_at,
+            created_by: model.created_by,
             updated_at: model.updated_at,
+            updated_by: model.updated_by,
             deleted_at: model.deleted_at,
+            deleted_by: model.deleted_by,
         }
     }
 }

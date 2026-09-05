@@ -405,14 +405,17 @@ checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 name = "avored-rust-cms"
 version = "0.1.0"
 dependencies = [
+ "argon2",
  "async-trait",
  "axum",
  "chrono",
  "console_error_panic_hook",
  "console_log",
  "dotenvy",
+ "email_address",
  "gloo-net 0.7.0",
  "gloo-storage",
+ "jsonwebtoken",
  "leptos",
  "leptos_axum",
  "leptos_meta",
@@ -1504,6 +1507,15 @@ dependencies = [
  "sec1",
  "subtle",
  "zeroize",
+]
+
+[[package]]
+name = "email_address"
+version = "0.2.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e079f19b08ca6239f47f8ba8509c11cf3ea30095831f7fed61441475edd8c449"
+dependencies = [
+ "serde",
 ]
 
 [[package]]

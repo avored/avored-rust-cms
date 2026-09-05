@@ -7,6 +7,9 @@ edition = "2021"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+argon2 = "0.5.3"
+jsonwebtoken = { version = "10.2.0", features = ["aws_lc_rs"]}
+email_address = "0.2.9"
 leptos = { version = "0.8.0" }
 leptos_router = { version = "0.8.0" }
 axum = { version = "0.8.0", optional = true, features = ["macros", "multipart"] }
@@ -18,6 +21,7 @@ leptos_meta = { version = "0.8.0" }
 tokio = { version = "1", features = ["rt-multi-thread"], optional = true }
 surrealdb = { version = "3.2.4", features = ["kv-rocksdb", "kv-mem"], optional = true }
 surrealdb-core = { version = "3.2.4", optional = true }
+
 # Keep the wasm-bindgen version aligned with cargo-leptos; otherwise the generated JS/WASM
 # will fail at runtime with the missing __wbindgen_externref_table_alloc symbol.
 wasm-bindgen = { version = "0.2.127", optional = true }

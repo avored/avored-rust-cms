@@ -21,9 +21,24 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
 
     let schema = r#"
         DEFINE TABLE IF NOT EXISTS users SCHEMALESS;
-        DEFINE TABLE IF NOT EXISTS entities SCHEMALESS;
-        DEFINE INDEX IF NOT EXISTS entities_identifier_unique
-            ON entities FIELDS identifier UNIQUE;
+    
+        DROP IF EXISTS TABLE entities;
+        DEFINE TABLE IF NOT EXISTS entities SCHEMAFULL;
+            DEFINE FIELD name ON TABLE entities TYPE string;
+            DEFINE FIELD identifier ON TABLE entities TYPE string;
+            DEFINE FIELD created_at ON TABLE entities TYPE datetime;
+            DEFINE FIELD created_by ON TABLE entities TYPE string;
+            DEFINE FIELD updated_at ON TABLE entities TYPE datetime;
+            DEFINE FIELD updated_by ON TABLE entities TYPE string;
+            DEFINE FIELD deleted_at ON TABLE entities TYPE datetime;
+            DEFINE FIELD deleted_by ON TABLE entities TYPE string;
+
+            DEFINE INDEX IF NOT EXISTS entities_identifier_unique
+                ON entities FIELDS identifier UNIQUE;
+
+
+        
+
     "#;
 
     datastore.execute(schema, session, None).await?;

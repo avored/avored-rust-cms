@@ -1,6 +1,6 @@
 use surrealdb::types::Value;
 
-use crate::core::domain::entities::User;
+use crate::core::domain::entities::UserModel;
 use crate::core::domain::entities::user::StorableUser;
 use crate::core::domain::repositories::MiscRepository;
 use crate::error::Result;
@@ -22,14 +22,15 @@ impl MiscRepositoryImpl {
 
 #[async_trait::async_trait]
 impl MiscRepository for MiscRepositoryImpl {
-    async fn create_user(&self, storable_user: StorableUser) -> Result<User> {
+    async fn create_user(&self, storable_user: StorableUser) -> Result<UserModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "CREATE users SET name=$name, email=$email, password=$password;";
+        let sql = "CREATE users SET name=$name, email=$email, password=$password;, created_at=now(), updated_at=now(), created_by=$performing_user, updated_by=$performing_user;";
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_user.name.into())),
             ("email".into(), Value::String(storable_user.email.into())),
             ("password".into(), Value::String(storable_user.password.into())),
+            ("performing_user".into(), Value::String(storable_user.processing_user.into())),
         ]
         .into();
 
@@ -41,7 +42,7 @@ impl MiscRepository for MiscRepositoryImpl {
             .next()
             .ok_or_else(|| crate::error::Error::Generic("No user returned from insert".to_string()))??;
 
-        let user: User = result_object.try_into()?;
+        let user: UserModel = result_object.try_into()?;
 
         Ok(user)
     }

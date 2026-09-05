@@ -1,13 +1,17 @@
 use serde::{Deserialize, Serialize};
+use surrealdb::types::Datetime;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct EntityModel {
     pub id: String,
     pub name: String,
     pub identifier: String,
-    pub created_at: String,
-    pub updated_at: String,
-    pub deleted_at: Option<String>,
+    pub created_at: Datetime,
+    pub created_by: String,
+    pub updated_at: Datetime,
+    pub updated_by: String,
+    pub deleted_at: Option<Datetime>,
+    pub deleted_by: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -41,19 +45,31 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
         };
 
         let created_at = match obj.remove("created_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v.to_string(),
+            Some(surrealdb::types::Value::Datetime(v)) => v,
+            _ => Datetime::now(),
+        };
+
+          let created_by = match obj.remove("created_by") {
             Some(surrealdb::types::Value::String(v)) => v,
             _ => String::new(),
         };
 
         let updated_at = match obj.remove("updated_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v.to_string(),
+            Some(surrealdb::types::Value::Datetime(v)) => v,
+            _ => Datetime::now(),
+        };
+
+         let updated_by = match obj.remove("updated_by") {
             Some(surrealdb::types::Value::String(v)) => v,
             _ => String::new(),
         };
 
         let deleted_at = match obj.remove("deleted_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => Some(v.to_string()),
+            Some(surrealdb::types::Value::Datetime(v)) => Some(v),
+            _ => None,
+        };
+
+        let deleted_by = match obj.remove("deleted_by") {
             Some(surrealdb::types::Value::String(v)) => Some(v),
             _ => None,
         };
@@ -63,8 +79,11 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
             name,
             identifier,
             created_at,
+            created_by,
             updated_at,
+            updated_by,
             deleted_at,
+            deleted_by,
         })
     }
 }

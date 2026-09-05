@@ -14,6 +14,7 @@ async fn creates_a_user_from_an_in_memory_database() {
         name: String::from("Test user"),
         email: String::from("test@local.com"),
         password: String::from("123456"),
+        processing_user: String::from("test"),
     };
 
     let user = repository
