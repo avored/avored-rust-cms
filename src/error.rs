@@ -1,7 +1,9 @@
+use rust_i18n::t;
 use tracing::error;
-use axum::http::StatusCode;
+use axum::http::{self, StatusCode};
 use axum::response::{IntoResponse, Response};
 
+use crate::core::domain::entities::ErrorMessageResponse;
 use crate::core::domain::entities::error_message::ErrorResponse;
 
 /// This is custom Result type for the application.
@@ -13,6 +15,7 @@ pub enum Error {
     Generic(String),
     ConfigMissing(String),
     BadRequest(ErrorResponse),
+    Authentication
 }
 
 impl std::error::Error for Error {}
@@ -74,7 +77,25 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
             Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            err => (StatusCode::INTERNAL_SERVER_ERROR, format!("error 500: {:?}", err)).into_response(),
+            Error::Authentication => {
+                use http::StatusCode;
+
+                let mut errors: Vec<ErrorMessageResponse> = vec![];
+                let error_message = ErrorMessageResponse {
+                    key: String::from("email"),
+                    message: String::from(t!("email_password_not_matched")),
+                };
+
+                errors.push(error_message);
+                let error_response = ErrorResponse {
+                    status: false,
+                    errors,
+                };
+                (StatusCode::UNAUTHORIZED, error_response).into_response()
+            }
+            err => {
+                (StatusCode::INTERNAL_SERVER_ERROR, format!("error 500: {:?}", err)).into_response()
+            },
         }
     }
 }
