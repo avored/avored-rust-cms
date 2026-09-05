@@ -1,123 +1,91 @@
-# Avored, Rust content management system
-AvoRed Rust CMS implemented with the help of [Axum](https://docs.rs/axum/latest/axum/) web framework and [SurrealDB](https://surrealdb.com/) as the database and a [React](https://react.dev/) admin frontend.
+<picture>
+    <source srcset="https://raw.githubusercontent.com/leptos-rs/leptos/main/docs/logos/Leptos_logo_Solid_White.svg" media="(prefers-color-scheme: dark)">
+    <img src="https://raw.githubusercontent.com/leptos-rs/leptos/main/docs/logos/Leptos_logo_RGB.svg" alt="Leptos Logo">
+</picture>
 
+# Leptos Axum Starter Template
 
-[![AvoRedCMS](https://github.com/avored/avored-rust-cms/actions/workflows/rust.yml/badge.svg)](https://github.com/avored/avored-rust-cms/actions/workflows/rust-test.yml)
+This is a template for use with the [Leptos](https://github.com/leptos-rs/leptos) web framework and the [cargo-leptos](https://github.com/akesson/cargo-leptos) tool using [Axum](https://github.com/tokio-rs/axum).
 
-### Join community via slack
-[![Join community via Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)](https://join.slack.com/t/avoredrustcms/shared_invite/zt-22031l11y-EYp3a3oWVVFaZ8WCWZAkJQ)
+## Creating your template repo
 
-## Demo admin
-
-Please visit [Demo AvoRed Rust CMS Admin](https://demo-admin.avored.com)
-
-## Installation
-
-Make sure the prerequisite are installed and then go through the install steps to install a local build of Avored.
-
-### Prerequisites
-
-**Protobuf**, Google's data interchange format written in C++, is required to be installed before build.  Read more about it at the protocol buffers website: https://protobuf.dev/ or at the repository https://github.com/protocolbuffers/protobuf
-
-* Install the precompiled binary on any OS
-
-https://protobuf.dev/installation/
-
-* Install Protobuf package on MacOS with `brew install protobuf`
-
-**Rust**, the systems programing lanugage for backend development.  https://www.rust-lang.org/
-
-**NodeJS**, the frontend web server and frontend toolchain. https://nodejs.org/en
-
-
-### Install Steps
-1. Clone the repository and create the local .env file from the `EXAMPLE.env`.
+If you don't have `cargo-leptos` installed you can install it with
 
 ```bash
-git clone https://github.com/avored/avored-rust-cms.git
-cd avored-rust-cms
-cp EXAMPLE.env .env.dev
-cp .env.dev .env
+cargo install cargo-leptos --locked
 ```
 
-2. Set up your `.env.dev`, or `.env.stg`, `.env.prd`, file by adding the random strings for the password salt and JWT secret.  The SMTP setup should be accurate if you wanted to use the forgot password feature(optionacd l).
+Then run
+```bash
+cargo leptos new --git https://github.com/leptos-rs/start-axum
+```
 
-**NOTE:** For local dev mail/SMTP info can be ignored, there are other ways to recover your login locally.
-
-3. Start your application backend
+to generate a new project template.
 
 ```bash
-cargo run
+cd new-avored
 ```
 
-4. Navigate to the admin web app directory `cd ts-grpc-react-admin` install the javascript dependencies and start the admin page.
+to go to your newly created project.
+Feel free to explore the project structure, but the best place to start with your application code is in `src/app.rs`.
+Additionally, Cargo.toml may need updating as new versions of the dependencies are released, especially if things are not working after a `cargo update`.
+
+## Running your project
 
 ```bash
-npm i
-npm run dev
+cargo leptos watch
 ```
 
-5. Once the application start you can visit [http://localhost:3000/setup](http://localhost:3000/setup).  This url will create the base database tables and an admin user once you submit the form on that page.
+## Installing Additional Tools
 
-6. After the form submit a redirect to login screen will occur [localhost:3000/admin](localhost:3000/admin).  Use the email and password you set with the setup form.
+By default, `cargo-leptos` uses `nightly` Rust, `cargo-generate`, and `sass`. If you run into any trouble, you may need to install one or more of these tools.
 
-Finished!
+1. `rustup toolchain install nightly --allow-downgrade` - make sure you have Rust nightly
+2. `rustup target add wasm32-unknown-unknown` - add the ability to compile Rust to WebAssembly
+3. `cargo install cargo-generate` - install `cargo-generate` binary (should be installed automatically in future)
+4. `npm install -g sass` - install `dart-sass` (should be optional in future
+5. Run `npm install` in end2end subdirectory before test
 
-You can now visit `localhost:3000/admin` when the backend and frontend are running to access the react admin for the portal.
+## Compiling for Release
+```bash
+cargo leptos build --release
+```
 
-**NOTE:** Right now react admin does not have many pages redone yet but work in progress.
+Will generate your server binary in target/release and your site package in target/site
 
+## Testing Your Project
+```bash
+cargo leptos end-to-end
+```
 
-## Features
+```bash
+cargo leptos end-to-end --release
+```
 
-- [x] Admin Users
-- [x] Roles/Permissions
-- [x] Components
-- [x] Pages
-- [x] Fields
-- [x] Asset Manager
+Cargo-leptos uses Playwright as the end-to-end test tool.
+Tests are located in end2end/tests directory.
 
-## RoadMap
- - [ ] Rest API
- - [ ] GraphQL API
- - [ ] Content Workflow
+## Executing a Server on a Remote Machine Without the Toolchain
+After running a `cargo leptos build --release` the minimum files needed are:
 
-##### Setting up full Stack project in RUST
+1. The server binary located in `target/server/release`
+2. The `site` directory and all files within located in `target/site`
 
- - [x] Web Framework ([Axum](https://github.com/tokio-rs/axum))
- - [x] SurrealDB ([Surreal DB](https://surrealdb.com/))
- - [x] Email Views ([Handlebars](https://github.com/sunng87/handlebars-rust))
- - [x] Display Form Validation Error
+Copy these files to your remote server. The directory structure should be:
+```text
+new-avored
+site/
+```
+Set the following environment variables (updating for your project as needed):
+```sh
+export LEPTOS_OUTPUT_NAME="new-avored"
+export LEPTOS_SITE_ROOT="site"
+export LEPTOS_SITE_PKG_DIR="pkg"
+export LEPTOS_SITE_ADDR="127.0.0.1:3000"
+export LEPTOS_RELOAD_PORT="3001"
+```
+Finally, run the server binary.
 
-### Dev help
+## Licensing
 
-How to do a loop inside the handlebar template
-
-    {{#each validation_message as |message|}}
-        {{ message.mssage }}
-    {{/each}}
-
-How to render a variable in handlebar template
-
-    {{ variable_name }}
-
-How to call helper method in handlebar template
-
-    {{ helper_method_name "argument" ~}}
-
-How to start a surreal db
-surreal start --user root --pass root --bind 0.0.0.0:8000 file://test.db
-
-#### Introduction
-
-Avored headless CMS enables efficient content management for websites, mobile apps, and various digital platforms.
-By decoupling the content from the presentation layer, it gives developers the flexibility to build frontends
-using their preferred technologies. With an avored headless CMS, content is centralized, making it easy to
-create, manage, and seamlessly deliver it to multiple applications.
-
-Discover more about Headless CMS concepts.
-
-###### Features
- - **Comprehensive Asset Management**: Organize and manage images, media, files, and other assets with ease.
- - **User-Friendly Content Management**: Simplify page content management for both technical and non-technical users.
- - **Seamless Content Distribution**: Deliver your content anywhere instantly using REST APIs.
+This template itself is released under the Unlicense. You should replace the LICENSE for your own application with an appropriate license if you plan to release it publicly.

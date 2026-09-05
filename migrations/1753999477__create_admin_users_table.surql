@@ -3,7 +3,7 @@ DEFINE TABLE admin_users;
 
 DEFINE FIELD full_name ON TABLE admin_users TYPE string;
 DEFINE FIELD email ON TABLE admin_users TYPE string;
-DEFINE FIELD password ON TABLE admin_users TYPE string;
+DEFINE FIELD password_hash ON TABLE admin_users TYPE string;
 DEFINE FIELD profile_image ON TABLE admin_users TYPE string;
 DEFINE FIELD is_super_admin ON TABLE admin_users TYPE bool;
 DEFINE FIELD created_by ON TABLE admin_users TYPE string;

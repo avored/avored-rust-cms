@@ -1,45 +1,36 @@
-//! `AvoRed` Rust CMS Library
-//!
-//! This library provides the core functionality for the `AvoRed` CMS,
-//! including security services, authentication, and data models.
+pub mod pages;
+rust_i18n::i18n!("resources/locales");
 
 
-/// api module
-pub mod api;
+#[cfg(feature = "ssr")]
+pub mod application;
 
-/// `avored_state` module
-pub mod avored_state;
+#[cfg(feature = "ssr")]
+pub mod domain;
 
-/// error module
+#[cfg(feature = "ssr")]
 pub mod error;
 
-/// extensions module
-pub mod extensions;
+#[cfg(feature = "ssr")]
+pub mod infra;
 
-/// middleware module
-pub mod middleware;
+/// It will hold the adapter implementations for the domain layer.
+#[cfg(feature = "ssr")]
+pub mod adapters;
 
-/// models module
-pub mod models;
+#[cfg(feature = "ssr")]
+pub mod grpc_server;
 
-/// providers module
-pub mod providers;
+#[cfg(feature = "ssr")]
+pub mod server {
+    // This will allow us to use it in main.rs if needed,
+    // or just leave it in lib.rs
+}
 
-/// repositories module
-pub mod repositories;
-
-/// requests module
-pub mod requests;
-/// Security services and authentication utilities.
-pub mod security;
-/// services module
-pub mod services;
-
-// Re-export commonly used items
-pub use error::{Error, Result};
-
-/// Constants per page
-pub const PER_PAGE: i64 = 10;
-
-// Re-export the i18n macro
-rust_i18n::i18n!("locales");
+#[cfg(feature = "hydrate")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub fn hydrate() {
+    use crate::pages::app::*;
+    console_error_panic_hook::set_once();
+    leptos::mount::hydrate_body(App);
+}

@@ -5,6 +5,7 @@
 
 # Cargo
 .cargo/
+data/avored.db/
 
 # IDE files
 .idea/
