@@ -1,4 +1,5 @@
 use crate::error::Result;
+use crate::infrastructure::migrations::init;
 use surrealdb_core::dbs::Session;
 use surrealdb_core::kvs::Datastore;
 
@@ -41,12 +42,8 @@ impl AvoRedDatabaseProvider {
             .with_ns(&database_namespace)
             .with_db(&database_name);
 
-        // 3. Ensure essential tables exist
-        let define_tables_sql = "
-            DEFINE TABLE IF NOT EXISTS users SCHEMALESS;
-            DEFINE TABLE IF NOT EXISTS entities SCHEMALESS;
-        ";
-        datastore.execute(define_tables_sql, &database_session, None).await?;
+        // 3. Apply all application migrations after the namespace/database exist.
+        init::run(&datastore, &database_session).await?;
 
         let db = (datastore, database_session);
 
