@@ -1,4 +1,4 @@
-use axum::{Router, http::HeaderValue};
+use axum::{Router, http::HeaderValue, routing::get};
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower_http::{cors::{Any, CorsLayer}, services::ServeDir};
@@ -28,8 +28,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
     let router = Router::<AppState>::new()
         
         .route(
-            "/api/misc/setup",
-            axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
+            "/api/entities/option",get(crate::interfaces::api::entity::option_entities_handler::option_entities_handler),
         )
         .route(
             "/api/entities",
@@ -49,6 +48,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route(
             "/api/auth/login",
             axum::routing::post(crate::interfaces::api::auth::login_handler),
+        )
+        .route(
+            "/api/misc/setup",
+            axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
         )
         /* frontend routes */
         .layer(cors)

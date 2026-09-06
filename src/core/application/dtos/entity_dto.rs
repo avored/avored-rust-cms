@@ -133,6 +133,23 @@ impl UpdateEntityCommand {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct EntityOptionResponse {
+    pub id: String,
+    pub name: String
+}
+
+impl From<EntityModel> for EntityOptionResponse {
+    fn from(model: EntityModel) -> Self {
+        Self {
+            id: model.id,
+            name: model.name,
+        }
+    }
+}
+
+
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct EntityResponse {
     pub id: String,
     pub name: String,

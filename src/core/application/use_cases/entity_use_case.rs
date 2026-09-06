@@ -3,7 +3,7 @@ use crate::core::application::dtos::entity_dto::{
     EntityResponse, PaginateEntityCommand,
 };
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
-use crate::core::domain::entities::StorableEntity;
+use crate::core::domain::entities::{EntityModel, StorableEntity};
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::{Error, Result};
 
@@ -76,6 +76,10 @@ where
             Err(Error::NotFound(_)) => Ok(0),
             Err(e) => Err(e),
         }
+    }
+
+    pub async fn list_options(&self) -> Result<Vec<EntityModel>> {
+        self.repository.list_options().await
     }
 
 }

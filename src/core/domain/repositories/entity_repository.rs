@@ -18,5 +18,7 @@ pub trait EntityRepository: Send + Sync {
     async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityModel>;
 
     async fn delete(&self, id: &str) -> Result<bool>;
+
+    async fn list_options(&self) -> Result<Vec<EntityModel>>;
     
 }

@@ -252,6 +252,29 @@ impl EntityRepository for EntityRepositoryImpl {
         let count: ModalCount = result_object.try_into()?;
         Ok(count)
     }
+
+    async fn list_options(&self) -> Result<Vec<EntityModel>> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = format!("
+            SELECT id, name 
+            FROM {} 
+            WHERE deleted_at = NONE;", 
+            ENTITIES_TABLE_NAME
+        );
+
+        let responses = datastore.execute(&sql, database_session, None).await?;
+
+        let it = into_iter_objects(responses)?;
+        let mut list = Vec::new();
+        for obj_res in it {
+            let obj = obj_res?;
+            let model: EntityModel = obj.try_into()?;
+            list.push(model);
+        }
+
+        Ok(list)
+    }
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {
