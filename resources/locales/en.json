@@ -15,8 +15,22 @@
     "confirm_password": "Confirm Password",
     "required": "The :attribute is required.",
     "entities": "Entities",
-    "create_entity": "Create Entity",
     "edit_entity": "Edit Entity",
     "identifier": "Identifier",
-    "email_password_not_matched": "Email and password do not match."
+    "email_password_not_matched": "Email and password do not match.",
+    "back_to_entities": "Back to entities",
+    "create_entity_description": "Define a reusable content type and choose how its values should be stored.",
+    "entity_details": "Entity details",
+    "give_entity_clear_name": "Give this entity a clear name and stable identifier.",
+    "entity_name_placeholder": "e.g. Blog post",
+    "entity_identifier_placeholder": "e.g. blog_post",
+    "entity_name_help": "The name of the entity is used in the admin panel and in the codebase. It should be clear and descriptive.",
+    "cancel": "Cancel",
+    "creating": "Creating...",
+    "create_entity": "Create entity",
+    "loading_entity": "Loading entity...",
+    "save_changes": "Save changes",
+    "saving": "Saving...",
+    "loading": "Loading..."
+
 }

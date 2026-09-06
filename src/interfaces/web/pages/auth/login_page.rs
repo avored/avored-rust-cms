@@ -42,8 +42,8 @@ pub struct ApiValidationError {
 
 #[component]
 pub fn LoginPage() -> impl IntoView {
-    let email = RwSignal::new("demo@avored.local".to_string());
-    let password = RwSignal::new("password1234".to_string());
+    let email = RwSignal::new("admin@avored.com".to_string());
+    let password = RwSignal::new("admin123".to_string());
     let error = RwSignal::new(String::new());
     let field_errors = RwSignal::new(HashMap::<String, String>::new());
     let submitting = RwSignal::new(false);

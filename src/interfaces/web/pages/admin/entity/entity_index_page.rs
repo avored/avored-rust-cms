@@ -11,9 +11,6 @@ pub fn EntityIndexPage() -> impl IntoView {
                         <h1 class="text-3xl font-semibold tracking-tight text-slate-900">
                             {t!("entities")}
                         </h1>
-                        <p class="mt-2 text-sm leading-6 text-slate-500">
-                            "Manage your entities and access their REST endpoints."
-                        </p>
                     </div>
                     <a
                         href="/admin/entity/create"
@@ -39,7 +36,7 @@ pub fn EntityIndexPage() -> impl IntoView {
                         </div>
                         <div x-show="loading" class="flex items-center gap-2 text-sm text-slate-500">
                             <i data-feather="loader" class="h-4 w-4 animate-spin"></i>
-                            "Loading"
+                            {t!("loading_entity")}
                         </div>
                     </div>
 

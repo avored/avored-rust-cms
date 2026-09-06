@@ -13,10 +13,12 @@ pub fn EntityEditPage() -> impl IntoView {
                 <div class="mb-8">
                     <a href="/admin/entity" class="mb-3 inline-flex items-center gap-2 text-sm font-medium text-slate-500 transition hover:text-primary-600">
                         <i data-feather="arrow-left" class="h-4 w-4"></i>
-                        "Back to entities"
+                        {t!("back_to_entities")}
                     </a>
                     <h1 class="text-3xl font-semibold tracking-tight text-slate-900">{t!("edit_entity")}</h1>
-                    <p class="mt-2 text-sm leading-6 text-slate-500">"Update the name or identifier for this entity."</p>
+                    <p class="mt-2 text-sm leading-6 text-slate-500">
+                        {t!("create_entity_description")}
+                    </p>
                 </div>
 
                 <template x-if="errorMessage">
@@ -24,13 +26,15 @@ pub fn EntityEditPage() -> impl IntoView {
                 </template>
 
                 <div x-show="loading" class="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center text-sm text-slate-500">
-                    "Loading entity..."
+                    {t!("loading_entity")}
                 </div>
 
                 <form x-show="!loading" x-on:submit.prevent="handleSubmit" class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <div class="border-b border-slate-200 px-5 py-5 sm:px-8">
-                        <h2 class="text-base font-semibold text-slate-900">"Entity details"</h2>
-                        <p class="mt-1 text-sm text-slate-500">"Keep the identifier stable if other systems already use it."</p>
+                        <h2 class="text-base font-semibold text-slate-900">{t!("entity_details")}</h2>
+                        <p class="mt-1 text-sm text-slate-500">
+                            {t!("entity_name_help")}
+                        </p>
                     </div>
 
                     <div class="grid gap-6 px-5 py-6 sm:px-8">
@@ -68,8 +72,9 @@ pub fn EntityEditPage() -> impl IntoView {
                     <div class="flex flex-col-reverse gap-3 border-t border-slate-200 bg-slate-50 px-5 py-4 sm:flex-row sm:justify-end sm:px-8">
                         <a href="/admin/entity" class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-100">"Cancel"</a>
                         <button type="submit" x-bind:disabled="submitting" class="inline-flex items-center justify-center rounded-lg bg-primary-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60">
-                            <span x-show="!submitting">"Save changes"</span>
-                            <span x-show="submitting">"Saving..."</span>
+                            <span x-show="!submitting">
+                            {t!("save_changes")}</span>
+                            <span x-show="submitting">{t!("saving")}</span>
                         </button>
                     </div>
                 </form>
