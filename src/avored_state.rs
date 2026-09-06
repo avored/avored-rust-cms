@@ -93,7 +93,7 @@ pub async fn test_avored_state() -> AppState {
             database_folder: "mem://".to_string(),
             database_name: "auth".to_string(),
             database_namespace: "test".to_string(),
-            password_salt: String::new(),
+            password_salt: "test-salt".to_string(),
             jwt_secret_key: String::new(),
             cors_allowed_app_url: vec![],
         }),

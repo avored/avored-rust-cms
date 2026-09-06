@@ -27,10 +27,11 @@ where
         let password = command.password.clone();
         let encrypted_password = user.password.clone();
 
-        if password.password_verification(&encrypted_password).is_err() {
-            return Err(crate::error::Error::Generic(
-                "Invalid credentials".to_string(),
-            ));
+        if !password
+            .password_verification(&encrypted_password)
+            .unwrap_or(false)
+        {
+            return Err(crate::error::Error::Authentication);
         }
 
 

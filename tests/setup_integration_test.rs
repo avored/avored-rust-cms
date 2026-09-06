@@ -35,7 +35,7 @@ async fn misc_setup_handler_create_user_an_in_memory_database() {
         .uri("/login")
         .header("content-type", "application/json")
         .body(Body::from(
-            r#"{"name":"test","email":"test@example.com","password":"secret"}"#,
+            r#"{"name":"test","email":"setup@example.com","password":"secret"}"#,
         ))
         .unwrap();
 

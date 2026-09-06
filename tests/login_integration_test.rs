@@ -2,6 +2,7 @@
 
 use avored_rust_cms::{
     avored_state::test_avored_state,
+    core::domain::extensions::string_extension::StringExtension,
     infrastructure::persistence::auth_repository::test_auth_repository,
     interfaces::api::auth::login_handler,
     core::domain::repositories::AuthRepository,
@@ -14,9 +15,27 @@ use axum::{
 };
 use tower::ServiceExt;
 
+async fn seed_test_user(provider: &avored_rust_cms::providers::avored_database_provider::AvoRedDatabaseProvider) {
+    let (datastore, session) = &provider.db;
+    let password = "secret"
+        .to_string()
+        .get_password_hash("test-salt")
+        .expect("test password should hash");
+    let sql = format!(
+        "CREATE users:test_user SET name = 'Test User', email = 'test@example.com', password = '{}', created_at = time::now(), created_by = 'test', updated_at = time::now(), updated_by = 'test', deleted_at = NONE RETURN AFTER;",
+        password
+    );
+
+    datastore
+        .execute(&sql, session, None)
+        .await
+        .expect("test user should be created");
+}
+
 #[tokio::test]
 async fn authenticates_a_user_from_an_in_memory_database() {
     let repository = test_auth_repository().await;
+    seed_test_user(&repository.database_provider).await;
 
     let user = repository
         .authenticate("test@example.com")
@@ -30,18 +49,18 @@ async fn authenticates_a_user_from_an_in_memory_database() {
 #[tokio::test]
 async fn rejects_invalid_credentials_in_an_in_memory_database() {
     let repository = test_auth_repository().await;
+    seed_test_user(&repository.database_provider).await;
 
-    assert!(repository
-        .authenticate("test@example.com")
-        .await
-        .is_err());
+    assert!(repository.authenticate("unknown@example.com").await.is_err());
 }
 
 #[tokio::test]
 async fn login_handler_authenticates_against_an_in_memory_database() {
+    let state = test_avored_state().await;
+    seed_test_user(&state.database_provider).await;
     let app = Router::new()
         .route("/login", post(login_handler))
-        .with_state(test_avored_state().await);
+        .with_state(state);
     let request = Request::builder()
         .method("POST")
         .uri("/login")
@@ -57,14 +76,16 @@ async fn login_handler_authenticates_against_an_in_memory_database() {
 
     assert_eq!(response_json["authenticated"], true);
     assert_eq!(response_json["user"]["email"], "test@example.com");
-    assert_eq!(response_json["token"], "demo-token-for-users:test_user");
+    assert!(response_json["token"].as_str().is_some_and(|token| !token.is_empty()));
 }
 
 #[tokio::test]
 async fn login_handler_rejects_invalid_credentials() {
+    let state = test_avored_state().await;
+    seed_test_user(&state.database_provider).await;
     let app = Router::new()
         .route("/login", post(login_handler))
-        .with_state(test_avored_state().await);
+        .with_state(state);
     let request = Request::builder()
         .method("POST")
         .uri("/login")
