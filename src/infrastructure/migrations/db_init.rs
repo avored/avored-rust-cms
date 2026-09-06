@@ -21,6 +21,20 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
 
     let schema = r#"
         DEFINE TABLE IF NOT EXISTS users SCHEMALESS;
+            DEFINE FIELD name ON TABLE users TYPE string;
+            DEFINE FIELD email ON TABLE users TYPE string;
+            DEFINE FIELD password ON TABLE users TYPE string;
+            DEFINE FIELD created_at ON TABLE users TYPE datetime;
+            DEFINE FIELD created_by ON TABLE users TYPE string;
+            DEFINE FIELD updated_at ON TABLE users TYPE datetime;
+            DEFINE FIELD updated_by ON TABLE users TYPE string;
+            DEFINE FIELD deleted_at ON TABLE users TYPE option<datetime>;
+            DEFINE FIELD deleted_by ON TABLE users TYPE option<string>;
+
+            DEFINE INDEX IF NOT EXISTS users_email_unique
+                ON users FIELDS email UNIQUE;
+
+
         DEFINE TABLE IF NOT EXISTS entities SCHEMAFULL;
             DEFINE FIELD name ON TABLE entities TYPE string;
             DEFINE FIELD identifier ON TABLE entities TYPE string;

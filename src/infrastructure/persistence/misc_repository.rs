@@ -1,5 +1,6 @@
 use surrealdb::types::Value;
 
+use crate::core::domain::constants::USERS_TABLE_NAME;
 use crate::core::domain::entities::UserModel;
 use crate::core::domain::entities::user::StorableUser;
 use crate::core::domain::repositories::MiscRepository;
@@ -25,7 +26,19 @@ impl MiscRepository for MiscRepositoryImpl {
     async fn create_user(&self, storable_user: StorableUser) -> Result<UserModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "CREATE users SET name=$name, email=$email, password=$password, created_at=time::now(), updated_at=time::now(), created_by=$performing_user, updated_by=$performing_user;";
+        let sql = format!("
+            CREATE {} 
+            SET 
+                name=$name, 
+                email=$email, 
+                password=$password, 
+                created_at=time::now(), 
+                updated_at=time::now(), 
+                created_by=$performing_user, 
+                updated_by=$performing_user;", 
+            USERS_TABLE_NAME
+        );
+        
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_user.name.into())),
             ("email".into(), Value::String(storable_user.email.into())),
@@ -35,7 +48,7 @@ impl MiscRepository for MiscRepositoryImpl {
         .into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let result_object = into_iter_objects(responses)?

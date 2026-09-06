@@ -2,6 +2,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 use surrealdb::types::{Number, Value};
 
+use crate::core::domain::constants::ENTITIES_TABLE_NAME;
 use crate::core::domain::entities::entity::{EntityModel, StorableEntity};
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::core::domain::repositories::EntityRepository;
@@ -25,7 +26,19 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "CREATE entities SET name=$name, identifier=$identifier, created_at=time::now(), created_by=$created_by, updated_at=time::now(), updated_by=$updated_by, deleted_at=NONE;";
+        let sql = format!("
+                CREATE {} 
+                SET 
+                    name=$name, 
+                    identifier=$identifier, 
+                    created_at=time::now(), 
+                    created_by=$created_by, 
+                    updated_at=time::now(), 
+                    updated_by=$updated_by, 
+                    deleted_at=NONE;", 
+                ENTITIES_TABLE_NAME
+        );
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_entity.name.into())),
             (
@@ -44,7 +57,7 @@ impl EntityRepository for EntityRepositoryImpl {
         .into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let result_object = into_iter_objects(responses)?
@@ -64,11 +77,16 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
-        let sql = "SELECT * FROM entities WHERE id = $id AND deleted_at = NONE;";
+        let sql = format!("
+            SELECT * 
+            FROM {} 
+            WHERE id = $id AND deleted_at = NONE;", 
+            ENTITIES_TABLE_NAME
+        );
         let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let mut it = into_iter_objects(responses)?;
@@ -84,12 +102,17 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn find_by_identifier(&self, identifier: &str) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "SELECT * FROM entities WHERE identifier=$identifier AND deleted_at = NONE;";
+        let sql = format!("
+            SELECT * 
+            FROM {} 
+            WHERE identifier = $identifier AND deleted_at = NONE;", 
+            ENTITIES_TABLE_NAME
+        );
         let data: BTreeMap<String, Value> =
             [("identifier".into(), Value::String(identifier.into()))].into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let mut it = into_iter_objects(responses)?;
@@ -113,7 +136,14 @@ impl EntityRepository for EntityRepositoryImpl {
         let number_page_size = Number::Int(page_size as i64);
         let number_skip = Number::Int(skip as i64);
 
-        let sql = "SELECT * FROM entities WHERE deleted_at = NONE LIMIT $limit START $skip;";
+        let sql = format!("
+            SELECT * 
+            FROM {} 
+            WHERE deleted_at = NONE 
+            LIMIT $limit 
+            START $skip;", 
+            ENTITIES_TABLE_NAME
+        );
 
         let data: BTreeMap<String, Value> = [
             ("limit".into(), Value::Number(number_page_size)),
@@ -122,7 +152,7 @@ impl EntityRepository for EntityRepositoryImpl {
         .into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let it = into_iter_objects(responses)?;
@@ -145,7 +175,12 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
-        let sql = "UPDATE entities SET name=$name, identifier=$identifier, updated_at=time::now(), updated_by=$updated_by WHERE id = $id AND deleted_at = NONE;";
+        let sql = format!("
+            UPDATE {} 
+            SET name=$name, identifier=$identifier, updated_at=time::now(), updated_by=$updated_by 
+            WHERE id = $id AND deleted_at = NONE;", 
+            ENTITIES_TABLE_NAME
+        );
         let data: BTreeMap<String, Value> = [
             ("id".into(), Value::RecordId(target_record)),
             ("name".into(), Value::String(storable_entity.name.into())),
@@ -161,7 +196,7 @@ impl EntityRepository for EntityRepositoryImpl {
         .into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let result_object = into_iter_objects(responses)?
@@ -181,11 +216,16 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
-        let sql = "UPDATE entities SET deleted_at=time::now(), updated_at=time::now() WHERE id = $id;";
+        let sql = format!("
+            UPDATE {} 
+            SET deleted_at=time::now(), updated_at=time::now() 
+            WHERE id = $id;", 
+            ENTITIES_TABLE_NAME
+        );
         let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
 
         let responses = datastore
-            .execute(sql, database_session, Some(data.into()))
+            .execute(&sql, database_session, Some(data.into()))
             .await?;
 
         let _ = into_iter_objects(responses)?;
@@ -195,9 +235,15 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn count(&self) -> Result<ModalCount> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = "SELECT count(id) FROM entities WHERE deleted_at = NONE GROUP ALL;";
+        let sql = format!("
+            SELECT count(id) 
+            FROM {} 
+            WHERE deleted_at = NONE 
+            GROUP ALL;", 
+            ENTITIES_TABLE_NAME
+        );
 
-            let responses = datastore.execute(sql, database_session, None).await?;
+            let responses = datastore.execute(&sql, database_session, None).await?;
 
         let result_object = into_iter_objects(responses)?
             .next()
