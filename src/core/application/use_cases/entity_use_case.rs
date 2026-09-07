@@ -23,10 +23,8 @@ where
         Self { repository }
     }
 
-    pub async fn create(&self, storable_entity: StorableEntity) -> Result<EntityResponse> {
-
-        let entity = self.repository.create(storable_entity).await?;
-        Ok(entity.into())
+    pub async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
+        self.repository.create(storable_entity).await
     }
 
     pub async fn get_by_id(&self, id: &str) -> Result<EntityModel> {
@@ -52,9 +50,8 @@ where
         self.repository.delete(id).await
     }
 
-    pub async fn get_by_identifier(&self, identifier: &str) -> Result<EntityResponse> {
-        let entity = self.repository.find_by_identifier(identifier).await?;
-        Ok(entity.into())
+    pub async fn get_by_identifier(&self, identifier: &str) -> Result<EntityModel> {
+        self.repository.find_by_identifier(identifier).await
     }
 
     pub async fn entity_count_by_identifier(&self, identifier: &str) -> Result<u64> {

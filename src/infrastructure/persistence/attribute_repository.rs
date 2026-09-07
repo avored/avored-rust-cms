@@ -238,6 +238,9 @@ impl AttributeRepository for AttributeRepositoryImpl {
     async fn delete(&self, id: &str) -> Result<bool> {
         let (datastore, database_session) = &self.database_provider.db;
 
+        // Verify existence
+        self.find_by_id(id).await?;
+
         let target_record = surrealdb::types::RecordId {
             table: ATTRIBUTES_TABLE_NAME.into(),
             key: surrealdb::types::RecordIdKey::String(id.to_string()),

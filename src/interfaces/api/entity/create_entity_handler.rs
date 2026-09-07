@@ -16,7 +16,7 @@ pub async fn create_entity_handler(
 
     let storable_entity = payload.to_storable(logged_in_user.email);
 
-    let entity = state.entity_use_case.create(storable_entity).await?;
+    let model = state.entity_use_case.create(storable_entity).await?;
 
-    Ok((StatusCode::CREATED, Json(entity)))
+    Ok((StatusCode::CREATED, Json(model.into())))
 }

@@ -212,10 +212,12 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn delete(&self, id: &str) -> Result<bool> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let id_clean = id.trim_start_matches("entities:").to_string();
+        // Verify existence
+        self.find_by_id(id).await?;
+
         let target_record = surrealdb::types::RecordId {
-            table: "entities".into(),
-            key: surrealdb::types::RecordIdKey::String(id_clean),
+            table: ENTITIES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
         let sql = format!("
