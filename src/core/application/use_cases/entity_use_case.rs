@@ -29,9 +29,8 @@ where
         Ok(entity.into())
     }
 
-    pub async fn get_by_id(&self, id: &str) -> Result<Option<EntityResponse>> {
-        let entity = self.repository.find_by_id(id).await?;
-        Ok(entity.map(Into::into))
+    pub async fn get_by_id(&self, id: &str) -> Result<EntityModel> {
+        self.repository.find_by_id(id).await
     }
 
     pub async fn paginate(&self, query: PaginateEntityCommand) -> Result<EntityPaginationResponse> {
@@ -45,22 +44,11 @@ where
     }
 
     pub async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityResponse> {
-        // Verify existence
-        let existing = self.repository.find_by_id(id).await?;
-        if existing.is_none() {
-            return Err(Error::Generic(format!("Entity with id '{}' not found", id)));
-        }
-
         let updated = self.repository.update(id, storable_entity).await?;
         Ok(updated.into())
     }
 
     pub async fn delete(&self, id: &str) -> Result<bool> {
-        let existing = self.repository.find_by_id(id).await?;
-        if existing.is_none() {
-            return Err(Error::Generic(format!("Entity with id '{}' not found", id)));
-        }
-
         self.repository.delete(id).await
     }
 

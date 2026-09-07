@@ -7,7 +7,7 @@ pub trait AttributeRepository: Send + Sync {
 
     async fn create(&self, storable_attribute: StorableAttribute) -> Result<AttributeModel>;
 
-    async fn find_by_id(&self, id: &str) -> Result<Option<AttributeModel>>;
+    async fn find_by_id(&self, id: &str) -> Result<AttributeModel>;
 
     async fn find_by_identifier(&self, identifier: &str) -> Result<AttributeModel>;
 

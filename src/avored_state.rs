@@ -4,12 +4,9 @@ use axum::extract::FromRef;
 use leptos::config::LeptosOptions;
 
 use crate::{
-    core::application::use_cases::{AuthUseCase, EntityUseCase, MiscUseCase},
-    infrastructure::persistence::{
-        entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
-        AuthRepositoryImpl,
-    },
-    providers::{
+    core::application::use_cases::{AttributeUseCase, AuthUseCase, EntityUseCase, MiscUseCase}, infrastructure::persistence::{
+        AttributeRepositoryImpl, AuthRepositoryImpl, entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
+    }, providers::{
         avored_config_provider::AvoRedConfigProvider,
         avored_database_provider::AvoRedDatabaseProvider,
     },
@@ -25,6 +22,8 @@ pub struct AppState {
     pub misc_use_case: MiscUseCase<MiscRepositoryImpl>,
 
     pub entity_use_case: EntityUseCase<EntityRepositoryImpl>,
+
+    pub attribute_use_case: AttributeUseCase<AttributeRepositoryImpl>,
 
     /// Database provider for `AvoRed` (SurrealDB).
     pub database_provider: Arc<AvoRedDatabaseProvider>,
@@ -55,6 +54,9 @@ impl AppState {
         let entity_repository = EntityRepositoryImpl::new(avored_database_provider.clone());
         let entity_use_case = EntityUseCase::new(entity_repository);
 
+        let attribute_repository = AttributeRepositoryImpl::new(avored_database_provider.clone());
+        let attribute_use_case = AttributeUseCase::new(attribute_repository);
+
         Ok(Self {
             leptos_options,
             database_provider: avored_database_provider,
@@ -62,6 +64,7 @@ impl AppState {
             auth_use_case,
             misc_use_case,
             entity_use_case,
+            attribute_use_case
         })
     }
 }
@@ -80,6 +83,7 @@ pub async fn test_avored_state() -> AppState {
     let database_provider = auth_repository.database_provider.clone();
     let misc_repository = MiscRepositoryImpl::new(database_provider.clone());
     let entity_repository = EntityRepositoryImpl::new(database_provider.clone());
+    let attribute_repository = AttributeRepositoryImpl::new(database_provider.clone());
 
     AppState {
         leptos_options: leptos::config::LeptosOptions::builder()
@@ -88,6 +92,7 @@ pub async fn test_avored_state() -> AppState {
         auth_use_case: AuthUseCase::new(auth_repository),
         misc_use_case: MiscUseCase::new(misc_repository),
         entity_use_case: EntityUseCase::new(entity_repository),
+        attribute_use_case: AttributeUseCase::new(attribute_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {
             database_folder: "mem://".to_string(),

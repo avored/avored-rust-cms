@@ -68,13 +68,12 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(entity)
     }
 
-    async fn find_by_id(&self, id: &str) -> Result<Option<EntityModel>> {
+    async fn find_by_id(&self, id: &str) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let id_clean = id.trim_start_matches("entities:").to_string();
         let target_record = surrealdb::types::RecordId {
-            table: "entities".into(),
-            key: surrealdb::types::RecordIdKey::String(id_clean),
+            table: ENTITIES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
         let sql = format!("
@@ -93,10 +92,13 @@ impl EntityRepository for EntityRepositoryImpl {
         if let Some(obj_res) = it.next() {
             let obj = obj_res?;
             let model: EntityModel = obj.try_into()?;
-            return Ok(Some(model));
+            return Ok(model);
         }
 
-        Ok(None)
+        Err(crate::error::Error::NotFound(format!(
+            "Entity with ID '{}' not found",
+            id
+        )))
     }
 
     async fn find_by_identifier(&self, identifier: &str) -> Result<EntityModel> {

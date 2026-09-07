@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 use surrealdb::types::{Number, Value};
 
-use crate::core::domain::constants::ATTRIBUTES_TABLE_NAME;
+use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::core::domain::entities::{AttributeModel, StorableAttribute};
 use crate::core::domain::repositories::AttributeRepository;
@@ -49,7 +49,17 @@ impl AttributeRepository for AttributeRepositoryImpl {
                 Value::String(storable_attribute.identifier.into()),
             ),
             
-            ("entity_id".into(), Value::String(storable_attribute.entity_id.into())),
+            (
+                "entity_id".into(),
+                Value::RecordId(surrealdb::types::RecordId {
+                    table: ENTITIES_TABLE_NAME.into(),
+                    key: surrealdb::types::RecordIdKey::String(
+                        storable_attribute
+                            .entity_id
+                            .to_string(),
+                    ),
+                }),
+            ),
             ("data_type".into(), Value::String(storable_attribute.data_type.into())),
             ("field_type".into(), Value::String(storable_attribute.field_type.into())),
             (
@@ -75,13 +85,12 @@ impl AttributeRepository for AttributeRepositoryImpl {
         Ok(attribute)
     }
 
-    async fn find_by_id(&self, id: &str) -> Result<Option<AttributeModel>> {
+    async fn find_by_id(&self, id: &str) -> Result<AttributeModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let id_clean = id.trim_start_matches("attributes:").to_string();
         let target_record = surrealdb::types::RecordId {
-            table: "attributes".into(),
-            key: surrealdb::types::RecordIdKey::String(id_clean),
+            table: ATTRIBUTES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
         let sql = format!("
@@ -100,10 +109,13 @@ impl AttributeRepository for AttributeRepositoryImpl {
         if let Some(obj_res) = it.next() {
             let obj = obj_res?;
             let model: AttributeModel = obj.try_into()?;
-            return Ok(Some(model));
+            return Ok(model);
         }
 
-        Ok(None)
+        Err(crate::error::Error::NotFound(format!(
+            "Attribute with ID '{}' not found",
+            id
+        )))
     }
 
     async fn find_by_identifier(&self, identifier: &str) -> Result<AttributeModel> {
@@ -178,7 +190,7 @@ impl AttributeRepository for AttributeRepositoryImpl {
 
         let id_clean = id.trim_start_matches("attributes:").to_string();
         let target_record = surrealdb::types::RecordId {
-            table: "attributes".into(),
+            table: ATTRIBUTES_TABLE_NAME.into(),
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
@@ -226,10 +238,9 @@ impl AttributeRepository for AttributeRepositoryImpl {
     async fn delete(&self, id: &str) -> Result<bool> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let id_clean = id.trim_start_matches("attributes:").to_string();
         let target_record = surrealdb::types::RecordId {
-            table: "attributes".into(),
-            key: surrealdb::types::RecordIdKey::String(id_clean),
+            table: ATTRIBUTES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
         let sql = format!("

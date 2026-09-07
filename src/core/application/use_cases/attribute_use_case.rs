@@ -1,3 +1,6 @@
+use crate::core::application::dtos::attribute_dto::{AttributePaginationResponse, AttributeResponse, PaginateAttributeCommand};
+use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
+use crate::core::domain::entities::{AttributeModel, StorableAttribute};
 use crate::core::domain::repositories::AttributeRepository;
 use crate::error::{Error, Result};
 
@@ -24,5 +27,43 @@ where
             Err(Error::NotFound(_)) => Ok(0),
             Err(e) => Err(e),
         }
+    }
+
+    pub async fn create(&self, storable_entity: StorableAttribute) -> Result<AttributeResponse> {
+
+        let entity = self.repository.create(storable_entity).await?;
+        Ok(entity.into())
+    }
+
+    pub async fn get_by_id(&self, id: &str) -> Result<AttributeModel> {
+        self.repository.find_by_id(id).await
+    }
+
+    pub async fn paginate(&self, query: PaginateAttributeCommand) -> Result<AttributePaginationResponse> {
+        let page = query.page.unwrap_or(DEFAULT_PAGE);
+        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
+        let entities = self.repository.paginate(page, page_size).await?;
+        let modal_count = self.repository.count().await?;
+        let data = entities.into_iter().map(Into::into).collect();
+
+        Ok(AttributePaginationResponse { data, total: modal_count.total })
+    }
+
+    pub async fn update(&self, id: &str, storable_entity: StorableAttribute) -> Result<AttributeModel> {
+        self.repository.update(id, storable_entity).await
+    }
+
+    pub async fn delete(&self, id: &str) -> Result<bool> {
+        self.repository.delete(id).await
+    }
+
+    pub async fn get_by_identifier(&self, identifier: &str) -> Result<AttributeResponse> {
+        let entity = self.repository.find_by_identifier(identifier).await?;
+        Ok(entity.into())
+    }
+
+
+    pub async fn list_options(&self) -> Result<Vec<AttributeModel>> {
+        self.repository.list_options().await
     }
 }

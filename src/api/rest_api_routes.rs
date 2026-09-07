@@ -1,4 +1,4 @@
-use axum::{Router, http::HeaderValue, routing::get};
+use axum::{Router, http::HeaderValue, routing::{delete, get, post, put}};
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower_http::{cors::{Any, CorsLayer}, services::ServeDir};
@@ -26,6 +26,23 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
     
 
     let router = Router::<AppState>::new()
+
+        .route(
+            "/api/attributes",get(crate::interfaces::api::attribute::paginate_attribute_handler::paginate_attributes_handler),
+        )
+        .route(
+            "/api/attributes",post(crate::interfaces::api::attribute::create_attribute_handler::create_attribute_handler),
+        )
+        .route(
+            "/api/attributes/{id}",get(crate::interfaces::api::attribute::fetch_attribute_handler::fetch_attribute_handler),
+        ) 
+        
+        .route(
+            "/api/attributes/{id}",put(crate::interfaces::api::attribute::update_attribute_handler::update_attribute_handler),
+        ) 
+        .route(
+            "/api/attributes/{id}",delete(crate::interfaces::api::attribute::delete_attribute_handler::delete_attribute_handler),
+        ) 
         
         .route(
             "/api/entities/option",get(crate::interfaces::api::entity::option_entities_handler::option_entities_handler),

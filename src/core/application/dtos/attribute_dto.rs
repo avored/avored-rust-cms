@@ -118,7 +118,7 @@ impl UpdateAttributeCommand {
         }
     }
 
-    pub async fn validate(&self, locale: &str, attribute_usecase: &AttributeUseCase<impl AttributeRepository>) -> Result<Vec<ErrorMessageResponse>> {
+    pub async fn validate(&self, locale: &str, _attribute_usecase: &AttributeUseCase<impl AttributeRepository>) -> Result<Vec<ErrorMessageResponse>> {
 
         let mut errors: Vec<ErrorMessageResponse> = vec![];
         let mut valid = true;
@@ -139,15 +139,6 @@ impl UpdateAttributeCommand {
             valid = false;
         }
 
-        let identifier_count = attribute_usecase.attribute_count_by_identifier(&self.identifier).await?;
-
-        if identifier_count > 0 {
-            errors.push(ErrorMessageResponse {
-                key: String::from("identifier"),
-                message: t!("unique", locale = locale, attribute = t!("identifier", locale = locale)).to_string(),
-            });
-            valid = false;
-        }
 
         if !valid {
             return Err(crate::error::Error::BadRequest(ErrorResponse {

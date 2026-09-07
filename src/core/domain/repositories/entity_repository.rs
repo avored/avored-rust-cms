@@ -7,7 +7,7 @@ pub trait EntityRepository: Send + Sync {
 
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel>;
 
-    async fn find_by_id(&self, id: &str) -> Result<Option<EntityModel>>;
+    async fn find_by_id(&self, id: &str) -> Result<EntityModel>;
 
     async fn find_by_identifier(&self, identifier: &str) -> Result<EntityModel>;
 
