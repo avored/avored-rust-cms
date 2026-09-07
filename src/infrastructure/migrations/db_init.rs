@@ -5,6 +5,8 @@ use crate::infrastructure::persistence::into_iter_objects;
 
 const INITIAL_SCHEMA_MIGRATION: &str = "0001_initial_schema";
 
+const REFRESH_DATABASE: bool = false;
+
 /// Apply pending database migrations.
 pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
     datastore
@@ -82,10 +84,20 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
         )
         .await?;
 
+    if REFRESH_DATABASE {
+        reset_local_database(datastore, session).await?;
+    }
+    
+
     Ok(())
 }
 
 async fn migration_is_applied(datastore: &Datastore, session: &Session) -> Result<bool> {
+
+    if REFRESH_DATABASE {
+        return Ok(false);
+    }
+
     let responses = datastore
         .execute(
             &format!(
