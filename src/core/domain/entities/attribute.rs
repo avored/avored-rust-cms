@@ -69,11 +69,6 @@ impl TryFrom<surrealdb::types::Object> for AttributeModel {
             _ => String::new(),
         };
 
-        let identifier = match obj.remove("identifier") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
         let created_at = match obj.remove("created_at") {
             Some(surrealdb::types::Value::Datetime(v)) => v,
             _ => Datetime::now(),
