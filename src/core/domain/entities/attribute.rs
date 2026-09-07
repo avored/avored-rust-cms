@@ -20,6 +20,7 @@ pub struct AttributeModel {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct StorableAttribute {
+    pub entity_id: String,
     pub name: String,
     pub identifier: String,
     pub data_type: String,

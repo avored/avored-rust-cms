@@ -1,11 +1,17 @@
 use crate::error::{Result, Error};
+
 pub mod auth_repository;
+pub use auth_repository::AuthRepositoryImpl;
 
 pub mod misc_repository;
-pub mod entity_repository;
 
-pub use auth_repository::AuthRepositoryImpl;
+pub mod entity_repository;
 pub use entity_repository::EntityRepositoryImpl;
+
+pub mod attribute_repository;
+pub use attribute_repository::AttributeRepositoryImpl;
+
+
 use surrealdb::types::{Object, Value};
 use surrealdb_core::dbs::QueryResult;
 

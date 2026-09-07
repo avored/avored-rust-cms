@@ -47,7 +47,7 @@ impl AuthRepository for AuthRepositoryImpl {
 
 
 pub async fn test_auth_repository() -> AuthRepositoryImpl {
-    let provider = AvoRedDatabaseProvider::register("mem://", "test", "auth")
+    let provider = AvoRedDatabaseProvider::register("mem://", "test", "avored")
         .await
         .expect("in-memory database should initialize");
 

@@ -11,3 +11,7 @@ pub use misc_repository::MiscRepository;
 pub mod entity_repository;
 
 pub use entity_repository::EntityRepository;
+
+pub mod attribute_repository;
+
+pub use attribute_repository::AttributeRepository;
