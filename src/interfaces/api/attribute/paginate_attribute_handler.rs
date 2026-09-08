@@ -8,6 +8,11 @@ pub async fn paginate_attributes_handler(
     State(state): State<AppState>,
     Query(command): Query<PaginateAttributeCommand>,
 ) -> Result<Json<AttributePaginationResponse>> {
-    let response = state.attribute_use_case.paginate(command).await?;
+    let (models, total) = state.attribute_use_case.paginate(command).await?;
+
+    let response = AttributePaginationResponse {
+        data: models.into_iter().map(Into::into).collect(),
+        total,
+    };
     Ok(Json(response))
 }

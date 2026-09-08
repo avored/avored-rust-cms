@@ -8,6 +8,10 @@ pub async fn paginate_entities_handler(
     State(state): State<AppState>,
     Query(command): Query<PaginateEntityCommand>,
 ) -> Result<Json<EntityPaginationResponse>> {
-    let response = state.entity_use_case.paginate(command).await?;
+    let (data, total) = state.entity_use_case.paginate(command).await?;
+    let response = EntityPaginationResponse {
+        data: data.into_iter().map(Into::into).collect(),
+        total,
+    };
     Ok(Json(response))
 }

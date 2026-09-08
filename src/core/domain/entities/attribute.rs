@@ -35,8 +35,8 @@ impl TryFrom<surrealdb::types::Object> for AttributeModel {
     fn try_from(mut obj: surrealdb::types::Object) -> Result<Self> {
         let id = match obj.remove("id") {
             Some(surrealdb::types::Value::RecordId(v)) => match v.key {
-                surrealdb::types::RecordIdKey::String(k) => format!("{}:{}", v.table, k),
-                _ => format!("{}:{:?}", v.table, v.key),
+                surrealdb::types::RecordIdKey::String(k) => format!("{}", k),
+                _ => format!("{:?}", v.key),
             },
             Some(surrealdb::types::Value::String(v)) => v,
             _ => String::new(),
@@ -44,8 +44,8 @@ impl TryFrom<surrealdb::types::Object> for AttributeModel {
 
         let entity_id = match obj.remove("entity_id") {
             Some(surrealdb::types::Value::RecordId(v)) => match v.key {
-                surrealdb::types::RecordIdKey::String(k) => format!("{}:{}", v.table, k),
-                _ => format!("{}:{:?}", v.table, v.key),
+                surrealdb::types::RecordIdKey::String(k) => format!("{}", k),
+                _ => format!("{:?}", v.key),
             },
             _ => String::new(),
         };

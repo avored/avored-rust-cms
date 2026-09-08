@@ -16,8 +16,7 @@ pub async fn create_attribute_handler(
     payload.validate(locale, &state.attribute_use_case).await?;
 
     let storable = payload.to_storable(logged_in_user.email);
-
     let model = state.attribute_use_case.create(storable).await?;
 
-    Ok((StatusCode::CREATED, Json(model)))
+    Ok((StatusCode::CREATED, Json(model.into())))
 }

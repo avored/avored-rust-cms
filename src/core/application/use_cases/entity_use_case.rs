@@ -1,7 +1,4 @@
-use crate::core::application::dtos::EntityPaginationResponse;
-use crate::core::application::dtos::entity_dto::{
-    EntityResponse, PaginateEntityCommand,
-};
+use crate::core::application::dtos::entity_dto::PaginateEntityCommand;
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::{EntityModel, StorableEntity};
 use crate::core::domain::repositories::EntityRepository;
@@ -31,19 +28,18 @@ where
         self.repository.find_by_id(id).await
     }
 
-    pub async fn paginate(&self, query: PaginateEntityCommand) -> Result<EntityPaginationResponse> {
-        let page = query.page.unwrap_or(DEFAULT_PAGE);
+    pub async fn paginate(&self, query: PaginateEntityCommand) -> Result<(Vec<EntityModel>, u64)> {
+        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
         let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
         let entities = self.repository.paginate(page, page_size).await?;
         let modal_count = self.repository.count().await?;
-        let data = entities.into_iter().map(Into::into).collect();
 
-        Ok(EntityPaginationResponse { data, total: modal_count.total })
+        Ok((entities, modal_count.total))
     }
 
-    pub async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityResponse> {
+    pub async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityModel> {
         let updated = self.repository.update(id, storable_entity).await?;
-        Ok(updated.into())
+        Ok(updated)
     }
 
     pub async fn delete(&self, id: &str) -> Result<bool> {
@@ -66,5 +62,4 @@ where
     pub async fn list_options(&self) -> Result<Vec<EntityModel>> {
         self.repository.list_options().await
     }
-
 }
