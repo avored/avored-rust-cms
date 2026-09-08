@@ -1,5 +1,6 @@
 use crate::core::application::dtos::entity_dto::PaginateEntityCommand;
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
+use crate::core::domain::entities::entity::UpdableIdentifierEntity;
 use crate::core::domain::entities::{EntityModel, StorableEntity};
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::{Error, Result};
@@ -61,5 +62,13 @@ where
 
     pub async fn list_options(&self) -> Result<Vec<EntityModel>> {
         self.repository.list_options().await
+    }
+
+    pub async fn update_identifier(
+        &self,
+        id: &str,
+        updatable_identifier: UpdableIdentifierEntity,
+    ) -> Result<EntityModel> {
+        self.repository.update_identifier(id, updatable_identifier).await
     }
 }

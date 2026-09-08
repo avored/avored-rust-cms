@@ -1,5 +1,6 @@
 use crate::core::application::dtos::attribute_dto::PaginateAttributeCommand;
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
+use crate::core::domain::entities::attribute::UpdableIdentifierAttribute;
 use crate::core::domain::entities::{AttributeModel, StorableAttribute};
 use crate::core::domain::repositories::AttributeRepository;
 use crate::error::{Error, Result};
@@ -71,4 +72,13 @@ where
     pub async fn list_options(&self) -> Result<Vec<AttributeModel>> {
         self.repository.list_options().await
     }
+
+    pub async fn update_identifier(
+        &self,
+        id: &str,
+        updatable_identifier: UpdableIdentifierAttribute,
+    ) -> Result<AttributeModel> {
+        self.repository.update_identifier(id, updatable_identifier).await
+    }
+
 }

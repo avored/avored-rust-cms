@@ -1,4 +1,4 @@
-use crate::core::domain::entities::entity::{EntityModel, StorableEntity};
+use crate::core::domain::entities::entity::{EntityModel, StorableEntity, UpdableIdentifierEntity};
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::error::Result;
 
@@ -20,5 +20,11 @@ pub trait EntityRepository: Send + Sync {
     async fn delete(&self, id: &str) -> Result<bool>;
 
     async fn list_options(&self) -> Result<Vec<EntityModel>>;
+
+    async fn update_identifier(
+        &self,
+        id: &str,
+        updatable_identifier: UpdableIdentifierEntity,
+    ) -> Result<EntityModel>;
     
 }

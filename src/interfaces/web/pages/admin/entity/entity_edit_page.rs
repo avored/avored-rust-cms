@@ -54,14 +54,43 @@ pub fn EntityEditPage() -> impl IntoView {
                         </div>
 
                         <div>
-                            <label for="edit-entity-identifier" class="mb-2 block text-sm font-medium text-slate-700">{t!("identifier")}</label>
+                            <div class="mb-2 flex items-center justify-between gap-3">
+                                <label for="edit-entity-identifier" class="block text-sm font-medium text-slate-700">{t!("identifier")}</label>
+                                <button
+                                    type="button"
+                                    x-show="!identifierEnabled"
+                                    x-on:click="enableIdentifier"
+                                    class="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50"
+                                >
+                                    "Edit"
+                                </button>
+                                <div x-show="identifierEnabled" class="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        x-on:click="saveIdentifier"
+                                        x-bind:disabled="identifierSubmitting"
+                                        class="rounded bg-primary-600 px-2 py-1 text-xs font-medium text-white hover:bg-primary-700 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        "Save"
+                                    </button>
+                                    <button
+                                        type="button"
+                                        x-on:click="cancelIdentifierEdit"
+                                        x-bind:disabled="identifierSubmitting"
+                                        class="rounded border border-slate-300 bg-white px-2 py-1 text-xs font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+                                    >
+                                        "Cancel"
+                                    </button>
+                                </div>
+                            </div>
                             <input
                                 id="edit-entity-identifier"
                                 name="identifier"
                                 type="text"
                                 x-model="identifier"
+                                x-bind:disabled="!identifierEnabled"
                                 x-bind:class="fieldError('identifier') ? 'border-red-400 ring-2 ring-red-100 focus:border-red-500' : ''"
-                                class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100"
+                                class="w-full rounded-lg border border-slate-300 px-3.5 py-2.5 font-mono text-sm text-slate-900 outline-none transition focus:border-primary-500 focus:ring-2 focus:ring-primary-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500"
                             />
                             <template x-if="fieldError('identifier')">
                                 <p class="mt-2 text-xs font-medium text-red-600" x-text="fieldError('identifier')"></p>

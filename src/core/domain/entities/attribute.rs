@@ -28,6 +28,12 @@ pub struct StorableAttribute {
     pub logged_in_user_email: String,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdableIdentifierAttribute {
+    pub identifier: String,
+    pub logged_in_user_email: String,
+}
+
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for AttributeModel {
     type Error = crate::error::Error;

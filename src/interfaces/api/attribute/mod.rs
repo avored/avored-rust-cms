@@ -7,3 +7,5 @@ pub mod fetch_attribute_handler;
 pub mod update_attribute_handler;
 
 pub mod delete_attribute_handler;
+
+pub mod update_attriute_identifier_handler;

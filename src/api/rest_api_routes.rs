@@ -2,6 +2,7 @@ use axum::{Router, http::HeaderValue, routing::{delete, get, post, put}};
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower_http::{cors::{Any, CorsLayer}, services::ServeDir};
+use crate::interfaces::api::{attribute::update_attriute_identifier_handler::update_attriute_identifier_handler, entity::update_entity_identifier_handler::update_entity_identifier_handler};
 
 use crate::{
     avored_state::AppState, infrastructure::middleware::auth_middleware, interfaces::web::{shell::Shell, web_routes::WebApp},
@@ -39,6 +40,9 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         
         .route(
             "/api/attributes/{id}",put(crate::interfaces::api::attribute::update_attribute_handler::update_attribute_handler),
+        )
+        .route(
+            "/api/attributes/{id}/identifier",put(update_attriute_identifier_handler),
         ) 
         .route(
             "/api/attributes/{id}",delete(crate::interfaces::api::attribute::delete_attribute_handler::delete_attribute_handler),
@@ -57,6 +61,9 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             axum::routing::get(crate::interfaces::api::entity::fetch_entity_handler)
                 .put(crate::interfaces::api::entity::update_entity_handler)
                 .delete(crate::interfaces::api::entity::delete_entity_handler),
+        )
+        .route(
+            "/api/entities/{id}/identifier",put(update_entity_identifier_handler),
         )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),

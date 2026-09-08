@@ -9,6 +9,9 @@ export function entityEditPage(entityId: string) {
         id: entityId,
         name: '',
         identifier: '',
+        originalIdentifier: '',
+        identifierEnabled: false,
+        identifierSubmitting: false,
         loading: false,
         submitting: false,
 
@@ -23,10 +26,40 @@ export function entityEditPage(entityId: string) {
                 const entity = await http.get<EntityInterface>(`/api/entities/${this.id}`);
                 this.name = entity.name || '';
                 this.identifier = entity.identifier || '';
+                this.originalIdentifier = this.identifier;
+                this.identifierEnabled = false;
             } catch (err: any) {
                 this.applyApiErrors(err);
             } finally {
                 this.loading = false;
+            }
+        },
+
+        enableIdentifier() {
+            this.identifierEnabled = true;
+        },
+
+        cancelIdentifierEdit() {
+            this.identifier = this.originalIdentifier;
+            this.identifierEnabled = false;
+            this.clearErrors();
+        },
+
+        async saveIdentifier() {
+            this.identifierSubmitting = true;
+            this.clearErrors();
+
+            try {
+                await http.put(`/api/entities/${this.id}/identifier`, {
+                    identifier: this.identifier,
+                });
+
+                this.originalIdentifier = this.identifier;
+                this.identifierEnabled = false;
+            } catch (err: any) {
+                this.applyApiErrors(err);
+            } finally {
+                this.identifierSubmitting = false;
             }
         },
 
@@ -37,7 +70,6 @@ export function entityEditPage(entityId: string) {
             try {
                 await http.put(`/api/entities/${this.id}`, {
                     name: this.name,
-                    identifier: this.identifier,
                 });
 
                 window.location.href = '/admin/entity';

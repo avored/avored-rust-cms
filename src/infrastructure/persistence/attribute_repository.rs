@@ -3,6 +3,7 @@ use std::sync::Arc;
 use surrealdb::types::{Number, Value};
 
 use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
+use crate::core::domain::entities::attribute::UpdableIdentifierAttribute;
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::core::domain::entities::{AttributeModel, StorableAttribute};
 use crate::core::domain::repositories::AttributeRepository;
@@ -305,6 +306,49 @@ impl AttributeRepository for AttributeRepositoryImpl {
 
         Ok(list)
     }
+
+    async fn update_identifier(
+        &self,
+        id: &str,
+        updatable_identifier: UpdableIdentifierAttribute,
+    ) -> Result<AttributeModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let target_record = surrealdb::types::RecordId {
+            table: ATTRIBUTES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
+        };
+
+        let sql = format!("
+            UPDATE {} 
+            SET identifier=$identifier, updated_at=time::now(), updated_by=$updated_by 
+            WHERE id = $id AND deleted_at = NONE;", 
+            ATTRIBUTES_TABLE_NAME
+        );
+        let data: BTreeMap<String, Value> = [
+            ("id".into(), Value::RecordId(target_record)),
+            (
+                "identifier".into(),
+                Value::String(updatable_identifier.identifier.into()),
+            ),
+            (
+                "updated_by".into(),
+                Value::String(updatable_identifier.logged_in_user_email.into()),
+            ),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?
+            .next()
+            .ok_or_else(|| crate::error::Error::Generic("No attribute returned from update identifier".to_string()))??;
+
+        let attribute: AttributeModel = result_object.try_into()?;
+        Ok(attribute)
+    } 
 }
 
 pub async fn test_attribute_repository() -> AttributeRepositoryImpl {

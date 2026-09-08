@@ -89,3 +89,10 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
         })
     }
 }
+
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdableIdentifierEntity {
+    pub identifier: String,
+    pub logged_in_user_email: String,
+}

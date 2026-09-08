@@ -20,3 +20,5 @@ pub mod delete_entity_handler;
 pub use delete_entity_handler::delete_entity_handler;
 
 pub mod option_entities_handler;
+
+pub mod update_entity_identifier_handler;
