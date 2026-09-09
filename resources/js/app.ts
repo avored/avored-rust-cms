@@ -5,6 +5,7 @@ import { setupPage } from "./misc/SetupPage";
 import { entityIndexPage } from "./entity/EntityIndexPage";
 import { entityCreatePage } from "./entity/EntityCreatePage";
 import { entityEditPage } from "./entity/EntityEditPage";
+import { attributeIndexPage } from "./attribute/AttributeIndexPage";
 
 declare global {
   interface Window {
@@ -25,6 +26,7 @@ if (window.Alpine) {
   window.Alpine.data("entityIndexPage", entityIndexPage);
   window.Alpine.data("entityCreatePage", entityCreatePage);
   window.Alpine.data("entityEditPage", entityEditPage);
+  window.Alpine.data("attributeIndexPage", attributeIndexPage);
 }
 
 const initApp = () => {
@@ -50,4 +52,3 @@ document.addEventListener("DOMContentLoaded", () => {
     window.feather.replace();
   }
 });
-

@@ -1,6 +1,6 @@
 import http from '../utils/http';
 import { formErrorsMixin } from '../utils/formErrors';
-import { EntityInterface } from './types';
+import { EntityInterface } from '../types/EntityType';
 
 export function entityEditPage(entityId: string) {
     return {

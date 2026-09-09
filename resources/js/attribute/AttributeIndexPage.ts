@@ -1,36 +1,36 @@
 import http from '../utils/http';
-import { EntityInterface, EntityPaginationResponse } from '../types/EntityType';
+import { AttributeInterface, AttributePaginationResponse } from '../types/AttributeType';
 
-export function entityIndexPage() {
+export function attributeIndexPage() {
     return {
-        entities: [] as EntityInterface[],
+        attributes: [] as AttributeInterface[],
         total: 0,
         page: 1,
         pageSize: 20,
         loading: false,
         deleteModalOpen: false,
-        entityToDelete: null as EntityInterface | null,
+        attributeToDelete: null as AttributeInterface | null,
         deleting: false,
         errorMessage: '',
 
         async init() {
-            await this.fetchEntities();
+            await this.fetchAttributes();
         },
 
-        async fetchEntities() {
+        async fetchAttributes() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get<EntityPaginationResponse>('/api/entities', {
+                const response = await http.get<AttributePaginationResponse>('/api/attributes', {
                     params: {
                         page: this.page,
                         page_size: this.pageSize,
                     },
                 });
-                this.entities = response.data || [];
+                this.attributes = response.data || [];
                 this.total = response.total || 0;
             } catch (err: any) {
-                this.errorMessage = err.message || 'Failed to load entities';
+                this.errorMessage = err.message || 'Failed to load attributes';
             } finally {
                 this.loading = false;
             }
@@ -51,13 +51,13 @@ export function entityIndexPage() {
         async previousPage() {
             if (this.page <= 1 || this.loading) return;
             this.page -= 1;
-            await this.fetchEntities();
+            await this.fetchAttributes();
         },
 
         async nextPage() {
             if (this.page >= this.totalPages() || this.loading) return;
             this.page += 1;
-            await this.fetchEntities();
+            await this.fetchAttributes();
         },
 
         formatDate(value: string) {
@@ -69,32 +69,32 @@ export function entityIndexPage() {
                 : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(date);
         },
 
-        confirmDelete(entity: EntityInterface) {
-            this.entityToDelete = entity;
+        confirmDelete(attribute: AttributeInterface) {
+            this.attributeToDelete = attribute;
             this.deleteModalOpen = true;
         },
 
         cancelDelete() {
             this.deleteModalOpen = false;
-            this.entityToDelete = null;
+            this.attributeToDelete = null;
         },
 
-        async deleteEntity() {
-            if (!this.entityToDelete) return;
+        async deleteAttribute() {
+            if (!this.attributeToDelete) return;
             this.deleting = true;
             try {
-                await http.delete(`/api/entities/${this.entityToDelete.id}`);
-                this.entities = this.entities.filter(e => e.id !== this.entityToDelete?.id);
+                await http.delete(`/api/attributes/${this.attributeToDelete.id}`);
+                this.attributes = this.attributes.filter(e => e.id !== this.attributeToDelete?.id);
                 this.total = Math.max(0, this.total - 1);
                 this.deleteModalOpen = false;
-                this.entityToDelete = null;
+                this.attributeToDelete = null;
 
-                if (this.entities.length === 0 && this.page > 1) {
+                if (this.attributes.length === 0 && this.page > 1) {
                     this.page -= 1;
-                    await this.fetchEntities();
+                    await this.fetchAttributes();
                 }
             } catch (err: any) {
-                this.errorMessage = err.message || 'Failed to delete entity';
+                this.errorMessage = err.message || 'Failed to delete attribute';
             } finally {
                 this.deleting = false;
             }
