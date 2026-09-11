@@ -1,4 +1,4 @@
-use crate::core::application::dtos::entity_dto::PaginateEntityCommand;
+use crate::core::application::dtos::entity_dto::{PaginateEntityCommand};
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::entity::UpdableIdentifierEntity;
 use crate::core::domain::entities::{EntityModel, StorableEntity};
@@ -22,7 +22,21 @@ where
     }
 
     pub async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
-        self.repository.create(storable_entity).await
+        let attributes = storable_entity.attributes.clone();
+        let logged_in_user = storable_entity.logged_in_user_email.clone();
+        let mut entity_model = self.repository.create(storable_entity).await?;
+
+        for attribute in attributes {
+            let attrobute_model = self.repository.create_attribute(
+                attribute,
+                entity_model.id.clone(),
+                logged_in_user.clone(),
+            ).await?;
+
+            entity_model.attributes.push(attrobute_model);
+        }
+
+        Ok(entity_model)
     }
 
     pub async fn get_by_id(&self, id: &str) -> Result<EntityModel> {
@@ -69,6 +83,8 @@ where
         id: &str,
         updatable_identifier: UpdableIdentifierEntity,
     ) -> Result<EntityModel> {
-        self.repository.update_identifier(id, updatable_identifier).await
+        self.repository
+            .update_identifier(id, updatable_identifier)
+            .await
     }
 }

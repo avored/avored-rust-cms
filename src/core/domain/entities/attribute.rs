@@ -20,7 +20,7 @@ pub struct AttributeModel {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct StorableAttribute {
-    pub entity_id: String,
+    // pub entity_id: String,
     pub name: String,
     pub identifier: String,
     pub data_type: String,
@@ -38,73 +38,25 @@ pub struct UpdableIdentifierAttribute {
 impl TryFrom<surrealdb::types::Object> for AttributeModel {
     type Error = crate::error::Error;
 
-    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self> {
-        let id = match obj.remove("id") {
-            Some(surrealdb::types::Value::RecordId(v)) => match v.key {
-                surrealdb::types::RecordIdKey::String(k) => format!("{}", k),
-                _ => format!("{:?}", v.key),
-            },
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+    fn try_from(obj: surrealdb::types::Object) -> Result<Self> {
+        use crate::core::domain::extensions::object_extension::ObjectExtension;
 
-        let entity_id = match obj.remove("entity_id") {
-            Some(surrealdb::types::Value::RecordId(v)) => match v.key {
-                surrealdb::types::RecordIdKey::String(k) => format!("{}", k),
-                _ => format!("{:?}", v.key),
-            },
-            _ => String::new(),
-        };
+        let id = obj.get_id("id")?;
+        let entity_id = obj.get_id("entity_id")?;
 
-        let name = match obj.remove("name") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+        let name = obj.get_string("name")?;
+        let identifier = obj.get_string("identifier")?;
+        let data_type = obj.get_string("data_type")?;
+        let field_type = obj.get_string("field_type")?;
+        
+        let created_at = obj.get_datetime("created_at")?;
+        let created_by = obj.get_string("created_by")?;
 
-        let identifier = match obj.remove("identifier") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+        let updated_at = obj.get_datetime("updated_at")?;
+        let updated_by = obj.get_string("updated_by")?;
 
-        let data_type = match obj.remove("data_type") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
-        let field_type = match obj.remove("field_type") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
-        let created_at = match obj.remove("created_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v,
-            _ => Datetime::now(),
-        };
-
-          let created_by = match obj.remove("created_by") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
-        let updated_at = match obj.remove("updated_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v,
-            _ => Datetime::now(),
-        };
-
-         let updated_by = match obj.remove("updated_by") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
-        let deleted_at = match obj.remove("deleted_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => Some(v),
-            _ => None,
-        };
-
-        let deleted_by = match obj.remove("deleted_by") {
-            Some(surrealdb::types::Value::String(v)) => Some(v),
-            _ => None,
-        };
+        let deleted_at = obj.get_optional_datetime("deleted_at")?;
+        let deleted_by = obj.get_optional_string("deleted_by")?;
 
         Ok(AttributeModel {
             id,

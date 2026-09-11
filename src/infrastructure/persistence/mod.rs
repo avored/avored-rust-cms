@@ -8,8 +8,8 @@ pub mod misc_repository;
 pub mod entity_repository;
 pub use entity_repository::EntityRepositoryImpl;
 
-pub mod attribute_repository;
-pub use attribute_repository::AttributeRepositoryImpl;
+// pub mod attribute_repository;
+// pub use attribute_repository::AttributeRepositoryImpl;
 
 
 use surrealdb::types::{Object, Value};

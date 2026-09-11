@@ -1,11 +1,24 @@
-use axum::{Router, http::HeaderValue, routing::{delete, get, post, put}};
+use crate::interfaces::api::entity::{
+    create_entity_handler, delete_entity_handler, fetch_entity_handler,
+    option_entities_handler::option_entities_handler, paginate_entities_handler,
+    update_entity_handler, update_entity_identifier_handler::update_entity_identifier_handler,
+};
+use axum::{
+    http::HeaderValue,
+    routing::{delete, get, post, put},
+    Router,
+};
 use leptos::context::provide_context;
 use leptos_axum::{generate_route_list, LeptosRoutes};
-use tower_http::{cors::{Any, CorsLayer}, services::ServeDir};
-use crate::interfaces::api::{attribute::update_attriute_identifier_handler::update_attriute_identifier_handler, entity::update_entity_identifier_handler::update_entity_identifier_handler};
+use tower_http::{
+    cors::{Any, CorsLayer},
+    services::ServeDir,
+};
 
 use crate::{
-    avored_state::AppState, infrastructure::middleware::auth_middleware, interfaces::web::{shell::Shell, web_routes::WebApp},
+    avored_state::AppState,
+    infrastructure::middleware::auth_middleware,
+    interfaces::web::{shell::Shell, web_routes::WebApp},
 };
 
 pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
@@ -24,46 +37,17 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .allow_headers(Any) // Allow all headers
         .allow_methods(Any) // Allow all methods
         .expose_headers(Any); // Expose all headers
-    
 
     let router = Router::<AppState>::new()
-
+        .route("/api/entities/option", get(option_entities_handler))
+        .route("/api/entities", post(create_entity_handler))
+        .route("/api/entities", get(paginate_entities_handler))
+        .route("/api/entities/{id}", get(fetch_entity_handler))
+        .route("/api/entities/{id}", put(update_entity_handler))
+        .route("/api/entities/{id}", delete(delete_entity_handler))
         .route(
-            "/api/attributes",get(crate::interfaces::api::attribute::paginate_attribute_handler::paginate_attributes_handler),
-        )
-        .route(
-            "/api/attributes",post(crate::interfaces::api::attribute::create_attribute_handler::create_attribute_handler),
-        )
-        .route(
-            "/api/attributes/{id}",get(crate::interfaces::api::attribute::fetch_attribute_handler::fetch_attribute_handler),
-        ) 
-        
-        .route(
-            "/api/attributes/{id}",put(crate::interfaces::api::attribute::update_attribute_handler::update_attribute_handler),
-        )
-        .route(
-            "/api/attributes/{id}/identifier",put(update_attriute_identifier_handler),
-        ) 
-        .route(
-            "/api/attributes/{id}",delete(crate::interfaces::api::attribute::delete_attribute_handler::delete_attribute_handler),
-        ) 
-        
-        .route(
-            "/api/entities/option",get(crate::interfaces::api::entity::option_entities_handler::option_entities_handler),
-        )
-        .route(
-            "/api/entities",
-            axum::routing::post(crate::interfaces::api::entity::create_entity_handler)
-                .get(crate::interfaces::api::entity::paginate_entities_handler),
-        )
-        .route(
-            "/api/entities/{id}",
-            axum::routing::get(crate::interfaces::api::entity::fetch_entity_handler)
-                .put(crate::interfaces::api::entity::update_entity_handler)
-                .delete(crate::interfaces::api::entity::delete_entity_handler),
-        )
-        .route(
-            "/api/entities/{id}/identifier",put(update_entity_identifier_handler),
+            "/api/entities/{id}/identifier",
+            put(update_entity_identifier_handler),
         )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
@@ -90,7 +74,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             },
             Shell,
         )
-        .nest_service("/public", ServeDir::new(std::path::Path::new("target").join("site")))
+        .nest_service(
+            "/public",
+            ServeDir::new(std::path::Path::new("target").join("site")),
+        )
         .nest_service("/assets", ServeDir::new(std::path::Path::new("assets")));
 
     Ok(router.with_state(state))

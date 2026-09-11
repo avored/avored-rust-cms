@@ -12,6 +12,6 @@ pub mod entity_use_case;
 pub use entity_use_case::EntityUseCase;
 
 
-pub mod attribute_use_case;
+// pub mod attribute_use_case;
 
-pub use attribute_use_case::AttributeUseCase;
+// pub use attribute_use_case::AttributeUseCase;

@@ -1,11 +1,20 @@
-use crate::core::domain::entities::entity::{EntityModel, StorableEntity, UpdableIdentifierEntity};
+use crate::core::domain::entities::entity::{
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity,
+};
 use crate::core::domain::entities::modal_count::ModalCount;
+use crate::core::domain::entities::{AttributeModel};
 use crate::error::Result;
 
 #[async_trait::async_trait]
 pub trait EntityRepository: Send + Sync {
-
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel>;
+
+    async fn create_attribute(
+        &self,
+        attribute: StorableEntityAttribute,
+        entity_id: String,
+        logged_in_user: String,
+    ) -> Result<AttributeModel>;
 
     async fn find_by_id(&self, id: &str) -> Result<EntityModel>;
 
@@ -26,5 +35,4 @@ pub trait EntityRepository: Send + Sync {
         id: &str,
         updatable_identifier: UpdableIdentifierEntity,
     ) -> Result<EntityModel>;
-    
 }

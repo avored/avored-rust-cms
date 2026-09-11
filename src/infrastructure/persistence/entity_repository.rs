@@ -2,9 +2,12 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 use surrealdb::types::{Number, Value};
 
-use crate::core::domain::constants::ENTITIES_TABLE_NAME;
-use crate::core::domain::entities::entity::{EntityModel, StorableEntity, UpdableIdentifierEntity};
+use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
+use crate::core::domain::entities::entity::{
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity,
+};
 use crate::core::domain::entities::modal_count::ModalCount;
+use crate::core::domain::entities::AttributeModel;
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::Result;
 use crate::infrastructure::persistence::into_iter_objects;
@@ -26,7 +29,8 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = format!("
+        let sql = format!(
+            "
                 CREATE {} 
                 SET 
                     name=$name, 
@@ -35,8 +39,8 @@ impl EntityRepository for EntityRepositoryImpl {
                     created_by=$created_by, 
                     updated_at=time::now(), 
                     updated_by=$updated_by, 
-                    deleted_at=NONE;", 
-                ENTITIES_TABLE_NAME
+                    deleted_at=NONE;",
+            ENTITIES_TABLE_NAME
         );
 
         let data: BTreeMap<String, Value> = [
@@ -60,9 +64,9 @@ impl EntityRepository for EntityRepositoryImpl {
             .execute(&sql, database_session, Some(data.into()))
             .await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No entity returned from insert".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No entity returned from insert".to_string())
+        })??;
 
         let entity: EntityModel = result_object.try_into()?;
         Ok(entity)
@@ -76,10 +80,13 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
-        let sql = format!("
-            SELECT * 
-            FROM {} 
-            WHERE id = $id AND deleted_at = NONE;", 
+        let sql = format!(
+            "
+            SELECT *,
+                (SELECT * FROM {} WHERE entity_id = $id AND deleted_at = NONE) AS attributes
+            FROM {}
+            WHERE id = $id AND deleted_at = NONE;",
+            ATTRIBUTES_TABLE_NAME,
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
@@ -104,10 +111,11 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn find_by_identifier(&self, identifier: &str) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = format!("
+        let sql = format!(
+            "
             SELECT * 
             FROM {} 
-            WHERE identifier = $identifier AND deleted_at = NONE;", 
+            WHERE identifier = $identifier AND deleted_at = NONE;",
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> =
@@ -138,12 +146,13 @@ impl EntityRepository for EntityRepositoryImpl {
         let number_page_size = Number::Int(page_size as i64);
         let number_skip = Number::Int(skip as i64);
 
-        let sql = format!("
+        let sql = format!(
+            "
             SELECT * 
             FROM {} 
             WHERE deleted_at = NONE 
             LIMIT $limit 
-            START $skip;", 
+            START $skip;",
             ENTITIES_TABLE_NAME
         );
 
@@ -177,10 +186,11 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id_clean),
         };
 
-        let sql = format!("
+        let sql = format!(
+            "
             UPDATE {} 
             SET name=$name, identifier=$identifier, updated_at=time::now(), updated_by=$updated_by 
-            WHERE id = $id AND deleted_at = NONE;", 
+            WHERE id = $id AND deleted_at = NONE;",
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [
@@ -201,9 +211,9 @@ impl EntityRepository for EntityRepositoryImpl {
             .execute(&sql, database_session, Some(data.into()))
             .await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No entity returned from update".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No entity returned from update".to_string())
+        })??;
 
         let entity: EntityModel = result_object.try_into()?;
         Ok(entity)
@@ -220,10 +230,11 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
-        let sql = format!("
+        let sql = format!(
+            "
             UPDATE {} 
             SET deleted_at=time::now(), updated_at=time::now() 
-            WHERE id = $id;", 
+            WHERE id = $id;",
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
@@ -239,19 +250,20 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn count(&self) -> Result<ModalCount> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = format!("
+        let sql = format!(
+            "
             SELECT count(id) 
             FROM {} 
             WHERE deleted_at = NONE 
-            GROUP ALL;", 
+            GROUP ALL;",
             ENTITIES_TABLE_NAME
         );
 
-            let responses = datastore.execute(&sql, database_session, None).await?;
+        let responses = datastore.execute(&sql, database_session, None).await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No entity returned from count".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No entity returned from count".to_string())
+        })??;
 
         let count: ModalCount = result_object.try_into()?;
         Ok(count)
@@ -260,10 +272,11 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn list_options(&self) -> Result<Vec<EntityModel>> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = format!("
+        let sql = format!(
+            "
             SELECT id, name 
             FROM {} 
-            WHERE deleted_at = NONE;", 
+            WHERE deleted_at = NONE;",
             ENTITIES_TABLE_NAME
         );
 
@@ -292,10 +305,11 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(id.to_string()),
         };
 
-        let sql = format!("
+        let sql = format!(
+            "
             UPDATE {} 
             SET identifier=$identifier, updated_at=time::now(), updated_by=$updated_by 
-            WHERE id = $id AND deleted_at = NONE;", 
+            WHERE id = $id AND deleted_at = NONE;",
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [
@@ -315,12 +329,75 @@ impl EntityRepository for EntityRepositoryImpl {
             .execute(&sql, database_session, Some(data.into()))
             .await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No entity returned from update identifier".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No entity returned from update identifier".to_string())
+        })??;
 
         let model: EntityModel = result_object.try_into()?;
         Ok(model)
+    }
+
+    async fn create_attribute(
+        &self,
+        storable_attribute: StorableEntityAttribute,
+        entity_id: String,
+        logged_in_user: String,
+    ) -> Result<AttributeModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = format!(
+            "
+                CREATE {} 
+                SET 
+                    entity_id = $entity_id,
+                    name=$name, 
+                    identifier=$identifier,
+                    data_type=$data_type,
+                    field_type=$field_type, 
+                    created_at=time::now(), 
+                    created_by=$created_by, 
+                    updated_at=time::now(), 
+                    updated_by=$updated_by, 
+                    deleted_at=NONE;",
+            ATTRIBUTES_TABLE_NAME
+        );
+
+        let data: BTreeMap<String, Value> = [
+            ("name".into(), Value::String(storable_attribute.name.into())),
+            (
+                "identifier".into(),
+                Value::String(storable_attribute.identifier.into()),
+            ),
+            (
+                "entity_id".into(),
+                Value::RecordId(surrealdb::types::RecordId {
+                    table: ENTITIES_TABLE_NAME.into(),
+                    key: surrealdb::types::RecordIdKey::String(entity_id),
+                }),
+            ),
+            (
+                "data_type".into(),
+                Value::String(storable_attribute.data_type.into()),
+            ),
+            (
+                "field_type".into(),
+                Value::String(storable_attribute.field_type.into()),
+            ),
+            ("created_by".into(), Value::String(logged_in_user.clone())),
+            ("updated_by".into(), Value::String(logged_in_user)),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No attribute returned from insert".to_string())
+        })??;
+
+        let attribute: AttributeModel = result_object.try_into()?;
+        Ok(attribute)
     }
 }
 

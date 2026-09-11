@@ -17,7 +17,7 @@ pub struct PaginateAttributeCommand {
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct CreateAttributeCommand {
-    pub entity_id: String,
+    // pub entity_id: String,
     pub name: String,
     pub identifier: String,
     pub data_type: String,
@@ -27,7 +27,7 @@ pub struct CreateAttributeCommand {
 impl CreateAttributeCommand {
     pub fn to_storable(&self, logged_in_user_email: String) -> StorableAttribute {
         StorableAttribute {
-            entity_id: self.entity_id.clone(),
+            // entity_id: self.entity_id.clone(),
             name: self.name.clone(),
             identifier: self.identifier.clone(),
             data_type: self.data_type.clone(),
@@ -136,7 +136,7 @@ pub struct UpdateAttributeCommand {
 impl UpdateAttributeCommand {
     pub fn to_storable(&self, logged_in_user_email: String) -> StorableAttribute {
         StorableAttribute {
-            entity_id: self.entity_id.clone(),
+            // entity_id: self.entity_id.clone(),
             name: self.name.clone(),
             identifier: self.identifier.clone(),
             data_type: self.data_type.clone(),

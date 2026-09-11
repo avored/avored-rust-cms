@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
-use crate::error::Result;
+use crate::{core::domain::entities::AttributeModel, error::Result};
+
+#[cfg(feature = "ssr")]
+use crate::core::domain::extensions::object_extension::ObjectExtension;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct EntityModel {
@@ -13,6 +16,15 @@ pub struct EntityModel {
     pub updated_by: String,
     pub deleted_at: Option<Datetime>,
     pub deleted_by: Option<String>,
+    pub attributes: Vec<AttributeModel>
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct StorableEntityAttribute {
+    pub name: String,
+    pub identifier: String,
+    pub data_type: String,
+    pub field_type: String
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -20,60 +32,41 @@ pub struct StorableEntity {
     pub name: String,
     pub identifier: String,
     pub logged_in_user_email: String,
+    pub attributes: Vec<StorableEntityAttribute>
 }
 
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for EntityModel {
     type Error = crate::error::Error;
 
-    fn try_from(mut obj: surrealdb::types::Object) -> Result<Self> {
-        let id = match obj.remove("id") {
-            Some(surrealdb::types::Value::RecordId(v)) => match v.key {
-                surrealdb::types::RecordIdKey::String(k) => format!("{}", k),
-                _ => format!("{:?}", v.key),
-            },
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+    fn try_from(obj: surrealdb::types::Object) -> Result<Self> {
+        let id = obj.get_id("id")?;
 
-        let name = match obj.remove("name") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+        let name = obj.get_string("name")?;
+        let identifier = obj.get_string("identifier")?;
 
-        let identifier = match obj.remove("identifier") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+        let created_at = obj.get_datetime("created_at")?;
+        let created_by = obj.get_string("created_by")?;
 
-        let created_at = match obj.remove("created_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v,
-            _ => Datetime::now(),
-        };
+        let updated_at = obj.get_datetime("updated_at")?;
+        let updated_by = obj.get_string("updated_by")?;
 
-          let created_by = match obj.remove("created_by") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
+        let deleted_at = obj.get_optional_datetime("deleted_at")?;
+        let deleted_by = obj.get_optional_string("deleted_by")?;
 
-        let updated_at = match obj.remove("updated_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => v,
-            _ => Datetime::now(),
-        };
-
-         let updated_by = match obj.remove("updated_by") {
-            Some(surrealdb::types::Value::String(v)) => v,
-            _ => String::new(),
-        };
-
-        let deleted_at = match obj.remove("deleted_at") {
-            Some(surrealdb::types::Value::Datetime(v)) => Some(v),
-            _ => None,
-        };
-
-        let deleted_by = match obj.remove("deleted_by") {
-            Some(surrealdb::types::Value::String(v)) => Some(v),
-            _ => None,
+        // Parse the inlined attributes subquery result
+        let attributes = match obj.get("attributes") {
+            Some(surrealdb::types::Value::Array(arr)) => {
+                let mut attrs = Vec::new();
+                for val in arr.iter() {
+                    if let surrealdb::types::Value::Object(attr_obj) = val {
+                        let attribute: AttributeModel = attr_obj.clone().try_into()?;
+                        attrs.push(attribute);
+                    }
+                }
+                attrs
+            }
+            _ => vec![],
         };
 
         Ok(EntityModel {
@@ -86,6 +79,7 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
             updated_by,
             deleted_at,
             deleted_by,
+            attributes,
         })
     }
 }
