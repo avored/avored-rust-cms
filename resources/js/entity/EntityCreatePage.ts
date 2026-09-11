@@ -10,7 +10,7 @@ export function entityCreatePage() {
         submitting: false,
         identifierTouched: false,
         attributeModalOpen: false,
-        editingAttributeId: null as number | null,
+        editingAttributeId: null as string | null,
         attributeIdentifierTouched: false,
         attributeDraft: {
             name: '',
@@ -19,7 +19,7 @@ export function entityCreatePage() {
             field_type: 'text',
         },
         attributes: [] as Array<{
-            id: number;
+            id: string;
             name: string;
             identifier: string;
             data_type: string;
@@ -120,7 +120,7 @@ export function entityCreatePage() {
                 });
             } else {
                 this.attributes.push({
-                    id: Date.now() + Math.random(),
+                    id: crypto.randomUUID(),
                     ...attributePayload,
                 });
             }
@@ -128,7 +128,7 @@ export function entityCreatePage() {
             this.closeAttributeModal();
         },
 
-        removeAttribute(attributeId: number) {
+        removeAttribute(attributeId: string) {
             this.attributes = this.attributes.filter((attribute) => attribute.id !== attributeId);
         },
 
