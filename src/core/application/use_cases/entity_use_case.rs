@@ -1,7 +1,9 @@
-use crate::core::application::dtos::entity_dto::{PaginateEntityCommand};
+use crate::core::application::dtos::entity_dto::PaginateEntityCommand;
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
-use crate::core::domain::entities::entity::UpdableIdentifierEntity;
-use crate::core::domain::entities::{EntityModel, StorableEntity};
+use crate::core::domain::entities::entity::{
+    StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity,
+};
+use crate::core::domain::entities::{AttributeModel, EntityModel, StorableEntity};
 use crate::core::domain::repositories::EntityRepository;
 use crate::error::{Error, Result};
 
@@ -27,11 +29,10 @@ where
         let mut entity_model = self.repository.create(storable_entity).await?;
 
         for attribute in attributes {
-            let attrobute_model = self.repository.create_attribute(
-                attribute,
-                entity_model.id.clone(),
-                logged_in_user.clone(),
-            ).await?;
+            let attrobute_model = self
+                .repository
+                .create_attribute(attribute, entity_model.id.clone(), logged_in_user.clone())
+                .await?;
 
             entity_model.attributes.push(attrobute_model);
         }
@@ -52,8 +53,41 @@ where
         Ok((entities, modal_count.total))
     }
 
-    pub async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityModel> {
-        let updated = self.repository.update(id, storable_entity).await?;
+    pub async fn update(&self, id: &str, updatable_entity: UpdatableEntity) -> Result<EntityModel> {
+        let mut updated = self.repository.update(id, updatable_entity.clone()).await?;
+        let logged_in_user = updatable_entity.logged_in_user_email.clone();
+
+        for attribute in updatable_entity.attributes {
+            let attrobute_model : AttributeModel;
+
+            if attribute.is_new {
+                let storable_entity_attribute = StorableEntityAttribute {
+                    name: attribute.name,
+                    identifier: attribute.identifier,
+                    data_type: attribute.data_type,
+                    field_type: attribute.field_type,
+                };
+                attrobute_model = self
+                    .repository
+                    .create_attribute(
+                        storable_entity_attribute,
+                        id.to_string(),
+                        logged_in_user.clone(),
+                    )
+                    .await?;
+            } else {
+                attrobute_model = self
+                    .repository
+                    .update_attribute(
+                        attribute,
+                        logged_in_user.clone(),
+                    )
+                    .await?;
+            }
+
+            updated.attributes.push(attrobute_model);
+        }
+
         Ok(updated)
     }
 

@@ -14,7 +14,7 @@ pub async fn update_entity_handler(
     let locale = "en";
     payload.validate(locale, &state.entity_use_case).await?;
 
-    let updatable_entity = payload.to_storable(logged_in_user.email.clone());
+    let updatable_entity = payload.to_updatable(logged_in_user.email.clone());
     let entity = state.entity_use_case.update(&id, updatable_entity).await?;
     
     Ok(Json(entity.into()))

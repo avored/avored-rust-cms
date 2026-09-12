@@ -35,6 +35,25 @@ pub struct StorableEntity {
     pub attributes: Vec<StorableEntityAttribute>
 }
 
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdatableEntityAttribute {
+    pub id: Option<String>,
+    pub name: String,
+    pub identifier: String,
+    pub data_type: String,
+    pub field_type: String,
+    pub is_new: bool
+}
+
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdatableEntity {
+    pub name: String,
+    pub logged_in_user_email: String,
+    pub attributes: Vec<UpdatableEntityAttribute>
+}
+
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for EntityModel {
     type Error = crate::error::Error;

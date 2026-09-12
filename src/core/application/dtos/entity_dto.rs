@@ -1,6 +1,6 @@
 use crate::core::application::use_cases::EntityUseCase;
 use crate::core::domain::entities::entity::{
-    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity,
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity, UpdatableEntityAttribute,
 };
 use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::entities::AttributeModel;
@@ -131,18 +131,28 @@ impl CreateAttributeCommand {
 /* #region Update entity command */
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdatableAttributeCommand {
+    pub id: Option<String>,
+    pub name: String,
+    pub identifier: String,
+    pub data_type: String,
+    pub field_type: String,
+    pub is_new : bool   
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct UpdateEntityCommand {
     pub name: String,
     pub identifier: String,
+    pub attributes: Vec<UpdatableAttributeCommand>    
 }
 
 impl UpdateEntityCommand {
-    pub fn to_storable(&self, logged_in_user_email: String) -> StorableEntity {
-        StorableEntity {
+    pub fn to_updatable(&self, logged_in_user_email: String) -> UpdatableEntity {
+        UpdatableEntity {
             name: self.name.clone(),
-            identifier: self.identifier.clone(),
             logged_in_user_email,
-            attributes: vec![],
+            attributes: self.attributes.iter().map(|a| a.to_updatable()).collect(),
         }
     }
 
@@ -205,6 +215,19 @@ impl UpdateEntityCommand {
         }
 
         Ok(errors)
+    }
+}
+
+impl UpdatableAttributeCommand {
+    pub fn to_updatable(&self) -> UpdatableEntityAttribute {
+        UpdatableEntityAttribute {
+            id: self.id.clone(),
+            name: self.name.clone(),
+            identifier: self.identifier.clone(),
+            data_type: self.data_type.clone(),
+            field_type: self.field_type.clone(),
+            is_new: self.is_new,
+        }
     }
 }
 

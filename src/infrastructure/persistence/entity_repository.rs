@@ -4,12 +4,12 @@ use surrealdb::types::{Number, Value};
 
 use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
 use crate::core::domain::entities::entity::{
-    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity,
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity, UpdatableEntityAttribute,
 };
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::core::domain::entities::AttributeModel;
 use crate::core::domain::repositories::EntityRepository;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::infrastructure::persistence::into_iter_objects;
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
 
@@ -177,7 +177,7 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(list)
     }
 
-    async fn update(&self, id: &str, storable_entity: StorableEntity) -> Result<EntityModel> {
+    async fn update(&self, id: &str, storable_entity: UpdatableEntity) -> Result<EntityModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
         let id_clean = id.trim_start_matches("entities:").to_string();
@@ -189,17 +189,13 @@ impl EntityRepository for EntityRepositoryImpl {
         let sql = format!(
             "
             UPDATE {} 
-            SET name=$name, identifier=$identifier, updated_at=time::now(), updated_by=$updated_by 
+            SET name=$name, updated_at=time::now(), updated_by=$updated_by 
             WHERE id = $id AND deleted_at = NONE;",
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [
             ("id".into(), Value::RecordId(target_record)),
             ("name".into(), Value::String(storable_entity.name.into())),
-            (
-                "identifier".into(),
-                Value::String(storable_entity.identifier.into()),
-            ),
             (
                 "updated_by".into(),
                 Value::String(storable_entity.logged_in_user_email.into()),
@@ -399,6 +395,46 @@ impl EntityRepository for EntityRepositoryImpl {
         let attribute: AttributeModel = result_object.try_into()?;
         Ok(attribute)
     }
+
+    async fn update_attribute(
+        &self,
+        attribute: UpdatableEntityAttribute,
+        logged_in_user: String,
+    ) -> Result<AttributeModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = format!(
+            "SELECT * FROM {} WHERE id = $id AND deleted_at = NONE;",
+            ATTRIBUTES_TABLE_NAME
+        );
+        let attribute_id = match attribute.id {
+            Some(id) => id,
+            _ => return Err(Error::NotFound(String::from("attribute id not found")))
+        };
+
+        let data: BTreeMap<String, Value> = [
+            ("id".into(), Value::String(attribute_id)),
+            ("name".into(), Value::String(attribute.name.clone())),
+            ("identifier".into(), Value::String(attribute.identifier.clone())),
+            ("data_type".into(), Value::String(attribute.data_type.clone())),
+            ("field_type".into(), Value::String(attribute.field_type.clone())),
+            ("updated_by".into(), Value::String(logged_in_user.clone())),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No attribute returned from update".to_string())
+        })??;
+
+        let attribute: AttributeModel = result_object.try_into()?;
+        Ok(attribute)
+    }
+
+    
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {
