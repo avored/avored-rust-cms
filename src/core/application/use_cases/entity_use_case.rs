@@ -92,7 +92,12 @@ where
     }
 
     pub async fn delete(&self, id: &str) -> Result<bool> {
-        self.repository.delete(id).await
+        let result = self.repository.delete(id).await?;
+
+        self.repository.delete_attribute(id).await?;
+        // if result
+
+        Ok(result)
     }
 
     pub async fn get_by_identifier(&self, identifier: &str) -> Result<EntityModel> {

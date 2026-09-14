@@ -42,4 +42,6 @@ pub trait EntityRepository: Send + Sync {
         attribute: UpdatableEntityAttribute,
         logged_in_user: String,
     ) -> Result<AttributeModel>;
+
+    async fn delete_attribute(&self, entity_id: &str) -> Result<bool>;
 }

@@ -434,6 +434,37 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(attribute)
     }
 
+    async fn delete_attribute(&self, entity_id: &str) -> Result<bool> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = format!(
+            "DELETE FROM {} WHERE entity_id = $entity_id AND deleted_at = NONE;",
+            ATTRIBUTES_TABLE_NAME
+        );
+
+        let entity_record_id = surrealdb::types::RecordId {
+            table: ENTITIES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(entity_id.to_string()),
+        };
+
+        let data: BTreeMap<String, Value> = [
+            ("entity_id".into(), Value::RecordId(entity_record_id)),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No attribute returned from delete".to_string())
+        })?;
+        
+        match result_object {
+            Ok(_) => Ok(true),
+            Err(e) => Err(e),
+        }
+    }
     
 }
 
