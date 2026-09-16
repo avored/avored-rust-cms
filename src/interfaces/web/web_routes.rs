@@ -1,7 +1,7 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
-use crate::interfaces::web::pages::admin::attributes::attribute_index_page::AttributeIndexPage;
+use crate::interfaces::web::pages::admin::collections::collection_index_page::CollectionIndexPage;
 use crate::interfaces::web::pages::admin::entity::{
     EntityCreatePage, EntityEditPage, EntityIndexPage,
 };
@@ -37,7 +37,7 @@ pub fn WebApp() -> impl IntoView {
                         <Route path=path!("entity") view=EntityIndexPage/>
                         <Route path=path!("entity/create") view=EntityCreatePage/>
                         <Route path=path!("entity/:id/edit") view=EntityEditPage/>
-                        <Route path=path!("attributes") view=AttributeIndexPage/>
+                        <Route path=path!("collections") view=CollectionIndexPage/>
                     </ParentRoute>
                 </Routes>
             </main>

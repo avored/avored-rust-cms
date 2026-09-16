@@ -1,3 +1,3 @@
 pub mod entity;
 
-pub mod attributes;
+pub mod collections;
