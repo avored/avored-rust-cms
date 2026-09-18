@@ -12,6 +12,11 @@ export interface AttributeInterface {
     deleted_by?: string;
 }
 
+export interface EntityOptionInterface {
+    id: string;
+    name: string;
+}
+
 export interface EntityInterface {
     id: string;
     name: string;
@@ -37,5 +42,11 @@ export interface UpdateEntityPayload {
 
 export interface EntityPaginationResponse {
     data: EntityInterface[];
+    total: number;
+}
+
+export interface CollectionPaginationResponse {
+    entity: EntityInterface;
+    data: Array<Record<string, any>>;
     total: number;
 }

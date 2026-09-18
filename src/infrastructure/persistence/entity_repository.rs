@@ -465,7 +465,76 @@ impl EntityRepository for EntityRepositoryImpl {
             Err(e) => Err(e),
         }
     }
-    
+
+    async fn paginate_collection(
+        &self,
+        table_name: &str,
+        page: u64,
+        page_size: u64,
+    ) -> Result<(Vec<serde_json::Value>, u64)> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        // Sanitize table_name to ensure it is a valid identifier
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        let skip = page.saturating_sub(1) * page_size;
+        let number_page_size = Number::Int(page_size as i64);
+        let number_skip = Number::Int(skip as i64);
+
+        let sql = format!(
+            "
+            SELECT * 
+            FROM {} 
+            WHERE deleted_at = NONE 
+            LIMIT $limit 
+            START $skip;",
+            table_name
+        );
+
+        let data: BTreeMap<String, Value> = [
+            ("limit".into(), Value::Number(number_page_size)),
+            ("skip".into(), Value::Number(number_skip)),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let it = into_iter_objects(responses)?;
+        let mut list = Vec::new();
+        for obj_res in it {
+            let obj = obj_res?;
+            let json_val = serde_json::to_value(&obj)
+                .map_err(|e| Error::Generic(e.to_string()))?;
+            list.push(json_val);
+        }
+
+        let count_sql = format!(
+            "
+            SELECT count(id) 
+            FROM {} 
+            WHERE deleted_at = NONE 
+            GROUP ALL;",
+            table_name
+        );
+
+        let count_responses = datastore
+            .execute(&count_sql, database_session, None)
+            .await?;
+
+        let total = match into_iter_objects(count_responses)?.next() {
+            Some(Ok(obj)) => {
+                let modal_count: ModalCount = obj.try_into()?;
+                modal_count.total
+            }
+            _ => 0,
+        };
+
+        Ok((list, total))
+    }
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {

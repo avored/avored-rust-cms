@@ -1,7 +1,10 @@
-use crate::interfaces::api::entity::{
-    create_entity_handler, delete_entity_handler, fetch_entity_handler,
-    option_entities_handler::option_entities_handler, paginate_entities_handler,
-    update_entity_handler, update_entity_identifier_handler::update_entity_identifier_handler,
+use crate::interfaces::api::{
+    collection::paginate_collections_handler::paginate_collections_handler,
+    entity::{
+        create_entity_handler, delete_entity_handler, fetch_entity_handler,
+        option_entities_handler::option_entities_handler, paginate_entities_handler,
+        update_entity_handler, update_entity_identifier_handler::update_entity_identifier_handler,
+    },
 };
 use axum::{
     http::HeaderValue,
@@ -39,7 +42,11 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .expose_headers(Any); // Expose all headers
 
     let router = Router::<AppState>::new()
-        .route("/api/entities/option", get(option_entities_handler))
+        .route(
+            "/api/collection/{entity_id}",
+            get(paginate_collections_handler),
+        )
+        .route("/api/entities/options", get(option_entities_handler))
         .route("/api/entities", post(create_entity_handler))
         .route("/api/entities", get(paginate_entities_handler))
         .route("/api/entities/{id}", get(fetch_entity_handler))

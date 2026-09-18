@@ -44,4 +44,11 @@ pub trait EntityRepository: Send + Sync {
     ) -> Result<AttributeModel>;
 
     async fn delete_attribute(&self, entity_id: &str) -> Result<bool>;
+
+    async fn paginate_collection(
+        &self,
+        table_name: &str,
+        page: u64,
+        page_size: u64,
+    ) -> Result<(Vec<serde_json::Value>, u64)>;
 }

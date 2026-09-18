@@ -3,6 +3,12 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
     headers?: Record<string, string>;
 }
 
+export interface ApiResponse<T> {
+    data: T;
+    // status?: boolean;
+    // message?: string;
+}
+
 /**
  * Thrown by the http utility for any non-2xx response.
  * Carry the parsed JSON body so callers (e.g. formErrorsMixin.applyApiErrors)

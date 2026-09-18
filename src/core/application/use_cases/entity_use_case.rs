@@ -1,3 +1,6 @@
+use crate::core::application::dtos::collection_dto::{
+    CollectionPaginationResponse, PaginateCollectionCommand,
+};
 use crate::core::application::dtos::entity_dto::PaginateEntityCommand;
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::entity::{
@@ -125,5 +128,26 @@ where
         self.repository
             .update_identifier(id, updatable_identifier)
             .await
+    }
+
+    pub async fn paginate_collection(
+        &self,
+        entity_id: &str,
+        query: PaginateCollectionCommand,
+    ) -> Result<CollectionPaginationResponse> {
+        let entity = self.repository.find_by_id(entity_id).await?;
+        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
+        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
+
+        let (data, total) = self
+            .repository
+            .paginate_collection(&entity.identifier, page, page_size)
+            .await?;
+
+        Ok(CollectionPaginationResponse {
+            entity,
+            data,
+            total,
+        })
     }
 }
