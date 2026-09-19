@@ -152,11 +152,6 @@ where
             .paginate_collection(&entity.identifier, page, page_size)
             .await?;
 
-        let test = json!({"id": "id", "name": "Admin", "email": "admin@avored.com"});
-
-        data.push(test);
-
-
         Ok(CollectionPaginationResponse {
             entity,
             data,
