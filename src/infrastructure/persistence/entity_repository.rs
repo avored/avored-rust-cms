@@ -535,6 +535,23 @@ impl EntityRepository for EntityRepositoryImpl {
 
         Ok((list, total))
     }
+
+    async fn create_collection_table(&self, table_name: &str) -> Result<()> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        let sql = format!("DEFINE TABLE OVERWRITE {} SCHEMALESS;", table_name);
+
+        datastore
+            .execute(&sql, database_session, None)
+            .await?;
+
+        Ok(())
+    }
+
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {

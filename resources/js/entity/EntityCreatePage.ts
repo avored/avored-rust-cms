@@ -140,6 +140,7 @@ export function entityCreatePage() {
                 await http.post('/api/entities', {
                     name: this.name,
                     identifier: this.identifier,
+                    attributes: this.attributes,
                 });
 
                 window.location.href = '/admin/entity';

@@ -37,8 +37,8 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                             x-bind:href="`/admin/collections?entity_id=${entity.id}`"
                                             x-text="entity.name"
                                             x-bind:class="selectedEntityId === entity.id
-                                                ? 'bg-primary-50 text-primary-700 font-semibold shadow-xs'
-                                                : 'text-slate-700 hover:bg-slate-100 hover:text-slate-900'"
+                                                ? 'bg-primary-700 text-white font-semibold shadow-xs'
+                                                : 'hover:bg-slate-100 hover:text-slate-900'"
                                             class="block rounded-lg px-3 py-2 text-sm transition"
                                         ></a>
                                     </li>
@@ -63,7 +63,10 @@ pub fn CollectionIndexPage() -> impl IntoView {
                             <div x-show="selectedEntityId">
                                 <div class="mb-4 flex items-center justify-between">
                                     <div>
-                                        <h2 class="text-lg font-semibold text-slate-900" x-text="currentEntity ? currentEntity.name : ''"></h2>
+                                        <h2 
+                                            class="text-lg font-semibold text-slate-900" 
+                                            x-text="currentEntity ? currentEntity.name : ''"
+                                        ></h2>
                                         <p class="text-xs text-slate-500" x-show="currentEntity">
                                             "Table: "
                                             <span class="font-mono" x-text="currentEntity ? currentEntity.identifier : ''"></span>
@@ -71,6 +74,14 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                             <span x-text="total"></span>
                                             " records"
                                         </p>
+                                    </div>
+                                    <div class="ml-auto">
+                                        <a
+                                            href="/collections/create?entity_id={selectedEntityId}"
+                                            class="rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                        >
+                                            "Create"
+                                        </a>
                                     </div>
                                     <div x-show="loading" class="flex items-center gap-2 text-sm text-slate-500">
                                         <i data-feather="loader" class="h-4 w-4 animate-spin"></i>

@@ -51,4 +51,6 @@ pub trait EntityRepository: Send + Sync {
         page: u64,
         page_size: u64,
     ) -> Result<(Vec<serde_json::Value>, u64)>;
+
+    async fn create_collection_table(&self, table_name: &str) -> Result<()>;
 }

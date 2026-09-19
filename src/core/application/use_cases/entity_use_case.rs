@@ -1,3 +1,5 @@
+use serde_json::json;
+
 use crate::core::application::dtos::collection_dto::{
     CollectionPaginationResponse, PaginateCollectionCommand,
 };
@@ -39,6 +41,12 @@ where
 
             entity_model.attributes.push(attrobute_model);
         }
+
+
+        self.repository
+            .create_collection_table(&entity_model.identifier)
+            .await?;
+
 
         Ok(entity_model)
     }
@@ -139,10 +147,15 @@ where
         let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
         let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
 
-        let (data, total) = self
+        let (mut data, total) = self
             .repository
             .paginate_collection(&entity.identifier, page, page_size)
             .await?;
+
+        let test = json!({"id": "id", "name": "Admin", "email": "admin@avored.com"});
+
+        data.push(test);
+
 
         Ok(CollectionPaginationResponse {
             entity,

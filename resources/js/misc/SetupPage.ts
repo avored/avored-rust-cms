@@ -5,10 +5,10 @@ export function setupPage() {
     return {
         ...formErrorsMixin(),
 
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: '',
+        name: 'Admin',
+        email: 'admin@avored.com',
+        password: 'password1234',
+        confirmPassword: 'password1234',
         submitting: false,
 
         async handleSubmit() {
