@@ -33,7 +33,7 @@ export function collectionIndexPage(entity_id: string) {
                 );
                 if (response) {
                     this.currentEntity = response.entity;
-                    this.collections = response.data || [];
+                    this.collections = (response.data || []).map((item: Record<string, any>) => ({ ...item }));
                     this.total = response.total || 0;
                 }
             } catch (err: any) {
@@ -43,6 +43,46 @@ export function collectionIndexPage(entity_id: string) {
             } finally {
                 this.loading = false;
             }
+        },
+
+        normalizeSurrealValue(value: any): any {
+            if (value === null || value === undefined) return value;
+
+            if (Array.isArray(value)) {
+                return value.map((item) => this.normalizeSurrealValue(item));
+            }
+
+            if (typeof value !== "object") {
+                return value;
+            }
+
+            const keys = Object.keys(value);
+            if (keys.length === 1) {
+                const key = keys[0];
+                switch (key) {
+                    case "String":
+                        return value.String ?? "";
+                    case "Bool":
+                        return Boolean(value.Bool);
+                    case "Number":
+                        return Number(value.Number ?? 0);
+                    case "Null":
+                        return null;
+                    case "RecordId": {
+                        const record = value.RecordId;
+                        const keyValue = record?.key?.String ?? record?.key ?? "";
+                        return `${record?.table ?? ""}:${keyValue}`;
+                    }
+                    case "Array":
+                        return this.normalizeSurrealValue(value.Array ?? []);
+                    case "Object":
+                        return this.normalizeSurrealValue(value.Object ?? {});
+                    default:
+                        break;
+                }
+            }
+
+            return value;
         },
 
         totalPages() {
@@ -70,7 +110,15 @@ export function collectionIndexPage(entity_id: string) {
         },
 
         getAttributeValue(item: Record<string, any>, identifier: string): string {
-            const val = item[identifier];
+            const rawValue = item?.[identifier];
+
+            if (identifier === "id") {
+                const recordId = rawValue?.RecordId;
+                const keyValue = recordId?.key?.String ?? recordId?.key ?? "";
+                return keyValue || "-";
+            }
+
+            const val = this.normalizeSurrealValue(rawValue);
             if (val === undefined || val === null) return "-";
             if (typeof val === "object") return JSON.stringify(val);
             return String(val);

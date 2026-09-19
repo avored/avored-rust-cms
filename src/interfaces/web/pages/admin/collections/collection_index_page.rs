@@ -100,9 +100,9 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                             </tr>
                                         </thead>
                                         <tbody x-show="!loading && collections.length > 0" class="divide-y divide-slate-100 bg-white">
-                                            <template x-for="(item, index) in collections" x-bind:key="item.id || index">
+                                            <template x-for="(item, index) in collections" x-bind:key="getAttributeValue(item, 'id') || index">
                                                 <tr class="transition hover:bg-slate-50">
-                                                    <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-600" x-text="item.id"></td>
+                                                    <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-600" x-text="getAttributeValue(item, 'id')"></td>
                                                     <template x-for="attr in (currentEntity ? currentEntity.attributes : [])" x-bind:key="attr.id">
                                                         <td class="whitespace-nowrap px-4 py-3 text-slate-800" x-text="getAttributeValue(item, attr.identifier)"></td>
                                                     </template>

@@ -1,4 +1,3 @@
-use serde_json::json;
 
 use crate::core::application::dtos::collection_dto::{
     CollectionPaginationResponse, PaginateCollectionCommand,
