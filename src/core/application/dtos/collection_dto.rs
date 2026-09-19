@@ -20,3 +20,19 @@ pub struct CollectionPaginationResponse {
     pub total: u64,
 }
 /* #endregion */
+
+/* #region Create Collection Command */
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct CreateCollectionCommand {
+    #[serde(flatten)]
+    pub fields: serde_json::Map<String, serde_json::Value>,
+}
+/* #endregion */
+
+/* #region Collection Response */
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct CollectionResponse {
+    pub record: serde_json::Value,
+}
+/* #endregion */
+

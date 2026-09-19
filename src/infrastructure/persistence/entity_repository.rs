@@ -1,6 +1,6 @@
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use surrealdb::types::{Number, Value};
+use surrealdb::types::{Number, Object, Value};
 
 use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
 use crate::core::domain::entities::entity::{
@@ -21,6 +21,39 @@ pub struct EntityRepositoryImpl {
 impl EntityRepositoryImpl {
     pub fn new(database_provider: Arc<AvoRedDatabaseProvider>) -> Self {
         Self { database_provider }
+    }
+}
+
+fn serde_json_to_surreal_value(value: serde_json::Value) -> Value {
+    match value {
+        serde_json::Value::Null => Value::None,
+        serde_json::Value::Bool(v) => Value::Bool(v),
+        serde_json::Value::Number(v) => {
+            if let Some(i) = v.as_i64() {
+                Value::Number(Number::Int(i))
+            } else if let Some(f) = v.as_f64() {
+                Value::Number(Number::Float(f))
+            } else {
+                Value::String(v.to_string())
+            }
+        }
+        serde_json::Value::String(v) => Value::String(v),
+        serde_json::Value::Array(items) => Value::Array(
+            items
+                .into_iter()
+                .filter(|item| !matches!(item, serde_json::Value::Null))
+                .map(serde_json_to_surreal_value)
+                .collect(),
+        ),
+        serde_json::Value::Object(map) => {
+            let mut object = Object::new();
+            for (key, value) in map {
+                if !matches!(value, serde_json::Value::Null) {
+                    object.insert(key, serde_json_to_surreal_value(value));
+                }
+            }
+            Value::Object(object)
+        }
     }
 }
 
@@ -552,6 +585,83 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(())
     }
 
+    async fn create_collection(
+        &self,
+        table_name: &str,
+        record: serde_json::Map<String, serde_json::Value>,
+    ) -> Result<serde_json::Value> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
+            match value {
+                serde_json::Value::Object(map) => {
+                    let mut filtered = serde_json::Map::new();
+                    for (key, child) in map {
+                        let cleaned = strip_nulls(child);
+                        if !matches!(cleaned, serde_json::Value::Null) {
+                            filtered.insert(key, cleaned);
+                        }
+                    }
+                    serde_json::Value::Object(filtered)
+                }
+                serde_json::Value::Array(items) => serde_json::Value::Array(
+                    items
+                        .into_iter()
+                        .map(strip_nulls)
+                        .filter(|value| !matches!(value, serde_json::Value::Null))
+                        .collect(),
+                ),
+                other => other,
+            }
+        }
+
+        let sanitized = strip_nulls(serde_json::Value::Object(record));
+        let mut content_record = sanitized
+            .as_object()
+            .cloned()
+            .unwrap_or_default();
+
+        content_record.remove("deleted_at");
+        content_record.remove("deleted_by");
+
+        let mut data = Object::new();
+        for (key, value) in content_record {
+            if !matches!(value, serde_json::Value::Null) {
+                data.insert(key, serde_json_to_surreal_value(value));
+            }
+        }
+
+        let mut set_clauses = Vec::new();
+        let mut bindings: BTreeMap<String, Value> = BTreeMap::new();
+
+        for (index, (key, value)) in data.iter().enumerate() {
+            let binding_name = format!("field_{}", index);
+            set_clauses.push(format!("{} = ${}", key, binding_name));
+            bindings.insert(binding_name, value.clone());
+        }
+
+        set_clauses.push("deleted_at = NONE".to_string());
+        set_clauses.push("deleted_by = NONE".to_string());
+
+        let sql = format!("CREATE {} SET {};", table_name, set_clauses.join(", "));
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(bindings.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            Error::Generic("No record returned from collection insert".to_string())
+        })??;
+
+        let json_val = serde_json::to_value(&result_object)
+            .map_err(|e| Error::Generic(e.to_string()))?;
+
+        Ok(json_val)
+    }
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {

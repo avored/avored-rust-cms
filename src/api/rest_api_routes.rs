@@ -1,5 +1,8 @@
 use crate::interfaces::api::{
-    collection::paginate_collections_handler::paginate_collections_handler,
+    collection::{
+        create_collection_handler::create_collection_handler,
+        paginate_collections_handler::paginate_collections_handler,
+    },
     entity::{
         create_entity_handler, delete_entity_handler, fetch_entity_handler,
         option_entities_handler::option_entities_handler, paginate_entities_handler,
@@ -45,6 +48,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route(
             "/api/collection/{entity_id}",
             get(paginate_collections_handler),
+        )
+        .route(
+            "/api/collection/{entity_id}",
+            post(create_collection_handler),
         )
         .route("/api/entities/options", get(option_entities_handler))
         .route("/api/entities", post(create_entity_handler))
