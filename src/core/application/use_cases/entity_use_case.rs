@@ -146,7 +146,7 @@ where
         let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
         let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
 
-        let (mut data, total) = self
+        let (data, total) = self
             .repository
             .paginate_collection(&entity.identifier, page, page_size)
             .await?;
