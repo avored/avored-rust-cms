@@ -62,8 +62,9 @@ export function collectionEditPage(entity_id: string, record_id: string) {
 
             if (typeof value === "object" && value !== null) {
                 const keys = Object.keys(value);
-                if (keys.length === 1 && value[keys[0]] !== undefined && typeof value[keys[0]] !== "object") {
-                    return value[keys[0]];
+                const key = keys[0];
+                if (keys.length === 1 && key && value[key] !== undefined && typeof value[key] !== "object") {
+                    return value[key];
                 }
                 return JSON.stringify(value);
             }

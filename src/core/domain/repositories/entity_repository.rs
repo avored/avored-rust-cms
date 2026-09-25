@@ -72,4 +72,6 @@ pub trait EntityRepository: Send + Sync {
         record_id: &str,
         record: serde_json::Map<String, serde_json::Value>,
     ) -> Result<serde_json::Value>;
+
+    async fn delete_collection_by_id(&self, table_name: &str, record_id: &str) -> Result<bool>;
 }

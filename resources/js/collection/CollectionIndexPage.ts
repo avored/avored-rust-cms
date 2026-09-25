@@ -11,6 +11,9 @@ export function collectionIndexPage(entity_id: string) {
         page: 1,
         pageSize: 20,
         loading: false,
+        deleteModalOpen: false,
+        recordToDelete: null as Record<string, any> | null,
+        deleting: false,
         errorMessage: "",
 
         async init() {
@@ -107,6 +110,36 @@ export function collectionIndexPage(entity_id: string) {
             if (this.page >= this.totalPages() || this.loading) return;
             this.page += 1;
             await this.loadCollections();
+        },
+
+        confirmDelete(record: Record<string, any>) {
+            this.recordToDelete = record;
+            this.deleteModalOpen = true;
+        },
+
+        cancelDelete() {
+            this.deleteModalOpen = false;
+            this.recordToDelete = null;
+        },
+
+        async deleteRecord() {
+            if (!this.recordToDelete || !this.selectedEntityId) return;
+
+            const recordId = this.getAttributeValue(this.recordToDelete, 'id');
+            if (!recordId || recordId === '-') return;
+
+            this.deleting = true;
+            try {
+                await entityApi.deleteCollection(this.selectedEntityId, recordId);
+                this.collections = this.collections.filter((item) => this.getAttributeValue(item, 'id') !== recordId);
+                this.total = Math.max(0, this.total - 1);
+                this.deleteModalOpen = false;
+                this.recordToDelete = null;
+            } catch (err: any) {
+                this.errorMessage = err.message || 'Failed to delete collection record';
+            } finally {
+                this.deleting = false;
+            }
         },
 
         getAttributeValue(item: Record<string, any>, identifier: string): string {

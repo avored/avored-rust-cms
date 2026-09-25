@@ -1,6 +1,7 @@
 use crate::interfaces::api::{
     collection::{
         create_collection_handler::create_collection_handler,
+        delete_collection_handler::delete_collection_handler,
         fetch_collection_by_id_handler::fetch_collection_handler,
         paginate_collections_handler::paginate_collections_handler,
         update_collection_handler::update_collection_handler,
@@ -47,21 +48,19 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .expose_headers(Any); // Expose all headers
 
     let router = Router::<AppState>::new()
+        .route("/api/collection", get(paginate_collections_handler))
+        .route("/api/collection", post(create_collection_handler))
         .route(
-            "/api/collection/{entity_id}",
-            get(paginate_collections_handler),
-        )
-        .route(
-            "/api/collection/{entity_id}",
-            post(create_collection_handler),
-        )
-        .route(
-            "/api/collection/{entity_id}/{record_id}",
+            "/api/collection/{record_id}",
             get(fetch_collection_handler),
         )
         .route(
-            "/api/collection/{entity_id}/{record_id}",
+            "/api/collection/{record_id}",
             put(update_collection_handler),
+        )
+        .route(
+            "/api/collection/{record_id}",
+            delete(delete_collection_handler),
         )
         .route("/api/entities/options", get(option_entities_handler))
         .route("/api/entities", post(create_entity_handler))

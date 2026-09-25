@@ -110,12 +110,21 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                                         <td class="whitespace-nowrap px-4 py-3 text-slate-800" x-text="getAttributeValue(item, attr.identifier)"></td>
                                                     </template>
                                                     <td class="whitespace-nowrap px-4 py-3 text-right">
-                                                        <a
-                                                            x-bind:href="`/admin/collections/${getAttributeValue(item, 'id')}/edit?entity_id=${selectedEntityId}`"
-                                                            class="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
-                                                        >
-                                                            "Edit"
-                                                        </a>
+                                                        <div class="flex items-center justify-end gap-2">
+                                                            <a
+                                                                x-bind:href="`/admin/collections/${getAttributeValue(item, 'id')}/edit?entity_id=${selectedEntityId}`"
+                                                                class="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                                            >
+                                                                "Edit"
+                                                            </a>
+                                                            <button
+                                                                type="button"
+                                                                x-on:click="confirmDelete(item)"
+                                                                class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 shadow-sm transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                                            >
+                                                                "Delete"
+                                                            </button>
+                                                        </div>
                                                     </td>
                                                 </tr>
                                             </template>
@@ -124,6 +133,21 @@ pub fn CollectionIndexPage() -> impl IntoView {
 
                                     <div x-show="!loading && collections.length === 0" class="py-12 text-center text-slate-500">
                                         <p class="text-sm">"No records found in this collection."</p>
+                                    </div>
+                                </div>
+
+                                <div x-show="deleteModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4" x-on:keydown.escape.window="cancelDelete()">
+                                    <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" x-on:click.outside="cancelDelete()" role="dialog" aria-modal="true" aria-labelledby="delete-collection-title">
+                                        <h2 id="delete-collection-title" class="text-lg font-semibold text-slate-900">"Delete record?"</h2>
+                                        <p class="mt-2 text-sm leading-6 text-slate-500">"This will remove the selected collection record from the table."</p>
+                                        <p class="mt-3 rounded-lg bg-slate-50 px-3 py-2 font-mono text-xs text-slate-700" x-text="recordToDelete ? getAttributeValue(recordToDelete, 'id') : ''"></p>
+                                        <div class="mt-6 flex justify-end gap-3">
+                                            <button type="button" x-on:click="cancelDelete()" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">"Cancel"</button>
+                                            <button type="button" x-on:click="deleteRecord()" x-bind:disabled="deleting" class="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                                                <span x-show="!deleting">"Delete record"</span>
+                                                <span x-show="deleting">"Deleting..."</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 

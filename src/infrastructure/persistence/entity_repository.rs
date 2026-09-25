@@ -794,6 +794,33 @@ impl EntityRepository for EntityRepositoryImpl {
 
         Ok(json_val)
     }
+
+    async fn delete_collection_by_id(&self, table_name: &str, record_id: &str) -> Result<bool> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        let target_record = surrealdb::types::RecordId {
+            table: table_name.to_string().into(),
+            key: surrealdb::types::RecordIdKey::String(record_id.to_string()),
+        };
+
+        let sql = format!(
+            "UPDATE {} SET deleted_at = time::now(), updated_at = time::now() WHERE id = $id AND deleted_at = NONE;",
+            table_name
+        );
+
+        let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let _ = into_iter_objects(responses)?;
+        Ok(true)
+    }
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {

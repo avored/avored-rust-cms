@@ -67,4 +67,12 @@ async fn test_collection_record_fetch_and_update_round_trip() {
 
     assert_eq!(updated.get("title").and_then(serde_json::Value::as_str), Some("Updated title"));
     assert_eq!(updated.get("status").and_then(serde_json::Value::as_str), Some("published"));
+
+    let deleted = repo
+        .delete_collection_by_id(&entity.identifier, &record_id)
+        .await
+        .expect("collection delete should succeed");
+
+    assert!(deleted);
+    assert!(repo.fetch_collection_by_id(&entity.identifier, &record_id).await.is_err());
 }

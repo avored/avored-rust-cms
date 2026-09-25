@@ -269,4 +269,11 @@ where
             .update_collection_by_id(&entity.identifier, record_id, record)
             .await
     }
+
+    pub async fn delete_collection(&self, entity_id: &str, record_id: &str) -> Result<bool> {
+        let entity = self.repository.find_by_id(entity_id).await?;
+        self.repository
+            .delete_collection_by_id(&entity.identifier, record_id)
+            .await
+    }
 }
