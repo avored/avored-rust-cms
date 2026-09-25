@@ -1,7 +1,9 @@
 use crate::interfaces::api::{
     collection::{
         create_collection_handler::create_collection_handler,
+        fetch_collection_by_id_handler::fetch_collection_handler,
         paginate_collections_handler::paginate_collections_handler,
+        update_collection_handler::update_collection_handler,
     },
     entity::{
         create_entity_handler, delete_entity_handler, fetch_entity_handler,
@@ -52,6 +54,14 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route(
             "/api/collection/{entity_id}",
             post(create_collection_handler),
+        )
+        .route(
+            "/api/collection/{entity_id}/{record_id}",
+            get(fetch_collection_handler),
+        )
+        .route(
+            "/api/collection/{entity_id}/{record_id}",
+            put(update_collection_handler),
         )
         .route("/api/entities/options", get(option_entities_handler))
         .route("/api/entities", post(create_entity_handler))

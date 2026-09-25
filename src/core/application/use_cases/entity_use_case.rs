@@ -158,6 +158,17 @@ where
         })
     }
 
+    pub async fn fetch_collection_by_id(
+        &self,
+        entity_id: &str,
+        record_id: &str,
+    ) -> Result<serde_json::Value> {
+        let entity = self.repository.find_by_id(entity_id).await?;
+        self.repository
+            .fetch_collection_by_id(&entity.identifier, record_id)
+            .await
+    }
+
     pub async fn create_collection(
         &self,
         entity_id: &str,
@@ -195,7 +206,7 @@ where
             None => serde_json::Map::new(),
         };
 
-        
+
         let now = chrono::Utc::now().to_rfc3339();
         record.insert("created_at".to_string(), serde_json::Value::String(now.clone()));
         record.insert("created_by".to_string(), serde_json::Value::String(logged_in_user.to_string()));
@@ -204,6 +215,58 @@ where
 
         self.repository
             .create_collection(&entity.identifier, record)
+            .await
+    }
+
+    pub async fn update_collection(
+        &self,
+        entity_id: &str,
+        record_id: &str,
+        mut record: serde_json::Map<String, serde_json::Value>,
+        logged_in_user: &str,
+    ) -> Result<serde_json::Value> {
+        let entity = self.repository.find_by_id(entity_id).await?;
+
+        fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
+            match value {
+                serde_json::Value::Object(map) => {
+                    let mut filtered = serde_json::Map::new();
+                    for (key, child) in map {
+                        let cleaned = strip_nulls(child);
+                        if !matches!(cleaned, serde_json::Value::Null) {
+                            filtered.insert(key, cleaned);
+                        }
+                    }
+                    serde_json::Value::Object(filtered)
+                }
+                serde_json::Value::Array(items) => serde_json::Value::Array(
+                    items
+                        .into_iter()
+                        .map(strip_nulls)
+                        .filter(|value| !matches!(value, serde_json::Value::Null))
+                        .collect(),
+                ),
+                other => other,
+            }
+        }
+
+        record = match strip_nulls(serde_json::Value::Object(record)).as_object().cloned() {
+            Some(filtered) => filtered,
+            None => serde_json::Map::new(),
+        };
+
+        record.remove("id");
+        record.remove("created_at");
+        record.remove("created_by");
+        record.remove("deleted_at");
+        record.remove("deleted_by");
+
+        let now = chrono::Utc::now().to_rfc3339();
+        record.insert("updated_at".to_string(), serde_json::Value::String(now.clone()));
+        record.insert("updated_by".to_string(), serde_json::Value::String(logged_in_user.to_string()));
+
+        self.repository
+            .update_collection_by_id(&entity.identifier, record_id, record)
             .await
     }
 }

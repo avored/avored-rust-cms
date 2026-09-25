@@ -97,15 +97,26 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                                 <template x-for="attr in (currentEntity ? currentEntity.attributes : [])" x-bind:key="attr.id">
                                                     <th scope="col" class="px-4 py-3" x-text="attr.name"></th>
                                                 </template>
+                                                <th scope="col" class="px-4 py-3 text-right">"Actions"</th>
                                             </tr>
                                         </thead>
                                         <tbody x-show="!loading && collections.length > 0" class="divide-y divide-slate-100 bg-white">
                                             <template x-for="(item, index) in collections" x-bind:key="getAttributeValue(item, 'id') || index">
                                                 <tr class="transition hover:bg-slate-50">
-                                                    <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-600" x-text="getAttributeValue(item, 'id')"></td>
+                                                    <td class="whitespace-nowrap px-4 py-3 font-mono text-xs text-slate-600">
+                                                        <span x-text="getAttributeValue(item, 'id')"></span>
+                                                    </td>
                                                     <template x-for="attr in (currentEntity ? currentEntity.attributes : [])" x-bind:key="attr.id">
                                                         <td class="whitespace-nowrap px-4 py-3 text-slate-800" x-text="getAttributeValue(item, attr.identifier)"></td>
                                                     </template>
+                                                    <td class="whitespace-nowrap px-4 py-3 text-right">
+                                                        <a
+                                                            x-bind:href="`/admin/collections/${getAttributeValue(item, 'id')}/edit?entity_id=${selectedEntityId}`"
+                                                            class="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                                        >
+                                                            "Edit"
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             </template>
                                         </tbody>

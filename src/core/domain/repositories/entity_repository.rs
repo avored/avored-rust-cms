@@ -52,6 +52,12 @@ pub trait EntityRepository: Send + Sync {
         page_size: u64,
     ) -> Result<(Vec<serde_json::Value>, u64)>;
 
+    async fn fetch_collection_by_id(
+        &self,
+        table_name: &str,
+        record_id: &str,
+    ) -> Result<serde_json::Value>;
+
     async fn create_collection_table(&self, table_name: &str) -> Result<()>;
 
     async fn create_collection(
@@ -59,5 +65,11 @@ pub trait EntityRepository: Send + Sync {
         table_name: &str,
         record: serde_json::Map<String, serde_json::Value>,
     ) -> Result<serde_json::Value>;
-}
 
+    async fn update_collection_by_id(
+        &self,
+        table_name: &str,
+        record_id: &str,
+        record: serde_json::Map<String, serde_json::Value>,
+    ) -> Result<serde_json::Value>;
+}

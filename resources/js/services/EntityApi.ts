@@ -36,9 +36,29 @@ class EntityApi {
     }
   }
 
+  async fetchCollectionById(entityId: string, recordId: string) {
+    try {
+      const response = await http.get<Record<string, any>>(`/api/collection/${entityId}/${recordId}`);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async createCollection(entityId: string, data: Record<string, any>) {
     try {
       const response = await http.post<Record<string, any>>(`/api/collection/${entityId}`, data);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async updateCollection(entityId: string, recordId: string, data: Record<string, any>) {
+    try {
+      const response = await http.put<Record<string, any>>(`/api/collection/${entityId}/${recordId}`, data);
       return response;
     } catch (error) {
       console.error(error);

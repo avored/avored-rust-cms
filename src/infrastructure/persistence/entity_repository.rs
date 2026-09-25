@@ -57,6 +57,14 @@ fn serde_json_to_surreal_value(value: serde_json::Value) -> Value {
     }
 }
 
+fn object_to_json_value(obj: Object) -> serde_json::Value {
+    let mut map = serde_json::Map::new();
+    for (key, value) in obj {
+        map.insert(key, value.into_json_value());
+    }
+    serde_json::Value::Object(map)
+}
+
 #[async_trait::async_trait]
 impl EntityRepository for EntityRepositoryImpl {
     async fn create(&self, storable_entity: StorableEntity) -> Result<EntityModel> {
@@ -585,6 +593,45 @@ impl EntityRepository for EntityRepositoryImpl {
         Ok(())
     }
 
+    async fn fetch_collection_by_id(
+        &self,
+        table_name: &str,
+        record_id: &str,
+    ) -> Result<serde_json::Value> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        let target_record = surrealdb::types::RecordId {
+            table: table_name.to_string().into(),
+            key: surrealdb::types::RecordIdKey::String(record_id.to_string()),
+        };
+
+        let sql = format!(
+            "SELECT * FROM {} WHERE id = $id AND deleted_at = NONE;",
+            table_name
+        );
+
+        let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let mut it = into_iter_objects(responses)?;
+        if let Some(obj_res) = it.next() {
+            let obj = obj_res?;
+            return Ok(object_to_json_value(obj));
+        }
+
+        Err(Error::NotFound(format!(
+            "Collection record '{}' not found in table '{}'",
+            record_id, table_name
+        )))
+    }
+
     async fn create_collection(
         &self,
         table_name: &str,
@@ -657,8 +704,93 @@ impl EntityRepository for EntityRepositoryImpl {
             Error::Generic("No record returned from collection insert".to_string())
         })??;
 
-        let json_val = serde_json::to_value(&result_object)
-            .map_err(|e| Error::Generic(e.to_string()))?;
+        let json_val = object_to_json_value(result_object);
+
+        Ok(json_val)
+    }
+
+    async fn update_collection_by_id(
+        &self,
+        table_name: &str,
+        record_id: &str,
+        record: serde_json::Map<String, serde_json::Value>,
+    ) -> Result<serde_json::Value> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        }
+
+        fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
+            match value {
+                serde_json::Value::Object(map) => {
+                    let mut filtered = serde_json::Map::new();
+                    for (key, child) in map {
+                        let cleaned = strip_nulls(child);
+                        if !matches!(cleaned, serde_json::Value::Null) {
+                            filtered.insert(key, cleaned);
+                        }
+                    }
+                    serde_json::Value::Object(filtered)
+                }
+                serde_json::Value::Array(items) => serde_json::Value::Array(
+                    items
+                        .into_iter()
+                        .map(strip_nulls)
+                        .filter(|value| !matches!(value, serde_json::Value::Null))
+                        .collect(),
+                ),
+                other => other,
+            }
+        }
+
+        let sanitized = strip_nulls(serde_json::Value::Object(record));
+        let mut content_record = sanitized
+            .as_object()
+            .cloned()
+            .unwrap_or_default();
+
+        content_record.remove("id");
+        content_record.remove("deleted_at");
+        content_record.remove("deleted_by");
+
+        let target_record = surrealdb::types::RecordId {
+            table: table_name.to_string().into(),
+            key: surrealdb::types::RecordIdKey::String(record_id.to_string()),
+        };
+
+        let mut data = Object::new();
+        for (key, value) in content_record {
+            if !matches!(value, serde_json::Value::Null) {
+                data.insert(key, serde_json_to_surreal_value(value));
+            }
+        }
+
+        let mut set_clauses = Vec::new();
+        let mut bindings: BTreeMap<String, Value> = BTreeMap::new();
+        bindings.insert("id".to_string(), Value::RecordId(target_record));
+
+        for (index, (key, value)) in data.iter().enumerate() {
+            let binding_name = format!("field_{}", index);
+            set_clauses.push(format!("{} = ${}", key, binding_name));
+            bindings.insert(binding_name, value.clone());
+        }
+
+        let sql = format!(
+            "UPDATE {} SET {} WHERE id = $id AND deleted_at = NONE;",
+            table_name,
+            set_clauses.join(", ")
+        );
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(bindings.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            Error::Generic("No record returned from collection update".to_string())
+        })??;
+
+        let json_val = object_to_json_value(result_object);
 
         Ok(json_val)
     }

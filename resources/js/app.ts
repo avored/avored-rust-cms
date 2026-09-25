@@ -6,6 +6,7 @@ import { entityIndexPage } from "./entity/EntityIndexPage";
 import { entityCreatePage } from "./entity/EntityCreatePage";
 import { entityEditPage } from "./entity/EntityEditPage";
 import { collectionCreatePage } from "./collection/CollectionCreatePage";
+import { collectionEditPage } from "./collection/CollectionEditPage";
 import { collectionIndexPage } from "./collection/CollectionIndexPage";
 
 declare global {
@@ -15,6 +16,8 @@ declare global {
     entityCreatePage: typeof entityCreatePage;
     entityEditPage: typeof entityEditPage;
     collectionCreatePage: typeof collectionCreatePage;
+    collectionEditPage: typeof collectionEditPage;
+    collectionIndexPage: typeof collectionIndexPage;
   }
 }
 
@@ -23,6 +26,8 @@ window.entityIndexPage = entityIndexPage;
 window.entityCreatePage = entityCreatePage;
 window.entityEditPage = entityEditPage;
 window.collectionCreatePage = collectionCreatePage;
+window.collectionEditPage = collectionEditPage;
+window.collectionIndexPage = collectionIndexPage;
 
 if (window.Alpine) {
   window.Alpine.data("setupPage", setupPage);
@@ -31,6 +36,7 @@ if (window.Alpine) {
   window.Alpine.data("entityEditPage", entityEditPage);
   window.Alpine.data("collectionIndexPage", collectionIndexPage);
   window.Alpine.data("collectionCreatePage", collectionCreatePage);
+  window.Alpine.data("collectionEditPage", collectionEditPage);
 }
 
 const initApp = () => {
