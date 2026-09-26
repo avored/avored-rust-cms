@@ -6,3 +6,4 @@ pub mod entity;
 
 pub mod collection;
 
+pub mod email_template;

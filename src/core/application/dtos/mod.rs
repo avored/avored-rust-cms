@@ -9,3 +9,5 @@ pub use entity_dto::{
 
 pub mod collection_dto;
 
+pub mod email_template_dto;
+pub use email_template_dto::{EmailTemplatePaginationResponse, PaginateEmailTemplateCommand};

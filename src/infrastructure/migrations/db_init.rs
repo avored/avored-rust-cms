@@ -67,8 +67,18 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
             DEFINE INDEX IF NOT EXISTS attributes_identifier_unique
                 ON attributes FIELDS identifier UNIQUE;
 
+        DEFINE TABLE IF NOT EXISTS email_templates SCHEMAFULL;
+            DEFINE FIELD name ON TABLE email_templates TYPE string;
+            DEFINE FIELD subject ON TABLE email_templates TYPE string;
+            DEFINE FIELD body_html ON TABLE email_templates TYPE string;
+            DEFINE FIELD body_plain ON TABLE email_templates TYPE option<string>;
+            DEFINE FIELD created_at ON TABLE email_templates TYPE datetime;
+            DEFINE FIELD updated_at ON TABLE email_templates TYPE datetime;
+            DEFINE FIELD deleted_at ON TABLE email_templates TYPE option<datetime>;
+            DEFINE FIELD deleted_by ON TABLE email_templates TYPE option<string>;
 
-        
+            DEFINE INDEX IF NOT EXISTS email_templates_name_index
+                ON email_templates FIELDS name UNIQUE;
 
     "#;
 

@@ -8,6 +8,9 @@ pub mod misc_repository;
 pub mod entity_repository;
 pub use entity_repository::EntityRepositoryImpl;
 
+pub mod email_template_repository;
+pub use email_template_repository::EmailTemplateRepositoryImpl;
+
 // pub mod attribute_repository;
 // pub use attribute_repository::AttributeRepositoryImpl;
 

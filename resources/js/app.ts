@@ -8,6 +8,7 @@ import { entityEditPage } from "./entity/EntityEditPage";
 import { collectionCreatePage } from "./collection/CollectionCreatePage";
 import { collectionEditPage } from "./collection/CollectionEditPage";
 import { collectionIndexPage } from "./collection/CollectionIndexPage";
+import { emailTemplateIndexPage } from "./email/EmailTemplateIndexPage";
 
 declare global {
   interface Window {
@@ -18,6 +19,7 @@ declare global {
     collectionCreatePage: typeof collectionCreatePage;
     collectionEditPage: typeof collectionEditPage;
     collectionIndexPage: typeof collectionIndexPage;
+    emailTemplateIndexPage: typeof emailTemplateIndexPage;
   }
 }
 
@@ -28,6 +30,7 @@ window.entityEditPage = entityEditPage;
 window.collectionCreatePage = collectionCreatePage;
 window.collectionEditPage = collectionEditPage;
 window.collectionIndexPage = collectionIndexPage;
+window.emailTemplateIndexPage = emailTemplateIndexPage;
 
 if (window.Alpine) {
   window.Alpine.data("setupPage", setupPage);
@@ -37,6 +40,7 @@ if (window.Alpine) {
   window.Alpine.data("collectionIndexPage", collectionIndexPage);
   window.Alpine.data("collectionCreatePage", collectionCreatePage);
   window.Alpine.data("collectionEditPage", collectionEditPage);
+  window.Alpine.data("emailTemplateIndexPage", emailTemplateIndexPage);
 }
 
 const initApp = () => {

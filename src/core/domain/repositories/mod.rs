@@ -12,6 +12,9 @@ pub mod entity_repository;
 
 pub use entity_repository::EntityRepository;
 
+pub mod email_template_repository;
+pub use email_template_repository::EmailTemplateRepository;
+
 pub mod attribute_repository;
 
 pub use attribute_repository::AttributeRepository;

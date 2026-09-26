@@ -12,6 +12,8 @@ pub const USERS_TABLE_NAME: &str = "users";
 /// The name of the entities table in the database.
 pub const ENTITIES_TABLE_NAME: &str = "entities";
 
+/// The name of the email templates table in the database.
+pub const EMAIL_TEMPLATES_TABLE_NAME: &str = "email_templates";
 
 /// The name of the attributes table in the database.
 pub const ATTRIBUTES_TABLE_NAME: &str = "attributes";

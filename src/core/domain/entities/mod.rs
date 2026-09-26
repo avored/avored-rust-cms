@@ -12,6 +12,8 @@ pub mod modal_count;
 pub mod entity;
 pub use entity::{EntityModel, StorableEntity};
 
+pub mod email_template;
+pub use email_template::EmailTemplateModel;
 
 pub mod attribute;
 pub use attribute::{AttributeModel, StorableAttribute};

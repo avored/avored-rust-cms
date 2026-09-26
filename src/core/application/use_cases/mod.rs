@@ -11,6 +11,9 @@ pub mod entity_use_case;
 
 pub use entity_use_case::EntityUseCase;
 
+pub mod email_template_use_case;
+
+pub use email_template_use_case::EmailTemplateUseCase;
 
 // pub mod attribute_use_case;
 

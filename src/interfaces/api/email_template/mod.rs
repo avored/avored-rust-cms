@@ -1,0 +1,3 @@
+pub mod paginate_email_templates_handler;
+
+pub use paginate_email_templates_handler::paginate_email_templates_handler;
