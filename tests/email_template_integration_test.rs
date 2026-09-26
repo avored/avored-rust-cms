@@ -1,6 +1,8 @@
 #![recursion_limit = "512"]
 
-use avored_rust_cms::core::application::dtos::email_template_dto::CreateEmailTemplateCommand;
+use avored_rust_cms::core::application::dtos::email_template_dto::{
+    CreateEmailTemplateCommand, UpdateEmailTemplateCommand,
+};
 use avored_rust_cms::avored_state::test_avored_state;
 
 #[tokio::test]
@@ -59,4 +61,51 @@ async fn test_email_template_repository_find_by_id_returns_not_found() {
 
     let result = state.email_template_use_case.get_by_id("email_templates:missing").await;
     assert!(result.is_err());
+}
+
+#[tokio::test]
+async fn test_update_email_template_command_requires_name_and_subject() {
+    let command = UpdateEmailTemplateCommand {
+        name: "   ".to_string(),
+        subject: "".to_string(),
+        body_html: Some("<h1>Updated</h1>".to_string()),
+        body_plain: Some("Updated".to_string()),
+    };
+
+    let result = command.validate("en").await;
+    assert!(result.is_err());
+}
+
+#[tokio::test]
+async fn test_email_template_use_case_update_returns_updated_record() {
+    let state = test_avored_state().await;
+    let created = state
+        .email_template_use_case
+        .create(CreateEmailTemplateCommand {
+            name: "Original Campaign".to_string(),
+            subject: "Original subject".to_string(),
+            body_html: Some("<p>Original</p>".to_string()),
+            body_plain: Some("Original".to_string()),
+        })
+        .await
+        .expect("create email template should succeed");
+
+    let updated = state
+        .email_template_use_case
+        .update(
+            &created.id,
+            UpdateEmailTemplateCommand {
+                name: "Updated Campaign".to_string(),
+                subject: "Updated subject".to_string(),
+                body_html: Some("<p>Updated</p>".to_string()),
+                body_plain: Some("Updated".to_string()),
+            },
+        )
+        .await
+        .expect("update email template should succeed");
+
+    assert_eq!(updated.name, "Updated Campaign");
+    assert_eq!(updated.subject, "Updated subject");
+    assert_eq!(updated.body_html, "<p>Updated</p>");
+    assert_eq!(updated.body_plain, Some("Updated".to_string()));
 }

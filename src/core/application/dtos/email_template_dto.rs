@@ -51,6 +51,46 @@ impl CreateEmailTemplateCommand {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct UpdateEmailTemplateCommand {
+    pub name: String,
+    pub subject: String,
+    pub body_html: Option<String>,
+    pub body_plain: Option<String>,
+}
+
+impl UpdateEmailTemplateCommand {
+    pub async fn validate(&self, _locale: &str) -> Result<Vec<ErrorMessageResponse>> {
+        let mut errors: Vec<ErrorMessageResponse> = vec![];
+        let mut valid = true;
+
+        if self.name.trim().is_empty() || !self.name.is_required()? {
+            errors.push(ErrorMessageResponse {
+                key: "name".to_string(),
+                message: "Name is required.".to_string(),
+            });
+            valid = false;
+        }
+
+        if self.subject.trim().is_empty() || !self.subject.is_required()? {
+            errors.push(ErrorMessageResponse {
+                key: "subject".to_string(),
+                message: "Subject is required.".to_string(),
+            });
+            valid = false;
+        }
+
+        if !valid {
+            return Err(crate::error::Error::BadRequest(ErrorResponse {
+                status: false,
+                errors,
+            }));
+        }
+
+        Ok(errors)
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct EmailTemplatePaginationResponse {
     pub data: Vec<EmailTemplateModel>,
     pub total: u64,

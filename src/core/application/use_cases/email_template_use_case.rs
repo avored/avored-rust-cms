@@ -1,5 +1,6 @@
 use crate::core::application::dtos::email_template_dto::{
     CreateEmailTemplateCommand, EmailTemplatePaginationResponse, PaginateEmailTemplateCommand,
+    UpdateEmailTemplateCommand,
 };
 use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::EmailTemplateModel;
@@ -43,6 +44,30 @@ where
 
     pub async fn get_by_id(&self, id: &str) -> Result<EmailTemplateModel> {
         self.repository.find_by_id(id).await
+    }
+
+    pub async fn update(
+        &self,
+        id: &str,
+        command: UpdateEmailTemplateCommand,
+    ) -> Result<EmailTemplateModel> {
+        command.validate("en").await?;
+
+        let body_html = command.body_html.unwrap_or_default();
+        let body_plain = command
+            .body_plain
+            .map(|value| value.trim().to_string())
+            .filter(|value| !value.is_empty());
+
+        self.repository
+            .update(
+                id,
+                command.name.trim().to_string(),
+                command.subject.trim().to_string(),
+                body_html,
+                body_plain,
+            )
+            .await
     }
 
     pub async fn paginate(

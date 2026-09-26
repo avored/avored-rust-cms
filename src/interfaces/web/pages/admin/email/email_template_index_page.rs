@@ -45,6 +45,7 @@ pub fn EmailTemplateIndexPage() -> impl IntoView {
                                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">"Subject"</th>
                                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">"Created"</th>
                                     <th scope="col" class="px-5 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">"Updated"</th>
+                                    <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6">"Actions"</th>
                                 </tr>
                             </thead>
                             <tbody x-show="!loading && templates.length > 0" class="divide-y divide-slate-100 bg-white">
@@ -56,6 +57,15 @@ pub fn EmailTemplateIndexPage() -> impl IntoView {
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-600" x-text="template.subject"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(template.created_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(template.updated_at)"></td>
+                                        <td class="whitespace-nowrap px-5 py-4 text-right sm:px-6">
+                                            <a
+                                                x-bind:href="`/admin/email-templates/${template.id}/edit`"
+                                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                            >
+                                                <i data-feather="edit-3" class="h-4 w-4"></i>
+                                                "Edit"
+                                            </a>
+                                        </td>
                                     </tr>
                                 </template>
                             </tbody>

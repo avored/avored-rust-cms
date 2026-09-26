@@ -92,6 +92,54 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
         )))
     }
 
+    async fn update(
+        &self,
+        id: &str,
+        name: String,
+        subject: String,
+        body_html: String,
+        body_plain: Option<String>,
+    ) -> Result<EmailTemplateModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let target_record = surrealdb::types::RecordId {
+            table: EMAIL_TEMPLATES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
+        };
+
+        let sql = format!(
+            "UPDATE {} SET name=$name, subject=$subject, body_html=$body_html, body_plain=$body_plain, updated_at=time::now() WHERE id = $id AND deleted_at = NONE RETURN *;",
+            EMAIL_TEMPLATES_TABLE_NAME
+        );
+
+        let data = BTreeMap::from([
+            ("id".to_string(), Value::RecordId(target_record)),
+            ("name".to_string(), Value::String(name)),
+            ("subject".to_string(), Value::String(subject)),
+            ("body_html".to_string(), Value::String(body_html)),
+            (
+                "body_plain".to_string(),
+                body_plain.map(Value::String).unwrap_or(Value::None),
+            ),
+        ]);
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let mut items = into_iter_objects(responses)?;
+        if let Some(obj_res) = items.next() {
+            let obj = obj_res?;
+            let template: EmailTemplateModel = obj.try_into()?;
+            return Ok(template);
+        }
+
+        Err(crate::error::Error::NotFound(format!(
+            "Email template with ID '{}' not found",
+            id
+        )))
+    }
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)> {
         let (datastore, database_session) = &self.database_provider.db;
         let skip = page.saturating_sub(1) * page_size;

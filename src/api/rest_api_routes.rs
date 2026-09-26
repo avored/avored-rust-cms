@@ -10,6 +10,7 @@ use crate::interfaces::api::{
         create_email_template_handler::create_email_template_handler,
         fetch_email_template_handler::fetch_email_template_handler,
         paginate_email_templates_handler::paginate_email_templates_handler,
+        update_email_template_handler::update_email_template_handler,
     },
     entity::{
         create_entity_handler, delete_entity_handler, fetch_entity_handler,
@@ -57,6 +58,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route("/api/collection", post(create_collection_handler))
         .route("/api/email-templates", post(create_email_template_handler))
         .route("/api/email-templates/{id}", get(fetch_email_template_handler))
+        .route("/api/email-templates/{id}", put(update_email_template_handler))
         .route("/api/email-templates", get(paginate_email_templates_handler))
         .route(
             "/api/collection/{record_id}",
