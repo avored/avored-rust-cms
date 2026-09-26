@@ -11,5 +11,7 @@ pub trait EmailTemplateRepository: Send + Sync {
         body_plain: Option<String>,
     ) -> Result<EmailTemplateModel>;
 
+    async fn find_by_id(&self, id: &str) -> Result<EmailTemplateModel>;
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)>;
 }

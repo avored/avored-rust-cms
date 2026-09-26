@@ -59,6 +59,39 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
         Ok(template)
     }
 
+    async fn find_by_id(&self, id: &str) -> Result<EmailTemplateModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let target_record = surrealdb::types::RecordId {
+            table: EMAIL_TEMPLATES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
+        };
+
+        let sql = format!(
+            "SELECT * FROM {} WHERE id = $id AND deleted_at = NONE;",
+            EMAIL_TEMPLATES_TABLE_NAME
+        );
+
+        let data: BTreeMap<String, Value> =
+            [("id".to_string(), Value::RecordId(target_record))].into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let mut items = into_iter_objects(responses)?;
+        if let Some(obj_res) = items.next() {
+            let obj = obj_res?;
+            let template: EmailTemplateModel = obj.try_into()?;
+            return Ok(template);
+        }
+
+        Err(crate::error::Error::NotFound(format!(
+            "Email template with ID '{}' not found",
+            id
+        )))
+    }
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)> {
         let (datastore, database_session) = &self.database_provider.db;
         let skip = page.saturating_sub(1) * page_size;

@@ -41,6 +41,10 @@ where
             .await
     }
 
+    pub async fn get_by_id(&self, id: &str) -> Result<EmailTemplateModel> {
+        self.repository.find_by_id(id).await
+    }
+
     pub async fn paginate(
         &self,
         query: PaginateEmailTemplateCommand,

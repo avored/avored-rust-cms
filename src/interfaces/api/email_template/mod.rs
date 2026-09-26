@@ -1,5 +1,7 @@
 pub mod create_email_template_handler;
+pub mod fetch_email_template_handler;
 pub mod paginate_email_templates_handler;
 
 pub use create_email_template_handler::create_email_template_handler;
+pub use fetch_email_template_handler::fetch_email_template_handler;
 pub use paginate_email_templates_handler::paginate_email_templates_handler;
