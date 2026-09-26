@@ -7,6 +7,9 @@ export function emailTemplateIndexPage() {
         page: 1,
         pageSize: 20,
         loading: false,
+        deleteModalOpen: false,
+        templateToDelete: null as Record<string, any> | null,
+        deleting: false,
         errorMessage: '',
         initialized: false,
 
@@ -68,6 +71,38 @@ export function emailTemplateIndexPage() {
             return Number.isNaN(date.getTime())
                 ? value
                 : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(date);
+        },
+
+        confirmDelete(template: Record<string, any>) {
+            this.templateToDelete = template;
+            this.deleteModalOpen = true;
+        },
+
+        cancelDelete() {
+            this.deleteModalOpen = false;
+            this.templateToDelete = null;
+        },
+
+        async deleteTemplate() {
+            if (!this.templateToDelete) return;
+
+            this.deleting = true;
+            try {
+                await http.delete(`/api/email-templates/${this.templateToDelete.id}`);
+                this.templates = this.templates.filter((template) => template.id !== this.templateToDelete?.id);
+                this.total = Math.max(0, this.total - 1);
+                this.deleteModalOpen = false;
+                this.templateToDelete = null;
+
+                if (this.templates.length === 0 && this.page > 1) {
+                    this.page -= 1;
+                    await this.fetchTemplates();
+                }
+            } catch (err: any) {
+                this.errorMessage = err.message || 'Failed to delete email template';
+            } finally {
+                this.deleting = false;
+            }
         },
     };
 }

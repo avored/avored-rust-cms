@@ -109,3 +109,35 @@ async fn test_email_template_use_case_update_returns_updated_record() {
     assert_eq!(updated.body_html, "<p>Updated</p>");
     assert_eq!(updated.body_plain, Some("Updated".to_string()));
 }
+
+#[tokio::test]
+async fn test_email_template_use_case_delete_returns_true_for_existing_record() {
+    let state = test_avored_state().await;
+    let created = state
+        .email_template_use_case
+        .create(CreateEmailTemplateCommand {
+            name: "Delete Campaign".to_string(),
+            subject: "Delete me".to_string(),
+            body_html: Some("<p>Delete</p>".to_string()),
+            body_plain: Some("Delete".to_string()),
+        })
+        .await
+        .expect("create email template should succeed");
+
+    let deleted = state
+        .email_template_use_case
+        .delete(&created.id)
+        .await
+        .expect("delete email template should succeed");
+
+    assert!(deleted);
+    assert!(state.email_template_use_case.get_by_id(&created.id).await.is_err());
+}
+
+#[tokio::test]
+async fn test_email_template_use_case_delete_returns_not_found_for_missing_record() {
+    let state = test_avored_state().await;
+
+    let result = state.email_template_use_case.delete("email_templates:missing").await;
+    assert!(result.is_err());
+}

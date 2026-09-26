@@ -58,13 +58,23 @@ pub fn EmailTemplateIndexPage() -> impl IntoView {
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(template.created_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(template.updated_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-right sm:px-6">
-                                            <a
-                                                x-bind:href="`/admin/email-templates/${template.id}/edit`"
-                                                class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                            >
-                                                <i data-feather="edit-3" class="h-4 w-4"></i>
-                                                "Edit"
-                                            </a>
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a
+                                                    x-bind:href="`/admin/email-templates/${template.id}/edit`"
+                                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                                >
+                                                    <i data-feather="edit-3" class="h-4 w-4"></i>
+                                                    "Edit"
+                                                </a>
+                                                <button
+                                                    type="button"
+                                                    x-on:click="confirmDelete(template)"
+                                                    class="inline-flex items-center justify-center gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                >
+                                                    <i data-feather="trash-2" class="h-4 w-4"></i>
+                                                    "Delete"
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </template>
@@ -113,6 +123,21 @@ pub fn EmailTemplateIndexPage() -> impl IntoView {
                         <i data-feather="layers" class="mx-auto h-8 w-8 text-slate-300"></i>
                         <h3 class="mt-3 text-sm font-semibold text-slate-900">"No email templates yet"</h3>
                         <p class="mt-1 text-sm text-slate-500">"Create your first template to start sending branded emails."</p>
+                    </div>
+                </div>
+
+                <div x-show="deleteModalOpen" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 px-4" x-on:keydown.escape.window="cancelDelete()">
+                    <div class="w-full max-w-md rounded-xl bg-white p-6 shadow-xl" x-on:click.outside="cancelDelete()" role="dialog" aria-modal="true" aria-labelledby="delete-email-template-title">
+                        <h2 id="delete-email-template-title" class="text-lg font-semibold text-slate-900">"Delete email template?"</h2>
+                        <p class="mt-2 text-sm leading-6 text-slate-500">"This will remove the template from the active list."</p>
+                        <p class="mt-3 rounded-lg bg-slate-50 px-3 py-2 font-medium text-slate-700" x-text="templateToDelete?.name"></p>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button type="button" x-on:click="cancelDelete()" class="rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">"Cancel"</button>
+                            <button type="button" x-on:click="deleteTemplate()" x-bind:disabled="deleting" class="rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60">
+                                <span x-show="!deleting">"Delete template"</span>
+                                <span x-show="deleting">"Deleting..."</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

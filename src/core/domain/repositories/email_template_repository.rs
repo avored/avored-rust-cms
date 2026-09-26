@@ -22,5 +22,7 @@ pub trait EmailTemplateRepository: Send + Sync {
         body_plain: Option<String>,
     ) -> Result<EmailTemplateModel>;
 
+    async fn delete(&self, id: &str) -> Result<bool>;
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)>;
 }

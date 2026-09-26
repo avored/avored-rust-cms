@@ -70,6 +70,10 @@ where
             .await
     }
 
+    pub async fn delete(&self, id: &str) -> Result<bool> {
+        self.repository.delete(id).await
+    }
+
     pub async fn paginate(
         &self,
         query: PaginateEmailTemplateCommand,

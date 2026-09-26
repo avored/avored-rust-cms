@@ -140,6 +140,32 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
         )))
     }
 
+    async fn delete(&self, id: &str) -> Result<bool> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        // Verify existence
+        self.find_by_id(id).await?;
+
+        let target_record = surrealdb::types::RecordId {
+            table: EMAIL_TEMPLATES_TABLE_NAME.into(),
+            key: surrealdb::types::RecordIdKey::String(id.to_string()),
+        };
+
+        let sql = format!(
+            "UPDATE {} SET deleted_at = time::now(), updated_at = time::now() WHERE id = $id AND deleted_at = NONE;",
+            EMAIL_TEMPLATES_TABLE_NAME
+        );
+
+        let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let _ = into_iter_objects(responses)?;
+        Ok(true)
+    }
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)> {
         let (datastore, database_session) = &self.database_provider.db;
         let skip = page.saturating_sub(1) * page_size;
