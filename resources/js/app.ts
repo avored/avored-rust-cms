@@ -8,6 +8,7 @@ import { entityEditPage } from "./entity/EntityEditPage";
 import { collectionCreatePage } from "./collection/CollectionCreatePage";
 import { collectionEditPage } from "./collection/CollectionEditPage";
 import { collectionIndexPage } from "./collection/CollectionIndexPage";
+import { emailTemplateCreatePage } from "./email/EmailTemplateCreatePage";
 import { emailTemplateIndexPage } from "./email/EmailTemplateIndexPage";
 
 declare global {
@@ -19,6 +20,7 @@ declare global {
     collectionCreatePage: typeof collectionCreatePage;
     collectionEditPage: typeof collectionEditPage;
     collectionIndexPage: typeof collectionIndexPage;
+    emailTemplateCreatePage: typeof emailTemplateCreatePage;
     emailTemplateIndexPage: typeof emailTemplateIndexPage;
   }
 }
@@ -30,6 +32,7 @@ window.entityEditPage = entityEditPage;
 window.collectionCreatePage = collectionCreatePage;
 window.collectionEditPage = collectionEditPage;
 window.collectionIndexPage = collectionIndexPage;
+window.emailTemplateCreatePage = emailTemplateCreatePage;
 window.emailTemplateIndexPage = emailTemplateIndexPage;
 
 if (window.Alpine) {
@@ -40,6 +43,7 @@ if (window.Alpine) {
   window.Alpine.data("collectionIndexPage", collectionIndexPage);
   window.Alpine.data("collectionCreatePage", collectionCreatePage);
   window.Alpine.data("collectionEditPage", collectionEditPage);
+  window.Alpine.data("emailTemplateCreatePage", emailTemplateCreatePage);
   window.Alpine.data("emailTemplateIndexPage", emailTemplateIndexPage);
 }
 

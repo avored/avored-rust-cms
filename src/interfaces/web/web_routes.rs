@@ -6,7 +6,7 @@ use crate::interfaces::web::pages::admin::collections::{
     collection_edit_page::CollectionEditPage,
     collection_index_page::CollectionIndexPage,
 };
-use crate::interfaces::web::pages::admin::email::EmailTemplateIndexPage;
+use crate::interfaces::web::pages::admin::email::{EmailTemplateCreatePage, EmailTemplateIndexPage};
 use crate::interfaces::web::pages::admin::entity::{
     EntityCreatePage, EntityEditPage, EntityIndexPage,
 };
@@ -46,6 +46,7 @@ pub fn WebApp() -> impl IntoView {
                         <Route path=path!("collections/create") view=CollectionCreatePage/>
                         <Route path=path!("collections/:id/edit") view=CollectionEditPage/>
                         <Route path=path!("email-templates") view=EmailTemplateIndexPage/>
+                        <Route path=path!("email-templates/create") view=EmailTemplateCreatePage/>
                     </ParentRoute>
                 </Routes>
             </main>

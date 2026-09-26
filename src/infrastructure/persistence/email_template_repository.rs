@@ -1,3 +1,4 @@
+use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use surrealdb::types::{Number, Value};
@@ -22,6 +23,42 @@ impl EmailTemplateRepositoryImpl {
 
 #[async_trait::async_trait]
 impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
+    async fn create(
+        &self,
+        name: String,
+        subject: String,
+        body_html: String,
+        body_plain: Option<String>,
+    ) -> Result<EmailTemplateModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = format!(
+            "CREATE {} SET name=$name, subject=$subject, body_html=$body_html, body_plain=$body_plain, created_at=time::now(), updated_at=time::now(), deleted_at=NONE, deleted_by=NONE;",
+            EMAIL_TEMPLATES_TABLE_NAME
+        );
+
+        let data = BTreeMap::from([
+            ("name".to_string(), Value::String(name)),
+            ("subject".to_string(), Value::String(subject)),
+            ("body_html".to_string(), Value::String(body_html)),
+            (
+                "body_plain".to_string(),
+                body_plain.map(Value::String).unwrap_or(Value::None),
+            ),
+        ]);
+
+        let responses = datastore
+            .execute(&sql, database_session, Some(data.into()))
+            .await?;
+
+        let obj = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No email template returned from insert".to_string())
+        })??;
+
+        let template: EmailTemplateModel = obj.try_into()?;
+        Ok(template)
+    }
+
     async fn paginate(&self, page: u64, page_size: u64) -> Result<(Vec<EmailTemplateModel>, u64)> {
         let (datastore, database_session) = &self.database_provider.db;
         let skip = page.saturating_sub(1) * page_size;
