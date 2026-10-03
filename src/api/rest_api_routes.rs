@@ -1,7 +1,10 @@
 use crate::interfaces::api::{
     api_manager::{
         create_entity_record_handler::create_entity_record_handler,
+        delete_entity_record_handler::delete_entity_record_handler,
+        fetch_entity_record_handler::fetch_entity_record_handler,
         list_entities_handler::list_entities_handler,
+        update_entity_record_handler::update_entity_record_handler,
     },
     collection::{
         create_collection_handler::create_collection_handler,
@@ -25,7 +28,7 @@ use crate::interfaces::api::{
 };
 use axum::{
     http::HeaderValue,
-    routing::{delete, get, post, put},
+    routing::{delete, get, patch, post, put},
     Router,
 };
 use leptos::context::provide_context;
@@ -90,6 +93,9 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         )
         .route("/api/v1/entities", get(list_entities_handler))
         .route("/api/v1/entities", post(create_entity_record_handler))
+        .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
+        .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
+        .route("/api/v1/entities/{id}", delete(delete_entity_record_handler))
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,

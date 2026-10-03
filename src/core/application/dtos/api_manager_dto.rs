@@ -84,3 +84,53 @@ pub struct CreateEntityRecordRequest {
 }
 
 /* #endregion */
+
+/* #region Update record DTOs */
+
+/// Query parameters for `PATCH /api/v1/entities/{id}`.
+#[derive(Debug, Deserialize)]
+pub struct UpdateEntityRecordQuery {
+    /// Identifier of the entity type (e.g. `"blog_posts"`), or entity ID.
+    pub entity_type: Option<String>,
+}
+
+/// Request body for `PATCH /api/v1/entities/{id}`.
+///
+/// ```json
+/// {
+///   "entity_type": "blog_posts",
+///   "attributes": { "title": "Updated title" }
+/// }
+/// ```
+#[derive(Debug, Deserialize)]
+pub struct UpdateEntityRecordRequest {
+    /// Optional in body if provided via query param `?entity_type=...`
+    pub entity_type: Option<String>,
+    /// Attributes to partially update.
+    pub attributes: serde_json::Map<String, serde_json::Value>,
+}
+
+/* #endregion */
+
+/* #region Fetch record DTOs */
+
+/// Query parameters for `GET /api/v1/entities/{id}`.
+#[derive(Debug, Deserialize)]
+pub struct FetchEntityRecordQuery {
+    /// Optional entity type identifier (e.g. `"blog_posts"`). If omitted,
+    /// it is inferred from the ID prefix if formatted as `"entity_type:key"`.
+    pub entity_type: Option<String>,
+}
+
+/* #region Delete record DTOs */
+
+/// Query parameters for `DELETE /api/v1/entities/{id}`.
+#[derive(Debug, Deserialize)]
+pub struct DeleteEntityRecordQuery {
+    /// Optional entity type identifier (e.g. `"blog_posts"`). If omitted,
+    /// it is inferred from the ID prefix if formatted as `"entity_type:key"`.
+    pub entity_type: Option<String>,
+}
+
+/* #endregion */
+

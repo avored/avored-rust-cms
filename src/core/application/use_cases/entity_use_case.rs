@@ -372,6 +372,92 @@ where
         self.create_collection(&entity.id, attributes, logged_in_user)
             .await
     }
+
+    /// Partially update a dynamic record for the given entity type.
+    ///
+    /// Validates supplied attributes against the entity schema, updates only
+    /// the supplied attributes, refreshes `updated_at` / `updated_by`, and
+    /// returns the complete post-update record.
+    pub async fn update_entity_record(
+        &self,
+        entity_type: &str,
+        record_id: &str,
+        attributes: serde_json::Map<String, serde_json::Value>,
+        logged_in_user: &str,
+    ) -> Result<serde_json::Value> {
+        // Confirm entity type exists — returns NotFound if unknown.
+        let entity = self.repository.find_by_identifier(entity_type).await?;
+
+        // Validate attribute names and types against entity schema
+        let mut errors = Vec::new();
+        for (key, val) in &attributes {
+            if let Some(attr_def) = entity.attributes.iter().find(|a| a.identifier == *key) {
+                let is_valid_type = match attr_def.data_type.as_str() {
+                    "string" => val.is_string() || val.is_null(),
+                    "integer" => val.is_i64() || val.is_u64() || val.is_null(),
+                    "boolean" => val.is_boolean() || val.is_null(),
+                    "date" => val.is_string() || val.is_null(),
+                    "json" => val.is_object() || val.is_array() || val.is_null(),
+                    _ => true,
+                };
+                if !is_valid_type {
+                    errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
+                        key: key.clone(),
+                        message: format!("Attribute '{}' expects type '{}'", key, attr_def.data_type),
+                    });
+                }
+            } else {
+                errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
+                    key: key.clone(),
+                    message: format!("Unknown attribute '{}' for entity '{}'", key, entity_type),
+                });
+            }
+        }
+
+        if !errors.is_empty() {
+            return Err(crate::error::Error::BadRequest(
+                crate::core::domain::entities::error_message::ErrorResponse {
+                    status: false,
+                    errors,
+                },
+            ));
+        }
+
+        // Delegate to existing update_collection persistence path
+        self.update_collection(&entity.id, record_id, attributes, logged_in_user)
+            .await
+    }
+
+    /// Retrieve a single dynamic record by entity type identifier and record ID.
+    pub async fn get_entity_record(
+        &self,
+        entity_type: &str,
+        record_id: &str,
+    ) -> Result<serde_json::Value> {
+        let entity = self.repository.find_by_identifier(entity_type).await?;
+        self.repository
+            .fetch_collection_by_id(&entity.identifier, record_id)
+            .await
+    }
+
+    /// Soft-delete a dynamic record by entity type identifier and record ID.
+    ///
+    /// Verifies the record currently exists (and is not deleted), returning
+    /// 404 Not Found if missing or already deleted.
+    pub async fn delete_entity_record(
+        &self,
+        entity_type: &str,
+        record_id: &str,
+    ) -> Result<bool> {
+        let entity = self.repository.find_by_identifier(entity_type).await?;
+        // Ensure record exists before deleting
+        self.repository
+            .fetch_collection_by_id(&entity.identifier, record_id)
+            .await?;
+        self.repository
+            .delete_collection_by_id(&entity.identifier, record_id)
+            .await
+    }
 }
 
 
