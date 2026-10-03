@@ -7,3 +7,5 @@ pub mod entity;
 pub mod collection;
 
 pub mod email_template;
+
+pub mod api_manager;

@@ -74,4 +74,16 @@ pub trait EntityRepository: Send + Sync {
     ) -> Result<serde_json::Value>;
 
     async fn delete_collection_by_id(&self, table_name: &str, record_id: &str) -> Result<bool>;
+
+    /// List dynamic records from `table_name` with optional equality filters and pagination.
+    ///
+    /// `filters` is a map of attribute key → expected string value.
+    /// Returns `(records, total_matching_count)`.
+    async fn list_entities(
+        &self,
+        table_name: &str,
+        page: u64,
+        limit: u64,
+        filters: &std::collections::HashMap<String, String>,
+    ) -> Result<(Vec<serde_json::Value>, u64)>;
 }

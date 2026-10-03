@@ -1,4 +1,5 @@
 use crate::interfaces::api::{
+    api_manager::list_entities_handler::list_entities_handler,
     collection::{
         create_collection_handler::create_collection_handler,
         delete_collection_handler::delete_collection_handler,
@@ -88,6 +89,8 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             state.clone(),
             auth_middleware::check_auth,
         ))
+        // Versioned API Manager routes
+        .route("/api/v1/entities", get(list_entities_handler))
         .route(
             "/api/auth/login",
             axum::routing::post(crate::interfaces::api::auth::login_handler),

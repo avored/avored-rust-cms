@@ -821,6 +821,97 @@ impl EntityRepository for EntityRepositoryImpl {
         let _ = into_iter_objects(responses)?;
         Ok(true)
     }
+
+    async fn list_entities(
+        &self,
+        table_name: &str,
+        page: u64,
+        limit: u64,
+        filters: &std::collections::HashMap<String, String>,
+    ) -> Result<(Vec<serde_json::Value>, u64)> {
+        use surrealdb::types::Number;
+
+        let (datastore, database_session) = &self.database_provider.db;
+
+        // Guard: table_name must be a safe identifier.
+        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
+        }
+
+        // Validate page / limit to prevent arithmetic overflow.
+        let limit = limit.min(100).max(1);
+        let page = page.max(1);
+        let skip = page.saturating_sub(1).saturating_mul(limit);
+
+        // Build parameterised WHERE conditions for attribute equality filters.
+        // Reserved query keys are stripped by the handler before reaching here,
+        // so every entry in `filters` is a genuine attribute filter.
+        let mut where_clauses: Vec<String> = vec!["deleted_at = NONE".to_string()];
+        let mut bindings: BTreeMap<String, Value> = BTreeMap::new();
+
+        for (idx, (key, val)) in filters.iter().enumerate() {
+            // Attribute key must be a safe identifier.
+            if !key.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+                return Err(Error::Generic(format!("Invalid filter key: {}", key)));
+            }
+            let binding = format!("filter_val_{}", idx);
+            where_clauses.push(format!("{} = ${}", key, binding));
+            bindings.insert(binding, Value::String(val.clone()));
+        }
+
+        let where_str = where_clauses.join(" AND ");
+
+        let limit_key = "list_limit".to_string();
+        let skip_key = "list_skip".to_string();
+        bindings.insert(limit_key.clone(), Value::Number(Number::Int(limit as i64)));
+        bindings.insert(skip_key.clone(), Value::Number(Number::Int(skip as i64)));
+
+        let data_sql = format!(
+            "SELECT * FROM {} WHERE {} LIMIT $list_limit START $list_skip;",
+            table_name, where_str
+        );
+
+        let responses = datastore
+            .execute(&data_sql, database_session, Some(bindings.clone().into()))
+            .await?;
+
+        let it = into_iter_objects(responses)?;
+        let mut list = Vec::new();
+        for obj_res in it {
+            let obj = obj_res?;
+            list.push(object_to_json_value(obj));
+        }
+
+        // Count query uses the same WHERE conditions but no LIMIT/START bindings.
+        let mut count_bindings: BTreeMap<String, Value> = BTreeMap::new();
+        for (idx, (_key, val)) in filters.iter().enumerate() {
+            let binding = format!("filter_val_{}", idx);
+            count_bindings.insert(binding, Value::String(val.clone()));
+        }
+
+        let count_sql = format!(
+            "SELECT count(id) FROM {} WHERE {} GROUP ALL;",
+            table_name, where_str
+        );
+
+        let count_responses = datastore
+            .execute(&count_sql, database_session, Some(count_bindings.into()))
+            .await?;
+
+        let total = match into_iter_objects(count_responses)?.next() {
+            Some(Ok(obj)) => {
+                let modal_count: crate::core::domain::entities::modal_count::ModalCount =
+                    obj.try_into()?;
+                modal_count.total
+            }
+            _ => 0,
+        };
+
+        Ok((list, total))
+    }
 }
 
 pub async fn test_entity_repository() -> EntityRepositoryImpl {

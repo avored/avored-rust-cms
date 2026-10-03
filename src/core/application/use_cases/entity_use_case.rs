@@ -276,4 +276,43 @@ where
             .delete_collection_by_id(&entity.identifier, record_id)
             .await
     }
+
+    /// List dynamic records for a given entity type with optional attribute
+    /// equality filters and pagination.
+    ///
+    /// Returns the raw JSON records together with the pagination envelope
+    /// values (`page`, `limit`, `total_items`, `total_pages`).
+    pub async fn list_entities(
+        &self,
+        entity_type: &str,
+        page: u64,
+        limit: u64,
+        filters: std::collections::HashMap<String, String>,
+    ) -> Result<(Vec<serde_json::Value>, u64, u64, u64)> {
+        use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
+
+        let page = if page == 0 { DEFAULT_PAGE } else { page };
+        let limit = if limit == 0 {
+            DEFAULT_PAGE_SIZE
+        } else {
+            limit.min(100)
+        };
+
+        // Resolve entity type to confirm it exists and get its table identifier.
+        let entity = self.repository.find_by_identifier(entity_type).await?;
+
+        let (records, total_items) = self
+            .repository
+            .list_entities(&entity.identifier, page, limit, &filters)
+            .await?;
+
+        let total_pages = if total_items == 0 {
+            1
+        } else {
+            total_items.div_ceil(limit)
+        };
+
+        Ok((records, total_items, total_pages, limit))
+    }
 }
+
