@@ -26,7 +26,7 @@ pub struct ListEntitiesQuery {
 
 /* #region Response DTOs */
 
-/// A single dynamic record returned by the list endpoint.
+/// A single dynamic record returned by the list or create endpoint.
 ///
 /// `id` and `entity_type` are promoted to the top level; all other stored
 /// fields are folded into the flat `attributes` object.
@@ -49,9 +49,9 @@ pub struct ListEntitiesResponse {
 
 /* #endregion */
 
-/* #region Use-case command */
+/* #region Use-case command (list) */
 
-/// Internal command passed from the handler to the use case.
+/// Internal command passed from the list handler to the use case.
 #[derive(Debug, Clone, Default)]
 pub struct ListEntitiesCommand {
     /// Resolved entity-type identifier (i.e. the SurrealDB table name).
@@ -62,6 +62,25 @@ pub struct ListEntitiesCommand {
     pub limit: u64,
     /// Attribute equality filters: key → value string.
     pub filters: HashMap<String, String>,
+}
+
+/* #endregion */
+
+/* #region Create record DTOs */
+
+/// Request body for `POST /api/v1/entities`.
+///
+/// ```json
+/// {
+///   "entity_type": "blog_posts",
+///   "attributes": { "title": "Hello", "views": 10 }
+/// }
+/// ```
+#[derive(Debug, Deserialize)]
+pub struct CreateEntityRecordRequest {
+    pub entity_type: String,
+    /// Flat attribute map preserving all JSON value types.
+    pub attributes: serde_json::Map<String, serde_json::Value>,
 }
 
 /* #endregion */

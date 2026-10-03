@@ -154,9 +154,11 @@ impl EntityRepository for EntityRepositoryImpl {
 
         let sql = format!(
             "
-            SELECT * 
+            SELECT *,
+                (SELECT * FROM {} WHERE entity_id = $parent.id AND deleted_at = NONE) AS attributes
             FROM {} 
             WHERE identifier = $identifier AND deleted_at = NONE;",
+            ATTRIBUTES_TABLE_NAME,
             ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> =

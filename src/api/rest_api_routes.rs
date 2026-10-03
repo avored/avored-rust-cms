@@ -1,5 +1,8 @@
 use crate::interfaces::api::{
-    api_manager::list_entities_handler::list_entities_handler,
+    api_manager::{
+        create_entity_record_handler::create_entity_record_handler,
+        list_entities_handler::list_entities_handler,
+    },
     collection::{
         create_collection_handler::create_collection_handler,
         delete_collection_handler::delete_collection_handler,
@@ -85,12 +88,13 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/entities/{id}/identifier",
             put(update_entity_identifier_handler),
         )
+        .route("/api/v1/entities", get(list_entities_handler))
+        .route("/api/v1/entities", post(create_entity_record_handler))
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,
         ))
-        // Versioned API Manager routes
-        .route("/api/v1/entities", get(list_entities_handler))
+        // Versioned API Manager routes (public or specific auth if any)
         .route(
             "/api/auth/login",
             axum::routing::post(crate::interfaces::api::auth::login_handler),

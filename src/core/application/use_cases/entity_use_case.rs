@@ -314,5 +314,64 @@ where
 
         Ok((records, total_items, total_pages, limit))
     }
+
+    /// Create a new dynamic record for the given entity type.
+    ///
+    /// Resolves `entity_type` by its identifier string (returns `NotFound` for
+    /// unknown types), then delegates to the existing collection persistence path
+    /// which stamps `created_at`, `updated_at`, `created_by`, `updated_by`, and
+    /// `deleted_at = NONE`.
+    ///
+    /// Returns the complete persisted record as raw JSON (all fields including
+    /// bookkeeping ones, for the caller to shape into the API response).
+    pub async fn create_entity_record(
+        &self,
+        entity_type: &str,
+        attributes: serde_json::Map<String, serde_json::Value>,
+        logged_in_user: &str,
+    ) -> Result<serde_json::Value> {
+        // Confirm entity type exists — returns NotFound if unknown.
+        let entity = self.repository.find_by_identifier(entity_type).await?;
+
+        // Validate attribute names and types against entity schema
+        let mut errors = Vec::new();
+        for (key, val) in &attributes {
+            if let Some(attr_def) = entity.attributes.iter().find(|a| a.identifier == *key) {
+                let is_valid_type = match attr_def.data_type.as_str() {
+                    "string" => val.is_string(),
+                    "integer" => val.is_i64() || val.is_u64(),
+                    "boolean" => val.is_boolean(),
+                    "date" => val.is_string(), // date represented as ISO string
+                    "json" => val.is_object() || val.is_array(),
+                    _ => true,
+                };
+                if !is_valid_type {
+                    errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
+                        key: key.clone(),
+                        message: format!("Attribute '{}' expects type '{}'", key, attr_def.data_type),
+                    });
+                }
+            } else {
+                errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
+                    key: key.clone(),
+                    message: format!("Unknown attribute '{}' for entity '{}'", key, entity_type),
+                });
+            }
+        }
+
+        if !errors.is_empty() {
+            return Err(crate::error::Error::BadRequest(
+                crate::core::domain::entities::error_message::ErrorResponse {
+                    status: false,
+                    errors,
+                },
+            ));
+        }
+
+        // Reuse the collection persistence path (timestamps + deleted_at).
+        self.create_collection(&entity.id, attributes, logged_in_user)
+            .await
+    }
 }
+
 
