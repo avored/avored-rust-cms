@@ -115,7 +115,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
-        workflow_from_object(first_object(
+        workflow_from_object(first_object_or_not_found(
             response,
             &format!("Workflow '{id}' was not found"),
         )?)
@@ -190,7 +190,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
-        workflow_from_object(first_object(
+        workflow_from_object(first_object_or_not_found(
             response,
             &format!("Workflow '{id}' was not found"),
         )?)
@@ -213,7 +213,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
-        workflow_from_object(first_object(
+        workflow_from_object(first_object_or_not_found(
             response,
             &format!("Workflow '{id}' was not found"),
         )?)
@@ -297,7 +297,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
-        execution_from_object(first_object(
+        execution_from_object(first_object_or_not_found(
             response,
             &format!("Workflow execution '{id}' was not found"),
         )?)
@@ -380,6 +380,17 @@ fn first_object(responses: Vec<surrealdb_core::dbs::QueryResult>, message: &str)
     into_iter_objects(responses)?
         .next()
         .ok_or_else(|| Error::Generic(message.to_string()))?
+}
+
+fn first_object_or_not_found(
+    responses: Vec<surrealdb_core::dbs::QueryResult>,
+    message: &str,
+) -> Result<Object> {
+    match into_iter_objects(responses)?.next() {
+        Some(Ok(object)) => Ok(object),
+        Some(Err(error)) => Err(error),
+        None => Err(Error::NotFound(message.to_string())),
+    }
 }
 
 fn read_count(responses: Vec<surrealdb_core::dbs::QueryResult>) -> Result<u64> {

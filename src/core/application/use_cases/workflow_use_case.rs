@@ -38,6 +38,7 @@ where
         let name = command.name.trim().to_string();
         command.trigger.entity_type = command.trigger.entity_type.trim().to_string();
         validate_definition(&name, &command.trigger.entity_type)?;
+        validate_actions(&command.actions)?;
         self.repository
             .create(
                 name,
@@ -85,6 +86,7 @@ where
         let name = command.name.trim().to_string();
         command.trigger.entity_type = command.trigger.entity_type.trim().to_string();
         validate_definition(&name, &command.trigger.entity_type)?;
+        validate_actions(&command.actions)?;
         self.repository
             .update(
                 id,
@@ -161,6 +163,60 @@ fn validate_definition(name: &str, entity_type: &str) -> Result<()> {
             message: "Trigger entity type is required.".to_string(),
         });
     }
+    if !errors.is_empty() {
+        return Err(Error::BadRequest(
+            crate::core::domain::entities::ErrorResponse {
+                status: false,
+                errors,
+            },
+        ));
+    }
+    Ok(())
+}
+
+fn validate_actions(actions: &[crate::core::domain::entities::WorkflowAction]) -> Result<()> {
+    use crate::core::domain::entities::WorkflowAction;
+
+    let errors = actions
+        .iter()
+        .enumerate()
+        .filter_map(|(index, action)| {
+            let invalid_field = match action {
+                WorkflowAction::Webhook { url } => {
+                    let parsed = url.trim().parse::<axum::http::Uri>();
+                    match parsed {
+                        Ok(uri)
+                            if matches!(uri.scheme_str(), Some("http" | "https"))
+                                && uri.authority().is_some_and(|authority| {
+                                    !authority.host().is_empty()
+                                }) =>
+                        {
+                            None
+                        }
+                        _ => Some("url"),
+                    }
+                }
+                WorkflowAction::Email {
+                    template_id,
+                    recipient,
+                } => {
+                    if template_id.trim().is_empty() {
+                        Some("template_id")
+                    } else if !email_address::EmailAddress::is_valid(recipient.trim()) {
+                        Some("recipient")
+                    } else {
+                        None
+                    }
+                }
+            }?;
+
+            Some(crate::core::domain::entities::ErrorMessageResponse {
+                key: format!("actions[{index}].{invalid_field}"),
+                message: "Workflow action configuration is required and must be valid.".to_string(),
+            })
+        })
+        .collect::<Vec<_>>();
+
     if !errors.is_empty() {
         return Err(Error::BadRequest(
             crate::core::domain::entities::ErrorResponse {

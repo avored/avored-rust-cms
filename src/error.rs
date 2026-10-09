@@ -78,6 +78,7 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
             Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
+            Self::NotFound(message) => (StatusCode::NOT_FOUND, message).into_response(),
             Error::Authentication => {
                 use http::StatusCode;
 
