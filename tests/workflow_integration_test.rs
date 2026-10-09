@@ -11,10 +11,36 @@ use avored_rust_cms::{
             WorkflowAction, WorkflowEvent, WorkflowExecutionStatus, WorkflowTrigger,
         },
     },
+    infrastructure::workflow_dispatcher::{WorkflowActionExecutor, WorkflowDispatcher},
     infrastructure::{migrations::db_init, persistence::into_iter_objects},
 };
 use serde_json::json;
+use std::sync::{
+    atomic::{AtomicUsize, Ordering},
+    Arc,
+};
 use surrealdb_core::{dbs::Session, kvs::Datastore};
+
+struct TestActionExecutor {
+    calls: Arc<AtomicUsize>,
+    fail_on_call: Option<usize>,
+}
+
+#[async_trait::async_trait]
+impl WorkflowActionExecutor for TestActionExecutor {
+    async fn execute(
+        &self,
+        _action: &WorkflowAction,
+        _payload: &serde_json::Value,
+    ) -> Result<(), String> {
+        let call = self.calls.fetch_add(1, Ordering::SeqCst) + 1;
+        if self.fail_on_call == Some(call) {
+            Err("simulated webhook failure".to_string())
+        } else {
+            Ok(())
+        }
+    }
+}
 
 fn command(name: &str, event: WorkflowEvent, is_active: bool) -> CreateWorkflowCommand {
     CreateWorkflowCommand {
@@ -314,4 +340,121 @@ async fn workflow_use_case_rejects_blank_required_fields_and_reports_missing_rec
         )
         .await
         .is_err());
+}
+
+#[tokio::test]
+async fn dispatcher_runs_only_active_matching_workflows_and_records_success() {
+    let state = test_avored_state().await;
+    let matching = state
+        .workflow_use_case
+        .create(command("Matching", WorkflowEvent::Created, true))
+        .await
+        .expect("matching workflow should be created");
+    let inactive = state
+        .workflow_use_case
+        .create(command("Inactive", WorkflowEvent::Created, false))
+        .await
+        .expect("inactive workflow should be created");
+    let non_matching = state
+        .workflow_use_case
+        .create(command("Non-matching", WorkflowEvent::Updated, true))
+        .await
+        .expect("non-matching workflow should be created");
+
+    let calls = Arc::new(AtomicUsize::new(0));
+    let dispatcher = WorkflowDispatcher::with_executor(
+        state.workflow_use_case.clone(),
+        TestActionExecutor {
+            calls: calls.clone(),
+            fail_on_call: None,
+        },
+    );
+    let payload = json!({"id": "customer-1", "attributes": {"name": "Ada"}});
+    dispatcher
+        .dispatch("customers", WorkflowEvent::Created, payload.clone())
+        .await
+        .expect("event dispatch should succeed");
+
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    let matching_history = state
+        .workflow_use_case
+        .find_executions(&matching.id, WorkflowPaginationQuery::default())
+        .await
+        .expect("matching workflow history should load");
+    assert_eq!(matching_history.total, 1);
+    assert_eq!(
+        matching_history.data[0].status,
+        WorkflowExecutionStatus::Success
+    );
+    assert_eq!(matching_history.data[0].payload, payload);
+    for workflow in [inactive, non_matching] {
+        let history = state
+            .workflow_use_case
+            .find_executions(&workflow.id, WorkflowPaginationQuery::default())
+            .await
+            .expect("workflow history should load");
+        assert_eq!(history.total, 0);
+    }
+}
+
+#[tokio::test]
+async fn dispatcher_records_action_failure_and_stops_the_action_chain() {
+    let state = test_avored_state().await;
+    let mut definition = command("Failing chain", WorkflowEvent::Created, true);
+    definition.actions.push(WorkflowAction::Webhook {
+        url: "https://example.test/second".to_string(),
+    });
+    let workflow = state
+        .workflow_use_case
+        .create(definition)
+        .await
+        .expect("workflow should be created");
+
+    let calls = Arc::new(AtomicUsize::new(0));
+    let dispatcher = WorkflowDispatcher::with_executor(
+        state.workflow_use_case.clone(),
+        TestActionExecutor {
+            calls: calls.clone(),
+            fail_on_call: Some(1),
+        },
+    );
+    dispatcher
+        .dispatch(
+            "customers",
+            WorkflowEvent::Created,
+            json!({"id": "customer-2"}),
+        )
+        .await
+        .expect("dispatch should record action failure");
+
+    assert_eq!(calls.load(Ordering::SeqCst), 1);
+    let history = state
+        .workflow_use_case
+        .find_executions(&workflow.id, WorkflowPaginationQuery::default())
+        .await
+        .expect("workflow history should load");
+    assert_eq!(history.total, 1);
+    assert_eq!(history.data[0].status, WorkflowExecutionStatus::Failed);
+    assert_eq!(
+        history.data[0].error_message.as_deref(),
+        Some("simulated webhook failure")
+    );
+}
+
+#[tokio::test]
+async fn email_actions_fail_visibly_until_a_sender_is_configured() {
+    let executor = avored_rust_cms::infrastructure::workflow_dispatcher::HttpWebhookExecutor::new();
+    let result = executor
+        .execute(
+            &WorkflowAction::Email {
+                template_id: "welcome".to_string(),
+                recipient: "person@example.test".to_string(),
+            },
+            &json!({"id": "customer-3"}),
+        )
+        .await;
+    assert_eq!(
+        result,
+        Err("Email actions are not executable until an email sender is configured".to_string())
+    );
 }

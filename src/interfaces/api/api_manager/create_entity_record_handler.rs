@@ -1,8 +1,4 @@
-use axum::{
-    extract::State,
-    http::StatusCode,
-    Extension, Json,
-};
+use axum::{extract::State, http::StatusCode, Extension, Json};
 
 use crate::{
     avored_state::AppState,
@@ -72,6 +68,26 @@ pub async fn create_entity_record_handler(
     // --- Shape response ---
 
     let response = shape_record(raw, &entity_type);
+    let event_payload = response.workflow_payload();
+    let dispatcher = state.workflow_dispatcher.clone();
+    let entity_type_for_task = entity_type.clone();
+    tokio::spawn(async move {
+        if let Err(error) = dispatcher
+            .dispatch(
+                &entity_type_for_task,
+                crate::core::domain::entities::WorkflowEvent::Created,
+                event_payload,
+            )
+            .await
+        {
+            tracing::error!(
+                entity_type = %entity_type_for_task,
+                event = "created",
+                error = %error,
+                "Failed to dispatch workflow event"
+            );
+        }
+    });
 
     Ok((StatusCode::CREATED, Json(response)))
 }

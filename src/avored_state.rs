@@ -12,6 +12,7 @@ use crate::{
         entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
         workflow_repository::WorkflowRepositoryImpl, AuthRepositoryImpl,
     },
+    infrastructure::workflow_dispatcher::{HttpWebhookExecutor, WorkflowDispatcher},
     providers::{
         avored_config_provider::AvoRedConfigProvider,
         avored_database_provider::AvoRedDatabaseProvider,
@@ -32,6 +33,8 @@ pub struct AppState {
     pub email_template_use_case: EmailTemplateUseCase<EmailTemplateRepositoryImpl>,
 
     pub workflow_use_case: WorkflowUseCase<WorkflowRepositoryImpl>,
+
+    pub workflow_dispatcher: WorkflowDispatcher,
 
     // pub attribute_use_case: AttributeUseCase<AttributeRepositoryImpl>,
     /// Database provider for `AvoRed` (SurrealDB).
@@ -69,6 +72,8 @@ impl AppState {
 
         let workflow_repository = WorkflowRepositoryImpl::new(avored_database_provider.clone());
         let workflow_use_case = WorkflowUseCase::new(workflow_repository);
+        let workflow_dispatcher =
+            WorkflowDispatcher::new(workflow_use_case.clone(), HttpWebhookExecutor::new());
 
         // let attribute_repository = AttributeRepositoryImpl::new(avored_database_provider.clone());
         // let attribute_use_case = AttributeUseCase::new(attribute_repository);
@@ -82,6 +87,7 @@ impl AppState {
             entity_use_case,
             email_template_use_case,
             workflow_use_case,
+            workflow_dispatcher,
             // attribute_use_case
         })
     }
@@ -101,6 +107,9 @@ pub async fn test_avored_state() -> AppState {
     let entity_repository = EntityRepositoryImpl::new(database_provider.clone());
     let email_template_repository = EmailTemplateRepositoryImpl::new(database_provider.clone());
     let workflow_repository = WorkflowRepositoryImpl::new(database_provider.clone());
+    let workflow_use_case = WorkflowUseCase::new(workflow_repository);
+    let workflow_dispatcher =
+        WorkflowDispatcher::new(workflow_use_case.clone(), HttpWebhookExecutor::new());
     // let attribute_repository = AttributeRepositoryImpl::new(database_provider.clone());
 
     AppState {
@@ -111,7 +120,8 @@ pub async fn test_avored_state() -> AppState {
         misc_use_case: MiscUseCase::new(misc_repository),
         entity_use_case: EntityUseCase::new(entity_repository),
         email_template_use_case: EmailTemplateUseCase::new(email_template_repository),
-        workflow_use_case: WorkflowUseCase::new(workflow_repository),
+        workflow_use_case,
+        workflow_dispatcher,
         // attribute_use_case: AttributeUseCase::new(attribute_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {

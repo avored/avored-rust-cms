@@ -37,6 +37,16 @@ pub struct EntityRecordResponse {
     pub attributes: serde_json::Map<String, serde_json::Value>,
 }
 
+impl EntityRecordResponse {
+    pub fn workflow_payload(&self) -> serde_json::Value {
+        serde_json::json!({
+            "id": self.id,
+            "entity_type": self.entity_type,
+            "attributes": self.attributes,
+        })
+    }
+}
+
 /// Paginated envelope returned by `GET /api/v1/entities`.
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct ListEntitiesResponse {
@@ -133,4 +143,3 @@ pub struct DeleteEntityRecordQuery {
 }
 
 /* #endregion */
-

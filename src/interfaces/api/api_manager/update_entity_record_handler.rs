@@ -74,7 +74,10 @@ pub async fn update_entity_record_handler(
     }
 
     let record_id = id.trim_start_matches(&format!("{}:", entity_type));
-    let record_id = record_id.split_once(':').map(|(_, k)| k).unwrap_or(record_id);
+    let record_id = record_id
+        .split_once(':')
+        .map(|(_, k)| k)
+        .unwrap_or(record_id);
 
     let raw = state
         .entity_use_case
@@ -87,6 +90,26 @@ pub async fn update_entity_record_handler(
         .await?;
 
     let response = shape_record(raw, &entity_type);
+    let event_payload = response.workflow_payload();
+    let dispatcher = state.workflow_dispatcher.clone();
+    let entity_type_for_task = entity_type.clone();
+    tokio::spawn(async move {
+        if let Err(error) = dispatcher
+            .dispatch(
+                &entity_type_for_task,
+                crate::core::domain::entities::WorkflowEvent::Updated,
+                event_payload,
+            )
+            .await
+        {
+            tracing::error!(
+                entity_type = %entity_type_for_task,
+                event = "updated",
+                error = %error,
+                "Failed to dispatch workflow event"
+            );
+        }
+    });
 
     Ok((StatusCode::OK, Json(response)))
 }
