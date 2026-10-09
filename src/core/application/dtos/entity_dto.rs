@@ -1,6 +1,7 @@
 use crate::core::application::use_cases::EntityUseCase;
 use crate::core::domain::entities::entity::{
-    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity, UpdatableEntityAttribute,
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity,
+    UpdatableEntityAttribute,
 };
 use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
 use crate::core::domain::entities::AttributeModel;
@@ -10,7 +11,6 @@ use crate::error::Result;
 use rust_i18n::t;
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
-
 
 /*  #region Paginate Command */
 
@@ -137,14 +137,14 @@ pub struct UpdatableAttributeCommand {
     pub identifier: String,
     pub data_type: String,
     pub field_type: String,
-    pub is_new : bool   
+    pub is_new: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct UpdateEntityCommand {
     pub name: String,
     pub identifier: String,
-    pub attributes: Vec<UpdatableAttributeCommand>    
+    pub attributes: Vec<UpdatableAttributeCommand>,
 }
 
 impl UpdateEntityCommand {
@@ -360,7 +360,7 @@ impl From<EntityModel> for EntityResponse {
             updated_by: model.updated_by,
             deleted_at: model.deleted_at,
             deleted_by: model.deleted_by,
-            attributes: model.attributes.iter().map(|f| f.clone().into() ).collect()
+            attributes: model.attributes.iter().map(|f| f.clone().into()).collect(),
         }
     }
 }

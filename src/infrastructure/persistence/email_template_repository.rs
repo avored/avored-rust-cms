@@ -176,7 +176,10 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
         );
 
         let data = std::collections::BTreeMap::from([
-            ("limit".to_string(), Value::Number(Number::Int(page_size as i64))),
+            (
+                "limit".to_string(),
+                Value::Number(Number::Int(page_size as i64)),
+            ),
             ("skip".to_string(), Value::Number(Number::Int(skip as i64))),
         ]);
 
@@ -195,7 +198,9 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
             "SELECT count() AS total FROM {} WHERE deleted_at = NONE;",
             EMAIL_TEMPLATES_TABLE_NAME
         );
-        let count_responses = datastore.execute(&count_sql, database_session, None).await?;
+        let count_responses = datastore
+            .execute(&count_sql, database_session, None)
+            .await?;
         let total = match into_iter_objects(count_responses)?.next() {
             Some(obj_res) => {
                 let obj = obj_res?;

@@ -1,6 +1,6 @@
+use crate::{core::domain::entities::AttributeModel, error::Result};
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
-use crate::{core::domain::entities::AttributeModel, error::Result};
 
 #[cfg(feature = "ssr")]
 use crate::core::domain::extensions::object_extension::ObjectExtension;
@@ -16,7 +16,7 @@ pub struct EntityModel {
     pub updated_by: String,
     pub deleted_at: Option<Datetime>,
     pub deleted_by: Option<String>,
-    pub attributes: Vec<AttributeModel>
+    pub attributes: Vec<AttributeModel>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -24,7 +24,7 @@ pub struct StorableEntityAttribute {
     pub name: String,
     pub identifier: String,
     pub data_type: String,
-    pub field_type: String
+    pub field_type: String,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
@@ -32,9 +32,8 @@ pub struct StorableEntity {
     pub name: String,
     pub identifier: String,
     pub logged_in_user_email: String,
-    pub attributes: Vec<StorableEntityAttribute>
+    pub attributes: Vec<StorableEntityAttribute>,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct UpdatableEntityAttribute {
@@ -43,15 +42,14 @@ pub struct UpdatableEntityAttribute {
     pub identifier: String,
     pub data_type: String,
     pub field_type: String,
-    pub is_new: bool
+    pub is_new: bool,
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct UpdatableEntity {
     pub name: String,
     pub logged_in_user_email: String,
-    pub attributes: Vec<UpdatableEntityAttribute>
+    pub attributes: Vec<UpdatableEntityAttribute>,
 }
 
 #[cfg(feature = "ssr")]
@@ -102,7 +100,6 @@ impl TryFrom<surrealdb::types::Object> for EntityModel {
         })
     }
 }
-
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct UpdableIdentifierEntity {

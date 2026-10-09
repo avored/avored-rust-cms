@@ -1,5 +1,5 @@
-use crate::core::domain::entities::UserModel;
 use crate::core::domain::entities::user::StorableUser;
+use crate::core::domain::entities::UserModel;
 use crate::error::Result;
 
 #[async_trait::async_trait]

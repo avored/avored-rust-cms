@@ -35,4 +35,3 @@ pub struct CollectionResponse {
     pub record: serde_json::Value,
 }
 /* #endregion */
-

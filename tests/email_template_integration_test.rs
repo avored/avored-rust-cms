@@ -1,9 +1,9 @@
 #![recursion_limit = "512"]
 
+use avored_rust_cms::avored_state::test_avored_state;
 use avored_rust_cms::core::application::dtos::email_template_dto::{
     CreateEmailTemplateCommand, UpdateEmailTemplateCommand,
 };
-use avored_rust_cms::avored_state::test_avored_state;
 
 #[tokio::test]
 async fn test_create_email_template_command_requires_name_and_subject() {
@@ -59,7 +59,10 @@ async fn test_email_template_repository_find_by_id_returns_record() {
 async fn test_email_template_repository_find_by_id_returns_not_found() {
     let state = test_avored_state().await;
 
-    let result = state.email_template_use_case.get_by_id("email_templates:missing").await;
+    let result = state
+        .email_template_use_case
+        .get_by_id("email_templates:missing")
+        .await;
     assert!(result.is_err());
 }
 
@@ -131,13 +134,20 @@ async fn test_email_template_use_case_delete_returns_true_for_existing_record() 
         .expect("delete email template should succeed");
 
     assert!(deleted);
-    assert!(state.email_template_use_case.get_by_id(&created.id).await.is_err());
+    assert!(state
+        .email_template_use_case
+        .get_by_id(&created.id)
+        .await
+        .is_err());
 }
 
 #[tokio::test]
 async fn test_email_template_use_case_delete_returns_not_found_for_missing_record() {
     let state = test_avored_state().await;
 
-    let result = state.email_template_use_case.delete("email_templates:missing").await;
+    let result = state
+        .email_template_use_case
+        .delete("email_templates:missing")
+        .await;
     assert!(result.is_err());
 }

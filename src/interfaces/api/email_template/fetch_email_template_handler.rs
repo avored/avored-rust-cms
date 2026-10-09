@@ -1,9 +1,9 @@
-use axum::{extract::{Path, State}, Json};
-
-use crate::{
-    avored_state::AppState,
-    error::Result,
+use axum::{
+    extract::{Path, State},
+    Json,
 };
+
+use crate::{avored_state::AppState, error::Result};
 
 pub async fn fetch_email_template_handler(
     State(state): State<AppState>,

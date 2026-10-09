@@ -1,8 +1,8 @@
-use axum::{extract::State, Json};
 use crate::avored_state::AppState;
-use crate::core::application::dtos::entity_dto::{ EntityOptionResponse};
+use crate::core::application::dtos::entity_dto::EntityOptionResponse;
 use crate::error::Result;
- 
+use axum::{extract::State, Json};
+
 pub async fn option_entities_handler(
     State(state): State<AppState>,
 ) -> Result<Json<Vec<EntityOptionResponse>>> {
@@ -16,7 +16,5 @@ pub async fn option_entities_handler(
         })
         .collect::<Vec<EntityOptionResponse>>();
 
-
     Ok(Json(entities_options))
-    
 }

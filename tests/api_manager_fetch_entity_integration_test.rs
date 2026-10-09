@@ -23,7 +23,9 @@ async fn seed_test_entity(
     name: &str,
     identifier: &str,
 ) -> (
-    EntityUseCase<avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl>,
+    EntityUseCase<
+        avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl,
+    >,
     String,
     String,
 ) {
@@ -73,11 +75,20 @@ async fn test_fetch_entity_record_success_multiple_attribute_types() {
     let (use_case, identifier, _entity_id) = seed_test_entity("News", "fetch_news_success").await;
 
     let mut details = serde_json::Map::new();
-    details.insert("author_note".to_string(), serde_json::Value::String("Breaking".to_string()));
+    details.insert(
+        "author_note".to_string(),
+        serde_json::Value::String("Breaking".to_string()),
+    );
 
     let mut attrs = serde_json::Map::new();
-    attrs.insert("title".to_string(), serde_json::Value::String("World News".to_string()));
-    attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(250)));
+    attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("World News".to_string()),
+    );
+    attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(250)),
+    );
     attrs.insert("is_active".to_string(), serde_json::Value::Bool(true));
     attrs.insert("details".to_string(), serde_json::Value::Object(details));
 
@@ -99,7 +110,10 @@ async fn test_fetch_entity_record_success_multiple_attribute_types() {
     let obj = fetched.as_object().unwrap();
 
     // Verify fields
-    assert_eq!(obj.get("title").and_then(|v| v.as_str()), Some("World News"));
+    assert_eq!(
+        obj.get("title").and_then(|v| v.as_str()),
+        Some("World News")
+    );
     assert_eq!(obj.get("views").and_then(|v| v.as_u64()), Some(250));
     assert_eq!(obj.get("is_active").and_then(|v| v.as_bool()), Some(true));
     assert!(obj.get("details").unwrap().is_object());
@@ -150,8 +164,14 @@ async fn test_fetch_entity_record_deleted_record_returns_not_found() {
 
     // 1. Create a record
     let mut attrs = serde_json::Map::new();
-    attrs.insert("title".to_string(), serde_json::Value::String("To be deleted".to_string()));
-    attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(1)));
+    attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("To be deleted".to_string()),
+    );
+    attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(1)),
+    );
     attrs.insert("is_active".to_string(), serde_json::Value::Bool(false));
 
     let created = use_case
@@ -163,10 +183,16 @@ async fn test_fetch_entity_record_deleted_record_returns_not_found() {
     let record_id = full_id.split_once(':').map(|(_, k)| k).unwrap_or(full_id);
 
     // 2. Fetch succeeds initially
-    assert!(use_case.get_entity_record(&identifier, record_id).await.is_ok());
+    assert!(use_case
+        .get_entity_record(&identifier, record_id)
+        .await
+        .is_ok());
 
     // 3. Delete the record via repository soft-delete
-    use_case.delete_collection(&entity_id, record_id).await.expect("soft delete should succeed");
+    use_case
+        .delete_collection(&entity_id, record_id)
+        .await
+        .expect("soft delete should succeed");
 
     // 4. Fetching the deleted record now returns 404
     let result = use_case.get_entity_record(&identifier, record_id).await;
@@ -176,4 +202,3 @@ async fn test_fetch_entity_record_deleted_record_returns_not_found() {
         other => panic!("expected NotFound, got: {:?}", other),
     }
 }
-

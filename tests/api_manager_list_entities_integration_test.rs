@@ -89,7 +89,10 @@ async fn test_list_entities_default_pagination() {
         .await
         .expect("list_entities should succeed");
 
-    assert_eq!(total, 5, "total_items should equal the number of seeded records");
+    assert_eq!(
+        total, 5,
+        "total_items should equal the number of seeded records"
+    );
     assert_eq!(records.len(), 5);
 }
 
@@ -104,7 +107,11 @@ async fn test_list_entities_explicit_pagination_first_page() {
         .expect("list_entities page 1 should succeed");
 
     assert_eq!(total, 10);
-    assert_eq!(records.len(), 3, "first page with limit=3 should return 3 records");
+    assert_eq!(
+        records.len(),
+        3,
+        "first page with limit=3 should return 3 records"
+    );
 }
 
 #[tokio::test]
@@ -119,7 +126,11 @@ async fn test_list_entities_last_page_partial() {
         .expect("list_entities last page should succeed");
 
     assert_eq!(total, 7);
-    assert_eq!(records.len(), 1, "last partial page should return the remaining 1 record");
+    assert_eq!(
+        records.len(),
+        1,
+        "last partial page should return the remaining 1 record"
+    );
 }
 
 #[tokio::test]
@@ -133,7 +144,10 @@ async fn test_list_entities_out_of_range_page_returns_empty() {
         .expect("out-of-range page should not error");
 
     assert_eq!(total, 3);
-    assert!(records.is_empty(), "out-of-range page should return an empty data array");
+    assert!(
+        records.is_empty(),
+        "out-of-range page should return an empty data array"
+    );
 }
 
 #[tokio::test]
@@ -167,7 +181,10 @@ async fn test_list_entities_single_attribute_filter() {
         .expect("single filter query should succeed");
 
     // Records 2, 4, 6 are published.
-    assert_eq!(total, 3, "filter on status=published should match 3 records");
+    assert_eq!(
+        total, 3,
+        "filter on status=published should match 3 records"
+    );
     assert_eq!(records.len(), 3);
     for record in &records {
         let status = record
@@ -180,8 +197,7 @@ async fn test_list_entities_single_attribute_filter() {
 
 #[tokio::test]
 async fn test_list_entities_no_match_filter() {
-    let (repo, table) =
-        seed_entity_with_records(4, "No Match Posts", "no_match_posts").await;
+    let (repo, table) = seed_entity_with_records(4, "No Match Posts", "no_match_posts").await;
     let mut filters = std::collections::HashMap::new();
     filters.insert("status".to_string(), "archived".to_string());
 
@@ -200,8 +216,7 @@ async fn test_list_entities_no_match_filter() {
 
 #[tokio::test]
 async fn test_list_entities_limit_cap_at_100() {
-    let (repo, table) =
-        seed_entity_with_records(5, "Capped", "capped_limit").await;
+    let (repo, table) = seed_entity_with_records(5, "Capped", "capped_limit").await;
     let filters = std::collections::HashMap::new();
 
     // Request limit=500 — repository must cap at 100.
@@ -211,7 +226,11 @@ async fn test_list_entities_limit_cap_at_100() {
         .expect("oversized limit should be capped without error");
 
     assert_eq!(total, 5);
-    assert_eq!(records.len(), 5, "all 5 records should be returned even when limit is capped");
+    assert_eq!(
+        records.len(),
+        5,
+        "all 5 records should be returned even when limit is capped"
+    );
 }
 
 // ---------------------------------------------------------------------------
@@ -239,8 +258,7 @@ async fn test_list_entities_invalid_table_name_is_rejected() {
 
 #[tokio::test]
 async fn test_list_entities_records_contain_expected_fields() {
-    let (repo, table) =
-        seed_entity_with_records(2, "Shape Test", "shape_test_records").await;
+    let (repo, table) = seed_entity_with_records(2, "Shape Test", "shape_test_records").await;
     let filters = std::collections::HashMap::new();
 
     let (records, ..) = repo

@@ -1,8 +1,8 @@
 use surrealdb::types::Value;
 
 use crate::core::domain::constants::USERS_TABLE_NAME;
-use crate::core::domain::entities::UserModel;
 use crate::core::domain::entities::user::StorableUser;
+use crate::core::domain::entities::UserModel;
 use crate::core::domain::repositories::MiscRepository;
 use crate::error::Result;
 use crate::infrastructure::persistence::into_iter_objects;
@@ -26,7 +26,8 @@ impl MiscRepository for MiscRepositoryImpl {
     async fn create_user(&self, storable_user: StorableUser) -> Result<UserModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let sql = format!("
+        let sql = format!(
+            "
             CREATE {} 
             SET 
                 name=$name, 
@@ -35,15 +36,21 @@ impl MiscRepository for MiscRepositoryImpl {
                 created_at=time::now(), 
                 updated_at=time::now(), 
                 created_by=$performing_user, 
-                updated_by=$performing_user;", 
+                updated_by=$performing_user;",
             USERS_TABLE_NAME
         );
-        
+
         let data: BTreeMap<String, Value> = [
             ("name".into(), Value::String(storable_user.name.into())),
             ("email".into(), Value::String(storable_user.email.into())),
-            ("password".into(), Value::String(storable_user.password.into())),
-            ("performing_user".into(), Value::String(storable_user.processing_user.into())),
+            (
+                "password".into(),
+                Value::String(storable_user.password.into()),
+            ),
+            (
+                "performing_user".into(),
+                Value::String(storable_user.processing_user.into()),
+            ),
         ]
         .into();
 
@@ -51,9 +58,9 @@ impl MiscRepository for MiscRepositoryImpl {
             .execute(&sql, database_session, Some(data.into()))
             .await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No user returned from insert".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No user returned from insert".to_string())
+        })??;
 
         let user: UserModel = result_object.try_into()?;
 

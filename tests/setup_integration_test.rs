@@ -1,9 +1,17 @@
 #![recursion_limit = "256"]
 
 use avored_rust_cms::{
-    avored_state::test_avored_state, core::domain::{entities::user::StorableUser, repositories::MiscRepository}, infrastructure::persistence::misc_repository::test_misc_repository, interfaces::api::misc::setup_handler::setup_handler,
+    avored_state::test_avored_state,
+    core::domain::{entities::user::StorableUser, repositories::MiscRepository},
+    infrastructure::persistence::misc_repository::test_misc_repository,
+    interfaces::api::misc::setup_handler::setup_handler,
 };
-use axum::{Router, body::{Body, to_bytes}, http::Request, routing::post};
+use axum::{
+    body::{to_bytes, Body},
+    http::Request,
+    routing::post,
+    Router,
+};
 use tower::ServiceExt;
 
 #[tokio::test]

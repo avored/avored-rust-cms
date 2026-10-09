@@ -1,6 +1,6 @@
+use crate::avored_state::AppState;
 use crate::core::domain::entities::user::TokenClaims;
 use crate::error::Error;
-use crate::avored_state::AppState;
 use axum::body::Body;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;

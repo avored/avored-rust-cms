@@ -58,7 +58,7 @@ pub fn EntityIndexPage() -> impl IntoView {
                                             <a x-bind:href="`/admin/entity/${entity.id}/edit`" class="font-medium text-slate-900 hover:text-primary-600" x-text="entity.name"></a>
                                         </td>
                                         <td class="whitespace-nowrap px-5 py-4 font-mono text-sm text-slate-600" x-text="entity.identifier"></td>
-                                        
+
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(entity.created_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(entity.updated_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-right text-sm sm:px-6">

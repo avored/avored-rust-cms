@@ -1,10 +1,6 @@
 #![recursion_limit = "256"]
 
-use avored_rust_cms::{
-    api::rest_api_routes::rest_api_routes,
-    avored_state::AppState,
-    error,
-};
+use avored_rust_cms::{api::rest_api_routes::rest_api_routes, avored_state::AppState, error};
 
 #[tokio::main]
 async fn main() -> error::Result<()> {

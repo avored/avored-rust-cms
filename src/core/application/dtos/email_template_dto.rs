@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::core::domain::entities::{error_message::{ErrorMessageResponse, ErrorResponse}, EmailTemplateModel};
+use crate::core::domain::entities::{
+    error_message::{ErrorMessageResponse, ErrorResponse},
+    EmailTemplateModel,
+};
 use crate::core::domain::extensions::string_extension::StringExtension;
 use crate::error::Result;
 

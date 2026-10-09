@@ -41,8 +41,9 @@ pub async fn fetch_entity_record_handler(
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
-                message: "entity_type query parameter is required when id does not contain entity prefix"
-                    .to_string(),
+                message:
+                    "entity_type query parameter is required when id does not contain entity prefix"
+                        .to_string(),
             }],
         }));
     };

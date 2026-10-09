@@ -1,7 +1,7 @@
-use axum::{extract::Path, extract::State, Json};
-use serde::Serialize;
 use crate::avored_state::AppState;
 use crate::error::Result;
+use axum::{extract::Path, extract::State, Json};
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct DeleteEntityResponse {

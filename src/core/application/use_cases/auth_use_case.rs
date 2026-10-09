@@ -1,7 +1,11 @@
-use jsonwebtoken::{EncodingKey, Header, encode};
+use jsonwebtoken::{encode, EncodingKey, Header};
 
 use crate::core::{
-    application::dtos::{LoginCommand, LoginResult}, domain::{entities::user::TokenClaims, extensions::string_extension::StringExtension, repositories::AuthRepository},
+    application::dtos::{LoginCommand, LoginResult},
+    domain::{
+        entities::user::TokenClaims, extensions::string_extension::StringExtension,
+        repositories::AuthRepository,
+    },
 };
 use crate::error::Result;
 
@@ -33,7 +37,6 @@ where
         {
             return Err(crate::error::Error::Authentication);
         }
-
 
         let claims: TokenClaims = user.clone().try_into()?;
 

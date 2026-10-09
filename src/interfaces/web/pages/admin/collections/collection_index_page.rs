@@ -63,8 +63,8 @@ pub fn CollectionIndexPage() -> impl IntoView {
                             <div x-show="selectedEntityId">
                                 <div class="mb-4 flex items-center justify-between">
                                     <div>
-                                        <h2 
-                                            class="text-lg font-semibold text-slate-900" 
+                                        <h2
+                                            class="text-lg font-semibold text-slate-900"
                                             x-text="currentEntity ? currentEntity.name : ''"
                                         ></h2>
                                         <p class="text-xs text-slate-500" x-show="currentEntity">

@@ -112,4 +112,3 @@ pub fn HomePage() -> impl IntoView {
         </div>
     }
 }
-

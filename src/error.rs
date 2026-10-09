@@ -1,10 +1,10 @@
-use rust_i18n::t;
-use tracing::error;
 use axum::http::{self, StatusCode};
 use axum::response::{IntoResponse, Response};
+use rust_i18n::t;
+use tracing::error;
 
-use crate::core::domain::entities::ErrorMessageResponse;
 use crate::core::domain::entities::error_message::ErrorResponse;
+use crate::core::domain::entities::ErrorMessageResponse;
 
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
@@ -27,7 +27,6 @@ impl core::fmt::Display for Error {
     }
 }
 
-
 impl From<dotenvy::Error> for Error {
     fn from(val: dotenvy::Error) -> Self {
         error!("there is an issue with loading env file: {val:?}");
@@ -41,14 +40,13 @@ impl From<serde_json::Error> for Error {
         Self::Generic("there is an issue with parsing json".to_string())
     }
 }
- 
+
 impl From<surrealdb::Error> for Error {
     fn from(val: surrealdb::Error) -> Self {
         error!("there is an issue with surreal db: {val:?}");
         Self::Generic(format!("there is an issue with surreal db: {val:?}"))
     }
 }
- 
 
 impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
@@ -58,13 +56,11 @@ impl From<argon2::password_hash::Error> for Error {
 }
 
 impl From<argon2::password_hash::phc::Error> for Error {
-    fn from(actual_error: argon2::password_hash::phc::Error
-) -> Self {
+    fn from(actual_error: argon2::password_hash::phc::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
         Self::Generic(format!("there is an issue with password hashing"))
     }
 }
-
 
 impl From<jsonwebtoken::errors::Error> for Error {
     fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
@@ -72,7 +68,6 @@ impl From<jsonwebtoken::errors::Error> for Error {
         Self::Generic(format!("there is an issue with generating jwt token"))
     }
 }
-
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
@@ -95,13 +90,14 @@ impl IntoResponse for Error {
                 };
                 (StatusCode::UNAUTHORIZED, error_response).into_response()
             }
-            err => {
-                (StatusCode::INTERNAL_SERVER_ERROR, format!("error 500: {:?}", err)).into_response()
-            },
+            err => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("error 500: {:?}", err),
+            )
+                .into_response(),
         }
     }
 }
-
 
 impl IntoResponse for ErrorResponse {
     fn into_response(self) -> Response {

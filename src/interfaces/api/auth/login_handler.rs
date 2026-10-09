@@ -77,7 +77,12 @@ impl LoginCommand {
         if !self.email.is_required()? {
             errors.push(ErrorMessageResponse {
                 key: String::from("email"),
-                message: t!("required", locale = locale, attribute = t!("email", locale = locale)).to_string(),
+                message: t!(
+                    "required",
+                    locale = locale,
+                    attribute = t!("email", locale = locale)
+                )
+                .to_string(),
             });
             valid = false;
         }

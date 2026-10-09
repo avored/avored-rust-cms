@@ -4,7 +4,8 @@ use surrealdb::types::{Number, Object, Value};
 
 use crate::core::domain::constants::{ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME};
 use crate::core::domain::entities::entity::{
-    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity, UpdatableEntityAttribute,
+    EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity,
+    UpdatableEntityAttribute,
 };
 use crate::core::domain::entities::modal_count::ModalCount;
 use crate::core::domain::entities::AttributeModel;
@@ -127,8 +128,7 @@ impl EntityRepository for EntityRepositoryImpl {
                 (SELECT * FROM {} WHERE entity_id = $id AND deleted_at = NONE) AS attributes
             FROM {}
             WHERE id = $id AND deleted_at = NONE;",
-            ATTRIBUTES_TABLE_NAME,
-            ENTITIES_TABLE_NAME
+            ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
 
@@ -158,8 +158,7 @@ impl EntityRepository for EntityRepositoryImpl {
                 (SELECT * FROM {} WHERE entity_id = $parent.id AND deleted_at = NONE) AS attributes
             FROM {} 
             WHERE identifier = $identifier AND deleted_at = NONE;",
-            ATTRIBUTES_TABLE_NAME,
-            ENTITIES_TABLE_NAME
+            ATTRIBUTES_TABLE_NAME, ENTITIES_TABLE_NAME
         );
         let data: BTreeMap<String, Value> =
             [("identifier".into(), Value::String(identifier.into()))].into();
@@ -452,15 +451,24 @@ impl EntityRepository for EntityRepositoryImpl {
         );
         let attribute_id = match attribute.id {
             Some(id) => id,
-            _ => return Err(Error::NotFound(String::from("attribute id not found")))
+            _ => return Err(Error::NotFound(String::from("attribute id not found"))),
         };
 
         let data: BTreeMap<String, Value> = [
             ("id".into(), Value::String(attribute_id)),
             ("name".into(), Value::String(attribute.name.clone())),
-            ("identifier".into(), Value::String(attribute.identifier.clone())),
-            ("data_type".into(), Value::String(attribute.data_type.clone())),
-            ("field_type".into(), Value::String(attribute.field_type.clone())),
+            (
+                "identifier".into(),
+                Value::String(attribute.identifier.clone()),
+            ),
+            (
+                "data_type".into(),
+                Value::String(attribute.data_type.clone()),
+            ),
+            (
+                "field_type".into(),
+                Value::String(attribute.field_type.clone()),
+            ),
             ("updated_by".into(), Value::String(logged_in_user.clone())),
         ]
         .into();
@@ -490,10 +498,8 @@ impl EntityRepository for EntityRepositoryImpl {
             key: surrealdb::types::RecordIdKey::String(entity_id.to_string()),
         };
 
-        let data: BTreeMap<String, Value> = [
-            ("entity_id".into(), Value::RecordId(entity_record_id)),
-        ]
-        .into();
+        let data: BTreeMap<String, Value> =
+            [("entity_id".into(), Value::RecordId(entity_record_id))].into();
 
         let responses = datastore
             .execute(&sql, database_session, Some(data.into()))
@@ -502,7 +508,7 @@ impl EntityRepository for EntityRepositoryImpl {
         let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
             crate::error::Error::Generic("No attribute returned from delete".to_string())
         })?;
-        
+
         match result_object {
             Ok(_) => Ok(true),
             Err(e) => Err(e),
@@ -518,8 +524,14 @@ impl EntityRepository for EntityRepositoryImpl {
         let (datastore, database_session) = &self.database_provider.db;
 
         // Sanitize table_name to ensure it is a valid identifier
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         let skip = page.saturating_sub(1) * page_size;
@@ -550,8 +562,7 @@ impl EntityRepository for EntityRepositoryImpl {
         let mut list = Vec::new();
         for obj_res in it {
             let obj = obj_res?;
-            let json_val = serde_json::to_value(&obj)
-                .map_err(|e| Error::Generic(e.to_string()))?;
+            let json_val = serde_json::to_value(&obj).map_err(|e| Error::Generic(e.to_string()))?;
             list.push(json_val);
         }
 
@@ -582,15 +593,19 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn create_collection_table(&self, table_name: &str) -> Result<()> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         let sql = format!("DEFINE TABLE OVERWRITE {} SCHEMALESS;", table_name);
 
-        datastore
-            .execute(&sql, database_session, None)
-            .await?;
+        datastore.execute(&sql, database_session, None).await?;
 
         Ok(())
     }
@@ -602,8 +617,14 @@ impl EntityRepository for EntityRepositoryImpl {
     ) -> Result<serde_json::Value> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         let target_record = surrealdb::types::RecordId {
@@ -641,8 +662,14 @@ impl EntityRepository for EntityRepositoryImpl {
     ) -> Result<serde_json::Value> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
@@ -669,10 +696,7 @@ impl EntityRepository for EntityRepositoryImpl {
         }
 
         let sanitized = strip_nulls(serde_json::Value::Object(record));
-        let mut content_record = sanitized
-            .as_object()
-            .cloned()
-            .unwrap_or_default();
+        let mut content_record = sanitized.as_object().cloned().unwrap_or_default();
 
         content_record.remove("deleted_at");
         content_record.remove("deleted_by");
@@ -719,8 +743,14 @@ impl EntityRepository for EntityRepositoryImpl {
     ) -> Result<serde_json::Value> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
@@ -747,10 +777,7 @@ impl EntityRepository for EntityRepositoryImpl {
         }
 
         let sanitized = strip_nulls(serde_json::Value::Object(record));
-        let mut content_record = sanitized
-            .as_object()
-            .cloned()
-            .unwrap_or_default();
+        let mut content_record = sanitized.as_object().cloned().unwrap_or_default();
 
         content_record.remove("id");
         content_record.remove("deleted_at");
@@ -800,8 +827,14 @@ impl EntityRepository for EntityRepositoryImpl {
     async fn delete_collection_by_id(&self, table_name: &str, record_id: &str) -> Result<bool> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
-            return Err(Error::Generic(format!("Invalid table identifier: {}", table_name)));
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
+            return Err(Error::Generic(format!(
+                "Invalid table identifier: {}",
+                table_name
+            )));
         }
 
         let target_record = surrealdb::types::RecordId {
@@ -836,7 +869,10 @@ impl EntityRepository for EntityRepositoryImpl {
         let (datastore, database_session) = &self.database_provider.db;
 
         // Guard: table_name must be a safe identifier.
-        if !table_name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') {
+        if !table_name
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_')
+        {
             return Err(Error::Generic(format!(
                 "Invalid table identifier: {}",
                 table_name

@@ -24,7 +24,9 @@ async fn seed_test_entity(
     name: &str,
     identifier: &str,
 ) -> (
-    EntityUseCase<avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl>,
+    EntityUseCase<
+        avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl,
+    >,
     String,
     String,
 ) {
@@ -59,12 +61,19 @@ async fn seed_test_entity(
 
 #[tokio::test]
 async fn test_delete_entity_record_success_and_inaccessible() {
-    let (use_case, identifier, _entity_id) = seed_test_entity("Articles", "del_articles_success").await;
+    let (use_case, identifier, _entity_id) =
+        seed_test_entity("Articles", "del_articles_success").await;
 
     // 1. Create a record
     let mut attrs = serde_json::Map::new();
-    attrs.insert("title".to_string(), serde_json::Value::String("Active Article".to_string()));
-    attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(50)));
+    attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Active Article".to_string()),
+    );
+    attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(50)),
+    );
 
     let created = use_case
         .create_entity_record(&identifier, attrs, "author@example.com")
@@ -75,7 +84,10 @@ async fn test_delete_entity_record_success_and_inaccessible() {
     let record_id = full_id.split_once(':').map(|(_, k)| k).unwrap_or(full_id);
 
     // Verify it is accessible initially
-    assert!(use_case.get_entity_record(&identifier, record_id).await.is_ok());
+    assert!(use_case
+        .get_entity_record(&identifier, record_id)
+        .await
+        .is_ok());
 
     // 2. Delete the record
     let deleted = use_case
@@ -109,7 +121,10 @@ async fn test_delete_entity_record_repeated_returns_not_found() {
     let (use_case, identifier, _entity_id) = seed_test_entity("Items", "del_items_repeat").await;
 
     let mut attrs = serde_json::Map::new();
-    attrs.insert("title".to_string(), serde_json::Value::String("Item".to_string()));
+    attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Item".to_string()),
+    );
     let created = use_case
         .create_entity_record(&identifier, attrs, "author@example.com")
         .await
@@ -119,7 +134,10 @@ async fn test_delete_entity_record_repeated_returns_not_found() {
     let record_id = full_id.split_once(':').map(|(_, k)| k).unwrap_or(full_id);
 
     // First delete succeeds
-    assert!(use_case.delete_entity_record(&identifier, record_id).await.is_ok());
+    assert!(use_case
+        .delete_entity_record(&identifier, record_id)
+        .await
+        .is_ok());
 
     // Repeated delete fails with NotFound
     let result = use_case.delete_entity_record(&identifier, record_id).await;

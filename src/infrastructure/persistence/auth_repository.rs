@@ -3,10 +3,10 @@ use surrealdb::types::Value;
 use crate::core::domain::{entities::UserModel, repositories::AuthRepository};
 use crate::infrastructure::persistence::into_iter_objects;
 
+use crate::error::Result;
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
 use std::collections::BTreeMap;
 use std::sync::Arc;
-use crate::error::Result;
 
 #[derive(Clone)]
 pub struct AuthRepositoryImpl {
@@ -25,26 +25,21 @@ impl AuthRepository for AuthRepositoryImpl {
         let (datastore, database_session) = &self.database_provider.db;
 
         let sql = "SELECT * FROM users WHERE email=$email;";
-        let data: BTreeMap<String, Value> = [
-            ("email".into(), Value::String(email.into())),
-        ]
-        .into();
+        let data: BTreeMap<String, Value> = [("email".into(), Value::String(email.into()))].into();
 
         let responses = datastore
             .execute(sql, database_session, Some(data.into()))
             .await?;
 
-        let result_object = into_iter_objects(responses)?
-            .next()
-            .ok_or_else(|| crate::error::Error::Generic("No user returned from insert".to_string()))??;
+        let result_object = into_iter_objects(responses)?.next().ok_or_else(|| {
+            crate::error::Error::Generic("No user returned from insert".to_string())
+        })??;
 
         let user: UserModel = result_object.try_into()?;
 
         Ok(user)
     }
 }
-
-
 
 pub async fn test_auth_repository() -> AuthRepositoryImpl {
     let provider = AvoRedDatabaseProvider::register("mem://", "test", "avored")

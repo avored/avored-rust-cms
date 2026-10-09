@@ -32,8 +32,7 @@ impl StringExtension for String {
         let password = self.as_bytes();
         let parsed_hash = argon2::PasswordHash::new(encrypted_password)?;
         let argon2 = Argon2::default();
-        
-        Ok(argon2.verify_password(password, &parsed_hash).is_ok())
 
+        Ok(argon2.verify_password(password, &parsed_hash).is_ok())
     }
 }

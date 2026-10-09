@@ -5,7 +5,6 @@ use leptos_router::hooks::use_navigate;
 #[cfg(target_arch = "wasm32")]
 use gloo_storage::Storage;
 
-
 #[derive(Clone, Default, Debug)]
 pub struct LoggedInUser {
     pub id: String,
@@ -73,7 +72,11 @@ where
         let ready = auth_ready.get();
         let logged_in = is_logged_in.get();
 
-        log::info!("PROTECTED ROUTE CHECK: ready={}, logged_in={}", ready, logged_in);
+        log::info!(
+            "PROTECTED ROUTE CHECK: ready={}, logged_in={}",
+            ready,
+            logged_in
+        );
 
         if ready && !logged_in {
             log::info!("PROTECTED ROUTE: redirecting to /auth/login");

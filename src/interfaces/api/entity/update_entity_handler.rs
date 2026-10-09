@@ -1,9 +1,9 @@
-use axum::Extension;
-use axum::{extract::Path, extract::State, Json};
 use crate::avored_state::AppState;
 use crate::core::application::dtos::entity_dto::{EntityResponse, UpdateEntityCommand};
 use crate::core::domain::entities::user::TokenClaims;
 use crate::error::Result;
+use axum::Extension;
+use axum::{extract::Path, extract::State, Json};
 
 pub async fn update_entity_handler(
     State(state): State<AppState>,
@@ -16,6 +16,6 @@ pub async fn update_entity_handler(
 
     let updatable_entity = payload.to_updatable(logged_in_user.email.clone());
     let entity = state.entity_use_case.update(&id, updatable_entity).await?;
-    
+
     Ok(Json(entity.into()))
 }

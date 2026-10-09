@@ -1,6 +1,6 @@
+use crate::error::Result;
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
-use crate::error::Result;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct AttributeModel {
@@ -48,7 +48,7 @@ impl TryFrom<surrealdb::types::Object> for AttributeModel {
         let identifier = obj.get_string("identifier")?;
         let data_type = obj.get_string("data_type")?;
         let field_type = obj.get_string("field_type")?;
-        
+
         let created_at = obj.get_datetime("created_at")?;
         let created_by = obj.get_string("created_by")?;
 

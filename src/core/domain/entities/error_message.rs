@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Clone, Deserialize, Default)]
 pub struct ErrorMessageResponse {
@@ -11,5 +11,3 @@ pub struct ErrorResponse {
     pub status: bool,
     pub errors: Vec<ErrorMessageResponse>,
 }
-
-

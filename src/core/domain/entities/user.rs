@@ -1,6 +1,6 @@
+use crate::error::Result;
 use serde::{Deserialize, Serialize};
 use surrealdb::types::Datetime;
-use crate::error::Result;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize, Default)]
 pub struct UserModel {
@@ -16,8 +16,6 @@ pub struct UserModel {
     pub deleted_by: Option<String>,
 }
 
-
-
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct StorableUser {
     pub name: String,
@@ -25,8 +23,6 @@ pub struct StorableUser {
     pub password: String,
     pub processing_user: String,
 }
-
-
 
 #[cfg(feature = "ssr")]
 impl TryFrom<surrealdb::types::Object> for UserModel {
@@ -37,7 +33,7 @@ impl TryFrom<surrealdb::types::Object> for UserModel {
                 surrealdb::types::RecordIdKey::String(k) => format!("{}:{}", v.table, k),
                 _ => format!("{}:{:?}", v.table, v.key),
             },
-                Some(surrealdb::types::Value::String(v)) => v,
+            Some(surrealdb::types::Value::String(v)) => v,
             _ => String::new(),
         };
         let email = match obj.remove("email") {
@@ -76,19 +72,29 @@ impl TryFrom<surrealdb::types::Object> for UserModel {
             Some(surrealdb::types::Value::String(v)) => Some(v),
             _ => None,
         };
-        Ok(UserModel { id, name, email, password, created_at, created_by, updated_at, updated_by, deleted_at, deleted_by })
+        Ok(UserModel {
+            id,
+            name,
+            email,
+            password,
+            created_at,
+            created_by,
+            updated_at,
+            updated_by,
+            deleted_at,
+            deleted_by,
+        })
     }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Default)]
 pub struct TokenClaims {
-    
     pub sub: String,
 
     pub name: String,
 
     pub email: String,
-    
+
     pub iat: usize,
 
     pub exp: usize,

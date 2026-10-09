@@ -149,7 +149,6 @@
 //     assert_eq!(json["identifier"], "product");
 //     let entity_id = json["id"].as_str().unwrap().to_string().trim_start_matches("entities:").to_string();
 
-
 //     // 3. GET /api/entity
 //     let list_req = Request::builder()
 //         .method("GET")

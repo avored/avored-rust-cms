@@ -26,7 +26,9 @@ async fn seed_test_entity(
     name: &str,
     identifier: &str,
 ) -> (
-    EntityUseCase<avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl>,
+    EntityUseCase<
+        avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl,
+    >,
     String,
 ) {
     let repo = test_entity_repository().await;
@@ -70,8 +72,14 @@ async fn test_patch_entity_record_single_attribute_preserves_omitted() {
 
     // 1. Create a record
     let mut initial_attrs = serde_json::Map::new();
-    initial_attrs.insert("title".to_string(), serde_json::Value::String("Initial Title".to_string()));
-    initial_attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(10)));
+    initial_attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Initial Title".to_string()),
+    );
+    initial_attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(10)),
+    );
     initial_attrs.insert("is_published".to_string(), serde_json::Value::Bool(true));
 
     let created = use_case
@@ -84,7 +92,10 @@ async fn test_patch_entity_record_single_attribute_preserves_omitted() {
 
     // 2. PATCH only the title
     let mut patch_attrs = serde_json::Map::new();
-    patch_attrs.insert("title".to_string(), serde_json::Value::String("Updated Title".to_string()));
+    patch_attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Updated Title".to_string()),
+    );
 
     let updated = use_case
         .update_entity_record(&identifier, record_id, patch_attrs, "editor@example.com")
@@ -94,14 +105,23 @@ async fn test_patch_entity_record_single_attribute_preserves_omitted() {
     let obj = updated.as_object().unwrap();
 
     // Verify title was updated
-    assert_eq!(obj.get("title").and_then(|v| v.as_str()), Some("Updated Title"));
+    assert_eq!(
+        obj.get("title").and_then(|v| v.as_str()),
+        Some("Updated Title")
+    );
 
     // Verify omitted fields remain unchanged
     assert_eq!(obj.get("views").and_then(|v| v.as_u64()), Some(10));
-    assert_eq!(obj.get("is_published").and_then(|v| v.as_bool()), Some(true));
+    assert_eq!(
+        obj.get("is_published").and_then(|v| v.as_bool()),
+        Some(true)
+    );
 
     // Verify updated_by
-    assert_eq!(obj.get("updated_by").and_then(|v| v.as_str()), Some("editor@example.com"));
+    assert_eq!(
+        obj.get("updated_by").and_then(|v| v.as_str()),
+        Some("editor@example.com")
+    );
 }
 
 #[tokio::test]
@@ -110,8 +130,14 @@ async fn test_patch_entity_record_multiple_attributes_and_updated_at() {
 
     // 1. Create a record
     let mut initial_attrs = serde_json::Map::new();
-    initial_attrs.insert("title".to_string(), serde_json::Value::String("Old Title".to_string()));
-    initial_attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(5)));
+    initial_attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Old Title".to_string()),
+    );
+    initial_attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(5)),
+    );
     initial_attrs.insert("is_published".to_string(), serde_json::Value::Bool(false));
 
     let created = use_case
@@ -121,15 +147,25 @@ async fn test_patch_entity_record_multiple_attributes_and_updated_at() {
 
     let full_id = created.get("id").and_then(|v| v.as_str()).unwrap();
     let record_id = full_id.split_once(':').map(|(_, k)| k).unwrap_or(full_id);
-    let original_updated_at = created.get("updated_at").and_then(|v| v.as_str()).unwrap().to_string();
+    let original_updated_at = created
+        .get("updated_at")
+        .and_then(|v| v.as_str())
+        .unwrap()
+        .to_string();
 
     // Small delay to ensure timestamp differs
     tokio::time::sleep(tokio::time::Duration::from_millis(15)).await;
 
     // 2. PATCH title and views
     let mut patch_attrs = serde_json::Map::new();
-    patch_attrs.insert("title".to_string(), serde_json::Value::String("New Title".to_string()));
-    patch_attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(999)));
+    patch_attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("New Title".to_string()),
+    );
+    patch_attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(999)),
+    );
 
     let updated = use_case
         .update_entity_record(&identifier, record_id, patch_attrs, "updater@example.com")
@@ -140,10 +176,16 @@ async fn test_patch_entity_record_multiple_attributes_and_updated_at() {
 
     assert_eq!(obj.get("title").and_then(|v| v.as_str()), Some("New Title"));
     assert_eq!(obj.get("views").and_then(|v| v.as_u64()), Some(999));
-    assert_eq!(obj.get("is_published").and_then(|v| v.as_bool()), Some(false));
+    assert_eq!(
+        obj.get("is_published").and_then(|v| v.as_bool()),
+        Some(false)
+    );
 
     let new_updated_at = obj.get("updated_at").and_then(|v| v.as_str()).unwrap();
-    assert_ne!(original_updated_at, new_updated_at, "updated_at should be refreshed");
+    assert_ne!(
+        original_updated_at, new_updated_at,
+        "updated_at should be refreshed"
+    );
 }
 
 #[tokio::test]
@@ -168,10 +210,18 @@ async fn test_patch_entity_record_missing_record() {
     let (use_case, identifier) = seed_test_entity("Items", "patch_missing_rec").await;
 
     let mut patch_attrs = serde_json::Map::new();
-    patch_attrs.insert("title".to_string(), serde_json::Value::String("Valid".to_string()));
+    patch_attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Valid".to_string()),
+    );
 
     let result = use_case
-        .update_entity_record(&identifier, "non_existent_key", patch_attrs, "user@example.com")
+        .update_entity_record(
+            &identifier,
+            "non_existent_key",
+            patch_attrs,
+            "user@example.com",
+        )
         .await;
 
     assert!(result.is_err());
@@ -182,7 +232,10 @@ async fn test_patch_entity_record_unknown_attribute() {
     let (use_case, identifier) = seed_test_entity("Posts", "patch_unknown_attr").await;
 
     let mut patch_attrs = serde_json::Map::new();
-    patch_attrs.insert("invalid_field".to_string(), serde_json::Value::String("bad".to_string()));
+    patch_attrs.insert(
+        "invalid_field".to_string(),
+        serde_json::Value::String("bad".to_string()),
+    );
 
     let result = use_case
         .update_entity_record(&identifier, "any_key", patch_attrs, "user@example.com")
@@ -203,7 +256,10 @@ async fn test_patch_entity_record_invalid_attribute_type() {
 
     let mut patch_attrs = serde_json::Map::new();
     // views expects integer, pass a string
-    patch_attrs.insert("views".to_string(), serde_json::Value::String("not_a_number".to_string()));
+    patch_attrs.insert(
+        "views".to_string(),
+        serde_json::Value::String("not_a_number".to_string()),
+    );
 
     let result = use_case
         .update_entity_record(&identifier, "any_key", patch_attrs, "user@example.com")

@@ -1,4 +1,3 @@
-
 use crate::core::application::dtos::collection_dto::{
     CollectionPaginationResponse, PaginateCollectionCommand,
 };
@@ -41,11 +40,9 @@ where
             entity_model.attributes.push(attrobute_model);
         }
 
-
         self.repository
             .create_collection_table(&entity_model.identifier)
             .await?;
-
 
         Ok(entity_model)
     }
@@ -68,7 +65,7 @@ where
         let logged_in_user = updatable_entity.logged_in_user_email.clone();
 
         for attribute in updatable_entity.attributes {
-            let attrobute_model : AttributeModel;
+            let attrobute_model: AttributeModel;
 
             if attribute.is_new {
                 let storable_entity_attribute = StorableEntityAttribute {
@@ -88,10 +85,7 @@ where
             } else {
                 attrobute_model = self
                     .repository
-                    .update_attribute(
-                        attribute,
-                        logged_in_user.clone(),
-                    )
+                    .update_attribute(attribute, logged_in_user.clone())
                     .await?;
             }
 
@@ -177,7 +171,6 @@ where
     ) -> Result<serde_json::Value> {
         let entity = self.repository.find_by_id(entity_id).await?;
 
-
         fn strip_nulls(value: serde_json::Value) -> serde_json::Value {
             match value {
                 serde_json::Value::Object(map) => {
@@ -201,17 +194,28 @@ where
             }
         }
 
-        record = match strip_nulls(serde_json::Value::Object(record)).as_object().cloned() {
+        record = match strip_nulls(serde_json::Value::Object(record))
+            .as_object()
+            .cloned()
+        {
             Some(filtered) => filtered,
             None => serde_json::Map::new(),
         };
 
-
         let now = chrono::Utc::now().to_rfc3339();
-        record.insert("created_at".to_string(), serde_json::Value::String(now.clone()));
-        record.insert("created_by".to_string(), serde_json::Value::String(logged_in_user.to_string()));
+        record.insert(
+            "created_at".to_string(),
+            serde_json::Value::String(now.clone()),
+        );
+        record.insert(
+            "created_by".to_string(),
+            serde_json::Value::String(logged_in_user.to_string()),
+        );
         record.insert("updated_at".to_string(), serde_json::Value::String(now));
-        record.insert("updated_by".to_string(), serde_json::Value::String(logged_in_user.to_string()));
+        record.insert(
+            "updated_by".to_string(),
+            serde_json::Value::String(logged_in_user.to_string()),
+        );
 
         self.repository
             .create_collection(&entity.identifier, record)
@@ -250,7 +254,10 @@ where
             }
         }
 
-        record = match strip_nulls(serde_json::Value::Object(record)).as_object().cloned() {
+        record = match strip_nulls(serde_json::Value::Object(record))
+            .as_object()
+            .cloned()
+        {
             Some(filtered) => filtered,
             None => serde_json::Map::new(),
         };
@@ -262,8 +269,14 @@ where
         record.remove("deleted_by");
 
         let now = chrono::Utc::now().to_rfc3339();
-        record.insert("updated_at".to_string(), serde_json::Value::String(now.clone()));
-        record.insert("updated_by".to_string(), serde_json::Value::String(logged_in_user.to_string()));
+        record.insert(
+            "updated_at".to_string(),
+            serde_json::Value::String(now.clone()),
+        );
+        record.insert(
+            "updated_by".to_string(),
+            serde_json::Value::String(logged_in_user.to_string()),
+        );
 
         self.repository
             .update_collection_by_id(&entity.identifier, record_id, record)
@@ -346,16 +359,26 @@ where
                     _ => true,
                 };
                 if !is_valid_type {
-                    errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
-                        key: key.clone(),
-                        message: format!("Attribute '{}' expects type '{}'", key, attr_def.data_type),
-                    });
+                    errors.push(
+                        crate::core::domain::entities::error_message::ErrorMessageResponse {
+                            key: key.clone(),
+                            message: format!(
+                                "Attribute '{}' expects type '{}'",
+                                key, attr_def.data_type
+                            ),
+                        },
+                    );
                 }
             } else {
-                errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
-                    key: key.clone(),
-                    message: format!("Unknown attribute '{}' for entity '{}'", key, entity_type),
-                });
+                errors.push(
+                    crate::core::domain::entities::error_message::ErrorMessageResponse {
+                        key: key.clone(),
+                        message: format!(
+                            "Unknown attribute '{}' for entity '{}'",
+                            key, entity_type
+                        ),
+                    },
+                );
             }
         }
 
@@ -401,16 +424,26 @@ where
                     _ => true,
                 };
                 if !is_valid_type {
-                    errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
-                        key: key.clone(),
-                        message: format!("Attribute '{}' expects type '{}'", key, attr_def.data_type),
-                    });
+                    errors.push(
+                        crate::core::domain::entities::error_message::ErrorMessageResponse {
+                            key: key.clone(),
+                            message: format!(
+                                "Attribute '{}' expects type '{}'",
+                                key, attr_def.data_type
+                            ),
+                        },
+                    );
                 }
             } else {
-                errors.push(crate::core::domain::entities::error_message::ErrorMessageResponse {
-                    key: key.clone(),
-                    message: format!("Unknown attribute '{}' for entity '{}'", key, entity_type),
-                });
+                errors.push(
+                    crate::core::domain::entities::error_message::ErrorMessageResponse {
+                        key: key.clone(),
+                        message: format!(
+                            "Unknown attribute '{}' for entity '{}'",
+                            key, entity_type
+                        ),
+                    },
+                );
             }
         }
 
@@ -444,11 +477,7 @@ where
     ///
     /// Verifies the record currently exists (and is not deleted), returning
     /// 404 Not Found if missing or already deleted.
-    pub async fn delete_entity_record(
-        &self,
-        entity_type: &str,
-        record_id: &str,
-    ) -> Result<bool> {
+    pub async fn delete_entity_record(&self, entity_type: &str, record_id: &str) -> Result<bool> {
         let entity = self.repository.find_by_identifier(entity_type).await?;
         // Ensure record exists before deleting
         self.repository
@@ -459,5 +488,3 @@ where
             .await
     }
 }
-
-

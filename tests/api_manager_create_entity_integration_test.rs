@@ -12,9 +12,7 @@
 use avored_rust_cms::{
     core::{
         application::use_cases::EntityUseCase,
-        domain::
-            entities::entity::{StorableEntity, StorableEntityAttribute}
-        ,
+        domain::entities::entity::{StorableEntity, StorableEntityAttribute},
     },
     error::Error,
     infrastructure::persistence::entity_repository::test_entity_repository,
@@ -25,7 +23,9 @@ async fn seed_test_entity(
     name: &str,
     identifier: &str,
 ) -> (
-    EntityUseCase<avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl>,
+    EntityUseCase<
+        avored_rust_cms::infrastructure::persistence::entity_repository::EntityRepositoryImpl,
+    >,
     String,
 ) {
     let repo = test_entity_repository().await;
@@ -109,10 +109,7 @@ async fn test_create_entity_record_success() {
         obj.get("title").and_then(|v| v.as_str()),
         Some("First Post")
     );
-    assert_eq!(
-        obj.get("views").and_then(|v| v.as_u64()),
-        Some(42)
-    );
+    assert_eq!(obj.get("views").and_then(|v| v.as_u64()), Some(42));
     assert_eq!(
         obj.get("is_published").and_then(|v| v.as_bool()),
         Some(true)
@@ -196,20 +193,29 @@ async fn test_create_entity_record_supported_json_types() {
     let (use_case, identifier) = seed_test_entity("Complex", "test_complex").await;
 
     let mut meta = serde_json::Map::new();
-    meta.insert("tag".to_string(), serde_json::Value::String("tech".to_string()));
+    meta.insert(
+        "tag".to_string(),
+        serde_json::Value::String("tech".to_string()),
+    );
     meta.insert(
         "sub_items".to_string(),
-        serde_json::Value::Array(vec![
-            serde_json::Value::from(1),
-            serde_json::Value::from(2),
-        ]),
+        serde_json::Value::Array(vec![serde_json::Value::from(1), serde_json::Value::from(2)]),
     );
 
     let mut attrs = serde_json::Map::new();
-    attrs.insert("title".to_string(), serde_json::Value::String("Rich Content".to_string()));
-    attrs.insert("views".to_string(), serde_json::Value::Number(serde_json::Number::from(100)));
+    attrs.insert(
+        "title".to_string(),
+        serde_json::Value::String("Rich Content".to_string()),
+    );
+    attrs.insert(
+        "views".to_string(),
+        serde_json::Value::Number(serde_json::Number::from(100)),
+    );
     attrs.insert("is_published".to_string(), serde_json::Value::Bool(false));
-    attrs.insert("publish_date".to_string(), serde_json::Value::String("2026-10-04T00:00:00Z".to_string()));
+    attrs.insert(
+        "publish_date".to_string(),
+        serde_json::Value::String("2026-10-04T00:00:00Z".to_string()),
+    );
     attrs.insert("metadata".to_string(), serde_json::Value::Object(meta));
 
     let created = use_case
@@ -219,6 +225,9 @@ async fn test_create_entity_record_supported_json_types() {
 
     let obj = created.as_object().unwrap();
     assert_eq!(obj.get("views").and_then(|v| v.as_u64()), Some(100));
-    assert_eq!(obj.get("is_published").and_then(|v| v.as_bool()), Some(false));
+    assert_eq!(
+        obj.get("is_published").and_then(|v| v.as_bool()),
+        Some(false)
+    );
     assert!(obj.get("metadata").unwrap().is_object());
 }

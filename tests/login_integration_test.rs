@@ -1,11 +1,10 @@
 #![recursion_limit = "256"]
 
 use avored_rust_cms::{
-    avored_state::test_avored_state,
-    core::domain::extensions::string_extension::StringExtension,
+    avored_state::test_avored_state, core::domain::extensions::string_extension::StringExtension,
+    core::domain::repositories::AuthRepository,
     infrastructure::persistence::auth_repository::test_auth_repository,
     interfaces::api::auth::login_handler,
-    core::domain::repositories::AuthRepository,
 };
 use axum::{
     body::{to_bytes, Body},
@@ -15,7 +14,9 @@ use axum::{
 };
 use tower::ServiceExt;
 
-async fn seed_test_user(provider: &avored_rust_cms::providers::avored_database_provider::AvoRedDatabaseProvider) {
+async fn seed_test_user(
+    provider: &avored_rust_cms::providers::avored_database_provider::AvoRedDatabaseProvider,
+) {
     let (datastore, session) = &provider.db;
     let password = "secret"
         .to_string()
@@ -51,7 +52,10 @@ async fn rejects_invalid_credentials_in_an_in_memory_database() {
     let repository = test_auth_repository().await;
     seed_test_user(&repository.database_provider).await;
 
-    assert!(repository.authenticate("unknown@example.com").await.is_err());
+    assert!(repository
+        .authenticate("unknown@example.com")
+        .await
+        .is_err());
 }
 
 #[tokio::test]
@@ -76,7 +80,9 @@ async fn login_handler_authenticates_against_an_in_memory_database() {
 
     assert_eq!(response_json["authenticated"], true);
     assert_eq!(response_json["user"]["email"], "test@example.com");
-    assert!(response_json["token"].as_str().is_some_and(|token| !token.is_empty()));
+    assert!(response_json["token"]
+        .as_str()
+        .is_some_and(|token| !token.is_empty()));
 }
 
 #[tokio::test]

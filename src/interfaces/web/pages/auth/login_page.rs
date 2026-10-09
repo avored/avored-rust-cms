@@ -111,10 +111,8 @@ pub fn LoginPage() -> impl IntoView {
                         Ok(api_err) => {
                             if let Some(errs) = api_err.errors {
                                 if !errs.is_empty() {
-                                    let map: HashMap<String, String> = errs
-                                        .into_iter()
-                                        .map(|e| (e.key, e.message))
-                                        .collect();
+                                    let map: HashMap<String, String> =
+                                        errs.into_iter().map(|e| (e.key, e.message)).collect();
                                     field_errors.set(map);
                                 } else {
                                     error.set("Login failed.".to_string());

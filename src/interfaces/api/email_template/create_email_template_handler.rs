@@ -13,7 +13,10 @@ pub async fn create_email_template_handler(
     State(state): State<AppState>,
     Extension(_logged_in_user): Extension<TokenClaims>,
     Json(payload): Json<CreateEmailTemplateCommand>,
-) -> Result<(StatusCode, Json<crate::core::domain::entities::EmailTemplateModel>)> {
+) -> Result<(
+    StatusCode,
+    Json<crate::core::domain::entities::EmailTemplateModel>,
+)> {
     let template = state.email_template_use_case.create(payload).await?;
     Ok((StatusCode::CREATED, Json(template)))
 }
