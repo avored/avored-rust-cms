@@ -1,10 +1,8 @@
 /// The default page size for paginated queries.
 pub const DEFAULT_PAGE_SIZE: u64 = 20;
 
-
 /// The name of the entities table in the database.
 pub const DEFAULT_PAGE: u64 = 1;
-
 
 /// The name of the users table in the database.
 pub const USERS_TABLE_NAME: &str = "users";
@@ -17,3 +15,9 @@ pub const EMAIL_TEMPLATES_TABLE_NAME: &str = "email_templates";
 
 /// The name of the attributes table in the database.
 pub const ATTRIBUTES_TABLE_NAME: &str = "attributes";
+
+/// The name of the workflow definitions table in the database.
+pub const WORKFLOWS_TABLE_NAME: &str = "workflows";
+
+/// The name of the workflow execution history table in the database.
+pub const WORKFLOW_EXECUTIONS_TABLE_NAME: &str = "workflow_executions";

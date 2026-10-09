@@ -1,4 +1,4 @@
-use crate::error::{Result, Error};
+use crate::error::{Error, Result};
 
 pub mod auth_repository;
 pub use auth_repository::AuthRepositoryImpl;
@@ -11,16 +11,18 @@ pub use entity_repository::EntityRepositoryImpl;
 pub mod email_template_repository;
 pub use email_template_repository::EmailTemplateRepositoryImpl;
 
+pub mod workflow_repository;
+pub use workflow_repository::WorkflowRepositoryImpl;
+
 // pub mod attribute_repository;
 // pub use attribute_repository::AttributeRepositoryImpl;
-
 
 use surrealdb::types::{Object, Value};
 use surrealdb_core::dbs::QueryResult;
 
-
-
-pub fn into_iter_objects(responses: Vec<QueryResult>) -> Result<impl Iterator<Item = Result<Object>>> {
+pub fn into_iter_objects(
+    responses: Vec<QueryResult>,
+) -> Result<impl Iterator<Item = Result<Object>>> {
     let response = responses
         .into_iter()
         .next()

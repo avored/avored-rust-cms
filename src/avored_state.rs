@@ -5,11 +5,12 @@ use leptos::config::LeptosOptions;
 
 use crate::{
     core::application::use_cases::{
-        AuthUseCase, EmailTemplateUseCase, EntityUseCase, MiscUseCase,
+        AuthUseCase, EmailTemplateUseCase, EntityUseCase, MiscUseCase, WorkflowUseCase,
     },
     infrastructure::persistence::{
-        email_template_repository::EmailTemplateRepositoryImpl, entity_repository::EntityRepositoryImpl,
-        misc_repository::MiscRepositoryImpl, AuthRepositoryImpl,
+        email_template_repository::EmailTemplateRepositoryImpl,
+        entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
+        workflow_repository::WorkflowRepositoryImpl, AuthRepositoryImpl,
     },
     providers::{
         avored_config_provider::AvoRedConfigProvider,
@@ -29,6 +30,8 @@ pub struct AppState {
     pub entity_use_case: EntityUseCase<EntityRepositoryImpl>,
 
     pub email_template_use_case: EmailTemplateUseCase<EmailTemplateRepositoryImpl>,
+
+    pub workflow_use_case: WorkflowUseCase<WorkflowRepositoryImpl>,
 
     // pub attribute_use_case: AttributeUseCase<AttributeRepositoryImpl>,
     /// Database provider for `AvoRed` (SurrealDB).
@@ -60,8 +63,12 @@ impl AppState {
         let entity_repository = EntityRepositoryImpl::new(avored_database_provider.clone());
         let entity_use_case = EntityUseCase::new(entity_repository);
 
-        let email_template_repository = EmailTemplateRepositoryImpl::new(avored_database_provider.clone());
+        let email_template_repository =
+            EmailTemplateRepositoryImpl::new(avored_database_provider.clone());
         let email_template_use_case = EmailTemplateUseCase::new(email_template_repository);
+
+        let workflow_repository = WorkflowRepositoryImpl::new(avored_database_provider.clone());
+        let workflow_use_case = WorkflowUseCase::new(workflow_repository);
 
         // let attribute_repository = AttributeRepositoryImpl::new(avored_database_provider.clone());
         // let attribute_use_case = AttributeUseCase::new(attribute_repository);
@@ -74,6 +81,7 @@ impl AppState {
             misc_use_case,
             entity_use_case,
             email_template_use_case,
+            workflow_use_case,
             // attribute_use_case
         })
     }
@@ -92,6 +100,7 @@ pub async fn test_avored_state() -> AppState {
     let misc_repository = MiscRepositoryImpl::new(database_provider.clone());
     let entity_repository = EntityRepositoryImpl::new(database_provider.clone());
     let email_template_repository = EmailTemplateRepositoryImpl::new(database_provider.clone());
+    let workflow_repository = WorkflowRepositoryImpl::new(database_provider.clone());
     // let attribute_repository = AttributeRepositoryImpl::new(database_provider.clone());
 
     AppState {
@@ -102,6 +111,7 @@ pub async fn test_avored_state() -> AppState {
         misc_use_case: MiscUseCase::new(misc_repository),
         entity_use_case: EntityUseCase::new(entity_repository),
         email_template_use_case: EmailTemplateUseCase::new(email_template_repository),
+        workflow_use_case: WorkflowUseCase::new(workflow_repository),
         // attribute_use_case: AttributeUseCase::new(attribute_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {
