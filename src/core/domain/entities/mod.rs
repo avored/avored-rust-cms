@@ -15,5 +15,11 @@ pub use entity::{EntityModel, StorableEntity};
 pub mod email_template;
 pub use email_template::EmailTemplateModel;
 
+pub mod workflow;
+pub use workflow::{
+    WorkflowAction, WorkflowEvent, WorkflowExecutionModel, WorkflowExecutionStatus, WorkflowModel,
+    WorkflowTrigger,
+};
+
 pub mod attribute;
 pub use attribute::{AttributeModel, StorableAttribute};

@@ -8,4 +8,6 @@ pub mod collection;
 
 pub mod email_template;
 
+pub mod workflow;
+
 pub mod api_manager;

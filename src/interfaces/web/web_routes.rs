@@ -2,8 +2,7 @@ use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
 use crate::interfaces::web::pages::admin::collections::{
-    collection_create_page::CollectionCreatePage,
-    collection_edit_page::CollectionEditPage,
+    collection_create_page::CollectionCreatePage, collection_edit_page::CollectionEditPage,
     collection_index_page::CollectionIndexPage,
 };
 use crate::interfaces::web::pages::admin::email::{
@@ -11,6 +10,9 @@ use crate::interfaces::web::pages::admin::email::{
 };
 use crate::interfaces::web::pages::admin::entity::{
     EntityCreatePage, EntityEditPage, EntityIndexPage,
+};
+use crate::interfaces::web::pages::admin::workflow::{
+    WorkflowCreatePage, WorkflowEditPage, WorkflowIndexPage,
 };
 use crate::interfaces::web::pages::misc::setup_page::SetupPage;
 use crate::interfaces::web::pages::{
@@ -50,6 +52,9 @@ pub fn WebApp() -> impl IntoView {
                         <Route path=path!("email-templates") view=EmailTemplateIndexPage/>
                         <Route path=path!("email-templates/create") view=EmailTemplateCreatePage/>
                         <Route path=path!("email-templates/:id/edit") view=EmailTemplateEditPage/>
+                        <Route path=path!("workflows") view=WorkflowIndexPage/>
+                        <Route path=path!("workflows/create") view=WorkflowCreatePage/>
+                        <Route path=path!("workflows/:id/edit") view=WorkflowEditPage/>
                     </ParentRoute>
                 </Routes>
             </main>

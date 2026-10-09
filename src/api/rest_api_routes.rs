@@ -25,6 +25,11 @@ use crate::interfaces::api::{
         option_entities_handler::option_entities_handler, paginate_entities_handler,
         update_entity_handler, update_entity_identifier_handler::update_entity_identifier_handler,
     },
+    workflow::{
+        create_workflow_handler, delete_workflow_handler, fetch_workflow_handler,
+        list_workflow_executions_handler, list_workflows_handler, set_workflow_active_handler,
+        update_workflow_handler,
+    },
 };
 use axum::{
     http::HeaderValue,
@@ -65,14 +70,36 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route("/api/collection", get(paginate_collections_handler))
         .route("/api/collection", post(create_collection_handler))
         .route("/api/email-templates", post(create_email_template_handler))
-        .route("/api/email-templates/{id}", get(fetch_email_template_handler))
-        .route("/api/email-templates/{id}", put(update_email_template_handler))
-        .route("/api/email-templates/{id}", delete(delete_email_template_handler))
-        .route("/api/email-templates", get(paginate_email_templates_handler))
         .route(
-            "/api/collection/{record_id}",
-            get(fetch_collection_handler),
+            "/api/email-templates/{id}",
+            get(fetch_email_template_handler),
         )
+        .route(
+            "/api/email-templates/{id}",
+            put(update_email_template_handler),
+        )
+        .route(
+            "/api/email-templates/{id}",
+            delete(delete_email_template_handler),
+        )
+        .route(
+            "/api/email-templates",
+            get(paginate_email_templates_handler),
+        )
+        .route("/api/workflows", get(list_workflows_handler))
+        .route("/api/workflows", post(create_workflow_handler))
+        .route("/api/workflows/{id}", get(fetch_workflow_handler))
+        .route("/api/workflows/{id}", put(update_workflow_handler))
+        .route("/api/workflows/{id}", delete(delete_workflow_handler))
+        .route(
+            "/api/workflows/{id}/active",
+            patch(set_workflow_active_handler),
+        )
+        .route(
+            "/api/workflows/{id}/executions",
+            get(list_workflow_executions_handler),
+        )
+        .route("/api/collection/{record_id}", get(fetch_collection_handler))
         .route(
             "/api/collection/{record_id}",
             put(update_collection_handler),
@@ -95,7 +122,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route("/api/v1/entities", post(create_entity_record_handler))
         .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
         .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
-        .route("/api/v1/entities/{id}", delete(delete_entity_record_handler))
+        .route(
+            "/api/v1/entities/{id}",
+            delete(delete_entity_record_handler),
+        )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,

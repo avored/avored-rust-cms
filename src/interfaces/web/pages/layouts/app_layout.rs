@@ -108,6 +108,16 @@ pub fn AppLayout() -> impl IntoView {
                         </svg>
                         <span class="ml-2">{t!("email_templates")}</span>
                     </a>
+
+                    <a href="/admin/workflows" class="group flex items-center rounded-md px-4 py-2 text-gray-700 transition hover:bg-gray-100" active-class="bg-blue-50 text-blue-600 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={class}>
+                            <rect x="3" y="3" width="6" height="6" rx="1"></rect>
+                            <rect x="15" y="15" width="6" height="6" rx="1"></rect>
+                            <path d="M9 6h3a3 3 0 0 1 3 3v6"></path>
+                            <path d="M12 15H9a3 3 0 0 0-3 3v3"></path>
+                        </svg>
+                        <span class="ml-2">"Workflows"</span>
+                    </a>
                 </nav>
             </aside>
 

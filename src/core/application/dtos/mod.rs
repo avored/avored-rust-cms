@@ -13,3 +13,9 @@ pub mod email_template_dto;
 pub use email_template_dto::{EmailTemplatePaginationResponse, PaginateEmailTemplateCommand};
 
 pub mod api_manager_dto;
+
+pub mod workflow_dto;
+pub use workflow_dto::{
+    CreateWorkflowCommand, SetWorkflowActiveCommand, UpdateWorkflowCommand,
+    WorkflowExecutionPaginationResponse, WorkflowPaginationQuery, WorkflowPaginationResponse,
+};

@@ -11,6 +11,8 @@ import { collectionIndexPage } from "./collection/CollectionIndexPage";
 import { emailTemplateCreatePage } from "./email/EmailTemplateCreatePage";
 import { emailTemplateEditPage } from "./email/EmailTemplateEditPage";
 import { emailTemplateIndexPage } from "./email/EmailTemplateIndexPage";
+import { workflowFormPage } from "./workflow/WorkflowFormPage";
+import { workflowIndexPage } from "./workflow/WorkflowIndexPage";
 
 declare global {
   interface Window {
@@ -24,6 +26,8 @@ declare global {
     emailTemplateCreatePage: typeof emailTemplateCreatePage;
     emailTemplateEditPage: typeof emailTemplateEditPage;
     emailTemplateIndexPage: typeof emailTemplateIndexPage;
+    workflowFormPage: typeof workflowFormPage;
+    workflowIndexPage: typeof workflowIndexPage;
   }
 }
 
@@ -37,6 +41,8 @@ window.collectionIndexPage = collectionIndexPage;
 window.emailTemplateCreatePage = emailTemplateCreatePage;
 window.emailTemplateEditPage = emailTemplateEditPage;
 window.emailTemplateIndexPage = emailTemplateIndexPage;
+window.workflowFormPage = workflowFormPage;
+window.workflowIndexPage = workflowIndexPage;
 
 if (window.Alpine) {
   window.Alpine.data("setupPage", setupPage);
@@ -49,6 +55,8 @@ if (window.Alpine) {
   window.Alpine.data("emailTemplateCreatePage", emailTemplateCreatePage);
   window.Alpine.data("emailTemplateEditPage", emailTemplateEditPage);
   window.Alpine.data("emailTemplateIndexPage", emailTemplateIndexPage);
+  window.Alpine.data("workflowFormPage", workflowFormPage);
+  window.Alpine.data("workflowIndexPage", workflowIndexPage);
 }
 
 const initApp = () => {
