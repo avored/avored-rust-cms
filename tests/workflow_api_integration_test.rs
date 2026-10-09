@@ -89,6 +89,19 @@ async fn workflow_api_requires_authentication() {
 }
 
 #[tokio::test]
+async fn workflow_routes_are_registered_on_the_application_router() {
+    let state = test_avored_state().await;
+    let app = avored_rust_cms::api::rest_api_routes::rest_api_routes(state)
+        .expect("application router should be created");
+    let response = app
+        .oneshot(request("GET", "/api/workflows", None, None))
+        .await
+        .expect("request should complete");
+
+    assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+}
+
+#[tokio::test]
 async fn workflow_api_supports_authenticated_crud_and_activation() {
     let state = test_avored_state().await;
     let jwt = token(&state.config.jwt_secret_key);
@@ -268,6 +281,23 @@ async fn workflow_api_returns_structured_bad_request_for_invalid_definitions() {
         .await
         .expect("invalid webhook request should complete");
     assert_eq!(invalid_webhook.status(), StatusCode::BAD_REQUEST);
+
+    let invalid_recipient = workflow_api(test_avored_state().await)
+        .oneshot(request(
+            "POST",
+            "/api/workflows",
+            Some(
+                r#"{
+                    "name":"Invalid email",
+                    "trigger":{"entity_type":"customers","event":"created"},
+                    "actions":[{"type":"email","template_id":"welcome","recipient":"not-an-email"}]
+                }"#,
+            ),
+            Some(&jwt),
+        ))
+        .await
+        .expect("invalid email request should complete");
+    assert_eq!(invalid_recipient.status(), StatusCode::BAD_REQUEST);
 }
 
 #[tokio::test]

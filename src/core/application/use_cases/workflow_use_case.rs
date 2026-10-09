@@ -187,9 +187,9 @@ fn validate_actions(actions: &[crate::core::domain::entities::WorkflowAction]) -
                     match parsed {
                         Ok(uri)
                             if matches!(uri.scheme_str(), Some("http" | "https"))
-                                && uri.authority().is_some_and(|authority| {
-                                    !authority.host().is_empty()
-                                }) =>
+                                && uri
+                                    .authority()
+                                    .is_some_and(|authority| !authority.host().is_empty()) =>
                         {
                             None
                         }
