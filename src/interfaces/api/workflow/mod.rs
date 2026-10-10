@@ -9,7 +9,8 @@ use crate::{
     core::{
         application::dtos::{
             CreateWorkflowCommand, SetWorkflowActiveCommand, UpdateWorkflowCommand,
-            WorkflowPaginationQuery, WorkflowPaginationResponse,
+            WorkflowExecutionPaginationResponse, WorkflowPaginationQuery,
+            WorkflowPaginationResponse,
         },
         domain::entities::{user::TokenClaims, ErrorMessageResponse, ErrorResponse, WorkflowModel},
     },
@@ -76,12 +77,13 @@ pub async fn set_workflow_active_handler(
 }
 
 pub async fn list_workflow_executions_handler(
-    State(_state): State<AppState>,
+    State(state): State<AppState>,
     Extension(_logged_in_user): Extension<TokenClaims>,
-    Path(_id): Path<String>,
-    Query(_query): Query<WorkflowPaginationQuery>,
-) -> StatusCode {
-    StatusCode::NOT_IMPLEMENTED
+    Path(id): Path<String>,
+    Query(query): Query<WorkflowPaginationQuery>,
+) -> Result<Json<WorkflowExecutionPaginationResponse>> {
+    let executions = state.workflow_use_case.find_executions(&id, query).await?;
+    Ok(Json(executions))
 }
 
 fn parse_json_payload<T>(payload: std::result::Result<Json<T>, JsonRejection>) -> Result<Json<T>> {

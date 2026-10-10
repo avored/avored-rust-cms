@@ -5,7 +5,8 @@ use avored_rust_cms::{
     core::domain::entities::user::TokenClaims,
     interfaces::api::workflow::{
         create_workflow_handler, delete_workflow_handler, fetch_workflow_handler,
-        list_workflows_handler, set_workflow_active_handler, update_workflow_handler,
+        list_workflow_executions_handler, list_workflows_handler, set_workflow_active_handler,
+        update_workflow_handler,
     },
 };
 use axum::{
@@ -44,6 +45,10 @@ fn workflow_api(state: avored_rust_cms::avored_state::AppState) -> Router {
         .route(
             "/api/workflows/{id}/active",
             patch(set_workflow_active_handler),
+        )
+        .route(
+            "/api/workflows/{id}/executions",
+            get(list_workflow_executions_handler),
         )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
@@ -215,6 +220,92 @@ async fn workflow_api_supports_authenticated_crud_and_activation() {
         ))
         .await
         .expect("missing workflow request should complete");
+    assert_eq!(missing_response.status(), StatusCode::NOT_FOUND);
+}
+
+#[tokio::test]
+async fn workflow_execution_history_api_lists_empty_and_paginated_results() {
+    let state = test_avored_state().await;
+    let jwt = token(&state.config.jwt_secret_key);
+    let app = workflow_api(state.clone());
+
+    let create_response = app
+        .clone()
+        .oneshot(request(
+            "POST",
+            "/api/workflows",
+            Some(
+                r#"{
+                    "name":"History workflow",
+                    "trigger":{"entity_type":"customers","event":"created"},
+                    "actions":[{"type":"webhook","url":"https://example.test/hook"}]
+                }"#,
+            ),
+            Some(&jwt),
+        ))
+        .await
+        .expect("create request should complete");
+    assert_eq!(create_response.status(), StatusCode::CREATED);
+    let workflow_id = response_json(create_response)
+        .await["id"]
+        .as_str()
+        .expect("workflow id should be present")
+        .to_string();
+
+    let empty_response = app
+        .clone()
+        .oneshot(request(
+            "GET",
+            &format!("/api/workflows/{workflow_id}/executions?page=1&page_size=10"),
+            None,
+            Some(&jwt),
+        ))
+        .await
+        .expect("history request should complete");
+    assert_eq!(empty_response.status(), StatusCode::OK);
+    let empty_history = response_json(empty_response).await;
+    assert_eq!(empty_history["total"], 0);
+    assert_eq!(empty_history["data"].as_array().unwrap().len(), 0);
+
+    state
+        .workflow_use_case
+        .create_execution(&workflow_id, serde_json::json!({"record_id": "customer-123"}))
+        .await
+        .expect("execution should be created");
+    state
+        .workflow_use_case
+        .create_execution(&workflow_id, serde_json::json!({"record_id": "customer-456"}))
+        .await
+        .expect("execution should be created");
+
+    let history_response = app
+        .clone()
+        .oneshot(request(
+            "GET",
+            &format!("/api/workflows/{workflow_id}/executions?page=1&page_size=1"),
+            None,
+            Some(&jwt),
+        ))
+        .await
+        .expect("history request should complete");
+    assert_eq!(history_response.status(), StatusCode::OK);
+    let history = response_json(history_response).await;
+    assert_eq!(history["total"], 2);
+    assert_eq!(history["page"], 1);
+    assert_eq!(history["page_size"], 1);
+    assert_eq!(history["data"][0]["workflow_id"], workflow_id);
+    assert_eq!(history["data"][0]["status"], "running");
+    assert_eq!(history["data"][0]["payload"]["record_id"], "customer-456");
+
+    let missing_response = app
+        .oneshot(request(
+            "GET",
+            "/api/workflows/does-not-exist/executions",
+            None,
+            Some(&jwt),
+        ))
+        .await
+        .expect("missing workflow history request should complete");
     assert_eq!(missing_response.status(), StatusCode::NOT_FOUND);
 }
 
