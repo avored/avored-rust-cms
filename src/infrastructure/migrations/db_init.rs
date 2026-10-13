@@ -5,6 +5,7 @@ use crate::infrastructure::persistence::into_iter_objects;
 
 const INITIAL_SCHEMA_MIGRATION: &str = "0001_initial_schema";
 const WORKFLOW_SCHEMA_MIGRATION: &str = "0002_workflow_schema";
+const API_KEY_SCHEMA_MIGRATION: &str = "0003_api_key_schema";
 
 const REFRESH_DATABASE: bool = false;
 
@@ -126,6 +127,33 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
         .await?;
     }
 
+    if !migration_is_applied(datastore, session, API_KEY_SCHEMA_MIGRATION).await? {
+        let api_key_schema = r#"
+            DEFINE TABLE IF NOT EXISTS api_keys SCHEMAFULL;
+                DEFINE FIELD name        ON TABLE api_keys TYPE string;
+                DEFINE FIELD key_prefix  ON TABLE api_keys TYPE string;
+                DEFINE FIELD key_hash    ON TABLE api_keys TYPE string;
+                DEFINE FIELD permissions ON TABLE api_keys TYPE array;
+                DEFINE FIELD permissions[*] ON TABLE api_keys FLEXIBLE TYPE object;
+                DEFINE FIELD created_at  ON TABLE api_keys TYPE datetime;
+                DEFINE FIELD created_by  ON TABLE api_keys TYPE string;
+                DEFINE FIELD updated_at  ON TABLE api_keys TYPE datetime;
+                DEFINE FIELD updated_by  ON TABLE api_keys TYPE string;
+
+                DEFINE INDEX IF NOT EXISTS api_keys_hash_unique
+                    ON api_keys FIELDS key_hash UNIQUE;
+        "#;
+
+        datastore.execute(api_key_schema, session, None).await?;
+        record_migration(
+            datastore,
+            session,
+            API_KEY_SCHEMA_MIGRATION,
+            "api key schema",
+        )
+        .await?;
+    }
+
     if REFRESH_DATABASE {
         reset_local_database(datastore, session).await?;
     }
@@ -182,6 +210,7 @@ pub async fn reset_local_database(datastore: &Datastore, session: &Session) -> R
              REMOVE TABLE IF EXISTS email_templates;
              REMOVE TABLE IF EXISTS workflows;
              REMOVE TABLE IF EXISTS workflow_executions;
+             REMOVE TABLE IF EXISTS api_keys;
              REMOVE TABLE IF EXISTS _migrations;",
             session,
             None,
