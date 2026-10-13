@@ -13,6 +13,9 @@ import { emailTemplateEditPage } from "./email/EmailTemplateEditPage";
 import { emailTemplateIndexPage } from "./email/EmailTemplateIndexPage";
 import { workflowFormPage } from "./workflow/WorkflowFormPage";
 import { workflowIndexPage } from "./workflow/WorkflowIndexPage";
+import { apiKeyIndexPage } from "./api_key/ApiKeyIndexPage";
+import { apiKeyCreatePage } from "./api_key/ApiKeyCreatePage";
+import { apiKeyEditPage } from "./api_key/ApiKeyEditPage";
 
 declare global {
   interface Window {
@@ -28,6 +31,9 @@ declare global {
     emailTemplateIndexPage: typeof emailTemplateIndexPage;
     workflowFormPage: typeof workflowFormPage;
     workflowIndexPage: typeof workflowIndexPage;
+    apiKeyIndexPage: typeof apiKeyIndexPage;
+    apiKeyCreatePage: typeof apiKeyCreatePage;
+    apiKeyEditPage: typeof apiKeyEditPage;
   }
 }
 
@@ -43,6 +49,9 @@ window.emailTemplateEditPage = emailTemplateEditPage;
 window.emailTemplateIndexPage = emailTemplateIndexPage;
 window.workflowFormPage = workflowFormPage;
 window.workflowIndexPage = workflowIndexPage;
+window.apiKeyIndexPage = apiKeyIndexPage;
+window.apiKeyCreatePage = apiKeyCreatePage;
+window.apiKeyEditPage = apiKeyEditPage;
 
 if (window.Alpine) {
   window.Alpine.data("setupPage", setupPage);
@@ -57,6 +66,9 @@ if (window.Alpine) {
   window.Alpine.data("emailTemplateIndexPage", emailTemplateIndexPage);
   window.Alpine.data("workflowFormPage", workflowFormPage);
   window.Alpine.data("workflowIndexPage", workflowIndexPage);
+  window.Alpine.data("apiKeyIndexPage", apiKeyIndexPage);
+  window.Alpine.data("apiKeyCreatePage", apiKeyCreatePage);
+  window.Alpine.data("apiKeyEditPage", apiKeyEditPage);
 }
 
 const initApp = () => {

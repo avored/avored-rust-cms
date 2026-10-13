@@ -133,8 +133,7 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
                 DEFINE FIELD name        ON TABLE api_keys TYPE string;
                 DEFINE FIELD key_prefix  ON TABLE api_keys TYPE string;
                 DEFINE FIELD key_hash    ON TABLE api_keys TYPE string;
-                DEFINE FIELD permissions ON TABLE api_keys TYPE array;
-                DEFINE FIELD permissions[*] ON TABLE api_keys FLEXIBLE TYPE object;
+                DEFINE FIELD permissions ON TABLE api_keys TYPE array<object> FLEXIBLE;
                 DEFINE FIELD created_at  ON TABLE api_keys TYPE datetime;
                 DEFINE FIELD created_by  ON TABLE api_keys TYPE string;
                 DEFINE FIELD updated_at  ON TABLE api_keys TYPE datetime;

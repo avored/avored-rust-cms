@@ -118,6 +118,14 @@ pub fn AppLayout() -> impl IntoView {
                         </svg>
                         <span class="ml-2">"Workflows"</span>
                     </a>
+
+                    <a href="/admin/api-keys" class="group flex items-center rounded-md px-4 py-2 text-gray-700 transition hover:bg-gray-100" active-class="bg-blue-50 text-blue-600 font-medium">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class={class}>
+                            <path d="M21 2l-2 2m-2-2l2 2m0 0l-7.5 7.5a5 5 0 1 0 2 2L21 6.5V4h-2.5L17 5.5"></path>
+                            <circle cx="8" cy="16" r="3"></circle>
+                        </svg>
+                        <span class="ml-2">"API Keys"</span>
+                    </a>
                 </nav>
             </aside>
 
