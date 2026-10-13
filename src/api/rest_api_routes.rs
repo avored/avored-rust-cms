@@ -49,7 +49,7 @@ use tower_http::{
 
 use crate::{
     avored_state::AppState,
-    infrastructure::middleware::auth_middleware,
+    infrastructure::middleware::{api_key_middleware, auth_middleware},
     interfaces::web::{shell::Shell, web_routes::WebApp},
 };
 
@@ -122,14 +122,6 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/entities/{id}/identifier",
             put(update_entity_identifier_handler),
         )
-        .route("/api/v1/entities", get(api_manager_paginate_entities_handler))
-        .route("/api/v1/entities", post(create_entity_record_handler))
-        .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
-        .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
-        .route(
-            "/api/v1/entities/{id}",
-            delete(delete_entity_record_handler),
-        )
         .route("/api/api-keys", get(paginate_api_keys_handler))
         .route("/api/api-keys", post(create_api_key_handler))
         .route("/api/api-keys/{id}", get(fetch_api_key_handler))
@@ -138,7 +130,24 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,
-        ))
+        ));
+
+    let v1_router = Router::<AppState>::new()
+        .route("/api/v1/entities", get(api_manager_paginate_entities_handler))
+        .route("/api/v1/entities", post(create_entity_record_handler))
+        .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
+        .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
+        .route(
+            "/api/v1/entities/{id}",
+            delete(delete_entity_record_handler),
+        )
+        .layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            api_key_middleware::check_api_key_auth,
+        ));
+
+    let router = router
+        .merge(v1_router)
         // Versioned API Manager routes (public or specific auth if any)
         .route(
             "/api/auth/login",

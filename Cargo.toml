@@ -22,6 +22,8 @@ tokio = { version = "1", features = ["rt-multi-thread", "net"], optional = true 
 surrealdb = { version = "3.2.4", features = ["kv-rocksdb", "kv-mem"], optional = true }
 surrealdb-core = { version = "3.2.4", optional = true }
 rand = { version = "0.8", optional = true }
+base64 = { version = "0.22", optional = true }
+sha2 = { version = "0.10", optional = true }
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"], optional = true }
 # Keep the wasm-bindgen version aligned with cargo-leptos; otherwise the generated JS/WASM
 # will fail at runtime with the missing __wbindgen_externref_table_alloc symbol.
@@ -65,6 +67,8 @@ ssr = [
     "leptos_router/ssr",
     "dep:argon2",
     "dep:rand",
+    "dep:base64",
+    "dep:sha2",
     "dep:jsonwebtoken",
     "dep:reqwest",
 ]
