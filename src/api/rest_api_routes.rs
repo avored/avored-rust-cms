@@ -3,7 +3,7 @@ use crate::interfaces::api::{
         create_entity_record_handler::create_entity_record_handler,
         delete_entity_record_handler::delete_entity_record_handler,
         fetch_entity_record_handler::fetch_entity_record_handler,
-        list_entities_handler::list_entities_handler,
+        paginate_entities_handler::paginate_entities_handler as api_manager_paginate_entities_handler,
         update_entity_record_handler::update_entity_record_handler,
     },
     collection::{
@@ -29,6 +29,10 @@ use crate::interfaces::api::{
         create_workflow_handler, delete_workflow_handler, fetch_workflow_handler,
         list_workflow_executions_handler, list_workflows_handler, set_workflow_active_handler,
         update_workflow_handler,
+    },
+    api_key::{
+        create_api_key_handler, delete_api_key_handler, fetch_api_key_handler,
+        paginate_api_keys_handler, update_api_key_handler,
     },
 };
 use axum::{
@@ -118,7 +122,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/entities/{id}/identifier",
             put(update_entity_identifier_handler),
         )
-        .route("/api/v1/entities", get(list_entities_handler))
+        .route("/api/v1/entities", get(api_manager_paginate_entities_handler))
         .route("/api/v1/entities", post(create_entity_record_handler))
         .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
         .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
@@ -126,6 +130,11 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/v1/entities/{id}",
             delete(delete_entity_record_handler),
         )
+        .route("/api/api-keys", get(paginate_api_keys_handler))
+        .route("/api/api-keys", post(create_api_key_handler))
+        .route("/api/api-keys/{id}", get(fetch_api_key_handler))
+        .route("/api/api-keys/{id}", put(update_api_key_handler))
+        .route("/api/api-keys/{id}", delete(delete_api_key_handler))
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,

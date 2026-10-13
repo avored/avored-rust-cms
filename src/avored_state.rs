@@ -6,11 +6,13 @@ use leptos::config::LeptosOptions;
 use crate::{
     core::application::use_cases::{
         AuthUseCase, EmailTemplateUseCase, EntityUseCase, MiscUseCase, WorkflowUseCase,
+        ApiKeyUseCase,
     },
     infrastructure::persistence::{
         email_template_repository::EmailTemplateRepositoryImpl,
         entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
         workflow_repository::WorkflowRepositoryImpl, AuthRepositoryImpl,
+        api_key_repository::ApiKeyRepositoryImpl,
     },
     infrastructure::workflow_dispatcher::{HttpWebhookExecutor, WorkflowDispatcher},
     providers::{
@@ -35,6 +37,8 @@ pub struct AppState {
     pub workflow_use_case: WorkflowUseCase<WorkflowRepositoryImpl>,
 
     pub workflow_dispatcher: WorkflowDispatcher,
+
+    pub api_key_use_case: ApiKeyUseCase<ApiKeyRepositoryImpl>,
 
     // pub attribute_use_case: AttributeUseCase<AttributeRepositoryImpl>,
     /// Database provider for `AvoRed` (SurrealDB).
@@ -75,6 +79,9 @@ impl AppState {
         let workflow_dispatcher =
             WorkflowDispatcher::new(workflow_use_case.clone(), HttpWebhookExecutor::new());
 
+        let api_key_repository = ApiKeyRepositoryImpl::new(avored_database_provider.clone());
+        let api_key_use_case = ApiKeyUseCase::new(api_key_repository);
+
         // let attribute_repository = AttributeRepositoryImpl::new(avored_database_provider.clone());
         // let attribute_use_case = AttributeUseCase::new(attribute_repository);
 
@@ -88,6 +95,7 @@ impl AppState {
             email_template_use_case,
             workflow_use_case,
             workflow_dispatcher,
+            api_key_use_case,
             // attribute_use_case
         })
     }
@@ -110,6 +118,8 @@ pub async fn test_avored_state() -> AppState {
     let workflow_use_case = WorkflowUseCase::new(workflow_repository);
     let workflow_dispatcher =
         WorkflowDispatcher::new(workflow_use_case.clone(), HttpWebhookExecutor::new());
+    let api_key_repository = ApiKeyRepositoryImpl::new(database_provider.clone());
+    let api_key_use_case = ApiKeyUseCase::new(api_key_repository);
     // let attribute_repository = AttributeRepositoryImpl::new(database_provider.clone());
 
     AppState {
@@ -122,6 +132,7 @@ pub async fn test_avored_state() -> AppState {
         email_template_use_case: EmailTemplateUseCase::new(email_template_repository),
         workflow_use_case,
         workflow_dispatcher,
+        api_key_use_case,
         // attribute_use_case: AttributeUseCase::new(attribute_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {

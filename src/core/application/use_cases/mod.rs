@@ -17,6 +17,9 @@ pub use email_template_use_case::EmailTemplateUseCase;
 pub mod workflow_use_case;
 pub use workflow_use_case::WorkflowUseCase;
 
+pub mod api_key_use_case;
+pub use api_key_use_case::ApiKeyUseCase;
+
 // pub mod attribute_use_case;
 
 // pub use attribute_use_case::AttributeUseCase;

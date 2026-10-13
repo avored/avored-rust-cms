@@ -11,3 +11,5 @@ pub mod email_template;
 pub mod workflow;
 
 pub mod api_manager;
+
+pub mod api_key;

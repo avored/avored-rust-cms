@@ -20,7 +20,7 @@ const RESERVED_KEYS: &[&str] = &["entity_type", "page", "limit"];
 /// Returns a paginated list of dynamic records belonging to the supplied entity
 /// type.  Any query parameter other than the three reserved ones is interpreted
 /// as an attribute equality filter.
-pub async fn list_entities_handler(
+pub async fn paginate_entities_handler(
     State(state): State<AppState>,
     Query(mut query): Query<ListEntitiesQuery>,
 ) -> Result<Json<ListEntitiesResponse>> {

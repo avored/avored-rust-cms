@@ -20,3 +20,6 @@ pub use workflow_repository::WorkflowRepository;
 pub mod attribute_repository;
 
 pub use attribute_repository::AttributeRepository;
+
+pub mod api_key_repository;
+pub use api_key_repository::ApiKeyRepository;

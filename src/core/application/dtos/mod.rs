@@ -19,3 +19,5 @@ pub use workflow_dto::{
     CreateWorkflowCommand, SetWorkflowActiveCommand, UpdateWorkflowCommand,
     WorkflowExecutionPaginationResponse, WorkflowPaginationQuery, WorkflowPaginationResponse,
 };
+
+pub mod api_key_dto;

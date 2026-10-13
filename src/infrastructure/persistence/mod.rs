@@ -14,6 +14,9 @@ pub use email_template_repository::EmailTemplateRepositoryImpl;
 pub mod workflow_repository;
 pub use workflow_repository::WorkflowRepositoryImpl;
 
+pub mod api_key_repository;
+pub use api_key_repository::ApiKeyRepositoryImpl;
+
 // pub mod attribute_repository;
 // pub use attribute_repository::AttributeRepositoryImpl;
 

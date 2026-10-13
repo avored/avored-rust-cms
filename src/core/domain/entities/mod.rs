@@ -23,3 +23,6 @@ pub use workflow::{
 
 pub mod attribute;
 pub use attribute::{AttributeModel, StorableAttribute};
+
+pub mod api_key;
+pub use api_key::{ApiKeyModel, ApiKeyPermission, StorableApiKey, UpdatableApiKey};
