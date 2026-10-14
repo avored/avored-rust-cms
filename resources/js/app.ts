@@ -16,6 +16,7 @@ import { workflowIndexPage } from "./workflow/WorkflowIndexPage";
 import { apiKeyIndexPage } from "./api_key/ApiKeyIndexPage";
 import { apiKeyCreatePage } from "./api_key/ApiKeyCreatePage";
 import { apiKeyEditPage } from "./api_key/ApiKeyEditPage";
+import { appLayout } from "./layouts/AppLayout";
 
 declare global {
   interface Window {
@@ -34,6 +35,7 @@ declare global {
     apiKeyIndexPage: typeof apiKeyIndexPage;
     apiKeyCreatePage: typeof apiKeyCreatePage;
     apiKeyEditPage: typeof apiKeyEditPage;
+    appLayout: typeof appLayout;
   }
 }
 
@@ -52,8 +54,10 @@ window.workflowIndexPage = workflowIndexPage;
 window.apiKeyIndexPage = apiKeyIndexPage;
 window.apiKeyCreatePage = apiKeyCreatePage;
 window.apiKeyEditPage = apiKeyEditPage;
+window.appLayout = appLayout;
 
 if (window.Alpine) {
+  window.Alpine.data("appLayout", appLayout);
   window.Alpine.data("setupPage", setupPage);
   window.Alpine.data("entityIndexPage", entityIndexPage);
   window.Alpine.data("entityCreatePage", entityCreatePage);
