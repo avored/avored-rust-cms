@@ -68,8 +68,8 @@ pub fn AppLayout() -> impl IntoView {
                     >
                         <img src="/assets/images/avored.svg" class="h-8 w-8 shrink-0" alt="Avored" />
                         <span
-                            class="hidden lg:inline text-primary-500 font-semibold ml-1 whitespace-nowrap"
-                            x-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="text-primary-500 font-semibold ml-1 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
                             "Avored"
                         </span>
@@ -92,8 +92,8 @@ pub fn AppLayout() -> impl IntoView {
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
                             {t!("dashboard")}
                         </span>
@@ -112,8 +112,8 @@ pub fn AppLayout() -> impl IntoView {
                             <line x1="12" y1="22.08" x2="12" y2="12"></line>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bindx-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
                             {t!("entities")}
                         </span>
@@ -132,8 +132,8 @@ pub fn AppLayout() -> impl IntoView {
                             <polyline points="2 12 12 17 22 12"></polyline>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bindx-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
                             {t!("collections")}
                         </span>
@@ -151,8 +151,8 @@ pub fn AppLayout() -> impl IntoView {
                             <path d="M4 7l8 6 8-6"></path>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
                             {t!("email_templates")}
                         </span>
@@ -172,10 +172,10 @@ pub fn AppLayout() -> impl IntoView {
                             <path d="M12 15H9a3 3 0 0 0-3 3v3"></path>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
-                            "Workflows"
+                            {t!("workflows")}
                         </span>
                     </a>
 
@@ -191,10 +191,10 @@ pub fn AppLayout() -> impl IntoView {
                             <circle cx="8" cy="16" r="3"></circle>
                         </svg>
                         <span
-                            class="hidden lg:inline ml-2 whitespace-nowrap"
-                            x-bind:class="{ '!hidden': isSidebarCollapsed }"
+                            class="ml-2 whitespace-nowrap"
+                            x-bind:class="isSidebarCollapsed ? 'hidden' : 'hidden lg:inline'"
                         >
-                            "API Keys"
+                            {t!("api_keys")}
                         </span>
                     </a>
                 </nav>

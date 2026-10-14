@@ -33,6 +33,8 @@
     "saving": "Saving...",
     "loading": "Loading...",
     "collections": "Collections",
-    "email_templates": "Email Templates"
-
+    "email_templates": "Email Templates",
+    "workflows": "Workflows",
+    "api_keys": "API Keys",
+    "dashboard": "Dashboard"
 }
