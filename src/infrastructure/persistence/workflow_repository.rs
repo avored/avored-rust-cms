@@ -1,7 +1,7 @@
 use std::{collections::BTreeMap, sync::Arc};
 
 use serde_json::Value as JsonValue;
-use surrealdb::types::{Number, Object, RecordId, RecordIdKey, Value};
+use surrealdb::types::{Number, Object, RecordIdKey, Value};
 
 use crate::{
     core::domain::{
@@ -14,7 +14,7 @@ use crate::{
         repositories::WorkflowRepository,
     },
     error::{Error, Result},
-    infrastructure::persistence::into_iter_objects,
+    infrastructure::persistence::{into_iter_objects, RecordIdExtension},
     providers::avored_database_provider::AvoRedDatabaseProvider,
 };
 
@@ -26,17 +26,6 @@ pub struct WorkflowRepositoryImpl {
 impl WorkflowRepositoryImpl {
     pub fn new(database_provider: Arc<AvoRedDatabaseProvider>) -> Self {
         Self { database_provider }
-    }
-
-    fn record_id(table: &str, id: &str) -> RecordId {
-        let key = id
-            .strip_prefix(&format!("{table}:"))
-            .unwrap_or(id)
-            .to_string();
-        RecordId {
-            table: table.into(),
-            key: RecordIdKey::String(key),
-        }
     }
 }
 
@@ -110,7 +99,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
             format!("SELECT * FROM {WORKFLOWS_TABLE_NAME} WHERE id = $id AND deleted_at = NONE;");
         let values = BTreeMap::from([(
             "id".to_string(),
-            Value::RecordId(Self::record_id(WORKFLOWS_TABLE_NAME, id)),
+            Value::RecordId(id.to_record_id(WORKFLOWS_TABLE_NAME)),
         )]);
         let response = datastore
             .execute(&sql, session, Some(values.into()))
@@ -170,7 +159,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let values = BTreeMap::from([
             (
                 "id".to_string(),
-                Value::RecordId(Self::record_id(WORKFLOWS_TABLE_NAME, id)),
+                Value::RecordId(id.to_record_id(WORKFLOWS_TABLE_NAME)),
             ),
             ("name".to_string(), Value::String(name)),
             (
@@ -206,7 +195,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let values = BTreeMap::from([
             (
                 "id".to_string(),
-                Value::RecordId(Self::record_id(WORKFLOWS_TABLE_NAME, id)),
+                Value::RecordId(id.to_record_id(WORKFLOWS_TABLE_NAME)),
             ),
             ("is_active".to_string(), Value::Bool(is_active)),
         ]);
@@ -228,7 +217,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         );
         let values = BTreeMap::from([(
             "id".to_string(),
-            Value::RecordId(Self::record_id(WORKFLOWS_TABLE_NAME, id)),
+            Value::RecordId(id.to_record_id(WORKFLOWS_TABLE_NAME)),
         )]);
         let response = datastore
             .execute(&sql, session, Some(values.into()))
@@ -283,7 +272,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let values = BTreeMap::from([
             (
                 "id".to_string(),
-                Value::RecordId(Self::record_id(WORKFLOW_EXECUTIONS_TABLE_NAME, id)),
+                Value::RecordId(id.to_record_id(WORKFLOW_EXECUTIONS_TABLE_NAME)),
             ),
             (
                 "status".to_string(),
@@ -313,7 +302,7 @@ impl WorkflowRepository for WorkflowRepositoryImpl {
         let exists_sql = format!("SELECT id FROM {WORKFLOWS_TABLE_NAME} WHERE id = $id;");
         let exists_values = BTreeMap::from([(
             "id".to_string(),
-            Value::RecordId(Self::record_id(WORKFLOWS_TABLE_NAME, workflow_id)),
+            Value::RecordId(workflow_id.to_record_id(WORKFLOWS_TABLE_NAME)),
         )]);
         let exists_response = datastore
             .execute(&exists_sql, session, Some(exists_values.into()))

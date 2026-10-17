@@ -31,7 +31,7 @@ Activate this skill when a user asks to plan, map out, or build full-stack featu
 3. **Map Dependencies:** Check existing shared types, data wrappers, and state extractors to keep configurations homogenous.
 
 ## Phase 2: Technical Plan Generation
-Using the layout rules from [technical plan template](./templates/tech-plan-template.md), generate a scannable implementation brief featuring these exact steps:
+Using the layout rules from [technical plan template](./templates/tech-plan-template.md), generate a scannable implementation brief and save it as an `implementation-phase-{number}.md` file directly in the same folder as the target `ticket.md` (e.g., `implementation-phase-1.md`, incrementing `{number}` if prior phase files already exist in that directory). The plan must cover these exact steps:
 
 1. **Scaffolding Sequence:** Define where Rust `todo!()` structures will be set up across Axum handlers and Leptos views alongside Alpine binding declarations.
 2. **Database & Infrastructure Layer:** Map updates to the data access tier.

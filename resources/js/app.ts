@@ -17,6 +17,7 @@ import { apiKeyIndexPage } from "./api_key/ApiKeyIndexPage";
 import { apiKeyCreatePage } from "./api_key/ApiKeyCreatePage";
 import { apiKeyEditPage } from "./api_key/ApiKeyEditPage";
 import { appLayout } from "./layouts/AppLayout";
+import { adminProfilePage } from "./admin/AdminProfilePage";
 
 declare global {
   interface Window {
@@ -36,6 +37,7 @@ declare global {
     apiKeyCreatePage: typeof apiKeyCreatePage;
     apiKeyEditPage: typeof apiKeyEditPage;
     appLayout: typeof appLayout;
+    adminProfilePage: typeof adminProfilePage;
   }
 }
 
@@ -55,6 +57,7 @@ window.apiKeyIndexPage = apiKeyIndexPage;
 window.apiKeyCreatePage = apiKeyCreatePage;
 window.apiKeyEditPage = apiKeyEditPage;
 window.appLayout = appLayout;
+window.adminProfilePage = adminProfilePage;
 
 if (window.Alpine) {
   window.Alpine.data("appLayout", appLayout);
@@ -73,6 +76,7 @@ if (window.Alpine) {
   window.Alpine.data("apiKeyIndexPage", apiKeyIndexPage);
   window.Alpine.data("apiKeyCreatePage", apiKeyCreatePage);
   window.Alpine.data("apiKeyEditPage", apiKeyEditPage);
+  window.Alpine.data("adminProfilePage", adminProfilePage);
 }
 
 const initApp = () => {

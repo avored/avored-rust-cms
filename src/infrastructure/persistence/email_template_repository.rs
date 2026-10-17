@@ -7,7 +7,7 @@ use crate::core::domain::constants::EMAIL_TEMPLATES_TABLE_NAME;
 use crate::core::domain::entities::email_template::EmailTemplateModel;
 use crate::core::domain::repositories::EmailTemplateRepository;
 use crate::error::Result;
-use crate::infrastructure::persistence::into_iter_objects;
+use crate::infrastructure::persistence::{into_iter_objects, RecordIdExtension};
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
 
 #[derive(Clone)]
@@ -102,18 +102,16 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
     ) -> Result<EmailTemplateModel> {
         let (datastore, database_session) = &self.database_provider.db;
 
-        let target_record = surrealdb::types::RecordId {
-            table: EMAIL_TEMPLATES_TABLE_NAME.into(),
-            key: surrealdb::types::RecordIdKey::String(id.to_string()),
-        };
-
         let sql = format!(
             "UPDATE {} SET name=$name, subject=$subject, body_html=$body_html, body_plain=$body_plain, updated_at=time::now() WHERE id = $id AND deleted_at = NONE RETURN *;",
             EMAIL_TEMPLATES_TABLE_NAME
         );
 
         let data = BTreeMap::from([
-            ("id".to_string(), Value::RecordId(target_record)),
+            (
+                "id".to_string(),
+                Value::RecordId(id.to_record_id(EMAIL_TEMPLATES_TABLE_NAME)),
+            ),
             ("name".to_string(), Value::String(name)),
             ("subject".to_string(), Value::String(subject)),
             ("body_html".to_string(), Value::String(body_html)),
@@ -146,17 +144,16 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
         // Verify existence
         self.find_by_id(id).await?;
 
-        let target_record = surrealdb::types::RecordId {
-            table: EMAIL_TEMPLATES_TABLE_NAME.into(),
-            key: surrealdb::types::RecordIdKey::String(id.to_string()),
-        };
-
         let sql = format!(
             "UPDATE {} SET deleted_at = time::now(), updated_at = time::now() WHERE id = $id AND deleted_at = NONE;",
             EMAIL_TEMPLATES_TABLE_NAME
         );
 
-        let data: BTreeMap<String, Value> = [("id".into(), Value::RecordId(target_record))].into();
+        let data: BTreeMap<String, Value> = [(
+            "id".into(),
+            Value::RecordId(id.to_record_id(EMAIL_TEMPLATES_TABLE_NAME)),
+        )]
+        .into();
 
         let responses = datastore
             .execute(&sql, database_session, Some(data.into()))

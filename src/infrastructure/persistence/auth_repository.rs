@@ -1,7 +1,7 @@
 use surrealdb::types::Value;
 
 use crate::core::domain::{entities::UserModel, repositories::AuthRepository};
-use crate::infrastructure::persistence::into_iter_objects;
+use crate::infrastructure::persistence::{into_iter_objects, RecordIdExtension};
 
 use crate::error::Result;
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
@@ -38,6 +38,78 @@ impl AuthRepository for AuthRepositoryImpl {
         let user: UserModel = result_object.try_into()?;
 
         Ok(user)
+    }
+
+    async fn fetch_by_id(&self, id: &str) -> Result<UserModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = "SELECT * FROM users WHERE id = $id;";
+        let data: BTreeMap<String, Value> = [(
+            "id".to_string(),
+            Value::RecordId(id.to_record_id("users")),
+        )]
+        .into();
+
+        let responses = datastore
+            .execute(sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?
+            .next()
+            .ok_or_else(|| crate::error::Error::Generic(format!("User '{id}' not found")))??;
+
+        let user: UserModel = result_object.try_into()?;
+        Ok(user)
+    }
+
+    async fn update_profile(&self, id: &str, name: &str, email: &str) -> Result<UserModel> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = "UPDATE users SET name = $name, email = $email, updated_at = time::now() WHERE id = $id RETURN AFTER;";
+        let data: BTreeMap<String, Value> = [
+            (
+                "id".to_string(),
+                Value::RecordId(id.to_record_id("users")),
+            ),
+            ("name".to_string(), Value::String(name.to_string())),
+            ("email".to_string(), Value::String(email.to_string())),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(sql, database_session, Some(data.into()))
+            .await?;
+
+        let result_object = into_iter_objects(responses)?
+            .next()
+            .ok_or_else(|| crate::error::Error::Generic(format!("User '{id}' not found")))??;
+
+        let user: UserModel = result_object.try_into()?;
+        Ok(user)
+    }
+
+    async fn update_password(&self, id: &str, password_hash: &str) -> Result<bool> {
+        let (datastore, database_session) = &self.database_provider.db;
+
+        let sql = "UPDATE users SET password = $password, updated_at = time::now() WHERE id = $id RETURN AFTER;";
+        let data: BTreeMap<String, Value> = [
+            (
+                "id".to_string(),
+                Value::RecordId(id.to_record_id("users")),
+            ),
+            (
+                "password".to_string(),
+                Value::String(password_hash.to_string()),
+            ),
+        ]
+        .into();
+
+        let responses = datastore
+            .execute(sql, database_session, Some(data.into()))
+            .await?;
+
+        let has_result = into_iter_objects(responses)?.next().is_some();
+        Ok(has_result)
     }
 }
 

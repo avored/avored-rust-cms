@@ -127,6 +127,18 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route("/api/api-keys/{id}", get(fetch_api_key_handler))
         .route("/api/api-keys/{id}", put(update_api_key_handler))
         .route("/api/api-keys/{id}", delete(delete_api_key_handler))
+        .route(
+            "/api/v1/admin/me",
+            get(crate::interfaces::api::auth::get_profile_handler),
+        )
+        .route(
+            "/api/v1/admin/me",
+            put(crate::interfaces::api::auth::update_profile_handler),
+        )
+        .route(
+            "/api/v1/admin/me/password",
+            put(crate::interfaces::api::auth::change_password_handler),
+        )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,

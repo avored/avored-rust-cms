@@ -17,6 +17,8 @@ pub use workflow_repository::WorkflowRepositoryImpl;
 pub mod api_key_repository;
 pub use api_key_repository::ApiKeyRepositoryImpl;
 
+pub use crate::core::domain::extensions::RecordIdExtension;
+
 // pub mod attribute_repository;
 // pub use attribute_repository::AttributeRepositoryImpl;
 

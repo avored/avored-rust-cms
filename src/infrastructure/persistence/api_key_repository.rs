@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use serde_json::Value as JsonValue;
-use surrealdb::types::{Number, Object, RecordId, RecordIdKey, Value};
+use surrealdb::types::{Number, Object, RecordIdKey, Value};
 
 use crate::core::domain::constants::API_KEYS_TABLE_NAME;
 use crate::core::domain::entities::api_key::{
@@ -10,7 +10,7 @@ use crate::core::domain::entities::api_key::{
 };
 use crate::core::domain::repositories::api_key_repository::ApiKeyRepository;
 use crate::error::{Error, Result};
-use crate::infrastructure::persistence::into_iter_objects;
+use crate::infrastructure::persistence::{into_iter_objects, RecordIdExtension};
 use crate::providers::avored_database_provider::AvoRedDatabaseProvider;
 
 #[derive(Clone)]
@@ -22,17 +22,6 @@ impl ApiKeyRepositoryImpl {
     pub fn new(db: Arc<AvoRedDatabaseProvider>) -> Self {
         Self {
             database_provider: db,
-        }
-    }
-
-    fn record_id(table: &str, id: &str) -> RecordId {
-        let key = id
-            .strip_prefix(&format!("{table}:"))
-            .unwrap_or(id)
-            .to_string();
-        RecordId {
-            table: table.into(),
-            key: RecordIdKey::String(key),
         }
     }
 }
@@ -78,7 +67,7 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
         let sql = format!("SELECT * FROM {API_KEYS_TABLE_NAME} WHERE id = $id LIMIT 1;");
         let values = BTreeMap::from([(
             "id".to_string(),
-            Value::RecordId(Self::record_id(API_KEYS_TABLE_NAME, id)),
+            Value::RecordId(id.to_record_id(API_KEYS_TABLE_NAME)),
         )]);
 
         let response = datastore
@@ -160,7 +149,7 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
         let values = BTreeMap::from([
             (
                 "id".to_string(),
-                Value::RecordId(Self::record_id(API_KEYS_TABLE_NAME, id)),
+                Value::RecordId(id.to_record_id(API_KEYS_TABLE_NAME)),
             ),
             ("name".to_string(), Value::String(updatable.name)),
             (
@@ -186,7 +175,7 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
         let sql = format!("DELETE {API_KEYS_TABLE_NAME} WHERE id = $id RETURN BEFORE;");
         let values = BTreeMap::from([(
             "id".to_string(),
-            Value::RecordId(Self::record_id(API_KEYS_TABLE_NAME, id)),
+            Value::RecordId(id.to_record_id(API_KEYS_TABLE_NAME)),
         )]);
 
         let response = datastore

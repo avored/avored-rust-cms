@@ -7,3 +7,5 @@ pub mod email;
 pub mod workflow;
 
 pub mod api_key;
+
+pub mod profile;
