@@ -1,0 +1,883 @@
+{
+  "repository": "avored/avored-rust-cms",
+  "fetchedAt": "2026-10-17T23:45:00.747Z",
+  "authentication": "GitHub CLI authenticated as indpurvesh",
+  "labels": {
+    "source": "gh api --paginate repos/avored/avored-rust-cms/labels",
+    "complete": true,
+    "items": [
+      {
+        "color": "1D76DB",
+        "description": "API endpoints, contracts, and integrations",
+        "isDefault": false,
+        "name": "api"
+      },
+      {
+        "color": "C5DC5E",
+        "description": "",
+        "isDefault": false,
+        "name": "backend"
+      },
+      {
+        "color": "d73a4a",
+        "description": "Something isn't working",
+        "isDefault": true,
+        "name": "bug"
+      },
+      {
+        "color": "5319E7",
+        "description": "Dependency upgrades and dependency management",
+        "isDefault": false,
+        "name": "dependencies"
+      },
+      {
+        "color": "0075ca",
+        "description": "Improvements or additions to documentation",
+        "isDefault": true,
+        "name": "documentation"
+      },
+      {
+        "color": "cfd3d7",
+        "description": "This issue or pull request already exists",
+        "isDefault": true,
+        "name": "duplicate"
+      },
+      {
+        "color": "a2eeef",
+        "description": "New feature or request",
+        "isDefault": true,
+        "name": "enhancement"
+      },
+      {
+        "color": "8BB474",
+        "description": "",
+        "isDefault": false,
+        "name": "frontend"
+      },
+      {
+        "color": "4E0464",
+        "description": "",
+        "isDefault": false,
+        "name": "future feature"
+      },
+      {
+        "color": "7057ff",
+        "description": "Good for newcomers",
+        "isDefault": true,
+        "name": "good first issue"
+      },
+      {
+        "color": "2CCDDA",
+        "description": "",
+        "isDefault": false,
+        "name": "hacktoberfest"
+      },
+      {
+        "color": "CFBB8A",
+        "description": "",
+        "isDefault": false,
+        "name": "hacktoberfest-accepted"
+      },
+      {
+        "color": "008672",
+        "description": "Extra attention is needed",
+        "isDefault": true,
+        "name": "help wanted"
+      },
+      {
+        "color": "EC893D",
+        "description": "Maintenance and improvements to existing functionality",
+        "isDefault": false,
+        "name": "improvement"
+      },
+      {
+        "color": "e4e669",
+        "description": "This doesn't seem right",
+        "isDefault": true,
+        "name": "invalid"
+      },
+      {
+        "color": "72D717",
+        "description": "",
+        "isDefault": false,
+        "name": "investigation"
+      },
+      {
+        "color": "D4C5F9",
+        "description": "Logging, tracing, metrics, and health checks",
+        "isDefault": false,
+        "name": "observability"
+      },
+      {
+        "color": "B60205",
+        "description": "High-priority work",
+        "isDefault": false,
+        "name": "priority: high"
+      },
+      {
+        "color": "0E8A16",
+        "description": "Low-priority work",
+        "isDefault": false,
+        "name": "priority: low"
+      },
+      {
+        "color": "FBCA04",
+        "description": "Medium-priority work",
+        "isDefault": false,
+        "name": "priority: medium"
+      },
+      {
+        "color": "d876e3",
+        "description": "Further information is requested",
+        "isDefault": true,
+        "name": "question"
+      },
+      {
+        "color": "36DC18",
+        "description": "",
+        "isDefault": false,
+        "name": "tech debt"
+      },
+      {
+        "color": "FBCA04",
+        "description": "Tests and test infrastructure",
+        "isDefault": false,
+        "name": "testing"
+      },
+      {
+        "color": "ffffff",
+        "description": "This will not be worked on",
+        "isDefault": true,
+        "name": "wontfix"
+      }
+    ]
+  },
+  "issueTypes": {
+    "source": "gh api repos/avored/avored-rust-cms/issue-types",
+    "complete": true,
+    "items": [
+      {
+        "id": 424423,
+        "name": "Task",
+        "description": "A specific piece of work",
+        "color": "yellow",
+        "enabled": true
+      },
+      {
+        "id": 424426,
+        "name": "Bug",
+        "description": "An unexpected problem or behavior",
+        "color": "red",
+        "enabled": true
+      },
+      {
+        "id": 424428,
+        "name": "Feature",
+        "description": "A request, idea, or new functionality",
+        "color": "blue",
+        "enabled": true
+      }
+    ]
+  },
+  "projects": {
+    "available": false,
+    "source": "gh project list --owner avored",
+    "status": 1,
+    "note": "error: your authentication token is missing required scopes [read:project]\nTo request it, run:  gh auth refresh -s read:project"
+  },
+  "proposedLabels": {
+    "basedOnFetchedAt": "2026-10-17T23:45:00.747Z",
+    "note": "Applied on GitHub; this list is the verified current repository label list.",
+    "items": [
+      {
+        "color": "1D76DB",
+        "description": "API endpoints, contracts, and integrations",
+        "isDefault": false,
+        "name": "api"
+      },
+      {
+        "color": "C5DC5E",
+        "description": "",
+        "isDefault": false,
+        "name": "backend"
+      },
+      {
+        "color": "d73a4a",
+        "description": "Something isn't working",
+        "isDefault": true,
+        "name": "bug"
+      },
+      {
+        "color": "5319E7",
+        "description": "Dependency upgrades and dependency management",
+        "isDefault": false,
+        "name": "dependencies"
+      },
+      {
+        "color": "0075ca",
+        "description": "Improvements or additions to documentation",
+        "isDefault": true,
+        "name": "documentation"
+      },
+      {
+        "color": "cfd3d7",
+        "description": "This issue or pull request already exists",
+        "isDefault": true,
+        "name": "duplicate"
+      },
+      {
+        "color": "a2eeef",
+        "description": "New feature or request",
+        "isDefault": true,
+        "name": "enhancement"
+      },
+      {
+        "color": "8BB474",
+        "description": "",
+        "isDefault": false,
+        "name": "frontend"
+      },
+      {
+        "color": "4E0464",
+        "description": "",
+        "isDefault": false,
+        "name": "future feature"
+      },
+      {
+        "color": "7057ff",
+        "description": "Good for newcomers",
+        "isDefault": true,
+        "name": "good first issue"
+      },
+      {
+        "color": "2CCDDA",
+        "description": "",
+        "isDefault": false,
+        "name": "hacktoberfest"
+      },
+      {
+        "color": "CFBB8A",
+        "description": "",
+        "isDefault": false,
+        "name": "hacktoberfest-accepted"
+      },
+      {
+        "color": "008672",
+        "description": "Extra attention is needed",
+        "isDefault": true,
+        "name": "help wanted"
+      },
+      {
+        "color": "EC893D",
+        "description": "Maintenance and improvements to existing functionality",
+        "isDefault": false,
+        "name": "improvement"
+      },
+      {
+        "color": "e4e669",
+        "description": "This doesn't seem right",
+        "isDefault": true,
+        "name": "invalid"
+      },
+      {
+        "color": "72D717",
+        "description": "",
+        "isDefault": false,
+        "name": "investigation"
+      },
+      {
+        "color": "D4C5F9",
+        "description": "Logging, tracing, metrics, and health checks",
+        "isDefault": false,
+        "name": "observability"
+      },
+      {
+        "color": "B60205",
+        "description": "High-priority work",
+        "isDefault": false,
+        "name": "priority: high"
+      },
+      {
+        "color": "0E8A16",
+        "description": "Low-priority work",
+        "isDefault": false,
+        "name": "priority: low"
+      },
+      {
+        "color": "FBCA04",
+        "description": "Medium-priority work",
+        "isDefault": false,
+        "name": "priority: medium"
+      },
+      {
+        "color": "d876e3",
+        "description": "Further information is requested",
+        "isDefault": true,
+        "name": "question"
+      },
+      {
+        "color": "36DC18",
+        "description": "",
+        "isDefault": false,
+        "name": "tech debt"
+      },
+      {
+        "color": "FBCA04",
+        "description": "Tests and test infrastructure",
+        "isDefault": false,
+        "name": "testing"
+      },
+      {
+        "color": "ffffff",
+        "description": "This will not be worked on",
+        "isDefault": true,
+        "name": "wontfix"
+      }
+    ],
+    "actions": [
+      {
+        "action": "rename",
+        "from": "improvements",
+        "to": "improvement",
+        "migrateExistingIssues": true,
+        "observedIssueUseCount": 18,
+        "observedPullRequestUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "remove",
+        "label": "beginner",
+        "migrateExistingIssuesTo": "good first issue",
+        "observedIssueUseCount": 32,
+        "observedPullRequestUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "remove",
+        "label": "important",
+        "migrateExistingIssuesTo": "priority: high",
+        "observedIssueUseCount": 9,
+        "observedPullRequestUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "merge",
+        "from": "hacktober-accepted",
+        "to": "hacktoberfest-accepted",
+        "migrateExistingIssues": true,
+        "observedIssueUseCount": 0,
+        "observedPullRequestUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "api",
+          "color": "1D76DB",
+          "description": "API endpoints, contracts, and integrations"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "dependencies",
+          "color": "5319E7",
+          "description": "Dependency upgrades and dependency management"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "observability",
+          "color": "D4C5F9",
+          "description": "Logging, tracing, metrics, and health checks"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "testing",
+          "color": "FBCA04",
+          "description": "Tests and test infrastructure"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "priority: high",
+          "color": "B60205",
+          "description": "High-priority work"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "priority: medium",
+          "color": "FBCA04",
+          "description": "Medium-priority work"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      },
+      {
+        "action": "add",
+        "label": {
+          "name": "priority: low",
+          "color": "0E8A16",
+          "description": "Low-priority work"
+        },
+        "observedUseCount": 0,
+        "status": "applied"
+      }
+    ]
+  },
+  "remoteLabelSync": {
+    "status": "applied",
+    "appliedAt": "2026-10-17T23:45:00.747Z",
+    "repository": "avored/avored-rust-cms",
+    "migrations": {
+      "improvements": {
+        "renamedTo": "improvement",
+        "migratedIssues": 18
+      },
+      "beginner": {
+        "migratedIssues": 32,
+        "migratedTo": "good first issue",
+        "removed": true
+      },
+      "important": {
+        "migratedIssues": 9,
+        "migratedTo": "priority: high",
+        "removed": true
+      },
+      "hacktober-accepted": {
+        "migratedIssues": 0,
+        "migratedTo": "hacktoberfest-accepted",
+        "removed": true
+      }
+    },
+    "additions": [
+      "api",
+      "dependencies",
+      "observability",
+      "priority: high",
+      "priority: low",
+      "priority: medium",
+      "testing"
+    ]
+  },
+  "roadmapIssueCreation": {
+    "status": "completed",
+    "completedAt": "2026-10-17T23:49:31.977Z",
+    "repository": "avored/avored-rust-cms",
+    "issueType": "Task",
+    "project": {
+      "title": "AvoRed Rust CMS",
+      "url": "https://github.com/orgs/avored/projects/2"
+    },
+    "issues": [
+      {
+        "id": "I-001",
+        "number": 357,
+        "title": "[I-001] [Tech Debt]: Remove all `unwrap()` calls from production code",
+        "url": "https://github.com/avored/avored-rust-cms/issues/357",
+        "labels": [
+          "tech debt",
+          "backend",
+          "priority: high"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-002",
+        "number": 358,
+        "title": "[I-002] [Tech Debt]: Remove dead / commented-out code",
+        "url": "https://github.com/avored/avored-rust-cms/issues/358",
+        "labels": [
+          "tech debt",
+          "backend",
+          "priority: high"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-003",
+        "number": 359,
+        "title": "[I-003] [Tech Debt]: Unify and improve error types",
+        "url": "https://github.com/avored/avored-rust-cms/issues/359",
+        "labels": [
+          "tech debt",
+          "backend",
+          "priority: high"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-004",
+        "number": 360,
+        "title": "[I-004] [Tech Debt]: Deduplicate auth middleware (`check_auth` / `check_customer_auth`)",
+        "url": "https://github.com/avored/avored-rust-cms/issues/360",
+        "labels": [
+          "tech debt",
+          "backend",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-005",
+        "number": 361,
+        "title": "[I-005] [Improvement]: Replace `println!` with structured `tracing` logging",
+        "url": "https://github.com/avored/avored-rust-cms/issues/361",
+        "labels": [
+          "improvement",
+          "backend",
+          "observability",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-006",
+        "number": 362,
+        "title": "[I-006] [Upgrade]: Audit and upgrade Rust (Cargo) dependencies",
+        "url": "https://github.com/avored/avored-rust-cms/issues/362",
+        "labels": [
+          "dependencies",
+          "priority: high"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-007",
+        "number": 363,
+        "title": "[I-007] [Upgrade]: Audit and upgrade npm (frontend) dependencies",
+        "url": "https://github.com/avored/avored-rust-cms/issues/363",
+        "labels": [
+          "frontend",
+          "dependencies",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-008",
+        "number": 364,
+        "title": "[I-008] [Improvement]: Add CI linting with Clippy and rustfmt enforcement",
+        "url": "https://github.com/avored/avored-rust-cms/issues/364",
+        "labels": [
+          "improvement",
+          "testing",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-009",
+        "number": 365,
+        "title": "[I-009] [Tech Debt]: Audit Cargo features and consider workspace restructuring",
+        "url": "https://github.com/avored/avored-rust-cms/issues/365",
+        "labels": [
+          "tech debt",
+          "backend",
+          "priority: low"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-010",
+        "number": 366,
+        "title": "[I-010] [Improvement]: Improve database migration system",
+        "url": "https://github.com/avored/avored-rust-cms/issues/366",
+        "labels": [
+          "improvement",
+          "backend",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-011",
+        "number": 367,
+        "title": "[I-011] [Improvement]: Add unit tests for application use cases",
+        "url": "https://github.com/avored/avored-rust-cms/issues/367",
+        "labels": [
+          "improvement",
+          "backend",
+          "testing",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-012",
+        "number": 368,
+        "title": "[I-012] [Improvement]: Clean up and improve integration tests",
+        "url": "https://github.com/avored/avored-rust-cms/issues/368",
+        "labels": [
+          "improvement",
+          "testing",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-013",
+        "number": 369,
+        "title": "[I-013] [Improvement]: Add request tracing with correlation IDs",
+        "url": "https://github.com/avored/avored-rust-cms/issues/369",
+        "labels": [
+          "improvement",
+          "backend",
+          "observability",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-014",
+        "number": 370,
+        "title": "[I-014] [Improvement]: Add health-check endpoint",
+        "url": "https://github.com/avored/avored-rust-cms/issues/370",
+        "labels": [
+          "improvement",
+          "backend",
+          "api",
+          "priority: low"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-015",
+        "number": 371,
+        "title": "[I-015] [Tech Debt]: Normalize API error responses across all handlers",
+        "url": "https://github.com/avored/avored-rust-cms/issues/371",
+        "labels": [
+          "tech debt",
+          "backend",
+          "api",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-016",
+        "number": 372,
+        "title": "[I-016] [Tech Debt]: Standardize API route versioning",
+        "url": "https://github.com/avored/avored-rust-cms/issues/372",
+        "labels": [
+          "tech debt",
+          "backend",
+          "api",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-017",
+        "number": 373,
+        "title": "[I-017] [Improvement]: Harden frontend authentication flow",
+        "url": "https://github.com/avored/avored-rust-cms/issues/373",
+        "labels": [
+          "improvement",
+          "frontend",
+          "priority: high"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-018",
+        "number": 374,
+        "title": "[I-018] [Tech Debt]: Audit Leptos SSR / Hydration boundaries",
+        "url": "https://github.com/avored/avored-rust-cms/issues/374",
+        "labels": [
+          "tech debt",
+          "frontend",
+          "priority: medium"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-019",
+        "number": 375,
+        "title": "[I-019] [Improvement]: Normalize pagination responses across all list endpoints",
+        "url": "https://github.com/avored/avored-rust-cms/issues/375",
+        "labels": [
+          "improvement",
+          "backend",
+          "api",
+          "priority: low"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      },
+      {
+        "id": "I-020",
+        "number": 376,
+        "title": "[I-020] [Improvement]: Refresh README and add developer documentation",
+        "url": "https://github.com/avored/avored-rust-cms/issues/376",
+        "labels": [
+          "documentation",
+          "improvement",
+          "priority: low"
+        ],
+        "issueType": "Task",
+        "project": "AvoRed Rust CMS"
+      }
+    ],
+    "dependencyVerification": [
+      {
+        "id": "I-001",
+        "issueNumber": 357,
+        "blockedBy": []
+      },
+      {
+        "id": "I-002",
+        "issueNumber": 358,
+        "blockedBy": []
+      },
+      {
+        "id": "I-003",
+        "issueNumber": 359,
+        "blockedBy": [
+          357
+        ]
+      },
+      {
+        "id": "I-004",
+        "issueNumber": 360,
+        "blockedBy": [
+          357,
+          359
+        ]
+      },
+      {
+        "id": "I-005",
+        "issueNumber": 361,
+        "blockedBy": []
+      },
+      {
+        "id": "I-006",
+        "issueNumber": 362,
+        "blockedBy": []
+      },
+      {
+        "id": "I-007",
+        "issueNumber": 363,
+        "blockedBy": []
+      },
+      {
+        "id": "I-008",
+        "issueNumber": 364,
+        "blockedBy": [
+          357,
+          358
+        ]
+      },
+      {
+        "id": "I-009",
+        "issueNumber": 365,
+        "blockedBy": []
+      },
+      {
+        "id": "I-010",
+        "issueNumber": 366,
+        "blockedBy": []
+      },
+      {
+        "id": "I-011",
+        "issueNumber": 367,
+        "blockedBy": [
+          359
+        ]
+      },
+      {
+        "id": "I-012",
+        "issueNumber": 368,
+        "blockedBy": [
+          367
+        ]
+      },
+      {
+        "id": "I-013",
+        "issueNumber": 369,
+        "blockedBy": [
+          361
+        ]
+      },
+      {
+        "id": "I-014",
+        "issueNumber": 370,
+        "blockedBy": []
+      },
+      {
+        "id": "I-015",
+        "issueNumber": 371,
+        "blockedBy": [
+          359
+        ]
+      },
+      {
+        "id": "I-016",
+        "issueNumber": 372,
+        "blockedBy": [
+          371
+        ]
+      },
+      {
+        "id": "I-017",
+        "issueNumber": 373,
+        "blockedBy": [
+          360
+        ]
+      },
+      {
+        "id": "I-018",
+        "issueNumber": 374,
+        "blockedBy": [
+          365
+        ]
+      },
+      {
+        "id": "I-019",
+        "issueNumber": 375,
+        "blockedBy": [
+          372
+        ]
+      },
+      {
+        "id": "I-020",
+        "issueNumber": 376,
+        "blockedBy": []
+      }
+    ]
+  }
+}

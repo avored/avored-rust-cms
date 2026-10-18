@@ -56,13 +56,25 @@ export function adminProfilePage() {
 
             this.submittingProfile = true;
             try {
-                const updated = await http.put('/api/v1/admin/me', {
+                await http.put('/api/v1/admin/me', {
                     name: this.profileForm.name.trim(),
                     email: this.profileForm.email.trim(),
                 });
-                this.profileForm.name = updated.name;
-                this.profileForm.email = updated.email;
                 this.successMessage = 'Profile updated successfully.';
+
+                try {
+                    const profile = await http.get('/api/v1/admin/me');
+                    this.profileForm.name = profile.name || '';
+                    this.profileForm.email = profile.email || '';
+                    localStorage.setItem('auth_user', JSON.stringify({
+                        id: profile.id,
+                        name: profile.name,
+                        email: profile.email,
+                    }));
+                    window.dispatchEvent(new Event('auth-profile-updated'));
+                } catch (err: any) {
+                    this.errorMessage = `Profile was saved, but the refreshed profile could not be synchronized: ${err.message || 'request failed'}`;
+                }
             } catch (err: any) {
                 this.errorMessage = err.message || 'Failed to update profile.';
             } finally {
