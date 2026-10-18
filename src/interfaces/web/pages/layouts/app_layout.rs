@@ -23,21 +23,6 @@ pub fn AppLayout() -> impl IntoView {
         }
     });
 
-    let user_name = move || {
-        auth_context
-            .logged_in_user
-            .get()
-            .map(|user| user.name)
-            .unwrap_or_default()
-    };
-    let user_email = move || {
-        auth_context
-            .logged_in_user
-            .get()
-            .map(|user| user.email)
-            .unwrap_or_default()
-    };
-
     let class = "w-5 h-5 shrink-0";
 
     let on_logout_click = move |ev: MouseEvent| {
@@ -51,6 +36,7 @@ pub fn AppLayout() -> impl IntoView {
             let navigate = leptos_router::hooks::use_navigate();
             use gloo_storage::{LocalStorage, Storage};
             LocalStorage::delete("auth_token");
+            LocalStorage::delete("auth_user");
             navigate("/auth/login", Default::default());
         }
     };
@@ -221,7 +207,7 @@ pub fn AppLayout() -> impl IntoView {
                             class="flex cursor-pointer items-center justify-center"
                         >
                             <img class="h-10 w-10 rounded-md object-cover" src="https://placehold.net/avatar.png" alt="Administrator" />
-                            <span class="ml-2 text-sm text-gray-800">{move || user_name()}</span>
+                            <span class="ml-2 text-sm text-gray-800" x-text="user.name"></span>
                         </div>
 
                         {move || {
@@ -230,8 +216,8 @@ pub fn AppLayout() -> impl IntoView {
                                     <div class="absolute right-0 top-14 z-50 w-48 rounded-md shadow-lg">
                                         <div class="overflow-hidden rounded-md bg-white ring-1 ring-black/20 dark:bg-gray-700 dark:ring-black/40">
                                             <div class="flex flex-col gap-1 border-b px-4 py-2 font-medium dark:border-b-gray-600">
-                                                <span class="text-gray-800 dark:text-gray-300">{user_name()}</span>
-                                                <span class="truncate text-xs text-gray-400 dark:text-gray-500">{user_email()}</span>
+                                                <span class="text-gray-800 dark:text-gray-300" x-text="user.name"></span>
+                                                <span class="truncate text-xs text-gray-400 dark:text-gray-500" x-text="user.email"></span>
                                             </div>
 
                                             <a href="/admin/profile" class="block px-4 py-2 text-sm font-medium text-gray-800 transition duration-150 ease-in-out hover:bg-black hover:text-white focus:bg-black focus:text-white focus:outline-none dark:text-gray-200">
