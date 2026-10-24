@@ -4,7 +4,7 @@ use avored_rust_cms::{api::rest_api_routes::rest_api_routes, avored_state::AppSt
 
 #[tokio::main]
 async fn main() -> error::Result<()> {
-    let conf = leptos::config::get_configuration(None).unwrap();
+    let conf = leptos::config::get_configuration(None)?;
     let leptos_options = conf.leptos_options;
 
     let state = AppState::new(leptos_options).await?;
@@ -12,10 +12,9 @@ async fn main() -> error::Result<()> {
     let app: axum::Router = rest_api_routes(state)?;
 
     println!("listening on http://{}", 3000);
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await?;
     axum::serve(listener, app.into_make_service())
-        .await
-        .unwrap();
+        .await?;
 
     Ok(())
 }

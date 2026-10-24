@@ -69,6 +69,37 @@ impl From<jsonwebtoken::errors::Error> for Error {
     }
 }
 
+impl From<leptos::config::errors::LeptosConfigError> for Error {
+    fn from(actual_error: leptos::config::errors::LeptosConfigError) -> Self {
+        error!("leptos config error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with leptos config"))
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(actual_error: std::io::Error) -> Self {
+        error!("IO error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with IO"))
+    }
+}
+
+impl From<reqwest::header::InvalidHeaderValue> for Error {
+    fn from(actual_error: reqwest::header::InvalidHeaderValue) -> Self {
+        error!("Invalid header value error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with the header value"))
+    }
+}
+
+
+impl From<std::net::AddrParseError> for Error {
+    fn from(actual_error: std::net::AddrParseError) -> Self {
+        error!("Address parse error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with the address"))
+    }
+}
+
+
+
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {

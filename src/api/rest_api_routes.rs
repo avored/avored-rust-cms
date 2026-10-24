@@ -61,7 +61,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
     let env_str_allowed_cors = state.config.cors_allowed_app_url.clone();
 
     for origin in &env_str_allowed_cors {
-        origins.push(HeaderValue::from_str(origin).unwrap());
+        origins.push(HeaderValue::from_str(origin)?);
     }
 
     let cors = CorsLayer::new()
