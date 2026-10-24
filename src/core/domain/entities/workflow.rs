@@ -58,28 +58,31 @@ pub struct WorkflowExecutionModel {
 
 #[cfg(test)]
 mod tests {
+    use crate::error::Result;
     use super::{WorkflowAction, WorkflowEvent, WorkflowExecutionStatus};
 
     #[test]
-    fn workflow_events_use_stable_snake_case_names() {
+    fn workflow_events_use_stable_snake_case_names() -> Result<()> {
         assert_eq!(
-            serde_json::to_value(WorkflowEvent::Created).unwrap(),
+            serde_json::to_value(WorkflowEvent::Created)?,
             serde_json::json!("created")
         );
         assert_eq!(
-            serde_json::to_value(WorkflowEvent::Updated).unwrap(),
+            serde_json::to_value(WorkflowEvent::Updated)?,
             serde_json::json!("updated")
         );
+
+        Ok(())
     }
 
     #[test]
-    fn workflow_actions_use_a_discriminated_ordered_action_shape() {
+    fn workflow_actions_use_a_discriminated_ordered_action_shape() -> Result<()> {
         let action = WorkflowAction::Email {
             template_id: "welcome".to_string(),
             recipient: "admin@example.test".to_string(),
         };
 
-        let encoded = serde_json::to_value(&action).unwrap();
+        let encoded = serde_json::to_value(&action)?;
         assert_eq!(
             encoded,
             serde_json::json!({
@@ -89,24 +92,27 @@ mod tests {
             })
         );
         assert_eq!(
-            serde_json::from_value::<WorkflowAction>(encoded).unwrap(),
+            serde_json::from_value::<WorkflowAction>(encoded)?,
             action
         );
+
+        Ok(())
     }
 
     #[test]
-    fn workflow_execution_status_names_are_stable() {
+    fn workflow_execution_status_names_are_stable() -> Result<()> {
         assert_eq!(
-            serde_json::to_value(WorkflowExecutionStatus::Running).unwrap(),
+            serde_json::to_value(WorkflowExecutionStatus::Running)?,
             serde_json::json!("running")
         );
         assert_eq!(
-            serde_json::to_value(WorkflowExecutionStatus::Success).unwrap(),
+            serde_json::to_value(WorkflowExecutionStatus::Success)?,
             serde_json::json!("success")
         );
         assert_eq!(
-            serde_json::to_value(WorkflowExecutionStatus::Failed).unwrap(),
+            serde_json::to_value(WorkflowExecutionStatus::Failed)?,
             serde_json::json!("failed")
         );
+        Ok(())
     }
 }

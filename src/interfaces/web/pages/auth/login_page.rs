@@ -40,6 +40,23 @@ pub struct ApiValidationError {
     pub message: String,
 }
 
+async fn send_login_request(
+    login_request: LoginRequest,
+) -> Result<gloo_net::http::Response, String> {
+    let request_body = serde_json::to_string(&login_request)
+        .map_err(|err| format!("Failed to serialize login request: {err}"))?;
+
+    let request = gloo_net::http::Request::post("/api/auth/login")
+        .header("Content-Type", "application/json")
+        .body(request_body)
+        .map_err(|err| format!("Failed to build login request: {err}"))?;
+
+    request
+        .send()
+        .await
+        .map_err(|err| format!("Unable to reach login API: {err}"))
+}
+
 #[component]
 pub fn LoginPage() -> impl IntoView {
     let email = RwSignal::new("admin@avored.com".to_string());
@@ -67,18 +84,13 @@ pub fn LoginPage() -> impl IntoView {
         field_errors.set(HashMap::new());
 
         leptos::task::spawn_local(async move {
-            let request_body = serde_json::to_string(&LoginRequest {
+            let response = send_login_request(LoginRequest {
                 email: email_value,
                 password: password_value,
             })
-            .unwrap_or_default();
+            .await;
 
-            let request = gloo_net::http::Request::post("/api/auth/login")
-                .header("Content-Type", "application/json")
-                .body(request_body)
-                .unwrap();
-
-            match request.send().await {
+            match response {
                 Ok(response) if response.ok() => match response.json::<LoginApiResponse>().await {
                     Ok(login_response) => {
                         if login_response.authenticated {
@@ -126,9 +138,7 @@ pub fn LoginPage() -> impl IntoView {
                         }
                     }
                 }
-                Err(err) => {
-                    error.set(format!("Unable to reach login API: {err}"));
-                }
+                Err(err) => error.set(err),
             }
 
             submitting.set(false);

@@ -257,6 +257,7 @@ mod tests {
     use super::{HttpWebhookExecutor, WorkflowActionExecutor};
     use crate::core::domain::entities::WorkflowAction;
     use serde_json::json;
+    use crate::error::Result;
 
     #[test]
     fn rejects_non_public_ipv4_addresses() {
@@ -278,13 +279,13 @@ mod tests {
     }
 
     #[test]
-    fn rejects_non_public_ipv6_addresses() {
+    fn rejects_non_public_ipv6_addresses() -> Result<()> {
         for address in [
             Ipv6Addr::LOCALHOST,
-            "fc00::1".parse().unwrap(),
-            "fe80::1".parse().unwrap(),
-            "2001:db8::1".parse().unwrap(),
-            "2002::1".parse().unwrap(),
+            "fc00::1".parse()?,
+            "fe80::1".parse()?,
+            "2001:db8::1".parse()?,
+            "2002::1".parse()?,
         ] {
             assert!(
                 !is_public_ip(IpAddr::V6(address)),
@@ -292,8 +293,10 @@ mod tests {
             );
         }
         assert!(is_public_ip(IpAddr::V6(
-            "2606:4700:4700::1111".parse().unwrap()
+            "2606:4700:4700::1111".parse()?
         )));
+
+        Ok(())
     }
 
     #[tokio::test]

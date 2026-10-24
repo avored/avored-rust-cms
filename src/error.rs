@@ -1,5 +1,6 @@
 use axum::http::{self, StatusCode};
 use axum::response::{IntoResponse, Response};
+use axum::Json;
 use rust_i18n::t;
 use tracing::error;
 
@@ -8,6 +9,22 @@ use crate::core::domain::entities::ErrorMessageResponse;
 
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
+
+#[derive(Debug, serde::Serialize, Default)]
+pub struct AuthErrorResponse {
+    pub status: bool,
+    pub message: String,
+}
+
+pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<AuthErrorResponse>) {
+    (
+        StatusCode::UNAUTHORIZED,
+        Json(AuthErrorResponse {
+            status: false,
+            message: message.into(),
+        }),
+    )
+}
 
 /// This is the custom error type for the application.
 #[derive(Debug, Clone)]
@@ -66,6 +83,34 @@ impl From<jsonwebtoken::errors::Error> for Error {
     fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
         error!("jsonwebtoken error: {actual_error:?}");
         Self::Generic(format!("there is an issue with generating jwt token"))
+    }
+}
+
+impl From<leptos::config::errors::LeptosConfigError> for Error {
+    fn from(actual_error: leptos::config::errors::LeptosConfigError) -> Self {
+        error!("leptos config error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with leptos config"))
+    }
+}
+
+impl From<std::io::Error> for Error {
+    fn from(actual_error: std::io::Error) -> Self {
+        error!("IO error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with IO"))
+    }
+}
+
+impl From<reqwest::header::InvalidHeaderValue> for Error {
+    fn from(actual_error: reqwest::header::InvalidHeaderValue) -> Self {
+        error!("Invalid header value error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with the header value"))
+    }
+}
+
+impl From<std::net::AddrParseError> for Error {
+    fn from(actual_error: std::net::AddrParseError) -> Self {
+        error!("Address parse error: {actual_error:?}");
+        Self::Generic(format!("there is an issue with the address"))
     }
 }
 

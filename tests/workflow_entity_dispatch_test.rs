@@ -9,10 +9,15 @@ use avored_rust_cms::{
             WorkflowAction, WorkflowEvent, WorkflowExecutionStatus, WorkflowTrigger,
         },
     },
+    interfaces::api::api_manager::{
+        create_entity_record_handler::create_entity_record_handler,
+        update_entity_record_handler::update_entity_record_handler,
+    },
 };
 use axum::{
     body::{to_bytes, Body},
     http::{Request, StatusCode},
+    routing::{patch, post},
     Router,
 };
 use chrono::Utc;
@@ -116,8 +121,14 @@ async fn entity_create_and_update_dispatch_matching_workflows_without_changing_r
         .expect("update-trigger workflow should be configured");
 
     let token = auth_token(&state);
-    let app: Router = avored_rust_cms::api::rest_api_routes::rest_api_routes(state.clone())
-        .expect("application routes should be configured");
+    let app: Router = Router::new()
+        .route("/api/v1/entities", post(create_entity_record_handler))
+        .route("/api/v1/entities/{id}", patch(update_entity_record_handler))
+        .layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            avored_rust_cms::infrastructure::middleware::auth_middleware::check_auth,
+        ))
+        .with_state(state.clone());
 
     let create_response = app
         .clone()
