@@ -22,3 +22,4 @@ pub use workflow_dto::{
 };
 
 pub mod api_key_dto;
+pub mod setting_dto;

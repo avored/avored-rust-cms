@@ -20,6 +20,9 @@ pub use workflow_use_case::WorkflowUseCase;
 pub mod api_key_use_case;
 pub use api_key_use_case::ApiKeyUseCase;
 
+pub mod setting_use_case;
+pub use setting_use_case::SettingUseCase;
+
 // pub mod attribute_use_case;
 
 // pub use attribute_use_case::AttributeUseCase;

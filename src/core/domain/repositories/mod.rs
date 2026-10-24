@@ -23,3 +23,6 @@ pub use attribute_repository::AttributeRepository;
 
 pub mod api_key_repository;
 pub use api_key_repository::ApiKeyRepository;
+
+pub mod setting_repository;
+pub use setting_repository::SettingRepository;

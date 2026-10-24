@@ -18,6 +18,7 @@ use crate::interfaces::web::pages::admin::api_key::{
     ApiKeyIndexPage, ApiKeyCreatePage, ApiKeyEditPage,
 };
 use crate::interfaces::web::pages::admin::profile::AdminProfilePage;
+use crate::interfaces::web::pages::admin::setting::SettingPage;
 use crate::interfaces::web::pages::misc::setup_page::SetupPage;
 use crate::interfaces::web::pages::{
     auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,
@@ -63,6 +64,7 @@ pub fn WebApp() -> impl IntoView {
                         <Route path=path!("api-keys") view=ApiKeyIndexPage/>
                         <Route path=path!("api-keys/create") view=ApiKeyCreatePage/>
                         <Route path=path!("api-keys/:id/edit") view=ApiKeyEditPage/>
+                        <Route path=path!("settings") view=SettingPage/>
                     </ParentRoute>
                 </Routes>
             </main>
