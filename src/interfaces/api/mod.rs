@@ -13,3 +13,5 @@ pub mod workflow;
 pub mod api_manager;
 
 pub mod api_key;
+
+pub mod setting;

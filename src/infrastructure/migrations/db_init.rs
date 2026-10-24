@@ -6,6 +6,7 @@ use crate::infrastructure::persistence::into_iter_objects;
 const INITIAL_SCHEMA_MIGRATION: &str = "0001_initial_schema";
 const WORKFLOW_SCHEMA_MIGRATION: &str = "0002_workflow_schema";
 const API_KEY_SCHEMA_MIGRATION: &str = "0003_api_key_schema";
+const SETTING_SCHEMA_MIGRATION: &str = "0004_setting_schema";
 
 const REFRESH_DATABASE: bool = false;
 
@@ -153,6 +154,29 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
         .await?;
     }
 
+    if !migration_is_applied(datastore, session, SETTING_SCHEMA_MIGRATION).await? {
+        let schema = r#"
+        DEFINE TABLE IF NOT EXISTS settings SCHEMAFULL;
+            DEFINE FIELD identifier ON TABLE settings TYPE string;
+            DEFINE FIELD value ON TABLE settings TYPE string;
+            DEFINE FIELD setting_group ON TABLE settings TYPE string;
+            DEFINE FIELD created_at ON TABLE settings TYPE datetime;
+            DEFINE FIELD updated_at ON TABLE settings TYPE datetime;
+
+            DEFINE INDEX IF NOT EXISTS settings_identifier_unique
+                ON settings FIELDS identifier UNIQUE;
+        "#;
+
+        datastore.execute(schema, session, None).await?;
+        record_migration(
+            datastore,
+            session,
+            SETTING_SCHEMA_MIGRATION,
+            "setting schema",
+        )
+        .await?;
+    }
+
     if REFRESH_DATABASE {
         reset_local_database(datastore, session).await?;
     }
@@ -210,6 +234,7 @@ pub async fn reset_local_database(datastore: &Datastore, session: &Session) -> R
              REMOVE TABLE IF EXISTS workflows;
              REMOVE TABLE IF EXISTS workflow_executions;
              REMOVE TABLE IF EXISTS api_keys;
+             REMOVE TABLE IF EXISTS settings;
              REMOVE TABLE IF EXISTS _migrations;",
             session,
             None,

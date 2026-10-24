@@ -34,6 +34,7 @@ use crate::interfaces::api::{
         create_api_key_handler, delete_api_key_handler, fetch_api_key_handler,
         paginate_api_keys_handler, update_api_key_handler,
     },
+    setting::{fetch_settings_handler, update_settings_handler},
 };
 use axum::{
     http::HeaderValue,
@@ -139,6 +140,8 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/v1/admin/me/password",
             put(crate::interfaces::api::auth::change_password_handler),
         )
+        .route("/api/v1/settings", get(fetch_settings_handler))
+        .route("/api/v1/settings", put(update_settings_handler))
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,

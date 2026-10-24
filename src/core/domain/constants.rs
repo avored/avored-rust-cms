@@ -24,3 +24,6 @@ pub const WORKFLOW_EXECUTIONS_TABLE_NAME: &str = "workflow_executions";
 
 /// The name of the api keys table in the database.
 pub const API_KEYS_TABLE_NAME: &str = "api_keys";
+
+/// The name of the settings table in the database.
+pub const SETTINGS_TABLE_NAME: &str = "settings";

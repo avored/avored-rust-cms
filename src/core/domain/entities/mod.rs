@@ -26,3 +26,6 @@ pub use attribute::{AttributeModel, StorableAttribute};
 
 pub mod api_key;
 pub use api_key::{ApiKeyModel, ApiKeyPermission, StorableApiKey, UpdatableApiKey};
+
+pub mod setting;
+pub use setting::{SettingModel, StorableSetting};

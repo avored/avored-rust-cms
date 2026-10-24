@@ -9,3 +9,5 @@ pub mod workflow;
 pub mod api_key;
 
 pub mod profile;
+
+pub mod setting;
