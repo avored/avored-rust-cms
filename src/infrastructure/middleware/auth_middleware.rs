@@ -1,22 +1,11 @@
 use crate::avored_state::AppState;
 use crate::core::domain::entities::user::TokenClaims;
-use crate::error::Error;
+use crate::error::{unauthorized, AuthErrorResponse as ErrorResponse};
 use axum::body::Body;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
 use axum::{http::Request, middleware::Next, Json};
 use jsonwebtoken::{decode, DecodingKey, Validation};
-use serde::Serialize;
-use std::borrow::ToOwned;
-
-#[derive(Debug, Serialize, Default)]
-/// error response struct
-pub struct ErrorResponse {
-    /// status of the response
-    pub status: bool,
-    /// message of the response
-    pub message: String,
-}
 
 /// Middleware to require JWT authentication for incoming requests
 pub async fn check_auth(
@@ -25,12 +14,20 @@ pub async fn check_auth(
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
-        let auth_value = t.to_str().map_err(|_e| Error::Authentication).unwrap();
+        let Ok(auth_value) = t.to_str() else {
+            return Err(unauthorized(
+                "Authentication failed: Invalid authorization header",
+            ));
+        };
 
         let jwt_token = &state.config.jwt_secret_key;
-        let token = auth_value.strip_prefix("Bearer ").map(ToOwned::to_owned);
+        let Some(token) = auth_value.strip_prefix("Bearer ") else {
+            return Err(unauthorized(
+                "Authentication failed: Invalid authorization header",
+            ));
+        };
         let claims = match decode::<TokenClaims>(
-            &token.unwrap_or_default(),
+            token,
             &DecodingKey::from_secret(jwt_token.as_ref()),
             &Validation::default(),
         ) {
@@ -43,11 +40,9 @@ pub async fn check_auth(
                     _ => "Token validation failed",
                 };
 
-                let json_error = ErrorResponse {
-                    status: false,
-                    message: format!("Authentication failed: {error_message}"),
-                };
-                return Err((StatusCode::UNAUTHORIZED, Json(json_error)));
+                return Err(unauthorized(format!(
+                    "Authentication failed: {error_message}"
+                )));
             }
         };
 
@@ -55,11 +50,7 @@ pub async fn check_auth(
 
         Ok(next.run(req).await)
     } else {
-        let json_error = ErrorResponse {
-            status: false,
-            message: "You are not logged in, please provide token".to_string(),
-        };
-        Err((StatusCode::UNAUTHORIZED, Json(json_error)))
+        Err(unauthorized("You are not logged in, please provide token"))
     }
 }
 
@@ -70,12 +61,20 @@ pub async fn check_customer_auth(
     next: Next,
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
-        let auth_value = t.to_str().map_err(|_e| Error::Authentication).unwrap();
+        let Ok(auth_value) = t.to_str() else {
+            return Err(unauthorized(
+                "Authentication failed: Invalid authorization header",
+            ));
+        };
 
         let jwt_token = &state.config.jwt_secret_key;
-        let token = auth_value.strip_prefix("Bearer ").map(ToOwned::to_owned);
+        let Some(token) = auth_value.strip_prefix("Bearer ") else {
+            return Err(unauthorized(
+                "Authentication failed: Invalid authorization header",
+            ));
+        };
         let claims = match decode::<TokenClaims>(
-            &token.unwrap_or_default(),
+            token,
             &DecodingKey::from_secret(jwt_token.as_ref()),
             &Validation::default(),
         ) {
@@ -88,11 +87,9 @@ pub async fn check_customer_auth(
                     _ => "Token validation failed",
                 };
 
-                let json_error = ErrorResponse {
-                    status: false,
-                    message: format!("Authentication failed: {error_message}"),
-                };
-                return Err((StatusCode::UNAUTHORIZED, Json(json_error)));
+                return Err(unauthorized(format!(
+                    "Authentication failed: {error_message}"
+                )));
             }
         };
 
@@ -100,10 +97,6 @@ pub async fn check_customer_auth(
 
         Ok(next.run(req).await)
     } else {
-        let json_error = ErrorResponse {
-            status: false,
-            message: "You are not logged in, please provide token".to_string(),
-        };
-        Err((StatusCode::UNAUTHORIZED, Json(json_error)))
+        Err(unauthorized("You are not logged in, please provide token"))
     }
 }

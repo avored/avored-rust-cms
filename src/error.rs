@@ -1,5 +1,6 @@
 use axum::http::{self, StatusCode};
 use axum::response::{IntoResponse, Response};
+use axum::Json;
 use rust_i18n::t;
 use tracing::error;
 
@@ -8,6 +9,22 @@ use crate::core::domain::entities::ErrorMessageResponse;
 
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
+
+#[derive(Debug, serde::Serialize, Default)]
+pub struct AuthErrorResponse {
+    pub status: bool,
+    pub message: String,
+}
+
+pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<AuthErrorResponse>) {
+    (
+        StatusCode::UNAUTHORIZED,
+        Json(AuthErrorResponse {
+            status: false,
+            message: message.into(),
+        }),
+    )
+}
 
 /// This is the custom error type for the application.
 #[derive(Debug, Clone)]
@@ -90,15 +107,12 @@ impl From<reqwest::header::InvalidHeaderValue> for Error {
     }
 }
 
-
 impl From<std::net::AddrParseError> for Error {
     fn from(actual_error: std::net::AddrParseError) -> Self {
         error!("Address parse error: {actual_error:?}");
         Self::Generic(format!("there is an issue with the address"))
     }
 }
-
-
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {

@@ -11,7 +11,7 @@ use avored_rust_cms::{
 };
 use axum::{
     body::{to_bytes, Body},
-    http::{Request, StatusCode},
+    http::{header::AUTHORIZATION, HeaderValue, Request, StatusCode},
     routing::{delete, get, patch, post, put},
     Router,
 };
@@ -57,6 +57,16 @@ fn workflow_api(state: avored_rust_cms::avored_state::AppState) -> Router {
         .with_state(state)
 }
 
+fn customer_auth_probe(state: avored_rust_cms::avored_state::AppState) -> Router {
+    Router::new()
+        .route("/api/workflows", get(|| async { StatusCode::OK }))
+        .layer(axum::middleware::from_fn_with_state(
+            state.clone(),
+            avored_rust_cms::infrastructure::middleware::auth_middleware::check_customer_auth,
+        ))
+        .with_state(state)
+}
+
 fn request(method: &str, uri: &str, body: Option<&str>, jwt: Option<&str>) -> Request<Body> {
     let mut builder = Request::builder().method(method).uri(uri);
     if let Some(jwt) = jwt {
@@ -71,6 +81,26 @@ fn request(method: &str, uri: &str, body: Option<&str>, jwt: Option<&str>) -> Re
                 .map(Body::from)
                 .unwrap_or_else(Body::empty),
         )
+        .expect("request should be valid")
+}
+
+fn malformed_authorization_request() -> Request<Body> {
+    let mut request = Request::builder()
+        .uri("/api/workflows")
+        .body(Body::empty())
+        .expect("request should be valid");
+    request.headers_mut().insert(
+        AUTHORIZATION,
+        HeaderValue::from_bytes(&[0xff]).expect("header value should accept opaque bytes"),
+    );
+    request
+}
+
+fn authorization_request(value: &str) -> Request<Body> {
+    Request::builder()
+        .uri("/api/workflows")
+        .header(AUTHORIZATION, value)
+        .body(Body::empty())
         .expect("request should be valid")
 }
 
@@ -91,6 +121,46 @@ async fn workflow_api_requires_authentication() {
         .expect("request should complete");
 
     assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+}
+
+#[tokio::test]
+async fn auth_middlewares_reject_malformed_authorization_headers_without_panicking() {
+    let state = test_avored_state().await;
+    let apps = [workflow_api(state.clone()), customer_auth_probe(state)];
+
+    for app in apps {
+        let response = app
+            .oneshot(malformed_authorization_request())
+            .await
+            .expect("request should complete");
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+        let error = response_json(response).await;
+        assert_eq!(error["status"], false);
+        assert_eq!(
+            error["message"],
+            "Authentication failed: Invalid authorization header"
+        );
+    }
+}
+
+#[tokio::test]
+async fn auth_middlewares_reject_authorization_headers_without_bearer_prefix() {
+    let state = test_avored_state().await;
+    let apps = [workflow_api(state.clone()), customer_auth_probe(state)];
+
+    for app in apps {
+        let response = app
+            .oneshot(authorization_request("Basic abc123"))
+            .await
+            .expect("request should complete");
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+        let error = response_json(response).await;
+        assert_eq!(error["status"], false);
+        assert_eq!(
+            error["message"],
+            "Authentication failed: Invalid authorization header"
+        );
+    }
 }
 
 #[tokio::test]
