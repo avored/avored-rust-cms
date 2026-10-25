@@ -22,9 +22,6 @@ pub use setting_repository::SettingRepositoryImpl;
 
 pub use crate::core::domain::extensions::RecordIdExtension;
 
-// pub mod attribute_repository;
-// pub use attribute_repository::AttributeRepositoryImpl;
-
 use surrealdb::types::{Object, Value};
 use surrealdb_core::dbs::QueryResult;
 

@@ -43,7 +43,6 @@ pub struct AppState {
 
     pub setting_use_case: SettingUseCase<SettingRepositoryImpl>,
 
-    // pub attribute_use_case: AttributeUseCase<AttributeRepositoryImpl>,
     /// Database provider for `AvoRed` (SurrealDB).
     pub database_provider: Arc<AvoRedDatabaseProvider>,
 
@@ -88,9 +87,6 @@ impl AppState {
         let setting_repository = SettingRepositoryImpl::new(avored_database_provider.clone());
         let setting_use_case = SettingUseCase::new(setting_repository);
 
-        // let attribute_repository = AttributeRepositoryImpl::new(avored_database_provider.clone());
-        // let attribute_use_case = AttributeUseCase::new(attribute_repository);
-
         Ok(Self {
             leptos_options,
             database_provider: avored_database_provider,
@@ -103,7 +99,6 @@ impl AppState {
             workflow_dispatcher,
             api_key_use_case,
             setting_use_case,
-            // attribute_use_case
         })
     }
 }
@@ -129,7 +124,6 @@ pub async fn test_avored_state() -> AppState {
     let api_key_use_case = ApiKeyUseCase::new(api_key_repository);
     let setting_repository = SettingRepositoryImpl::new(database_provider.clone());
     let setting_use_case = SettingUseCase::new(setting_repository);
-    // let attribute_repository = AttributeRepositoryImpl::new(database_provider.clone());
 
     AppState {
         leptos_options: leptos::config::LeptosOptions::builder()
@@ -143,7 +137,6 @@ pub async fn test_avored_state() -> AppState {
         workflow_dispatcher,
         api_key_use_case,
         setting_use_case,
-        // attribute_use_case: AttributeUseCase::new(attribute_repository),
         database_provider,
         config: Arc::new(AvoRedConfigProvider {
             database_folder: "mem://".to_string(),

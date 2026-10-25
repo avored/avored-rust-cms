@@ -1,7 +1,6 @@
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
-// use gloo_storage::{LocalStorage, Storage};
-// use anyhow::Result;
+
 #[cfg(target_arch = "wasm32")]
 use gloo_storage::Storage;
 
