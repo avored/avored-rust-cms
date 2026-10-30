@@ -182,27 +182,30 @@ function generateMarkdown(issue, issuetype) {
 
   const labelsStr = labels.length > 0 ? labels.map((l) => `\`${l}\``).join(', ') : 'None';
   const assigneesStr = assignees.length > 0 ? assignees.map((a) => `@${a}`).join(', ') : 'None';
+  const templatePath = path.join(__dirname, '..', 'templates', 'ticket-template.md');
+  const template = fs.readFileSync(templatePath, 'utf-8');
+  const values = {
+    number: num,
+    title,
+    url,
+    issuetype,
+    state,
+    author,
+    assignees: assigneesStr,
+    labels: labelsStr,
+    created,
+    updated,
+    description: body || '_No description provided._',
+  };
 
-  return [
-    `# #${num}: ${title}`,
-    '',
-    '> **Issue Metadata**',
-    `> - **URL:** [${url}](${url})`,
-    `> - **Type:** \`${issuetype}\``,
-    `> - **State:** \`${state}\``,
-    `> - **Author:** @${author}`,
-    `> - **Assignees:** ${assigneesStr}`,
-    `> - **Labels:** ${labelsStr}`,
-    `> - **Created:** ${created}`,
-    `> - **Updated:** ${updated}`,
-    '',
-    '---',
-    '',
-    '## Description',
-    '',
-    body || '_No description provided._',
-    '',
-  ].join('\n');
+  return template
+    .replace(/\{\{(\w+)\}\}/g, (placeholder, key) => {
+      if (!Object.prototype.hasOwnProperty.call(values, key)) {
+        throw new Error(`Unknown ticket template placeholder: ${placeholder}`);
+      }
+      return values[key];
+    })
+    .trimEnd() + '\n';
 }
 
 function promptInput(query) {
@@ -287,3 +290,5 @@ async function main() {
 if (require.main === module) {
   main();
 }
+
+module.exports = { generateMarkdown };

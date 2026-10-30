@@ -40,6 +40,8 @@ Execute the bundled Node.js script:
 node .agents/skills/download-issue/scripts/download_issue.js <ISSUE_REF>
 ```
 
+The script formats the ticket with [`templates/ticket-template.md`](./templates/ticket-template.md). Keep this template as the single source of truth for generated ticket structure; the issue body is placed under `Description`, with surrounding whitespace trimmed.
+
 #### Supported Options:
 - `--repo <owner/repo>`: Specify a different GitHub repository.
 - `--type <type>`: Override the issue type directory (e.g., `features`, `bugs`, `improvements`, `epics`, `tech-debt`).
@@ -59,5 +61,5 @@ node .agents/skills/download-issue/scripts/download_issue.js https://github.com/
 
 ### Step 4: Verify and Present Output
 1. Verify that the file was created in `docs/{issuetype}/{short-issue-title}/ticket.md`.
-2. Inspect the generated file using `view_file` to ensure markdown integrity and completeness.
-3. Provide the user with a clickable markdown link to the generated document (e.g., `[ticket.md](file:///Users/purveshp/rust/avored-rust-cms/docs/features/add-admin-profile-page-edit-profile-change-password/ticket.md)`).
+2. Inspect the generated file to confirm its metadata follows the template and its description preserves the issue body.
+3. Provide the user with a clickable Markdown link to the generated document.
