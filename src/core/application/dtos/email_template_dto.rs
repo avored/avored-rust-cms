@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::core::domain::entities::{
-    error_message::{ErrorMessageResponse, ErrorResponse},
+    error_message::{ApiErrorResponse, ErrorMessageResponse},
     EmailTemplateModel,
 };
 use crate::core::domain::extensions::string_extension::StringExtension;
@@ -43,7 +43,7 @@ impl CreateEmailTemplateCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));
@@ -83,7 +83,7 @@ impl UpdateEmailTemplateCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));

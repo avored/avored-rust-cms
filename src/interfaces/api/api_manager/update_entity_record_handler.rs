@@ -10,7 +10,7 @@ use crate::{
         EntityRecordResponse, UpdateEntityRecordQuery, UpdateEntityRecordRequest,
     },
     core::domain::entities::{
-        error_message::{ErrorMessageResponse, ErrorResponse},
+        error_message::{ApiErrorResponse, ErrorMessageResponse},
         user::TokenClaims,
     },
     error::{Error, Result},
@@ -51,7 +51,7 @@ pub async fn update_entity_record_handler(
         .unwrap_or_default();
 
     if entity_type.is_empty() {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
@@ -63,7 +63,7 @@ pub async fn update_entity_record_handler(
     // Validate that attribute keys are non-empty strings
     for key in payload.attributes.keys() {
         if key.trim().is_empty() {
-            return Err(Error::BadRequest(ErrorResponse {
+            return Err(Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors: vec![ErrorMessageResponse {
                     key: "attributes".to_string(),

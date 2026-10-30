@@ -3,21 +3,15 @@ use axum::http::{Request, StatusCode};
 use axum::middleware::Next;
 use axum::response::IntoResponse;
 use axum::Json;
-use serde::Serialize;
 use sha2::{Digest, Sha256};
 
 use crate::avored_state::AppState;
+use crate::core::domain::entities::ApiErrorMessageResponse;
 
-#[derive(Debug, Serialize, Default)]
-pub struct ApiKeyErrorResponse {
-    pub status: bool,
-    pub message: String,
-}
-
-fn unauthorized(message: &str) -> (StatusCode, Json<ApiKeyErrorResponse>) {
+fn unauthorized(message: &str) -> (StatusCode, Json<ApiErrorMessageResponse>) {
     (
         StatusCode::UNAUTHORIZED,
-        Json(ApiKeyErrorResponse {
+        Json(ApiErrorMessageResponse {
             status: false,
             message: message.to_string(),
         }),
@@ -29,7 +23,7 @@ pub async fn check_api_key_auth(
     axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, Json<ApiKeyErrorResponse>)> {
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiErrorMessageResponse>)> {
     if let Some(header_val) = req.headers().get("x-api-key") {
         let plain_secret = header_val
             .to_str()

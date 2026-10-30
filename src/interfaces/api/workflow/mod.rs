@@ -12,7 +12,9 @@ use crate::{
             WorkflowExecutionPaginationResponse, WorkflowPaginationQuery,
             WorkflowPaginationResponse,
         },
-        domain::entities::{user::TokenClaims, ErrorMessageResponse, ErrorResponse, WorkflowModel},
+        domain::entities::{
+            user::TokenClaims, ApiErrorResponse, ErrorMessageResponse, WorkflowModel,
+        },
     },
     error::{Error, Result},
 };
@@ -88,7 +90,7 @@ pub async fn list_workflow_executions_handler(
 
 fn parse_json_payload<T>(payload: std::result::Result<Json<T>, JsonRejection>) -> Result<Json<T>> {
     payload.map_err(|rejection| {
-        Error::BadRequest(ErrorResponse {
+        Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "body".to_string(),

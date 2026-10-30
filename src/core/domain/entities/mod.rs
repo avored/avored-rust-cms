@@ -5,7 +5,7 @@ pub use user::UserModel;
 pub mod error_message;
 
 pub use error_message::ErrorMessageResponse;
-pub use error_message::ErrorResponse;
+pub use error_message::{ApiErrorMessageResponse, ApiErrorResponse};
 
 pub mod modal_count;
 

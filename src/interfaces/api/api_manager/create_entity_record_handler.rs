@@ -4,7 +4,7 @@ use crate::{
     avored_state::AppState,
     core::application::dtos::api_manager_dto::{CreateEntityRecordRequest, EntityRecordResponse},
     core::domain::entities::{
-        error_message::{ErrorMessageResponse, ErrorResponse},
+        error_message::{ApiErrorResponse, ErrorMessageResponse},
         user::TokenClaims,
     },
     error::{Error, Result},
@@ -36,7 +36,7 @@ pub async fn create_entity_record_handler(
 
     let entity_type = payload.entity_type.trim().to_string();
     if entity_type.is_empty() {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
@@ -48,7 +48,7 @@ pub async fn create_entity_record_handler(
     // Validate that attribute keys are non-empty strings.
     for key in payload.attributes.keys() {
         if key.trim().is_empty() {
-            return Err(Error::BadRequest(ErrorResponse {
+            return Err(Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors: vec![ErrorMessageResponse {
                     key: "attributes".to_string(),

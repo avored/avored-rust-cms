@@ -7,7 +7,7 @@ use axum::{
 use crate::{
     avored_state::AppState,
     core::application::dtos::api_manager_dto::{EntityRecordResponse, FetchEntityRecordQuery},
-    core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse},
+    core::domain::entities::error_message::{ApiErrorResponse, ErrorMessageResponse},
     error::{Error, Result},
 };
 
@@ -37,7 +37,7 @@ pub async fn fetch_entity_record_handler(
     } else if let Some((table, key)) = id.split_once(':') {
         (table.trim().to_string(), key.trim().to_string())
     } else {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
@@ -49,7 +49,7 @@ pub async fn fetch_entity_record_handler(
     };
 
     if entity_type.is_empty() {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
@@ -59,7 +59,7 @@ pub async fn fetch_entity_record_handler(
     }
 
     if record_id.is_empty() {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "id".to_string(),

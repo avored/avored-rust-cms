@@ -6,7 +6,7 @@ use crate::{
     core::{
         application::dtos::LoginCommand,
         domain::{
-            entities::{ErrorMessageResponse, ErrorResponse},
+            entities::{ApiErrorMessageResponse, ApiErrorResponse, ErrorMessageResponse},
             extensions::string_extension::StringExtension,
         },
     },
@@ -27,11 +27,6 @@ pub struct LoginResponse {
     pub authenticated: bool,
 }
 
-#[derive(Debug, serde::Serialize)]
-pub struct LoginErrorResponse {
-    pub message: String,
-}
-
 #[axum::debug_handler(state = AppState)]
 pub async fn login_handler(
     State(state): State<AppState>,
@@ -47,7 +42,8 @@ pub async fn login_handler(
     if !result.authenticated {
         return Ok((
             StatusCode::UNAUTHORIZED,
-            Json(LoginErrorResponse {
+            Json(ApiErrorMessageResponse {
+                status: false,
                 message: String::from("Invalid credentials"),
             }),
         )
@@ -100,7 +96,7 @@ impl LoginCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));

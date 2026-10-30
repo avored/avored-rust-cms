@@ -3,7 +3,7 @@ use crate::core::domain::entities::entity::{
     EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity,
     UpdatableEntityAttribute,
 };
-use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
+use crate::core::domain::entities::error_message::{ApiErrorResponse, ErrorMessageResponse};
 use crate::core::domain::entities::AttributeModel;
 use crate::core::domain::extensions::string_extension::StringExtension;
 use crate::core::domain::repositories::EntityRepository;
@@ -105,7 +105,7 @@ impl CreateEntityCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));
@@ -208,7 +208,7 @@ impl UpdateEntityCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));
@@ -306,7 +306,7 @@ impl PutEntityIdentifierCommand {
         }
 
         if !valid {
-            return Err(crate::error::Error::BadRequest(ErrorResponse {
+            return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
             }));
