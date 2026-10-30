@@ -13,7 +13,7 @@ use axum::{
     body::{to_bytes, Body},
     http::{header::AUTHORIZATION, HeaderValue, Request, StatusCode},
     routing::{delete, get, patch, post, put},
-    Router,
+    Extension, Router,
 };
 use chrono::Utc;
 use jsonwebtoken::{encode, EncodingKey, Header};
@@ -59,7 +59,10 @@ fn workflow_api(state: avored_rust_cms::avored_state::AppState) -> Router {
 
 fn customer_auth_probe(state: avored_rust_cms::avored_state::AppState) -> Router {
     Router::new()
-        .route("/api/workflows", get(|| async { StatusCode::OK }))
+        .route(
+            "/api/workflows",
+            get(|Extension(claims): Extension<TokenClaims>| async move { axum::Json(claims) }),
+        )
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             avored_rust_cms::infrastructure::middleware::auth_middleware::check_customer_auth,
@@ -160,6 +163,51 @@ async fn auth_middlewares_reject_authorization_headers_without_bearer_prefix() {
             error["message"],
             "Authentication failed: Invalid authorization header"
         );
+    }
+}
+
+#[tokio::test]
+async fn customer_auth_accepts_database_api_key_and_injects_temporary_api_user() {
+    let state = test_avored_state().await;
+    let (_, api_key) = state
+        .api_key_use_case
+        .create(
+            "Customer integration test".to_string(),
+            vec![],
+            "users:test".to_string(),
+        )
+        .await
+        .expect("API key should be persisted");
+    let app = customer_auth_probe(state);
+    let response = app
+        .oneshot(authorization_request(&format!("Bearer {api_key}")))
+        .await
+        .expect("request should complete");
+
+    assert_eq!(response.status(), StatusCode::OK);
+    let claims = response_json(response).await;
+    assert_eq!(claims["sub"], "users:api-user");
+    assert_eq!(claims["name"], "API User");
+    assert_eq!(claims["email"], "api-user@avored.local");
+}
+
+#[tokio::test]
+async fn customer_auth_rejects_unknown_api_keys_and_jwts() {
+    let state = test_avored_state().await;
+    let jwt = token(&state.config.jwt_secret_key);
+    let app = customer_auth_probe(state);
+
+    let jwt_authorization = format!("Bearer {jwt}");
+    for credential in ["Bearer unknown-api-key", jwt_authorization.as_str()] {
+        let response = app
+            .clone()
+            .oneshot(authorization_request(credential))
+            .await
+            .expect("request should complete");
+
+        assert_eq!(response.status(), StatusCode::UNAUTHORIZED);
+        let error = response_json(response).await;
+        assert_eq!(error["message"], "Authentication failed: Invalid API key");
     }
 }
 
@@ -316,8 +364,7 @@ async fn workflow_execution_history_api_lists_empty_and_paginated_results() {
         .await
         .expect("create request should complete");
     assert_eq!(create_response.status(), StatusCode::CREATED);
-    let workflow_id = response_json(create_response)
-        .await["id"]
+    let workflow_id = response_json(create_response).await["id"]
         .as_str()
         .expect("workflow id should be present")
         .to_string();
@@ -339,12 +386,18 @@ async fn workflow_execution_history_api_lists_empty_and_paginated_results() {
 
     state
         .workflow_use_case
-        .create_execution(&workflow_id, serde_json::json!({"record_id": "customer-123"}))
+        .create_execution(
+            &workflow_id,
+            serde_json::json!({"record_id": "customer-123"}),
+        )
         .await
         .expect("execution should be created");
     state
         .workflow_use_case
-        .create_execution(&workflow_id, serde_json::json!({"record_id": "customer-456"}))
+        .create_execution(
+            &workflow_id,
+            serde_json::json!({"record_id": "customer-456"}),
+        )
         .await
         .expect("execution should be created");
 
