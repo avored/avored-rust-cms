@@ -27,11 +27,12 @@ pub struct LoginUser {
     pub email: String,
 }
 
-/// Matches the backend `{ status: false, errors: [{key, message}] }` shape.
+/// Matches the backend validation or message error response shapes.
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ApiValidationResponse {
+pub struct ErrorResponse {
     pub status: bool,
     pub errors: Option<Vec<ApiValidationError>>,
+    pub message: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -119,7 +120,7 @@ pub fn LoginPage() -> impl IntoView {
                 },
                 Ok(response) => {
                     // Try to parse as a structured validation error response
-                    match response.json::<ApiValidationResponse>().await {
+                    match response.json::<ErrorResponse>().await {
                         Ok(api_err) => {
                             if let Some(errs) = api_err.errors {
                                 if !errs.is_empty() {
@@ -127,10 +128,18 @@ pub fn LoginPage() -> impl IntoView {
                                         errs.into_iter().map(|e| (e.key, e.message)).collect();
                                     field_errors.set(map);
                                 } else {
-                                    error.set("Login failed.".to_string());
+                                    error.set(
+                                        api_err
+                                            .message
+                                            .unwrap_or_else(|| "Login failed.".to_string()),
+                                    );
                                 }
                             } else {
-                                error.set("Login failed.".to_string());
+                                error.set(
+                                    api_err
+                                        .message
+                                        .unwrap_or_else(|| "Login failed.".to_string()),
+                                );
                             }
                         }
                         Err(_) => {

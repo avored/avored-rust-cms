@@ -1,5 +1,5 @@
 use crate::avored_state::AppState;
-use crate::core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse};
+use crate::core::domain::entities::error_message::{ApiErrorResponse, ErrorMessageResponse};
 use crate::core::domain::entities::user::StorableUser;
 use crate::core::domain::extensions::string_extension::StringExtension;
 use crate::error::Result;
@@ -94,7 +94,7 @@ impl SetupCommand {
         }
 
         if !valid {
-            let error_response = ErrorResponse {
+            let error_response = ApiErrorResponse {
                 status: valid,
                 errors,
             };

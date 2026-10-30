@@ -8,7 +8,7 @@ use crate::{
     core::application::dtos::api_manager_dto::{
         EntityRecordResponse, ListEntitiesQuery, ListEntitiesResponse,
     },
-    core::domain::entities::error_message::{ErrorMessageResponse, ErrorResponse},
+    core::domain::entities::error_message::{ApiErrorResponse, ErrorMessageResponse},
     error::{Error, Result},
 };
 
@@ -28,7 +28,7 @@ pub async fn paginate_entities_handler(
 
     let entity_type = query.entity_type.trim().to_string();
     if entity_type.is_empty() {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "entity_type".to_string(),
@@ -41,7 +41,7 @@ pub async fn paginate_entities_handler(
     let limit = query.limit.unwrap_or(20);
 
     if page == 0 {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "page".to_string(),
@@ -51,7 +51,7 @@ pub async fn paginate_entities_handler(
     }
 
     if limit == 0 || limit > 100 {
-        return Err(Error::BadRequest(ErrorResponse {
+        return Err(Error::BadRequest(ApiErrorResponse {
             status: false,
             errors: vec![ErrorMessageResponse {
                 key: "limit".to_string(),

@@ -11,9 +11,10 @@ export interface ApiError {
     message: string;
 }
 
-export interface ApiErrorResponse {
+export interface ErrorResponse {
     status: boolean;
     errors?: ApiError[];
+    message?: string;
 }
 
 /**
@@ -24,14 +25,13 @@ export interface ApiErrorResponse {
  * @param data - The parsed JSON body of a non-OK response.
  */
 export function parseApiErrors(data: unknown): Record<string, string> {
-
     if (typeof data === 'string') {
         data = JSON.parse(data);
     }
 
     if (!data || typeof data !== 'object') return {};
 
-    const body = data as ApiErrorResponse;
+    const body = data as ErrorResponse;
     if (!Array.isArray(body.errors) || body.errors.length === 0) return {};
 
     return body.errors.reduce<Record<string, string>>((map, err) => {
@@ -95,14 +95,18 @@ export function formErrorsMixin() {
         applyApiErrors(err: unknown, fallback = 'Request failed') {
             if (err instanceof HttpError) {
                 const parsed = parseApiErrors(err.data);
-               
+
                 if (Object.keys(parsed).length > 0) {
-                    console.log('test');
                     this.fieldErrors = parsed;
                     return;
                 }
-                // Use the HttpError message if no field errors (e.g. 401, 500)
-                this.errorMessage = err.message || fallback;
+                const responseMessage =
+                    err.data &&
+                    typeof err.data === 'object' &&
+                    typeof err.data.message === 'string'
+                        ? err.data.message
+                        : '';
+                this.errorMessage = responseMessage || err.message || fallback;
             } else {
                 // Network error or unexpected throw
                 this.errorMessage = (err instanceof Error ? err.message : null) || fallback;

@@ -384,7 +384,7 @@ where
 
         if !errors.is_empty() {
             return Err(crate::error::Error::BadRequest(
-                crate::core::domain::entities::error_message::ErrorResponse {
+                crate::core::domain::entities::error_message::ApiErrorResponse {
                     status: false,
                     errors,
                 },
@@ -449,7 +449,7 @@ where
 
         if !errors.is_empty() {
             return Err(crate::error::Error::BadRequest(
-                crate::core::domain::entities::error_message::ErrorResponse {
+                crate::core::domain::entities::error_message::ApiErrorResponse {
                     status: false,
                     errors,
                 },

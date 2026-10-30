@@ -1,25 +1,19 @@
-use axum::http::{self, StatusCode};
+use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use axum::Json;
 use rust_i18n::t;
 use tracing::error;
 
-use crate::core::domain::entities::error_message::ErrorResponse;
+use crate::core::domain::entities::error_message::{ApiErrorMessageResponse, ApiErrorResponse};
 use crate::core::domain::entities::ErrorMessageResponse;
 
 /// This is custom Result type for the application.
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[derive(Debug, serde::Serialize, Default)]
-pub struct AuthErrorResponse {
-    pub status: bool,
-    pub message: String,
-}
-
-pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<AuthErrorResponse>) {
+pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<ApiErrorMessageResponse>) {
     (
         StatusCode::UNAUTHORIZED,
-        Json(AuthErrorResponse {
+        Json(ApiErrorMessageResponse {
             status: false,
             message: message.into(),
         }),
@@ -31,8 +25,9 @@ pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<AuthErrorRe
 pub enum Error {
     Generic(String),
     ConfigMissing(String),
-    BadRequest(ErrorResponse),
+    BadRequest(ApiErrorResponse),
     Authentication,
+    Forbidden(String),
     NotFound(String),
 }
 
@@ -117,11 +112,24 @@ impl From<std::net::AddrParseError> for Error {
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
-            Self::BadRequest(str) => (StatusCode::BAD_REQUEST, str).into_response(),
-            Self::NotFound(message) => (StatusCode::NOT_FOUND, message).into_response(),
+            Self::BadRequest(response) => (StatusCode::BAD_REQUEST, Json(response)).into_response(),
+            Self::NotFound(message) => (
+                StatusCode::NOT_FOUND,
+                Json(ApiErrorMessageResponse {
+                    status: false,
+                    message,
+                }),
+            )
+                .into_response(),
+            Self::Forbidden(message) => (
+                StatusCode::FORBIDDEN,
+                Json(ApiErrorMessageResponse {
+                    status: false,
+                    message,
+                }),
+            )
+                .into_response(),
             Error::Authentication => {
-                use http::StatusCode;
-
                 let mut errors: Vec<ErrorMessageResponse> = vec![];
                 let error_message = ErrorMessageResponse {
                     key: String::from("email"),
@@ -129,28 +137,84 @@ impl IntoResponse for Error {
                 };
 
                 errors.push(error_message);
-                let error_response = ErrorResponse {
+                let error_response = ApiErrorResponse {
                     status: false,
                     errors,
                 };
-                (StatusCode::UNAUTHORIZED, error_response).into_response()
+                (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
             }
-            err => (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                format!("error 500: {:?}", err),
-            )
-                .into_response(),
+            err => {
+                error!(error = ?err, "internal request error");
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(ApiErrorMessageResponse {
+                        status: false,
+                        message: "An internal server error occurred.".to_string(),
+                    }),
+                )
+                    .into_response()
+            }
         }
     }
 }
 
-impl IntoResponse for ErrorResponse {
-    fn into_response(self) -> Response {
-        let validation_errors = match serde_json::to_string(&self) {
-            Ok(str) => str,
-            _ => "validation error 400.".to_string(),
-        };
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::body::to_bytes;
 
-        (StatusCode::BAD_REQUEST, validation_errors).into_response()
+    async fn response_json(response: Response) -> serde_json::Value {
+        let body = to_bytes(response.into_body(), usize::MAX)
+            .await
+            .expect("response body should be readable");
+        serde_json::from_slice(&body).expect("response body should be valid JSON")
+    }
+
+    #[tokio::test]
+    async fn bad_request_returns_structured_json() {
+        let response = Error::BadRequest(ApiErrorResponse {
+            status: false,
+            errors: vec![ErrorMessageResponse {
+                key: "email".to_string(),
+                message: "Required".to_string(),
+            }],
+        })
+        .into_response();
+
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+        assert_eq!(
+            response_json(response).await,
+            serde_json::json!({
+                "status": false,
+                "errors": [{"key": "email", "message": "Required"}]
+            })
+        );
+    }
+
+    #[tokio::test]
+    async fn forbidden_returns_message_json() {
+        let response = Error::Forbidden("Not allowed".to_string()).into_response();
+
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+        assert_eq!(
+            response_json(response).await,
+            serde_json::json!({"status": false, "message": "Not allowed"})
+        );
+    }
+
+    #[tokio::test]
+    async fn internal_error_hides_debug_details() {
+        let response = Error::Generic("sensitive internal details".to_string()).into_response();
+
+        assert_eq!(response.status(), StatusCode::INTERNAL_SERVER_ERROR);
+        let body = response_json(response).await;
+        assert_eq!(
+            body,
+            serde_json::json!({
+                "status": false,
+                "message": "An internal server error occurred."
+            })
+        );
+        assert!(!body.to_string().contains("sensitive internal details"));
     }
 }

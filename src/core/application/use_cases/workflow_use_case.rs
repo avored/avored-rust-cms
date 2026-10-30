@@ -165,7 +165,7 @@ fn validate_definition(name: &str, entity_type: &str) -> Result<()> {
     }
     if !errors.is_empty() {
         return Err(Error::BadRequest(
-            crate::core::domain::entities::ErrorResponse {
+            crate::core::domain::entities::ApiErrorResponse {
                 status: false,
                 errors,
             },
@@ -220,7 +220,7 @@ fn validate_actions(actions: &[crate::core::domain::entities::WorkflowAction]) -
 
     if !errors.is_empty() {
         return Err(Error::BadRequest(
-            crate::core::domain::entities::ErrorResponse {
+            crate::core::domain::entities::ApiErrorResponse {
                 status: false,
                 errors,
             },

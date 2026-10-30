@@ -1,6 +1,7 @@
 use crate::avored_state::AppState;
 use crate::core::domain::entities::user::TokenClaims;
-use crate::error::{unauthorized, AuthErrorResponse as ErrorResponse};
+use crate::core::domain::entities::ApiErrorMessageResponse;
+use crate::error::unauthorized;
 use axum::body::Body;
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -12,7 +13,7 @@ pub async fn check_auth(
     axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiErrorMessageResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
         let Ok(auth_value) = t.to_str() else {
             return Err(unauthorized(
@@ -59,7 +60,7 @@ pub async fn check_customer_auth(
     axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<impl IntoResponse, (StatusCode, Json<ApiErrorMessageResponse>)> {
     if let Some(t) = req.headers().get("authorization") {
         let Ok(auth_value) = t.to_str() else {
             return Err(unauthorized(
