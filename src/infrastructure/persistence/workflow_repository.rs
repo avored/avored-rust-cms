@@ -365,14 +365,14 @@ fn pagination_values(page_size: u64, skip: u64) -> BTreeMap<String, Value> {
     ])
 }
 
-fn first_object(responses: Vec<surrealdb_core::dbs::QueryResult>, message: &str) -> Result<Object> {
+fn first_object(responses: Vec<surrealdb_rpc::QueryResult>, message: &str) -> Result<Object> {
     into_iter_objects(responses)?
         .next()
         .ok_or_else(|| Error::Generic(message.to_string()))?
 }
 
 fn first_object_or_not_found(
-    responses: Vec<surrealdb_core::dbs::QueryResult>,
+    responses: Vec<surrealdb_rpc::QueryResult>,
     message: &str,
 ) -> Result<Object> {
     match into_iter_objects(responses)?.next() {
@@ -382,7 +382,7 @@ fn first_object_or_not_found(
     }
 }
 
-fn read_count(responses: Vec<surrealdb_core::dbs::QueryResult>) -> Result<u64> {
+fn read_count(responses: Vec<surrealdb_rpc::QueryResult>) -> Result<u64> {
     let object = first_object(responses, "Count query returned no result")?;
     let total = object
         .get("total")
