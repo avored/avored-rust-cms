@@ -133,3 +133,8 @@ lib-default-features = false
 #
 # Optional. Defaults to "release".
 lib-profile-release = "wasm-release"
+
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "warn"
+redundant_field_names = "deny"

@@ -58,6 +58,7 @@ pub async fn check_auth(
 }
 
 /// Middleware to require API-key authentication for incoming customer requests
+#[allow(clippy::result_large_err)]
 pub async fn check_customer_auth(
     axum::extract::State(state): axum::extract::State<AppState>,
     mut req: Request<Body>,
@@ -87,10 +88,9 @@ pub async fn check_customer_auth(
         }
     }
 
-
     // @todo improve this to a proper user claims for api users.
     // May be we can have backend to select a user (created, updated and deleted by user email)
-    // and map it with domain name as well. 
+    // and map it with domain name as well.
     let now = chrono::Utc::now().timestamp() as usize;
     req.extensions_mut().insert(TokenClaims {
         sub: "users:api-user".to_string(),

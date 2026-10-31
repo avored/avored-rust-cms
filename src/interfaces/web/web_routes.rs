@@ -1,6 +1,9 @@
 use leptos::prelude::*;
 use leptos_meta::{provide_meta_context, Stylesheet, Title};
 
+use crate::interfaces::web::pages::admin::api_key::{
+    ApiKeyCreatePage, ApiKeyEditPage, ApiKeyIndexPage,
+};
 use crate::interfaces::web::pages::admin::collections::{
     collection_create_page::CollectionCreatePage, collection_edit_page::CollectionEditPage,
     collection_index_page::CollectionIndexPage,
@@ -11,14 +14,11 @@ use crate::interfaces::web::pages::admin::email::{
 use crate::interfaces::web::pages::admin::entity::{
     EntityCreatePage, EntityEditPage, EntityIndexPage,
 };
+use crate::interfaces::web::pages::admin::profile::AdminProfilePage;
+use crate::interfaces::web::pages::admin::setting::SettingPage;
 use crate::interfaces::web::pages::admin::workflow::{
     WorkflowCreatePage, WorkflowEditPage, WorkflowIndexPage,
 };
-use crate::interfaces::web::pages::admin::api_key::{
-    ApiKeyIndexPage, ApiKeyCreatePage, ApiKeyEditPage,
-};
-use crate::interfaces::web::pages::admin::profile::AdminProfilePage;
-use crate::interfaces::web::pages::admin::setting::SettingPage;
 use crate::interfaces::web::pages::misc::setup_page::SetupPage;
 use crate::interfaces::web::pages::{
     auth::login_page::LoginPage, dashboard_page::DashboardPage, home_page::HomePage,

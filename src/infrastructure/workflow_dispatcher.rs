@@ -256,8 +256,8 @@ mod tests {
     use super::is_public_ip;
     use super::{HttpWebhookExecutor, WorkflowActionExecutor};
     use crate::core::domain::entities::WorkflowAction;
-    use serde_json::json;
     use crate::error::Result;
+    use serde_json::json;
 
     #[test]
     fn rejects_non_public_ipv4_addresses() {
@@ -292,9 +292,7 @@ mod tests {
                 "{address} must be blocked"
             );
         }
-        assert!(is_public_ip(IpAddr::V6(
-            "2606:4700:4700::1111".parse()?
-        )));
+        assert!(is_public_ip(IpAddr::V6("2606:4700:4700::1111".parse()?)));
 
         Ok(())
     }

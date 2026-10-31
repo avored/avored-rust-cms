@@ -1,4 +1,5 @@
 #![recursion_limit = "256"]
+#![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 
 use avored_rust_cms::{api::rest_api_routes::rest_api_routes, avored_state::AppState, error};
 

@@ -63,49 +63,49 @@ impl From<surrealdb::Error> for Error {
 impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with password hashing"))
+        Self::Generic("there is an issue with password hashing".to_string())
     }
 }
 
 impl From<argon2::password_hash::phc::Error> for Error {
     fn from(actual_error: argon2::password_hash::phc::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with password hashing"))
+        Self::Generic("there is an issue with password hashing".to_string())
     }
 }
 
 impl From<jsonwebtoken::errors::Error> for Error {
     fn from(actual_error: jsonwebtoken::errors::Error) -> Self {
         error!("jsonwebtoken error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with generating jwt token"))
+        Self::Generic("there is an issue with generating jwt token".to_string())
     }
 }
 
 impl From<leptos::config::errors::LeptosConfigError> for Error {
     fn from(actual_error: leptos::config::errors::LeptosConfigError) -> Self {
         error!("leptos config error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with leptos config"))
+        Self::Generic("there is an issue with leptos config".to_string())
     }
 }
 
 impl From<std::io::Error> for Error {
     fn from(actual_error: std::io::Error) -> Self {
         error!("IO error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with IO"))
+        Self::Generic("there is an issue with IO".to_string())
     }
 }
 
 impl From<reqwest::header::InvalidHeaderValue> for Error {
     fn from(actual_error: reqwest::header::InvalidHeaderValue) -> Self {
         error!("Invalid header value error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with the header value"))
+        Self::Generic("there is an issue with the header value".to_string())
     }
 }
 
 impl From<std::net::AddrParseError> for Error {
     fn from(actual_error: std::net::AddrParseError) -> Self {
         error!("Address parse error: {actual_error:?}");
-        Self::Generic(format!("there is an issue with the address"))
+        Self::Generic("there is an issue with the address".to_string())
     }
 }
 

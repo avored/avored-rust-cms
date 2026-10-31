@@ -91,8 +91,8 @@ pub fn AdminProfilePage() -> impl IntoView {
                     </form>
                 </div>
 
-                <div 
-                    x-show="activeTab === 'password'" 
+                <div
+                    x-show="activeTab === 'password'"
                     class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
                     <form x-on:submit.prevent="submitPassword()" class="p-6 sm:p-8 space-y-6">
                         <div>

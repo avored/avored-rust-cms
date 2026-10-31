@@ -58,8 +58,8 @@ pub struct WorkflowExecutionModel {
 
 #[cfg(test)]
 mod tests {
-    use crate::error::Result;
     use super::{WorkflowAction, WorkflowEvent, WorkflowExecutionStatus};
+    use crate::error::Result;
 
     #[test]
     fn workflow_events_use_stable_snake_case_names() -> Result<()> {
@@ -91,10 +91,7 @@ mod tests {
                 "recipient": "admin@example.test"
             })
         );
-        assert_eq!(
-            serde_json::from_value::<WorkflowAction>(encoded)?,
-            action
-        );
+        assert_eq!(serde_json::from_value::<WorkflowAction>(encoded)?, action);
 
         Ok(())
     }

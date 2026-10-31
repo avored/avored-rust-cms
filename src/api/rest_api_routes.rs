@@ -1,4 +1,8 @@
 use crate::interfaces::api::{
+    api_key::{
+        create_api_key_handler, delete_api_key_handler, fetch_api_key_handler,
+        paginate_api_keys_handler, update_api_key_handler,
+    },
     api_manager::{
         create_entity_record_handler::create_entity_record_handler,
         delete_entity_record_handler::delete_entity_record_handler,
@@ -25,16 +29,12 @@ use crate::interfaces::api::{
         option_entities_handler::option_entities_handler, paginate_entities_handler,
         update_entity_handler, update_entity_identifier_handler::update_entity_identifier_handler,
     },
+    setting::{fetch_settings_handler, update_settings_handler},
     workflow::{
         create_workflow_handler, delete_workflow_handler, fetch_workflow_handler,
         list_workflow_executions_handler, list_workflows_handler, set_workflow_active_handler,
         update_workflow_handler,
     },
-    api_key::{
-        create_api_key_handler, delete_api_key_handler, fetch_api_key_handler,
-        paginate_api_keys_handler, update_api_key_handler,
-    },
-    setting::{fetch_settings_handler, update_settings_handler},
 };
 use axum::{
     http::HeaderValue,
@@ -149,7 +149,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         ));
 
     let v1_router = Router::<AppState>::new()
-        .route("/api/v1/entities", get(api_manager_paginate_entities_handler))
+        .route(
+            "/api/v1/entities",
+            get(api_manager_paginate_entities_handler),
+        )
         .route("/api/v1/entities", post(create_entity_record_handler))
         .route("/api/v1/entities/{id}", get(fetch_entity_record_handler))
         .route("/api/v1/entities/{id}", patch(update_entity_record_handler))

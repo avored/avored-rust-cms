@@ -12,8 +12,8 @@ use crate::{
         api_key_repository::ApiKeyRepositoryImpl,
         email_template_repository::EmailTemplateRepositoryImpl,
         entity_repository::EntityRepositoryImpl, misc_repository::MiscRepositoryImpl,
-        setting_repository::SettingRepositoryImpl,
-        workflow_repository::WorkflowRepositoryImpl, AuthRepositoryImpl,
+        setting_repository::SettingRepositoryImpl, workflow_repository::WorkflowRepositoryImpl,
+        AuthRepositoryImpl,
     },
     infrastructure::workflow_dispatcher::{HttpWebhookExecutor, WorkflowDispatcher},
     providers::{

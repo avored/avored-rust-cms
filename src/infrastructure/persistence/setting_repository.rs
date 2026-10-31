@@ -64,7 +64,7 @@ impl SettingRepository for SettingRepositoryImpl {
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
-        for object_res in into_iter_objects(response)? {
+        if let Some(object_res) = into_iter_objects(response)?.next() {
             let object = object_res?;
             return Ok(Some(map_object_to_setting(&object)?));
         }

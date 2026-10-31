@@ -1,4 +1,5 @@
 #![recursion_limit = "256"]
+#![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
 
 pub mod interfaces;
 

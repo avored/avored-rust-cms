@@ -99,7 +99,7 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
         let (datastore, session) = &self.database_provider.db;
 
         let page = page.max(1);
-        let limit = limit.min(100).max(1);
+        let limit = limit.clamp(1, 100);
         let skip = page.saturating_sub(1).saturating_mul(limit);
 
         let sql = format!(
@@ -210,7 +210,7 @@ fn read_count_from_object(object: &Object) -> Result<u64> {
         .get("total")
         .or_else(|| object.get("count"))
         .and_then(|value| match value {
-            Value::Number(number) => number.clone().into_int().ok(),
+            Value::Number(number) => (*number).into_int().ok(),
             _ => None,
         })
         .unwrap_or(0);
