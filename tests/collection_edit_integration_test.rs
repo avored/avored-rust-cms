@@ -1,3 +1,4 @@
+#![allow(clippy::unwrap_used, clippy::expect_used)]
 #![recursion_limit = "256"]
 
 use avored_rust_cms::{

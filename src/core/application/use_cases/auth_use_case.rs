@@ -47,13 +47,16 @@ where
         )?;
 
         Ok(LoginResult {
-            token: token,
-            user: user,
+            token,
+            user,
             authenticated: true,
         })
     }
 
-    pub async fn fetch_profile(&self, user_id: &str) -> Result<crate::core::application::dtos::AdminProfileResponse> {
+    pub async fn fetch_profile(
+        &self,
+        user_id: &str,
+    ) -> Result<crate::core::application::dtos::AdminProfileResponse> {
         let user = self.repository.fetch_by_id(user_id).await?;
         Ok(user.into())
     }
@@ -67,7 +70,9 @@ where
             return Err(crate::error::Error::Generic("Name is required".to_string()));
         }
         if command.email.trim().is_empty() {
-            return Err(crate::error::Error::Generic("Email is required".to_string()));
+            return Err(crate::error::Error::Generic(
+                "Email is required".to_string(),
+            ));
         }
         let user = self
             .repository

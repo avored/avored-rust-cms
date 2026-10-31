@@ -80,7 +80,7 @@ pub fn SettingPage() -> impl IntoView {
                             <i data-feather="mail" class="h-4 w-4"></i>
                             "Email & Delivery"
                         </button>
-                        
+
                     </nav>
                 </div>
 

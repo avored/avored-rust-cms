@@ -387,7 +387,7 @@ fn read_count(responses: Vec<surrealdb_rpc::QueryResult>) -> Result<u64> {
     let total = object
         .get("total")
         .and_then(|value| match value {
-            Value::Number(number) => number.clone().into_int().ok(),
+            Value::Number(number) => (*number).into_int().ok(),
             _ => None,
         })
         .ok_or_else(|| Error::Generic("Count query returned an invalid total".to_string()))?;

@@ -202,7 +202,7 @@ impl EmailTemplateRepository for EmailTemplateRepositoryImpl {
             Some(obj_res) => {
                 let obj = obj_res?;
                 let total = obj.get("total").and_then(|v| match v {
-                    surrealdb::types::Value::Number(num) => Some(num.clone()),
+                    surrealdb::types::Value::Number(num) => Some(*num),
                     _ => None,
                 });
                 match total {

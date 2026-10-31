@@ -25,9 +25,7 @@ impl AvoRedDatabaseProvider {
         //  let db = Surreal::new::<RocksDb>("path/to/database-folder").await?;
         // // let test = surrealdb::engine::local::Folder::new(folder_name);
 
-        let datastore = Datastore::new(&folder_name)
-            .await
-            .expect("there is issue with connecting with data/avored.db storage");
+        let datastore = Datastore::new(folder_name).await?;
         tracing::info!("database connected");
 
         // 1. Ensure Namespace exists (Root/Owner level session)
@@ -42,8 +40,8 @@ impl AvoRedDatabaseProvider {
         datastore.execute(&define_db_sql, &ns_session, None).await?;
 
         let database_session = Session::owner()
-            .with_ns(&database_namespace)
-            .with_db(&database_name);
+            .with_ns(database_namespace)
+            .with_db(database_name);
 
         // 3. Apply all application migrations after the namespace/database exist.
         db_init::run(&datastore, &database_session).await?;

@@ -1,3 +1,4 @@
+#![allow(clippy::unwrap_used, clippy::expect_used)]
 #![recursion_limit = "256"]
 
 //! Integration tests for `DELETE /api/v1/entities/{id}`.

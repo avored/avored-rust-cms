@@ -44,11 +44,8 @@ impl AuthRepository for AuthRepositoryImpl {
         let (datastore, database_session) = &self.database_provider.db;
 
         let sql = "SELECT * FROM users WHERE id = $id;";
-        let data: BTreeMap<String, Value> = [(
-            "id".to_string(),
-            Value::RecordId(id.to_record_id("users")),
-        )]
-        .into();
+        let data: BTreeMap<String, Value> =
+            [("id".to_string(), Value::RecordId(id.to_record_id("users")))].into();
 
         let responses = datastore
             .execute(sql, database_session, Some(data.into()))
@@ -67,10 +64,7 @@ impl AuthRepository for AuthRepositoryImpl {
 
         let sql = "UPDATE users SET name = $name, email = $email, updated_at = time::now() WHERE id = $id RETURN AFTER;";
         let data: BTreeMap<String, Value> = [
-            (
-                "id".to_string(),
-                Value::RecordId(id.to_record_id("users")),
-            ),
+            ("id".to_string(), Value::RecordId(id.to_record_id("users"))),
             ("name".to_string(), Value::String(name.to_string())),
             ("email".to_string(), Value::String(email.to_string())),
         ]
@@ -93,10 +87,7 @@ impl AuthRepository for AuthRepositoryImpl {
 
         let sql = "UPDATE users SET password = $password, updated_at = time::now() WHERE id = $id RETURN AFTER;";
         let data: BTreeMap<String, Value> = [
-            (
-                "id".to_string(),
-                Value::RecordId(id.to_record_id("users")),
-            ),
+            ("id".to_string(), Value::RecordId(id.to_record_id("users"))),
             (
                 "password".to_string(),
                 Value::String(password_hash.to_string()),

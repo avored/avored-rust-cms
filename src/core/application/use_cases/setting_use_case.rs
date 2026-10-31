@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
 use crate::core::application::dtos::setting_dto::{
-    EmailSettingsDto, GeneralSettingsDto, SeoSettingsDto,
-    SettingsGroupResponse, UpdateSettingsPayload,
+    EmailSettingsDto, GeneralSettingsDto, SeoSettingsDto, SettingsGroupResponse,
+    UpdateSettingsPayload,
 };
 use crate::core::domain::entities::setting::StorableSetting;
 use crate::core::domain::repositories::setting_repository::SettingRepository;
@@ -57,10 +57,7 @@ impl<R: SettingRepository> SettingUseCase<R> {
                 .get("seo.meta_description")
                 .cloned()
                 .unwrap_or_else(|| "A modular, blazing fast CMS built with Rust.".to_string()),
-            og_image_url: map
-                .get("seo.og_image_url")
-                .cloned()
-                .unwrap_or_default(),
+            og_image_url: map.get("seo.og_image_url").cloned().unwrap_or_default(),
         };
 
         let email = EmailSettingsDto {
@@ -89,20 +86,35 @@ impl<R: SettingRepository> SettingUseCase<R> {
         })
     }
 
-    pub async fn update_settings(&self, payload: UpdateSettingsPayload) -> Result<SettingsGroupResponse> {
+    pub async fn update_settings(
+        &self,
+        payload: UpdateSettingsPayload,
+    ) -> Result<SettingsGroupResponse> {
         let entries = vec![
             ("general.site_name", payload.general.site_name, "general"),
             ("general.logo_url", payload.general.logo_url, "general"),
-            ("general.support_email", payload.general.support_email, "general"),
+            (
+                "general.support_email",
+                payload.general.support_email,
+                "general",
+            ),
             ("general.timezone", payload.general.timezone, "general"),
-            ("general.default_language", payload.general.default_language, "general"),
+            (
+                "general.default_language",
+                payload.general.default_language,
+                "general",
+            ),
             ("seo.meta_title", payload.seo.meta_title, "seo"),
             ("seo.meta_description", payload.seo.meta_description, "seo"),
             ("seo.og_image_url", payload.seo.og_image_url, "seo"),
             ("email.smtp_host", payload.email.smtp_host, "email"),
             ("email.smtp_port", payload.email.smtp_port, "email"),
             ("email.sender_name", payload.email.sender_name, "email"),
-            ("email.default_reply_to", payload.email.default_reply_to, "email")
+            (
+                "email.default_reply_to",
+                payload.email.default_reply_to,
+                "email",
+            ),
         ];
 
         for (ident, val, grp) in entries {
