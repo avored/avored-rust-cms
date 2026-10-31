@@ -60,6 +60,15 @@ impl From<surrealdb::Error> for Error {
     }
 }
 
+// @todo why do surreal datastore required anyhow::Error to be impl
+// trigger from Datastore::new(folder_name).await?; in avored_database_provider
+impl From<anyhow::Error> for Error {
+    fn from(val: anyhow::Error) -> Self {
+        error!("there is an issue with anyhow error: {val:?}");
+        Self::Generic(format!("there is an issue with anyhow error: {val:?}"))
+    }
+}
+
 impl From<argon2::password_hash::Error> for Error {
     fn from(actual_error: argon2::password_hash::Error) -> Self {
         error!("argon2 password hash error: {actual_error:?}");

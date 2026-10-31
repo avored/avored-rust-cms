@@ -22,13 +22,14 @@ tokio = { version = "1", features = ["rt-multi-thread", "net"], optional = true 
 surrealdb = { version = "3.3.5", features = ["kv-rocksdb", "kv-mem"], optional = true }
 surrealdb-core = { version = "3.3.5", optional = true }
 surrealdb-rpc = { version = "3.3.5", optional = true }
-rand = { version = "0.9.5", optional = true }
+rand = { version = "0.10.3", optional = true }
 base64 = { version = "0.23.1", optional = true }
 sha2 = { version = "0.11.1", optional = true }
 reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls"], optional = true }
 # Keep the wasm-bindgen version aligned with cargo-leptos; otherwise the generated JS/WASM
 # will fail at runtime with the missing __wbindgen_externref_table_alloc symbol.
-wasm-bindgen = { version = "=0.2.128", optional = true }
+wasm-bindgen = { version = "=0.2.130", optional = true }
+anyhow = { version = "1.0", optional = true }
 dotenvy = { version = "0.15.7", optional = true }
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
@@ -75,6 +76,7 @@ ssr = [
     "dep:jsonwebtoken",
     "dep:reqwest",
     "dep:tracing-appender",
+    "dep:anyhow",
 ]
 
 # Defines a size-optimized profile for the WASM bundle in release mode
