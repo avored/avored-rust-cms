@@ -26,6 +26,7 @@ impl AvoRedDatabaseProvider {
         let datastore = Datastore::new(&folder_name)
             .await
             .expect("there is issue with connecting with data/avored.db storage");
+        tracing::info!("database connected");
 
         // 1. Ensure Namespace exists (Root/Owner level session)
         let root_session = Session::owner();
@@ -44,6 +45,7 @@ impl AvoRedDatabaseProvider {
 
         // 3. Apply all application migrations after the namespace/database exist.
         db_init::run(&datastore, &database_session).await?;
+        tracing::info!("database migrations applied");
 
         let db = (datastore, database_session);
 

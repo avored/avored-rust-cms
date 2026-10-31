@@ -46,6 +46,7 @@ use leptos_axum::{generate_route_list, LeptosRoutes};
 use tower_http::{
     cors::{Any, CorsLayer},
     services::ServeDir,
+    trace::{DefaultOnRequest, DefaultOnResponse, TraceLayer},
 };
 
 use crate::{
@@ -171,6 +172,18 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .route(
             "/api/misc/setup",
             axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
+        )
+        .layer(
+            TraceLayer::new_for_http()
+                .make_span_with(|request: &axum::http::Request<_>| {
+                    tracing::debug_span!(
+                        "http_request",
+                        method = %request.method(),
+                        path = %request.uri().path()
+                    )
+                })
+                .on_request(DefaultOnRequest::new().level(tracing::Level::DEBUG))
+                .on_response(DefaultOnResponse::new().level(tracing::Level::DEBUG)),
         )
         /* frontend routes */
         .layer(cors)

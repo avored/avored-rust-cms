@@ -10,7 +10,11 @@ pub async fn setup_handler(
     State(state): State<AppState>,
     Json(payload): Json<SetupCommand>,
 ) -> Result<Json<SetupResponse>> {
-    println!("->> {:<12} - setup_handler", "REST_API_HANDLER");
+    tracing::info!(
+        component = "REST_API_HANDLER",
+        handler = "setup",
+        "handling setup request"
+    );
 
     let locale = "en";
 

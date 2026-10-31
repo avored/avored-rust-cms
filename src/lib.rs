@@ -28,5 +28,6 @@ pub fn hydrate() {
     use crate::interfaces::web::web_routes::WebApp;
 
     console_error_panic_hook::set_once();
+    console_log::init_with_level(log::Level::Info).expect("failed to initialize browser logging");
     leptos::mount::hydrate_body(WebApp);
 }

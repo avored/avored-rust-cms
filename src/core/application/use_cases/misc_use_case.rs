@@ -17,7 +17,11 @@ where
     }
 
     pub async fn setup(&self, storable_user: StorableUser) -> crate::error::Result<bool> {
-        println!("->> {:<12} - setup", "MISC_USE_CASE");
+        tracing::info!(
+            component = "MISC_USE_CASE",
+            operation = "setup",
+            "setting up initial user"
+        );
 
         match self.repository.create_user(storable_user).await {
             Ok(_) => Ok(true),
