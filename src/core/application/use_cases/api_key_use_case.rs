@@ -1,3 +1,5 @@
+use rand::RngExt;
+
 use crate::core::domain::entities::api_key::{
     ApiKeyModel, ApiKeyPermission, StorableApiKey, UpdatableApiKey,
 };
@@ -22,7 +24,6 @@ impl<R: ApiKeyRepository> ApiKeyUseCase<R> {
         actor: String,
     ) -> Result<(ApiKeyModel, String)> {
         use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
-        use rand::Rng;
         use sha2::{Digest, Sha256};
 
         // 1. Generate 32 random bytes → base64url plain secret
