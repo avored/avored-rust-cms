@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use std::sync::Arc;
 
 use surrealdb::types::{Object, RecordIdKey, Value};
-use surrealdb_core::dbs::QueryResult;
+use surrealdb_rpc::QueryResult;
 
 use crate::core::domain::constants::SETTINGS_TABLE_NAME;
 use crate::core::domain::entities::setting::{SettingModel, StorableSetting};
@@ -55,8 +55,12 @@ impl SettingRepository for SettingRepositoryImpl {
 
     async fn find_by_identifier(&self, identifier: &str) -> Result<Option<SettingModel>> {
         let (datastore, session) = &self.database_provider.db;
-        let sql = format!("SELECT * FROM {SETTINGS_TABLE_NAME} WHERE identifier = $identifier LIMIT 1;");
-        let values = BTreeMap::from([("identifier".to_string(), Value::String(identifier.to_string()))]);
+        let sql =
+            format!("SELECT * FROM {SETTINGS_TABLE_NAME} WHERE identifier = $identifier LIMIT 1;");
+        let values = BTreeMap::from([(
+            "identifier".to_string(),
+            Value::String(identifier.to_string()),
+        )]);
         let response = datastore
             .execute(&sql, session, Some(values.into()))
             .await?;
@@ -78,7 +82,10 @@ impl SettingRepository for SettingRepositoryImpl {
             );
             let values = BTreeMap::from([
                 ("value".to_string(), Value::String(setting.value)),
-                ("setting_group".to_string(), Value::String(setting.setting_group)),
+                (
+                    "setting_group".to_string(),
+                    Value::String(setting.setting_group),
+                ),
             ]);
             let response = datastore
                 .execute(&sql, session, Some(values.into()))
@@ -92,7 +99,10 @@ impl SettingRepository for SettingRepositoryImpl {
             let values = BTreeMap::from([
                 ("identifier".to_string(), Value::String(setting.identifier)),
                 ("value".to_string(), Value::String(setting.value)),
-                ("setting_group".to_string(), Value::String(setting.setting_group)),
+                (
+                    "setting_group".to_string(),
+                    Value::String(setting.setting_group),
+                ),
             ]);
             let response = datastore
                 .execute(&sql, session, Some(values.into()))
@@ -103,10 +113,7 @@ impl SettingRepository for SettingRepositoryImpl {
     }
 }
 
-fn first_object(
-    response: Vec<QueryResult>,
-    missing_msg: &'static str,
-) -> Result<Object> {
+fn first_object(response: Vec<QueryResult>, missing_msg: &'static str) -> Result<Object> {
     into_iter_objects(response)?
         .next()
         .ok_or_else(|| Error::Generic(missing_msg.to_string()))?

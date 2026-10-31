@@ -23,7 +23,7 @@ pub use setting_repository::SettingRepositoryImpl;
 pub use crate::core::domain::extensions::RecordIdExtension;
 
 use surrealdb::types::{Object, Value};
-use surrealdb_core::dbs::QueryResult;
+use surrealdb_rpc::QueryResult;
 
 pub fn into_iter_objects(
     responses: Vec<QueryResult>,

@@ -80,11 +80,10 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
     async fn find_by_hash(&self, key_hash: &str) -> Result<Option<ApiKeyModel>> {
         let (datastore, session) = &self.database_provider.db;
 
-        let sql = format!("SELECT * FROM {API_KEYS_TABLE_NAME} WHERE key_hash = $key_hash LIMIT 1;");
-        let values = BTreeMap::from([(
-            "key_hash".to_string(),
-            Value::String(key_hash.to_string()),
-        )]);
+        let sql =
+            format!("SELECT * FROM {API_KEYS_TABLE_NAME} WHERE key_hash = $key_hash LIMIT 1;");
+        let values =
+            BTreeMap::from([("key_hash".to_string(), Value::String(key_hash.to_string()))]);
 
         let response = datastore
             .execute(&sql, session, Some(values.into()))
@@ -189,17 +188,14 @@ impl ApiKeyRepository for ApiKeyRepositoryImpl {
     }
 }
 
-fn first_object(
-    responses: Vec<surrealdb_core::dbs::QueryResult>,
-    message: &str,
-) -> Result<Object> {
+fn first_object(responses: Vec<surrealdb_rpc::QueryResult>, message: &str) -> Result<Object> {
     into_iter_objects(responses)?
         .next()
         .ok_or_else(|| Error::Generic(message.to_string()))?
 }
 
 fn first_object_or_not_found(
-    responses: Vec<surrealdb_core::dbs::QueryResult>,
+    responses: Vec<surrealdb_rpc::QueryResult>,
     message: &str,
 ) -> Result<Object> {
     match into_iter_objects(responses)?.next() {

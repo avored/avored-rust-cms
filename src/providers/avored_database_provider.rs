@@ -1,10 +1,12 @@
+use std::sync::Arc;
+
 use crate::error::Result;
 use crate::infrastructure::migrations::db_init;
 use surrealdb_core::dbs::Session;
 use surrealdb_core::kvs::Datastore;
 
 /// database dn type
-pub type DB = (Datastore, Session);
+pub type DB = (Arc<Datastore>, Session);
 
 /// avored database provider
 pub struct AvoRedDatabaseProvider {

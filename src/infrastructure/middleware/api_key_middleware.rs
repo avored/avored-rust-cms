@@ -11,7 +11,11 @@ use crate::core::domain::entities::ApiErrorMessageResponse;
 pub(crate) fn hash_api_key(plain_secret: &str) -> String {
     let mut hasher = Sha256::new();
     hasher.update(plain_secret.as_bytes());
-    format!("{:x}", hasher.finalize())
+    hasher
+        .finalize()
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
 }
 
 fn unauthorized(message: &str) -> (StatusCode, Json<ApiErrorMessageResponse>) {

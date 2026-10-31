@@ -26,7 +26,7 @@ impl<R: ApiKeyRepository> ApiKeyUseCase<R> {
         use sha2::{Digest, Sha256};
 
         // 1. Generate 32 random bytes → base64url plain secret
-        let random_bytes: [u8; 32] = rand::thread_rng().gen();
+        let random_bytes: [u8; 32] = rand::rng().random();
         let plain_secret = format!("avr_{}", URL_SAFE_NO_PAD.encode(random_bytes));
 
         // 2. Take first 8 chars as visible prefix
@@ -35,7 +35,11 @@ impl<R: ApiKeyRepository> ApiKeyUseCase<R> {
         // 3. SHA-256 hash the full plain secret
         let mut hasher = Sha256::new();
         hasher.update(plain_secret.as_bytes());
-        let key_hash = format!("{:x}", hasher.finalize());
+        let key_hash = hasher
+            .finalize()
+            .iter()
+            .map(|byte| format!("{byte:02x}"))
+            .collect::<String>();
 
         // 4. Persist
         let storable = StorableApiKey {
