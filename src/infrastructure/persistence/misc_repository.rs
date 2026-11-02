@@ -41,15 +41,12 @@ impl MiscRepository for MiscRepositoryImpl {
         );
 
         let data: BTreeMap<String, Value> = [
-            ("name".into(), Value::String(storable_user.name.into())),
-            ("email".into(), Value::String(storable_user.email.into())),
-            (
-                "password".into(),
-                Value::String(storable_user.password.into()),
-            ),
+            ("name".into(), Value::String(storable_user.name)),
+            ("email".into(), Value::String(storable_user.email)),
+            ("password".into(), Value::String(storable_user.password)),
             (
                 "performing_user".into(),
-                Value::String(storable_user.processing_user.into()),
+                Value::String(storable_user.processing_user),
             ),
         ]
         .into();

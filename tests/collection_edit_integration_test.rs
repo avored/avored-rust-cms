@@ -52,7 +52,7 @@ async fn test_collection_record_fetch_and_update_round_trip() {
         .and_then(serde_json::Value::as_str)
         .unwrap()
         .split(':')
-        .last()
+        .next_back()
         .unwrap()
         .to_string();
 
