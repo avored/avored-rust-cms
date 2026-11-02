@@ -65,29 +65,25 @@ where
         let logged_in_user = updatable_entity.logged_in_user_email.clone();
 
         for attribute in updatable_entity.attributes {
-            let attrobute_model: AttributeModel;
-
-            if attribute.is_new {
+            let attrobute_model: AttributeModel = if attribute.is_new {
                 let storable_entity_attribute = StorableEntityAttribute {
                     name: attribute.name,
                     identifier: attribute.identifier,
                     data_type: attribute.data_type,
                     field_type: attribute.field_type,
                 };
-                attrobute_model = self
-                    .repository
+                self.repository
                     .create_attribute(
                         storable_entity_attribute,
                         id.to_string(),
                         logged_in_user.clone(),
                     )
-                    .await?;
+                    .await?
             } else {
-                attrobute_model = self
-                    .repository
+                self.repository
                     .update_attribute(attribute, logged_in_user.clone())
-                    .await?;
-            }
+                    .await?
+            };
 
             updated.attributes.push(attrobute_model);
         }

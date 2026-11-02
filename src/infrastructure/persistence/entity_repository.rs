@@ -86,18 +86,18 @@ impl EntityRepository for EntityRepositoryImpl {
         );
 
         let data: BTreeMap<String, Value> = [
-            ("name".into(), Value::String(storable_entity.name.into())),
+            ("name".into(), Value::String(storable_entity.name)),
             (
                 "identifier".into(),
-                Value::String(storable_entity.identifier.into()),
+                Value::String(storable_entity.identifier),
             ),
             (
                 "created_by".into(),
-                Value::String(storable_entity.logged_in_user_email.clone().into()),
+                Value::String(storable_entity.logged_in_user_email.clone()),
             ),
             (
                 "updated_by".into(),
-                Value::String(storable_entity.logged_in_user_email.into()),
+                Value::String(storable_entity.logged_in_user_email),
             ),
         ]
         .into();
@@ -237,10 +237,10 @@ impl EntityRepository for EntityRepositoryImpl {
         );
         let data: BTreeMap<String, Value> = [
             ("id".into(), Value::RecordId(target_record)),
-            ("name".into(), Value::String(storable_entity.name.into())),
+            ("name".into(), Value::String(storable_entity.name)),
             (
                 "updated_by".into(),
-                Value::String(storable_entity.logged_in_user_email.into()),
+                Value::String(storable_entity.logged_in_user_email),
             ),
         ]
         .into();
@@ -354,11 +354,11 @@ impl EntityRepository for EntityRepositoryImpl {
             ("id".into(), Value::RecordId(target_record)),
             (
                 "identifier".into(),
-                Value::String(updatable_identifier.identifier.into()),
+                Value::String(updatable_identifier.identifier),
             ),
             (
                 "updated_by".into(),
-                Value::String(updatable_identifier.logged_in_user_email.into()),
+                Value::String(updatable_identifier.logged_in_user_email),
             ),
         ]
         .into();
@@ -401,10 +401,10 @@ impl EntityRepository for EntityRepositoryImpl {
         );
 
         let data: BTreeMap<String, Value> = [
-            ("name".into(), Value::String(storable_attribute.name.into())),
+            ("name".into(), Value::String(storable_attribute.name)),
             (
                 "identifier".into(),
-                Value::String(storable_attribute.identifier.into()),
+                Value::String(storable_attribute.identifier),
             ),
             (
                 "entity_id".into(),
@@ -415,11 +415,11 @@ impl EntityRepository for EntityRepositoryImpl {
             ),
             (
                 "data_type".into(),
-                Value::String(storable_attribute.data_type.into()),
+                Value::String(storable_attribute.data_type),
             ),
             (
                 "field_type".into(),
-                Value::String(storable_attribute.field_type.into()),
+                Value::String(storable_attribute.field_type),
             ),
             ("created_by".into(), Value::String(logged_in_user.clone())),
             ("updated_by".into(), Value::String(logged_in_user)),
@@ -880,7 +880,7 @@ impl EntityRepository for EntityRepositoryImpl {
         }
 
         // Validate page / limit to prevent arithmetic overflow.
-        let limit = limit.min(100).max(1);
+        let limit = limit.clamp(1, 100);
         let page = page.max(1);
         let skip = page.saturating_sub(1).saturating_mul(limit);
 
