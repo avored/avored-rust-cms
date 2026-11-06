@@ -126,14 +126,11 @@ pub async fn run(datastore: &Datastore, session: &Session) -> Result<()> {
     tracing::info!("applying merged database schema");
     datastore.execute(MERGED_SCHEMA, session, None).await?;
 
-    record_migration(
-        datastore,
-        session,
-        SCHEMA_MIGRATION_V1,
-        "merged schema v1",
-    )
-    .await?;
-    tracing::info!(migration_id = SCHEMA_MIGRATION_V1, "merged database schema applied successfully");
+    record_migration(datastore, session, SCHEMA_MIGRATION_V1, "merged schema v1").await?;
+    tracing::info!(
+        migration_id = SCHEMA_MIGRATION_V1,
+        "merged database schema applied successfully"
+    );
 
     Ok(())
 }
@@ -153,9 +150,7 @@ pub async fn record_migration(
         ("name".to_string(), Value::String(name.to_string())),
     ]);
 
-    datastore
-        .execute(sql, session, Some(params.into()))
-        .await?;
+    datastore.execute(sql, session, Some(params.into())).await?;
     Ok(())
 }
 
