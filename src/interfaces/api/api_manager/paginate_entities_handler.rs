@@ -34,6 +34,7 @@ pub async fn paginate_entities_handler(
                 key: "entity_type".to_string(),
                 message: "entity_type is required".to_string(),
             }],
+            request_id: None,
         }));
     }
 
@@ -47,6 +48,7 @@ pub async fn paginate_entities_handler(
                 key: "page".to_string(),
                 message: "page must be greater than 0".to_string(),
             }],
+            request_id: None,
         }));
     }
 
@@ -57,6 +59,7 @@ pub async fn paginate_entities_handler(
                 key: "limit".to_string(),
                 message: "limit must be between 1 and 100".to_string(),
             }],
+            request_id: None,
         }));
     }
 

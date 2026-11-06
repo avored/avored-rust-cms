@@ -57,6 +57,7 @@ pub async fn update_entity_record_handler(
                 key: "entity_type".to_string(),
                 message: "entity_type is required in body or query param".to_string(),
             }],
+            request_id: None,
         }));
     }
 
@@ -69,6 +70,7 @@ pub async fn update_entity_record_handler(
                     key: "attributes".to_string(),
                     message: "attribute keys must not be blank".to_string(),
                 }],
+                request_id: None,
             }));
         }
     }

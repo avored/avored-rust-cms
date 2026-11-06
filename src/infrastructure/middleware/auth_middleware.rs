@@ -82,6 +82,7 @@ pub async fn check_customer_auth(
                 Json(ApiErrorMessageResponse {
                     status: false,
                     message: "An internal server error occurred.".to_string(),
+                    request_id: None,
                 }),
             )
                 .into_response());
