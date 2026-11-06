@@ -15,3 +15,5 @@ pub mod api_manager;
 pub mod api_key;
 
 pub mod setting;
+
+pub mod health;
