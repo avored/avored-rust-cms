@@ -1,6 +1,7 @@
 {
   "name": "avored-rust-cms",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "vite": "vite",
