@@ -34,12 +34,7 @@ fn app() -> Router {
 #[tokio::test]
 async fn response_contains_x_request_id_header() {
     let response = app()
-        .oneshot(
-            Request::builder()
-                .uri("/ok")
-                .body(Body::empty())
-                .unwrap(),
-        )
+        .oneshot(Request::builder().uri("/ok").body(Body::empty()).unwrap())
         .await
         .unwrap();
 
@@ -79,7 +74,10 @@ async fn passes_through_existing_x_request_id() {
         .to_str()
         .unwrap();
 
-    assert_eq!(returned_id, custom_id, "existing request id should be echoed back");
+    assert_eq!(
+        returned_id, custom_id,
+        "existing request id should be echoed back"
+    );
 }
 
 #[tokio::test]
@@ -132,6 +130,8 @@ async fn each_request_gets_a_unique_id() {
         .unwrap()
         .to_string();
 
-    assert_ne!(id1, id2, "each request should receive a distinct correlation id");
+    assert_ne!(
+        id1, id2,
+        "each request should receive a distinct correlation id"
+    );
 }
-
