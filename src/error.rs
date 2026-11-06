@@ -123,11 +123,11 @@ impl IntoResponse for Error {
     fn into_response(self) -> Response {
         match self {
             Self::BadRequest(response) => (StatusCode::BAD_REQUEST, Json(response)).into_response(),
-            Self::NotFound(message) => (
+            Self::NotFound(_) => (
                 StatusCode::NOT_FOUND,
                 Json(ApiErrorMessageResponse {
                     status: false,
-                    message,
+                    message: "Resource not found".to_string(),
                     request_id: None,
                 }),
             )
@@ -214,6 +214,17 @@ mod tests {
         assert_eq!(
             response_json(response).await,
             serde_json::json!({"status": false, "message": "Not allowed"})
+        );
+    }
+
+    #[tokio::test]
+    async fn not_found_returns_standardized_message() {
+        let response = Error::NotFound("User 42 not found".to_string()).into_response();
+
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+        assert_eq!(
+            response_json(response).await,
+            serde_json::json!({"status": false, "message": "Resource not found"})
         );
     }
 
