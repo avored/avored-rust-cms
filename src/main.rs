@@ -24,6 +24,25 @@ async fn main() -> error::Result<()> {
     tracing::info!("application configuration loaded");
     let leptos_options = conf.leptos_options;
 
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|arg| arg == "--reset-db") {
+        tracing::info!("--reset-db flag detected: resetting database");
+        let state = AppState::new(leptos_options.clone()).await?;
+        state.database_provider.reset().await?;
+        tracing::info!("database tables and migrations reset successfully");
+        return Ok(());
+    }
+
+    if args.iter().any(|arg| arg == "--refresh-db") {
+        tracing::info!("--refresh-db flag detected: resetting and refreshing database");
+        let state = AppState::new(leptos_options.clone()).await?;
+        state.database_provider.reset().await?;
+        let (datastore, session) = &state.database_provider.db;
+        avored_rust_cms::infrastructure::migrations::db_init::run(datastore, session).await?;
+        tracing::info!("database tables reset and migrations reapplied successfully");
+        return Ok(());
+    }
+
     let state = AppState::new(leptos_options).await?;
     tracing::info!("application state initialized");
 

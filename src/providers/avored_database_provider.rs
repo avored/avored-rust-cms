@@ -51,4 +51,10 @@ impl AvoRedDatabaseProvider {
 
         Ok(Self { db })
     }
+
+    /// Reset all application tables and migrations in the database.
+    pub async fn reset(&self) -> Result<()> {
+        let (datastore, session) = &self.db;
+        db_init::reset_local_database(datastore, session).await
+    }
 }

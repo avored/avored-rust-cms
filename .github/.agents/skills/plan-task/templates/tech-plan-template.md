@@ -2,6 +2,7 @@
 
 ## 📋 1. Scope Overview
 * **Objective:** [A brief 1-2 sentence summary of what this change achieves.]
+* **Branch Name:** `[Suggested branch name, e.g. feature/short-title, fix/short-title, or kebab-case issue slug]`
 * **Primary Impact:** Full-Stack (Axum API ➔ Leptos Frontend ➔ Alpine.js/Tailwind View)
 * **Risk Level:** [Low / Medium / High] - [Brief explanation of why]
 
