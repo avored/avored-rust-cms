@@ -177,6 +177,10 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/misc/setup",
             axum::routing::post(crate::interfaces::api::misc::setup_handler::setup_handler),
         )
+        .route(
+            "/health",
+            get(crate::interfaces::api::health::health_check_handler),
+        )
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &axum::http::Request<_>| {
