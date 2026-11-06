@@ -1,3 +1,4 @@
+use crate::infrastructure::middleware::request_id_middleware::{self, RequestId, X_REQUEST_ID};
 use crate::interfaces::api::{
     api_key::{
         create_api_key_handler, delete_api_key_handler, fetch_api_key_handler,
@@ -179,15 +180,31 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(|request: &axum::http::Request<_>| {
+                    let request_id = request
+                        .extensions()
+                        .get::<RequestId>()
+                        .map(|id| id.0.as_str())
+                        .or_else(|| {
+                            request
+                                .headers()
+                                .get(&X_REQUEST_ID)
+                                .and_then(|val| val.to_str().ok())
+                        })
+                        .unwrap_or_default();
+
                     tracing::debug_span!(
                         "http_request",
                         method = %request.method(),
-                        path = %request.uri().path()
+                        path = %request.uri().path(),
+                        request_id = %request_id
                     )
                 })
                 .on_request(DefaultOnRequest::new().level(tracing::Level::DEBUG))
                 .on_response(DefaultOnResponse::new().level(tracing::Level::DEBUG)),
         )
+        .layer(axum::middleware::from_fn(
+            request_id_middleware::request_id_middleware,
+        ))
         /* frontend routes */
         .layer(cors)
         .leptos_routes_with_context(

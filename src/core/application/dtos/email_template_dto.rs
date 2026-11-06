@@ -46,6 +46,7 @@ impl CreateEmailTemplateCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 
@@ -86,6 +87,7 @@ impl UpdateEmailTemplateCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 

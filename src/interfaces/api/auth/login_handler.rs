@@ -45,6 +45,7 @@ pub async fn login_handler(
             Json(ApiErrorMessageResponse {
                 status: false,
                 message: String::from("Invalid credentials"),
+                request_id: None,
             }),
         )
             .into_response());
@@ -99,6 +100,7 @@ impl LoginCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 

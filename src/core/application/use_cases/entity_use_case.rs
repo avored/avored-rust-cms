@@ -383,6 +383,7 @@ where
                 crate::core::domain::entities::error_message::ApiErrorResponse {
                     status: false,
                     errors,
+                    request_id: None,
                 },
             ));
         }
@@ -448,6 +449,7 @@ where
                 crate::core::domain::entities::error_message::ApiErrorResponse {
                     status: false,
                     errors,
+                    request_id: None,
                 },
             ));
         }

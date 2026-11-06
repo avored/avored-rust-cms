@@ -24,6 +24,7 @@ fn unauthorized(message: &str) -> (StatusCode, Json<ApiErrorMessageResponse>) {
         Json(ApiErrorMessageResponse {
             status: false,
             message: message.to_string(),
+            request_id: None,
         }),
     )
 }

@@ -96,6 +96,7 @@ fn parse_json_payload<T>(payload: std::result::Result<Json<T>, JsonRejection>) -
                 key: "body".to_string(),
                 message: format!("Invalid JSON request body: {}", rejection.body_text()),
             }],
+            request_id: None,
         })
     })
 }

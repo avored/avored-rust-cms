@@ -38,6 +38,7 @@ pub async fn delete_entity_record_handler(
                     "entity_type query parameter is required when id does not contain entity prefix"
                         .to_string(),
             }],
+            request_id: None,
         }));
     };
 
@@ -48,6 +49,7 @@ pub async fn delete_entity_record_handler(
                 key: "entity_type".to_string(),
                 message: "entity_type must not be blank".to_string(),
             }],
+            request_id: None,
         }));
     }
 
@@ -58,6 +60,7 @@ pub async fn delete_entity_record_handler(
                 key: "id".to_string(),
                 message: "record id must not be blank".to_string(),
             }],
+            request_id: None,
         }));
     }
 

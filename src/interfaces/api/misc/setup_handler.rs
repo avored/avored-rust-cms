@@ -101,6 +101,7 @@ impl SetupCommand {
             let error_response = ApiErrorResponse {
                 status: valid,
                 errors,
+                request_id: None,
             };
 
             return Err(crate::error::Error::BadRequest(error_response));

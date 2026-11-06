@@ -168,6 +168,7 @@ fn validate_definition(name: &str, entity_type: &str) -> Result<()> {
             crate::core::domain::entities::ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             },
         ));
     }
@@ -223,6 +224,7 @@ fn validate_actions(actions: &[crate::core::domain::entities::WorkflowAction]) -
             crate::core::domain::entities::ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             },
         ));
     }

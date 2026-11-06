@@ -16,6 +16,7 @@ pub fn unauthorized(message: impl Into<String>) -> (StatusCode, Json<ApiErrorMes
         Json(ApiErrorMessageResponse {
             status: false,
             message: message.into(),
+            request_id: None,
         }),
     )
 }
@@ -127,6 +128,7 @@ impl IntoResponse for Error {
                 Json(ApiErrorMessageResponse {
                     status: false,
                     message,
+                    request_id: None,
                 }),
             )
                 .into_response(),
@@ -135,6 +137,7 @@ impl IntoResponse for Error {
                 Json(ApiErrorMessageResponse {
                     status: false,
                     message,
+                    request_id: None,
                 }),
             )
                 .into_response(),
@@ -149,6 +152,7 @@ impl IntoResponse for Error {
                 let error_response = ApiErrorResponse {
                     status: false,
                     errors,
+                    request_id: None,
                 };
                 (StatusCode::UNAUTHORIZED, Json(error_response)).into_response()
             }
@@ -159,6 +163,7 @@ impl IntoResponse for Error {
                     Json(ApiErrorMessageResponse {
                         status: false,
                         message: "An internal server error occurred.".to_string(),
+                        request_id: None,
                     }),
                 )
                     .into_response()
@@ -187,6 +192,7 @@ mod tests {
                 key: "email".to_string(),
                 message: "Required".to_string(),
             }],
+            request_id: None,
         })
         .into_response();
 

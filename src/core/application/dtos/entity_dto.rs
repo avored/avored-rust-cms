@@ -108,6 +108,7 @@ impl CreateEntityCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 
@@ -211,6 +212,7 @@ impl UpdateEntityCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 
@@ -309,6 +311,7 @@ impl PutEntityIdentifierCommand {
             return Err(crate::error::Error::BadRequest(ApiErrorResponse {
                 status: false,
                 errors,
+                request_id: None,
             }));
         }
 
