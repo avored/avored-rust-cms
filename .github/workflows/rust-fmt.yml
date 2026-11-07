@@ -48,6 +48,41 @@ jobs:
       - name: Run clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
 
+  feature-builds:
+    name: SSR and hydrate feature boundaries
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Rust toolchain and WASM target
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Build the SSR server
+        run: cargo build -p avored-api --no-default-features --features ssr --bin avored-api
+
+      - name: Build the hydrate-only WASM library
+        run: cargo build -p avored-web --target wasm32-unknown-unknown --no-default-features --features hydrate --lib
+
+      - name: Reject server-only crates in the hydrate dependency graph
+        shell: bash
+        run: |
+          if cargo tree -p avored-web --target wasm32-unknown-unknown --no-default-features --features hydrate -e normal --prefix none \
+            | grep -E '^(axum|leptos_axum|surrealdb|surrealdb-core|surrealdb-rpc|tower-http|email_address|tracing-subscriber) v'; then
+            echo "The hydrate-only dependency graph contains server-only crates."
+            exit 1
+          fi
+
   test:
     name: Tests
     runs-on: ubuntu-22.04

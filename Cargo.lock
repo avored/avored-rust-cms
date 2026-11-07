@@ -378,28 +378,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
-name = "avored-rust-cms"
+name = "avored-api"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "argon2 0.6.0",
  "async-trait",
+ "avored-core",
+ "avored-web",
  "axum",
- "base64 0.23.1",
  "chrono",
- "console_error_panic_hook",
- "console_log",
  "dotenvy",
- "email_address",
- "gloo-net 0.7.0",
- "gloo-storage",
  "jsonwebtoken 11.1.0",
  "leptos",
  "leptos_axum",
- "leptos_meta",
- "leptos_router",
- "log",
- "rand 0.10.3",
  "reqwest 0.13.5",
  "rust-i18n",
  "serde",
@@ -415,6 +406,50 @@ dependencies = [
  "tracing-appender",
  "tracing-subscriber",
  "uuid",
+]
+
+[[package]]
+name = "avored-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "argon2 0.6.0",
+ "async-trait",
+ "axum",
+ "base64 0.23.1",
+ "chrono",
+ "dotenvy",
+ "email_address",
+ "jsonwebtoken 11.1.0",
+ "leptos",
+ "rand 0.10.3",
+ "reqwest 0.13.5",
+ "rust-i18n",
+ "serde",
+ "serde_json",
+ "sha2 0.11.1",
+ "surrealdb",
+ "tokio",
+ "tracing",
+ "uuid",
+]
+
+[[package]]
+name = "avored-web"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "console_error_panic_hook",
+ "console_log",
+ "gloo-net 0.7.0",
+ "gloo-storage",
+ "leptos",
+ "leptos_meta",
+ "leptos_router",
+ "log",
+ "rust-i18n",
+ "serde",
+ "serde_json",
  "wasm-bindgen",
 ]
 

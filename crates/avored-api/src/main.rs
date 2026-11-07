@@ -1,0 +1,65 @@
+#![cfg_attr(test, allow(clippy::unwrap_used, clippy::expect_used))]
+
+#[cfg(feature = "ssr")]
+use avored_api::{api::rest_api_routes::rest_api_routes, avored_state::AppState, error};
+
+#[cfg(feature = "ssr")]
+#[tokio::main]
+async fn main() -> error::Result<()> {
+    let _log_guard = avored_api::infrastructure::logging::initialize_tracing()
+        .map_err(|error| error::Error::Generic(format!("failed to initialize tracing: {error}")))?;
+    match avored_api::infrastructure::logging::cleanup_expired_logs(std::path::Path::new(
+        "public/log",
+    )) {
+        Ok(removed) if removed > 0 => {
+            tracing::info!(removed, retention_days = 14, "removed expired log files");
+        }
+        Ok(_) => {}
+        Err(error) => {
+            tracing::error!(%error, "failed to clean up expired log files");
+        }
+    }
+    avored_api::infrastructure::logging::spawn_log_cleanup();
+
+    let conf = leptos::config::get_configuration(None)?;
+    tracing::info!("application configuration loaded");
+    let leptos_options = conf.leptos_options;
+
+    let args: Vec<String> = std::env::args().collect();
+    if args.iter().any(|arg| arg == "--reset-db") {
+        tracing::info!("--reset-db flag detected: resetting database");
+        let state = AppState::new(leptos_options.clone()).await?;
+        state.database_provider.reset().await?;
+        tracing::info!("database tables and migrations reset successfully");
+        return Ok(());
+    }
+
+    if args.iter().any(|arg| arg == "--refresh-db") {
+        tracing::info!("--refresh-db flag detected: resetting and refreshing database");
+        let state = AppState::new(leptos_options.clone()).await?;
+        state.database_provider.reset().await?;
+        let (datastore, session) = &state.database_provider.db;
+        avored_api::infrastructure::migrations::db_init::run(datastore, session).await?;
+        tracing::info!("database tables reset and migrations reapplied successfully");
+        return Ok(());
+    }
+
+    let state = AppState::new(leptos_options).await?;
+    tracing::info!("application state initialized");
+
+    let app: axum::Router = rest_api_routes(state)?;
+
+    let address = "0.0.0.0:3000";
+    let listener = tokio::net::TcpListener::bind(address).await?;
+    tracing::info!(address = %listener.local_addr()?, "server listening");
+    axum::serve(listener, app.into_make_service()).await?;
+
+    Ok(())
+}
+
+#[cfg(not(feature = "ssr"))]
+pub fn main() {
+    // no client-side main function
+    // unless we want this to work with e.g., trunk for a purely client-side app
+    // see lib.rs for hydration function instead
+}
