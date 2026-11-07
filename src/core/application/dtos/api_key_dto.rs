@@ -2,14 +2,14 @@ use serde::{Deserialize, Serialize};
 
 use crate::core::domain::entities::api_key::ApiKeyPermission;
 
-/// POST /api/api-keys  request body
+/// POST /api/v1/admin/api-keys request body
 #[derive(Debug, Deserialize)]
 pub struct CreateApiKeyRequest {
     pub name: String,
     pub permissions: Vec<ApiKeyPermission>,
 }
 
-/// PUT /api/api-keys/{id}  request body
+/// PUT /api/v1/admin/api-keys/{id} request body
 #[derive(Debug, Deserialize)]
 pub struct UpdateApiKeyRequest {
     pub name: String,

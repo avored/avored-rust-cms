@@ -23,7 +23,7 @@ export function apiKeyIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get('/api/api-keys', {
+                const response = await http.get('/api/v1/admin/api-keys', {
                     params: {
                         page: this.page,
                         limit: this.limit,
@@ -79,7 +79,7 @@ export function apiKeyIndexPage() {
             if (!this.keyToDelete?.id || this.deleting) return;
             this.deleting = true;
             try {
-                await http.delete(`/api/api-keys/${this.keyToDelete.id}`);
+                await http.delete(`/api/v1/admin/api-keys/${this.keyToDelete.id}`);
                 this.cancelDelete();
                 await this.fetchKeys();
             } catch (err: any) {

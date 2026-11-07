@@ -137,7 +137,7 @@ export function entityCreatePage() {
             this.clearErrors();
 
             try {
-                await http.post('/api/entities', {
+                await http.post('/api/v1/admin/entities', {
                     name: this.name,
                     identifier: this.identifier,
                     attributes: this.attributes,

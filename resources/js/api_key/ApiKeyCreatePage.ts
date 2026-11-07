@@ -33,7 +33,7 @@ export function apiKeyCreatePage() {
             this.submitting = true;
             this.errorMessage = '';
             try {
-                const response = await http.post('/api/api-keys', {
+                const response = await http.post('/api/v1/admin/api-keys', {
                     name: this.name.trim(),
                     permissions: this.selectedPermissions(),
                 });

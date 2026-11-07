@@ -16,7 +16,7 @@ export function emailTemplateCreatePage() {
             this.clearErrors();
 
             try {
-                await http.post('/api/email-templates', {
+                await http.post('/api/v1/admin/email-templates', {
                     name: this.name,
                     subject: this.subject,
                     body_html: this.body_html,
