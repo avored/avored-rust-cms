@@ -42,7 +42,7 @@ export function entityEditPage(entityId: string) {
             this.loading = true;
             this.clearErrors();
             try {
-                const entity = await http.get<EntityInterface>(`/api/entities/${this.id}`);
+                const entity = await http.get<EntityInterface>(`/api/v1/admin/entities/${this.id}`);
                 this.name = entity.name || '';
                 this.identifier = entity.identifier || '';
                 this.originalIdentifier = this.identifier;
@@ -79,7 +79,7 @@ export function entityEditPage(entityId: string) {
             this.clearErrors();
 
             try {
-                await http.put(`/api/entities/${this.id}/identifier`, {
+                await http.put(`/api/v1/admin/entities/${this.id}/identifier`, {
                     identifier: this.identifier,
                 });
 
@@ -107,7 +107,7 @@ export function entityEditPage(entityId: string) {
             })
 
             try {
-                await http.put(`/api/entities/${this.id}`, {
+                await http.put(`/api/v1/admin/entities/${this.id}`, {
                     name: this.name,
                     attributes: payloadAttributes
                 });

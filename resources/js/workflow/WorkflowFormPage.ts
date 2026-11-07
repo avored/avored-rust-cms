@@ -119,7 +119,7 @@ export function workflowFormPage(workflowId: string = '') {
             this.clearErrors();
 
             try {
-                const workflow = await http.get<Record<string, any>>(`/api/workflows/${this.id}`);
+                const workflow = await http.get<Record<string, any>>(`/api/v1/admin/workflows/${this.id}`);
                 this.name = workflow.name || '';
                 this.triggerEntityType = workflow.trigger?.entity_type || '';
                 this.triggerEvent = workflow.trigger?.event || 'created';
@@ -159,9 +159,9 @@ export function workflowFormPage(workflowId: string = '') {
                 const payload = this.buildPayload();
 
                 if (this.id) {
-                    await http.put(`/api/workflows/${this.id}`, payload);
+                    await http.put(`/api/v1/admin/workflows/${this.id}`, payload);
                 } else {
-                    await http.post('/api/workflows', payload);
+                    await http.post('/api/v1/admin/workflows', payload);
                 }
 
                 window.location.href = '/admin/workflows';

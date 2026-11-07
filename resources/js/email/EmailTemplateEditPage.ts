@@ -22,7 +22,7 @@ export function emailTemplateEditPage(templateId: string) {
             this.clearErrors();
 
             try {
-                const template = await http.get<Record<string, any>>(`/api/email-templates/${this.id}`);
+                const template = await http.get<Record<string, any>>(`/api/v1/admin/email-templates/${this.id}`);
                 this.name = template.name || '';
                 this.subject = template.subject || '';
                 this.body_html = template.body_html || '';
@@ -39,7 +39,7 @@ export function emailTemplateEditPage(templateId: string) {
             this.clearErrors();
 
             try {
-                await http.put(`/api/email-templates/${this.id}`, {
+                await http.put(`/api/v1/admin/email-templates/${this.id}`, {
                     name: this.name,
                     subject: this.subject,
                     body_html: this.body_html,

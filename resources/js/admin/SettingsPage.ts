@@ -82,7 +82,7 @@ export function settingsPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const data = await http.get('/api/v1/settings');
+                const data = await http.get('/api/v1/admin/settings');
                 if (data) {
                     this.form = {
                         general: { ...this.form.general, ...(data.general || {}) },
@@ -128,7 +128,7 @@ export function settingsPage() {
 
             this.saving = true;
             try {
-                const updated = await http.put('/api/v1/settings', this.form);
+                const updated = await http.put('/api/v1/admin/settings', this.form);
                 if (updated) {
                     this.form = {
                         general: { ...this.form.general, ...(updated.general || {}) },

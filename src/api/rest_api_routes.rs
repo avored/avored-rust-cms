@@ -73,63 +73,81 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
         .allow_methods(Any) // Allow all methods
         .expose_headers(Any); // Expose all headers
 
-    let router = Router::<AppState>::new()
-        .route("/api/collection", get(paginate_collections_handler))
-        .route("/api/collection", post(create_collection_handler))
-        .route("/api/email-templates", post(create_email_template_handler))
+    let admin_routes = Router::<AppState>::new()
         .route(
-            "/api/email-templates/{id}",
+            "/api/v1/admin/collection",
+            get(paginate_collections_handler),
+        )
+        .route("/api/v1/admin/collection", post(create_collection_handler))
+        .route(
+            "/api/v1/admin/email-templates",
+            post(create_email_template_handler),
+        )
+        .route(
+            "/api/v1/admin/email-templates/{id}",
             get(fetch_email_template_handler),
         )
         .route(
-            "/api/email-templates/{id}",
+            "/api/v1/admin/email-templates/{id}",
             put(update_email_template_handler),
         )
         .route(
-            "/api/email-templates/{id}",
+            "/api/v1/admin/email-templates/{id}",
             delete(delete_email_template_handler),
         )
         .route(
-            "/api/email-templates",
+            "/api/v1/admin/email-templates",
             get(paginate_email_templates_handler),
         )
-        .route("/api/workflows", get(list_workflows_handler))
-        .route("/api/workflows", post(create_workflow_handler))
-        .route("/api/workflows/{id}", get(fetch_workflow_handler))
-        .route("/api/workflows/{id}", put(update_workflow_handler))
-        .route("/api/workflows/{id}", delete(delete_workflow_handler))
+        .route("/api/v1/admin/workflows", get(list_workflows_handler))
+        .route("/api/v1/admin/workflows", post(create_workflow_handler))
+        .route("/api/v1/admin/workflows/{id}", get(fetch_workflow_handler))
+        .route("/api/v1/admin/workflows/{id}", put(update_workflow_handler))
         .route(
-            "/api/workflows/{id}/active",
+            "/api/v1/admin/workflows/{id}",
+            delete(delete_workflow_handler),
+        )
+        .route(
+            "/api/v1/admin/workflows/{id}/active",
             patch(set_workflow_active_handler),
         )
         .route(
-            "/api/workflows/{id}/executions",
+            "/api/v1/admin/workflows/{id}/executions",
             get(list_workflow_executions_handler),
         )
-        .route("/api/collection/{record_id}", get(fetch_collection_handler))
         .route(
-            "/api/collection/{record_id}",
+            "/api/v1/admin/collection/{record_id}",
+            get(fetch_collection_handler),
+        )
+        .route(
+            "/api/v1/admin/collection/{record_id}",
             put(update_collection_handler),
         )
         .route(
-            "/api/collection/{record_id}",
+            "/api/v1/admin/collection/{record_id}",
             delete(delete_collection_handler),
         )
-        .route("/api/entities/options", get(option_entities_handler))
-        .route("/api/entities", post(create_entity_handler))
-        .route("/api/entities", get(paginate_entities_handler))
-        .route("/api/entities/{id}", get(fetch_entity_handler))
-        .route("/api/entities/{id}", put(update_entity_handler))
-        .route("/api/entities/{id}", delete(delete_entity_handler))
         .route(
-            "/api/entities/{id}/identifier",
+            "/api/v1/admin/entities/options",
+            get(option_entities_handler),
+        )
+        .route("/api/v1/admin/entities", post(create_entity_handler))
+        .route("/api/v1/admin/entities", get(paginate_entities_handler))
+        .route("/api/v1/admin/entities/{id}", get(fetch_entity_handler))
+        .route("/api/v1/admin/entities/{id}", put(update_entity_handler))
+        .route("/api/v1/admin/entities/{id}", delete(delete_entity_handler))
+        .route(
+            "/api/v1/admin/entities/{id}/identifier",
             put(update_entity_identifier_handler),
         )
-        .route("/api/api-keys", get(paginate_api_keys_handler))
-        .route("/api/api-keys", post(create_api_key_handler))
-        .route("/api/api-keys/{id}", get(fetch_api_key_handler))
-        .route("/api/api-keys/{id}", put(update_api_key_handler))
-        .route("/api/api-keys/{id}", delete(delete_api_key_handler))
+        .route("/api/v1/admin/api-keys", get(paginate_api_keys_handler))
+        .route("/api/v1/admin/api-keys", post(create_api_key_handler))
+        .route("/api/v1/admin/api-keys/{id}", get(fetch_api_key_handler))
+        .route("/api/v1/admin/api-keys/{id}", put(update_api_key_handler))
+        .route(
+            "/api/v1/admin/api-keys/{id}",
+            delete(delete_api_key_handler),
+        )
         .route(
             "/api/v1/admin/me",
             get(crate::interfaces::api::auth::get_profile_handler),
@@ -142,8 +160,8 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             "/api/v1/admin/me/password",
             put(crate::interfaces::api::auth::change_password_handler),
         )
-        .route("/api/v1/settings", get(fetch_settings_handler))
-        .route("/api/v1/settings", put(update_settings_handler))
+        .route("/api/v1/admin/settings", get(fetch_settings_handler))
+        .route("/api/v1/admin/settings", put(update_settings_handler))
         .layer(axum::middleware::from_fn_with_state(
             state.clone(),
             auth_middleware::check_auth,
@@ -166,7 +184,7 @@ pub fn rest_api_routes(state: AppState) -> crate::error::Result<Router> {
             api_key_middleware::check_api_key_auth,
         ));
 
-    let router = router
+    let router = admin_routes
         .merge(v1_router)
         // Versioned API Manager routes (public or specific auth if any)
         .route(

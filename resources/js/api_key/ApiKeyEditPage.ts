@@ -42,7 +42,7 @@ export function apiKeyEditPage(apiKeyId: string = '') {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const key = await http.get(`/api/api-keys/${this.id}`);
+                const key = await http.get(`/api/v1/admin/api-keys/${this.id}`);
                 this.name = key.name || '';
                 this.keyPrefix = key.key_prefix || '';
 
@@ -80,7 +80,7 @@ export function apiKeyEditPage(apiKeyId: string = '') {
             this.errorMessage = '';
             this.successMessage = '';
             try {
-                await http.put(`/api/api-keys/${this.id}`, {
+                await http.put(`/api/v1/admin/api-keys/${this.id}`, {
                     name: this.name.trim(),
                     permissions: this.selectedPermissions(),
                 });
@@ -107,7 +107,7 @@ export function apiKeyEditPage(apiKeyId: string = '') {
             if (!this.id || this.deleting) return;
             this.deleting = true;
             try {
-                await http.delete(`/api/api-keys/${this.id}`);
+                await http.delete(`/api/v1/admin/api-keys/${this.id}`);
                 window.location.href = '/admin/api-keys';
             } catch (err: any) {
                 this.errorMessage = err.message || 'Failed to delete API key';

@@ -21,7 +21,7 @@ export function entityIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get<EntityPaginationResponse>('/api/entities', {
+                const response = await http.get<EntityPaginationResponse>('/api/v1/admin/entities', {
                     params: {
                         page: this.page,
                         page_size: this.pageSize,
@@ -83,7 +83,7 @@ export function entityIndexPage() {
             if (!this.entityToDelete) return;
             this.deleting = true;
             try {
-                await http.delete(`/api/entities/${this.entityToDelete.id}`);
+                await http.delete(`/api/v1/admin/entities/${this.entityToDelete.id}`);
                 this.entities = this.entities.filter(e => e.id !== this.entityToDelete?.id);
                 this.total = Math.max(0, this.total - 1);
                 this.deleteModalOpen = false;

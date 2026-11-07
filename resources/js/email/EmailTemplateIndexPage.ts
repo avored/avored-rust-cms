@@ -23,7 +23,7 @@ export function emailTemplateIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get('/api/email-templates', {
+                const response = await http.get('/api/v1/admin/email-templates', {
                     params: {
                         page: this.page,
                         page_size: this.pageSize,
@@ -88,7 +88,7 @@ export function emailTemplateIndexPage() {
 
             this.deleting = true;
             try {
-                await http.delete(`/api/email-templates/${this.templateToDelete.id}`);
+                await http.delete(`/api/v1/admin/email-templates/${this.templateToDelete.id}`);
                 this.templates = this.templates.filter((template) => template.id !== this.templateToDelete?.id);
                 this.total = Math.max(0, this.total - 1);
                 this.deleteModalOpen = false;

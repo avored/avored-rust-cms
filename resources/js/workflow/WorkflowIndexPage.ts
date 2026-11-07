@@ -23,7 +23,7 @@ export function workflowIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get('/api/workflows', {
+                const response = await http.get('/api/v1/admin/workflows', {
                     params: {
                         page: this.page,
                         page_size: this.pageSize,
@@ -86,7 +86,7 @@ export function workflowIndexPage() {
         async toggleWorkflow(workflow: Record<string, any>) {
             const nextState = !workflow.is_active;
             try {
-                const updated = await http.patch(`/api/workflows/${workflow.id}/active`, {
+                const updated = await http.patch(`/api/v1/admin/workflows/${workflow.id}/active`, {
                     is_active: nextState,
                 });
                 workflow.is_active = updated.is_active;
@@ -101,7 +101,7 @@ export function workflowIndexPage() {
 
             this.deleting = true;
             try {
-                await http.delete(`/api/workflows/${this.workflowToDelete.id}`);
+                await http.delete(`/api/v1/admin/workflows/${this.workflowToDelete.id}`);
                 this.workflows = this.workflows.filter((workflow) => workflow.id !== this.workflowToDelete?.id);
                 this.total = Math.max(0, this.total - 1);
                 this.deleteModalOpen = false;
