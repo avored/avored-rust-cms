@@ -178,6 +178,28 @@ The application uses embedded SurrealDB storage, so no separate database server 
 | `npm run dev` | Run Vite and the Leptos watcher together |
 | `cargo test` | Run the Rust test suite |
 
+## Cargo feature builds
+
+The Rust code is a Cargo workspace with three packages:
+
+- `avored-core` contains domain models, application use cases, and shared error types.
+- `avored-web` contains the Leptos UI and hydration library.
+- `avored-api` contains the Axum server, API handlers, persistence, and server binary.
+
+The workspace Cargo-Leptos project pairs the `avored-api` binary with the `avored-web` library. Cargo features are additive, so use `--no-default-features` on direct package builds to ensure only the requested feature is active.
+
+| Build | Command |
+| --- | --- |
+| SSR server | `cargo build -p avored-api --no-default-features --features ssr --bin avored-api` |
+| Hydration WASM library | `cargo build -p avored-web --target wasm32-unknown-unknown --no-default-features --features hydrate --lib` |
+| Full Leptos application | `cargo leptos build --project avored-rust-cms --release` |
+
+Cargo-Leptos builds the server with `ssr` and the library with `hydrate`, disabling defaults for each target. The hydrate-only dependency graph should not contain Axum or SurrealDB.
+
+### Workspace boundaries
+
+`avored-api` depends on `avored-core` and `avored-web`; the web package remains independent of the database-backed core so its WASM build cannot pull in server persistence dependencies. The workspace split establishes package and feature boundaries; it is not yet a claim of measured compile-time improvement. See the [workspace decision](docs/tech-debt/tech-debt-audit-cargo-features-and-consider-workspace-restructuring/workspace-decision.md) for the rationale and remaining measurement work.
+
 ---
 
 ## Production

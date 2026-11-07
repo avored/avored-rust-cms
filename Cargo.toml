@@ -1,143 +1,35 @@
-[package]
+[workspace]
+members = [
+    "crates/avored-core",
+    "crates/avored-web",
+    "crates/avored-api",
+]
+resolver = "2"
+
+[[workspace.metadata.leptos]]
 name = "avored-rust-cms"
-version = "0.1.0"
-edition = "2021"
+bin-package = "avored-api"
+lib-package = "avored-web"
+bin-target = "avored-api"
+site-root = "target/site"
+site-pkg-dir = "pkg"
+assets-dir = "public"
+site-addr = "127.0.0.1:3000"
+reload-port = 3002
+browserquery = "defaults"
+bin-features = ["ssr"]
+bin-default-features = false
+lib-features = ["hydrate"]
+lib-default-features = false
+lib-profile-release = "wasm-release"
 
-[lib]
-crate-type = ["cdylib", "rlib"]
-
-[dependencies]
-uuid = { version = "1.29.0", features = ["v4", "fast-rng"], optional = true }
-argon2 = { version = "0.6", optional = true }
-jsonwebtoken = { version = "11.1.0", features = ["aws_lc_rs"], optional = true }
-email_address = "0.2.9"
-leptos = { version = "0.8.22" }
-leptos_router = { version = "0.8.17" }
-axum = { version = "0.8.0", optional = true, features = ["macros", "multipart"] }
-tower = { version = "0.5.2", optional = true }
-tower-http = { version = "0.7.0", features = ["fs", "cors", "trace"], optional = true }
-console_error_panic_hook = { version = "0.1", optional = true }
-leptos_axum = { version = "0.8.10", optional = true }
-leptos_meta = { version = "0.8.7" }
-tokio = { version = "1", features = ["rt-multi-thread", "net"], optional = true }
-surrealdb = { version = "3.3.5", features = ["kv-rocksdb", "kv-mem"], optional = true }
-surrealdb-core = { version = "3.3.5", optional = true }
-surrealdb-rpc = { version = "3.3.5", optional = true }
-rand = { version = "0.10.3", optional = true }
-base64 = { version = "0.23.1", optional = true }
-sha2 = { version = "0.11.1", optional = true }
-reqwest = { version = "0.13.5", default-features = false, features = ["json", "rustls"], optional = true }
-# Keep the wasm-bindgen version aligned with cargo-leptos; otherwise the generated JS/WASM
-# will fail at runtime with the missing __wbindgen_externref_table_alloc symbol.
-wasm-bindgen = { version = "=0.2.130", optional = true }
-anyhow = { version = "1.0", optional = true }
-dotenvy = { version = "0.15.7", optional = true }
-tracing = "0.1.41"
-tracing-subscriber = { version = "0.3.20", features = ["env-filter", "fmt"] }
-tracing-appender = { version = "0.2.3", optional = true }
-chrono = { version = "0.4.42", features = ["serde"] }
-serde = { version = "1", features = ["derive"] }
-serde_json = "1"
-rust-i18n = "4.1.0"
-gloo-storage = "0.4.0"
-gloo-net = "0.7"
-console_log = "1"
-log = "0.4"
-async-trait = "0.1"
-
-[dev-dependencies]
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-tower = { version = "0.5.2", features = ["util"] }
-
-[features]
-default = ["ssr"]
-
-hydrate = [
-    "leptos/hydrate",
-    "dep:console_error_panic_hook",
-    "dep:wasm-bindgen",
-]
-ssr = [
-    "dep:axum",
-    "dep:tokio",
-    "dep:leptos_axum",
-    "dep:tower",
-    "dep:tower-http",
-    "dep:surrealdb",
-    "dep:surrealdb-core",
-    "dep:surrealdb-rpc",
-    "dep:dotenvy",
-    "leptos/ssr",
-    "leptos_meta/ssr",
-    "leptos_router/ssr",
-    "dep:argon2",
-    "dep:rand",
-    "dep:base64",
-    "dep:sha2",
-    "dep:jsonwebtoken",
-    "dep:reqwest",
-    "dep:tracing-appender",
-    "dep:anyhow",
-    "dep:uuid",
-]
-
-# Defines a size-optimized profile for the WASM bundle in release mode
 [profile.wasm-release]
 inherits = "release"
-opt-level = 'z'
+opt-level = "z"
 lto = true
 codegen-units = 1
 panic = "abort"
 
-[package.metadata.leptos]
-# The name used by wasm-bindgen/cargo-leptos for the JS/WASM bundle. Defaults to the crate name
-output-name = "avored-rust-cms"
-
-# The site root folder is where cargo-leptos generate all output. WARNING: all content of this folder will be erased on a rebuild. Use it in your server setup.
-site-root = "target/site"
-
-# The site-root relative folder where all compiled output (JS, WASM and CSS) is written
-# Defaults to pkg
-site-pkg-dir = "pkg"
-
-#
-# Optional. Env: LEPTOS_ASSETS_DIR.
-assets-dir = "public"
-
-# The IP and port (ex: 127.0.0.1:3000) where the server serves the content. Use it in your server setup.
-site-addr = "127.0.0.1:3000"
-
-# The port to use for automatic reload monitoring. 3001 is commonly occupied by another process.
-reload-port = 3002
-
-#  The browserlist query used for optimizing the CSS.
-browserquery = "defaults"
-
-# The features to use when compiling the bin target
-#
-# Optional. Can be over-ridden with the command line parameter --bin-features
-bin-features = ["ssr"]
-
-# If the --no-default-features flag should be used when compiling the bin target
-#
-# Optional. Defaults to false.
-bin-default-features = false
-
-# The features to use when compiling the lib target
-#
-# Optional. Can be over-ridden with the command line parameter --lib-features
-lib-features = ["hydrate"]
-
-# If the --no-default-features flag should be used when compiling the lib target
-#
-# Optional. Defaults to false.
-lib-default-features = false
-
-# The profile to use for the lib target when compiling for release
-#
-# Optional. Defaults to "release".
-lib-profile-release = "wasm-release"
-
-[lints.clippy]
+[workspace.lints.clippy]
 unwrap_used = "deny"
 redundant_field_names = "deny"

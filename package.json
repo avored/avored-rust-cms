@@ -6,7 +6,7 @@
   "scripts": {
     "vite": "vite",
     "build": "vite build",
-    "leptos": "cargo leptos watch",
+    "leptos": "cargo leptos watch --project avored-rust-cms",
     "dev": "concurrently \"npm run vite\" \"npm run leptos\""
   },
   "author": "",
