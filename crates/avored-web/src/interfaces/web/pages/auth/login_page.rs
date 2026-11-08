@@ -97,16 +97,18 @@ pub fn LoginPage() -> impl IntoView {
                         if login_response.authenticated {
                             let token = login_response.token.clone();
                             let user = login_response.user.clone();
+                            let stored_user = LoggedInUser {
+                                id: user.id.clone(),
+                                name: user.name.clone(),
+                                email: user.email.clone(),
+                            };
 
                             let _ = LocalStorage::set("auth_token", token.clone());
+                            let _ = LocalStorage::set("auth_user", stored_user.clone());
 
                             auth_context.is_logged_in.set(true);
                             auth_context.auth_token.set(token.clone());
-                            auth_context.logged_in_user.set(Some(LoggedInUser {
-                                id: user.id,
-                                name: user.name,
-                                email: user.email,
-                            }));
+                            auth_context.logged_in_user.set(Some(stored_user));
 
                             log::info!("Login successful, redirecting to /admin");
                             navigate("/admin", Default::default());
