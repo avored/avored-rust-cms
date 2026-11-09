@@ -1,3 +1,4 @@
+#[cfg(target_arch = "wasm32")]
 use gloo_storage::{LocalStorage, Storage};
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
@@ -5,7 +6,9 @@ use rust_i18n::t;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::interfaces::web::protected_routes::{AuthContext, LoggedInUser};
+use crate::interfaces::web::protected_routes::AuthContext;
+#[cfg(target_arch = "wasm32")]
+use crate::interfaces::web::protected_routes::LoggedInUser;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct LoginRequest {
@@ -41,6 +44,7 @@ pub struct ApiValidationError {
     pub message: String,
 }
 
+#[cfg(target_arch = "wasm32")]
 async fn send_login_request(
     login_request: LoginRequest,
 ) -> Result<gloo_net::http::Response, String> {
@@ -71,64 +75,75 @@ pub fn LoginPage() -> impl IntoView {
     let on_submit = move |ev: leptos::ev::SubmitEvent| {
         ev.prevent_default();
 
-        if submitting.get() {
-            return;
-        }
+        #[cfg(target_arch = "wasm32")]
+        {
+            if submitting.get() {
+                return;
+            }
 
-        let email_value = email.get();
-        let password_value = password.get();
-        let auth_context = auth_context.clone();
-        let navigate = navigate.clone();
+            let email_value = email.get();
+            let password_value = password.get();
+            let auth_context = auth_context.clone();
+            let navigate = navigate.clone();
 
-        submitting.set(true);
-        error.set(String::new());
-        field_errors.set(HashMap::new());
+            submitting.set(true);
+            error.set(String::new());
+            field_errors.set(HashMap::new());
 
-        leptos::task::spawn_local(async move {
-            let response = send_login_request(LoginRequest {
-                email: email_value,
-                password: password_value,
-            })
-            .await;
+            leptos::task::spawn_local(async move {
+                let response = send_login_request(LoginRequest {
+                    email: email_value,
+                    password: password_value,
+                })
+                .await;
 
-            match response {
-                Ok(response) if response.ok() => match response.json::<LoginApiResponse>().await {
-                    Ok(login_response) => {
-                        if login_response.authenticated {
-                            let token = login_response.token.clone();
-                            let user = login_response.user.clone();
-                            let stored_user = LoggedInUser {
-                                id: user.id.clone(),
-                                name: user.name.clone(),
-                                email: user.email.clone(),
-                            };
+                match response {
+                    Ok(response) if response.ok() => {
+                        match response.json::<LoginApiResponse>().await {
+                            Ok(login_response) => {
+                                if login_response.authenticated {
+                                    let token = login_response.token.clone();
+                                    let user = login_response.user.clone();
+                                    let stored_user = LoggedInUser {
+                                        id: user.id.clone(),
+                                        name: user.name.clone(),
+                                        email: user.email.clone(),
+                                    };
 
-                            let _ = LocalStorage::set("auth_token", token.clone());
-                            let _ = LocalStorage::set("auth_user", stored_user.clone());
+                                    let _ = LocalStorage::set("auth_token", token.clone());
+                                    let _ = LocalStorage::set("auth_user", stored_user.clone());
 
-                            auth_context.is_logged_in.set(true);
-                            auth_context.auth_token.set(token.clone());
-                            auth_context.logged_in_user.set(Some(stored_user));
+                                    auth_context.is_logged_in.set(true);
+                                    auth_context.auth_token.set(token.clone());
+                                    auth_context.logged_in_user.set(Some(stored_user));
 
-                            log::info!("Login successful, redirecting to /admin");
-                            navigate("/admin", Default::default());
-                        } else {
-                            error.set("Login failed.".to_string());
+                                    log::info!("Login successful, redirecting to /admin");
+                                    navigate("/admin", Default::default());
+                                } else {
+                                    error.set("Login failed.".to_string());
+                                }
+                            }
+                            Err(err) => {
+                                error.set(format!("Failed to parse login response: {err}"));
+                            }
                         }
                     }
-                    Err(err) => {
-                        error.set(format!("Failed to parse login response: {err}"));
-                    }
-                },
-                Ok(response) => {
-                    // Try to parse as a structured validation error response
-                    match response.json::<ErrorResponse>().await {
-                        Ok(api_err) => {
-                            if let Some(errs) = api_err.errors {
-                                if !errs.is_empty() {
-                                    let map: HashMap<String, String> =
-                                        errs.into_iter().map(|e| (e.key, e.message)).collect();
-                                    field_errors.set(map);
+                    Ok(response) => {
+                        // Try to parse as a structured validation error response
+                        match response.json::<ErrorResponse>().await {
+                            Ok(api_err) => {
+                                if let Some(errs) = api_err.errors {
+                                    if !errs.is_empty() {
+                                        let map: HashMap<String, String> =
+                                            errs.into_iter().map(|e| (e.key, e.message)).collect();
+                                        field_errors.set(map);
+                                    } else {
+                                        error.set(
+                                            api_err
+                                                .message
+                                                .unwrap_or_else(|| "Login failed.".to_string()),
+                                        );
+                                    }
                                 } else {
                                     error.set(
                                         api_err
@@ -136,24 +151,29 @@ pub fn LoginPage() -> impl IntoView {
                                             .unwrap_or_else(|| "Login failed.".to_string()),
                                     );
                                 }
-                            } else {
-                                error.set(
-                                    api_err
-                                        .message
-                                        .unwrap_or_else(|| "Login failed.".to_string()),
-                                );
+                            }
+                            Err(_) => {
+                                error.set("Login failed.".to_string());
                             }
                         }
-                        Err(_) => {
-                            error.set("Login failed.".to_string());
-                        }
                     }
+                    Err(err) => error.set(err),
                 }
-                Err(err) => error.set(err),
-            }
 
-            submitting.set(false);
-        });
+                submitting.set(false);
+            });
+        }
+
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            let _ = &email;
+            let _ = &password;
+            let _ = &auth_context;
+            let _ = &navigate;
+            let _ = &submitting;
+            let _ = &error;
+            let _ = &field_errors;
+        }
     };
 
     view! {

@@ -21,10 +21,8 @@ fn decode_jwt_payload(token: &str) -> Option<serde_json::Value> {
     let payload = parts.next()?;
     let _signature = parts.next()?;
 
-    let padded = payload
-        .replace('-', "+")
-        .replace('_', "/")
-        + &"=".repeat((4 - payload.len() % 4) % 4);
+    let padded =
+        payload.replace('-', "+").replace('_', "/") + &"=".repeat((4 - payload.len() % 4) % 4);
 
     let decoded = URL_SAFE_NO_PAD.decode(padded).ok()?;
     serde_json::from_slice::<serde_json::Value>(&decoded).ok()
@@ -92,9 +90,7 @@ pub fn provide_auth_context() {
         let storage_token = gloo_storage::LocalStorage::get::<String>("auth_token").ok();
         let stored_user = gloo_storage::LocalStorage::get::<LoggedInUser>("auth_user")
             .ok()
-            .filter(|user| {
-                !(user.id.is_empty() && user.name.is_empty() && user.email.is_empty())
-            });
+            .filter(|user| !(user.id.is_empty() && user.name.is_empty() && user.email.is_empty()));
 
         match storage_token {
             Some(token) if !token.trim().is_empty() => {
