@@ -225,3 +225,196 @@ fn validate_actions(actions: &[crate::core::domain::entities::WorkflowAction]) -
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::core::{
+        application::dtos::CreateWorkflowCommand,
+        domain::entities::{
+            WorkflowAction, WorkflowEvent, WorkflowExecutionModel, WorkflowExecutionStatus,
+            WorkflowModel, WorkflowTrigger,
+        },
+    };
+    use async_trait::async_trait;
+    use serde_json::json;
+    use surrealdb::types::Datetime;
+
+    #[derive(Clone, Default)]
+    struct MockWorkflowRepository;
+
+    #[async_trait]
+    impl WorkflowRepository for MockWorkflowRepository {
+        async fn create(
+            &self,
+            name: String,
+            trigger: WorkflowTrigger,
+            is_active: bool,
+            actions: Vec<WorkflowAction>,
+        ) -> Result<WorkflowModel> {
+            Ok(WorkflowModel {
+                id: "workflow-1".to_string(),
+                name,
+                trigger,
+                is_active,
+                actions,
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn find_all(&self, _page: u64, _page_size: u64) -> Result<(Vec<WorkflowModel>, u64)> {
+            Ok((vec![], 0))
+        }
+
+        async fn find_by_id(&self, id: &str) -> Result<WorkflowModel> {
+            Ok(WorkflowModel {
+                id: id.to_string(),
+                name: "Example workflow".to_string(),
+                trigger: WorkflowTrigger {
+                    entity_type: "user".to_string(),
+                    event: WorkflowEvent::Created,
+                },
+                is_active: true,
+                actions: vec![WorkflowAction::Webhook {
+                    url: "https://example.com/webhook".to_string(),
+                }],
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn find_active_by_trigger(
+            &self,
+            _entity_type: &str,
+            _event: WorkflowEvent,
+        ) -> Result<Vec<WorkflowModel>> {
+            Ok(vec![])
+        }
+
+        async fn update(
+            &self,
+            id: &str,
+            name: String,
+            trigger: WorkflowTrigger,
+            is_active: bool,
+            actions: Vec<WorkflowAction>,
+        ) -> Result<WorkflowModel> {
+            Ok(WorkflowModel {
+                id: id.to_string(),
+                name,
+                trigger,
+                is_active,
+                actions,
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn set_active(&self, id: &str, is_active: bool) -> Result<WorkflowModel> {
+            Ok(WorkflowModel {
+                id: id.to_string(),
+                name: "Example workflow".to_string(),
+                trigger: WorkflowTrigger {
+                    entity_type: "user".to_string(),
+                    event: WorkflowEvent::Created,
+                },
+                is_active,
+                actions: vec![WorkflowAction::Webhook {
+                    url: "https://example.com/webhook".to_string(),
+                }],
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn delete(&self, _id: &str) -> Result<()> {
+            Ok(())
+        }
+
+        async fn create_execution(
+            &self,
+            workflow_id: &str,
+            payload: serde_json::Value,
+        ) -> Result<WorkflowExecutionModel> {
+            Ok(WorkflowExecutionModel {
+                id: "execution-1".to_string(),
+                workflow_id: workflow_id.to_string(),
+                status: WorkflowExecutionStatus::Running,
+                payload,
+                error_message: None,
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn update_execution_status(
+            &self,
+            id: &str,
+            status: WorkflowExecutionStatus,
+            error_message: Option<String>,
+        ) -> Result<WorkflowExecutionModel> {
+            Ok(WorkflowExecutionModel {
+                id: id.to_string(),
+                workflow_id: "workflow-1".to_string(),
+                status,
+                payload: json!({}),
+                error_message,
+                created_at: Datetime::default(),
+                updated_at: Datetime::default(),
+            })
+        }
+
+        async fn find_executions(
+            &self,
+            _workflow_id: &str,
+            _page: u64,
+            _page_size: u64,
+        ) -> Result<(Vec<WorkflowExecutionModel>, u64)> {
+            Ok((vec![], 0))
+        }
+    }
+
+    #[tokio::test]
+    async fn create_rejects_empty_name_or_entity_type() {
+        let use_case = WorkflowUseCase::new(MockWorkflowRepository);
+        let result = use_case
+            .create(CreateWorkflowCommand {
+                name: "   ".to_string(),
+                trigger: WorkflowTrigger {
+                    entity_type: "   ".to_string(),
+                    event: WorkflowEvent::Created,
+                },
+                is_active: Some(true),
+                actions: vec![WorkflowAction::Webhook {
+                    url: "https://example.com/webhook".to_string(),
+                }],
+            })
+            .await;
+
+        assert!(matches!(result, Err(Error::BadRequest(_))));
+    }
+
+    #[tokio::test]
+    async fn create_accepts_valid_workflow() {
+        let use_case = WorkflowUseCase::new(MockWorkflowRepository);
+        let result = use_case
+            .create(CreateWorkflowCommand {
+                name: "User onboarding".to_string(),
+                trigger: WorkflowTrigger {
+                    entity_type: "user".to_string(),
+                    event: WorkflowEvent::Created,
+                },
+                is_active: Some(true),
+                actions: vec![WorkflowAction::Webhook {
+                    url: "https://example.com/webhook".to_string(),
+                }],
+            })
+            .await
+            .expect("valid workflow should be accepted");
+
+        assert_eq!(result.name, "User onboarding");
+        assert!(result.is_active);
+        assert_eq!(result.trigger.entity_type, "user");
+    }
+}
