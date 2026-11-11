@@ -86,3 +86,92 @@ impl<R: ApiKeyRepository> ApiKeyUseCase<R> {
         self.repo.delete(id).await
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use async_trait::async_trait;
+
+    #[derive(Clone, Default)]
+    struct MockApiKeyRepository;
+
+    #[async_trait]
+    impl ApiKeyRepository for MockApiKeyRepository {
+        async fn create(&self, storable: StorableApiKey) -> Result<ApiKeyModel> {
+            Ok(ApiKeyModel {
+                id: "api-key-1".to_string(),
+                key_prefix: storable.key_prefix,
+                key_hash: storable.key_hash,
+                permissions: storable.permissions,
+                created_at: "2026-01-01T00:00:00Z".to_string(),
+                created_by: storable.created_by.clone(),
+                updated_at: "2026-01-01T00:00:00Z".to_string(),
+                updated_by: storable.created_by,
+                name: storable.name,
+            })
+        }
+
+        async fn find_by_id(&self, id: &str) -> Result<ApiKeyModel> {
+            Ok(ApiKeyModel {
+                id: id.to_string(),
+                name: "Billing API".to_string(),
+                key_prefix: "avr_ab12c".to_string(),
+                key_hash: "hash".to_string(),
+                permissions: vec![ApiKeyPermission {
+                    endpoint: "/api/v1/entities".to_string(),
+                    method: "GET".to_string(),
+                }],
+                created_at: "2026-01-01T00:00:00Z".to_string(),
+                created_by: "admin".to_string(),
+                updated_at: "2026-01-01T00:00:00Z".to_string(),
+                updated_by: "admin".to_string(),
+            })
+        }
+
+        async fn find_by_hash(&self, _key_hash: &str) -> Result<Option<ApiKeyModel>> {
+            Ok(None)
+        }
+
+        async fn list(&self, _page: u64, _limit: u64) -> Result<(Vec<ApiKeyModel>, u64)> {
+            Ok((vec![], 0))
+        }
+
+        async fn update(&self, id: &str, updatable: UpdatableApiKey) -> Result<ApiKeyModel> {
+            Ok(ApiKeyModel {
+                id: id.to_string(),
+                name: updatable.name,
+                key_prefix: "avr_ab12c".to_string(),
+                key_hash: "updated-hash".to_string(),
+                permissions: updatable.permissions,
+                created_at: "2026-01-01T00:00:00Z".to_string(),
+                created_by: "admin".to_string(),
+                updated_at: "2026-01-02T00:00:00Z".to_string(),
+                updated_by: updatable.updated_by,
+            })
+        }
+
+        async fn delete(&self, _id: &str) -> Result<bool> {
+            Ok(true)
+        }
+    }
+
+    #[tokio::test]
+    async fn create_generates_plain_secret_and_hash() {
+        let use_case = ApiKeyUseCase::new(MockApiKeyRepository);
+        let permissions = vec![ApiKeyPermission {
+            endpoint: "/api/v1/entities".to_string(),
+            method: "GET".to_string(),
+        }];
+
+        let (model, plain_secret) = use_case
+            .create("Billing API".to_string(), permissions, "admin".to_string())
+            .await
+            .expect("api key creation should succeed");
+
+        assert!(plain_secret.starts_with("avr_"));
+        assert_eq!(model.name, "Billing API");
+        assert_eq!(model.created_by, "admin");
+        assert_eq!(model.key_prefix, plain_secret.chars().take(8).collect::<String>());
+        assert!(!model.key_hash.is_empty());
+    }
+}
