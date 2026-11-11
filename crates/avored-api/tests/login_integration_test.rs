@@ -1,9 +1,10 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 #![recursion_limit = "256"]
 
+mod common;
+
 use avored_api::{
-    avored_state::test_avored_state, core::domain::extensions::string_extension::StringExtension,
-    core::domain::repositories::AuthRepository,
+    avored_state::test_avored_state, core::domain::repositories::AuthRepository,
     infrastructure::persistence::auth_repository::test_auth_repository,
     interfaces::api::auth::login_handler,
 };
@@ -15,29 +16,10 @@ use axum::{
 };
 use tower::ServiceExt;
 
-async fn seed_test_user(
-    provider: &avored_api::providers::avored_database_provider::AvoRedDatabaseProvider,
-) {
-    let (datastore, session) = &provider.db;
-    let password = "secret"
-        .to_string()
-        .get_password_hash("test-salt")
-        .expect("test password should hash");
-    let sql = format!(
-        "CREATE users:test_user SET name = 'Test User', email = 'test@example.com', password = '{}', created_at = time::now(), created_by = 'test', updated_at = time::now(), updated_by = 'test', deleted_at = NONE RETURN AFTER;",
-        password
-    );
-
-    datastore
-        .execute(&sql, session, None)
-        .await
-        .expect("test user should be created");
-}
-
 #[tokio::test]
 async fn authenticates_a_user_from_an_in_memory_database() {
     let repository = test_auth_repository().await;
-    seed_test_user(&repository.database_provider).await;
+    common::seed_test_user(&repository.database_provider).await;
 
     let user = repository
         .authenticate("test@example.com")
@@ -51,7 +33,7 @@ async fn authenticates_a_user_from_an_in_memory_database() {
 #[tokio::test]
 async fn rejects_invalid_credentials_in_an_in_memory_database() {
     let repository = test_auth_repository().await;
-    seed_test_user(&repository.database_provider).await;
+    common::seed_test_user(&repository.database_provider).await;
 
     assert!(repository
         .authenticate("unknown@example.com")
@@ -62,7 +44,7 @@ async fn rejects_invalid_credentials_in_an_in_memory_database() {
 #[tokio::test]
 async fn login_handler_authenticates_against_an_in_memory_database() {
     let state = test_avored_state().await;
-    seed_test_user(&state.database_provider).await;
+    common::seed_test_user(&state.database_provider).await;
     let app = Router::new()
         .route("/login", post(login_handler))
         .with_state(state);
@@ -87,9 +69,27 @@ async fn login_handler_authenticates_against_an_in_memory_database() {
 }
 
 #[tokio::test]
+async fn login_handler_rejects_missing_required_fields() {
+    let state = test_avored_state().await;
+    let app = Router::new()
+        .route("/login", post(login_handler))
+        .with_state(state);
+    let request = Request::builder()
+        .method("POST")
+        .uri("/login")
+        .header("content-type", "application/json")
+        .body(Body::from(r#"{"email":"test@example.com"}"#))
+        .unwrap();
+
+    let response = app.oneshot(request).await.unwrap();
+
+    assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
+}
+
+#[tokio::test]
 async fn login_handler_rejects_invalid_credentials() {
     let state = test_avored_state().await;
-    seed_test_user(&state.database_provider).await;
+    common::seed_test_user(&state.database_provider).await;
     let app = Router::new()
         .route("/login", post(login_handler))
         .with_state(state);

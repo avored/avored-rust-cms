@@ -9,7 +9,7 @@ use avored_api::{
 };
 use axum::{
     body::{to_bytes, Body},
-    http::Request,
+    http::{Request, StatusCode},
     routing::post,
     Router,
 };
@@ -53,4 +53,21 @@ async fn misc_setup_handler_create_user_an_in_memory_database() {
     let response_json: serde_json::Value = serde_json::from_slice(&body).unwrap();
 
     assert_eq!(response_json["success"], true);
+}
+
+#[tokio::test]
+async fn misc_setup_handler_rejects_missing_required_fields() {
+    let app = Router::new()
+        .route("/login", post(setup_handler))
+        .with_state(test_avored_state().await);
+    let request = Request::builder()
+        .method("POST")
+        .uri("/login")
+        .header("content-type", "application/json")
+        .body(Body::from(r#"{"name":"test","email":"setup@example.com"}"#))
+        .unwrap();
+
+    let response = app.oneshot(request).await.unwrap();
+
+    assert_eq!(response.status(), StatusCode::UNPROCESSABLE_ENTITY);
 }
