@@ -113,6 +113,17 @@ cargo install cargo-leptos --locked
 
 ---
 
+## Documentation
+
+New contributors should start here:
+
+- [Architecture overview](document/leptos-ssr-hydration-boundaries.md)
+- [API route/versioning reference](document/api-route-versioning.md)
+- [Roadmap and tech debt backlog](document/improvement-and-tech-debt-roadmap.md)
+- [Contributing guide](CONTRIBUTING.md)
+
+---
+
 ## Get started
 
 1. Clone the repository and enter the project directory:
@@ -210,10 +221,10 @@ Do not use development secrets in production. Set `APP_ENV=prod` in `.env` and p
 
 ## Contributing
 
-Contributions are welcome! Please open an issue to discuss the change you'd like to make before submitting a pull request. All code must pass `cargo test` and be formatted with `cargo fmt`.
+Contributions are welcome. Please read the [contributing guide](CONTRIBUTING.md) before opening a pull request. In short: open or reference an issue, keep changes small and scoped, update docs when behaviour changes, and ensure the relevant Rust and frontend checks pass.
 
 ---
 
 ## License
 
-This project is open-source. See the [LICENSE](LICENSE) file for details.
+This repository does not currently declare a license in its root metadata or files. Before redistributing or publishing forks, confirm the intended licensing terms with the project maintainers.
