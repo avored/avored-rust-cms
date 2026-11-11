@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::application::dtos::pagination_dto::Pagination;
 use crate::core::domain::entities::EntityModel;
 
 /*  #region Paginate Command */
@@ -13,11 +14,11 @@ pub struct PaginateCollectionCommand {
 /* #endregion */
 
 /* #region Collection Paginate response */
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CollectionPaginationResponse {
     pub entity: EntityModel,
     pub data: Vec<serde_json::Value>,
-    pub total: u64,
+    pub pagination: Pagination,
 }
 /* #endregion */
 

@@ -21,5 +21,8 @@ pub use workflow_dto::{
     WorkflowExecutionPaginationResponse, WorkflowPaginationQuery, WorkflowPaginationResponse,
 };
 
+pub mod pagination_dto;
+pub use pagination_dto::{PaginatedResponse, Pagination, PaginationQuery};
+
 pub mod api_key_dto;
 pub mod setting_dto;

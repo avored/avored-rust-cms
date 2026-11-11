@@ -268,7 +268,10 @@ async fn workflow_api_supports_authenticated_crud_and_activation() {
         .expect("list request should complete");
     assert_eq!(list_response.status(), StatusCode::OK);
     let list = response_json(list_response).await;
-    assert_eq!(list["total"], 1);
+    assert_eq!(list["pagination"]["total"], 1);
+    assert_eq!(list["pagination"]["per_page"], 10);
+    assert_eq!(list["pagination"]["current_page"], 1);
+    assert_eq!(list["pagination"]["last_page"], 1);
     assert_eq!(list["data"][0]["id"], id);
 
     let fetch_response = app
@@ -382,7 +385,8 @@ async fn workflow_execution_history_api_lists_empty_and_paginated_results() {
         .expect("history request should complete");
     assert_eq!(empty_response.status(), StatusCode::OK);
     let empty_history = response_json(empty_response).await;
-    assert_eq!(empty_history["total"], 0);
+    assert_eq!(empty_history["pagination"]["total"], 0);
+    assert_eq!(empty_history["pagination"]["last_page"], 1);
     assert_eq!(empty_history["data"].as_array().unwrap().len(), 0);
 
     state
@@ -414,9 +418,10 @@ async fn workflow_execution_history_api_lists_empty_and_paginated_results() {
         .expect("history request should complete");
     assert_eq!(history_response.status(), StatusCode::OK);
     let history = response_json(history_response).await;
-    assert_eq!(history["total"], 2);
-    assert_eq!(history["page"], 1);
-    assert_eq!(history["page_size"], 1);
+    assert_eq!(history["pagination"]["total"], 2);
+    assert_eq!(history["pagination"]["current_page"], 1);
+    assert_eq!(history["pagination"]["per_page"], 1);
+    assert_eq!(history["pagination"]["last_page"], 2);
     assert_eq!(history["data"][0]["workflow_id"], workflow_id);
     assert_eq!(history["data"][0]["status"], "running");
     assert_eq!(history["data"][0]["payload"]["record_id"], "customer-456");

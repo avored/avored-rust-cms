@@ -144,7 +144,7 @@ async fn workflows_can_be_created_updated_activated_and_deleted() {
         .find_executions(&created.id, WorkflowPaginationQuery::default())
         .await
         .expect("execution history should remain available after workflow deletion");
-    assert_eq!(history.total, 1);
+    assert_eq!(history.pagination.total, 1);
     assert_eq!(history.data[0].id, execution.id);
 }
 
@@ -167,13 +167,14 @@ async fn workflow_list_supports_paginated_results_and_total_count() {
         .find_all(WorkflowPaginationQuery {
             page: Some(0),
             page_size: Some(1),
+            ..WorkflowPaginationQuery::default()
         })
         .await
         .expect("workflow page should be fetched");
-    assert_eq!(page.page, 1);
-    assert_eq!(page.page_size, 1);
+    assert_eq!(page.pagination.current_page, 1);
+    assert_eq!(page.pagination.per_page, 1);
     assert_eq!(page.data.len(), 1);
-    assert_eq!(page.total, 2);
+    assert_eq!(page.pagination.total, 2);
 }
 
 #[tokio::test]
@@ -216,7 +217,7 @@ async fn workflow_execution_status_and_history_are_persisted() {
         .find_executions(&workflow.id, WorkflowPaginationQuery::default())
         .await
         .expect("workflow history should be listed");
-    assert_eq!(history.total, 1);
+    assert_eq!(history.pagination.total, 1);
     assert_eq!(history.data[0].id, running.id);
     assert_eq!(history.data[0].payload["record_id"], "customer-123");
 }
@@ -252,7 +253,7 @@ async fn workflow_schema_migration_is_idempotent_and_preserves_records() {
         .find_executions(&workflow.id, WorkflowPaginationQuery::default())
         .await
         .expect("execution history should remain after migration");
-    assert_eq!(history.total, 1);
+    assert_eq!(history.pagination.total, 1);
     assert_eq!(history.data[0].id, execution.id);
 }
 
@@ -382,7 +383,7 @@ async fn dispatcher_runs_only_active_matching_workflows_and_records_success() {
         .find_executions(&matching.id, WorkflowPaginationQuery::default())
         .await
         .expect("matching workflow history should load");
-    assert_eq!(matching_history.total, 1);
+    assert_eq!(matching_history.pagination.total, 1);
     assert_eq!(
         matching_history.data[0].status,
         WorkflowExecutionStatus::Success
@@ -394,7 +395,7 @@ async fn dispatcher_runs_only_active_matching_workflows_and_records_success() {
             .find_executions(&workflow.id, WorkflowPaginationQuery::default())
             .await
             .expect("workflow history should load");
-        assert_eq!(history.total, 0);
+        assert_eq!(history.pagination.total, 0);
     }
 }
 
@@ -434,7 +435,7 @@ async fn dispatcher_records_action_failure_and_stops_the_action_chain() {
         .find_executions(&workflow.id, WorkflowPaginationQuery::default())
         .await
         .expect("workflow history should load");
-    assert_eq!(history.total, 1);
+    assert_eq!(history.pagination.total, 1);
     assert_eq!(history.data[0].status, WorkflowExecutionStatus::Failed);
     assert_eq!(
         history.data[0].error_message.as_deref(),

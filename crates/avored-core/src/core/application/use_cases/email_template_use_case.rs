@@ -2,7 +2,6 @@ use crate::core::application::dtos::email_template_dto::{
     CreateEmailTemplateCommand, EmailTemplatePaginationResponse, PaginateEmailTemplateCommand,
     UpdateEmailTemplateCommand,
 };
-use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 use crate::core::domain::entities::EmailTemplateModel;
 use crate::core::domain::repositories::EmailTemplateRepository;
 use crate::error::Result;
@@ -78,15 +77,15 @@ where
         &self,
         query: PaginateEmailTemplateCommand,
     ) -> Result<EmailTemplatePaginationResponse> {
-        let page = query.page.unwrap_or(DEFAULT_PAGE);
-        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
+        let page = query.current_page();
+        let page_size = query.per_page();
         let (data, total) = self.repository.paginate(page, page_size).await?;
 
         Ok(EmailTemplatePaginationResponse {
             data,
-            total,
-            page,
-            page_size,
+            pagination: crate::core::application::dtos::pagination_dto::Pagination::new(
+                total, page_size, page,
+            ),
         })
     }
 }

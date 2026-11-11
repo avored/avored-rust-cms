@@ -8,14 +8,15 @@ use crate::{
     core::application::dtos::api_manager_dto::{
         EntityRecordResponse, ListEntitiesQuery, ListEntitiesResponse,
     },
+    core::application::dtos::pagination_dto::{PaginatedResponse, Pagination, PaginationQuery},
     core::domain::entities::error_message::{ApiErrorResponse, ErrorMessageResponse},
     error::{Error, Result},
 };
 
 /// Reserved query-parameter keys that must never be treated as attribute filters.
-const RESERVED_KEYS: &[&str] = &["entity_type", "page", "limit"];
+const RESERVED_KEYS: &[&str] = &["entity_type", "page", "per_page", "page_size", "limit"];
 
-/// `GET /api/v1/entities?entity_type={type}&page={p}&limit={l}[&attr=value…]`
+/// `GET /api/v1/entities?entity_type={type}&page={p}&per_page={n}[&attr=value…]`
 ///
 /// Returns a paginated list of dynamic records belonging to the supplied entity
 /// type.  Any query parameter other than the three reserved ones is interpreted
@@ -38,30 +39,14 @@ pub async fn paginate_entities_handler(
         }));
     }
 
-    let page = query.page.unwrap_or(1);
-    let limit = query.limit.unwrap_or(20);
-
-    if page == 0 {
-        return Err(Error::BadRequest(ApiErrorResponse {
-            status: false,
-            errors: vec![ErrorMessageResponse {
-                key: "page".to_string(),
-                message: "page must be greater than 0".to_string(),
-            }],
-            request_id: None,
-        }));
-    }
-
-    if limit == 0 || limit > 100 {
-        return Err(Error::BadRequest(ApiErrorResponse {
-            status: false,
-            errors: vec![ErrorMessageResponse {
-                key: "limit".to_string(),
-                message: "limit must be between 1 and 100".to_string(),
-            }],
-            request_id: None,
-        }));
-    }
+    let pagination_query = PaginationQuery {
+        page: query.page,
+        per_page: query.per_page,
+        page_size: query.page_size,
+        limit: query.limit,
+    };
+    let page = pagination_query.current_page();
+    let per_page = pagination_query.per_page();
 
     // Strip reserved keys from the flat filter map so attribute filters are clean.
     for key in RESERVED_KEYS {
@@ -70,9 +55,9 @@ pub async fn paginate_entities_handler(
 
     // --- Delegate to use case ---
 
-    let (records, total_items, total_pages, resolved_limit) = state
+    let (records, total_items) = state
         .entity_use_case
-        .list_entities(&entity_type, page, limit, query.filters)
+        .list_entities(&entity_type, page, per_page, query.filters)
         .await?;
 
     // --- Shape response ---
@@ -82,12 +67,9 @@ pub async fn paginate_entities_handler(
         .map(|record| shape_record(record, &entity_type))
         .collect();
 
-    let response = ListEntitiesResponse {
+    let response = PaginatedResponse {
         data,
-        page,
-        limit: resolved_limit,
-        total_items,
-        total_pages,
+        pagination: Pagination::new(total_items, per_page, page),
     };
 
     Ok(Json(response))

@@ -1,20 +1,24 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+use crate::core::application::dtos::pagination_dto::PaginatedResponse;
 /* #region Query DTO */
 
 /// Query parameters for `GET /api/v1/entities`.
 ///
 /// Required: `entity_type` — the identifier of an entity type (e.g. `"blog_posts"`).
-/// Optional: `page` (1-based, default 1), `limit` (default 20, max 100).
+/// Optional: `page` (1-based, default 1), `per_page` (default 25, max 100).
 /// Any additional query key that does not match a reserved name is treated as an
 /// attribute equality filter: `?title=Hello&views=10`.
 ///
-/// Reserved names (not treated as filters): `entity_type`, `page`, `limit`.
+/// Reserved names (not treated as filters): `entity_type`, `page`, `per_page`,
+/// `page_size`, and `limit`.
 #[derive(Debug, Deserialize)]
 pub struct ListEntitiesQuery {
     pub entity_type: String,
     pub page: Option<u64>,
+    pub per_page: Option<u64>,
+    pub page_size: Option<u64>,
     pub limit: Option<u64>,
     /// Catch-all for attribute filters.  Axum's `Query` extractor flattens
     /// extra keys into a `HashMap` via `#[serde(flatten)]`.
@@ -48,14 +52,7 @@ impl EntityRecordResponse {
 }
 
 /// Paginated envelope returned by `GET /api/v1/entities`.
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct ListEntitiesResponse {
-    pub data: Vec<EntityRecordResponse>,
-    pub page: u64,
-    pub limit: u64,
-    pub total_items: u64,
-    pub total_pages: u64,
-}
+pub type ListEntitiesResponse = PaginatedResponse<EntityRecordResponse>;
 
 /* #endregion */
 

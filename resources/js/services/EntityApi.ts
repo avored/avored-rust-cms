@@ -21,13 +21,13 @@ class EntityApi {
     }
   }
 
-  async fetchCollectionsByEntityId(entityId: string, page: number = 1, pageSize: number = 20) {
+  async fetchCollectionsByEntityId(entityId: string, page: number = 1, pageSize: number = 25) {
     try {
       const response = await http.get<CollectionPaginationResponse>("/api/v1/admin/collection", {
         params: {
           entity_id: entityId,
           page,
-          page_size: pageSize,
+          per_page: pageSize,
         },
       });
       return response;

@@ -9,7 +9,8 @@ export function collectionIndexPage(entity_id: string) {
         collections: [] as Array<Record<string, any>>,
         total: 0,
         page: 1,
-        pageSize: 20,
+        pageSize: 25,
+        lastPage: 1,
         loading: false,
         deleteModalOpen: false,
         recordToDelete: null as Record<string, any> | null,
@@ -37,12 +38,14 @@ export function collectionIndexPage(entity_id: string) {
                 if (response) {
                     this.currentEntity = response.entity;
                     this.collections = (response.data || []).map((item: Record<string, any>) => ({ ...item }));
-                    this.total = response.total || 0;
+                    this.total = response.pagination.total;
+                    this.lastPage = response.pagination.last_page;
                 }
             } catch (err: any) {
                 this.errorMessage = err.message || "Failed to load collection data";
                 this.collections = [];
                 this.total = 0;
+                this.lastPage = 1;
             } finally {
                 this.loading = false;
             }
@@ -89,7 +92,7 @@ export function collectionIndexPage(entity_id: string) {
         },
 
         totalPages() {
-            return Math.max(1, Math.ceil(this.total / this.pageSize));
+            return this.lastPage;
         },
 
         firstVisibleItem() {

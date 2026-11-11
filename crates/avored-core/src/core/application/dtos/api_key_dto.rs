@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::core::domain::entities::api_key::ApiKeyPermission;
+use crate::core::{
+    application::dtos::pagination_dto::PaginatedResponse,
+    domain::entities::api_key::ApiKeyPermission,
+};
 
 /// POST /api/v1/admin/api-keys request body
 #[derive(Debug, Deserialize)]
@@ -31,11 +34,4 @@ pub struct ApiKeyResponse {
 }
 
 /// Paginated list response
-#[derive(Debug, Serialize)]
-pub struct ListApiKeysResponse {
-    pub data: Vec<ApiKeyResponse>,
-    pub page: u64,
-    pub limit: u64,
-    pub total_items: u64,
-    pub total_pages: u64,
-}
+pub type ListApiKeysResponse = PaginatedResponse<ApiKeyResponse>;
