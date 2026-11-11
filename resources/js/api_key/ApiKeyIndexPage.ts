@@ -1,11 +1,13 @@
 import http from '../utils/http';
+import { PaginatedResponse } from '../types/EntityType';
 
 export function apiKeyIndexPage() {
     return {
         keys: [] as Array<Record<string, any>>,
         total: 0,
         page: 1,
-        limit: 20,
+        limit: 25,
+        lastPage: 1,
         loading: false,
         deleteModalOpen: false,
         keyToDelete: null as Record<string, any> | null,
@@ -23,26 +25,28 @@ export function apiKeyIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get('/api/v1/admin/api-keys', {
+                const response = await http.get<PaginatedResponse<Record<string, any>>>('/api/v1/admin/api-keys', {
                     params: {
                         page: this.page,
-                        limit: this.limit,
+                        per_page: this.limit,
                     },
                 });
 
                 this.keys = response.data || [];
-                this.total = response.total_items || 0;
+                this.total = response.pagination.total;
+                this.lastPage = response.pagination.last_page;
             } catch (err: any) {
                 this.errorMessage = err.message || 'Failed to load API keys';
                 this.keys = [];
                 this.total = 0;
+                this.lastPage = 1;
             } finally {
                 this.loading = false;
             }
         },
 
         totalPages() {
-            return Math.max(1, Math.ceil(this.total / this.limit));
+            return this.lastPage;
         },
 
         firstVisibleItem() {

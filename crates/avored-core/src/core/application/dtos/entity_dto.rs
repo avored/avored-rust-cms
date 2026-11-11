@@ -1,3 +1,4 @@
+use crate::core::application::dtos::pagination_dto::Pagination;
 use crate::core::application::use_cases::EntityUseCase;
 use crate::core::domain::entities::entity::{
     EntityModel, StorableEntity, StorableEntityAttribute, UpdableIdentifierEntity, UpdatableEntity,
@@ -388,9 +389,9 @@ impl From<AttributeModel> for AttributeResponse {
 /* #endregion */
 
 /* #region Entity Paginate response */
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct EntityPaginationResponse {
     pub data: Vec<EntityResponse>,
-    pub total: u64,
+    pub pagination: Pagination,
 }
 /* #endregion */

@@ -59,7 +59,7 @@ async fn wait_for_execution(state: &AppState, workflow_id: &str) {
             .find_executions(workflow_id, WorkflowPaginationQuery::default())
             .await
             .expect("execution history query should succeed");
-        if history.total > 0 {
+        if history.pagination.total > 0 {
             assert_eq!(history.data[0].status, WorkflowExecutionStatus::Failed);
             return;
         }
@@ -161,6 +161,7 @@ async fn entity_create_and_update_dispatch_matching_workflows_without_changing_r
             .find_executions(&updated_workflow.id, WorkflowPaginationQuery::default())
             .await
             .expect("update workflow history should be queryable")
+            .pagination
             .total,
         0
     );

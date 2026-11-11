@@ -1,11 +1,13 @@
 import http from '../utils/http';
+import { PaginatedResponse } from '../types/EntityType';
 
 export function workflowIndexPage() {
     return {
         workflows: [] as Array<Record<string, any>>,
         total: 0,
         page: 1,
-        pageSize: 20,
+        pageSize: 25,
+        lastPage: 1,
         loading: false,
         deleteModalOpen: false,
         workflowToDelete: null as Record<string, any> | null,
@@ -23,26 +25,28 @@ export function workflowIndexPage() {
             this.loading = true;
             this.errorMessage = '';
             try {
-                const response = await http.get('/api/v1/admin/workflows', {
+                const response = await http.get<PaginatedResponse<Record<string, any>>>('/api/v1/admin/workflows', {
                     params: {
                         page: this.page,
-                        page_size: this.pageSize,
+                        per_page: this.pageSize,
                     },
                 });
 
                 this.workflows = response.data || [];
-                this.total = response.total || 0;
+                this.total = response.pagination.total;
+                this.lastPage = response.pagination.last_page;
             } catch (err: any) {
                 this.errorMessage = err.message || 'Failed to load workflows';
                 this.workflows = [];
                 this.total = 0;
+                this.lastPage = 1;
             } finally {
                 this.loading = false;
             }
         },
 
         totalPages() {
-            return Math.max(1, Math.ceil(this.total / this.pageSize));
+            return this.lastPage;
         },
 
         firstVisibleItem() {

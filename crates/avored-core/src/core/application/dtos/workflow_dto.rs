@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::application::dtos::pagination_dto::PaginatedResponse;
 use crate::core::domain::entities::{
     WorkflowAction, WorkflowExecutionModel, WorkflowModel, WorkflowTrigger,
 };
@@ -25,24 +26,6 @@ pub struct SetWorkflowActiveCommand {
     pub is_active: bool,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct WorkflowPaginationQuery {
-    pub page: Option<u64>,
-    pub page_size: Option<u64>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WorkflowPaginationResponse {
-    pub data: Vec<WorkflowModel>,
-    pub total: u64,
-    pub page: u64,
-    pub page_size: u64,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize)]
-pub struct WorkflowExecutionPaginationResponse {
-    pub data: Vec<WorkflowExecutionModel>,
-    pub total: u64,
-    pub page: u64,
-    pub page_size: u64,
-}
+pub type WorkflowPaginationQuery = crate::core::application::dtos::pagination_dto::PaginationQuery;
+pub type WorkflowPaginationResponse = PaginatedResponse<WorkflowModel>;
+pub type WorkflowExecutionPaginationResponse = PaginatedResponse<WorkflowExecutionModel>;

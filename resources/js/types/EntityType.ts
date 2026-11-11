@@ -40,13 +40,22 @@ export interface UpdateEntityPayload {
     identifier: string;
 }
 
-export interface EntityPaginationResponse {
-    data: EntityInterface[];
+export interface PaginationInterface {
     total: number;
+    per_page: number;
+    current_page: number;
+    last_page: number;
 }
+
+export interface PaginatedResponse<T> {
+    data: T[];
+    pagination: PaginationInterface;
+}
+
+export type EntityPaginationResponse = PaginatedResponse<EntityInterface>;
 
 export interface CollectionPaginationResponse {
     entity: EntityInterface;
     data: Array<Record<string, any>>;
-    total: number;
+    pagination: PaginationInterface;
 }

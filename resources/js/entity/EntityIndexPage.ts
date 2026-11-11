@@ -6,7 +6,8 @@ export function entityIndexPage() {
         entities: [] as EntityInterface[],
         total: 0,
         page: 1,
-        pageSize: 20,
+        pageSize: 25,
+        lastPage: 1,
         loading: false,
         deleteModalOpen: false,
         entityToDelete: null as EntityInterface | null,
@@ -24,11 +25,12 @@ export function entityIndexPage() {
                 const response = await http.get<EntityPaginationResponse>('/api/v1/admin/entities', {
                     params: {
                         page: this.page,
-                        page_size: this.pageSize,
+                        per_page: this.pageSize,
                     },
                 });
                 this.entities = response.data || [];
-                this.total = response.total || 0;
+                this.total = response.pagination.total;
+                this.lastPage = response.pagination.last_page;
             } catch (err: any) {
                 this.errorMessage = err.message || 'Failed to load entities';
             } finally {
@@ -37,7 +39,7 @@ export function entityIndexPage() {
         },
 
         totalPages() {
-            return Math.max(1, Math.ceil(this.total / this.pageSize));
+            return this.lastPage;
         },
 
         firstVisibleItem() {

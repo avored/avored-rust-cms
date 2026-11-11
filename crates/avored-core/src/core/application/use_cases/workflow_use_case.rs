@@ -3,12 +3,11 @@ use serde_json::Value as JsonValue;
 use crate::{
     core::{
         application::dtos::{
-            CreateWorkflowCommand, SetWorkflowActiveCommand, UpdateWorkflowCommand,
-            WorkflowExecutionPaginationResponse, WorkflowPaginationQuery,
+            CreateWorkflowCommand, PaginatedResponse, Pagination, SetWorkflowActiveCommand,
+            UpdateWorkflowCommand, WorkflowExecutionPaginationResponse, WorkflowPaginationQuery,
             WorkflowPaginationResponse,
         },
         domain::{
-            constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE},
             entities::{
                 WorkflowEvent, WorkflowExecutionModel, WorkflowExecutionStatus, WorkflowModel,
             },
@@ -53,14 +52,12 @@ where
         &self,
         query: WorkflowPaginationQuery,
     ) -> Result<WorkflowPaginationResponse> {
-        let page = query.page.unwrap_or(DEFAULT_PAGE).max(1);
-        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE).clamp(1, 100);
+        let page = query.current_page();
+        let page_size = query.per_page();
         let (data, total) = self.repository.find_all(page, page_size).await?;
-        Ok(WorkflowPaginationResponse {
+        Ok(PaginatedResponse {
             data,
-            total,
-            page,
-            page_size,
+            pagination: Pagination::new(total, page_size, page),
         })
     }
 
@@ -134,17 +131,15 @@ where
         workflow_id: &str,
         query: WorkflowPaginationQuery,
     ) -> Result<WorkflowExecutionPaginationResponse> {
-        let page = query.page.unwrap_or(DEFAULT_PAGE).max(1);
-        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE).clamp(1, 100);
+        let page = query.current_page();
+        let page_size = query.per_page();
         let (data, total) = self
             .repository
             .find_executions(workflow_id, page, page_size)
             .await?;
-        Ok(WorkflowExecutionPaginationResponse {
+        Ok(PaginatedResponse {
             data,
-            total,
-            page,
-            page_size,
+            pagination: Pagination::new(total, page_size, page),
         })
     }
 }

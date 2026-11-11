@@ -52,8 +52,8 @@ where
     }
 
     pub async fn paginate(&self, query: PaginateEntityCommand) -> Result<(Vec<EntityModel>, u64)> {
-        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
-        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
+        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE).max(1);
+        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE).clamp(1, 100);
         let entities = self.repository.paginate(page, page_size).await?;
         let modal_count = self.repository.count().await?;
 
@@ -133,8 +133,8 @@ where
         query: PaginateCollectionCommand,
     ) -> Result<CollectionPaginationResponse> {
         let entity = self.repository.find_by_id(entity_id).await?;
-        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE);
-        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE);
+        let page: u64 = query.page.unwrap_or(DEFAULT_PAGE).max(1);
+        let page_size = query.page_size.unwrap_or(DEFAULT_PAGE_SIZE).clamp(1, 100);
 
         let (data, total) = self
             .repository
@@ -144,7 +144,9 @@ where
         Ok(CollectionPaginationResponse {
             entity,
             data,
-            total,
+            pagination: crate::core::application::dtos::pagination_dto::Pagination::new(
+                total, page_size, page,
+            ),
         })
     }
 
@@ -289,15 +291,14 @@ where
     /// List dynamic records for a given entity type with optional attribute
     /// equality filters and pagination.
     ///
-    /// Returns the raw JSON records together with the pagination envelope
-    /// values (`page`, `limit`, `total_items`, `total_pages`).
+    /// Returns raw JSON records and their total count.
     pub async fn list_entities(
         &self,
         entity_type: &str,
         page: u64,
         limit: u64,
         filters: std::collections::HashMap<String, String>,
-    ) -> Result<(Vec<serde_json::Value>, u64, u64, u64)> {
+    ) -> Result<(Vec<serde_json::Value>, u64)> {
         use crate::core::domain::constants::{DEFAULT_PAGE, DEFAULT_PAGE_SIZE};
 
         let page = if page == 0 { DEFAULT_PAGE } else { page };
@@ -315,13 +316,7 @@ where
             .list_entities(&entity.identifier, page, limit, &filters)
             .await?;
 
-        let total_pages = if total_items == 0 {
-            1
-        } else {
-            total_items.div_ceil(limit)
-        };
-
-        Ok((records, total_items, total_pages, limit))
+        Ok((records, total_items))
     }
 
     /// Create a new dynamic record for the given entity type.

@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+use crate::core::application::dtos::pagination_dto::PaginatedResponse;
 use crate::core::domain::entities::{
     error_message::{ApiErrorResponse, ErrorMessageResponse},
     EmailTemplateModel,
@@ -7,11 +8,8 @@ use crate::core::domain::entities::{
 use crate::core::domain::extensions::string_extension::StringExtension;
 use crate::error::Result;
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct PaginateEmailTemplateCommand {
-    pub page: Option<u64>,
-    pub page_size: Option<u64>,
-}
+pub type PaginateEmailTemplateCommand =
+    crate::core::application::dtos::pagination_dto::PaginationQuery;
 
 #[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub struct CreateEmailTemplateCommand {
@@ -95,10 +93,4 @@ impl UpdateEmailTemplateCommand {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
-pub struct EmailTemplatePaginationResponse {
-    pub data: Vec<EmailTemplateModel>,
-    pub total: u64,
-    pub page: u64,
-    pub page_size: u64,
-}
+pub type EmailTemplatePaginationResponse = PaginatedResponse<EmailTemplateModel>;
