@@ -71,14 +71,21 @@ Built in Rust from the ground up, it targets:
 
 ## 🗺 Roadmap
 
-- [ ] API Key management (create, rotate, revoke)
-- [ ] Media / file upload support
-- [ ] Webhook triggers on content events
-- [ ] GraphQL API layer
-- [ ] Plugin / extension system
-- [ ] CLI tooling (`avored-cli`) for migrations and seeding
-- [ ] Docker & Docker Compose support
-- [ ] Audit log / activity history
+The full improvement, tech-debt, and product roadmap is maintained in the
+[roadmap document](document/improvement-and-tech-debt-roadmap.md).
+
+The roadmap's proposed next product phase focuses on content modeling, asset
+management, testing, and delivery:
+
+| Workstream | GitHub issues |
+|---|---|
+| Field schema and asset storage foundation | [#398](https://github.com/avored/avored-rust-cms/issues/398), [#399](https://github.com/avored/avored-rust-cms/issues/399) |
+| Admin asset browser and richer field types | [#400](https://github.com/avored/avored-rust-cms/issues/400), [#401](https://github.com/avored/avored-rust-cms/issues/401) |
+| Playwright coverage, Tailwind patterns, and quality checks | [#402](https://github.com/avored/avored-rust-cms/issues/402), [#403](https://github.com/avored/avored-rust-cms/issues/403), [#404](https://github.com/avored/avored-rust-cms/issues/404) |
+| Documentation and deployment automation | [#405](https://github.com/avored/avored-rust-cms/issues/405), [#406](https://github.com/avored/avored-rust-cms/issues/406) |
+
+Tailwind CSS is already used by the project; the planned work standardizes its
+use across admin forms rather than introducing a new styling framework.
 
 ---
 
@@ -119,7 +126,7 @@ New contributors should start here:
 
 - [Architecture overview](document/leptos-ssr-hydration-boundaries.md)
 - [API route/versioning reference](document/api-route-versioning.md)
-- [Roadmap and tech debt backlog](document/improvement-and-tech-debt-roadmap.md)
+- [Improvement, tech-debt, and product roadmap](document/improvement-and-tech-debt-roadmap.md)
 - [Contributing guide](CONTRIBUTING.md)
 
 ---

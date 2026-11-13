@@ -1,7 +1,7 @@
 # AvoRed CMS — Improvement & Tech Debt Roadmap
 
-> **Status**: Active — New features are on hold.  
-> **Focus**: Harden existing features, eliminate tech debt, upgrade dependencies, and improve developer experience.  
+> **Status**: Active — Phases 1–4 track improvement work; Phase 5 is the proposed product phase.  
+> **Focus**: Improve code quality and developer experience, then deliver flexible content fields, asset management, reliable admin testing, and safer delivery.  
 > **Created**: 2026-10-18
 
 ---
@@ -14,6 +14,7 @@
 | **Phase 2** | Dependency Upgrades & Tooling | #I-006 → #I-010 | 🟠 High–Medium |
 | **Phase 3** | Test Coverage & Observability | #I-011 → #I-015 | 🟡 Medium |
 | **Phase 4** | API Polish & Frontend Cleanup | #I-016 → #I-020 | 🟢 Medium–Low |
+| **Phase 5** | Content Model, Assets & Delivery | #NP-001 → #NP-009 | 🔴 High–Medium |
 
 ```mermaid
 gantt
@@ -942,6 +943,392 @@ So that **I can set up the project, understand the architecture, and start contr
 
 ---
 
+## Phase 5 — Next Product Phase
+
+> **Status**: Proposed — GitHub issues created as [#398–#406](https://github.com/avored/avored-rust-cms/issues/398).
+> **Tailwind CSS** is already part of the project; this phase standardizes its use rather than adding a new styling dependency.
+
+### NP-001 — Add reusable field schema foundation
+
+**Title:** `[NP-001] [Feature]: Add reusable field schema foundation for entity forms`
+
+**Priority**: High  
+**Phase**: Next Phase — Content Model Foundation  
+**Dependencies**: None
+**GitHub Issue**: [#398](https://github.com/avored/avored-rust-cms/issues/398)
+
+---
+
+### 📝 User Story
+As a CMS administrator,  
+I want reusable, validated field definitions for entities,  
+So that content forms can support multiple field types consistently.
+
+### 🎯 Scope & Requirements
+- [ ] Define a field-definition model with stable ID, name, label, type, required flag, and validation/configuration metadata.
+- [ ] Persist field definitions with the entity or content-model configuration using the repository's existing persistence patterns.
+- [ ] Validate field names, duplicate definitions, and type-specific configuration on create and update.
+- [ ] Expose the field definitions through the existing admin API patterns.
+- [ ] Preserve compatibility with existing entities and records that have no new field definitions.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** a valid field definition, **When** an administrator saves it, **Then** it is persisted and returned by the admin API.
+- [ ] **Given** a malformed or duplicate definition, **When** it is submitted, **Then** the API returns a structured validation error and does not persist it.
+- [ ] **Given** existing entity data, **When** the schema support is deployed, **Then** existing records remain readable and editable.
+
+### 🛠️ Technical Context / Notes
+* **Backend / API**: Follow existing Axum request, response, and validation conventions.
+* **Frontend**: Keep the schema representation consumable by the Leptos admin form builder.
+* **Database / Data model**: Reuse the current entity configuration persistence model where suitable; avoid introducing a parallel schema store without need.
+
+### 📋 Task Checklist
+- [ ] Define and validate the field-definition model
+- [ ] Add persistence and API support
+- [ ] Preserve compatibility with existing entities
+- [ ] Add focused unit and API tests
+
+---
+
+### NP-002 — Add asset and folder management backend
+
+**Title:** `[NP-002] [Feature]: Add asset storage backend with folders and upload support`
+
+**Priority**: High  
+**Phase**: Next Phase — Asset Foundation  
+**Dependencies**: None
+**GitHub Issue**: [#399](https://github.com/avored/avored-rust-cms/issues/399)
+
+---
+
+### 📝 User Story
+As a content editor,  
+I want to upload files and organize them into folders,  
+So that assets can be managed and reused across content.
+
+### 🎯 Scope & Requirements
+- [ ] Define asset metadata including stable ID, original filename, storage key, MIME type, size, folder, and creation time.
+- [ ] Support folder listing and creation, with a documented policy for nesting.
+- [ ] Add an authenticated upload endpoint with configurable storage location and size/type validation.
+- [ ] Store files using generated storage keys rather than trusting client-provided paths or filenames.
+- [ ] Add API operations to list, retrieve, and delete assets and folders, with appropriate authorization.
+- [ ] Ensure failed uploads do not leave orphaned metadata or partially written files.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** an authenticated user uploads an allowed file, **When** the upload succeeds, **Then** the file and its metadata are available through the asset API.
+- [ ] **Given** an unsupported or oversized upload, **When** it is submitted, **Then** the API returns a clear validation error and no asset is recorded.
+- [ ] **Given** a folder, **When** an asset is uploaded to it, **Then** the asset is listed under that folder.
+- [ ] **Given** a client-supplied filename containing path separators, **When** it is uploaded, **Then** storage remains confined to the configured asset location.
+
+### 🛠️ Technical Context / Notes
+* **Backend / API**: Use Axum multipart handling and the project's existing auth/error conventions.
+* **Storage**: Keep storage location configurable and isolate storage implementation so local filesystem storage can be replaced later.
+* **Database / Data model**: Persist metadata and folder relations; do not store raw file bytes in the metadata record.
+* **Security**: Validate authorization, size, MIME/type policy, and generated storage paths.
+
+### 📋 Task Checklist
+- [ ] Define asset/folder models and persistence
+- [ ] Implement authenticated upload and asset-management endpoints
+- [ ] Add validation and cleanup behavior for failed uploads/deletes
+- [ ] Add unit and integration tests for valid and rejected requests
+
+---
+
+### NP-003 — Build the admin asset browser and upload flow
+
+**Title:** `[NP-003] [Feature]: Build admin asset browser and upload flow`
+
+**Priority**: High  
+**Phase**: Next Phase — Admin Asset Management  
+**Dependencies**: NP-002
+**GitHub Issue**: [#400](https://github.com/avored/avored-rust-cms/issues/400)
+
+---
+
+### 📝 User Story
+As a CMS administrator,  
+I want to browse folders, upload files, and select existing assets,  
+So that I can manage media from the admin interface.
+
+### 🎯 Scope & Requirements
+- [ ] Add an admin asset page using the existing Leptos routing and layout conventions.
+- [ ] Display folders and assets with filename, file type, size, and upload date.
+- [ ] Support folder navigation and the folder operations provided by the API.
+- [ ] Add an upload interaction with progress and actionable validation/error feedback.
+- [ ] Support selecting an asset and returning its stable ID to a caller such as a content form.
+- [ ] Provide accessible loading, empty, and error states.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** an administrator opens the asset page, **When** assets are available, **Then** folders and files are displayed with their metadata.
+- [ ] **Given** a valid file, **When** the administrator uploads it, **Then** it appears in the current folder without a full-page reload.
+- [ ] **Given** an API upload failure, **When** it occurs, **Then** the UI displays an actionable error and does not show the upload as successful.
+- [ ] **Given** a caller requests asset selection, **When** the administrator chooses an asset, **Then** the caller receives its stable asset ID.
+
+### 🛠️ Technical Context / Notes
+* **Frontend**: Follow existing Leptos page, routing, and API client patterns.
+* **Styling**: Use the existing Tailwind setup and accessible interaction patterns.
+* **Backend / API**: Consume NP-002 endpoints; avoid duplicating validation rules in the UI.
+
+### 📋 Task Checklist
+- [ ] Add the admin route and asset browser page
+- [ ] Implement folder navigation and upload interaction
+- [ ] Implement asset selection integration
+- [ ] Add UI tests for loading, empty, success, and error states
+
+---
+
+### NP-004 — Add textarea, dropdown, image, and number field types
+
+**Title:** `[NP-004] [Feature]: Add textarea, dropdown, image, and number field types`
+
+**Priority**: High  
+**Phase**: Next Phase — Rich Content Forms  
+**Dependencies**: NP-001, NP-003
+**GitHub Issue**: [#401](https://github.com/avored/avored-rust-cms/issues/401)
+
+---
+
+### 📝 User Story
+As a CMS administrator,  
+I want textarea, dropdown, image, and number fields in content forms,  
+So that I can model common content without custom workarounds.
+
+### 🎯 Scope & Requirements
+- [ ] Add textarea configuration and rendering, including required validation.
+- [ ] Add dropdown configuration with validated options and a defined stored value.
+- [ ] Add an image field that references an asset by stable asset ID and uses the asset browser for selection.
+- [ ] Add a number field with integer/decimal configuration and relevant min/max validation.
+- [ ] Validate submitted values against the configured field definitions on the backend.
+- [ ] Preserve existing field rendering and saved content behavior.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** a textarea field, **When** content is saved, **Then** its complete text value is persisted and displayed on edit.
+- [ ] **Given** a dropdown field, **When** an allowed option is selected and saved, **Then** the selected value is persisted; unconfigured values are rejected.
+- [ ] **Given** an image field, **When** an asset is selected, **Then** the stable asset reference is persisted and can be resolved when the form is reopened.
+- [ ] **Given** a number field with configured constraints, **When** a value violates them, **Then** save is rejected with a field-specific validation error.
+- [ ] **Given** an entity using existing fields, **When** the new renderers are introduced, **Then** existing fields continue to work.
+
+### 🛠️ Technical Context / Notes
+* **Backend / API**: Extend the field schema and validation introduced in NP-001.
+* **Frontend**: Use Leptos field components and the asset selector from NP-003.
+* **Database / Data model**: Store image values as asset references, not copied URLs or file contents.
+
+### 📋 Task Checklist
+- [ ] Add field configuration and backend validation for all four types
+- [ ] Add form renderers and edit-state hydration
+- [ ] Integrate image selection with the asset browser
+- [ ] Add focused tests for valid, invalid, and persisted values
+
+---
+
+### NP-005 — Add Playwright coverage for admin content and asset flows
+
+**Title:** `[NP-005] [Improvement]: Add Playwright coverage for admin content and asset flows`
+
+**Priority**: High  
+**Phase**: Next Phase — Regression Testing  
+**Dependencies**: NP-003, NP-004
+**GitHub Issue**: [#402](https://github.com/avored/avored-rust-cms/issues/402)
+
+---
+
+### 📝 User Story
+As a developer,  
+I want browser-level tests for critical admin workflows,  
+So that regressions in content forms and asset management are caught before release.
+
+### 🎯 Scope & Requirements
+- [ ] Configure Playwright for the existing frontend/build and local test environment.
+- [ ] Add a deterministic test setup for authentication and test data without using production credentials or data.
+- [ ] Cover an admin login/session smoke flow using the project's supported test approach.
+- [ ] Cover content create/edit and validation for textarea, dropdown, image, and number fields.
+- [ ] Cover asset upload and selection using a small test fixture.
+- [ ] Ensure tests can run locally and in CI with clear failure diagnostics.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** the test environment is available, **When** the Playwright suite runs, **Then** the critical admin flows execute without manual interaction.
+- [ ] **Given** invalid field data, **When** a browser test submits it, **Then** the corresponding validation feedback is visible and the invalid value is not saved.
+- [ ] **Given** an upload fixture, **When** the browser test uploads and selects it, **Then** the asset appears and its reference is saved in the content form.
+- [ ] **Given** an application or test setup failure, **When** the suite runs, **Then** the failure is reported rather than silently skipped.
+
+### 🛠️ Technical Context / Notes
+* Playwright tests are browser end-to-end tests, not Rust unit tests; keep fast unit/API tests in their existing test layers.
+* **CI**: Use deterministic setup and bounded timeouts; do not require production secrets.
+* **Test data**: Isolate test data and clean it up safely after each run.
+
+### 📋 Task Checklist
+- [ ] Add Playwright configuration and test scripts
+- [ ] Add isolated authentication and test-data setup
+- [ ] Add content form and asset flow tests
+- [ ] Document local execution and integrate with CI
+
+---
+
+### NP-006 — Standardize Tailwind patterns for admin forms
+
+**Title:** `[NP-006] [Improvement]: Standardize Tailwind patterns for admin forms`
+
+**Priority**: Medium  
+**Phase**: Next Phase — Admin UI Consistency  
+**Dependencies**: NP-003, NP-004
+**GitHub Issue**: [#403](https://github.com/avored/avored-rust-cms/issues/403)
+
+---
+
+### 📝 User Story
+As a frontend developer,  
+I want consistent Tailwind patterns for admin forms and asset screens,  
+So that the interface remains accessible and maintainable as it grows.
+
+### 🎯 Scope & Requirements
+- [ ] Review existing form and admin-page styles and identify patterns directly relevant to the new workflows.
+- [ ] Establish reusable conventions or components for labels, inputs, validation messages, buttons, and empty/loading states.
+- [ ] Apply the conventions to the asset browser and new field types.
+- [ ] Preserve responsive layouts, keyboard interaction, and existing theme behavior.
+- [ ] Document how future admin forms should use the existing Tailwind setup.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** the new asset and field screens, **When** rendered, **Then** shared controls use consistent spacing, focus, disabled, and validation states.
+- [ ] **Given** keyboard-only interaction, **When** a user navigates the controls, **Then** focus is visible and controls remain operable.
+- [ ] **Given** the project frontend build, **When** the updated pages are built, **Then** no additional Tailwind installation or parallel styling system is introduced.
+
+### 🛠️ Technical Context / Notes
+* **Frontend**: Leptos components with the project's existing Tailwind CSS v4 pipeline.
+* Keep changes scoped to patterns needed by this phase; avoid a broad visual redesign.
+
+### 📋 Task Checklist
+- [ ] Identify and document shared admin form patterns
+- [ ] Apply shared patterns to asset and field screens
+- [ ] Check responsive and keyboard-accessible states
+- [ ] Add or update relevant UI checks
+
+---
+
+### NP-007 — Strengthen codebase quality checks for the new workflows
+
+**Title:** `[NP-007] [Improvement]: Strengthen codebase quality checks for admin workflows`
+
+**Priority**: Medium  
+**Phase**: Next Phase — Quality Gates  
+**Dependencies**: NP-005
+**GitHub Issue**: [#404](https://github.com/avored/avored-rust-cms/issues/404)
+
+---
+
+### 📝 User Story
+As a maintainer,  
+I want automated quality checks for backend and frontend changes,  
+So that regressions are detected consistently before merge.
+
+### 🎯 Scope & Requirements
+- [ ] Review current CI workflows and reuse existing jobs where possible.
+- [ ] Ensure applicable Rust formatting, lint, and test checks run for pull requests.
+- [ ] Ensure frontend build and Playwright checks run with appropriate dependency caching and timeouts.
+- [ ] Fix warnings or test instability introduced by this phase; do not bundle unrelated broad refactors.
+- [ ] Report failed checks clearly and preserve test artifacts needed to diagnose browser failures.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** a pull request with a formatting or compile failure, **When** CI runs, **Then** the corresponding check fails with actionable output.
+- [ ] **Given** a pull request changing admin workflows, **When** CI runs, **Then** the relevant Playwright checks are executed.
+- [ ] **Given** a test failure, **When** CI completes, **Then** the failed test output and useful browser artifacts are available.
+
+### 🛠️ Technical Context / Notes
+* **CI**: Extend current GitHub Actions rather than creating duplicate workflows.
+* Keep secrets out of test jobs unless strictly necessary; prefer local deterministic fixtures.
+
+### 📋 Task Checklist
+- [ ] Audit current CI coverage and add only missing checks
+- [ ] Integrate Playwright with stable setup and diagnostics
+- [ ] Resolve phase-related warnings and flaky tests
+- [ ] Verify checks on a representative pull request branch
+
+---
+
+### NP-008 — Document content fields, assets, and contributor workflows
+
+**Title:** `[NP-008] [Documentation]: Document content fields, assets, and contributor workflows`
+
+**Priority**: Medium  
+**Phase**: Next Phase — Documentation  
+**Dependencies**: NP-004, NP-005
+**GitHub Issue**: [#405](https://github.com/avored/avored-rust-cms/issues/405)
+
+---
+
+### 📝 User Story
+As a new contributor or CMS administrator,  
+I want accurate documentation for content fields, asset handling, and development checks,  
+So that I can use and extend the new workflows correctly.
+
+### 🎯 Scope & Requirements
+- [ ] Update setup documentation with current prerequisites, configuration, and local run instructions.
+- [ ] Document supported field types, field configuration, validation, and image asset references.
+- [ ] Document upload storage configuration, folder behavior, validation, and operational considerations.
+- [ ] Document Playwright setup and local/CI test commands.
+- [ ] Document the existing Tailwind workflow and conventions for admin screens.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** a developer follows the setup documentation, **When** prerequisites are available, **Then** they can run the app and relevant checks locally.
+- [ ] **Given** an administrator or developer reads the field documentation, **When** configuring a field, **Then** supported options and validation behavior are clear.
+- [ ] **Given** the asset documentation, **When** an operator configures storage, **Then** they can identify required settings and storage safety considerations.
+
+### 🛠️ Technical Context / Notes
+* Update existing documentation where appropriate instead of duplicating instructions.
+* Documentation must describe implemented behavior and configuration, not planned behavior.
+
+### 📋 Task Checklist
+- [ ] Update setup and contributor documentation
+- [ ] Document field types and validation
+- [ ] Document asset configuration and handling
+- [ ] Document Tailwind and Playwright workflows
+
+---
+
+### NP-009 — Add GitHub Actions deployment workflow
+
+**Title:** `[NP-009] [Automation]: Add GitHub Actions workflow for server deployment`
+
+**Priority**: Medium  
+**Phase**: Next Phase — Release Automation  
+**Dependencies**: NP-007, NP-008
+**GitHub Issue**: [#406](https://github.com/avored/avored-rust-cms/issues/406)
+
+---
+
+### 📝 User Story
+As a project maintainer,  
+I want a controlled deployment workflow for the server,  
+So that validated releases can be deployed consistently and verified afterward.
+
+### 🎯 Scope & Requirements
+- [ ] Document and implement the deployment target and release trigger (for example, a protected branch or version tag).
+- [ ] Run required build and test checks before deployment.
+- [ ] Deploy through a controlled runner or SSH using GitHub Environments and repository-managed secrets.
+- [ ] Keep credentials and environment configuration out of source control and logs.
+- [ ] Add deployment verification, including an application health check where available.
+- [ ] Define failure behavior and a safe rollback or recovery procedure.
+- [ ] Make production deployment approval configurable through environment protection rules.
+
+### ✅ Acceptance Criteria
+- [ ] **Given** a deployment trigger, **When** required checks pass and approvals are satisfied, **Then** the workflow deploys the intended revision to the configured target.
+- [ ] **Given** a failed build, test, or deployment step, **When** the workflow runs, **Then** deployment does not proceed or is clearly marked failed.
+- [ ] **Given** a completed deployment, **When** verification runs, **Then** the workflow only reports success after the deployed service responds as expected.
+- [ ] **Given** deployment credentials, **When** the workflow executes, **Then** they are sourced from protected secrets and are not printed in logs.
+
+### 🛠️ Technical Context / Notes
+* **CI/CD**: Use GitHub Actions and environment protection; deployment should not run on untrusted pull-request code.
+* **Operations**: The target OS, service manager, artifact strategy, and rollback mechanism must be documented before enabling production deployment.
+* Do not commit credentials, private keys, or server environment files.
+
+### 📋 Task Checklist
+- [ ] Document deployment target and trigger assumptions
+- [ ] Add protected deployment workflow and required pre-deploy checks
+- [ ] Add secure secret handling and post-deploy verification
+- [ ] Document recovery/rollback and validate against a non-production target
+
+---
+
+---
+
 ## Dependency Graph
 
 ```mermaid
@@ -959,6 +1346,17 @@ graph TD
     I004 --> I017["I-017: Auth hardening"]
     I009["I-009: Feature audit"] --> I018["I-018: SSR/Hydration audit"]
     I016 --> I019["I-019: Pagination normalization"]
+    NP001["NP-001: Field schema"] --> NP004["NP-004: Rich field types"]
+    NP002["NP-002: Asset backend"] --> NP003["NP-003: Asset browser"] --> NP004
+    NP003 --> NP005["NP-005: Playwright coverage"]
+    NP004 --> NP005
+    NP003 --> NP006["NP-006: Tailwind patterns"]
+    NP004 --> NP006
+    NP005 --> NP007["NP-007: Quality gates"]
+    NP004 --> NP008["NP-008: Documentation"]
+    NP005 --> NP008
+    NP007 --> NP009["NP-009: Deployment"]
+    NP008 --> NP009
     
     style I001 fill:#ff6b6b,color:#fff
     style I002 fill:#ff6b6b,color:#fff
@@ -993,7 +1391,16 @@ graph TD
 | I-018 | Audit Leptos SSR / Hydration boundaries | 🟡 Medium | 4 | I-009 |
 | I-019 | Normalize pagination responses | 🟢 Low | 4 | I-016 |
 | I-020 | Refresh README and add developer documentation | 🟢 Low | 4 | None |
+| NP-001 | Add reusable field schema foundation | 🔴 High | 5 | None — [#398](https://github.com/avored/avored-rust-cms/issues/398) |
+| NP-002 | Add asset and folder management backend | 🔴 High | 5 | None — [#399](https://github.com/avored/avored-rust-cms/issues/399) |
+| NP-003 | Build admin asset browser and upload flow | 🔴 High | 5 | NP-002 — [#400](https://github.com/avored/avored-rust-cms/issues/400) |
+| NP-004 | Add textarea, dropdown, image, and number field types | 🔴 High | 5 | NP-001, NP-003 — [#401](https://github.com/avored/avored-rust-cms/issues/401) |
+| NP-005 | Add Playwright coverage for admin content and asset flows | 🔴 High | 5 | NP-003, NP-004 — [#402](https://github.com/avored/avored-rust-cms/issues/402) |
+| NP-006 | Standardize Tailwind patterns for admin forms | 🟡 Medium | 5 | NP-003, NP-004 — [#403](https://github.com/avored/avored-rust-cms/issues/403) |
+| NP-007 | Strengthen codebase quality checks for admin workflows | 🟡 Medium | 5 | NP-005 — [#404](https://github.com/avored/avored-rust-cms/issues/404) |
+| NP-008 | Document content fields, assets, and contributor workflows | 🟡 Medium | 5 | NP-004, NP-005 — [#405](https://github.com/avored/avored-rust-cms/issues/405) |
+| NP-009 | Add GitHub Actions deployment workflow | 🟡 Medium | 5 | NP-007, NP-008 — [#406](https://github.com/avored/avored-rust-cms/issues/406) |
 
 ---
 
-> **Next Step**: Review this roadmap and then create these as GitHub issues in the `avored/avored-rust-cms` repository.
+> **Next Step**: Begin implementation with NP-001 and NP-002; the Phase 5 GitHub issues and dependency order are recorded above.
