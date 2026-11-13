@@ -100,6 +100,17 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                                 <th scope="col" class="px-4 py-3 text-right">"Actions"</th>
                                             </tr>
                                         </thead>
+                                        <tbody x-show="loading" class="divide-y divide-slate-100 bg-white">
+                                            <template x-for="i in 3" x-bind:key="i">
+                                                <tr class="animate-pulse">
+                                                    <td class="whitespace-nowrap px-4 py-3"><div class="h-4 w-12 rounded bg-slate-200"></div></td>
+                                                    <template x-for="attr in (currentEntity ? currentEntity.attributes : [])" x-bind:key="attr.id">
+                                                        <td class="whitespace-nowrap px-4 py-3"><div class="h-4 w-24 rounded bg-slate-200"></div></td>
+                                                    </template>
+                                                    <td class="whitespace-nowrap px-4 py-3 text-right"><div class="ml-auto h-8 w-16 rounded-md bg-slate-200"></div></td>
+                                                </tr>
+                                            </template>
+                                        </tbody>
                                         <tbody x-show="!loading && collections.length > 0" class="divide-y divide-slate-100 bg-white">
                                             <template x-for="(item, index) in collections" x-bind:key="getAttributeValue(item, 'id') || index">
                                                 <tr class="transition hover:bg-slate-50">
@@ -113,16 +124,22 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                                         <div class="flex items-center justify-end gap-2">
                                                             <a
                                                                 x-bind:href="`/admin/collections/${getAttributeValue(item, 'id')}/edit?entity_id=${selectedEntityId}`"
-                                                                class="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                                                aria-label="Edit collection record"
+                                                                title="Edit collection record"
+                                                                class="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white p-2 text-slate-700 shadow-sm transition hover:bg-slate-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
                                                             >
-                                                                "Edit"
+                                                                <i data-feather="edit-3" class="h-4 w-4"></i>
+                                                                <span class="sr-only">"Edit"</span>
                                                             </a>
                                                             <button
                                                                 type="button"
                                                                 x-on:click="confirmDelete(item)"
-                                                                class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 shadow-sm transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                                                aria-label="Delete collection record"
+                                                                title="Delete collection record"
+                                                                class="inline-flex items-center justify-center rounded-md border border-red-200 bg-red-50 p-2 text-red-700 shadow-sm transition hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                                                             >
-                                                                "Delete"
+                                                                <i data-feather="trash-2" class="h-4 w-4"></i>
+                                                                <span class="sr-only">"Delete"</span>
                                                             </button>
                                                         </div>
                                                     </td>
@@ -166,21 +183,21 @@ pub fn CollectionIndexPage() -> impl IntoView {
                                             type="button"
                                             x-on:click="previousPage()"
                                             x-bind:disabled="page <= 1 || loading"
-                                            class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                            class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                                         >
                                             "Previous"
                                         </button>
-                                        <span class="px-2 text-xs text-slate-500">
+                                        <span class="px-2 text-xs text-slate-600">
                                             "Page "
-                                            <span class="font-medium text-slate-700" x-text="page"></span>
+                                            <span class="font-semibold text-slate-800" x-text="page"></span>
                                             " of "
-                                            <span class="font-medium text-slate-700" x-text="totalPages()"></span>
+                                            <span class="font-semibold text-slate-800" x-text="totalPages()"></span>
                                         </span>
                                         <button
                                             type="button"
                                             x-on:click="nextPage()"
                                             x-bind:disabled="page >= totalPages() || loading"
-                                            class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                            class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-xs hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                                         >
                                             "Next"
                                         </button>

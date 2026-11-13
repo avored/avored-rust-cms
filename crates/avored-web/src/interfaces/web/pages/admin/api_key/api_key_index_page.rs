@@ -50,6 +50,18 @@ pub fn ApiKeyIndexPage() -> impl IntoView {
                                     <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6">"Actions"</th>
                                 </tr>
                             </thead>
+                            <tbody x-show="loading" class="divide-y divide-slate-100 bg-white">
+                                <template x-for="i in 3" x-bind:key="i">
+                                    <tr class="animate-pulse">
+                                        <td class="whitespace-nowrap px-5 py-4 sm:px-6"><div class="h-4 w-28 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-20 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-6 w-20 rounded-md bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-24 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-24 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4 text-right sm:px-6"><div class="ml-auto h-9 w-20 rounded-lg bg-slate-200"></div></td>
+                                    </tr>
+                                </template>
+                            </tbody>
                             <tbody x-show="!loading && keys.length > 0" class="divide-y divide-slate-100 bg-white">
                                 <template x-for="key in keys" x-bind:key="key.id">
                                     <tr class="transition hover:bg-slate-50">
@@ -66,16 +78,22 @@ pub fn ApiKeyIndexPage() -> impl IntoView {
                                             <div class="flex items-center justify-end gap-2">
                                                 <a
                                                     x-bind:href="`/admin/api-keys/${key.id}/edit`"
-                                                    class="inline-flex items-center rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-700 shadow-sm transition hover:bg-slate-50"
+                                                    aria-label="Edit API key"
+                                                    title="Edit API key"
+                                                    class="inline-flex items-center justify-center rounded-md border border-slate-300 bg-white p-2 text-slate-700 shadow-sm transition hover:bg-slate-50"
                                                 >
-                                                    "Edit"
+                                                    <i data-feather="edit-3" class="h-4 w-4"></i>
+                                                    <span class="sr-only">"Edit"</span>
                                                 </a>
                                                 <button
                                                     type="button"
                                                     x-on:click="confirmDelete(key)"
-                                                    class="inline-flex items-center rounded-md border border-red-200 bg-red-50 px-2.5 py-1.5 text-xs font-medium text-red-700 shadow-sm transition hover:bg-red-100"
+                                                    aria-label="Delete API key"
+                                                    title="Delete API key"
+                                                    class="inline-flex items-center justify-center rounded-md border border-red-200 bg-red-50 p-2 text-red-700 shadow-sm transition hover:bg-red-100"
                                                 >
-                                                    "Delete"
+                                                    <i data-feather="trash-2" class="h-4 w-4"></i>
+                                                    <span class="sr-only">"Delete"</span>
                                                 </button>
                                             </div>
                                         </td>
@@ -106,22 +124,22 @@ pub fn ApiKeyIndexPage() -> impl IntoView {
                                 type="button"
                                 x-on:click="previousPage()"
                                 x-bind:disabled="page <= 1 || loading"
-                                class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                             >
                                 <i data-feather="chevron-left" class="h-4 w-4"></i>
                                 "Previous"
                             </button>
-                            <span class="px-2 text-xs text-slate-500">
+                            <span class="px-2 text-xs text-slate-600">
                                 "Page "
-                                <span class="font-medium text-slate-700" x-text="page"></span>
+                                <span class="font-semibold text-slate-800" x-text="page"></span>
                                 " of "
-                                <span class="font-medium text-slate-700" x-text="totalPages()"></span>
+                                <span class="font-semibold text-slate-800" x-text="totalPages()"></span>
                             </span>
                             <button
                                 type="button"
                                 x-on:click="nextPage()"
                                 x-bind:disabled="page >= totalPages() || loading"
-                                class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center gap-1 rounded-md border border-slate-300 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-700 shadow-sm hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                             >
                                 "Next"
                                 <i data-feather="chevron-right" class="h-4 w-4"></i>
