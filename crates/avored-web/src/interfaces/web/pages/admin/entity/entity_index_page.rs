@@ -51,6 +51,17 @@ pub fn EntityIndexPage() -> impl IntoView {
                                     <th scope="col" class="px-5 py-3 text-right text-xs font-semibold uppercase tracking-wide text-slate-500 sm:px-6">"Actions"</th>
                                 </tr>
                             </thead>
+                            <tbody x-show="loading" class="divide-y divide-slate-100 bg-white">
+                                <template x-for="i in 3" x-bind:key="i">
+                                    <tr class="animate-pulse">
+                                        <td class="whitespace-nowrap px-5 py-4 sm:px-6"><div class="h-4 w-28 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-32 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-24 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4"><div class="h-4 w-24 rounded bg-slate-200"></div></td>
+                                        <td class="whitespace-nowrap px-5 py-4 text-right sm:px-6"><div class="ml-auto h-9 w-20 rounded-lg bg-slate-200"></div></td>
+                                    </tr>
+                                </template>
+                            </tbody>
                             <tbody x-show="!loading && entities.length > 0" class="divide-y divide-slate-100 bg-white">
                                 <template x-for="entity in entities" x-bind:key="entity.id">
                                     <tr class="transition hover:bg-slate-50">
@@ -62,8 +73,27 @@ pub fn EntityIndexPage() -> impl IntoView {
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(entity.created_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-sm text-slate-500" x-text="formatDate(entity.updated_at)"></td>
                                         <td class="whitespace-nowrap px-5 py-4 text-right text-sm sm:px-6">
-                                            <a x-bind:href="`/admin/entity/${entity.id}/edit`" class="font-medium text-primary-600 hover:text-primary-800">"Edit"</a>
-                                            <button type="button" x-on:click="confirmDelete(entity)" class="ml-4 font-medium text-red-600 hover:text-red-800">"Delete"</button>
+                                            <div class="flex items-center justify-end gap-2">
+                                                <a
+                                                    x-bind:href="`/admin/entity/${entity.id}/edit`"
+                                                    aria-label="Edit entity"
+                                                    title="Edit entity"
+                                                    class="inline-flex items-center justify-center rounded-lg border border-slate-300 bg-white p-2 text-slate-700 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                                >
+                                                    <i data-feather="edit-3" class="h-4 w-4"></i>
+                                                    <span class="sr-only">"Edit"</span>
+                                                </a>
+                                                <button
+                                                    type="button"
+                                                    x-on:click="confirmDelete(entity)"
+                                                    aria-label="Delete entity"
+                                                    title="Delete entity"
+                                                    class="inline-flex items-center justify-center rounded-lg border border-red-200 bg-red-50 p-2 text-red-700 transition hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                                >
+                                                    <i data-feather="trash-2" class="h-4 w-4"></i>
+                                                    <span class="sr-only">"Delete"</span>
+                                                </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </template>
@@ -85,22 +115,22 @@ pub fn EntityIndexPage() -> impl IntoView {
                                 type="button"
                                 x-on:click="previousPage()"
                                 x-bind:disabled="page <= 1 || loading"
-                                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                             >
                                 <i data-feather="chevron-left" class="h-4 w-4"></i>
                                 "Previous"
                             </button>
-                            <span class="px-2 text-sm text-slate-500">
+                            <span class="px-2 text-sm text-slate-600">
                                 "Page "
-                                <span class="font-medium text-slate-700" x-text="page"></span>
+                                <span class="font-semibold text-slate-800" x-text="page"></span>
                                 " of "
-                                <span class="font-medium text-slate-700" x-text="totalPages()"></span>
+                                <span class="font-semibold text-slate-800" x-text="totalPages()"></span>
                             </span>
                             <button
                                 type="button"
                                 x-on:click="nextPage()"
                                 x-bind:disabled="page >= totalPages() || loading"
-                                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+                                class="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400"
                             >
                                 "Next"
                                 <i data-feather="chevron-right" class="h-4 w-4"></i>
