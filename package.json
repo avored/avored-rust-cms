@@ -15,10 +15,6 @@
   "description": "",
   "devDependencies": {
     "@playwright/test": "^1.65.0",
-    "@tailwindcss/cli": "^4.3.3",
-    "@tailwindcss/postcss": "^4.3.3",
-    "@tailwindcss/typography": "^0.5.20",
-    "@tailwindcss/vite": "^4.3.3",
     "@types/alpinejs": "^3.17.0",
     "@types/alpinejs__focus": "^3.13.4",
     "@types/async-alpine": "^2.0.0",
@@ -27,7 +23,6 @@
     "async-alpine": "^2.0.3",
     "concurrently": "^10.0.6",
     "postcss": "^8.5.32",
-    "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
     "vite": "^8.3.5"
   },

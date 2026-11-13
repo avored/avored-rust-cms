@@ -17,6 +17,7 @@ assets-dir = "public"
 site-addr = "127.0.0.1:3000"
 reload-port = 3002
 browserquery = "defaults"
+tailwind-input-file = "resources/css/app.css"
 bin-features = ["ssr"]
 bin-default-features = false
 lib-features = ["hydrate"]

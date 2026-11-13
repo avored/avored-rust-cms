@@ -1,5 +1,6 @@
 @import "tailwindcss";
-@plugin "@tailwindcss/typography";
+@source "../../crates/avored-web/src";
+@source "../js";
 
 [x-cloak] {
   display: none !important;
@@ -43,11 +44,10 @@
   @apply font-mono text-sm p-4 bg-white text-gray-800 min-h-50;
 }
 
-/* Custom preview container styled using Tailwind Typography */
 .editor-preview {
-  @apply prose prose-slate p-6 bg-gray-50;
+  @apply p-6 bg-gray-50;
 }
 
 @utility form-input {
-  @apply shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 dark:bg-gray-800 leading-tight focus:outline-none;
+  @apply w-full rounded-md border border-slate-300 px-3 py-2 outline-none ring-0 transition focus:border-primary-500;
 }

@@ -89,10 +89,11 @@ If you are working on backend or API behaviour, prefer targeted integration test
 
 ### Frontend
 
-Use the project's Vite/Tailwind workflow when modifying styles or frontend assets:
+Vite bundles the JavaScript assets. Cargo Leptos compiles Tailwind CSS using the input configured in the workspace `Cargo.toml`.
 
 ```bash
 npm run build
+cargo leptos build --project avored-rust-cms
 ```
 
 When adjusting Leptos components, keep SSR and hydration safety in mind. The project already documents the hydration boundaries in [docs/architecture/leptos-ssr-hydration-boundaries.md](docs/architecture/leptos-ssr-hydration-boundaries.md).

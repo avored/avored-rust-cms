@@ -1,5 +1,6 @@
 {
     "welcome_avored": "Welcome to Avored",
+    "login_page_description": "Enter your email and password to access your Avored admin dashboard.",
     "login": "Login",
     "profile": "Profile",
     "logout": "Logout",

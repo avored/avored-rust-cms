@@ -1,5 +1,3 @@
-import "../css/app.css";
-
 import "./init";
 import { setupPage } from "./misc/SetupPage";
 import { entityIndexPage } from "./entity/EntityIndexPage";
