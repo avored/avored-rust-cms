@@ -97,6 +97,17 @@ npm run build
 
 When adjusting Leptos components, keep SSR and hydration safety in mind. The project already documents the hydration boundaries in [docs/architecture/leptos-ssr-hydration-boundaries.md](docs/architecture/leptos-ssr-hydration-boundaries.md).
 
+### Browser tests
+
+Install Playwright's Chromium browser once, then run the homepage smoke test:
+
+```bash
+npx playwright install chromium
+npm run test:e2e
+```
+
+Playwright starts the local app with `npm run dev` and verifies that the homepage displays the `Avored Rust CMS` label.
+
 ## Coding standards
 
 - Prefer small, readable functions and domain-specific types.

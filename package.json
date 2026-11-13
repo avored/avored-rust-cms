@@ -7,12 +7,14 @@
     "vite": "vite",
     "build": "vite build",
     "leptos": "cargo leptos watch --project avored-rust-cms",
-    "dev": "concurrently \"npm run vite\" \"npm run leptos\""
+    "dev": "concurrently \"npm run vite\" \"npm run leptos\"",
+    "test:e2e": "playwright test"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "@tailwindcss/cli": "^4.3.3",
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/typography": "^0.5.20",

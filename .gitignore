@@ -73,6 +73,8 @@ release/
 # Test artifacts
 /tests/target/
 /tests/output/
+/playwright-report/
+/test-results/
 
 # Documentation build
 /target/doc/
